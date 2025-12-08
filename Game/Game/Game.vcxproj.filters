@@ -1,27 +1,57 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Game">
+      <UniqueIdentifier>{7e567ef0-407c-44e6-8977-ab420d28f6a5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="リソース ファイル">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Game\Enemy">
+      <UniqueIdentifier>{8ba0fe59-a9ad-4735-a772-80217d60dd58}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\ApplicationMain.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CharaBase.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\GameObjectBase.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EnemyBase.cpp">
+      <Filter>Game\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StealthEnemy.cpp">
+      <Filter>Game\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="source\BattleEnemy.cpp">
+      <Filter>Game\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationMain.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CharaBase.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GameObjectBase.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerBase.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnemyBase.h">
+      <Filter>Game\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StealthEnemy.h">
+      <Filter>Game\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="source\BattleEnemy.h">
+      <Filter>Game\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

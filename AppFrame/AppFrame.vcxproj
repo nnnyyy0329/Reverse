@@ -156,6 +156,7 @@
     <ClCompile Include="source\Application\ApplicationBase.cpp" />
     <ClCompile Include="source\Application\WinMain.cpp" />
     <ClCompile Include="source\CFile\CFile.cpp" />
+    <ClCompile Include="source\math\mymath.cpp" />
     <ClCompile Include="source\Mode\ModeBase.cpp" />
     <ClCompile Include="source\Mode\ModeServer.cpp" />
   </ItemGroup>
@@ -164,6 +165,8 @@
     <ClInclude Include="source\Application\ApplicationBase.h" />
     <ClInclude Include="source\Application\UtilMacro.h" />
     <ClInclude Include="source\CFile\CFile.h" />
+    <ClInclude Include="source\math\mymath.h" />
+    <ClInclude Include="source\memo.h" />
     <ClInclude Include="source\Mode\ModeBase.h" />
     <ClInclude Include="source\Mode\ModeServer.h" />
   </ItemGroup>

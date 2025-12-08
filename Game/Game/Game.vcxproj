@@ -148,9 +148,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\ApplicationMain.cpp" />
+    <ClCompile Include="source\BattleEnemy.cpp" />
+    <ClCompile Include="source\CharaBase.cpp" />
+    <ClCompile Include="source\EnemyBase.cpp" />
+    <ClCompile Include="source\GameObjectBase.cpp" />
+    <ClCompile Include="source\PlayerBase.cpp" />
+    <ClCompile Include="source\StealthEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationMain.h" />
+    <ClInclude Include="source\BattleEnemy.h" />
+    <ClInclude Include="source\CharaBase.h" />
+    <ClInclude Include="source\EnemyBase.h" />
+    <ClInclude Include="source\GameObjectBase.h" />
+    <ClInclude Include="source\PlayerBase.h" />
+    <ClInclude Include="source\StealthEnemy.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

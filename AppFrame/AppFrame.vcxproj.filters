@@ -10,6 +10,9 @@
     <Filter Include="App">
       <UniqueIdentifier>{b2153cf9-c23c-45c9-9b1d-929fe1d90b7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{e5016951-0486-4249-8d7e-240d0362dfdd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\CFile\CFile.cpp">
@@ -26,6 +29,9 @@
     </ClCompile>
     <ClCompile Include="source\Application\WinMain.cpp">
       <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="source\math\mymath.cpp">
+      <Filter>math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -47,5 +53,9 @@
     <ClInclude Include="source\appframe.h">
       <Filter>App</Filter>
     </ClInclude>
+    <ClInclude Include="source\math\mymath.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\memo.h" />
   </ItemGroup>
 </Project>
