@@ -2,7 +2,7 @@
 
 SurfacePlayer::SurfacePlayer()
 {
-	_iHandle = -1;
+	_iHandle = MV1LoadModel("res/base/SDChar/SDChar.mv1");
 }
 
 SurfacePlayer::~SurfacePlayer()
