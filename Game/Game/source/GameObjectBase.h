@@ -29,12 +29,14 @@ public:
 	void SetMove(VECTOR v) { _vMove = v; }
 
 protected:
+	// 位置関連
 	VECTOR _vPos;		// 位置
 	VECTOR _vOldPos;	// 前フレームの位置
 	VECTOR _vDir;		// 回転
 	VECTOR _vScale;		// 拡縮
 	VECTOR _vMove;		// 移動量
 
+	// モデル関連
 	int _iHandle;		// グラフィックハンドル
 	int _iAttachIndex;	// アタッチインデックス
 	float _fTotalTime;	// 総経過時間

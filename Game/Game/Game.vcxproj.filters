@@ -7,8 +7,11 @@
     <Filter Include="Game\Enemy">
       <UniqueIdentifier>{8ba0fe59-a9ad-4735-a772-80217d60dd58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Player">
+    <Filter Include="Game\PlayerBase">
       <UniqueIdentifier>{826fd0c4-4828-42a0-bb4f-daea080dbc2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\PlayerBase\Player">
+      <UniqueIdentifier>{898a96a2-9fcf-438e-a8e5-f532a41fc0e8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,12 +34,14 @@
       <Filter>Game\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerBase.cpp">
-      <Filter>Game\Player</Filter>
+      <Filter>Game\PlayerBase</Filter>
     </ClCompile>
     <ClCompile Include="source\InteriorPlayer.cpp">
-      <Filter>Game\Player</Filter>
+      <Filter>Game\PlayerBase\Player</Filter>
     </ClCompile>
-    <ClCompile Include="source\SurfacePlayer.cpp" />
+    <ClCompile Include="source\SurfacePlayer.cpp">
+      <Filter>Game\PlayerBase\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationMain.h">
@@ -58,11 +63,13 @@
       <Filter>Game\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerBase.h">
-      <Filter>Game\Player</Filter>
+      <Filter>Game\PlayerBase</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SurfacePlayer.h">
+      <Filter>Game\PlayerBase\Player</Filter>
     </ClInclude>
     <ClInclude Include="source\InteriorPlayer.h">
-      <Filter>Game\Player</Filter>
+      <Filter>Game\PlayerBase\Player</Filter>
     </ClInclude>
-    <ClInclude Include="source\SurfacePlayer.h" />
   </ItemGroup>
 </Project>
