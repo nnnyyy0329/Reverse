@@ -152,8 +152,10 @@
     <ClCompile Include="source\CharaBase.cpp" />
     <ClCompile Include="source\EnemyBase.cpp" />
     <ClCompile Include="source\GameObjectBase.cpp" />
+    <ClCompile Include="source\InteriorPlayer.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
     <ClCompile Include="source\StealthEnemy.cpp" />
+    <ClCompile Include="source\SurfacePlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationMain.h" />
@@ -161,8 +163,10 @@
     <ClInclude Include="source\CharaBase.h" />
     <ClInclude Include="source\EnemyBase.h" />
     <ClInclude Include="source\GameObjectBase.h" />
+    <ClInclude Include="source\InteriorPlayer.h" />
     <ClInclude Include="source\PlayerBase.h" />
     <ClInclude Include="source\StealthEnemy.h" />
+    <ClInclude Include="source\SurfacePlayer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -62,11 +62,10 @@ protected:
 	float _fCollisionR;			// 当たり判定の半径
 
 	// 基礎ステータス
-	float _fMoveSpeed;				// 移動速度
-	float _fDirSpeed;				// 回転速度
-	float _fLife;					// 体力
-	float _fGravity;				// 重力
-	
+	float _fMoveSpeed;			// 移動速度
+	float _fDirSpeed;			// 回転速度
+	float _fLife;				// 体力
+	float _fGravity;			// 重力	
 
 };
 

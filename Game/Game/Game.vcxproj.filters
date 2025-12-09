@@ -7,6 +7,9 @@
     <Filter Include="Game\Enemy">
       <UniqueIdentifier>{8ba0fe59-a9ad-4735-a772-80217d60dd58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Player">
+      <UniqueIdentifier>{826fd0c4-4828-42a0-bb4f-daea080dbc2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\ApplicationMain.cpp">
@@ -18,9 +21,6 @@
     <ClCompile Include="source\GameObjectBase.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="source\PlayerBase.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="source\EnemyBase.cpp">
       <Filter>Game\Enemy</Filter>
     </ClCompile>
@@ -30,6 +30,13 @@
     <ClCompile Include="source\BattleEnemy.cpp">
       <Filter>Game\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="source\PlayerBase.cpp">
+      <Filter>Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InteriorPlayer.cpp">
+      <Filter>Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SurfacePlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationMain.h">
@@ -41,9 +48,6 @@
     <ClInclude Include="source\GameObjectBase.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="source\PlayerBase.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="source\EnemyBase.h">
       <Filter>Game\Enemy</Filter>
     </ClInclude>
@@ -53,5 +57,12 @@
     <ClInclude Include="source\BattleEnemy.h">
       <Filter>Game\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="source\PlayerBase.h">
+      <Filter>Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="source\InteriorPlayer.h">
+      <Filter>Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SurfacePlayer.h" />
   </ItemGroup>
 </Project>
