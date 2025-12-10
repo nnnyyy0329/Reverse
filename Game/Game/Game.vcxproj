@@ -73,21 +73,21 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>..\..\AppFrame\source;$(SolutionDir)..\DxLib;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)include;..\..\AppFrame\source;$(SolutionDir)..\DxLib;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)..\DxLib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>..\..\AppFrame\source;$(SolutionDir)..\DxLib;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)include;..\..\AppFrame\source;$(SolutionDir)..\DxLib;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)..\DxLib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\AppFrame\source;$(SolutionDir)..\DxLib;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)include;..\..\AppFrame\source;$(SolutionDir)..\DxLib;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)..\DxLib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\AppFrame\source;$(SolutionDir)..\DxLib;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)include;..\..\AppFrame\source;$(SolutionDir)..\DxLib;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)..\DxLib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -147,24 +147,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\ApplicationGlobal.cpp" />
     <ClCompile Include="source\ApplicationMain.cpp" />
     <ClCompile Include="source\BattleEnemy.cpp" />
     <ClCompile Include="source\CharaBase.cpp" />
     <ClCompile Include="source\EnemyBase.cpp" />
     <ClCompile Include="source\GameObjectBase.cpp" />
     <ClCompile Include="source\InteriorPlayer.cpp" />
+    <ClCompile Include="source\ModeGame.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
+    <ClCompile Include="source\StageBase.cpp" />
     <ClCompile Include="source\StealthEnemy.cpp" />
     <ClCompile Include="source\SurfacePlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\ApplicationGlobal.h" />
     <ClInclude Include="source\ApplicationMain.h" />
     <ClInclude Include="source\BattleEnemy.h" />
     <ClInclude Include="source\CharaBase.h" />
     <ClInclude Include="source\EnemyBase.h" />
     <ClInclude Include="source\GameObjectBase.h" />
     <ClInclude Include="source\InteriorPlayer.h" />
+    <ClInclude Include="source\ModeGame.h" />
     <ClInclude Include="source\PlayerBase.h" />
+    <ClInclude Include="source\StageBase.h" />
     <ClInclude Include="source\StealthEnemy.h" />
     <ClInclude Include="source\SurfacePlayer.h" />
   </ItemGroup>

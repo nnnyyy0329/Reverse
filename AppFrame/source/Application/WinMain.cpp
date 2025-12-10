@@ -31,6 +31,9 @@ int WINAPI WinMain(
 	// 1フレームループを組む ----------------------------------------------------------
 	while (ProcessMessage() == 0)		// プログラムが終了するまでループ
 	{
+		if (1 == CheckHitKey(KEY_INPUT_ESCAPE)) {// ESCキーで終了
+			break;
+		}
 		appBase->Input();
 		appBase->Process();
 

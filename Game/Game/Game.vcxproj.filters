@@ -42,6 +42,9 @@
     <ClCompile Include="source\SurfacePlayer.cpp">
       <Filter>Game\PlayerBase\Player</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeGame.cpp" />
+    <ClCompile Include="source\StageBase.cpp" />
+    <ClCompile Include="source\ApplicationGlobal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationMain.h">
@@ -71,5 +74,8 @@
     <ClInclude Include="source\InteriorPlayer.h">
       <Filter>Game\PlayerBase\Player</Filter>
     </ClInclude>
+    <ClInclude Include="source\ModeGame.h" />
+    <ClInclude Include="source\StageBase.h" />
+    <ClInclude Include="source\ApplicationGlobal.h" />
   </ItemGroup>
 </Project>

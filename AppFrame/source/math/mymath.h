@@ -5,6 +5,10 @@
 // ‰~ü—¦
 #define	PI				(3.141592653589793)
 
+// degree‚Æradian‚Ì•ÏŠ·
+static constexpr auto DEGREE_TO_RADIAN = DX_PI_F / 180.0f;
+static constexpr auto RADIAN_TO_DEGREE = 180.0f / DX_PI_F;
+
 class Character;
 
 // “–‚½‚è”»’è—pB2‚Â‚Ìbox‚ª“–‚½‚Á‚½‚©‚ğ”»’è
