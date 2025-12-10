@@ -2,7 +2,7 @@
 
 InteriorPlayer::InteriorPlayer()
 {
-
+	// test
 }
 
 InteriorPlayer::~InteriorPlayer()
