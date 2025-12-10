@@ -418,3 +418,4 @@ FodyWeavers.xsd
 *.msp
 DxLib
 Game/Game/Log.txt
+Game/Game/res
