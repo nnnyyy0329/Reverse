@@ -5,36 +5,35 @@
 // À‘Ì
 ApplicationMain				g_oApplicationMain;
 
-// ‰Šú‰»
 bool ApplicationMain::Initialize(HINSTANCE hInstance) {
 	if (!base::Initialize(hInstance)) { return false; }
 
 	// ƒ‚[ƒh‚Ì“o˜^
 	ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
 
+	// ƒ‚[ƒh‚Ì“o˜^
+	ModeServer::GetInstance()->Add(new ModeGame(), 10, "game");
+
 	return true;
 }
 
-// I—¹
 bool ApplicationMain::Terminate() {
 	base::Terminate();
 	return true;
 }
 
-// “ü—Í
+
 bool ApplicationMain::Input() {
 	base::Input();
 	return true;
 }
 
-// XV
 bool ApplicationMain::Process() {
 	base::Process();
 
 	return true;
 }
 
-// •`‰æ
 bool ApplicationMain::Render() {
 	base::Render(); // ŒÄ‚Ño‚µ
 

@@ -1,8 +1,9 @@
+#pragma once
 #include "appframe.h"
-#include <string>
 
 //いったんこれ
 class SurfacePlayer;
+class StageBase;
 
 // モード
 class ModeGame : public ModeBase
@@ -19,4 +20,7 @@ protected:
 	//いったんこれ
 	std::shared_ptr<SurfacePlayer> _surfacePlayer;
 
-}; 
+	// スマートポインタで管理する
+	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される
+	std::shared_ptr<StageBase> _stage;// ステージ
+};

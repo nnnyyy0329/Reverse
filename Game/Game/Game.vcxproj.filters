@@ -54,6 +54,9 @@
     <ClCompile Include="source\ModeGame.cpp">
       <Filter>Game\Gamemain</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeGame.cpp" />
+    <ClCompile Include="source\StageBase.cpp" />
+    <ClCompile Include="source\ApplicationGlobal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\EnemyBase.h">
@@ -86,5 +89,8 @@
     <ClInclude Include="source\ModeGame.h">
       <Filter>Game\Gamemain</Filter>
     </ClInclude>
+    <ClInclude Include="source\ModeGame.h" />
+    <ClInclude Include="source\StageBase.h" />
+    <ClInclude Include="source\ApplicationGlobal.h" />
   </ItemGroup>
 </Project>
