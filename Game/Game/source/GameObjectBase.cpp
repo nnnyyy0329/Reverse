@@ -40,3 +40,8 @@ bool GameObjectBase::Render()
 {
 	return true;
 }
+
+void GameObjectBase::DebugRender()
+{
+
+}

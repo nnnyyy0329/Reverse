@@ -11,6 +11,7 @@ public:
 	virtual bool Terminate();	// 終了
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
+	virtual void DebugRender();	// デバッグ描画
 
 	// ゲッターセッター
 	VECTOR GetPos() { return _vPos; }
