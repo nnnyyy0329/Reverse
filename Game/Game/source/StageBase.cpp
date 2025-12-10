@@ -52,6 +52,23 @@ StageBase::StageBase()
 	// jsonファイルの読み込み(敵)
 	{
 	}
+
+	// マップ
+	_handleSkySphere = MV1LoadModel("res/base/SkySphere/skysphere.mv1");
+	#if 0
+	// ダンジョン
+	_handleMap = MV1LoadModel("res/base/Dungeon/Dungeon.mv1");
+	_frameMapCollision = MV1SearchFrame(_handleMap, "dungeon_collision");
+	#else
+	// フィールド
+	_handleMap = MV1LoadModel("res/base/Ground/Ground.mv1");
+	_frameMapCollision = MV1SearchFrame(_handleMap, "ground_navmesh");
+	#endif
+	// コリジョン情報の生成
+	MV1SetupCollInfo(_handleMap, _frameMapCollision, 16, 16, 16);
+	// コリジョンのフレームを描画しない設定
+	MV1SetFrameVisible(_handleMap, _frameMapCollision, FALSE);
+
 }
 
 StageBase::~StageBase()
@@ -76,5 +93,12 @@ void StageBase::Render()
 
 	// 敵の描画
 	{
+	}
+
+
+	// マップモデルを描画する
+	{
+		MV1DrawModel(_handleMap);
+		MV1DrawModel(_handleSkySphere);
 	}
 }

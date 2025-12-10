@@ -30,5 +30,12 @@ protected:
 	std::vector<MODELPOS> _mapModelPosList;// json読み込みで設定したマップモデルのリスト
 
 	int _stageNum;// ステージ番号
+
+
+	// マップ用
+	int _handleMap;
+	int _handleSkySphere;
+	int _frameMapCollision;
+
 };
 

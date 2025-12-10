@@ -51,12 +51,15 @@
     <ClCompile Include="source\CharaBase.cpp">
       <Filter>Game\ObjectBase\CharaBase</Filter>
     </ClCompile>
-    <ClCompile Include="source\ModeGame.cpp">
-      <Filter>Game\Gamemain</Filter>
-    </ClCompile>
     <ClCompile Include="source\ModeGame.cpp" />
     <ClCompile Include="source\StageBase.cpp" />
     <ClCompile Include="source\ApplicationGlobal.cpp" />
+    <ClCompile Include="source\ModeGame.cpp">
+      <Filter>Game\Gamemain</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CameraManager.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\EnemyBase.h">
@@ -86,11 +89,14 @@
     <ClInclude Include="source\CharaBase.h">
       <Filter>Game\ObjectBase\CharaBase</Filter>
     </ClInclude>
-    <ClInclude Include="source\ModeGame.h">
-      <Filter>Game\Gamemain</Filter>
-    </ClInclude>
     <ClInclude Include="source\ModeGame.h" />
     <ClInclude Include="source\StageBase.h" />
     <ClInclude Include="source\ApplicationGlobal.h" />
+    <ClInclude Include="source\ModeGame.h">
+      <Filter>Game\Gamemain</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CameraManager.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

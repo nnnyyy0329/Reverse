@@ -150,6 +150,7 @@
     <ClCompile Include="source\ApplicationGlobal.cpp" />
     <ClCompile Include="source\ApplicationMain.cpp" />
     <ClCompile Include="source\BattleEnemy.cpp" />
+    <ClCompile Include="source\CameraManager.cpp" />
     <ClCompile Include="source\CharaBase.cpp" />
     <ClCompile Include="source\EnemyBase.cpp" />
     <ClCompile Include="source\GameObjectBase.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="source\ApplicationGlobal.h" />
     <ClInclude Include="source\ApplicationMain.h" />
     <ClInclude Include="source\BattleEnemy.h" />
+    <ClInclude Include="source\CameraManager.h" />
     <ClInclude Include="source\CharaBase.h" />
     <ClInclude Include="source\EnemyBase.h" />
     <ClInclude Include="source\GameObjectBase.h" />
