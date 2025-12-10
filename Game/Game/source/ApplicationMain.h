@@ -18,8 +18,4 @@ public:
 
 protected:
 
-	int _cg;
-	int _x, _y;
-	int _w, _h;
-
 }; 

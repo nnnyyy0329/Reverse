@@ -2,8 +2,10 @@
 #include <math.h>
 #include "DxLib.h"
 
-// 円周率
-#define	PI				(3.141592653589793)
+// 計算用マクロ
+#define	PI	(3.1415926535897932386f)
+#define	DEG2RAD(x)			( ((x) / 180.0f ) * PI )
+#define	RAD2DEG(x)			( ((x) * 180.0f ) / PI )
 
 class Character;
 

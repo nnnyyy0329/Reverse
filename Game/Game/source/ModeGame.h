@@ -1,8 +1,8 @@
-
 #include "appframe.h"
-
 #include <string>
 
+//Ç¢Ç¡ÇΩÇÒÇ±ÇÍ
+class SurfacePlayer;
 
 // ÉÇÅ[Éh
 class ModeGame : public ModeBase
@@ -16,5 +16,7 @@ public:
 
 protected:
 
+	//Ç¢Ç¡ÇΩÇÒÇ±ÇÍ
+	std::shared_ptr<SurfacePlayer> _surfacePlayer;
 
 }; 
