@@ -64,23 +64,23 @@ bool SurfacePlayer::Process()
 
 	// いったんとりあえずこれ
 	{
-		int key = ApplicationMain::GetInstance()->GetKey();
-		int trg = ApplicationMain::GetInstance()->GetTrg();
+		//int key = ApplicationMain::GetInstance()->GetKey();
+		//int trg = ApplicationMain::GetInstance()->GetTrg();
 
 		// 処理前のステータスを保存しておく
 		CHARA_STATUS oldStatus = _eStatus;
 
-		// アナログスティック対応
-		DINPUT_JOYSTATE di;
-		GetJoypadDirectInputState(DX_INPUT_PAD1, &di);
-		float lx, ly, rx, ry;	// 左右アナログスティックの座標
-		float analogMin = 0.3f;	// アナログ閾値
-		// Logicoolパッドの場合
-		lx = (float)di.X / 1000.f; ly = (float)di.Y / 1000.f;
-		rx = (float)di.Z / 1000.f; ry = (float)di.Rz / 1000.f;
+		//// アナログスティック対応
+		//DINPUT_JOYSTATE di;
+		//GetJoypadDirectInputState(DX_INPUT_PAD1, &di);
+		//float lx, ly, rx, ry;	// 左右アナログスティックの座標
+		//float analogMin = 0.3f;	// アナログ閾値
+		//// Logicoolパッドの場合
+		//lx = (float)di.X / 1000.f; ly = (float)di.Y / 1000.f;
+		//rx = (float)di.Z / 1000.f; ry = (float)di.Rz / 1000.f;
 
 
-		if(key & PAD_INPUT_8) {	// W
+		if(_key & PAD_INPUT_8) {	// W
 			// カメラ位置（注目位置もXZスライド）
 			float sx = _cam._vPos.x - _cam._vTarget.x;
 			float sz = _cam._vPos.z - _cam._vTarget.z;
@@ -90,9 +90,9 @@ bool SurfacePlayer::Process()
 			{
 				VECTOR v = { 0,0,0 };
 				float mvSpeed = 2.f;
-				float length = sqrt(lx * lx + ly * ly);
-				float rad = atan2(lx, ly);
-				if(length < analogMin) {
+				float length = sqrt(_lx * _lx + _ly * _ly);
+				float rad = atan2(_lx, _ly);
+				if(length < _analogMin) {
 					// 入力が小さかったら動かなかったことにする
 					length = 0.f;
 				}
@@ -116,14 +116,14 @@ bool SurfacePlayer::Process()
 				float sz = _cam._vPos.z - _cam._vTarget.z;
 				float rad = atan2(sz, sx);
 				float length = sqrt(sz * sz + sx * sx);
-				if(rx < -analogMin) { length -= 1.f; }
-				if(rx > analogMin) { length += 1.f; }
+				if(_rx < -_analogMin) { length -= 1.f; }
+				if(_rx > _analogMin) { length += 1.f; }
 				_cam._vPos.x = _cam._vTarget.x + cos(rad) * length;
 				_cam._vPos.z = _cam._vTarget.z + sin(rad) * length;
 
 				// Y位置
-				if(ry > analogMin) { _cam._vTarget.y -= 1.f; }
-				if(ry < -analogMin) { _cam._vTarget.y += 1.f; }
+				if(_ry > _analogMin) { _cam._vTarget.y -= 1.f; }
+				if(_ry < -_analogMin) { _cam._vTarget.y += 1.f; }
 			}
 		}
 		else {
@@ -139,9 +139,9 @@ bool SurfacePlayer::Process()
 			float mvSpeed = 6.f;
 
 			// アナログ左スティック用
-			float length = sqrt(lx * lx + ly * ly);
-			float rad = atan2(lx, ly);
-			if(length < analogMin) {
+			float length = sqrt(_lx * _lx + _ly * _ly);
+			float rad = atan2(_lx, _ly);
+			if(length < _analogMin) {
 				// 入力が小さかったら動かなかったことにする
 				length = 0.f;
 			}
@@ -215,20 +215,20 @@ bool SurfacePlayer::Process()
 				float sz = _cam._vPos.z - _cam._vTarget.z;
 				float rad = atan2(sz, sx);
 				float length = sqrt(sz * sz + sx * sx);
-				if(rx > analogMin) { rad -= 0.05f; }
-				if(rx < -analogMin) { rad += 0.05f; }
+				if(_rx > _analogMin) { rad -= 0.05f; }
+				if(_rx < -_analogMin) { rad += 0.05f; }
 				_cam._vPos.x = _cam._vTarget.x + cos(rad) * length;
 				_cam._vPos.z = _cam._vTarget.z + sin(rad) * length;
 
 				// Y位置
-				if(ry > analogMin) { _cam._vPos.y -= 5.f; }
-				if(ry < -analogMin) { _cam._vPos.y += 5.f; }
+				if(_ry > _analogMin) { _cam._vPos.y -= 5.f; }
+				if(_ry < -_analogMin) { _cam._vPos.y += 5.f; }
 			}
 
 
 
 			// デバッグ機能
-			if(trg & PAD_INPUT_6) {
+			if(_trg & PAD_INPUT_6) {
 				_bViewCollision = !_bViewCollision;
 			}
 			if(_bViewCollision) {

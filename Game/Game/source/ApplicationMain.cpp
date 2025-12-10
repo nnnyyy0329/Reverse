@@ -11,9 +11,6 @@ bool ApplicationMain::Initialize(HINSTANCE hInstance) {
 	// ƒ‚[ƒh‚Ì“o˜^
 	ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
 
-	// ƒ‚[ƒh‚Ì“o˜^
-	ModeServer::GetInstance()->Add(new ModeGame(), 10, "game");
-
 	return true;
 }
 

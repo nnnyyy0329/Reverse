@@ -2,6 +2,7 @@
 #include "AppFrame.h"
 #include "ApplicationMain.h"
 #include "ModeGame.h"
+#include "PlayerBase.h"
 #include "StageBase.h"
 
 // いったんこれ
@@ -30,19 +31,24 @@ bool ModeGame::Terminate() {
 
 bool ModeGame::Process() {
 	base::Process();
+	/// 入力取得
+	{
+		int key = ApplicationMain::GetInstance()->GetKey();
+		int trg = ApplicationMain::GetInstance()->GetTrg();
+		auto analog = ApplicationMain::GetInstance()->GetAnalog();
+		float lx = analog.lx;
+		float ly = analog.ly;
+		float rx = analog.rx;
+		float ry = analog.ry;
+		float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
 
-	// いったんこれ
-	_surfacePlayer->Process();
-		// アナログスティック対応
-		DINPUT_JOYSTATE di;
-		GetJoypadDirectInputState(DX_INPUT_PAD1, &di);
-		float lx, ly, rx, ry;// 左右アナログスティックの座標
-		float analogMin = 0.3f;// アナログ閾値
-		// Logicoolパッドの場合
-		lx = (float)di.X / 1000.f; ly = (float)di.Y / 1000.f;// 左スティック
-		rx = (float)di.Rx / 1000.f; ry = (float)di.Ry / 1000.f;// 右スティック
+		// プレイヤーに入力状態を渡す
+		if (_surfacePlayer) {
+			_surfacePlayer->SetInput(key, trg, lx, ly, rx, ry, analogMin);
+		}
 	}
 
+	_surfacePlayer->Process();
 	_stage->Process();
 
 	return true;
