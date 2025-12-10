@@ -55,6 +55,18 @@ bool ApplicationBase::Input()
 	_gKey = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 	_gTrg = (_gKey ^ keyold) & _gKey;	// キーのトリガ情報生成（押した瞬間しか反応しないキー情報）
 
+	// アナログスティック対応
+	DINPUT_JOYSTATE di;
+	GetJoypadDirectInputState(DX_INPUT_PAD1, &di);
+	float lx, ly, rx, ry;// 左右アナログスティックの座標
+	// Logicoolパッドの場合
+	lx = (float)di.X / 1000.f; ly = (float)di.Y / 1000.f;// 左スティック
+	rx = (float)di.Rx / 1000.f; ry = (float)di.Ry / 1000.f;// 右スティック
+	_analog.lx = lx;
+	_analog.ly = ly;
+	_analog.rx = rx;
+	_analog.ry = ry;
+
 	return true;
 }
 

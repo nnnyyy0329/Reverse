@@ -1,10 +1,12 @@
 #include "ApplicationMain.h"
 #include "ModeGame.h"
+#include "PlayerBase.h"
 #include "StageBase.h"
 
 bool ModeGame::Initialize() {
 	if (!base::Initialize()) { return false; }
 
+	_player = std::make_shared<PlayerBase>();
 	_stage = std::make_shared<StageBase>();
 
 	return true;
@@ -21,15 +23,16 @@ bool ModeGame::Process() {
 	{
 		int key = ApplicationMain::GetInstance()->GetKey();
 		int trg = ApplicationMain::GetInstance()->GetTrg();
+		auto analog = ApplicationMain::GetInstance()->GetAnalog();
+		float lx = analog.lx;
+		float ly = analog.ly;
+		float rx = analog.rx;
+		float ry = analog.ry;
 
-		// アナログスティック対応
-		DINPUT_JOYSTATE di;
-		GetJoypadDirectInputState(DX_INPUT_PAD1, &di);
-		float lx, ly, rx, ry;// 左右アナログスティックの座標
-		float analogMin = 0.3f;// アナログ閾値
-		// Logicoolパッドの場合
-		lx = (float)di.X / 1000.f; ly = (float)di.Y / 1000.f;// 左スティック
-		rx = (float)di.Rx / 1000.f; ry = (float)di.Ry / 1000.f;// 右スティック
+		// プレイヤーに入力状態を渡す
+		if (_player) {
+			_player->SetInput(key, trg, lx, ly, rx, ry);
+		}
 	}
 
 	_stage->Process();
