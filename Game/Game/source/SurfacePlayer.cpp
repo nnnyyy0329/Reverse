@@ -316,15 +316,32 @@ void SurfacePlayer::StatusAnimationProcess()
 	}
 	else
 	{
-		// 移動量に応じて
-		if(VSize(_vMove) > 0.f)
+		// しゃがみ中かどうか
+		if(_bIsCrouching)
 		{
-			_vDir = _vMove;
-			_eStatus = CHARA_STATUS::WALK;
+			// しゃがみ中
+			if(VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f) // 歩いているかどうか
+			{
+				_vDir = _vMove;							// 移動方向を向く
+				_eStatus = CHARA_STATUS::CROUCH_WALK;	// しゃがみ歩行
+			}
+			else // 止まっている
+			{
+				_eStatus = CHARA_STATUS::CROUCH_WAIT;	// しゃがみ待機
+			}
 		}
-		else
+		else // しゃがみ中でない
 		{
-			_eStatus = CHARA_STATUS::WAIT;
+			// 通常 
+			if(VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f) // 歩いているかどうか
+			{
+				_vDir = _vMove;					// 移動方向を向く
+				_eStatus = CHARA_STATUS::WALK;	// 歩行
+			}
+			else // 止まっている
+			{
+				_eStatus = CHARA_STATUS::WAIT;	// 待機
+			}
 		}
 	}
 
@@ -366,7 +383,12 @@ void SurfacePlayer::StatusAnimationProcess()
 				// _iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "jump_down"), -1, FALSE);
 				break;
 			}	
-			case CHARA_STATUS::CROUCH:	// しゃがみ
+			case CHARA_STATUS::CROUCH_WAIT:	// しゃがみ待機
+			{
+				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch_idle"), -1, FALSE);
+				break;
+			}
+			case CHARA_STATUS::CROUCH_WALK:	// しゃがみ歩行
 			{
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch"), -1, FALSE);
 				break;
@@ -450,12 +472,14 @@ void SurfacePlayer::CrouchProcess()
 	if(_trg & PAD_INPUT_B)
 	{
 		// しゃがみ開始フラグが立っておらず、しゃがみステータスでなければ
-		if(!_bIsStartCrouch && _eStatus != CHARA_STATUS::CROUCH)
+		if(!_bIsStartCrouch && _eStatus != CHARA_STATUS::CROUCH_WAIT)
 		{
 			// しゃがみ開始
-			_bIsStartCrouch = true;				// しゃがみ開始フラグを立てる
-			_bIsCrouching = true;				// しゃがみフラグを立てる
-			_eStatus = CHARA_STATUS::CROUCH;	// ステータスをしゃがみにする
+			const bool next = !_bIsStartCrouch;		// しゃがみ開始フラグを反転
+
+			_bIsStartCrouch = next;					// しゃがみ開始フラグを立てる
+			_bIsCrouching = next;					// しゃがみフラグを立てる
+			_eStatus = CHARA_STATUS::CROUCH_WAIT;	// ステータスをしゃがみにする
 		}
 		else // しゃがみ解除
 		{
@@ -516,8 +540,11 @@ void SurfacePlayer::DrawStatus()
 		case CHARA_STATUS::JUMP_DOWN:
 			status = "JUMP_DOWN";
 			break;
-		case CHARA_STATUS::CROUCH:
-			status = "CROUCH";
+		case CHARA_STATUS::CROUCH_WAIT:
+			status = "CROUCH_WAIT";
+			break;
+		case CHARA_STATUS::CROUCH_WALK:
+			status = "CROUCH_WALK";
 			break;
 		case CHARA_STATUS::DEATH:
 			status = "DEATH";
