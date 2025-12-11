@@ -18,12 +18,11 @@ public:
 
 protected:
 
-	//いったんこれ
-	std::shared_ptr<PlayerBase> _player;
+	void CheckCollisionPlayerMap();// プレイヤーとマップの当たり判定
 
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される
-	//std::shared_ptr<PlayerBase> _player;// プレイヤー
+	std::shared_ptr<PlayerBase> _player;// プレイヤー
 	std::shared_ptr<StageBase> _stage;// ステージ
 	std::shared_ptr<CameraManager> _cameraManager;// カメラマネージャー
 };

@@ -14,10 +14,7 @@ public:
 
 protected:
 
-	// 3Dモデル描画用
-	float _colSubY;	// コリジョン判定時のY補正(腰位置）
-	// デバッグ用
-	bool	_bViewCollision;
+
 
 };
 

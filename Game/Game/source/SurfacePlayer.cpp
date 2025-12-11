@@ -20,6 +20,11 @@ SurfacePlayer::SurfacePlayer()
 	// 腰位置の設定
 	_colSubY = 40.f;
 
+	// カプセル子りいじょん
+	_fCollisionR = 15.f;
+	_vCollisionTop = VGet(0.0f, 70.0f, 0.0f);
+	_vCollisionBottom = VGet(0.0f, 10.0f, 0.0f);
+
 }
 
 SurfacePlayer::~SurfacePlayer()
@@ -172,6 +177,7 @@ bool SurfacePlayer::Process()
 
 	// 処理前のステータスを保存しておく
 	_eOldStatus = _eStatus;
+	_vOldPos = _vPos;
 
 	// 移動方向を決める
 	_vMove = { 0,0,0 };
@@ -238,6 +244,9 @@ bool SurfacePlayer::Process()
 		_fPlayTime = 0.0f;
 	}
 
+	_vCollisionBottom = VAdd(_vPos,VGet(0.0f, 10.f, 0.0f));
+	_vCollisionTop = VAdd(_vPos, VGet(0.0f, 70.f, 0.0f));
+
 	return true;
 }
 
@@ -294,6 +303,10 @@ bool SurfacePlayer::Render()
 			DrawFormatString(x, y, GetColor(255, 0, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
 		}
 	}
+
+	// デバッグ用コリジョン表示
+		// カプセル表示
+		DrawCapsule3D(_vCollisionTop,_vCollisionBottom, _fCollisionR,16, GetColor(255, 255, 0),GetColor(255, 255, 0), TRUE);
 
 	return true;
 }

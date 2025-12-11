@@ -39,6 +39,8 @@ public:
 	float GetCollisionR() { return _fCollisionR; }		// 当たり判定の半径
 	void SetCollisionR(float f) { _fCollisionR = f; }	// 当たり判定の半径
 
+	float GetColSubY() { return _colSubY; }		// コリジョン判定時のY補正(腰位置）
+
 	// 基礎ステータス
 	float GetMoveSpeed() { return _fMoveSpeed; }	// 移動速度
 	void SetMoveSpeed(float f) { _fMoveSpeed = f; }	// 移動速度
@@ -60,6 +62,10 @@ protected:
 	VECTOR _vCollisionTop;		// 当たり判定の上端
 	VECTOR _vCollisionBottom;	// 当たり判定の下端
 	float _fCollisionR;			// 当たり判定の半径
+	// 3Dモデル描画用
+	float _colSubY;	// コリジョン判定時のY補正(腰位置）
+	// デバッグ用
+	bool	_bViewCollision;
 
 	// 基礎ステータス
 	float _fMoveSpeed;			// 移動速度
