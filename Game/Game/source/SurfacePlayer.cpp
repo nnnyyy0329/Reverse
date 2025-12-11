@@ -29,6 +29,8 @@ SurfacePlayer::SurfacePlayer()
 	_fVelY = 0.0f;
 	_bIsJumping = false;
 	_bIsStanding = true;
+	_bIsCrouching = false;
+	_bIsStartCrouch = false;
 
 	// カプセルコリジョンの設定
 	_vCollisionTop = VGet(0.0f, 0.0f, 0.0f);	// 上端
@@ -195,6 +197,9 @@ bool SurfacePlayer::Process()
 	// 着地処理
 	StandingProcess();
 
+	// しゃがみ処理
+	CrouchProcess();
+
 	// ステータスに応じたアニメーション処理
 	StatusAnimationProcess();
 
@@ -262,17 +267,36 @@ void SurfacePlayer::MovePlayer()
 
 	// 移動方向を決める
 	_vMove = { 0,0,0 };
-	_fMoveSpeed = 6.0f;
+
+	// しゃがみ中かどうかで移動速度を変える
+	if(_bIsCrouching){_fMoveSpeed = 3.0f;}
+	else{_fMoveSpeed = 6.0f;}
+
 	if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
 	if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
 	if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
 	if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
 
-	_vPos = VAdd(_vPos, VScale(_vMove, _fMoveSpeed));
+	// 移動量を正規化
+	float len = VSize(_vMove);
+	if(len > 0.0f)
+	{
+		_vMove.x /= len;	// 正規化
+		_vMove.y /= len;	// 正規化
+	}
+	_vPos = VAdd(_vPos, VScale(_vMove, _fMoveSpeed));	// 移動速度を掛けて移動
 
 	// カプセルに座標を対応
-	_vCollisionTop = VAdd(_vPos, VGet(0, 70.0f, 0));	// キャラの高さ分を足す
-	_vCollisionBottom = VAdd(_vPos, VGet(0, 10.0f, 0));	// 腰位置分を足す
+	if(!_bIsCrouching) // しゃがみ中じゃないなら
+	{
+		_vCollisionTop = VAdd(_vPos, VGet(0, 70.0f, 0));	// キャラの高さ分を足す
+		_vCollisionBottom = VAdd(_vPos, VGet(0, 10.0f, 0));	// 腰位置分を足す
+	}
+	else // しゃがみ中なら
+	{
+		_vCollisionTop = VAdd(_vPos, VGet(0, 35.0f, 0));
+		_vCollisionBottom = VAdd(_vPos, VGet(0, 5.0f, 0));	
+	}
 }
 
 // ステータスに応じたアニメーション処理
@@ -377,39 +401,71 @@ void SurfacePlayer::StandingProcess()
 	// 重力を加算する
 	if(!_bIsStanding)
 	{
-		_fVelY += _fGravity;
+		_fVelY += _fGravity;	// 重力加速度を加算
 	}
 
-	_vPos.y += _fVelY;
+	_vPos.y += _fVelY;	// Y方向の速度分、位置を更新
 
 	// 地面との衝突
-	if(_vPos.y <= 0.0f)
+	if(_vPos.y <= 0.0f) // 地面の高さが０の場合
 	{
-		_vPos.y = 0.0f;	// 地面の高さに合わせる
-		_fVelY = 0.0f;	// Y方向の速度を０にする
-		_bIsStanding = true;	
-		_bIsJumping = false;
+		_vPos.y = 0.0f;			// 地面の高さに合わせる
+		_fVelY = 0.0f;			// Y方向の速度を０にする
+		_bIsStanding = true;	// 着地フラグを立てる	
+		_bIsJumping = false;	// ジャンプ中フラグを下ろす
 	}
 	else
 	{
-		_bIsStanding = false;
+		_bIsStanding = false;	// 空中
 	}
 }
 
 // ジャンプ処理
 void SurfacePlayer::JumpProcess()
 {
-	if(_trg & PAD_INPUT_A && _eStatus != CHARA_STATUS::JUMP_UP)
+	// しゃがみ中はジャンプできない
+	if(_bIsCrouching){ return; } 
+
+	// ジャンプボタンが押されたら
+	if(_trg & PAD_INPUT_A && _eStatus != CHARA_STATUS::JUMP_UP)	// Zボタン
 	{
+		// ジャンプ中でなく、着地しているなら
 		if(!_bIsJumping && _bIsStanding)
 		{
 			// ジャンプ開始
-			_fVelY = 10.f;
-			_bIsJumping = true;
-			_bIsStanding = false;
+			_fVelY = 10.f;			// ジャンプ初速を設定
+			_bIsJumping = true;		// ジャンプ中フラグを立てる
+			_bIsStanding = false;	// 着地フラグを下ろす
 		}
 	}
 }
+
+// しゃがみ処理
+void SurfacePlayer::CrouchProcess()
+{
+	// 空中ではしゃがめない
+	if(_bIsStanding == false){ return; } 
+
+	// しゃがみボタンが押されたら
+	if(_trg & PAD_INPUT_B)
+	{
+		// しゃがみ開始フラグが立っておらず、しゃがみステータスでなければ
+		if(!_bIsStartCrouch && _eStatus != CHARA_STATUS::CROUCH)
+		{
+			// しゃがみ開始
+			_bIsStartCrouch = true;				// しゃがみ開始フラグを立てる
+			_bIsCrouching = true;				// しゃがみフラグを立てる
+			_eStatus = CHARA_STATUS::CROUCH;	// ステータスをしゃがみにする
+		}
+		else // しゃがみ解除
+		{
+			_bIsCrouching = false;		// しゃがみフラグを下ろす	
+			_bIsStartCrouch = false;	// しゃがみ開始フラグを下ろす
+		}
+	}
+}
+
+/* ーーーーーーーーーーーーーデバッグ表示ーーーーーーーーーーーーー */
 
 // カプセルコリジョン描画
 void SurfacePlayer::DrawCapsuleCollision()

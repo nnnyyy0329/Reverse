@@ -22,6 +22,7 @@ public:
 	void StatusAnimationProcess();	// ステータスに応じたアニメーション処理
 	void StandingProcess();			// 着地処理
 	void JumpProcess();				// ジャンプ処理
+	void CrouchProcess();			// しゃがみ処理
 
 	// デバッグ用
 	void DrawCapsuleCollision();	// カプセルコリジョン描画
@@ -35,8 +36,10 @@ protected:
 	bool	_bViewCollision;
 
 	// 固有変数追加
-	float _fVelY;		// Y方向の速度
-	bool _bIsJumping;	// ジャンプ中かどうか
-	bool _bIsStanding;	// 着地しているかどうか
+	float _fVelY;			// Y方向の速度
+	bool _bIsJumping;		// ジャンプ中かどうか
+	bool _bIsStanding;		// 着地しているかどうか
+	bool _bIsCrouching;		// しゃがんでいるかどうか
+	bool _bIsStartCrouch;	// しゃがみ開始フラグ
 };
 
