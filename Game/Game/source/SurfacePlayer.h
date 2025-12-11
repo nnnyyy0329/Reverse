@@ -1,3 +1,9 @@
+/*ーーーーーーーーーー
+|
+|	成田担当
+|
+ーーーーーーーーーー*/
+
 #pragma once
 #include "PlayerBase.h"
 
@@ -12,6 +18,15 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
+	void MovePlayer();				// プレイヤー移動処理
+	void StatusAnimationProcess();	// ステータスに応じたアニメーション処理
+	void StandingProcess();			// 着地処理
+	void JumpProcess();				// ジャンプ処理
+
+	// デバッグ用
+	void DrawCapsuleCollision();	// カプセルコリジョン描画
+	void DrawStatus();				// ステータス描画
+
 protected:
 
 	// 3Dモデル描画用
@@ -19,5 +34,9 @@ protected:
 	// デバッグ用
 	bool	_bViewCollision;
 
+	// 固有変数追加
+	float _fVelY;		// Y方向の速度
+	bool _bIsJumping;	// ジャンプ中かどうか
+	bool _bIsStanding;	// 着地しているかどうか
 };
 

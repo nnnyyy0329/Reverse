@@ -8,6 +8,9 @@ enum class CHARA_STATUS
 	WAIT,
 	WALK,
 	ATTACK,
+	JUMP_UP,	
+	JUMP_DOWN,	
+	CROUCH,
 	DEATH,
 	_EOT_,
 };

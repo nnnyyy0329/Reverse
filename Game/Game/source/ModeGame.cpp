@@ -87,8 +87,8 @@ bool ModeGame::Render() {
 	// ‚¢‚Á‚½‚ñ‚±‚ê
 	_cameraManager->SetUp();
 	
-	_player->Render();
 	_stage->Render();
+	_player->Render();
 
 	return true;
 }
