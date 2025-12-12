@@ -59,6 +59,11 @@ bool SurfacePlayer::Terminate()
 
 bool SurfacePlayer::Process()
 {
+	// ‘Ì—Í‚ª0ˆÈ‰º‚È‚ç
+	if(_fLife <= 0.f) { _eStatus = CHARA_STATUS::DEATH; return false; }
+
+	if(_key & PAD_INPUT_8){ _fLife -= 5.0f; }
+
 	// ‚¢‚Á‚½‚ñ‚Æ‚è‚ ‚¦‚¸‚±‚ê
 	{
 	//	// ˆ—‘O‚ÌƒXƒe[ƒ^ƒX‚ð•Û‘¶‚µ‚Ä‚¨‚­
@@ -209,6 +214,9 @@ bool SurfacePlayer::Process()
 
 bool SurfacePlayer::Render()
 {
+	// ‘Ì—Í‚ª0ˆÈ‰º‚È‚ç
+	if(_fLife <= 0.f) { _eStatus = CHARA_STATUS::DEATH; return false; }
+
 	// ‚¢‚Á‚½‚ñ‚Æ‚è‚ ‚¦‚¸‚±‚ê
 	{
 		// 0,0,0‚ð’†S‚Éü‚ðˆø‚­
@@ -393,9 +401,19 @@ void SurfacePlayer::StatusAnimationProcess()
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch"), -1, FALSE);
 				break;
 			}
-			case CHARA_STATUS::ATTACK:	// UŒ‚
+			case CHARA_STATUS::FIRST_ATTACK:	// UŒ‚1
 			{
-				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack"), -1, FALSE);
+				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_01"), -1, FALSE);
+				break;
+			}
+			case CHARA_STATUS::SECOND_ATTACK:	// UŒ‚2
+			{
+				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_02"), -1, FALSE);
+				break;
+			}
+			case CHARA_STATUS::THIRD_ATTACK:	// UŒ‚3
+			{
+				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_03"), -1, FALSE);
 				break;
 			}
 			case CHARA_STATUS::DEATH:	// Ž€–S
@@ -522,37 +540,43 @@ void SurfacePlayer::DrawStatus()
 	const char* status = "";
 	switch(_eStatus)
 	{
-		case CHARA_STATUS::NONE:
+		case CHARA_STATUS::NONE:			// ‰Šúó‘Ô
 			status = "NONE";
 			break;
-		case CHARA_STATUS::WAIT:
+		case CHARA_STATUS::WAIT:			// ‘Ò‹@
 			status = "WAIT";
 			break;
-		case CHARA_STATUS::WALK:
+		case CHARA_STATUS::WALK:			// •às
 			status = "WALK";
 			break;
-		case CHARA_STATUS::ATTACK:
-			status = "ATTACK";
+		case CHARA_STATUS::FIRST_ATTACK:	// UŒ‚1
+			status = "FIRST_ATTACK";
 			break;
-		case CHARA_STATUS::JUMP_UP:
+		case CHARA_STATUS::SECOND_ATTACK:	// UŒ‚2
+			status = "SECOND_ATTACK";
+			break;
+		case CHARA_STATUS::THIRD_ATTACK:	// UŒ‚3
+			status = "THIRD_ATTACK";
+			break;
+		case CHARA_STATUS::JUMP_UP:			// ƒWƒƒƒ“ƒvã¸
 			status = "JUMP_UP";
 			break;
-		case CHARA_STATUS::JUMP_DOWN:
+		case CHARA_STATUS::JUMP_DOWN:		// ƒWƒƒƒ“ƒv‰º~
 			status = "JUMP_DOWN";
 			break;
-		case CHARA_STATUS::CROUCH_WAIT:
+		case CHARA_STATUS::CROUCH_WAIT:		// ‚µ‚á‚ª‚Ý‘Ò‹@
 			status = "CROUCH_WAIT";
 			break;
-		case CHARA_STATUS::CROUCH_WALK:
+		case CHARA_STATUS::CROUCH_WALK:		// ‚µ‚á‚ª‚Ý•às
 			status = "CROUCH_WALK";
 			break;
-		case CHARA_STATUS::DEATH:
-			status = "DEATH";
+		case CHARA_STATUS::DEATH:			// Ž€–S
+			status = "DEATH";	
 			break;
 		default:
 			status = "UNKNOWN";
 			break;
 	}
 	
-	DrawFormatString(600, 0, GetColor(255, 0, 0), "Player Status: %s", status);
+	DrawFormatString(0, 40, GetColor(255, 0, 0), "Player Status: %s", status);
 }
