@@ -15,7 +15,7 @@ bool ModeGame::Initialize() {
 		_player = std::make_shared<SurfacePlayer>();
 		_player->Initialize();
 
-		_stage = std::make_shared<StageBase>();
+		_stage = std::make_shared<StageBase>(2);
 
 		_cameraManager = std::make_shared<CameraManager>();
 		_cameraManager->SetTarget(_player);
@@ -169,7 +169,7 @@ void ModeGame::CheckCollisionPlayerMap() {
 			// 線分とモデルの当たり判定
 			MV1_COLL_RESULT_POLY hitPoly = MV1CollCheck_Line(
 				obj.modelHandle,
-				-1,// コリジョンフレーム指定
+				obj.collisionFrame,// コリジョンフレーム指定
 				lineStart,
 				lineEnd
 			);

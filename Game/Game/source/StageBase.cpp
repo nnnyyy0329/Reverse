@@ -3,25 +3,47 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 
-StageBase::StageBase()
+StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 {
 	// jsonファイルの読み込み(マップ)
 	{
-#if 0	// ブロック
-		std::string path = "res/BoxFieldUE/";
-		std::string jsonFile = "Stage.json";
-		std::string jsonObjName = "Stage";
-#endif
-#if 0	// 浮島
-		std::string path = "res/FloatingIsland/";
-		std::string jsonFile = "FloatingIsland.json";
-		std::string jsonObjName = "Stage";
-#endif
-#if 1	// 孤島
-		std::string path = "res/IslandJson/";
-		std::string jsonFile = "Island.json";
-		std::string jsonObjName = "Island";
-#endif
+		std::string path, jsonFile, jsonObjName;
+
+		switch (_stageNum) {// ステージ番号で読み込むファイルを分ける
+		case 1:
+			// ブロック
+			path = "res/BoxFieldUE/";
+			jsonFile = "Stage.json";
+			jsonObjName = "Stage";
+			break;
+		case 2:
+			// 浮島
+			path = "res/FloatingIsland/";
+			jsonFile = "FloatingIsland.json";
+			jsonObjName = "Stage";
+			break;
+		case 3:
+			// 孤島
+			path = "res/IslandJson/";
+			jsonFile = "Island.json";
+			jsonObjName = "Island";
+			break;
+		}
+//#if 0	// ブロック
+//		std::string path = "res/BoxFieldUE/";
+//		std::string jsonFile = "Stage.json";
+//		std::string jsonObjName = "Stage";
+//#endif
+//#if 1	// 浮島
+//		std::string path = "res/FloatingIsland/";
+//		std::string jsonFile = "FloatingIsland.json";
+//		std::string jsonObjName = "Stage";
+//#endif
+//#if 0	// 孤島
+//		std::string path = "res/IslandJson/";
+//		std::string jsonFile = "Island.json";
+//		std::string jsonObjName = "Island";
+//#endif
 
 		std::ifstream file(path + jsonFile);
 		nlohmann::json json;
@@ -58,6 +80,7 @@ StageBase::StageBase()
 				// コリジョン情報の生成
 				int frameCollision = MV1SearchFrame(handle, ("UCX_" + modelPos.name).c_str());
 				MV1SetupCollInfo(handle, frameCollision, 16, 16, 16);
+				modelPos.collisionFrame = frameCollision;
 			}
 			// 名前から使うモデルハンドルを決める
 			if (_mapModelHandle.count(modelPos.name) > 0) {
@@ -112,6 +135,7 @@ void StageBase::Render()
 			MV1SetRotationXYZ(ite->modelHandle, ite->rot);
 			MV1SetScale(ite->modelHandle, ite->scale);
 			MV1DrawFrame(ite->modelHandle, ite->drawFrame);
+			MV1DrawFrame(ite->modelHandle, ite->collisionFrame);// コリジョンフレームの描画
 		}
 	}
 

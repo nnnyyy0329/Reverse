@@ -14,9 +14,10 @@ public:
 		VECTOR scale;// スケール
 		int modelHandle;// モデルハンドル
 		int drawFrame;// 描画フレーム
+		int collisionFrame;// コリジョンフレーム
 	};
 
-	StageBase();
+	StageBase(int stageNum);
 	virtual ~StageBase();
 
 	virtual void Process();
@@ -24,8 +25,8 @@ public:
 
 	const std::vector<std::shared_ptr<EnemyBase>>& GetEnemies() const { return _stageEnemies; }// ステージ内の敵リストを取得
 	const std::vector<MODELPOS>& GetMapModelPosList() const { return _mapModelPosList; }
-	int GetHandleMap() const { return _handleMap; }// マップモデルのハンドルを取得
-	int GetFrameMapCollision() const { return _frameMapCollision; }// マップのコリジョンフレームを取得
+	//int GetHandleMap() const { return _handleMap; }// マップモデルのハンドルを取得
+	//int GetFrameMapCollision() const { return _frameMapCollision; }// マップのコリジョンフレームを取得
 
 protected:
 	std::map<std::string, int> _mapModelHandle;// マップモデル用ハンドル(名前、モデルハンドル)
@@ -36,8 +37,8 @@ protected:
 	int _stageNum;// ステージ番号
 
 	// テスト用マップ
-	int _handleMap;
-	int _handleSkySphere;
-	int _frameMapCollision;
+	//int _handleMap;
+	//int _handleSkySphere;
+	//int _frameMapCollision;
 };
 
