@@ -1,23 +1,6 @@
 #pragma once
 #include "GameObjectBase.h"
 
-// キャラ状態列挙型
-enum class CHARA_STATUS
-{
-	NONE,
-	WAIT,
-	WALK,
-	FIRST_ATTACK,
-	SECOND_ATTACK,
-	THIRD_ATTACK,
-	JUMP_UP,	
-	JUMP_DOWN,	
-	CROUCH_WAIT,
-	CROUCH_WALK,
-	DEATH,
-	_EOT_,
-};
-
 class CharaBase : public GameObjectBase
 {
 public:
@@ -31,10 +14,6 @@ public:
 
 	// ゲッターセッター
 	
-	// キャラの状態 
-	CHARA_STATUS GetStatus() { return _eStatus; }		// 現在の状態を取得
-	void SetStatus(CHARA_STATUS e) { _eStatus = e; }	// 現在の状態を設定
-
 	// 当たり判定用
 	VECTOR GetCollisionTop() { return _vCollisionTop; }		// 当たり判定の上端
 	void SetCollisionTop(VECTOR v) { _vCollisionTop = v; }	// 当たり判定の上端
@@ -59,9 +38,6 @@ public:
 	void SetGravity(float f) { _fGravity = f; }	// 重力
 
 protected:
-	CHARA_STATUS _eStatus;		// キャラの状態
-	CHARA_STATUS _eOldStatus;	// 前フレームのキャラの状態
-
 	// 当たり判定用
 	VECTOR _vCollisionTop;		// 当たり判定の上端
 	VECTOR _vCollisionBottom;	// 当たり判定の下端

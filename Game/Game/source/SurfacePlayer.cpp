@@ -19,7 +19,7 @@ SurfacePlayer::SurfacePlayer()
 	_vDir = VGet(0, 0, -1);
 
 	// 基礎ステータスの初期化
-	_eStatus = CHARA_STATUS::NONE;
+	_ePlayerStatus = PLAYER_STATUS::NONE;
 	_fMoveSpeed = 0.0f;
 	_fDirSpeed = 0.0f;
 	_fLife = 100.0f;
@@ -60,7 +60,7 @@ bool SurfacePlayer::Terminate()
 bool SurfacePlayer::Process()
 {
 	// 体力が0以下なら
-	if(_fLife <= 0.f) { _eStatus = CHARA_STATUS::DEATH; return false; }
+	if(_fLife <= 0.f) { _ePlayerStatus = PLAYER_STATUS::DEATH; return false; }
 
 	if(_key & PAD_INPUT_8){ _fLife -= 5.0f; }
 
@@ -215,50 +215,7 @@ bool SurfacePlayer::Process()
 bool SurfacePlayer::Render()
 {
 	// 体力が0以下なら
-	if(_fLife <= 0.f) { _eStatus = CHARA_STATUS::DEATH; return false; }
-
-	// いったんとりあえずこれ
-	{
-		// 0,0,0を中心に線を引く
-		{
-			float linelength = 1000.f;
-			VECTOR v = { 0, 0, 0 };
-			DrawLine3D(VAdd(v, VGet(-linelength, 0, 0)), VAdd(v, VGet(linelength, 0, 0)), GetColor(255, 0, 0));
-			DrawLine3D(VAdd(v, VGet(0, -linelength, 0)), VAdd(v, VGet(0, linelength, 0)), GetColor(0, 255, 0));
-			DrawLine3D(VAdd(v, VGet(0, 0, -linelength)), VAdd(v, VGet(0, 0, linelength)), GetColor(0, 0, 255));
-		}
-
-		// 再生時間をセットする
-		MV1SetAttachAnimTime(_iHandle, _iAttachIndex, _fPlayTime);
-
-		// モデルを描画する
-		{
-			// 位置
-			MV1SetPosition(_iHandle, _vPos);
-
-			// 向きからY軸回転を算出
-			VECTOR vRot = { 0,0,0 };
-			vRot.y = atan2(_vDir.x * -1, _vDir.z * -1);	// モデルが標準でどちらを向いているかで式が変わる(これは-zを向いている場合)
-			MV1SetRotationXYZ(_iHandle, vRot);
-
-			// 描画
-			MV1DrawModel(_iHandle);
-
-			// コリジョン判定用ラインの描画
-			if(_bViewCollision)
-			{
-				DrawLine3D(VAdd(_vPos, VGet(0, _colSubY, 0)), VAdd(_vPos, VGet(0, -99999.f, 0)), GetColor(255, 0, 0));
-			}
-		}
-
-		// プレイヤー情報表示
-		{
-			int x = 0, y = 0, size = 16;
-			SetFontSize(size);
-			DrawFormatString(x, y, GetColor(255, 0, 0), "Player:"); y += size;
-			DrawFormatString(x, y, GetColor(255, 0, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
-		}
-	}
+	if(_fLife <= 0.f) { _ePlayerStatus = PLAYER_STATUS::DEATH; return false; }
 
 	// デバッグ用
 	DrawCapsuleCollision();	// カプセルコリジョンを描画
@@ -271,7 +228,7 @@ bool SurfacePlayer::Render()
 void SurfacePlayer::MovePlayer()
 {
 	// 処理前のステータスを保存しておく
-	_eOldStatus = _eStatus;
+	_eOldPlayerStatus = _ePlayerStatus;
 
 	// 移動方向を決める
 	_vMove = { 0,0,0 };
@@ -315,11 +272,11 @@ void SurfacePlayer::StatusAnimationProcess()
 	{
 		if(_fVelY > 0.0f) // 上昇中
 		{
-			_eStatus = CHARA_STATUS::JUMP_UP;
+			_ePlayerStatus = PLAYER_STATUS::JUMP_UP;
 		}
 		else // 下降中
 		{
-			_eStatus = CHARA_STATUS::JUMP_DOWN;
+			_ePlayerStatus = PLAYER_STATUS::JUMP_DOWN;
 		}
 	}
 	else
@@ -331,11 +288,11 @@ void SurfacePlayer::StatusAnimationProcess()
 			if(VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f) // 歩いているかどうか
 			{
 				_vDir = _vMove;							// 移動方向を向く
-				_eStatus = CHARA_STATUS::CROUCH_WALK;	// しゃがみ歩行
+				_ePlayerStatus = PLAYER_STATUS::CROUCH_WALK;	// しゃがみ歩行
 			}
 			else // 止まっている
 			{
-				_eStatus = CHARA_STATUS::CROUCH_WAIT;	// しゃがみ待機
+				_ePlayerStatus = PLAYER_STATUS::CROUCH_WAIT;	// しゃがみ待機
 			}
 		}
 		else // しゃがみ中でない
@@ -344,17 +301,17 @@ void SurfacePlayer::StatusAnimationProcess()
 			if(VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f) // 歩いているかどうか
 			{
 				_vDir = _vMove;					// 移動方向を向く
-				_eStatus = CHARA_STATUS::WALK;	// 歩行
+				_ePlayerStatus = PLAYER_STATUS::WALK;	// 歩行
 			}
 			else // 止まっている
 			{
-				_eStatus = CHARA_STATUS::WAIT;	// 待機
+				_ePlayerStatus = PLAYER_STATUS::WAIT;	// 待機
 			}
 		}
 	}
 
 	// ステータスが変わっていないか？
-	if(_eOldStatus == _eStatus)
+	if(_eOldPlayerStatus == _ePlayerStatus)
 	{
 		// 再生時間を進める
 		_fPlayTime += 0.5f;
@@ -369,54 +326,54 @@ void SurfacePlayer::StatusAnimationProcess()
 		}
 
 		// ステータスに合わせてアニメーションのアタッチ
-		switch(_eStatus)
+		switch(_ePlayerStatus)
 		{
-			case CHARA_STATUS::WAIT:	// 待機
+			case PLAYER_STATUS::WAIT:	// 待機
 			{
 				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "idle"), -1, FALSE);
 				break;
 			}
-			case CHARA_STATUS::WALK:	// 歩行
+			case PLAYER_STATUS::WALK:	// 歩行
 			{
 				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "run"), -1, FALSE);
 				break;
 			}
-			case CHARA_STATUS::JUMP_UP: // ジャンプ上昇
+			case PLAYER_STATUS::JUMP_UP: // ジャンプ上昇
 			{
 				// _iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "jump_up"), -1, FALSE);
 				break;
 			}
-			case CHARA_STATUS::JUMP_DOWN: // ジャンプ下降
+			case PLAYER_STATUS::JUMP_DOWN: // ジャンプ下降
 			{
 				// _iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "jump_down"), -1, FALSE);
 				break;
 			}	
-			case CHARA_STATUS::CROUCH_WAIT:	// しゃがみ待機
+			case PLAYER_STATUS::CROUCH_WAIT:	// しゃがみ待機
 			{
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch_idle"), -1, FALSE);
 				break;
 			}
-			case CHARA_STATUS::CROUCH_WALK:	// しゃがみ歩行
+			case PLAYER_STATUS::CROUCH_WALK:	// しゃがみ歩行
 			{
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch"), -1, FALSE);
 				break;
 			}
-			case CHARA_STATUS::FIRST_ATTACK:	// 攻撃1
+			case PLAYER_STATUS::FIRST_ATTACK:	// 攻撃1
 			{
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_01"), -1, FALSE);
 				break;
 			}
-			case CHARA_STATUS::SECOND_ATTACK:	// 攻撃2
+			case PLAYER_STATUS::SECOND_ATTACK:	// 攻撃2
 			{
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_02"), -1, FALSE);
 				break;
 			}
-			case CHARA_STATUS::THIRD_ATTACK:	// 攻撃3
+			case PLAYER_STATUS::THIRD_ATTACK:	// 攻撃3
 			{
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_03"), -1, FALSE);
 				break;
 			}
-			case CHARA_STATUS::DEATH:	// 死亡
+			case PLAYER_STATUS::DEATH:	// 死亡
 			{
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "death"), -1, FALSE);
 				break;
@@ -467,7 +424,7 @@ void SurfacePlayer::JumpProcess()
 	if(_bIsCrouching){ return; } 
 
 	// ジャンプボタンが押されたら
-	if(_trg & PAD_INPUT_A && _eStatus != CHARA_STATUS::JUMP_UP)	// Zボタン
+	if(_trg & PAD_INPUT_A && _ePlayerStatus != PLAYER_STATUS::JUMP_UP)	// Zボタン
 	{
 		// ジャンプ中でなく、着地しているなら
 		if(!_bIsJumping && _bIsStanding)
@@ -490,14 +447,14 @@ void SurfacePlayer::CrouchProcess()
 	if(_trg & PAD_INPUT_B)
 	{
 		// しゃがみ開始フラグが立っておらず、しゃがみステータスでなければ
-		if(!_bIsStartCrouch && _eStatus != CHARA_STATUS::CROUCH_WAIT)
+		if(!_bIsStartCrouch && _ePlayerStatus != PLAYER_STATUS::CROUCH_WAIT)
 		{
 			// しゃがみ開始
 			const bool next = !_bIsStartCrouch;		// しゃがみ開始フラグを反転
 
 			_bIsStartCrouch = next;					// しゃがみ開始フラグを立てる
 			_bIsCrouching = next;					// しゃがみフラグを立てる
-			_eStatus = CHARA_STATUS::CROUCH_WAIT;	// ステータスをしゃがみにする
+			_ePlayerStatus = PLAYER_STATUS::CROUCH_WAIT;	// ステータスをしゃがみにする
 		}
 		else // しゃがみ解除
 		{
@@ -507,7 +464,58 @@ void SurfacePlayer::CrouchProcess()
 	}
 }
 
-/* ーーーーーーーーーーーーーデバッグ表示ーーーーーーーーーーーーー */
+// モデルの描画
+void SurfacePlayer::DrawModel()
+{
+	// 再生時間をセットする
+	MV1SetAttachAnimTime(_iHandle, _iAttachIndex, _fPlayTime);
+
+	// モデルを描画する
+	{
+		// 位置
+		MV1SetPosition(_iHandle, _vPos);
+
+		// 向きからY軸回転を算出
+		VECTOR vRot = { 0,0,0 };
+		vRot.y = atan2(_vDir.x * -1, _vDir.z * -1);	// モデルが標準でどちらを向いているかで式が変わる(これは-zを向いている場合)
+		MV1SetRotationXYZ(_iHandle, vRot);
+
+		// 描画
+		MV1DrawModel(_iHandle);
+
+		// コリジョン判定用ラインの描画
+		if(_bViewCollision)
+		{
+			DrawLine3D(VAdd(_vPos, VGet(0, _colSubY, 0)), VAdd(_vPos, VGet(0, -99999.f, 0)), GetColor(255, 0, 0));
+		}
+	}
+}
+
+/* ーーーーーーーーーーーーーーーーーーデバッグ表示ーーーーーーーーーーーーーーーーーー */
+
+// その他の描画
+void SurfacePlayer::DrawOther()
+{
+	// いったんとりあえずこれ
+	{
+		// 0,0,0を中心に線を引く
+		{
+			float linelength = 1000.f;
+			VECTOR v = { 0, 0, 0 };
+			DrawLine3D(VAdd(v, VGet(-linelength, 0, 0)), VAdd(v, VGet(linelength, 0, 0)), GetColor(255, 0, 0));
+			DrawLine3D(VAdd(v, VGet(0, -linelength, 0)), VAdd(v, VGet(0, linelength, 0)), GetColor(0, 255, 0));
+			DrawLine3D(VAdd(v, VGet(0, 0, -linelength)), VAdd(v, VGet(0, 0, linelength)), GetColor(0, 0, 255));
+		}
+
+		// プレイヤー情報表示
+		{
+			int x = 0, y = 0, size = 16;
+			SetFontSize(size);
+			DrawFormatString(x, y, GetColor(255, 0, 0), "Player:"); y += size;
+			DrawFormatString(x, y, GetColor(255, 0, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
+		}
+	}
+}
 
 // カプセルコリジョン描画
 void SurfacePlayer::DrawCapsuleCollision()
@@ -538,39 +546,39 @@ void SurfacePlayer::DrawCapsuleCollision()
 void SurfacePlayer::DrawStatus()
 {
 	const char* status = "";
-	switch(_eStatus)
+	switch(_ePlayerStatus)
 	{
-		case CHARA_STATUS::NONE:			// 初期状態
+		case PLAYER_STATUS::NONE:			// 初期状態
 			status = "NONE";
 			break;
-		case CHARA_STATUS::WAIT:			// 待機
+		case PLAYER_STATUS::WAIT:			// 待機
 			status = "WAIT";
 			break;
-		case CHARA_STATUS::WALK:			// 歩行
+		case PLAYER_STATUS::WALK:			// 歩行
 			status = "WALK";
 			break;
-		case CHARA_STATUS::FIRST_ATTACK:	// 攻撃1
+		case PLAYER_STATUS::FIRST_ATTACK:	// 攻撃1
 			status = "FIRST_ATTACK";
 			break;
-		case CHARA_STATUS::SECOND_ATTACK:	// 攻撃2
+		case PLAYER_STATUS::SECOND_ATTACK:	// 攻撃2
 			status = "SECOND_ATTACK";
 			break;
-		case CHARA_STATUS::THIRD_ATTACK:	// 攻撃3
+		case PLAYER_STATUS::THIRD_ATTACK:	// 攻撃3
 			status = "THIRD_ATTACK";
 			break;
-		case CHARA_STATUS::JUMP_UP:			// ジャンプ上昇
+		case PLAYER_STATUS::JUMP_UP:			// ジャンプ上昇
 			status = "JUMP_UP";
 			break;
-		case CHARA_STATUS::JUMP_DOWN:		// ジャンプ下降
+		case PLAYER_STATUS::JUMP_DOWN:		// ジャンプ下降
 			status = "JUMP_DOWN";
 			break;
-		case CHARA_STATUS::CROUCH_WAIT:		// しゃがみ待機
+		case PLAYER_STATUS::CROUCH_WAIT:		// しゃがみ待機
 			status = "CROUCH_WAIT";
 			break;
-		case CHARA_STATUS::CROUCH_WALK:		// しゃがみ歩行
+		case PLAYER_STATUS::CROUCH_WALK:		// しゃがみ歩行
 			status = "CROUCH_WALK";
 			break;
-		case CHARA_STATUS::DEATH:			// 死亡
+		case PLAYER_STATUS::DEATH:			// 死亡
 			status = "DEATH";	
 			break;
 		default:

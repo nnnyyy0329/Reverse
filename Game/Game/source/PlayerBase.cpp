@@ -2,7 +2,9 @@
 
 PlayerBase::PlayerBase()
 {
-
+	// ƒLƒƒƒ‰‚Ìó‘Ô‰Šú‰»
+	_ePlayerStatus = PLAYER_STATUS::NONE;
+	_eOldPlayerStatus = PLAYER_STATUS::NONE;
 }
 
 PlayerBase::~PlayerBase()

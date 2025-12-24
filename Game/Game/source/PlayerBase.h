@@ -1,6 +1,23 @@
 #pragma once
 #include "CharaBase.h"
 
+// 状態列挙型
+enum class PLAYER_STATUS
+{
+	NONE,
+	WAIT,
+	WALK,
+	FIRST_ATTACK,
+	SECOND_ATTACK,
+	THIRD_ATTACK,
+	JUMP_UP,
+	JUMP_DOWN,
+	CROUCH_WAIT,
+	CROUCH_WALK,
+	DEATH,
+	_EOT_,
+};
+
 class PlayerBase : public CharaBase
 {
 public:
@@ -24,7 +41,16 @@ public:
 		_analogMin = analogMin;
 	}
 
+	// キャラの状態 
+	PLAYER_STATUS GetStatus() { return _ePlayerStatus; }		// 現在の状態を取得
+	void SetStatus(PLAYER_STATUS e) { _ePlayerStatus = e; }	// 現在の状態を設定
+
+
 protected:
+
+	PLAYER_STATUS _ePlayerStatus;		// キャラの状態
+	PLAYER_STATUS _eOldPlayerStatus;	// 前フレームのキャラの状態
+
 	// 入力状態
 	int _key = 0;
 	int _trg = 0;

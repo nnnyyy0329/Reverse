@@ -13,6 +13,12 @@
     <Filter Include="math">
       <UniqueIdentifier>{e5016951-0486-4249-8d7e-240d0362dfdd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{63e6ccdf-544b-439b-806d-1e932e23f655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Component">
+      <UniqueIdentifier>{e2d5dff1-1578-4f71-ad91-6fe0837b0092}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\CFile\CFile.cpp">
@@ -50,12 +56,13 @@
     <ClInclude Include="source\Application\UtilMacro.h">
       <Filter>App</Filter>
     </ClInclude>
-    <ClInclude Include="source\appframe.h">
-      <Filter>App</Filter>
-    </ClInclude>
     <ClInclude Include="source\math\mymath.h">
       <Filter>math</Filter>
     </ClInclude>
     <ClInclude Include="source\memo.h" />
+    <ClInclude Include="source\Manager\ComponentManager.h">
+      <Filter>Manager\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="source\appframe.h" />
   </ItemGroup>
 </Project>

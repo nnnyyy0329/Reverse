@@ -2,10 +2,6 @@
 
 CharaBase::CharaBase()
 {
-	// ƒLƒƒƒ‰‚Ìó‘Ô‰Šú‰»
-	_eStatus = CHARA_STATUS::NONE;
-	_eOldStatus = CHARA_STATUS::NONE;
-
 	// “–‚½‚è”»’è—p‰Šú‰»
 	_vCollisionTop = VGet(0.0f, 1.0f, 0.0f);
 	_vCollisionBottom = VGet(0.0f, 0.0f, 0.0f);

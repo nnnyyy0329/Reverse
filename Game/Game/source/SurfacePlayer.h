@@ -25,6 +25,8 @@ public:
 	void CrouchProcess();			// しゃがみ処理
 
 	// デバッグ用
+	void DrawModel();				// モデル描画
+	void DrawOther();				// そのほかの描画
 	void DrawCapsuleCollision();	// カプセルコリジョン描画
 	void DrawStatus();				// ステータス描画
 

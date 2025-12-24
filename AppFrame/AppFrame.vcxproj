@@ -165,6 +165,7 @@
     <ClInclude Include="source\Application\ApplicationBase.h" />
     <ClInclude Include="source\Application\UtilMacro.h" />
     <ClInclude Include="source\CFile\CFile.h" />
+    <ClInclude Include="source\Manager\ComponentManager.h" />
     <ClInclude Include="source\math\mymath.h" />
     <ClInclude Include="source\memo.h" />
     <ClInclude Include="source\Mode\ModeBase.h" />
