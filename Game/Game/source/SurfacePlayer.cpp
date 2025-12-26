@@ -1,3 +1,5 @@
+// 担当 : 成田
+
 #include "SurfacePlayer.h"
 #include "ApplicationMain.h"
 
@@ -22,7 +24,7 @@ SurfacePlayer::SurfacePlayer()
 	_ePlayerStatus = PLAYER_STATUS::NONE;
 	_fMoveSpeed = 0.0f;
 	_fDirSpeed = 0.0f;
-	_fLife = 100.0f;
+	_fLife = 50.0f;
 	_fGravity = GRAVITY;
 
 	// 固有変数の初期化
@@ -40,6 +42,11 @@ SurfacePlayer::SurfacePlayer()
 	// 腰位置の設定
 	_colSubY = 40.f;
 	_bViewCollision = false;
+
+	// 表示用オフセット
+	_drawSizeOffset = 16;
+	_drawOffsetX = 0;
+	_drawOffsetY = 0;
 }
 
 SurfacePlayer::~SurfacePlayer()
@@ -59,10 +66,11 @@ bool SurfacePlayer::Terminate()
 
 bool SurfacePlayer::Process()
 {
-	// 体力が0以下なら
-	if(_fLife <= 0.f) { _ePlayerStatus = PLAYER_STATUS::DEATH; return false; }
+	// 死亡処理
+	ProcessDeath();
 
-	if(_key & PAD_INPUT_8){ _fLife -= 5.0f; }
+	// プレイヤーが死亡しているなら
+	if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
 
 	// いったんとりあえずこれ
 	{
@@ -194,19 +202,22 @@ bool SurfacePlayer::Process()
 	}
 
 	// プレイヤー移動処理
-	MovePlayer();
+	ProcessMovePlayer();
 
 	// ジャンプ処理
-	JumpProcess();
+	ProcessJump();
 
 	// 着地処理
-	StandingProcess();
+	ProcessStanding();
 
 	// しゃがみ処理
-	CrouchProcess();
+	ProcessCrouch();
 
 	// ステータスに応じたアニメーション処理
-	StatusAnimationProcess();
+	ProcessStatusAnimation();
+
+	// デバッグ用の処理
+	ProcessDebug();
 
 
 	return true;
@@ -221,9 +232,7 @@ bool SurfacePlayer::Render()
 	DrawModel();
 
 	// デバッグ用
-	DrawOther();			// その他の表示
-	DrawCapsuleCollision();	// カプセルコリジョンを描画
-	DrawStatus();			// ステータスを描画
+	DrawDebug();
 
 	return true;
 }

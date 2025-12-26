@@ -1,3 +1,5 @@
+// íSìñ : ê¨ìc
+
 #include "InteriorPlayer.h"
 
 InteriorPlayer::InteriorPlayer()

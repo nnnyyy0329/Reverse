@@ -1,8 +1,4 @@
-/*ーーーーーーーーーー
-|
-|	成田担当
-|
-ーーーーーーーーーー*/
+// 担当 : 成田
 
 #pragma once
 #include "PlayerBase.h"
@@ -18,17 +14,21 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
-	void MovePlayer();				// プレイヤー移動処理
-	void StatusAnimationProcess();	// ステータスに応じたアニメーション処理
-	void StandingProcess();			// 着地処理
-	void JumpProcess();				// ジャンプ処理
-	void CrouchProcess();			// しゃがみ処理
+	void ProcessMovePlayer();		// プレイヤー移動処理
+	void ProcessStatusAnimation();	// ステータスに応じたアニメーション処理
+	void ProcessPlayAnimation();	// アニメーション再生処理
+	void ProcessStanding();			// 着地処理
+	void ProcessJump();				// ジャンプ処理
+	void ProcessCrouch();			// しゃがみ処理
+	void ProcessDeath();			// 死亡処理
+	void ProcessDebug();			// デバッグ用関数
 
-	// デバッグ用
 	void DrawModel();				// モデル描画
-	void DrawOther();				// そのほかの描画
-	void DrawCapsuleCollision();	// カプセルコリジョン描画
-	void DrawStatus();				// ステータス描画
+	void DrawDebug();				// デバッグ用表示
+	void DrawCoordinate();			// 座標関係の表示
+	void DrawCapsuleCollision();	// カプセルコリジョン表示
+	void DrawStatus();				// ステータス表示
+	void DrawParameter();			// パラメーター表示
 
 protected:
 
@@ -43,5 +43,10 @@ protected:
 	bool _bIsStanding;		// 着地しているかどうか
 	bool _bIsCrouching;		// しゃがんでいるかどうか
 	bool _bIsStartCrouch;	// しゃがみ開始フラグ
+
+	// 表示用オフセット
+	int _drawSizeOffset;
+	int _drawOffsetX;
+	int _drawOffsetY;
 };
 

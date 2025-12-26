@@ -1,8 +1,10 @@
+// 担当 : 成田
+
 #include "SurfacePlayer.h"
 #include "ApplicationMain.h"
 
 // プレイヤー移動処理
-void SurfacePlayer::MovePlayer()
+void SurfacePlayer::ProcessMovePlayer()
 {
 	// 処理前のステータスを保存しておく
 	_eOldPlayerStatus = _ePlayerStatus;
@@ -42,7 +44,7 @@ void SurfacePlayer::MovePlayer()
 }
 
 // ステータスに応じたアニメーション処理
-void SurfacePlayer::StatusAnimationProcess()
+void SurfacePlayer::ProcessStatusAnimation()
 {
 	// 空中ならジャンプステータス
 	if(!_bIsStanding)
@@ -87,6 +89,13 @@ void SurfacePlayer::StatusAnimationProcess()
 		}
 	}
 
+	// アニメーション再生処理
+	ProcessPlayAnimation();
+}
+
+// アニメーション再生処理
+void SurfacePlayer::ProcessPlayAnimation()
+{
 	// ステータスが変わっていないか？
 	if(_eOldPlayerStatus == _ePlayerStatus)
 	{
@@ -170,7 +179,7 @@ void SurfacePlayer::StatusAnimationProcess()
 }
 
 // 着地処理
-void SurfacePlayer::StandingProcess()
+void SurfacePlayer::ProcessStanding()
 {
 	// 重力を加算する
 	if(!_bIsStanding)
@@ -195,7 +204,7 @@ void SurfacePlayer::StandingProcess()
 }
 
 // ジャンプ処理
-void SurfacePlayer::JumpProcess()
+void SurfacePlayer::ProcessJump()
 {
 	// しゃがみ中はジャンプできない
 	if(_bIsCrouching){ return; }
@@ -215,7 +224,7 @@ void SurfacePlayer::JumpProcess()
 }
 
 // しゃがみ処理
-void SurfacePlayer::CrouchProcess()
+void SurfacePlayer::ProcessCrouch()
 {
 	// 空中ではしゃがめない
 	if(_bIsStanding == false){ return; }
@@ -238,5 +247,28 @@ void SurfacePlayer::CrouchProcess()
 			_bIsCrouching = false;		// しゃがみフラグを下ろす	
 			_bIsStartCrouch = false;	// しゃがみ開始フラグを下ろす
 		}
+	}
+}
+
+// 死亡処理
+void SurfacePlayer::ProcessDeath()
+{
+	// 体力が0以下ならステータスを死亡に変更
+	if(_fLife <= 0){ _ePlayerStatus = PLAYER_STATUS::DEATH; }
+
+	// 死亡時のアニメーション
+	if(_ePlayerStatus == PLAYER_STATUS::DEATH)
+	{
+		// アニメーション再生処理
+		ProcessPlayAnimation();
+	}
+}
+
+// デバッグ用関数
+void SurfacePlayer::ProcessDebug()
+{
+	// 体力減少
+	{
+		if(_trg & PAD_INPUT_8){ _fLife -= 5.0f; }
 	}
 }
