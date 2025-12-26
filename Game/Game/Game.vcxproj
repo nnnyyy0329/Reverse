@@ -160,6 +160,8 @@
     <ClCompile Include="source\StageBase.cpp" />
     <ClCompile Include="source\StealthEnemy.cpp" />
     <ClCompile Include="source\SurfacePlayer.cpp" />
+    <ClCompile Include="source\SurfacePlayer_Draw.cpp" />
+    <ClCompile Include="source\SurfacePlayer_Move.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h" />

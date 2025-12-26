@@ -16,11 +16,14 @@
     <Filter Include="Game\ObjectBase\CharaBase\PlayerBase">
       <UniqueIdentifier>{826fd0c4-4828-42a0-bb4f-daea080dbc2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\ObjectBase\CharaBase\PlayerBase\Player">
-      <UniqueIdentifier>{898a96a2-9fcf-438e-a8e5-f532a41fc0e8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\ObjectBase\CharaBase\Enemy">
       <UniqueIdentifier>{8ba0fe59-a9ad-4735-a772-80217d60dd58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer">
+      <UniqueIdentifier>{898a96a2-9fcf-438e-a8e5-f532a41fc0e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer">
+      <UniqueIdentifier>{e6749879-00b7-4dd0-a9e2-5d0692121485}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,11 +39,8 @@
     <ClCompile Include="source\PlayerBase.cpp">
       <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
     </ClCompile>
-    <ClCompile Include="source\InteriorPlayer.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\Player</Filter>
-    </ClCompile>
     <ClCompile Include="source\SurfacePlayer.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\Player</Filter>
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer</Filter>
     </ClCompile>
     <ClCompile Include="source\ApplicationMain.cpp">
       <Filter>Game\Gamemain</Filter>
@@ -60,6 +60,15 @@
     <ClCompile Include="source\CameraManager.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="source\InteriorPlayer.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SurfacePlayer_Move.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SurfacePlayer_Draw.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\EnemyBase.h">
@@ -75,10 +84,7 @@
       <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
     </ClInclude>
     <ClInclude Include="source\SurfacePlayer.h">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="source\InteriorPlayer.h">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\Player</Filter>
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer</Filter>
     </ClInclude>
     <ClInclude Include="source\ApplicationMain.h">
       <Filter>Game\Gamemain</Filter>
@@ -97,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="source\CameraManager.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\InteriorPlayer.h">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
