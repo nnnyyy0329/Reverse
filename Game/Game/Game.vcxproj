@@ -156,6 +156,8 @@
     <ClCompile Include="source\GameObjectBase.cpp" />
     <ClCompile Include="source\InteriorPlayer.cpp" />
     <ClCompile Include="source\ModeGame.cpp" />
+    <ClCompile Include="source\PlayerAbilityBase.cpp" />
+    <ClCompile Include="source\PlayerAbilityManager.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
     <ClCompile Include="source\StageBase.cpp" />
     <ClCompile Include="source\StealthEnemy.cpp" />
@@ -173,6 +175,8 @@
     <ClInclude Include="source\GameObjectBase.h" />
     <ClInclude Include="source\InteriorPlayer.h" />
     <ClInclude Include="source\ModeGame.h" />
+    <ClInclude Include="source\PlayerAbilityBase.h" />
+    <ClInclude Include="source\PlayerAbilityManager.h" />
     <ClInclude Include="source\PlayerBase.h" />
     <ClInclude Include="source\StageBase.h" />
     <ClInclude Include="source\StealthEnemy.h" />
