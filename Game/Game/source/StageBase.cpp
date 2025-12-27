@@ -1,4 +1,5 @@
 #include "StageBase.h"
+#include "EnemyBase.h"
 
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -12,9 +13,9 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 		switch (_stageNum) {// ステージ番号で読み込むファイルを分ける
 		case 1:
 			// ブロック
-			path = "res/BoxFieldUE/";
-			jsonFile = "Stage.json";
-			jsonObjName = "Stage";
+			path = "res/try/";
+			jsonFile = "try.json";
+			jsonObjName = "Playground";
 			break;
 		case 2:
 			// 浮島
@@ -96,26 +97,9 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 
 	// jsonファイルの読み込み(敵)
 	{
+		std::shared_ptr<EnemyBase> enTest = std::make_shared<EnemyBase>();
+		_stageEnemies.push_back(enTest);
 	}
-
-	// テスト用マップ
-//	{
-//		_handleSkySphere = MV1LoadModel("res/base/SkySphere/skysphere.mv1");
-//#if 1
-//		// ダンジョン
-//		_handleMap = MV1LoadModel("res/base/Dungeon/Dungeon.mv1");
-//		_frameMapCollision = MV1SearchFrame(_handleMap, "dungeon_collision");
-//#else
-//		// フィールド
-//		_handleMap = MV1LoadModel("res/base/Ground/Ground.mv1");
-//		_frameMapCollision = MV1SearchFrame(_handleMap, "ground_navmesh");
-//#endif
-//		// コリジョン情報の生成
-//		MV1SetupCollInfo(_handleMap, _frameMapCollision, 16, 16, 16);
-//		// コリジョンのフレームを描画しない設定
-//		MV1SetFrameVisible(_handleMap, _frameMapCollision, FALSE);
-//	}
-
 }
 
 StageBase::~StageBase()
@@ -124,6 +108,16 @@ StageBase::~StageBase()
 
 void StageBase::Process()
 {
+	// マップモデルの更新
+	{
+	}
+
+	// 敵の更新
+	{
+		for (auto& enemy : _stageEnemies) {
+			enemy->Process();
+		}
+	}
 }
 
 void StageBase::Render()
@@ -135,12 +129,15 @@ void StageBase::Render()
 			MV1SetRotationXYZ(ite->modelHandle, ite->rot);
 			MV1SetScale(ite->modelHandle, ite->scale);
 			MV1DrawFrame(ite->modelHandle, ite->drawFrame);
-			MV1DrawFrame(ite->modelHandle, ite->collisionFrame);// コリジョンフレームの描画
+			//MV1DrawFrame(ite->modelHandle, ite->collisionFrame);// コリジョンフレームの描画
 		}
 	}
 
 	// 敵の描画
 	{
+		for (auto& enemy : _stageEnemies) {
+			enemy->Render();
+		}
 	}
 
 	// テスト用マップの描画

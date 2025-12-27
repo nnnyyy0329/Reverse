@@ -149,7 +149,6 @@
   <ItemGroup>
     <ClCompile Include="source\ApplicationGlobal.cpp" />
     <ClCompile Include="source\ApplicationMain.cpp" />
-    <ClCompile Include="source\BattleEnemy.cpp" />
     <ClCompile Include="source\CameraManager.cpp" />
     <ClCompile Include="source\CharaBase.cpp" />
     <ClCompile Include="source\EnemyBase.cpp" />
@@ -158,13 +157,16 @@
     <ClCompile Include="source\ModeGame.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
     <ClCompile Include="source\StageBase.cpp" />
-    <ClCompile Include="source\StealthEnemy.cpp" />
-    <ClCompile Include="source\SurfacePlayer.cpp" />
+    <ClCompile Include="source\SurfacePlayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h" />
     <ClInclude Include="source\ApplicationMain.h" />
-    <ClInclude Include="source\BattleEnemy.h" />
     <ClInclude Include="source\CameraManager.h" />
     <ClInclude Include="source\CharaBase.h" />
     <ClInclude Include="source\EnemyBase.h" />
@@ -173,8 +175,12 @@
     <ClInclude Include="source\ModeGame.h" />
     <ClInclude Include="source\PlayerBase.h" />
     <ClInclude Include="source\StageBase.h" />
-    <ClInclude Include="source\StealthEnemy.h" />
-    <ClInclude Include="source\SurfacePlayer.h" />
+    <ClInclude Include="source\SurfacePlayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,7 +15,7 @@ bool ModeGame::Initialize() {
 		_player = std::make_shared<SurfacePlayer>();
 		_player->Initialize();
 
-		_stage = std::make_shared<StageBase>(2);
+		_stage = std::make_shared<StageBase>(3);
 
 		_cameraManager = std::make_shared<CameraManager>();
 		_cameraManager->SetTarget(_player);
@@ -83,11 +83,11 @@ bool ModeGame::Render() {
 	// ライト設定
 	SetUseLighting(TRUE);
 
-#if 0	// 平行ライト
+#if 1	// 平行ライト
 	SetGlobalAmbientLight(GetColorF(0.5f, 0.f, 0.f, 0.f));
 	ChangeLightTypeDir(VGet(-1, -1, 0));
 #endif
-#if 1	// ポイントライト
+#if 0	// ポイントライト
 	SetGlobalAmbientLight(GetColorF(0.f, 0.f, 0.f, 0.f));
 	ChangeLightTypePoint(VAdd(_player->GetPos(), VGet(0, 50.f, 0)), 1000.f, 0.f, 0.005f, 0.f);
 #endif

@@ -27,12 +27,6 @@
     <ClCompile Include="source\EnemyBase.cpp">
       <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="source\StealthEnemy.cpp">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="source\BattleEnemy.cpp">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="source\PlayerBase.cpp">
       <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
     </ClCompile>
@@ -63,12 +57,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\EnemyBase.h">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="source\StealthEnemy.h">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="source\BattleEnemy.h">
       <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerBase.h">
