@@ -30,21 +30,6 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 			jsonObjName = "Island";
 			break;
 		}
-//#if 0	// ブロック
-//		std::string path = "res/BoxFieldUE/";
-//		std::string jsonFile = "Stage.json";
-//		std::string jsonObjName = "Stage";
-//#endif
-//#if 1	// 浮島
-//		std::string path = "res/FloatingIsland/";
-//		std::string jsonFile = "FloatingIsland.json";
-//		std::string jsonObjName = "Stage";
-//#endif
-//#if 0	// 孤島
-//		std::string path = "res/IslandJson/";
-//		std::string jsonFile = "Island.json";
-//		std::string jsonObjName = "Island";
-//#endif
 
 		std::ifstream file(path + jsonFile);
 		nlohmann::json json;
@@ -85,8 +70,15 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 			}
 			// 名前から使うモデルハンドルを決める
 			if (_mapModelHandle.count(modelPos.name) > 0) {
-				modelPos.modelHandle = _mapModelHandle[modelPos.name];
+				// 既に読み込まれているモデルを複製して使う
+				modelPos.modelHandle = MV1DuplicateModel(_mapModelHandle[modelPos.name]);
 				modelPos.drawFrame = MV1SearchFrame(modelPos.modelHandle, modelPos.name.c_str());
+
+				// モデルの情報をそれぞれに合わせる
+				MV1SetPosition(modelPos.modelHandle, modelPos.pos);
+				MV1SetRotationXYZ(modelPos.modelHandle, modelPos.rot);
+				MV1SetScale(modelPos.modelHandle, modelPos.scale);
+				MV1RefreshCollInfo(modelPos.modelHandle);// 行列が変わるためコリジョン情報を更新
 			}
 			// データをリストに追加
 			if (modelPos.modelHandle != -1) {
@@ -125,9 +117,6 @@ void StageBase::Render()
 	// マップモデルの描画
 	{
 		for (auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) {
-			MV1SetPosition(ite->modelHandle, ite->pos);
-			MV1SetRotationXYZ(ite->modelHandle, ite->rot);
-			MV1SetScale(ite->modelHandle, ite->scale);
 			MV1DrawFrame(ite->modelHandle, ite->drawFrame);
 			//MV1DrawFrame(ite->modelHandle, ite->collisionFrame);// コリジョンフレームの描画
 		}
@@ -145,4 +134,14 @@ void StageBase::Render()
 	//	MV1DrawModel(_handleMap);
 	//	MV1DrawModel(_handleSkySphere);
 	//}
+}
+
+void StageBase::DebugRender()
+{
+	// 敵のデバッグ描画
+	{
+		for (auto& enemy : _stageEnemies) {
+			enemy->DebugRender();
+		}
+	}
 }

@@ -19,13 +19,17 @@ EnemyBase::EnemyBase(){
 	_fTotalTime = MV1GetAttachAnimTotalTime(_iHandle, _iAttachIndex);
 	_fPlayTime = 0.0f;
 
-	_vPos = VGet(300.0f, 0.0f, 0.0f);// テストで調整
+	_vPos = VGet(230.0f, 57.0f, 0.0f);// テストで調整
+	_vOldPos = _vPos;
 	_vDir = VGet(0.0f, 0.0f, 1.0f);// 前方を向いておく
 	_fMoveSpeed = DEFAULT_MOVE_SPEED;
 	_eCurrentState = ENEMY_STATE::IDLE;
 	_eOldState = ENEMY_STATE::NONE;
 	_fStateTimer = 0.0f;
 	_vHomePos = _vPos;
+
+	// 腰位置の設定
+	_colSubY = 40.f;
 
 	// 当たり判定用(カプセル)
 	_fCollisionR = COLLISION_RADIUS;
@@ -50,6 +54,9 @@ bool EnemyBase::Process() {
 	if (_fPlayTime >= _fTotalTime) {
 		_fPlayTime = 0.0f;
 	}
+
+	_vOldPos = _vPos;// 前フレームの位置を保存
+	_eOldState = _eCurrentState;// 前フレームの状態を保存
 
 	_vMove = VGet(0.0f, 0.0f, 0.0f);// 毎フレーム移動量リセット
 
@@ -105,6 +112,13 @@ void EnemyBase::DebugRender() {
 	DrawCapsule3D(
 		_vCollisionBottom,_vCollisionTop,_fCollisionR,16,
 		GetColor(255, 0, 0),GetColor(255, 255, 255),FALSE);
+
+	{
+		int x = 0, y = 32, size = 16;
+		SetFontSize(size);
+		DrawFormatString(x, y, GetColor(255, 255, 0), "Enemy:"); y += size;
+		DrawFormatString(x, y, GetColor(255, 255, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
+	}
 }
 
 // 敵の状態変更

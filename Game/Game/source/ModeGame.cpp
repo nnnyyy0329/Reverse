@@ -1,9 +1,9 @@
-
 #include "AppFrame.h"
 #include "ApplicationMain.h"
 #include "ModeGame.h"
 
 #include "StageBase.h"
+#include "EnemyBase.h"
 #include "CameraManager.h"
 #include "SurfacePlayer.h"
 
@@ -64,6 +64,7 @@ bool ModeGame::Process() {
 	// 当たり判定
 	{
 		CheckCollisionPlayerMap();
+		CheckCollisionEnemiesMap();
 	}
 
 
@@ -102,6 +103,8 @@ bool ModeGame::Render() {
 
 	// デバッグ情報の描画
 	{
+		//_player->DebugRender();
+		_stage->DebugRender();
 	}
 
 	return true;
@@ -150,7 +153,7 @@ void ModeGame::CheckCollisionPlayerMap() {
 
 		// 判定用の線分の始点と終点を設定
 		VECTOR lineStart = VAdd(testPos, VGet(0, _player->GetColSubY(), 0));// 始点：キャラの腰位置
-		VECTOR lineEnd = VAdd(testPos, VGet(0, -1000.0f, 0));// 終点：かなり下の位置
+		VECTOR lineEnd = VAdd(testPos, VGet(0, -50.0f, 0));// 終点：かなり下の位置
 
 		// 当たった中で最も高い地面を記録する
 		float highestY = -99999.0f;
@@ -158,14 +161,6 @@ void ModeGame::CheckCollisionPlayerMap() {
 
 		// 全てのマップオブジェクトと当たり判定を行う
 		for (const auto& obj : mapObjList) {
-			// モデルの情報をそれぞれに合わせる
-			MV1SetPosition(obj.modelHandle, obj.pos);
-			MV1SetRotationXYZ(obj.modelHandle, obj.rot);
-			MV1SetScale(obj.modelHandle, obj.scale);
-
-			// 行列が変わるためコリジョン情報を更新
-			MV1RefreshCollInfo(obj.modelHandle);
-
 			// 線分とモデルの当たり判定
 			MV1_COLL_RESULT_POLY hitPoly = MV1CollCheck_Line(
 				obj.modelHandle,
@@ -200,6 +195,97 @@ void ModeGame::CheckCollisionPlayerMap() {
 		// 地面が見つからなかった
 		// 元の座標に戻す
 		_player->SetPos(vOldPos);
+	}
+}
+
+// 敵とマップの当たり判定（壁ずり対応：プレイヤーと同じ考え方）
+void ModeGame::CheckCollisionEnemiesMap() {
+	if (!_stage) return;
+
+	const auto& enemies = _stage->GetEnemies();// ステージの敵リストを取得
+	const auto& mapObjList = _stage->GetMapModelPosList();// ステージのマップオブジェクトリストを取得
+
+	// escapeTbl[]順に角度を変えて回避を試みる
+	const float escapeTbl[] = {
+		0, -10, 10, -20, 20, -30, 30, -40, 40, -50, 50, -60, 60, -70, 70, -80, 80,
+	};
+
+	for (const auto& enemy : enemies) {// 全ての敵に対して処理
+		if (!enemy) continue;
+
+		const VECTOR vCurrentPos = enemy->GetPos();// 現在の位置
+		const VECTOR vOldPos = enemy->GetOldPos();// 前フレームの位置
+
+		// 移動ベクトルと移動量を計算
+		const VECTOR vMove = VSub(vCurrentPos, vOldPos);
+		const float moveLength = VSize(vMove);
+
+		// 移動していないなら処理しない（壁ずり不要）
+		if (moveLength < 0.001f) {
+			continue;
+		}
+
+		// 移動角度（XZのみ）
+		const float moveRad = atan2(vMove.z, vMove.x);
+
+		bool isLanded = false;
+
+		for (int i = 0; i < static_cast<int>(sizeof(escapeTbl) / sizeof(escapeTbl[0])); i++) {
+			// escapeTbl[]分だけ角度をずらす
+			const float escapeRad = DEG2RAD(escapeTbl[i]);
+			const float checkRad = moveRad + escapeRad;
+
+			// 判定用移動ベクトル
+			VECTOR v;
+			v.x = cos(checkRad) * moveLength;
+			v.y = 0.0f;// Yは無視してXZ平面で判定
+			v.z = sin(checkRad) * moveLength;
+
+			VECTOR testPos = VAdd(vOldPos, v);// 判定用の位置(前フレームの位置 + ずらした移動量)
+
+			// 判定用の線分の始点と終点を設定
+			const VECTOR lineStart = VAdd(testPos, VGet(0.0f, enemy->GetColSubY(), 0.0f));// 始点：キャラの腰位置
+			const VECTOR lineEnd = VAdd(testPos, VGet(0.0f, -50.0f, 0.0f));// 終点：かなり下の位置
+
+			// 当たった中で最も高い地面を記録する
+			float highestY = -99999.0f;
+			bool hitAnyObj = false;
+
+			for (const auto& obj : mapObjList) {
+				// 線分とモデルの当たり判定
+				const MV1_COLL_RESULT_POLY hitPoly = MV1CollCheck_Line(
+					obj.modelHandle,
+					obj.collisionFrame,
+					lineStart,
+					lineEnd
+				);
+
+				if (hitPoly.HitFlag) {
+					// 当たった
+					// 最も高いY位置を記録
+					if (hitPoly.HitPosition.y > highestY) {
+						highestY = hitPoly.HitPosition.y;
+						hitAnyObj = true;
+					}
+				}
+			}
+
+			if (hitAnyObj) {
+				// 地面が見つかった
+				// 当たったY位置をキャラ座標にする
+				testPos.y = highestY;
+
+				enemy->SetPos(testPos);// キャラの座標を更新
+				isLanded = true;
+				break;// ループから抜ける
+			}
+		}
+
+		if (!isLanded) {
+			// 地面が見つからなかった
+			// 元の座標に戻す
+			enemy->SetPos(vOldPos);
+		}
 	}
 }
 

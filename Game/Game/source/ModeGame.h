@@ -19,6 +19,7 @@ public:
 protected:
 
 	void CheckCollisionPlayerMap();// プレイヤーとマップの当たり判定
+	void CheckCollisionEnemiesMap();// 敵とマップの当たり判定
 
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される
