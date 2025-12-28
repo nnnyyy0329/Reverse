@@ -1,6 +1,17 @@
 #pragma once
 #include "GameObjectBase.h"
 
+enum class CHARA_TYPE
+{
+	NONE,
+	SURFACE_PLAYER,
+	INTERIOR_PLAYER,
+
+	// 敵もここに追加
+
+	_EOT_,
+};
+
 class CharaBase : public GameObjectBase
 {
 public:
@@ -12,8 +23,7 @@ public:
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
 
-	// ゲッターセッター
-	
+	/*****ゲッターセッター*****/
 	// 当たり判定用
 	VECTOR GetCollisionTop() { return _vCollisionTop; }		// 当たり判定の上端
 	void SetCollisionTop(VECTOR v) { _vCollisionTop = v; }	// 当たり判定の上端
@@ -38,7 +48,7 @@ public:
 	void SetGravity(float f) { _fGravity = f; }	// 重力
 
 protected:
-	// 当たり判定用
+	// キャラカプセルの当たり判定用
 	VECTOR _vCollisionTop;		// 当たり判定の上端
 	VECTOR _vCollisionBottom;	// 当たり判定の下端
 	float _fCollisionR;			// 当たり判定の半径
@@ -49,5 +59,7 @@ protected:
 	float _fLife;				// 体力
 	float _fGravity;			// 重力	
 
+	// キャラタイプ
+	CHARA_TYPE _eCharType;
 };
 

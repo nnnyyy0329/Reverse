@@ -37,6 +37,9 @@
     <Filter Include="Game\PlayerAbility">
       <UniqueIdentifier>{09b6d8d1-f467-423b-a47a-03c7330f630f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Attack">
+      <UniqueIdentifier>{6748d8e2-e201-4466-a052-98f1eae00f2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\EnemyBase.cpp">
@@ -91,6 +94,12 @@
     <ClCompile Include="source\PlayerAbilityManager.cpp">
       <Filter>Game\PlayerAbility</Filter>
     </ClCompile>
+    <ClCompile Include="source\SurfacePlayer_Attack.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AttackBase.cpp">
+      <Filter>Game\Attack</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\EnemyBase.h">
@@ -138,6 +147,9 @@
     </ClInclude>
     <ClInclude Include="source\PlayerAbilityManager.h">
       <Filter>Game\PlayerAbility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AttackBase.h">
+      <Filter>Game\Attack</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

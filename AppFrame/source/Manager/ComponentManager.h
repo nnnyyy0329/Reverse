@@ -1,3 +1,6 @@
+// コンポーネント管理の汎用関数
+// 追加 : 成田
+
 #pragma once
 #include <vector>
 #include <memory>

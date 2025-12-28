@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="source\ApplicationGlobal.cpp" />
     <ClCompile Include="source\ApplicationMain.cpp" />
+    <ClCompile Include="source\AttackBase.cpp" />
     <ClCompile Include="source\BattleEnemy.cpp" />
     <ClCompile Include="source\CameraManager.cpp" />
     <ClCompile Include="source\CharaBase.cpp" />
@@ -162,12 +163,14 @@
     <ClCompile Include="source\StageBase.cpp" />
     <ClCompile Include="source\StealthEnemy.cpp" />
     <ClCompile Include="source\SurfacePlayer.cpp" />
+    <ClCompile Include="source\SurfacePlayer_Attack.cpp" />
     <ClCompile Include="source\SurfacePlayer_Draw.cpp" />
     <ClCompile Include="source\SurfacePlayer_Move.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h" />
     <ClInclude Include="source\ApplicationMain.h" />
+    <ClInclude Include="source\AttackBase.h" />
     <ClInclude Include="source\BattleEnemy.h" />
     <ClInclude Include="source\CameraManager.h" />
     <ClInclude Include="source\CharaBase.h" />

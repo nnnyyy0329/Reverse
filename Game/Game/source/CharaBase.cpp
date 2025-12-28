@@ -12,6 +12,9 @@ CharaBase::CharaBase()
 	_fDirSpeed = 5.0f;
 	_fLife = 100.0f;
 	_fGravity = -0.01f;
+
+	// キャラタイプ
+	_eCharType = CHARA_TYPE::NONE;
 }
 
 CharaBase::~CharaBase()
