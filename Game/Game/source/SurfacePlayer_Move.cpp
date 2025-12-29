@@ -3,6 +3,28 @@
 #include "SurfacePlayer.h"
 #include "ApplicationMain.h"
 
+// Process呼び出し用関数
+void SurfacePlayer::ProcessCall()
+{
+	// プレイヤー移動処理
+	ProcessMovePlayer();
+
+	// ジャンプ処理
+	ProcessJump();
+
+	// 着地処理
+	ProcessStanding();
+
+	// しゃがみ処理
+	//ProcessCrouch();
+
+	// ステータスに応じたアニメーション処理
+	ProcessStatusAnimation();
+
+	// デバッグ用の処理
+	ProcessDebug();
+}
+
 // プレイヤー移動処理
 void SurfacePlayer::ProcessMovePlayer()
 {
@@ -12,23 +34,27 @@ void SurfacePlayer::ProcessMovePlayer()
 	// 移動方向を決める
 	_vMove = { 0,0,0 };
 
-	// しゃがみ中かどうかで移動速度を変える
-	if(_bIsCrouching){ _fMoveSpeed = 3.0f; }
-	else{ _fMoveSpeed = 6.0f; }
-
-	if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
-	if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
-	if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
-	if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
-
-	// 移動量を正規化
-	float len = VSize(_vMove);
-	if(len > 0.0f)
+	// 攻撃中は移動入力を受け付けない
+	if(!IsAttacking())
 	{
-		_vMove.x /= len;	// 正規化
-		_vMove.y /= len;	// 正規化
+		// しゃがみ中かどうかで移動速度を変える
+		if(_bIsCrouching){ _fMoveSpeed = 3.0f; }
+		else{ _fMoveSpeed = 6.0f; }
+
+		if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
+		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
+		if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
+		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
+
+		// 移動量を正規化
+		float len = VSize(_vMove);
+		if(len > 0.0f)
+		{
+			_vMove.x /= len;	// 正規化
+			_vMove.y /= len;	// 正規化
+		}
+		_vPos = VAdd(_vPos, VScale(_vMove, _fMoveSpeed));	// 移動速度を掛けて移動
 	}
-	_vPos = VAdd(_vPos, VScale(_vMove, _fMoveSpeed));	// 移動速度を掛けて移動
 
 	// カプセルに座標を対応
 	if(!_bIsCrouching) // しゃがみ中じゃないなら
@@ -46,6 +72,14 @@ void SurfacePlayer::ProcessMovePlayer()
 // ステータスに応じたアニメーション処理
 void SurfacePlayer::ProcessStatusAnimation()
 {
+	// 攻撃中
+	if(IsAttacking())
+	{
+		// アニメーション再生処理のみ
+		ProcessPlayAnimation();
+		return;
+	}
+
 	// 空中ならジャンプステータス
 	if(!_bIsStanding)
 	{
@@ -209,6 +243,9 @@ void SurfacePlayer::ProcessJump()
 	// しゃがみ中はジャンプできない
 	if(_bIsCrouching){ return; }
 
+	// 攻撃中はジャンプできない
+	if(IsAttacking()){ return; }
+
 	// ジャンプボタンが押されたら
 	if(_trg & PAD_INPUT_A && _ePlayerStatus != PLAYER_STATUS::JUMP_UP)	// Zボタン
 	{
@@ -228,6 +265,9 @@ void SurfacePlayer::ProcessCrouch()
 {
 	// 空中ではしゃがめない
 	if(_bIsStanding == false){ return; }
+
+	// 攻撃中はジャンプできない
+	if(IsAttacking()){ return; }
 
 	// しゃがみボタンが押されたら
 	if(_trg & PAD_INPUT_B)

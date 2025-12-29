@@ -89,7 +89,7 @@ public:
 		float damage
 	);
 
-	void DrawDebug();	// デバッグ表示
+	void DrawAttackCollision();	// 攻撃コリジョン表示
 
 	// ゲッターセッター
 	COLLISION_TYPE GetCollisionType() const { return _eColType; }

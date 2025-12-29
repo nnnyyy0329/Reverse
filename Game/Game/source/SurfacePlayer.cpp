@@ -10,6 +10,7 @@ namespace
 
 SurfacePlayer::SurfacePlayer()
 {
+	// モデル表示関係
 	_iHandle = MV1LoadModel("res/base/SDChar/SDChar.mv1");
 	_iAttachIndex = MV1AttachAnim(_iHandle, 1, -1, FALSE);
 	_fTotalTime = MV1GetAttachAnimTotalTime(_iHandle, _iAttachIndex);
@@ -43,12 +44,19 @@ SurfacePlayer::SurfacePlayer()
 	_bViewCollision = false;
 
 	// 表示用オフセット
-	_drawSizeOffset = 16;
-	_drawOffsetX = 0;
-	_drawOffsetY = 0;
+	_iDrawSizeOffset = 16;
+	_iDrawOffsetX = 0;
+	_iDrawOffsetY = 0;
+
+	// 攻撃システム初期化
+	_bCanCombo = false;
+	_iComboCount = 0;
 
 	// キャラタイプ
 	_eCharType = CHARA_TYPE::SURFACE_PLAYER;
+
+	// 攻撃データの初期化
+	InitializeAttackData();
 }
 
 SurfacePlayer::~SurfacePlayer()
@@ -58,6 +66,9 @@ SurfacePlayer::~SurfacePlayer()
 
 bool SurfacePlayer::Initialize()
 {
+	// 攻撃データの初期化
+	InitializeAttackData();
+
 	return true;
 }
 
@@ -74,23 +85,11 @@ bool SurfacePlayer::Process()
 	// プレイヤーが死亡しているなら
 	if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
 
-	// プレイヤー移動処理
-	ProcessMovePlayer();
-		
-	// ジャンプ処理
-	ProcessJump();
+	// Process呼び出し用関数
+	ProcessCall();
 
-	// 着地処理
-	ProcessStanding();
-
-	// しゃがみ処理
-	//ProcessCrouch();
-
-	// ステータスに応じたアニメーション処理
-	ProcessStatusAnimation();
-
-	// デバッグ用の処理
-	ProcessDebug();
+	// 攻撃Process呼び出し用関数
+	ProcessAttackCall();
 
 	return true;
 }

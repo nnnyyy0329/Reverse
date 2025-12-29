@@ -12,6 +12,8 @@ AttackBase::AttackBase()
     _stcAttackCol.attackDuration = 0.0f;
     _stcAttackCol.recovery = 0.0f;
     _stcAttackCol.damage = 0.0f;
+    _stcAttackCol.currentTime = 0.0f;
+    _stcAttackCol.isActive = false;
 
     // コリジョンタイプ
     _eColType = COLLISION_TYPE::NONE;
@@ -41,7 +43,7 @@ bool AttackBase::Process()
 bool AttackBase::Render()
 {
     // デバッグ表示
-    DrawDebug();
+    //DrawAttackCollision();
 
     return true;
 }
@@ -53,6 +55,7 @@ bool AttackBase::ProcessStartAttack()
         _eAttackState = ATTACK_STATE::STARTUP;
         _stcAttackCol.currentTime = 0.0f;
         _stcAttackCol.isActive = false;
+
         return true;
     }
 
@@ -64,6 +67,7 @@ bool AttackBase::ProcessStopAttack()
     _eAttackState = ATTACK_STATE::INACTIVE;
     _stcAttackCol.isActive = false;
     _stcAttackCol.currentTime = 0.0f;
+
     return true;
 }
 
@@ -107,6 +111,13 @@ void AttackBase::UpdateAttackState()
                 _stcAttackCol.currentTime = 0.0f;
             }
 
+            break;
+        }
+
+        case ATTACK_STATE::INACTIVE:
+        default:
+        {
+            _stcAttackCol.isActive = false;
             break;
         }
     }
@@ -181,7 +192,7 @@ void AttackBase::SetSphereAttackData
     _eColType = COLLISION_TYPE::SPHERE;
 }
 
-void AttackBase::DrawDebug()
+void AttackBase::DrawAttackCollision()
 {
     // デバッグ用：攻撃判定の可視化
     if(_stcAttackCol.isActive)

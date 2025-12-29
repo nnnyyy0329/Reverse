@@ -32,12 +32,17 @@ void SurfacePlayer::DrawModel()
 // デバッグ用表示
 void SurfacePlayer::DrawDebug()
 {
-	_drawOffsetY = 0;	// 毎フレーム初期位置にリセット
+	_iDrawOffsetY = 0;	// 毎フレーム初期位置にリセット
 
 	DrawCoordinate();		// 座標関係の表示
 	DrawCapsuleCollision();	// カプセルコリジョンを表示
 	DrawStatus();			// ステータスを表示
 	DrawParameter();		// パラメーター表示
+
+	// 攻撃コリジョン表示
+	_firstAttack.DrawAttackCollision();
+	_secondAttack.DrawAttackCollision();
+	_thirdAttack.DrawAttackCollision();
 }
 
 // 座標関係の表示
@@ -54,11 +59,11 @@ void SurfacePlayer::DrawCoordinate()
 
 	// プレイヤー情報表示
 	{
-		DrawFormatString(_drawOffsetX, _drawOffsetY, GetColor(0, 255, 0), "Player:"); 
-		_drawOffsetY += _drawSizeOffset;	// 表示位置をずらす
+		DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(0, 255, 0), "Player:");
+		_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 
-		DrawFormatString(_drawOffsetX, _drawOffsetY, GetColor(0, 255, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z);
-		_drawOffsetY += _drawSizeOffset;	// 表示位置をずらす
+		DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(0, 255, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z);
+		_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 	}
 }
 
@@ -78,17 +83,17 @@ void SurfacePlayer::DrawCapsuleCollision()
 
 	// カプセルコリジョン座標表示
 	{
-		DrawFormatString(_drawOffsetX, _drawOffsetY, GetColor(0, 255, 0), "Capsule Collision:");
-		_drawOffsetY += _drawSizeOffset;	// 表示位置をずらす
+		DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(0, 255, 0), "Capsule Collision:");
+		_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 
-		DrawFormatString(_drawOffsetX, _drawOffsetY, GetColor(0, 255, 0), "  Top     = (%5.2f, %5.2f, %5.2f)", _vCollisionTop.x, _vCollisionTop.y, _vCollisionTop.z);
-		_drawOffsetY += _drawSizeOffset;	// 表示位置をずらす
+		DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(0, 255, 0), "  Top     = (%5.2f, %5.2f, %5.2f)", _vCollisionTop.x, _vCollisionTop.y, _vCollisionTop.z);
+		_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 
-		DrawFormatString(_drawOffsetX, _drawOffsetY, GetColor(0, 255, 0), "  Bottom  = (%5.2f, %5.2f, %5.2f)", _vCollisionBottom.x, _vCollisionBottom.y, _vCollisionBottom.z);
-		_drawOffsetY += _drawSizeOffset;	// 表示位置をずらす
+		DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(0, 255, 0), "  Bottom  = (%5.2f, %5.2f, %5.2f)", _vCollisionBottom.x, _vCollisionBottom.y, _vCollisionBottom.z);
+		_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 
-		DrawFormatString(_drawOffsetX, _drawOffsetY, GetColor(0, 255, 0), "  Radius  = %5.2f", _fCollisionR);
-		_drawOffsetY += _drawSizeOffset;	// 表示位置をずらす
+		DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(0, 255, 0), "  Radius  = %5.2f", _fCollisionR);
+		_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 	}
 }
 
@@ -136,14 +141,15 @@ void SurfacePlayer::DrawStatus()
 			break;
 	}
 
-	DrawFormatString(_drawOffsetX, _drawOffsetY, GetColor(0, 255, 0), "Player Status: %s", status);
-	_drawOffsetY += _drawSizeOffset;	// 表示位置をずらす
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(0, 255, 0), "Player Status: %s", status);
+	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 }
 
 // パラメーター表示
 void SurfacePlayer::DrawParameter()
 {
 	// 体力表示
-	DrawFormatString(_drawOffsetX, _drawOffsetY, GetColor(0, 255, 0), "Player Life: %f", _fLife);
-	_drawOffsetY += _drawSizeOffset;	// 表示位置をずらす
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(0, 255, 0), "Player Life: %f", _fLife);
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(0, 255, 0), "Player Life: %f", _fLife);
+	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 }
