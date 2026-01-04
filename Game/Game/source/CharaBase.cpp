@@ -2,10 +2,6 @@
 
 CharaBase::CharaBase()
 {
-	// キャラの状態初期化
-	_eStatus = CHARA_STATUS::NONE;
-	_eOldStatus = CHARA_STATUS::NONE;
-
 	// 当たり判定用初期化
 	_vCollisionTop = VGet(0.0f, 1.0f, 0.0f);
 	_vCollisionBottom = VGet(0.0f, 0.0f, 0.0f);
@@ -16,6 +12,9 @@ CharaBase::CharaBase()
 	_fDirSpeed = 5.0f;
 	_fLife = 100.0f;
 	_fGravity = -0.01f;
+
+	// キャラタイプ
+	_eCharType = CHARA_TYPE::NONE;
 }
 
 CharaBase::~CharaBase()

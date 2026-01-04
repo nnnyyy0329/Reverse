@@ -1,14 +1,14 @@
 #pragma once
 #include "GameObjectBase.h"
 
-// キャラ状態列挙型
-enum class CHARA_STATUS
+enum class CHARA_TYPE
 {
 	NONE,
-	WAIT,
-	WALK,
-	ATTACK,
-	DEATH,
+	SURFACE_PLAYER,
+	INTERIOR_PLAYER,
+
+	// 敵もここに追加
+
 	_EOT_,
 };
 
@@ -23,12 +23,7 @@ public:
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
 
-	// ゲッターセッター
-	
-	// キャラの状態 
-	CHARA_STATUS GetStatus() { return _eStatus; }		// 現在の状態を取得
-	void SetStatus(CHARA_STATUS e) { _eStatus = e; }	// 現在の状態を設定
-
+	/*****ゲッターセッター*****/
 	// 当たり判定用
 	VECTOR GetCollisionTop() { return _vCollisionTop; }		// 当たり判定の上端
 	void SetCollisionTop(VECTOR v) { _vCollisionTop = v; }	// 当たり判定の上端
@@ -55,10 +50,7 @@ public:
 	void SetGravity(float f) { _fGravity = f; }	// 重力
 
 protected:
-	CHARA_STATUS _eStatus;		// キャラの状態
-	CHARA_STATUS _eOldStatus;	// 前フレームのキャラの状態
-
-	// 当たり判定用
+	// キャラカプセルの当たり判定用
 	VECTOR _vCollisionTop;		// 当たり判定の上端
 	VECTOR _vCollisionBottom;	// 当たり判定の下端
 	float _fCollisionR;			// 当たり判定の半径
@@ -73,5 +65,7 @@ protected:
 	float _fLife;				// 体力
 	float _fGravity;			// 重力	
 
+	// キャラタイプ
+	CHARA_TYPE _eCharType;
 };
 

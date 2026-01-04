@@ -7,7 +7,8 @@
 #include "CameraManager.h"
 #include "SurfacePlayer.h"
 
-bool ModeGame::Initialize() {
+bool ModeGame::Initialize() 
+{
 	if (!base::Initialize()) { return false; }
 
 	// オブジェクトの生成、初期設定
@@ -24,7 +25,8 @@ bool ModeGame::Initialize() {
 	return true;
 }
 
-bool ModeGame::Terminate() {
+bool ModeGame::Terminate() 
+{
 	base::Terminate();
 
 	_player.reset();
@@ -32,7 +34,8 @@ bool ModeGame::Terminate() {
 	return true;
 }
 
-bool ModeGame::Process() {
+bool ModeGame::Process()
+{
 	base::Process();
 	/// 入力取得
 	{
@@ -46,11 +49,13 @@ bool ModeGame::Process() {
 		float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
 
 		// プレイヤーに入力状態を渡す
-		if (_player) {
+		if (_player) 
+		{
 			_player->SetInput(key, trg, lx, ly, rx, ry, analogMin);
 		}
 		// カメラマネージャーに入力状態を渡す
-		if (_cameraManager) {
+		if (_cameraManager)
+		{
 			_cameraManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
 		}
 	}
@@ -73,7 +78,8 @@ bool ModeGame::Process() {
 	return true;
 }
 
-bool ModeGame::Render() {
+bool ModeGame::Render() 
+{
 	base::Render();
 
 	// 3D基本設定
@@ -82,7 +88,8 @@ bool ModeGame::Render() {
 	SetUseBackCulling(TRUE);
 
 	// ライト設定
-	SetUseLighting(TRUE);
+	{
+		SetUseLighting(TRUE);
 
 #if 1	// 平行ライト
 	SetGlobalAmbientLight(GetColorF(0.5f, 0.f, 0.f, 0.f));
