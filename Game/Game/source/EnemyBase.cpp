@@ -33,8 +33,9 @@ EnemyBase::EnemyBase(){
 
 	// 当たり判定用(カプセル)
 	_fCollisionR = COLLISION_RADIUS;
+	_fCollisionHeight = COLLISION_HEIGHT;
 	_vCollisionBottom = VGet(0.0f, 0.0f, 0.0f);
-	_vCollisionTop = VGet(0.0f, COLLISION_HEIGHT, 0.0f);
+	_vCollisionTop = VGet(0.0f, _fCollisionHeight, 0.0f);
 }
 
 EnemyBase::~EnemyBase() {

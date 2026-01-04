@@ -65,7 +65,9 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 
 				// コリジョン情報の生成
 				int frameCollision = MV1SearchFrame(handle, ("UCX_" + modelPos.name).c_str());
-				MV1SetupCollInfo(handle, frameCollision, 16, 16, 16);
+				if (frameCollision != -1) {// コリジョンフレームが存在するなら
+					MV1SetupCollInfo(handle, frameCollision, 16, 16, 16);// コリジョン情報を作成
+				}
 				modelPos.collisionFrame = frameCollision;
 			}
 			// 名前から使うモデルハンドルを決める
@@ -78,7 +80,7 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 				MV1SetPosition(modelPos.modelHandle, modelPos.pos);
 				MV1SetRotationXYZ(modelPos.modelHandle, modelPos.rot);
 				MV1SetScale(modelPos.modelHandle, modelPos.scale);
-				MV1RefreshCollInfo(modelPos.modelHandle);// 行列が変わるためコリジョン情報を更新
+				MV1RefreshCollInfo(modelPos.modelHandle);// 行列を更新した後にコリジョン情報を更新
 			}
 			// データをリストに追加
 			if (modelPos.modelHandle != -1) {
