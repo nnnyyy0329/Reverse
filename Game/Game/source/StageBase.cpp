@@ -13,9 +13,9 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 		switch (_stageNum) {// ステージ番号で読み込むファイルを分ける
 		case 1:
 			// ブロック
-			path = "res/try/";
-			jsonFile = "try.json";
-			jsonObjName = "Playground";
+			path = "res/BoxFieldUE/";
+			jsonFile = "Stage.json";
+			jsonObjName = "Stage";
 			break;
 		case 2:
 			// 浮島
@@ -56,32 +56,36 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 			data.at("scale").at("z").get_to(modelPos.scale.y);
 			data.at("scale").at("y").get_to(modelPos.scale.z);
 
-			// 名前のモデルがすでに読み込み済みか？
+			// 名前のモデルがすでに読み込み済か？
 			if (_mapModelHandle.count(modelPos.name) == 0) {
-				// まだ読み込まれていないので読み込む
-				std::string fileName = path + modelPos.name + ".mv1";
-				int handle = MV1LoadModel(fileName.c_str());
-				_mapModelHandle[modelPos.name] = handle;
-
-				// コリジョン情報の生成
-				int frameCollision = MV1SearchFrame(handle, ("UCX_" + modelPos.name).c_str());
-				if (frameCollision != -1) {// コリジョンフレームが存在するなら
-					MV1SetupCollInfo(handle, frameCollision, 16, 16, 16);// コリジョン情報を作成
-				}
-				modelPos.collisionFrame = frameCollision;
+				// まだ読み込まれていない。読み込みを行う
+				std::string filename = path + modelPos.name + ".mv1";
+				_mapModelHandle[modelPos.name] = MV1LoadModel(filename.c_str());
 			}
+
 			// 名前から使うモデルハンドルを決める
 			if (_mapModelHandle.count(modelPos.name) > 0) {
-				// 既に読み込まれているモデルを複製して使う
+				// オリジナルモデルから複製を作成
 				modelPos.modelHandle = MV1DuplicateModel(_mapModelHandle[modelPos.name]);
+				// 描画用のフレームを取得
 				modelPos.drawFrame = MV1SearchFrame(modelPos.modelHandle, modelPos.name.c_str());
 
-				// モデルの情報をそれぞれに合わせる
+				// コリジョン用のフレームを取得
+				std::string collisionName = "UCX_" + modelPos.name;
+				modelPos.collisionFrame = MV1SearchFrame(modelPos.modelHandle, collisionName.c_str());
+
+				// モデル情報の設定
 				MV1SetPosition(modelPos.modelHandle, modelPos.pos);
 				MV1SetRotationXYZ(modelPos.modelHandle, modelPos.rot);
 				MV1SetScale(modelPos.modelHandle, modelPos.scale);
-				MV1RefreshCollInfo(modelPos.modelHandle);// 行列を更新した後にコリジョン情報を更新
+
+				// コリジョン設定
+				if (modelPos.collisionFrame != -1) {
+					MV1SetupCollInfo(modelPos.modelHandle, modelPos.collisionFrame, 8, 8, 8);
+					//MV1RefreshCollInfo(modelPos.modelHandle, modelPos.collisionFrame);
+				}
 			}
+
 			// データをリストに追加
 			if (modelPos.modelHandle != -1) {
 				_mapModelPosList.push_back(modelPos);
@@ -119,8 +123,8 @@ void StageBase::Render()
 	// マップモデルの描画
 	{
 		for (auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) {
-			MV1DrawFrame(ite->modelHandle, ite->drawFrame);
-			//MV1DrawFrame(ite->modelHandle, ite->collisionFrame);// コリジョンフレームの描画
+			//MV1DrawFrame(ite->modelHandle, ite->drawFrame);
+			MV1DrawFrame(ite->modelHandle, ite->collisionFrame);// コリジョンフレームの描画
 		}
 	}
 
