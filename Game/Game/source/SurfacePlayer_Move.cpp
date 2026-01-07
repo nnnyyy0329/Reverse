@@ -28,9 +28,6 @@ void SurfacePlayer::ProcessCall()
 // プレイヤー移動処理
 void SurfacePlayer::ProcessMovePlayer()
 {
-	// 処理前のステータスを保存しておく
-	_eOldPlayerStatus = _ePlayerStatus;
-
 	// 移動方向を決める
 	_vMove = { 0,0,0 };
 
@@ -72,6 +69,9 @@ void SurfacePlayer::ProcessMovePlayer()
 // ステータスに応じたアニメーション処理
 void SurfacePlayer::ProcessStatusAnimation()
 {
+	// 処理前のステータスを保存しておく
+	_eOldPlayerStatus = _ePlayerStatus;
+
 	// 攻撃中
 	if(IsAttacking())
 	{
@@ -100,7 +100,7 @@ void SurfacePlayer::ProcessStatusAnimation()
 			// しゃがみ中
 			if(VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f) // 歩いているかどうか
 			{
-				_vDir = _vMove;							// 移動方向を向く
+				_vDir = _vMove;									// 移動方向を向く
 				_ePlayerStatus = PLAYER_STATUS::CROUCH_WALK;	// しゃがみ歩行
 			}
 			else // 止まっている
@@ -108,12 +108,13 @@ void SurfacePlayer::ProcessStatusAnimation()
 				_ePlayerStatus = PLAYER_STATUS::CROUCH_WAIT;	// しゃがみ待機
 			}
 		}
-		else // しゃがみ中でない
+		// 通常移動
+		else
 		{
 			// 通常 
 			if(VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f) // 歩いているかどうか
 			{
-				_vDir = _vMove;					// 移動方向を向く
+				_vDir = _vMove;							// 移動方向を向く
 				_ePlayerStatus = PLAYER_STATUS::WALK;	// 歩行
 			}
 			else // 止まっている
@@ -160,53 +161,65 @@ void SurfacePlayer::ProcessPlayAnimation()
 			}
 			case PLAYER_STATUS::JUMP_UP: // ジャンプ上昇
 			{
+				_iAttachIndex = -1;
 				// _iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "jump_up"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::JUMP_DOWN: // ジャンプ下降
 			{
+				_iAttachIndex = -1;
 				// _iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "jump_down"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::CROUCH_WAIT:	// しゃがみ待機
 			{
+				_iAttachIndex = -1;
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch_idle"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::CROUCH_WALK:	// しゃがみ歩行
 			{
+				_iAttachIndex = -1;
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::FIRST_ATTACK:	// 攻撃1
 			{
+				_iAttachIndex = -1;
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_01"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::SECOND_ATTACK:	// 攻撃2
 			{
+				_iAttachIndex = -1;
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_02"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::THIRD_ATTACK:	// 攻撃3
 			{
+				_iAttachIndex = -1;
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_03"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::DEATH:	// 死亡
 			{
+				_iAttachIndex = -1;
 				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "death"), -1, FALSE);
 				break;
 			}
 		}
 
 		// アタッチしたアニメーションの総再生時間を取得する
-		_fTotalTime = MV1GetAttachAnimTotalTime(_iHandle, _iAttachIndex);
+		if(_iAttachIndex != -1)
+		{
+			_fTotalTime = MV1GetAttachAnimTotalTime(_iHandle, _iAttachIndex);
+		}		
+		
 		_fPlayTime = 0.0f;
 	}
 
 	// 再生時間がアニメーションの総再生時間に達したら再生時間を０に戻す
-	if(_fPlayTime >= _fTotalTime)
+	if(_iAttachIndex != -1 && _fPlayTime >= _fTotalTime)
 	{
 		_fPlayTime = 0.0f;
 	}

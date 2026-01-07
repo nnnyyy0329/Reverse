@@ -12,7 +12,7 @@ SurfacePlayer::SurfacePlayer()
 {
 	// ƒ‚ƒfƒ‹•\Ž¦ŠÖŒW
 	_iHandle = MV1LoadModel("res/base/SDChar/SDChar.mv1");
-	_iAttachIndex = MV1AttachAnim(_iHandle, 1, -1, FALSE);
+	_iAttachIndex = MV1AttachAnim(_iHandle, -1, -1, FALSE);
 	_fTotalTime = MV1GetAttachAnimTotalTime(_iHandle, _iAttachIndex);
 	_fPlayTime = 0.0f;
 

@@ -54,7 +54,7 @@ StageBase::StageBase()
 	}
 
 	// マップ
-	_handleSkySphere = MV1LoadModel("res/base/SkySphere/skysphere.mv1");
+	//_handleSkySphere = MV1LoadModel("res/base/SkySphere/skysphere.mv1");
 	#if 0
 	// ダンジョン
 	_handleMap = MV1LoadModel("res/base/Dungeon/Dungeon.mv1");
