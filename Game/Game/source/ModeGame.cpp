@@ -69,14 +69,14 @@ bool ModeGame::Process()
 
 	// “–‚½‚è”»’è
 	{
-		CheckCollisionCharaMap(_player);
+		//CheckCollisionCharaMap(_player);
 		for (const auto& enemy : _stage->GetEnemies()) {
 			CheckCollisionCharaMap(enemy);
 		}
 	}
 
 	// “G‚Ì‹ŠE”»’è
-	//CheckEnemiesVision();
+	CheckEnemiesVision();
 
 	_cameraManager->Process();// ƒJƒƒ‰XV
 

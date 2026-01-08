@@ -18,6 +18,11 @@ public:
 
 	void OnDetectPlayer(std::shared_ptr<CharaBase> target);// プレイヤー発見時の処理
 
+	// AppFrameに移動予定
+	// DrawLine3Dを組み合わせて3D空間に円を描画する関数
+	// center:中心座標, radius:半径, color:色, segment:分割数
+	void DrawCircle3D(VECTOR center, float radius, unsigned int color, int segments);
+
 protected:
 	enum class ENEMY_STATE {// 敵AIの状態
 		NONE,

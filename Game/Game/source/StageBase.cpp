@@ -13,9 +13,9 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 		switch (_stageNum) {// ステージ番号で読み込むファイルを分ける
 		case 1:
 			// ブロック
-			path = "res/BoxFieldUE/";
-			jsonFile = "Stage.json";
-			jsonObjName = "Stage";
+			path = "res/try/";
+			jsonFile = "try.json";
+			jsonObjName = "Playground";
 			break;
 		case 2:
 			// 浮島

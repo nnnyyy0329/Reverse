@@ -6,14 +6,18 @@ namespace {
 	constexpr auto IDLE_TIME = 120.0f;// 待機状態の時間
 	constexpr auto MOVE_TIME = 180.0f;// 自動移動状態の時間
 	constexpr auto DETECT_TIME = 30.0f;// 発見状態の時間
+	constexpr auto ATTACK_TIME = 60.0f;// 攻撃状態の時間
 
-	constexpr auto GO_HOME_DISTANCE = 300.0f;// 初期位置に戻る距離
+	constexpr auto GO_HOME_DISTANCE = 400.0f;// 初期位置に戻る距離
 
 	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
 	constexpr auto COLLISION_HEIGHT = 100.0f;// 敵の当たり判定高さ
 
 	constexpr auto VISION_RANGE = 250.0f;// 敵の索敵距離
 	constexpr auto VISION_ANGLE = 60.0f;// 敵の視界の角度(半分)
+
+	constexpr auto CHASE_LIMIT_RANGE = 1200.0f;// これ以上離れたら追跡をやめる距離
+	constexpr auto ATTACK_RANGE = 50.0f;// これ以内なら攻撃する距離
 }
 
 EnemyBase::EnemyBase(){
@@ -32,8 +36,8 @@ EnemyBase::EnemyBase(){
 	_fStateTimer = 0.0f;
 	_vHomePos = _vPos;
 
-	// 腰位置の設定
-	_colSubY = 40.f;
+	// 腰位置の設定(マップモデルとの判定用)
+	_colSubY = 40.0f;
 
 	// 当たり判定用(カプセル)
 	_fCollisionR = COLLISION_RADIUS;
@@ -166,11 +170,29 @@ void EnemyBase::DebugRender() {
 		}
 	}
 
+	// 追跡中の各範囲の描画
 	{
-		int x = 0, y = 32, size = 16;
+		if (_eCurrentState == ENEMY_STATE::CHASE) {
+			// 攻撃可能範囲を描画
+			unsigned int attackColor = GetColor(255, 0, 0);// 赤
+			DrawCircle3D(_vPos, ATTACK_RANGE, attackColor, 16);
+
+			// 追跡限界範囲を描画
+			unsigned int chaseColor = GetColor(255, 255, 0);// 黄
+			DrawCircle3D(_vPos, CHASE_LIMIT_RANGE, chaseColor, 16);
+		}
+	}
+
+	unsigned int homeColor = GetColor(0, 0, 255);// 青
+	DrawCircle3D(_vHomePos, GO_HOME_DISTANCE, homeColor, 16);// 初期位置に戻る距離
+
+	// デバッグ文字列の描画
+	{
+		int x = 0, y = 32, size = 16;// 改行用
 		SetFontSize(size);
 		DrawFormatString(x, y, GetColor(255, 255, 0), "Enemy:"); y += size;
 		DrawFormatString(x, y, GetColor(255, 255, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
+		DrawFormatString(x, y, GetColor(255, 255, 0), "  state  = %d", static_cast<int>(_eCurrentState)); y += size;
 	}
 }
 
@@ -230,16 +252,53 @@ void EnemyBase::EnemyDetectProcess() {
 
 // 追跡状態の処理
 void EnemyBase::EnemyChaseProcess() {
-	if (!_targetPlayer) {// 範囲外に出たなどでターゲットがいなくなったら
+	if (!_targetPlayer) {// ターゲットが存在しない場合は
 		ChangeState(ENEMY_STATE::IDLE);// 待機状態へ
+		return;
 	}
 
-	// ターゲットの方向を向く
-	_vDir = VNorm(VSub(_targetPlayer->GetPos(), _vPos));// ターゲットへの単位ベクトルを計算
+	// ターゲットまでのベクトルと距離を計算
+	VECTOR vToTarget = VSub(_targetPlayer->GetPos(), _vPos);
+	auto distToTarget = VSize(vToTarget);
+
+	// 距離による分岐処理
+	{
+		// 離れているなら追跡をやめる
+		if (distToTarget > CHASE_LIMIT_RANGE) {
+			_targetPlayer.reset();// ターゲットを削除
+			ChangeState(ENEMY_STATE::IDLE);
+			return;
+		}
+
+		// 攻撃可能範囲内なら攻撃状態へ
+		if (distToTarget <= ATTACK_RANGE) {
+			ChangeState(ENEMY_STATE::ATTACK);
+			return;
+		}
+	}
+
+	// 移動処理
+	if (distToTarget > 0.001f) {// ゼロ除算防止
+		_vDir = VNorm(vToTarget);// ターゲットの方向を向く
+	}
 	_vMove = VScale(_vDir, _fMoveSpeed);// 移動量を更新
 }
 
+// 攻撃状態の処理
 void EnemyBase::EnemyAttackProcess() {
+	if (!_targetPlayer) {// ターゲットが存在しない場合は
+		ChangeState(ENEMY_STATE::IDLE);// 待機状態へ
+		return;
+	}
+
+	_fStateTimer++;// タイマーを進める
+
+	// 攻撃中は移動しない
+	_vMove = VGet(0.0f, 0.0f, 0.0f);
+
+	if (_fStateTimer >= ATTACK_TIME) {// 攻撃時間を超えたら
+		ChangeState(ENEMY_STATE::CHASE);// 追跡状態へ戻る
+	}
 }
 
 void EnemyBase::SetVisionAngle(float angle) {
@@ -252,8 +311,50 @@ void EnemyBase::OnDetectPlayer(std::shared_ptr<CharaBase> target) {
 	if (!target) return;
 
 	// ここに遷移するかの条件をいれる
+	{
+		// 追跡/攻撃中なら再び発見しない
+		if (_eCurrentState == ENEMY_STATE::CHASE ||
+			_eCurrentState == ENEMY_STATE::ATTACK) {
+			_targetPlayer = target;// ターゲットだけ更新
+			return;
+		}
+
+		// すでに発見中なら何もしない
+		if (_eCurrentState == ENEMY_STATE::DETECT) {
+			return;
+		}
+	}
 
 	// 発見した瞬間の処理
 	_targetPlayer = target;// 追跡対象をセット
 	ChangeState(ENEMY_STATE::DETECT);// まず発見状態へ
+}
+
+
+
+void EnemyBase::DrawCircle3D(VECTOR center, float radius, unsigned int color, int segments) {
+	// 1区画当たりの角度(ラジアン)
+	auto step = DX_TWO_PI_F / static_cast<float>(segments);
+
+	// 最初の点を計算
+	VECTOR vPrevPos;
+	vPrevPos.x = center.x + sinf(0.0f) * radius;
+	vPrevPos.y = center.y;// 高さは中心と同じ
+	vPrevPos.z = center.z + cosf(0.0f) * radius;
+
+	// 分割数分ループして点を計算し、線を描画していく
+	for (int i = 0; i <= segments; i++) {
+		auto angle = step * static_cast<float>(i);// 現在の角度を計算
+
+		// 次の点を計算
+		VECTOR vNextPos;
+		vNextPos.x = center.x + sinf(angle) * radius;
+		vNextPos.y = center.y;// 高さは中心と同じ
+		vNextPos.z = center.z + cosf(angle) * radius;
+
+		// 前の点と次の点を結ぶ線を描画
+		DrawLine3D(vPrevPos, vNextPos, color);
+
+		vPrevPos = vNextPos;// 次のループのために点を進める
+	}
 }

@@ -103,7 +103,7 @@ bool SurfacePlayer::Render()
 	DrawModel();
 
 	// デバッグ用
-	DrawDebug();
+	//DrawDebug();
 
 	// デバッグ用コリジョン表示
 		// カプセル表示
