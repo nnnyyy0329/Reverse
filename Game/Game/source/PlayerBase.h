@@ -43,9 +43,16 @@ public:
 		_analogMin = analogMin;
 	}
 
+	/*****ゲッターセッター*****/
 	// キャラの状態 
-	PLAYER_STATUS GetStatus() { return _ePlayerStatus; }		// 現在の状態を取得
+	PLAYER_STATUS GetStatus() { return _ePlayerStatus; }	// 現在の状態を取得
 	void SetStatus(PLAYER_STATUS e) { _ePlayerStatus = e; }	// 現在の状態を設定
+
+	// 攻撃コリジョン情報の受け取り用
+	VECTOR GetAttackColTop(){ return _vAttackColTop; }
+	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }
+	float GetAttackColR(){ return _fAttackColR; }
+
 
 
 protected:
@@ -53,7 +60,7 @@ protected:
 	PLAYER_STATUS _ePlayerStatus;		// キャラの状態
 	PLAYER_STATUS _eOldPlayerStatus;	// 前フレームのキャラの状態
 
-	// 入力状態
+	// 入力関係
 	int _key = 0;
 	int _trg = 0;
 	float _lx = 0.0f;
@@ -61,5 +68,33 @@ protected:
 	float _rx = 0.0f;
 	float _ry = 0.0f;
 	float _analogMin = 0.0f;
+
+
+	// 3Dモデル描画用
+	float _colSubY;	// コリジョン判定時のY補正(腰位置）
+	// デバッグ用
+	bool	_bViewCollision;
+
+
+	// アクション関係変数
+	float _fVelY;			// Y方向の速度
+	bool _bIsJumping;		// ジャンプ中かどうか
+	bool _bIsStanding;		// 着地しているかどうか
+	bool _bIsCrouching;		// しゃがんでいるかどうか
+	bool _bIsStartCrouch;	// しゃがみ開始フラグ
+
+	// 表示用オフセット
+	int _iDrawSizeOffset;	// ずらす大きさ
+	int _iDrawOffsetX;		
+	int _iDrawOffsetY;
+
+	// 攻撃コンボ関係
+	bool _bCanCombo;	// コンボ可能フラグ
+	int _iComboCount;	// コンボカウント
+
+	// 攻撃コリジョン情報の受け取り用
+	VECTOR _vAttackColTop;
+	VECTOR _vAttackColBottom;
+	float _fAttackColR;
 };
 

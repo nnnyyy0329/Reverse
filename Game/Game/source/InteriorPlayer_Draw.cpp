@@ -1,12 +1,12 @@
 // 担当 : 成田
 
-#include "SurfacePlayer.h"
+#include "InteriorPlayer.h"
 
 // デバッグ用表示
-void SurfacePlayer::CallDraw()
+void InteriorPlayer::CallDraw()
 {
 	// モデルの表示
-	DrawModel();	
+	DrawModel();
 
 	_iDrawOffsetY = 0;	// 毎フレーム初期位置にリセット
 
@@ -17,13 +17,10 @@ void SurfacePlayer::CallDraw()
 	DrawParameter();						// パラメーター表示
 	//DrawAnimationName();					// 再生されているアニメーション名表示
 	DrawColPos();							// コリジョン情報表示
-	_firstAttack.DrawAttackCollision();		// 第一攻撃コリジョン表示
-	_secondAttack.DrawAttackCollision();	// 第二攻撃コリジョン表示
-	_thirdAttack.DrawAttackCollision();		// 第三攻撃コリジョン表示
 }
 
 // モデルの表示
-void SurfacePlayer::DrawModel()
+void InteriorPlayer::DrawModel()
 {
 	// 再生時間をセットする
 	MV1SetAttachAnimTime(_iHandle, _iAttachIndex, _fPlayTime);
@@ -50,17 +47,17 @@ void SurfacePlayer::DrawModel()
 }
 
 // 基礎情報表示
-void SurfacePlayer::DrawBaseData()
+void InteriorPlayer::DrawBaseData()
 {
 	// プレイヤーの名前表示
 	{
-		DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(0, 255, 0), "ーーーーーSerfacePlayerーーーーー");
+		DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(0, 255, 0), "ーーーーーInteriorPlayerーーーーー");
 		_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 	}
 }
 
 // 座標の表示
-void SurfacePlayer::DrawCoordinate()
+void InteriorPlayer::DrawCoordinate()
 {
 	// プレイヤーの座標情報
 	{
@@ -85,7 +82,7 @@ void SurfacePlayer::DrawCoordinate()
 }
 
 // カプセルコリジョン表示
-void SurfacePlayer::DrawCapsuleCollision()
+void InteriorPlayer::DrawCapsuleCollision()
 {
 	DrawCapsule3D
 	(
@@ -100,7 +97,7 @@ void SurfacePlayer::DrawCapsuleCollision()
 }
 
 // ステータス描画
-void SurfacePlayer::DrawStatus()
+void InteriorPlayer::DrawStatus()
 {
 	const char* status = "";
 	switch(_ePlayerStatus)
@@ -148,7 +145,7 @@ void SurfacePlayer::DrawStatus()
 }
 
 // パラメーター表示
-void SurfacePlayer::DrawParameter()
+void InteriorPlayer::DrawParameter()
 {
 	// 体力表示
 	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(0, 255, 0), "Player Life: %f", _fLife);
@@ -157,7 +154,7 @@ void SurfacePlayer::DrawParameter()
 }
 
 // 再生されているアニメーション名表示
-void SurfacePlayer::DrawAnimationName()
+void InteriorPlayer::DrawAnimationName()
 {
 	const char* animName = "";
 
@@ -175,12 +172,12 @@ void SurfacePlayer::DrawAnimationName()
 		}
 		case PLAYER_STATUS::JUMP_UP: // ジャンプ上昇
 		{
-			 animName = "JUMP_UP";
+			animName = "JUMP_UP";
 			break;
 		}
 		case PLAYER_STATUS::JUMP_DOWN: // ジャンプ下降
 		{
-			 animName = "JUMP_DOWN";
+			animName = "JUMP_DOWN";
 			break;
 		}
 		case PLAYER_STATUS::CROUCH_WAIT:	// しゃがみ待機
@@ -220,7 +217,7 @@ void SurfacePlayer::DrawAnimationName()
 }
 
 // コリジョンの情報表示
-void SurfacePlayer::DrawColPos()
+void InteriorPlayer::DrawColPos()
 {
 	// プレイヤーのカプセルコリジョン情報
 	{
@@ -239,11 +236,8 @@ void SurfacePlayer::DrawColPos()
 }
 
 // 受け取ったコリジョンのデータ表示
-void SurfacePlayer::DrawAttackColData()
+void InteriorPlayer::DrawAttackColData()
 {
-	// 攻撃中でない場合は何も表示しない
-	if(!IsAttacking()){ return; }
-
 	// 攻撃コリジョン情報のタイトル表示
 	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(255, 255, 0), "----Attack Collision Data----");
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす

@@ -1,10 +1,10 @@
 // 担当 : 成田
 
-#include "SurfacePlayer.h"
+#include "InteriorPlayer.h"
 #include "ApplicationMain.h"
 
 // Process呼び出し用関数
-void SurfacePlayer::CallProcess()
+void InteriorPlayer::CallProcess()
 {
 	// プレイヤー移動処理
 	ProcessMovePlayer();
@@ -26,32 +26,28 @@ void SurfacePlayer::CallProcess()
 }
 
 // プレイヤー移動処理
-void SurfacePlayer::ProcessMovePlayer()
+void InteriorPlayer::ProcessMovePlayer()
 {
 	// 移動方向を決める
 	_vMove = { 0,0,0 };
 
-	// 攻撃中は移動入力を受け付けない
-	if(!IsAttacking())
+	// しゃがみ中かどうかで移動速度を変える
+	if(_bIsCrouching){ _fMoveSpeed = 3.0f; }
+	else{ _fMoveSpeed = 6.0f; }
+
+	if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
+	if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
+	if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
+	if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
+
+	// 移動量を正規化
+	float len = VSize(_vMove);
+	if(len > 0.0f)
 	{
-		// しゃがみ中かどうかで移動速度を変える
-		if(_bIsCrouching){ _fMoveSpeed = 3.0f; }
-		else{ _fMoveSpeed = 6.0f; }
-
-		if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
-		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
-		if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
-		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
-
-		// 移動量を正規化
-		float len = VSize(_vMove);
-		if(len > 0.0f)
-		{
-			_vMove.x /= len;	// 正規化
-			_vMove.y /= len;	// 正規化
-		}
-		_vPos = VAdd(_vPos, VScale(_vMove, _fMoveSpeed));	// 移動速度を掛けて移動
+		_vMove.x /= len;	// 正規化
+		_vMove.y /= len;	// 正規化
 	}
+	_vPos = VAdd(_vPos, VScale(_vMove, _fMoveSpeed));	// 移動速度を掛けて移動
 
 	// カプセルに座標を対応
 	if(!_bIsCrouching) // しゃがみ中じゃないなら
@@ -67,18 +63,10 @@ void SurfacePlayer::ProcessMovePlayer()
 }
 
 // ステータスに応じたアニメーション処理
-void SurfacePlayer::ProcessStatusAnimation()
+void InteriorPlayer::ProcessStatusAnimation()
 {
 	// 処理前のステータスを保存しておく
 	_eOldPlayerStatus = _ePlayerStatus;
-
-	// 攻撃中
-	if(IsAttacking())
-	{
-		// アニメーション再生処理のみ
-		ProcessPlayAnimation();
-		return;
-	}
 
 	// 空中ならジャンプステータス
 	if(!_bIsStanding)
@@ -129,7 +117,7 @@ void SurfacePlayer::ProcessStatusAnimation()
 }
 
 // アニメーション再生処理
-void SurfacePlayer::ProcessPlayAnimation()
+void InteriorPlayer::ProcessPlayAnimation()
 {
 	// ステータスが変わっていないか？
 	if(_eOldPlayerStatus == _ePlayerStatus)
@@ -213,8 +201,8 @@ void SurfacePlayer::ProcessPlayAnimation()
 		if(_iAttachIndex != -1)
 		{
 			_fTotalTime = MV1GetAttachAnimTotalTime(_iHandle, _iAttachIndex);
-		}		
-		
+		}
+
 		_fPlayTime = 0.0f;
 	}
 
@@ -226,7 +214,7 @@ void SurfacePlayer::ProcessPlayAnimation()
 }
 
 // 着地処理
-void SurfacePlayer::ProcessStanding()
+void InteriorPlayer::ProcessStanding()
 {
 	// 重力を加算する
 	if(!_bIsStanding)
@@ -251,13 +239,10 @@ void SurfacePlayer::ProcessStanding()
 }
 
 // ジャンプ処理
-void SurfacePlayer::ProcessJump()
+void InteriorPlayer::ProcessJump()
 {
 	// しゃがみ中はジャンプできない
 	if(_bIsCrouching){ return; }
-
-	// 攻撃中はジャンプできない
-	if(IsAttacking()){ return; }
 
 	// ジャンプボタンが押されたら
 	if(_trg & PAD_INPUT_A && _ePlayerStatus != PLAYER_STATUS::JUMP_UP)	// Zボタン
@@ -274,13 +259,10 @@ void SurfacePlayer::ProcessJump()
 }
 
 // しゃがみ処理
-void SurfacePlayer::ProcessCrouch()
+void InteriorPlayer::ProcessCrouch()
 {
 	// 空中ではしゃがめない
 	if(_bIsStanding == false){ return; }
-
-	// 攻撃中はジャンプできない
-	if(IsAttacking()){ return; }
 
 	// しゃがみボタンが押されたら
 	if(_trg & PAD_INPUT_B)
@@ -304,7 +286,7 @@ void SurfacePlayer::ProcessCrouch()
 }
 
 // 死亡処理
-void SurfacePlayer::ProcessDeath()
+void InteriorPlayer::ProcessDeath()
 {
 	// 体力が0以下ならステータスを死亡に変更
 	if(_fLife <= 0){ _ePlayerStatus = PLAYER_STATUS::DEATH; }
@@ -318,7 +300,7 @@ void SurfacePlayer::ProcessDeath()
 }
 
 // デバッグ用関数
-void SurfacePlayer::ProcessDebug()
+void InteriorPlayer::ProcessDebug()
 {
 	// 体力減少
 	{

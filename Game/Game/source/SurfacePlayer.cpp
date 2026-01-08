@@ -27,7 +27,7 @@ SurfacePlayer::SurfacePlayer()
 	_fLife = 50.0f;
 	_fGravity = GRAVITY;
 
-	// 固有変数の初期化
+	// アクション関係変数の初期化
 	_fVelY = 0.0f;
 	_bIsJumping = false;
 	_bIsStanding = true;
@@ -85,11 +85,11 @@ bool SurfacePlayer::Process()
 	// プレイヤーが死亡しているなら
 	if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
 
-	// Process呼び出し用関数
-	ProcessCall();
+	// 移動関係Process呼び出し用関数
+	CallProcess();
 
-	// 攻撃Process呼び出し用関数
-	ProcessAttackCall();
+	// 攻撃関係Process呼び出し用関数
+	CallProcessAttack();
 
 	return true;
 }
@@ -103,7 +103,7 @@ bool SurfacePlayer::Render()
 	DrawModel();
 
 	// デバッグ用
-	DrawDebug();
+	CallDraw();
 
 	return true;
 }

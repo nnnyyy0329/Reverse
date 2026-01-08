@@ -100,6 +100,15 @@
     <ClCompile Include="source\AttackBase.cpp">
       <Filter>Game\Attack</Filter>
     </ClCompile>
+    <ClCompile Include="source\InteriorPlayer_Move.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InteriorPlayer_Draw.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InteriorPlayer_Attack.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\EnemyBase.h">

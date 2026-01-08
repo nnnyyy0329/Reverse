@@ -14,7 +14,8 @@ void SurfacePlayer::InitializeAttackData()
 		10.0f,						// 発生フレーム
 		15.0f,						// 持続フレーム
 		20.0f,						// 硬直フレーム
-		10.0f						// ダメージ
+		10.0f,						// ダメージ
+		false
 	);
 
 	// 第2攻撃：カプセル攻撃
@@ -26,7 +27,8 @@ void SurfacePlayer::InitializeAttackData()
 		10.0f,						// 発生フレーム
 		15.0f,						// 持続フレーム
 		20.0f,						// 硬直フレーム
-		10.0f						// ダメージ
+		10.0f,						// ダメージ
+		false
 	);
 
 	// 第3攻撃：カプセル攻撃
@@ -38,7 +40,8 @@ void SurfacePlayer::InitializeAttackData()
 		10.0f,						// 発生フレーム
 		15.0f,						// 持続フレーム
 		20.0f,						// 硬直フレーム
-		10.0f						// ダメージ
+		10.0f,						// ダメージ
+		false
 	);
 }
 
@@ -61,7 +64,8 @@ void SurfacePlayer::ProcessAttackColPos()
 		10.0f,										// 発生フレーム
 		15.0f,										// 持続フレーム
 		20.0f,										// 硬直フレーム
-		10.0f										// ダメージ
+		10.0f,										// ダメージ
+		false										// ヒットフラグ
 	);
 
 	// 第2攻撃コリジョン位置を更新
@@ -73,7 +77,8 @@ void SurfacePlayer::ProcessAttackColPos()
 		10.0f,										// 発生フレーム
 		15.0f,										// 持続フレーム
 		20.0f,										// 硬直フレーム
-		10.0f										// ダメージ
+		10.0f,										// ダメージ
+		false										// ヒットフラグ
 	);
 
 	// 第3攻撃コリジョン位置を更新
@@ -85,12 +90,13 @@ void SurfacePlayer::ProcessAttackColPos()
 		10.0f,										// 発生フレーム
 		15.0f,										// 持続フレーム
 		20.0f,										// 硬直フレーム
-		10.0f										// ダメージ
+		10.0f,										// ダメージ
+		false										// ヒットフラグ
 	);
 }
 
 // 攻撃Process呼び出し用関数
-void SurfacePlayer::ProcessAttackCall()
+void SurfacePlayer::CallProcessAttack()
 {
 	// 攻撃処理
 	ProcessAttack();	

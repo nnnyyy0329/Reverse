@@ -9,13 +9,15 @@
 
 // ‚¢‚Á‚½‚ñ‚±‚ê
 #include "SurfacePlayer.h"
+#include "InteriorPlayer.h"
 
 bool ModeGame::Initialize() 
 {
 	if (!base::Initialize()) { return false; }
 
 	// ‚¢‚Á‚½‚ñ‚±‚ê
-	_player = std::make_shared<SurfacePlayer>();
+	//_player = std::make_shared<SurfacePlayer>();
+	_player = std::make_shared<InteriorPlayer>();
 	_player->Initialize();
 	_stage = std::make_shared<StageBase>();
 	_cameraManager = std::make_shared<CameraManager>();
