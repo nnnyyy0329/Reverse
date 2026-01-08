@@ -16,7 +16,7 @@ public:
 	virtual bool	Render();		// 描画
 
 	// SurfacePlayer_Move.cppで定義
-	void CallProcess();				// 移動関係Process呼び出し用関数
+	void CallProcess();				// アクション関係Process呼び出し用関数
 	void ProcessMovePlayer();		// プレイヤー移動処理
 	void ProcessStatusAnimation();	// ステータスに応じたアニメーション処理
 	void ProcessPlayAnimation();	// アニメーション再生処理
@@ -59,7 +59,5 @@ protected:
 	AttackBase _firstAttack;		// 第1攻撃
 	AttackBase _secondAttack;		// 第2攻撃
 	AttackBase _thirdAttack;		// 第3攻撃
-	bool _bCanCombo;				// コンボ可能フラグ
-	int _iComboCount;				// コンボカウント
 };
 

@@ -3,7 +3,7 @@
 #include "SurfacePlayer.h"
 #include "ApplicationMain.h"
 
-// Process呼び出し用関数
+// アクション関係Process呼び出し用関数
 void SurfacePlayer::CallProcess()
 {
 	// プレイヤー移動処理
@@ -50,6 +50,7 @@ void SurfacePlayer::ProcessMovePlayer()
 			_vMove.x /= len;	// 正規化
 			_vMove.y /= len;	// 正規化
 		}
+
 		_vPos = VAdd(_vPos, VScale(_vMove, _fMoveSpeed));	// 移動速度を掛けて移動
 	}
 

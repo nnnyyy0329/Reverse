@@ -85,7 +85,7 @@ bool SurfacePlayer::Process()
 	// プレイヤーが死亡しているなら
 	if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
 
-	// 移動関係Process呼び出し用関数
+	// アクション関係Process呼び出し用関数
 	CallProcess();
 
 	// 攻撃関係Process呼び出し用関数

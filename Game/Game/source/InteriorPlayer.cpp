@@ -47,9 +47,9 @@ InteriorPlayer::InteriorPlayer()
 	_iDrawOffsetX = 0;
 	_iDrawOffsetY = 0;
 
-	//// 攻撃システム初期化
-	//_bCanCombo = false;
-	//_iComboCount = 0;
+	// 攻撃システム初期化
+	_bCanCombo = false;
+	_iComboCount = 0;
 
 	// キャラタイプ
 	_eCharType = CHARA_TYPE::INTERIOR_PLAYER;
@@ -78,8 +78,11 @@ bool InteriorPlayer::Process()
 	// プレイヤーが死亡しているなら
 	if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
 
-	// 移動関係Process呼び出し用関数
+	// アクション関係Process呼び出し用関数
 	CallProcess();
+
+	// 攻撃関係Process呼び出し用関数
+	CallProcessAttack();
 
 	return true;
 }
@@ -87,9 +90,9 @@ bool InteriorPlayer::Process()
 bool InteriorPlayer::Render()
 {
 	// プレイヤーが死亡しているなら
-//if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
+	//if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
 
-// モデル表示
+	// モデル表示
 	DrawModel();
 
 	// デバッグ用

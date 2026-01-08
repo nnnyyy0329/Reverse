@@ -14,8 +14,8 @@ void SurfacePlayer::InitializeAttackData()
 		10.0f,						// 発生フレーム
 		15.0f,						// 持続フレーム
 		20.0f,						// 硬直フレーム
-		10.0f,						// ダメージ
-		false
+		5.0f,						// ダメージ
+		false						// ヒットフラグ
 	);
 
 	// 第2攻撃：カプセル攻撃
@@ -27,8 +27,8 @@ void SurfacePlayer::InitializeAttackData()
 		10.0f,						// 発生フレーム
 		15.0f,						// 持続フレーム
 		20.0f,						// 硬直フレーム
-		10.0f,						// ダメージ
-		false
+		5.0f,						// ダメージ
+		false						// ヒットフラグ
 	);
 
 	// 第3攻撃：カプセル攻撃
@@ -40,8 +40,8 @@ void SurfacePlayer::InitializeAttackData()
 		10.0f,						// 発生フレーム
 		15.0f,						// 持続フレーム
 		20.0f,						// 硬直フレーム
-		10.0f,						// ダメージ
-		false
+		20.0f,						// ダメージ
+		false						// ヒットフラグ
 	);
 }
 
