@@ -139,5 +139,6 @@
     <ClInclude Include="source\AttackBase.h">
       <Filter>Game\Attack</Filter>
     </ClInclude>
+    <ClInclude Include="source\CollisionSegmentTriangle.h" />
   </ItemGroup>
 </Project>

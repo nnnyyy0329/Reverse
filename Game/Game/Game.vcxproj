@@ -171,6 +171,7 @@
     <ClInclude Include="source\AttackBase.h" />
     <ClInclude Include="source\CameraManager.h" />
     <ClInclude Include="source\CharaBase.h" />
+    <ClInclude Include="source\CollisionSegmentTriangle.h" />
     <ClInclude Include="source\EnemyBase.h" />
     <ClInclude Include="source\GameObjectBase.h" />
     <ClInclude Include="source\InteriorPlayer.h" />
