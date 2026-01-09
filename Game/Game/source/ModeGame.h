@@ -3,6 +3,7 @@
 
 //いったんこれ
 class PlayerBase;
+class PlayerManager;
 class StageBase;
 class CameraManager;
 
@@ -19,7 +20,11 @@ public:
 protected:
 
 	//いったんこれ
-	std::shared_ptr<PlayerBase> _player;
+	//std::shared_ptr<PlayerBase> _surfacePlayer;
+	//std::shared_ptr<PlayerBase> _interiorPlayer;
+
+	// プレイヤー管理をPlayerManagerに委譲
+	std::shared_ptr<PlayerManager> _playerManager;
 
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される

@@ -66,6 +66,12 @@ SurfacePlayer::~SurfacePlayer()
 
 bool SurfacePlayer::Initialize()
 {
+	// 基礎ステータスの初期化
+	_ePlayerStatus = PLAYER_STATUS::NONE;
+	_fMoveSpeed = 0.0f;
+	_fDirSpeed = 0.0f;
+	_fGravity = GRAVITY;
+
 	// 攻撃データの初期化
 	InitializeAttackData();
 

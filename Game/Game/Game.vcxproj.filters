@@ -109,6 +109,9 @@
     <ClCompile Include="source\InteriorPlayer_Attack.cpp">
       <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
     </ClCompile>
+    <ClCompile Include="source\PlayerManager.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\EnemyBase.h">
@@ -159,6 +162,9 @@
     </ClInclude>
     <ClInclude Include="source\AttackBase.h">
       <Filter>Game\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerManager.h">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

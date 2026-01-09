@@ -8,6 +8,7 @@
 #include "CameraManager.h"
 
 // いったんこれ
+#include "PlayerManager.h"
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
 
@@ -15,13 +16,23 @@ bool ModeGame::Initialize()
 {
 	if (!base::Initialize()) { return false; }
 
+	// PlayerManagerの初期化
+	_playerManager = std::make_shared<PlayerManager>();
+	_playerManager->Initialize();
+
+	// プレイヤーの作成と登録
+	auto surfacePlayer = std::make_shared<SurfacePlayer>();
+	surfacePlayer->Initialize();
+	_playerManager->RegisterPlayer(PLAYER_TYPE::SURFACE, surfacePlayer);
+
+	auto interiorPlayer = std::make_shared<InteriorPlayer>();
+	interiorPlayer->Initialize();
+	_playerManager->RegisterPlayer(PLAYER_TYPE::INTERIOR, interiorPlayer);
+
 	// いったんこれ
-	//_player = std::make_shared<SurfacePlayer>();
-	_player = std::make_shared<InteriorPlayer>();
-	_player->Initialize();
 	_stage = std::make_shared<StageBase>();
 	_cameraManager = std::make_shared<CameraManager>();
-	_cameraManager->SetTarget(_player);
+	_cameraManager->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
 
 	return true;
 }
@@ -32,7 +43,8 @@ bool ModeGame::Terminate()
 
 
 	// いったんこれ
-	_player.reset();
+	_playerManager.reset();
+
 
 	return true;
 }
@@ -40,6 +52,7 @@ bool ModeGame::Terminate()
 bool ModeGame::Process()
 {
 	base::Process();
+
 	/// 入力取得
 	{
 		int key = ApplicationMain::GetInstance()->GetKey();
@@ -51,10 +64,10 @@ bool ModeGame::Process()
 		float ry = analog.ry;
 		float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
 
-		// プレイヤーに入力状態を渡す
-		if (_player) 
+		// プレイヤーマネージャーに入力状態を渡す
+		if (_playerManager)
 		{
-			_player->SetInput(key, trg, lx, ly, rx, ry, analogMin);
+			_playerManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
 		}
 		// カメラマネージャーに入力状態を渡す
 		if (_cameraManager)
@@ -63,7 +76,12 @@ bool ModeGame::Process()
 		}
 	}
 
-	_player->Process();
+	// いったん
+	std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
+	_cameraManager->SetTarget(activePlayer);	// 毎フレームプレイヤーにカメラを合わせる
+
+
+	_playerManager->Process();
 	_stage->Process();
 	_cameraManager->Process();
 
@@ -88,16 +106,18 @@ bool ModeGame::Render()
 			ChangeLightTypeDir(VGet(-1, -1, 0));
 		#endif
 		#if 1	// ポイントライト
+			PlayerBase* activePlayer = _playerManager->GetActivePlayer();
+
 			SetGlobalAmbientLight(GetColorF(0.f, 0.f, 0.f, 0.f));
-			ChangeLightTypePoint(VAdd(_player->GetPos(), VGet(0, 50.f, 0)), 1000.f, 0.f, 0.005f, 0.f);
+			ChangeLightTypePoint(VAdd(activePlayer->GetPos(), VGet(0, 50.f, 0)), 1000.f, 0.f, 0.005f, 0.f);
 		#endif
 	}
 
 	// いったんこれ
 	_cameraManager->SetUp();
-	
+
 	_stage->Render();
-	_player->Render();
+	_playerManager->Render();
 
 	return true;
 }
