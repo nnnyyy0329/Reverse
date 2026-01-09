@@ -17,7 +17,7 @@ SurfacePlayer::SurfacePlayer()
 	_fPlayTime = 0.0f;
 
 	// 位置の初期化
-	_vPos = VGet(0, 0, 0);
+	_vPos = VGet(230.0f,100.0f, 0.0f);
 	_vDir = VGet(0, 0, -1);
 
 	// 基礎ステータスの初期化

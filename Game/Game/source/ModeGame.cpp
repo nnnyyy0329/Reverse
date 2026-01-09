@@ -125,177 +125,139 @@ bool ModeGame::Render()
 	return true;
 }
 
-// キャラとマップの当たり判定
+// キャラとマップの当たり判定（接地維持 + カプセル押し出し方式）
+// 前提：GetCollisionBottom()/Top() は「ワールド座標」をキャラ側で毎フレーム更新している
 void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
 	if (!chara || !_stage) return;
 
-	auto& mapObjList = _stage->GetMapModelPosList();
-	VECTOR vCurrentPos = chara->GetPos();// 現在の移動後座標
-	VECTOR vOldPos = chara->GetOldPos();// 移動前の座標
+	const auto& mapObjList = _stage->GetMapModelPosList();
 
-	// 移動ベクトルと移動量を計算
-	VECTOR vMove = VSub(vCurrentPos, vOldPos);
-	const float moveLength = VSize(vMove);
+	// 現在の（移動入力反映後の）座標
+	VECTOR vCurrentPos = chara->GetPos();
 
-	// 移動していないなら処理しない
-	if (moveLength < 0.001f) return;
+	// カプセル（半径のみキャラ設定から取得、線分端点はワールド座標をそのまま使う）
+	const float capsuleRadius = chara->GetCollisionR();
 
-	// 移動角度を計算
-	const float moveRad = atan2(vMove.z, vMove.x);
+	// ここで取得する Bottom/Top は「ワールド座標」前提
+	VECTOR vCapBottomWS = chara->GetCollisionBottom();
+	VECTOR vCapTopWS = chara->GetCollisionTop();
 
-	// escapeTbl[]順に角度を変えて回避を試みる
-	const float escapeTbl[] = {
-		0, -10, 10, -20, 20, -30, 30, -40, 40, -50, 50, -60, 60, -70, 70, -80, 80,
-	};
+	// ---------------------------------------------------------
+	// 1) 接地維持（床スナップ）
+	// ---------------------------------------------------------
+	// 足元（Bottom）から下に線分を飛ばして床を拾い、最も高い床へ吸着させる
+	{
+		const float groundProbeLen = 2000.0f; // ステージ規模に合わせて調整
+		const float groundSnapEps = 1.0f;     // めり込み防止で少し浮かせる
+		bool snapped = false;
+		float bestHitY = -FLT_MAX;
 
-	// カプセルパラメータ（必要ならキャラ側の値に合わせて調整）
-	const float capsuleRadius = 12.0f;     // キャラの太さ（要調整）
-	const float capsuleHalfHeight = 24.0f; // 上下の半分（要調整）
+		for (const auto& obj : mapObjList) {
+			if (obj.collisionFrame == -1) continue;
 
-	// 押し出しの余裕（微小めり込みや数値誤差対策）
-	const float skin = 0.1f;
+			const VECTOR start = vCapBottomWS;
+			const VECTOR end = VSub(vCapBottomWS, VGet(0.0f, groundProbeLen, 0.0f));
 
-	// 反復回数（めり込み解消用）
-	const int maxSolveIters = 12;
+			auto hitLine = MV1CollCheck_Line(
+				obj.modelHandle,
+				obj.collisionFrame,
+				start,
+				end
+			);
 
-	// 1反復での最大押し出し（暴れ対策）
-	const float maxPushPerIter = capsuleRadius + 4.0f;
+			if (!hitLine.HitFlag) continue;
 
-	bool isResolved = false;
-
-	for (int i = 0; i < static_cast<int>(sizeof(escapeTbl) / sizeof(escapeTbl[0])); i++) {
-		const float escapeRad = DEG2RAD(escapeTbl[i]);
-		const float checkRad = moveRad + escapeRad;
-
-		// 判定用の移動ベクトル（XZのみ調整）
-		VECTOR vTestPos = vOldPos;
-		vTestPos.x += cos(checkRad) * moveLength;
-		vTestPos.z += sin(checkRad) * moveLength;
-
-		// カプセル中心線（腰位置基準）
-		const float waistY = chara->GetColSubY();
-		VECTOR vCapCenter = VAdd(vTestPos, VGet(0.0f, waistY, 0.0f));
-		VECTOR vCapStart = VAdd(vCapCenter, VGet(0.0f, -capsuleHalfHeight, 0.0f));
-		VECTOR vCapEnd = VAdd(vCapCenter, VGet(0.0f, +capsuleHalfHeight, 0.0f));
-
-		// 反復でめり込み解消
-		for (int iter = 0; iter < maxSolveIters; ++iter) {
-
-			bool anyHit = false;
-
-			// 今回反復で「最も深いめり込み」を採用（押し出しは1つにする）
-			float bestPenetration = 0.0f;
-			VECTOR vBestPush = VGet(0.0f, 0.0f, 0.0f);
-
-			for (const auto& obj : mapObjList) {
-				if (obj.collisionFrame == -1) continue;
-
-				MV1_COLL_RESULT_POLY_DIM hit = MV1CollCheck_Capsule(
-					obj.modelHandle,
-					obj.collisionFrame,
-					vCapStart,
-					vCapEnd,
-					capsuleRadius
-				);
-
-				if (hit.HitNum > 0) {
-					anyHit = true;
-
-					// 返ってきた当たりポリゴン全部について、線分-三角形の最短距離から押し出し量を計算
-					for (int a = 0; a < hit.HitNum; ++a) {
-						const VECTOR vP0 = hit.Dim[a].Position[0];
-						const VECTOR vP1 = hit.Dim[a].Position[1];
-						const VECTOR vP2 = hit.Dim[a].Position[2];
-
-						const SegmentTriangleResult r = SegmentTriangleMinDistance(vCapStart, vCapEnd, vP0, vP1, vP2);
-
-						// distance
-						const float distSq = r.fSegTriMinDistSquare;
-						const float dist = (distSq > 0.0f) ? std::sqrt(distSq) : 0.0f;
-
-						// penetration = radius - distance
-						const float penetration = (capsuleRadius + skin) - dist;
-						if (penetration <= 0.0f) continue;
-
-						// 押し出し方向は (線分側最近接点 - 三角形側最近接点)
-						VECTOR vDir = VSub(r.vSegMinDistPos, r.vTriMinDistPos);
-						const float dirLen = VSize(vDir);
-
-						// 方向が取れない場合は法線を使う（退避）
-						if (dirLen < 1e-6f) {
-							vDir = hit.Dim[a].Normal;
-						}
-						vDir = SafeNormalizeVec(vDir);
-
-						VECTOR vPush = VScale(vDir, penetration);
-
-						// この反復では最も深いめり込みを採用
-						if (penetration > bestPenetration) {
-							bestPenetration = penetration;
-							vBestPush = vPush;
-						}
-					}
-				}
-
-				MV1CollResultPolyDimTerminate(hit);
+			// 一番高い床を採用（段差で下の床に吸われにくくする）
+			if (!snapped || hitLine.HitPosition.y > bestHitY) {
+				bestHitY = hitLine.HitPosition.y;
+				snapped = true;
 			}
-
-			if (!anyHit) {
-				// もう当たっていない＝解決
-				break;
-			}
-
-			// 押し出し候補が取れない（数値的におかしい）場合は終了
-			if (bestPenetration <= 0.0f || (vBestPush.x == 0.0f && vBestPush.y == 0.0f && vBestPush.z == 0.0f)) {
-				break;
-			}
-
-			// 押し出し量の制限（暴れ対策）
-			const float pushLen = VSize(vBestPush);
-			if (pushLen > maxPushPerIter) {
-				vBestPush = VScale(SafeNormalizeVec(vBestPush), maxPushPerIter);
-			}
-
-			// 位置とカプセルを更新
-			vTestPos = VAdd(vTestPos, vBestPush);
-			vCapCenter = VAdd(vCapCenter, vBestPush);
-			vCapStart = VAdd(vCapStart, vBestPush);
-			vCapEnd = VAdd(vCapEnd, vBestPush);
 		}
 
-		// 最終確認：まだ当たるなら失敗扱い、当たらないなら採用
-		bool finalHit = false;
+		if (snapped) {
+			const float targetBottomY = bestHitY + groundSnapEps;
+			const float dy = targetBottomY - vCapBottomWS.y;
+
+			// 位置とカプセル線分（WS）を同じだけ上げる
+			vCurrentPos.y += dy;
+			vCapBottomWS.y += dy;
+			vCapTopWS.y += dy;
+		}
+	}
+
+	// ---------------------------------------------------------
+	// 2) カプセル押し出し（Iterative Solver）
+	// ---------------------------------------------------------
+	const float skin = 0.01f;
+	const int maxSolveIters = 20;
+	const float maxPushPerIter = capsuleRadius * 1.5f;
+
+	for (int iter = 0; iter < maxSolveIters; ++iter) {
+		bool anyHit = false;
+		float bestPenetration = 0.0f;
+		VECTOR vBestPush = VGet(0.0f, 0.0f, 0.0f);
+
 		for (const auto& obj : mapObjList) {
 			if (obj.collisionFrame == -1) continue;
 
 			MV1_COLL_RESULT_POLY_DIM hit = MV1CollCheck_Capsule(
 				obj.modelHandle,
 				obj.collisionFrame,
-				vCapStart,
-				vCapEnd,
-				capsuleRadius
+				vCapBottomWS,
+				vCapTopWS,
+				capsuleRadius + skin
 			);
 
 			if (hit.HitNum > 0) {
-				finalHit = true;
+				anyHit = true;
+
+				for (int i = 0; i < hit.HitNum; ++i) {
+					const VECTOR vP0 = hit.Dim[i].Position[0];
+					const VECTOR vP1 = hit.Dim[i].Position[1];
+					const VECTOR vP2 = hit.Dim[i].Position[2];
+
+					const SegmentTriangleResult r = SegmentTriangleMinDistance(vCapBottomWS, vCapTopWS, vP0, vP1, vP2);
+
+					const float dist = (r.fSegTriMinDistSquare > 0.0f) ? std::sqrt(r.fSegTriMinDistSquare) : 0.0f;
+					const float penetration = (capsuleRadius + skin) - dist;
+					if (penetration <= 1e-6f) continue;
+
+					VECTOR vDir = VSub(r.vSegMinDistPos, r.vTriMinDistPos);
+					if (VSize(vDir) < 1e-6f) {
+						vDir = hit.Dim[i].Normal;
+					}
+					vDir = SafeNormalizeVec(vDir);
+
+					const VECTOR vPush = VScale(vDir, penetration);
+
+					if (penetration > bestPenetration) {
+						bestPenetration = penetration;
+						vBestPush = vPush;
+					}
+				}
 			}
 
 			MV1CollResultPolyDimTerminate(hit);
-
-			if (finalHit) break;
 		}
 
-		if (!finalHit) {
-			chara->SetPos(vTestPos);
-			isResolved = true;
+		if (!anyHit || bestPenetration <= 0.0f) {
 			break;
 		}
+
+		// 暴れ防止
+		const float pushLen = VSize(vBestPush);
+		if (pushLen > maxPushPerIter) {
+			vBestPush = VScale(SafeNormalizeVec(vBestPush), maxPushPerIter);
+		}
+
+		// 位置 & カプセル線分（WS）を同じだけ移動
+		vCurrentPos = VAdd(vCurrentPos, vBestPush);
+		vCapBottomWS = VAdd(vCapBottomWS, vBestPush);
+		vCapTopWS = VAdd(vCapTopWS, vBestPush);
 	}
 
-	if (!isResolved) {
-		// 解決できなかったら元に戻す
-		chara->SetPos(vOldPos);
-	}
+	// 最終反映
+	chara->SetPos(vCurrentPos);
 }
 
 // 敵の視界判定

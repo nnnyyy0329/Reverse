@@ -64,7 +64,7 @@ inline VECTOR ClosestPointOnTriangle(const VECTOR& vP, const VECTOR& vA, const V
 	// 三角形abpの符号付き面積
 	const float areaC = dot1 * dot4 - dot3 * dot2;
 	// 点pが辺abの側面にあり、かつaとbの間にある場合
-	if (areaC <= 0.0f && dot1 >= 0.0f && 0.0f <= 0.0f) {
+	if (areaC <= 0.0f && dot1 >= 0.0f && dot3 <= 0.0f) {
 		const float t = dot1 / (dot1 - dot3);// aからどれくらいbよりか(補間係数)
 		return VAdd(vA, VScale(vAB, t));// 点pを辺ab上に投影した点
 	}
