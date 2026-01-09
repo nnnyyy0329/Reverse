@@ -78,7 +78,7 @@ bool ModeGame::Process()
 	}
 
 	// 敵の視界判定
-	CheckEnemiesVision();
+	//CheckEnemiesVision();
 
 	_cameraManager->Process();// カメラ更新
 
@@ -125,7 +125,7 @@ bool ModeGame::Render()
 	return true;
 }
 
-// キャラとマップの当たり判定（カプセル：正確な押し出し量版）
+// キャラとマップの当たり判定
 void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
 	if (!chara || !_stage) return;
 
@@ -168,15 +168,15 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
 		const float checkRad = moveRad + escapeRad;
 
 		// 判定用の移動ベクトル（XZのみ調整）
-		VECTOR testPos = vOldPos;
-		testPos.x += cos(checkRad) * moveLength;
-		testPos.z += sin(checkRad) * moveLength;
+		VECTOR vTestPos = vOldPos;
+		vTestPos.x += cos(checkRad) * moveLength;
+		vTestPos.z += sin(checkRad) * moveLength;
 
 		// カプセル中心線（腰位置基準）
 		const float waistY = chara->GetColSubY();
-		VECTOR capCenter = VAdd(testPos, VGet(0.0f, waistY, 0.0f));
-		VECTOR capStart = VAdd(capCenter, VGet(0.0f, -capsuleHalfHeight, 0.0f));
-		VECTOR capEnd = VAdd(capCenter, VGet(0.0f, +capsuleHalfHeight, 0.0f));
+		VECTOR vCapCenter = VAdd(vTestPos, VGet(0.0f, waistY, 0.0f));
+		VECTOR vCapStart = VAdd(vCapCenter, VGet(0.0f, -capsuleHalfHeight, 0.0f));
+		VECTOR vCapEnd = VAdd(vCapCenter, VGet(0.0f, +capsuleHalfHeight, 0.0f));
 
 		// 反復でめり込み解消
 		for (int iter = 0; iter < maxSolveIters; ++iter) {
@@ -185,7 +185,7 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
 
 			// 今回反復で「最も深いめり込み」を採用（押し出しは1つにする）
 			float bestPenetration = 0.0f;
-			VECTOR bestPush = VGet(0.0f, 0.0f, 0.0f);
+			VECTOR vBestPush = VGet(0.0f, 0.0f, 0.0f);
 
 			for (const auto& obj : mapObjList) {
 				if (obj.collisionFrame == -1) continue;
@@ -193,8 +193,8 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
 				MV1_COLL_RESULT_POLY_DIM hit = MV1CollCheck_Capsule(
 					obj.modelHandle,
 					obj.collisionFrame,
-					capStart,
-					capEnd,
+					vCapStart,
+					vCapEnd,
 					capsuleRadius
 				);
 
@@ -203,14 +203,14 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
 
 					// 返ってきた当たりポリゴン全部について、線分-三角形の最短距離から押し出し量を計算
 					for (int a = 0; a < hit.HitNum; ++a) {
-						const VECTOR p0 = hit.Dim[a].Position[0];
-						const VECTOR p1 = hit.Dim[a].Position[1];
-						const VECTOR p2 = hit.Dim[a].Position[2];
+						const VECTOR vP0 = hit.Dim[a].Position[0];
+						const VECTOR vP1 = hit.Dim[a].Position[1];
+						const VECTOR vP2 = hit.Dim[a].Position[2];
 
-						const SegmentTriangleResult r = SegmentTriangleMinDistance(capStart, capEnd, p0, p1, p2);
+						const SegmentTriangleResult r = SegmentTriangleMinDistance(vCapStart, vCapEnd, vP0, vP1, vP2);
 
 						// distance
-						const float distSq = r.Seg_Tri_MinDist_Square;
+						const float distSq = r.fSegTriMinDistSquare;
 						const float dist = (distSq > 0.0f) ? std::sqrt(distSq) : 0.0f;
 
 						// penetration = radius - distance
@@ -218,21 +218,21 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
 						if (penetration <= 0.0f) continue;
 
 						// 押し出し方向は (線分側最近接点 - 三角形側最近接点)
-						VECTOR dir = VSub(r.Seg_MinDist_Pos, r.Tri_MinDist_Pos);
-						const float dirLen = VSize(dir);
+						VECTOR vDir = VSub(r.vSegMinDistPos, r.vTriMinDistPos);
+						const float dirLen = VSize(vDir);
 
 						// 方向が取れない場合は法線を使う（退避）
 						if (dirLen < 1e-6f) {
-							dir = hit.Dim[a].Normal;
+							vDir = hit.Dim[a].Normal;
 						}
-						dir = SafeNormalizeVec(dir);
+						vDir = SafeNormalizeVec(vDir);
 
-						VECTOR push = VScale(dir, penetration);
+						VECTOR vPush = VScale(vDir, penetration);
 
 						// この反復では最も深いめり込みを採用
 						if (penetration > bestPenetration) {
 							bestPenetration = penetration;
-							bestPush = push;
+							vBestPush = vPush;
 						}
 					}
 				}
@@ -246,21 +246,21 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
 			}
 
 			// 押し出し候補が取れない（数値的におかしい）場合は終了
-			if (bestPenetration <= 0.0f || (bestPush.x == 0.0f && bestPush.y == 0.0f && bestPush.z == 0.0f)) {
+			if (bestPenetration <= 0.0f || (vBestPush.x == 0.0f && vBestPush.y == 0.0f && vBestPush.z == 0.0f)) {
 				break;
 			}
 
 			// 押し出し量の制限（暴れ対策）
-			const float pushLen = VSize(bestPush);
+			const float pushLen = VSize(vBestPush);
 			if (pushLen > maxPushPerIter) {
-				bestPush = VScale(SafeNormalizeVec(bestPush), maxPushPerIter);
+				vBestPush = VScale(SafeNormalizeVec(vBestPush), maxPushPerIter);
 			}
 
 			// 位置とカプセルを更新
-			testPos = VAdd(testPos, bestPush);
-			capCenter = VAdd(capCenter, bestPush);
-			capStart = VAdd(capStart, bestPush);
-			capEnd = VAdd(capEnd, bestPush);
+			vTestPos = VAdd(vTestPos, vBestPush);
+			vCapCenter = VAdd(vCapCenter, vBestPush);
+			vCapStart = VAdd(vCapStart, vBestPush);
+			vCapEnd = VAdd(vCapEnd, vBestPush);
 		}
 
 		// 最終確認：まだ当たるなら失敗扱い、当たらないなら採用
@@ -271,8 +271,8 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
 			MV1_COLL_RESULT_POLY_DIM hit = MV1CollCheck_Capsule(
 				obj.modelHandle,
 				obj.collisionFrame,
-				capStart,
-				capEnd,
+				vCapStart,
+				vCapEnd,
 				capsuleRadius
 			);
 
@@ -286,7 +286,7 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
 		}
 
 		if (!finalHit) {
-			chara->SetPos(testPos);
+			chara->SetPos(vTestPos);
 			isResolved = true;
 			break;
 		}
