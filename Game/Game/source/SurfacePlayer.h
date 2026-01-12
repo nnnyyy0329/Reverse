@@ -38,26 +38,18 @@ public:
 	void DrawColPos();				// コリジョンの情報表示
 	void DrawAttackColData();		// 受け取ったコリジョンのデータ表示
 
-	// SurfacePlayer_Attack.cppで定義
-	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数
-	void ProcessAttackColPos();		// コリジョン位置の更新処理
-	void ProcessAttack();			// 攻撃処理
-	void ProcessBranchAttack();		// 攻撃分岐処理
-	void ProcessFirstAttack();		// 第1攻撃処理
-	void ProcessSecondAttack();		// 第2攻撃処理
-	void ProcessThirdAttack();		// 第3攻撃処理
-	void InitializeAttackData();	// 攻撃データ初期化
-	void ReceiveAttackColData();	// 攻撃コリジョンの情報受け取り関数
-	bool CanNextAttack();			// 次の攻撃が可能かチェック
-	bool IsAttacking();				// 攻撃中かチェック
-
 	/*****ゲッターセッター*****/
 
+private:
+	void UpdateAttackColPos(AttackBase& attack, const VECTOR& topOffset, const VECTOR& bottomOffset, const VECTOR& baseOffset);	// 攻撃判定の位置更新処理
+	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, AttackBase& attack);										// 攻撃開始処理
+	void ProcessComboAttack(AttackBase& currentAttack, int nextComboCount, PLAYER_STATUS nextStatus, AttackBase& nextAttack);	// 汎用コンボ攻撃処理
+	void ProcessAttackFinish(AttackBase& attack);																				// 攻撃終了処理
+	void EndAttackSequence();																									// 攻撃課程修了
 
 protected:
-	// 攻撃システム
-	AttackBase _firstAttack;		// 第1攻撃
-	AttackBase _secondAttack;		// 第2攻撃
-	AttackBase _thirdAttack;		// 第3攻撃
+	// 攻撃システムのカスタマイズ
+	virtual AttackConstants GetAttackConstants() override;
+	virtual void GetAttackConfigs(AttackConfig configs[3]) override;
 };
 

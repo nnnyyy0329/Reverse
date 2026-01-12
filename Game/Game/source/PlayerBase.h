@@ -2,6 +2,28 @@
 
 #pragma once
 #include "CharaBase.h"
+#include "AttackBase.h"
+
+// 攻撃定数構造体
+struct AttackConstants
+{
+	float ATTACK_OFFSET_SCALE;
+	float COMMON_RADIUS;
+	float COMMON_DELAY;
+	float COMMON_DURATION;
+	float COMMON_RECOVERY;
+	float NORMAL_DAMAGE;
+	float FINISHER_DAMAGE;
+	int MAX_COMBO_COUNT;
+};
+
+// 攻撃設定データ構造体
+struct AttackConfig
+{
+	VECTOR topOffset;
+	VECTOR bottomOffset;
+	float damage;
+};
 
 // 状態列挙型
 enum class PLAYER_STATUS
@@ -53,7 +75,36 @@ public:
 	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }
 	float GetAttackColR(){ return _fAttackColR; }
 
+protected:	// 攻撃関係
 
+	virtual AttackConstants GetAttackConstants() = 0;			// 攻撃定数を取得
+	virtual void GetAttackConfigs(AttackConfig configs[3]) = 0;	// 攻撃設定を取得
+
+	// PlayerBase_Attack.cppで定義
+	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数																				// 攻撃関係Process呼び出し用関数
+	void ProcessAttackColPos();		// コリジョン位置の更新処理
+	void ProcessAttack();			// 攻撃処理
+	void ProcessBranchAttack();		// 攻撃分岐処理
+	void ProcessFirstAttack();		// 第1攻撃処理
+	void ProcessSecondAttack();		// 第2攻撃処理
+	void ProcessThirdAttack();		// 第3攻撃処理
+	void InitializeAttackData();	// 攻撃データ初期化
+	void ReceiveAttackColData();	// 攻撃コリジョンの情報受け取り関数
+	bool CanNextAttack();			// 次の攻撃が可能かチェック
+	bool IsAttacking();				// 攻撃中かチェック
+
+	// 攻撃システム
+	AttackBase _firstAttack;		// 第1攻撃
+	AttackBase _secondAttack;		// 第2攻撃
+	AttackBase _thirdAttack;		// 第3攻撃
+
+private:	// 攻撃関係
+
+	void UpdateAttackColPos(AttackBase& attack, const VECTOR& topOffset, const VECTOR& bottomOffset, const VECTOR& baseOffset);	// 攻撃判定の位置更新処理
+	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, AttackBase& attack);										// 攻撃開始処理
+	void ProcessComboAttack(AttackBase& currentAttack, int nextComboCount, PLAYER_STATUS nextStatus, AttackBase& nextAttack);	// 汎用コンボ攻撃処理
+	void ProcessAttackFinish(AttackBase& attack);																				// 攻撃終了処理
+	void EndAttackSequence();																									// 攻撃課程修了
 
 protected:
 

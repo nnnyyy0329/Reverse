@@ -72,6 +72,10 @@ bool SurfacePlayer::Initialize()
 	_fDirSpeed = 0.0f;
 	_fGravity = GRAVITY;
 
+	// 攻撃システム初期化
+	_bCanCombo = false;
+	_iComboCount = 0;
+
 	// 攻撃データの初期化
 	InitializeAttackData();
 
@@ -112,4 +116,31 @@ bool SurfacePlayer::Render()
 	CallDraw();
 
 	return true;
+}
+
+// 攻撃判定のパラメーター
+AttackConstants SurfacePlayer::GetAttackConstants()
+{
+	// SurfacePlayer専用の攻撃定数
+	AttackConstants constants;
+
+	constants.ATTACK_OFFSET_SCALE = 75.0f;
+	constants.COMMON_RADIUS = 30.0f;
+	constants.COMMON_DELAY = 10.0f;
+	constants.COMMON_DURATION = 15.0f;
+	constants.COMMON_RECOVERY = 20.0f;
+	constants.NORMAL_DAMAGE = 5.0f;
+	constants.FINISHER_DAMAGE = 20.0f;
+	constants.MAX_COMBO_COUNT = 3;
+
+	return constants;
+}
+
+// 攻撃判定の大きさ設定
+void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
+{
+	// SurfacePlayer専用の攻撃設定
+	configs[0] = { {0.0f, 100.0f, 50.0f}, {0.0f, 50.0f, 50.0f}, 5.0f };		// 第1攻撃
+	configs[1] = { {0.0f, 250.0f, 50.0f}, {0.0f, 150.0f, 50.0f}, 5.0f };	// 第2攻撃
+	configs[2] = { {0.0f, 200.0f, 50.0f}, {0.0f, 0.0f, 50.0f}, 20.0f };		// 第3攻撃
 }

@@ -21,13 +21,15 @@ bool ModeGame::Initialize()
 	_playerManager->Initialize();
 
 	// ÉvÉåÉCÉÑÅ[ÇÃçÏê¨Ç∆ìoò^
-	auto surfacePlayer = std::make_shared<SurfacePlayer>();
-	surfacePlayer->Initialize();
-	_playerManager->RegisterPlayer(PLAYER_TYPE::SURFACE, surfacePlayer);
+	{
+		auto surfacePlayer = std::make_shared<SurfacePlayer>();
+		surfacePlayer->Initialize();
+		_playerManager->RegisterPlayer(PLAYER_TYPE::SURFACE, surfacePlayer);
 
-	auto interiorPlayer = std::make_shared<InteriorPlayer>();
-	interiorPlayer->Initialize();
-	_playerManager->RegisterPlayer(PLAYER_TYPE::INTERIOR, interiorPlayer);
+		auto interiorPlayer = std::make_shared<InteriorPlayer>();
+		interiorPlayer->Initialize();
+		_playerManager->RegisterPlayer(PLAYER_TYPE::INTERIOR, interiorPlayer);
+	}
 
 	// Ç¢Ç¡ÇΩÇÒÇ±ÇÍ
 	_stage = std::make_shared<StageBase>();

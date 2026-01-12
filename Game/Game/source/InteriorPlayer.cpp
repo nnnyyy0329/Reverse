@@ -68,6 +68,13 @@ bool InteriorPlayer::Initialize()
 	_fDirSpeed = 0.0f;
 	_fGravity = GRAVITY;
 
+	// 攻撃システム初期化
+	_bCanCombo = false;
+	_iComboCount = 0;
+
+	// 攻撃データの初期化を追加
+	InitializeAttackData();
+
 	return true;
 }
 
@@ -105,4 +112,31 @@ bool InteriorPlayer::Render()
 	CallDraw();
 
 	return true;
+}
+
+// 攻撃判定のパラメーター
+AttackConstants InteriorPlayer::GetAttackConstants()
+{
+	// SurfacePlayer専用の攻撃定数
+	AttackConstants constants;
+
+	constants.ATTACK_OFFSET_SCALE = 60.0f;	
+	constants.COMMON_RADIUS = 25.0f;		
+	constants.COMMON_DELAY = 8.0f;			  
+	constants.COMMON_DURATION = 12.0f;		
+	constants.COMMON_RECOVERY = 18.0f;		
+	constants.NORMAL_DAMAGE = 4.0f;			
+	constants.FINISHER_DAMAGE = 15.0f;		
+	constants.MAX_COMBO_COUNT = 4;			
+
+	return constants;
+}
+
+// 攻撃判定の大きさ設定
+void InteriorPlayer::GetAttackConfigs(AttackConfig configs[3])
+{
+	// SurfacePlayer専用の攻撃設定
+	configs[0] = {{0.0f, 80.0f, 40.0f}, {0.0f, 120.0f, 40.0f}, 4.0f};	// 第1攻撃
+	configs[1] = {{0.0f, 20.0f, 30.0f}, {0.0f, 100.0f, 30.0f}, 4.0f};	// 第2攻撃
+	configs[2] = {{0.0f, 150.0f, 35.0f}, {0.0f, 80.0f, 35.0f}, 15.0f};	// 第3攻撃
 }

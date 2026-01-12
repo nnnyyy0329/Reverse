@@ -156,18 +156,17 @@
     <ClCompile Include="source\EnemyBase.cpp" />
     <ClCompile Include="source\GameObjectBase.cpp" />
     <ClCompile Include="source\InteriorPlayer.cpp" />
-    <ClCompile Include="source\InteriorPlayer_Attack.cpp" />
     <ClCompile Include="source\InteriorPlayer_Draw.cpp" />
     <ClCompile Include="source\InteriorPlayer_Move.cpp" />
     <ClCompile Include="source\ModeGame.cpp" />
     <ClCompile Include="source\PlayerAbilityBase.cpp" />
     <ClCompile Include="source\PlayerAbilityManager.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
+    <ClCompile Include="source\PlayerBase_Attack.cpp" />
     <ClCompile Include="source\PlayerManager.cpp" />
     <ClCompile Include="source\StageBase.cpp" />
     <ClCompile Include="source\StealthEnemy.cpp" />
     <ClCompile Include="source\SurfacePlayer.cpp" />
-    <ClCompile Include="source\SurfacePlayer_Attack.cpp" />
     <ClCompile Include="source\SurfacePlayer_Draw.cpp" />
     <ClCompile Include="source\SurfacePlayer_Move.cpp" />
   </ItemGroup>

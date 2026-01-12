@@ -94,9 +94,6 @@
     <ClCompile Include="source\PlayerAbilityManager.cpp">
       <Filter>Game\PlayerAbility</Filter>
     </ClCompile>
-    <ClCompile Include="source\SurfacePlayer_Attack.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer</Filter>
-    </ClCompile>
     <ClCompile Include="source\AttackBase.cpp">
       <Filter>Game\Attack</Filter>
     </ClCompile>
@@ -106,10 +103,10 @@
     <ClCompile Include="source\InteriorPlayer_Draw.cpp">
       <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
     </ClCompile>
-    <ClCompile Include="source\InteriorPlayer_Attack.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
-    </ClCompile>
     <ClCompile Include="source\PlayerManager.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase_Attack.cpp">
       <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
     </ClCompile>
   </ItemGroup>
