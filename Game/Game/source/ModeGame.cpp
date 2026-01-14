@@ -1,12 +1,14 @@
 #include "AppFrame.h"
 #include "ApplicationMain.h"
 #include "ModeGame.h"
+#include "ModeMenu.h"
 
 #include "CharaBase.h"
 #include "StageBase.h"
 #include "Enemy.h"
 #include "CameraManager.h"
 #include "SurfacePlayer.h"
+#include "DebugCamera.h"
 
 bool ModeGame::Initialize() 
 {
@@ -17,10 +19,12 @@ bool ModeGame::Initialize()
 		_player = std::make_shared<SurfacePlayer>();
 		_player->Initialize();
 
-		_stage = std::make_shared<StageBase>(3);
+		_stage = std::make_shared<StageBase>(1);
 
 		_cameraManager = std::make_shared<CameraManager>();
 		_cameraManager->SetTarget(_player);
+
+		_debugCamera = std::make_shared<DebugCamera>();
 
 		// 敵にターゲットのプレイヤーを設定
 		for (const auto& enemy : _stage->GetEnemies()) {
@@ -36,6 +40,7 @@ bool ModeGame::Terminate()
 	base::Terminate();
 
 	_player.reset();
+	_debugCamera.reset();
 
 	return true;
 }
@@ -64,6 +69,14 @@ bool ModeGame::Process()
 		{
 			_cameraManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
 		}
+	}
+
+	// spaceキーでメニューを開く
+	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10) {
+		ModeMenu* modeMenu = new ModeMenu();
+		modeMenu->SetDebugCamera(_debugCamera);// デバッグカメラを渡す
+		// ModeGameより上のレイヤーにメニューを登録する
+		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 	}
 
 	// オブジェクトの更新
@@ -108,7 +121,17 @@ bool ModeGame::Render()
 #endif
 	}
 
-	_cameraManager->SetUp();// カメラ設定更新
+	// カメラ設定
+	{
+		// メニューが開いていて、デバッグカメラが使われているなら
+		auto* menu = dynamic_cast<ModeMenu*>(ModeServer::GetInstance()->Get("menu"));
+		if (menu && menu->IsUseDebugCamera() && _debugCamera) {
+			_debugCamera->SetUp();// デバッグカメラ設定更新
+		}
+		else {
+			_cameraManager->SetUp();// カメラ設定更新
+		}
+	}
 	
 	// オブジェクトの描画
 	{
@@ -120,6 +143,7 @@ bool ModeGame::Render()
 	{
 		//_player->DebugRender();
 		_stage->DebugRender();
+		_debugCamera->DebugRender();
 	}
 
 	return true;

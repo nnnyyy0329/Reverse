@@ -13,9 +13,9 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 
 		switch (_stageNum) {// ステージ番号で読み込むファイルを分ける
 		case 1:
-			// ブロック
-			path = "res/try/";
-			jsonFile = "try.json";
+			// jsonお試し
+			path = "res/try2/";
+			jsonFile = "protostage.json";
 			jsonObjName = "Playground";
 			break;
 		case 2:
@@ -97,10 +97,10 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 	// jsonファイルの読み込み(敵)
 	{
 		_stageEnemies.push_back(
-			EnemyFactory::CreateEnemy(EnemyType::MELEE, VGet(250.0f, 57.0f, 1060.0f))// テストで調整
+			EnemyFactory::CreateEnemy(EnemyType::MELEE, VGet(250.0f, 0.0f, 1060.0f))// テストで調整
 		);
 		_stageEnemies.push_back(
-			EnemyFactory::CreateEnemy(EnemyType::RANGED, VGet(-200.0f, 57.0f, 900.0f))// テストで調整
+			EnemyFactory::CreateEnemy(EnemyType::RANGED, VGet(-200.0f, 0.0f, 900.0f))// テストで調整
 		);
 	}
 }
@@ -128,8 +128,8 @@ void StageBase::Render()
 	// マップモデルの描画
 	{
 		for (auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) {
-			//MV1DrawFrame(ite->modelHandle, ite->drawFrame);
-			MV1DrawFrame(ite->modelHandle, ite->collisionFrame);// コリジョンフレームの描画
+			MV1DrawFrame(ite->modelHandle, ite->drawFrame);
+			//MV1DrawFrame(ite->modelHandle, ite->collisionFrame);// コリジョンフレームの描画
 		}
 	}
 

@@ -102,7 +102,7 @@ bool SurfacePlayer::Render()
 	// モデル表示
 	DrawModel();
 
-	// デバッグ用
+	//// デバッグ用
 	//DrawDebug();
 
 	// デバッグ用コリジョン表示

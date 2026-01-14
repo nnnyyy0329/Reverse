@@ -167,21 +167,28 @@ void Enemy::DebugRender() {
 
 	// デバッグ文字列の描画
 	{
-		VECTOR vScreenPos = ConvWorldPosToScreenPos(VAdd(_vPos, VGet(0, 150.0f, 0)));// 画面座標に変換(少し上に調整)
-		int x = static_cast<int>(vScreenPos.x);
-		int y = static_cast<int>(vScreenPos.y);
-		int size = 16;// 改行用
-		SetFontSize(size);
-		DrawFormatString(x, y, GetColor(255, 255, 0), "Enemy:"); y += size;
-		DrawFormatString(x, y, GetColor(255, 255, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
+		// 敵を箱型と定義して、カメラに映っているか判定
+		// 中心から半径と高さ分の範囲
+		VECTOR vMin = VAdd(_vPos, VGet(-_fCollisionR, 0.0f, -_fCollisionR));
+		VECTOR vMax = VAdd(_vPos, VGet(_fCollisionR, _fCollisionHeight, _fCollisionR));
 
-		// 状態名
-		// ステートから名前を取得
-		const char* stateName = "None";
-		if (_currentState) {
-			stateName = _currentState->GetName();
+		// CheckCameraViewClip_Box：カメラの視界外ならTRUEを返す
+		if (CheckCameraViewClip_Box(vMin, vMax) == FALSE) {// 映っている時だけ
+			VECTOR vScreenPos = ConvWorldPosToScreenPos(VAdd(_vPos, VGet(0, 150.0f, 0)));// 画面座標に変換(少し上に調整)
+			int x = static_cast<int>(vScreenPos.x);
+			int y = static_cast<int>(vScreenPos.y);
+			int size = 16;// 改行用
+			SetFontSize(size);
+			DrawFormatString(x, y, GetColor(255, 255, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
+
+			// 状態名
+			// ステートから名前を取得
+			const char* stateName = "None";
+			if (_currentState) {
+				stateName = _currentState->GetName();
+			}
+			DrawFormatString(x, y, GetColor(255, 255, 0), "  state  = %s", stateName); y += size;
 		}
-		DrawFormatString(x, y, GetColor(255, 255, 0), "  state  = %s", stateName); y += size;
 	}
 }
 

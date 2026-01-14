@@ -6,6 +6,7 @@ class CharaBase;
 class PlayerBase;
 class StageBase;
 class CameraManager;
+class DebugCamera;
 
 // モード
 class ModeGame : public ModeBase
@@ -25,4 +26,5 @@ protected:
 	std::shared_ptr<PlayerBase> _player;// プレイヤー
 	std::shared_ptr<StageBase> _stage;// ステージ
 	std::shared_ptr<CameraManager> _cameraManager;// カメラマネージャー
+	std::shared_ptr<DebugCamera> _debugCamera;// デバッグカメラ
 };
