@@ -1,7 +1,10 @@
 #pragma once
 #include "CharaBase.h"
 #include "EnemyState.h"
+
 #include <memory>
+
+class Bullet;
 
 class Enemy : public CharaBase
 {
@@ -31,6 +34,8 @@ public:
 	std::shared_ptr<CharaBase> GetTarget() const { return _targetPlayer; }
 	void SetTarget(std::shared_ptr<CharaBase> target) { _targetPlayer = target; }
 
+	void SpawnBullet(VECTOR vStartPos, VECTOR vDir);// ”­Ëˆ—
+
 protected:
 
 	VECTOR _vHomePos;// “G‚Ì‰ŠúˆÊ’u
@@ -39,5 +44,7 @@ protected:
 
 	std::shared_ptr<EnemyState> _currentState;
 	EnemyParam _enemyParam;
+
+	std::vector<std::shared_ptr<Bullet>> _bullets;// ”­Ë‚·‚é’e‚ÌƒŠƒXƒg
 };
 

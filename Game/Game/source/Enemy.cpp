@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Bullet.h"
 
 namespace {
 	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
@@ -63,6 +64,16 @@ bool Enemy::Process() {
 	_vCollisionBottom = VAdd(_vPos, VGet(0, _fCollisionR, 0));// 半径分ずらして中心位置に
 	_vCollisionTop = VAdd(_vPos, VGet(0, _fCollisionHeight - _fCollisionR, 0));// 高さ分ずらす
 
+	// 弾の更新
+	for (auto ite = _bullets.begin(); ite != _bullets.end(); ) {
+		if (!(*ite)->Process()) {// falseなら寿命切れ
+			ite = _bullets.erase(ite);
+		}
+		else {
+			++ite;
+		}
+	}
+
 	return true;
 }
 
@@ -92,6 +103,11 @@ bool Enemy::Render() {
 
 	// モデルの描画
 	MV1DrawModel(_iHandle);
+
+	// 弾の描画
+	for (const auto& bullet : _bullets) {
+		bullet->Render();
+	}
 
 	return true;
 }
@@ -239,4 +255,15 @@ void Enemy::SetEnemyParam(const EnemyParam& param) {
 	// 視界のcos値を計算して設定
 	auto rad = _enemyParam.visionAngle * DEGREE_TO_RADIAN;
 	_enemyParam.visionCos = cosf(rad);
+}
+
+void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir) {
+	// 弾の生成
+	auto newBullet = std::make_shared<Bullet>();
+
+	// 発射設定(位置、向き、速度、寿命)
+	newBullet->Activate(vStartPos, vDir, 10.0f, 300);
+
+	// リストに追加
+	_bullets.push_back(newBullet);
 }

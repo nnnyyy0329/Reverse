@@ -4,9 +4,6 @@
     <Filter Include="Game">
       <UniqueIdentifier>{7e567ef0-407c-44e6-8977-ab420d28f6a5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Gamemain">
-      <UniqueIdentifier>{52a7dade-3a1c-4d1e-b99a-499473420d5c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\ObjectBase">
       <UniqueIdentifier>{d81b0c46-0a46-4e7e-8a8c-463266dfab16}</UniqueIdentifier>
     </Filter>
@@ -39,6 +36,9 @@
     </Filter>
     <Filter Include="Game\Attack">
       <UniqueIdentifier>{6748d8e2-e201-4466-a052-98f1eae00f2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Mode">
+      <UniqueIdentifier>{52a7dade-3a1c-4d1e-b99a-499473420d5c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -100,8 +100,13 @@
     <ClCompile Include="source\StateRanged.cpp">
       <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="source\ModeMenu.cpp" />
-    <ClCompile Include="source\DebugCamera.cpp" />
+    <ClCompile Include="source\ModeMenu.cpp">
+      <Filter>Game\Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DebugCamera.cpp">
+      <Filter>Game\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Bullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Enemy.h">
@@ -160,7 +165,12 @@
       <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="source\MenuItemBase.h" />
-    <ClInclude Include="source\ModeMenu.h" />
-    <ClInclude Include="source\DebugCamera.h" />
+    <ClInclude Include="source\ModeMenu.h">
+      <Filter>Game\Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DebugCamera.h">
+      <Filter>Game\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Bullet.h" />
   </ItemGroup>
 </Project>

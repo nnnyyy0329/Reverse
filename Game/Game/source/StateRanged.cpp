@@ -191,6 +191,14 @@ namespace Ranged
 	}
 
 	void Attack::Shoot(Enemy* owner) {
-		// ‰¼
+		// ”­ŽËˆÊ’u‚ÌŒvŽZ
+		VECTOR vMuzzlePos = VAdd(
+			owner->GetPos(),
+			VScale(owner->GetDir(), 20.0f)// ­‚µ‘O•û‚É‚¸‚ç‚·
+		);
+		vMuzzlePos.y += 40.0f;// ‚‚³‚ð‡‚í‚¹‚é
+
+		// ’e‚ð¶¬
+		owner->SpawnBullet(vMuzzlePos, owner->GetDir());
 	}
 }
