@@ -42,7 +42,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\EnemyBase.cpp">
+    <ClCompile Include="source\Enemy.cpp">
       <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerBase.cpp">
@@ -94,9 +94,11 @@
     <ClCompile Include="source\AttackBase.cpp">
       <Filter>Game\Attack</Filter>
     </ClCompile>
+    <ClCompile Include="source\StateMelee.cpp" />
+    <ClCompile Include="source\StateRanged.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\EnemyBase.h">
+    <ClInclude Include="source\Enemy.h">
       <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerBase.h">
@@ -138,6 +140,14 @@
     </ClInclude>
     <ClInclude Include="source\AttackBase.h">
       <Filter>Game\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnemyState.h">
+      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateMelee.h" />
+    <ClInclude Include="source\StateRanged.h" />
+    <ClInclude Include="source\EnemyFactory.h">
+      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

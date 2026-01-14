@@ -1,5 +1,6 @@
 #include "StageBase.h"
-#include "EnemyBase.h"
+#include "Enemy.h"
+#include "EnemyFactory.h"
 
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -95,8 +96,12 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 
 	// jsonファイルの読み込み(敵)
 	{
-		std::shared_ptr<EnemyBase> enTest = std::make_shared<EnemyBase>();
-		_stageEnemies.push_back(enTest);
+		_stageEnemies.push_back(
+			EnemyFactory::CreateEnemy(EnemyType::MELEE, VGet(250.0f, 57.0f, 1060.0f))// テストで調整
+		);
+		_stageEnemies.push_back(
+			EnemyFactory::CreateEnemy(EnemyType::RANGED, VGet(-200.0f, 57.0f, 900.0f))// テストで調整
+		);
 	}
 }
 

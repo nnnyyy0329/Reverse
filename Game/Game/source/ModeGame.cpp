@@ -4,7 +4,7 @@
 
 #include "CharaBase.h"
 #include "StageBase.h"
-#include "EnemyBase.h"
+#include "Enemy.h"
 #include "CameraManager.h"
 #include "SurfacePlayer.h"
 
@@ -21,6 +21,11 @@ bool ModeGame::Initialize()
 
 		_cameraManager = std::make_shared<CameraManager>();
 		_cameraManager->SetTarget(_player);
+
+		// 敵にターゲットのプレイヤーを設定
+		for (const auto& enemy : _stage->GetEnemies()) {
+			enemy->SetTarget(_player);
+		}
 	}
 
 	return true;
@@ -71,12 +76,9 @@ bool ModeGame::Process()
 	{
 		//CheckCollisionCharaMap(_player);
 		for (const auto& enemy : _stage->GetEnemies()) {
-			CheckCollisionCharaMap(enemy);
+			//CheckCollisionCharaMap(enemy);
 		}
 	}
-
-	// 敵の視界判定
-	CheckEnemiesVision();
 
 	_cameraManager->Process();// カメラ更新
 
@@ -199,31 +201,5 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
 		// 地面が見つからなかった
 		// 元の座標に戻す
 		chara->SetPos(vOldPos);
-	}
-}
-
-// 敵の視界判定
-void ModeGame::CheckEnemiesVision() {
-	auto enemies = _stage->GetEnemies();// ステージの敵リストを取得
-
-	for (auto enemy : enemies) {
-		if (!enemy) continue;
-
-		// 距離チェック
-		auto dist = VSize(VSub(_player->GetPos(), enemy->GetPos()));// プレイヤーと敵の距離
-		if (dist > enemy->GetVisionRange()) continue;// 索敵距離外ならスキップ
-
-		// 視界角度チェック
-		VECTOR vToPlayer = VNorm(VSub(_player->GetPos(), enemy->GetPos()));// 敵からのプレイヤーへの単位ベクトル
-		auto dot = VDot(enemy->GetDir(), vToPlayer);// 敵の向きベクトルとの内積を計算
-		// 内積がcos以上なら視界角度内にいる
-		if (dot < enemy->GetVisionCosAngle()) {
-			continue;// 視界角度の外にいる
-		}
-
-		// 障害物チェック(実装予定)
-
-		// ここまで来たらプレイヤーを発見している
-		enemy->OnDetectPlayer(_player);// 追跡対象を設定
 	}
 }
