@@ -34,16 +34,15 @@ bool ModeGame::Initialize()
 	}
 
 	// いったんこれ
-	_stage = std::make_shared<StageBase>();
+	_stage = std::make_shared<StageBase>(1);
 	_cameraManager = std::make_shared<CameraManager>();
 	_cameraManager->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
 
-		_debugCamera = std::make_shared<DebugCamera>();
+	_debugCamera = std::make_shared<DebugCamera>();
 
-		// 敵にターゲットのプレイヤーを設定
-		for (const auto& enemy : _stage->GetEnemies()) {
-			enemy->SetTarget(_player);
-		}
+	// 敵にターゲットのプレイヤーを設定
+	for (const auto& enemy : _stage->GetEnemies()) {
+		enemy->SetTarget(_playerManager->GetActivePlayerShared());
 	}
 
 	return true;
@@ -98,7 +97,7 @@ bool ModeGame::Process()
 
 	// オブジェクトの更新
 	{
-		_player->Process();
+		_playerManager->Process();
 		_stage->Process();
 	}
 
@@ -110,14 +109,14 @@ bool ModeGame::Process()
 		}
 	}
 
-	_cameraManager->Process();// カメラ更新
 	// いったん
 	std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
 	_cameraManager->SetTarget(activePlayer);	// 毎フレームプレイヤーにカメラを合わせる
+	// 敵にターゲットのプレイヤーを設定
+	for (const auto& enemy : _stage->GetEnemies()) {
+		enemy->SetTarget(activePlayer);
+	}
 
-
-	_playerManager->Process();
-	_stage->Process();
 	_cameraManager->Process();
 
 	return true;
@@ -162,7 +161,7 @@ bool ModeGame::Render()
 	
 	// オブジェクトの描画
 	{
-		_player->Render();
+		_playerManager->Render();
 		_stage->Render();
 	}
 
@@ -172,11 +171,6 @@ bool ModeGame::Render()
 		_stage->DebugRender();
 		_debugCamera->DebugRender();
 	}
-	// いったんこれ
-	_cameraManager->SetUp();
-
-	_stage->Render();
-	_playerManager->Render();
 
 	return true;
 }

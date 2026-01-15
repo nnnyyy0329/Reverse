@@ -145,7 +145,7 @@ void PlayerManager::TransferPlayerState(PlayerBase* from, PlayerBase* to)
 
 	// 位置と向きの引き継ぎ
 	to->SetPos(from->GetPos());
-	to->SetRad(from->GetRad());
+	to->SetDir(from->GetDir());
 
 	// ステータスの引き継ぎ
 	to->SetLife(from->GetLife());
