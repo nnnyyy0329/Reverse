@@ -10,14 +10,17 @@
     <Filter Include="App">
       <UniqueIdentifier>{b2153cf9-c23c-45c9-9b1d-929fe1d90b7c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="math">
-      <UniqueIdentifier>{e5016951-0486-4249-8d7e-240d0362dfdd}</UniqueIdentifier>
+    <Filter Include="naritaAppFrame">
+      <UniqueIdentifier>{434f42ab-6b92-47d1-9da3-216c450887b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Manager">
+    <Filter Include="naritaAppFrame\Manager">
       <UniqueIdentifier>{63e6ccdf-544b-439b-806d-1e932e23f655}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Manager\Component">
+    <Filter Include="naritaAppFrame\Manager\Component">
       <UniqueIdentifier>{e2d5dff1-1578-4f71-ad91-6fe0837b0092}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="naritaAppFrame\math">
+      <UniqueIdentifier>{e5016951-0486-4249-8d7e-240d0362dfdd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -37,7 +40,7 @@
       <Filter>App</Filter>
     </ClCompile>
     <ClCompile Include="source\math\mymath.cpp">
-      <Filter>math</Filter>
+      <Filter>naritaAppFrame\math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -57,11 +60,11 @@
       <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="source\math\mymath.h">
-      <Filter>math</Filter>
+      <Filter>naritaAppFrame\math</Filter>
     </ClInclude>
     <ClInclude Include="source\memo.h" />
     <ClInclude Include="source\Manager\ComponentManager.h">
-      <Filter>Manager\Component</Filter>
+      <Filter>naritaAppFrame\Manager\Component</Filter>
     </ClInclude>
     <ClInclude Include="source\appframe.h" />
   </ItemGroup>
