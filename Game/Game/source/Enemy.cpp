@@ -262,7 +262,7 @@ void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir) {
 	auto newBullet = std::make_shared<Bullet>();
 
 	// 発射設定(位置、向き、速度、寿命)
-	newBullet->Activate(vStartPos, vDir, 10.0f, 300);
+	newBullet->Activate(vStartPos, vDir, 20.0f, 300);
 
 	// リストに追加
 	_bullets.push_back(newBullet);

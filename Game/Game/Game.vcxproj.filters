@@ -88,11 +88,20 @@
     <ClCompile Include="source\PlayerAbilityManager.cpp">
       <Filter>Game\PlayerAbility</Filter>
     </ClCompile>
-    <ClCompile Include="source\SurfacePlayer_Attack.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer</Filter>
-    </ClCompile>
     <ClCompile Include="source\AttackBase.cpp">
       <Filter>Game\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InteriorPlayer_Move.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InteriorPlayer_Draw.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerManager.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase_Attack.cpp">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
     </ClCompile>
     <ClCompile Include="source\StateMelee.cpp">
       <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
@@ -151,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="source\AttackBase.h">
       <Filter>Game\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerManager.h">
+      <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
     </ClInclude>
     <ClInclude Include="source\EnemyState.h">
       <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>

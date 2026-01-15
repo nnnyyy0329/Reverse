@@ -1,10 +1,10 @@
 // 担当 : 成田
 
-#include "SurfacePlayer.h"
+#include "InteriorPlayer.h"
 #include "ApplicationMain.h"
 
 // アクション関係Process呼び出し用関数
-void SurfacePlayer::CallProcess()
+void InteriorPlayer::CallProcess()
 {
 	// プレイヤー移動処理
 	ProcessMovePlayer();
@@ -26,7 +26,7 @@ void SurfacePlayer::CallProcess()
 }
 
 // プレイヤー移動処理
-void SurfacePlayer::ProcessMovePlayer()
+void InteriorPlayer::ProcessMovePlayer()
 {
 	// 移動方向を決める
 	_vMove = { 0,0,0 };
@@ -68,7 +68,7 @@ void SurfacePlayer::ProcessMovePlayer()
 }
 
 // ステータスに応じたアニメーション処理
-void SurfacePlayer::ProcessStatusAnimation()
+void InteriorPlayer::ProcessStatusAnimation()
 {
 	// 処理前のステータスを保存しておく
 	_eOldPlayerStatus = _ePlayerStatus;
@@ -130,7 +130,7 @@ void SurfacePlayer::ProcessStatusAnimation()
 }
 
 // アニメーション再生処理
-void SurfacePlayer::ProcessPlayAnimation()
+void InteriorPlayer::ProcessPlayAnimation()
 {
 	// ステータスが変わっていないか？
 	if(_eOldPlayerStatus == _ePlayerStatus)
@@ -214,8 +214,8 @@ void SurfacePlayer::ProcessPlayAnimation()
 		if(_iAttachIndex != -1)
 		{
 			_fTotalTime = MV1GetAttachAnimTotalTime(_iHandle, _iAttachIndex);
-		}		
-		
+		}
+
 		_fPlayTime = 0.0f;
 	}
 
@@ -227,7 +227,7 @@ void SurfacePlayer::ProcessPlayAnimation()
 }
 
 // 着地処理
-void SurfacePlayer::ProcessStanding()
+void InteriorPlayer::ProcessStanding()
 {
 	// 重力を加算する
 	if(!_bIsStanding)
@@ -252,7 +252,7 @@ void SurfacePlayer::ProcessStanding()
 }
 
 // ジャンプ処理
-void SurfacePlayer::ProcessJump()
+void InteriorPlayer::ProcessJump()
 {
 	// しゃがみ中はジャンプできない
 	if(_bIsCrouching){ return; }
@@ -275,7 +275,7 @@ void SurfacePlayer::ProcessJump()
 }
 
 // しゃがみ処理
-void SurfacePlayer::ProcessCrouch()
+void InteriorPlayer::ProcessCrouch()
 {
 	// 空中ではしゃがめない
 	if(_bIsStanding == false){ return; }
@@ -305,7 +305,7 @@ void SurfacePlayer::ProcessCrouch()
 }
 
 // 死亡処理
-void SurfacePlayer::ProcessDeath()
+void InteriorPlayer::ProcessDeath()
 {
 	// 体力が0以下ならステータスを死亡に変更
 	if(_fLife <= 0){ _ePlayerStatus = PLAYER_STATUS::DEATH; }
@@ -319,7 +319,7 @@ void SurfacePlayer::ProcessDeath()
 }
 
 // デバッグ用関数
-void SurfacePlayer::ProcessDebug()
+void InteriorPlayer::ProcessDebug()
 {
 	// 体力減少
 	{

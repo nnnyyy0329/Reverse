@@ -4,6 +4,7 @@
 //いったんこれ
 class CharaBase;
 class PlayerBase;
+class PlayerManager;
 class StageBase;
 class CameraManager;
 class DebugCamera;
@@ -20,6 +21,13 @@ public:
 
 protected:
 	void CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara);// キャラとマップの当たり判定
+
+	//いったんこれ
+	//std::shared_ptr<PlayerBase> _surfacePlayer;
+	//std::shared_ptr<PlayerBase> _interiorPlayer;
+
+	// プレイヤー管理をPlayerManagerに委譲
+	std::shared_ptr<PlayerManager> _playerManager;
 
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される

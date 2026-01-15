@@ -26,6 +26,7 @@ struct ATTACK_COLLISION
 	float damage;			// ダメージ量
 	float currentTime;		// 現在の経過時間
 	bool isActive;			// 現在アクティブかどうか
+	bool isHit;				// ヒットしたかどうか
 };
 
 // 攻撃の状態を管理
@@ -63,7 +64,8 @@ public:
 		float delay, 
 		float duration, 
 		float recovery, 
-		float damage
+		float damage,
+		bool hit
 	);
 
 	// 円形攻撃データ設定
@@ -75,7 +77,8 @@ public:
 		float delay,
 		float duration,
 		float recovery,
-		float damage
+		float damage,
+		bool hit
 	);
 
 	// 球攻撃データ設定
@@ -86,7 +89,8 @@ public:
 		float delay,
 		float duration,
 		float recovery,
-		float damage
+		float damage,
+		bool hit
 	);
 
 	void DrawAttackCollision();	// 攻撃コリジョン表示
@@ -95,6 +99,9 @@ public:
 	COLLISION_TYPE GetCollisionType() const { return _eColType; }
 	ATTACK_COLLISION GetAttackCollision() const { return _stcAttackCol; }
 	ATTACK_STATE GetAttackState() const { return _eAttackState; }
+
+	bool GetHitFlag() const { return _stcAttackCol.isHit; }
+	void SetHitFlag(bool hit) { _stcAttackCol.isHit = hit; }
 
 protected:
 	// 攻撃コリジョン関係

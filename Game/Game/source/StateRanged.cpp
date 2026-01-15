@@ -90,7 +90,7 @@ namespace Ranged
 		_shotTimer++;
 
 		auto interval = owner->GetEnemyParam().attackInterval;// 攻撃間隔
-		auto lockTime = 45.0f;// 発射の何フレーム前になったら向きを固定するか
+		auto lockTime = 10.0f;// 発射の何フレーム前になったら向きを固定するか
 		auto moveBackRange = owner->GetEnemyParam().attackRange;// これより近づいたら後退する
 		auto moveSpeed = owner->GetEnemyParam().moveSpeed;// 後退速度
 
@@ -98,6 +98,8 @@ namespace Ranged
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
 		auto dist = VSize(vToTarget);// ターゲットまでの距離
 		VECTOR vDirToTarget = VNorm(vToTarget);// ターゲット方向(正規化)
+		VECTOR vDir = owner->GetDir();
+		auto dot = VDot(vDir, vDirToTarget);// 内積
 
 		// 向きの制御
 		{
@@ -137,8 +139,8 @@ namespace Ranged
 		{
 			VECTOR vMove = VGet(0.0f, 0.0f, 0.0f);
 
-			// 近づかれたら後退する
-			if (dist < moveBackRange) {
+			// 距離が近い　かつ　プレイヤーの正面を向いている(45度)
+			if (dist < moveBackRange && dot > 0.7f) {
 				// 移動用にY成分を抜いたベクトルを作る
 				VECTOR vToTargetXZ = vToTarget;
 				vToTargetXZ.y = 0.0f;// 高さは無視する
@@ -156,6 +158,12 @@ namespace Ranged
 			owner->SetMove(vMove);// 移動量を更新
 		}
 
+		// 発射判定
+		if (_shotTimer >= interval && dot > 0.9f) {
+			Shoot(owner);// 発射
+			_shotTimer = 0.0f;// タイマーリセット
+		}
+
 		// 視界外チェック
 		{
 			// 距離が離れすぎたら待機状態へ
@@ -163,28 +171,16 @@ namespace Ranged
 			bool bIsOutRange = (dist > owner->GetEnemyParam().visionRange * 1.2f);// 少し余裕を持たせる
 
 			// 角度チェック
-			VECTOR vDir = owner->GetDir();
-			auto dot = VDot(vDir, vDirToTarget);// 内積
 			auto limitCos = owner->GetEnemyParam().visionCos;// 視界のcos値
-
-			// 後退中かどうか
-			bool bIsTooClose = (dist < moveBackRange);
 
 			// 内積がlimitCos未満なら扇の外
 			bool bIsOutAngle = (dot < limitCos);
 
 			// 離れすぎor視界外なら待機状態へ
-			// 近すぎる場合は視界外でも後退を優先
-			if (bIsOutRange || (bIsOutAngle && !bIsTooClose)) {
+			if (bIsOutRange || bIsOutAngle) {
 				owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// 念のため停止
 				return std::make_shared<Idle>();// 待機状態へ
 			}
-		}
-
-		// 発射判定
-		if(_shotTimer >= interval) {
-			Shoot(owner);// 発射
-			_shotTimer = 0.0f;// タイマーリセット
 		}
 
 		return nullptr;

@@ -4,13 +4,14 @@
 
 PlayerAbilityManager::PlayerAbilityManager()
 {
-
+	_ability = nullptr;
+	_playerBase = nullptr;
 }
 
 PlayerAbilityManager::~PlayerAbilityManager()
 {
 	// すべての能力を削除
-	_abilities.clear();
+	_ability.reset();
 }
 
 bool PlayerAbilityManager::Initialize()
@@ -28,47 +29,47 @@ bool PlayerAbilityManager::Process()
 	return true;
 }
 
-// 能力追加関数
-bool PlayerAbilityManager::AddAbility(std::unique_ptr<PlayerAbilityBase> ability)
+// 能力設定関数
+bool PlayerAbilityManager::SetAbility(std::unique_ptr<PlayerAbilityBase> ability)
 {
 	if(!ability){ return false; }
 
-	ABILITY_TYPE type = ability->GetAbilityType();
-
-	// 既に同じタイプの能力が存在するかチェック
-	if(HasAbility(type)){ return false; }
-
-	// 能力マップに追加
-	_abilities[type] = std::move(ability);
+	// 既存のアビリティがあれば自動的に削除され、新しいアビリティに置換
+	_ability = std::move(ability);
 
 	return true;
 }
 
 // 能力削除
-bool PlayerAbilityManager::RemoveAbility(ABILITY_TYPE type)
+bool PlayerAbilityManager::RemoveAbility()
 {
-	auto ability = _abilities.find(type);
-	if(ability == _abilities.end()){ return false; }	// 存在しない
+	if(!_ability){ return false; }
 
-	// マップから削除
-	_abilities.erase(ability);
+	// アビリティを削除
+	_ability.reset();
 
 	return true;
 }
 
 // 能力チェック関数
-bool PlayerAbilityManager::HasAbility(ABILITY_TYPE type) const
+bool PlayerAbilityManager::HasAbility() const
 {
-	return _abilities.find(type) != _abilities.end();
+	return _ability != nullptr;
 }
 
 // 能力取得
-PlayerAbilityBase* PlayerAbilityManager::GetAbility(ABILITY_TYPE type) const
+PlayerAbilityBase* PlayerAbilityManager::GetAbility() const
 {
-	auto ability = _abilities.find(type);
-	if(ability != _abilities.end())
+	return _ability.get();
+}
+
+// 能力タイプ取得
+ABILITY_TYPE PlayerAbilityManager::GetAbilityType() const
+{
+	if(_ability)
 	{
-		return ability->second.get();	// アビリティ取得
+		return _ability->GetAbilityType();
 	}
-	return nullptr;
+
+	return ABILITY_TYPE::NONE;
 }

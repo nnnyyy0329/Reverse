@@ -14,6 +14,7 @@ AttackBase::AttackBase()
     _stcAttackCol.damage = 0.0f;
     _stcAttackCol.currentTime = 0.0f;
     _stcAttackCol.isActive = false;
+    _stcAttackCol.isHit = false;
 
     // コリジョンタイプ
     _eColType = COLLISION_TYPE::NONE;
@@ -55,6 +56,7 @@ bool AttackBase::ProcessStartAttack()
         _eAttackState = ATTACK_STATE::STARTUP;
         _stcAttackCol.currentTime = 0.0f;
         _stcAttackCol.isActive = false;
+        _stcAttackCol.isHit = false;
 
         return true;
     }
@@ -132,7 +134,8 @@ void AttackBase::SetCapsuleAttackData
     float delay,
     float duration,
     float recovery,
-    float damage
+    float damage,
+    bool hit
 )
 {
     _stcAttackCol.attackColTop = top;
@@ -142,6 +145,7 @@ void AttackBase::SetCapsuleAttackData
     _stcAttackCol.attackDuration = duration;
     _stcAttackCol.recovery = recovery;
     _stcAttackCol.damage = damage;
+    _stcAttackCol.isHit = hit;
 
     _eColType = COLLISION_TYPE::CAPSULE;
 }
@@ -155,7 +159,8 @@ void AttackBase::SetCircleAttackData
     float delay,
     float duration,
     float recovery,
-    float damage
+    float damage,
+    bool hit
 )
 {
     // 高さを考慮した位置を設定
@@ -166,6 +171,7 @@ void AttackBase::SetCircleAttackData
     _stcAttackCol.attackDuration = duration;
     _stcAttackCol.recovery = recovery;
     _stcAttackCol.damage = damage;
+    _stcAttackCol.isHit = hit;
 
     _eColType = COLLISION_TYPE::CIRCLE;
 }
@@ -178,7 +184,8 @@ void AttackBase::SetSphereAttackData
     float delay,
     float duration,
     float recovery,
-    float damage
+    float damage,
+    bool hit
 )
 {
     _stcAttackCol.attackColTop = center;                    // 中心点
@@ -188,6 +195,7 @@ void AttackBase::SetSphereAttackData
     _stcAttackCol.attackDuration = duration;
     _stcAttackCol.recovery = recovery;
     _stcAttackCol.damage = damage;
+    _stcAttackCol.isHit = hit;
 
     _eColType = COLLISION_TYPE::SPHERE;
 }

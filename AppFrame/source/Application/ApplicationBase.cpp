@@ -61,7 +61,7 @@ bool ApplicationBase::Input()
 	float lx, ly, rx, ry;// 左右アナログスティックの座標
 	// Logicoolパッドの場合
 	lx = (float)di.X / 1000.f; ly = (float)di.Y / 1000.f;// 左スティック
-	rx = (float)di.Z / 1000.f; ry = (float)di.Rz / 1000.f;// 右スティック
+	rx = (float)di.Rx / 1000.f; ry = (float)di.Ry / 1000.f;// 右スティック
 	_analog.lx = lx;
 	_analog.ly = ly;
 	_analog.rx = rx;
