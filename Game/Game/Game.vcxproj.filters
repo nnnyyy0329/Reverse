@@ -40,6 +40,18 @@
     <Filter Include="Game\Mode">
       <UniqueIdentifier>{52a7dade-3a1c-4d1e-b99a-499473420d5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\ObjectBase\CharaBase\Bullet">
+      <UniqueIdentifier>{4df65e72-934c-4dc5-91c5-1951c746b0d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\HitCheck">
+      <UniqueIdentifier>{2d574b18-3cc7-46cb-ae03-fb8f8c106e5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Mode\Menu">
+      <UniqueIdentifier>{9710008c-8441-4524-836a-1bda3df59a04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Mode\Game">
+      <UniqueIdentifier>{2afad796-da80-45cb-ba48-2f1612de6a9d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Enemy.cpp">
@@ -56,10 +68,6 @@
     </ClCompile>
     <ClCompile Include="source\CharaBase.cpp">
       <Filter>Game\ObjectBase\CharaBase</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeGame.cpp" />
-    <ClCompile Include="source\ModeGame.cpp">
-      <Filter>Game\Gamemain</Filter>
     </ClCompile>
     <ClCompile Include="source\InteriorPlayer.cpp">
       <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
@@ -109,13 +117,25 @@
     <ClCompile Include="source\StateRanged.cpp">
       <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="source\ModeMenu.cpp">
-      <Filter>Game\Mode</Filter>
-    </ClCompile>
     <ClCompile Include="source\DebugCamera.cpp">
       <Filter>Game\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="source\Bullet.cpp" />
+    <ClCompile Include="source\ModeGame.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Bullet.cpp">
+      <Filter>Game\ObjectBase\CharaBase\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="source\HitCheckManager.cpp" />
+    <ClCompile Include="source\ModeMenu.cpp">
+      <Filter>Game\Mode\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModeGame_CheckHit.cpp">
+      <Filter>Game\Mode\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModeGame.cpp">
+      <Filter>Game\Mode\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Enemy.h">
@@ -132,10 +152,6 @@
     </ClInclude>
     <ClInclude Include="source\CharaBase.h">
       <Filter>Game\ObjectBase\CharaBase</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeGame.h" />
-    <ClInclude Include="source\ModeGame.h">
-      <Filter>Game\Gamemain</Filter>
     </ClInclude>
     <ClInclude Include="source\InteriorPlayer.h">
       <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
@@ -176,13 +192,24 @@
     <ClInclude Include="source\StateMelee.h">
       <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="source\MenuItemBase.h" />
-    <ClInclude Include="source\ModeMenu.h">
-      <Filter>Game\Mode</Filter>
-    </ClInclude>
     <ClInclude Include="source\DebugCamera.h">
       <Filter>Game\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="source\Bullet.h" />
+    <ClInclude Include="source\ModeGame.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Bullet.h">
+      <Filter>Game\ObjectBase\CharaBase\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="source\HitCheckManager.h" />
+    <ClInclude Include="source\MenuItemBase.h">
+      <Filter>Game\Mode\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeMenu.h">
+      <Filter>Game\Mode\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeGame.h">
+      <Filter>Game\Mode\Game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

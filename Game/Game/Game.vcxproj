@@ -156,10 +156,17 @@
     <ClCompile Include="source\DebugCamera.cpp" />
     <ClCompile Include="source\Enemy.cpp" />
     <ClCompile Include="source\GameObjectBase.cpp" />
+    <ClCompile Include="source\HitCheckManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="source\InteriorPlayer.cpp" />
     <ClCompile Include="source\InteriorPlayer_Draw.cpp" />
     <ClCompile Include="source\InteriorPlayer_Move.cpp" />
     <ClCompile Include="source\ModeGame.cpp" />
+    <ClCompile Include="source\ModeGame_CheckHit.cpp" />
     <ClCompile Include="source\ModeMenu.cpp" />
     <ClCompile Include="source\PlayerAbilityBase.cpp" />
     <ClCompile Include="source\PlayerAbilityManager.cpp" />
@@ -185,6 +192,7 @@
     <ClInclude Include="source\EnemyFactory.h" />
     <ClInclude Include="source\EnemyState.h" />
     <ClInclude Include="source\GameObjectBase.h" />
+    <ClInclude Include="source\HitCheckManager.h" />
     <ClInclude Include="source\InteriorPlayer.h" />
     <ClInclude Include="source\MenuItemBase.h" />
     <ClInclude Include="source\ModeGame.h" />

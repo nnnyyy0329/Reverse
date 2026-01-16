@@ -36,6 +36,8 @@ public:
 
 	void SpawnBullet(VECTOR vStartPos, VECTOR vDir);// 発射処理
 
+	std::vector<std::shared_ptr<Bullet>> GetBullet(){ return _bullets; }// 指定したインデックスの弾を取得
+
 protected:
 
 	VECTOR _vHomePos;// 敵の初期位置

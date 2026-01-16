@@ -100,7 +100,7 @@ protected:	// 攻撃関係
 
 private:	// 攻撃関係
 
-	void UpdateAttackColPos(AttackBase& attack, const VECTOR& topOffset, const VECTOR& bottomOffset, const VECTOR& baseOffset);	// 攻撃判定の位置更新処理
+	void UpdateAttackColPos(AttackBase& attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);					// 攻撃判定の位置更新処理
 	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, AttackBase& attack);										// 攻撃開始処理
 	void ProcessComboAttack(AttackBase& currentAttack, int nextComboCount, PLAYER_STATUS nextStatus, AttackBase& nextAttack);	// 汎用コンボ攻撃処理
 	void ProcessAttackFinish(AttackBase& attack);																				// 攻撃終了処理

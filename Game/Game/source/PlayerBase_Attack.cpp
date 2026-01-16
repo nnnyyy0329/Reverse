@@ -1,4 +1,3 @@
-// 担当 : 成田
 
 #include "PlayerBase.h"
 
@@ -6,9 +5,9 @@
 void PlayerBase::InitializeAttackData()
 {
 	// 子クラスから攻撃定数と設定を取得
-	AttackConstants constants = GetAttackConstants();
-	AttackConfig configs[3];
-	GetAttackConfigs(configs);
+	AttackConstants constants = GetAttackConstants();	// 攻撃定数取得
+	AttackConfig configs[3];							// 攻撃設定取得
+	GetAttackConfigs(configs);							// 攻撃設定取得
 
 	// 第1攻撃：カプセル攻撃
 	_firstAttack.SetCapsuleAttackData
@@ -50,27 +49,29 @@ void PlayerBase::InitializeAttackData()
 	);
 }
 
-// 単一攻撃のコリジョン位置更新
+// 攻撃のコリジョン位置更新
 void PlayerBase::UpdateAttackColPos
 (
 	AttackBase& attack,
-	const VECTOR& topOffset,
-	const VECTOR& bottomOffset, 
-	const VECTOR& baseOffset
+	VECTOR& topOffset,
+	VECTOR& bottomOffset, 
+	VECTOR& baseOffset
 )
 {
+	// 攻撃コリジョン情報を取得
 	const ATTACK_COLLISION& col = attack.GetAttackCollision();
 
+	// コリジョン位置を更新
 	attack.SetCapsuleAttackData
 	(
-		VAdd(baseOffset, topOffset),
-		VAdd(baseOffset, bottomOffset),
-		col.attackColR,
-		col.attackDelay,
-		col.attackDuration,
-		col.recovery, 
-		col.damage, 
-		col.isHit
+		VAdd(baseOffset, topOffset),	// 上部
+		VAdd(baseOffset, bottomOffset),	// 下部
+		col.attackColR,					// 半径
+		col.attackDelay,				// 発生遅延
+		col.attackDuration,				// 持続時間
+		col.recovery, 					// 後隙
+		col.damage, 					// ダメージ
+		col.isHit						// ヒットフラグ
 	);
 }
 
@@ -78,9 +79,9 @@ void PlayerBase::UpdateAttackColPos
 void PlayerBase::ProcessAttackColPos()
 {
 	// 子クラスから攻撃定数と設定を取得
-	AttackConstants constants = GetAttackConstants();
-	AttackConfig configs[3];
-	GetAttackConfigs(configs);
+	AttackConstants constants = GetAttackConstants();	// 攻撃定数取得
+	AttackConfig configs[3];							// 攻撃設定取得
+	GetAttackConfigs(configs);							// 攻撃設定取得
 
 	// 判定を前方にずらす
 	VECTOR dirNorm = VNorm(_vDir);
@@ -116,6 +117,7 @@ void PlayerBase::ProcessAttack()
 		_ePlayerStatus == PLAYER_STATUS::WALK)
 		&& _trg & PAD_INPUT_7) 
 	{
+		// 1段目の攻撃開始処理
 		ProcessStartAttack(1, PLAYER_STATUS::FIRST_ATTACK, _firstAttack);
 	}
 }
@@ -137,25 +139,31 @@ void PlayerBase::ProcessBranchAttack()
 	// 現在の状態に応じて攻撃処理を分岐
 	switch(_ePlayerStatus)
 	{
-		case PLAYER_STATUS::FIRST_ATTACK:
+		case PLAYER_STATUS::FIRST_ATTACK:	// 1段目の攻撃
 		{
+			// 1段目の攻撃処理
 			ProcessFirstAttack();
+
 			break;
 		}
 
-		case PLAYER_STATUS::SECOND_ATTACK:
+		case PLAYER_STATUS::SECOND_ATTACK:	// 2段目の攻撃
 		{
+			// 2段目の攻撃処理
 			ProcessSecondAttack();
+
 			break;
 		}
 
-		case PLAYER_STATUS::THIRD_ATTACK:
+		case PLAYER_STATUS::THIRD_ATTACK:	// 3段目の攻撃
 		{
+			// 3段目の攻撃処理
 			ProcessThirdAttack();
+
 			break;
 		}
 
-		default:
+		default:	// 攻撃状態でない場合
 		{
 			break;
 		}
@@ -165,44 +173,58 @@ void PlayerBase::ProcessBranchAttack()
 // 汎用コンボ攻撃処理
 void PlayerBase::ProcessComboAttack
 (
-	AttackBase& currentAttack,
-	int nextComboCount,
-	PLAYER_STATUS nextStatus,
-	AttackBase& nextAttack
+	AttackBase& currentAttack,	// 現在の攻撃
+	int nextComboCount,			// 次のコンボカウント
+	PLAYER_STATUS nextStatus,	// 次の状態
+	AttackBase& nextAttack		// 次の攻撃
 )
 {
+	// 現在の攻撃状態を取得
 	ATTACK_STATE state = currentAttack.GetAttackState();
-
+	
+	// 状態に応じた処理
 	switch(state)
 	{
-		case ATTACK_STATE::STARTUP:
+		case ATTACK_STATE::STARTUP:	// 発生前
 		{
-			_bCanCombo = false;
+			// コンボ不可にする
+			_bCanCombo = false;	
+
 			break;
 		}
 
-		case ATTACK_STATE::ACTIVE:
+		case ATTACK_STATE::ACTIVE:	// 攻撃判定中
 		{
-			_bCanCombo = true;
+			// コンボ可能にする
+			_bCanCombo = true;	
+
+			// 次の攻撃入力があれば次の攻撃へ
 			if((_trg & PAD_INPUT_7) && CanNextAttack())
 			{
+				// 次の攻撃へ
 				ProcessStartAttack(nextComboCount, nextStatus, nextAttack);
 			}
+
 			break;
 		}
 
-		case ATTACK_STATE::RECOVERY:
+		case ATTACK_STATE::RECOVERY:	// 硬直中
 		{
+			// 次の攻撃入力があれば次の攻撃へ
 			if((_trg & PAD_INPUT_7) && CanNextAttack())
 			{
+				// 次の攻撃へ
 				ProcessStartAttack(nextComboCount, nextStatus, nextAttack);
 			}
+
 			break;
 		}
 
-		case ATTACK_STATE::INACTIVE:
+		case ATTACK_STATE::INACTIVE:	// 攻撃終了
 		{
+			// 攻撃過程終了処理
 			EndAttackSequence();
+
 			break;
 		}
 	}
@@ -211,8 +233,10 @@ void PlayerBase::ProcessComboAttack
 // 攻撃終了処理
 void PlayerBase::ProcessAttackFinish(AttackBase& attack)
 {
+	// 攻撃状態が非アクティブなら攻撃過程終了
 	if(attack.GetAttackState() == ATTACK_STATE::INACTIVE)
 	{
+		// 攻撃過程終了処理
 		EndAttackSequence();
 	}
 }
@@ -220,26 +244,29 @@ void PlayerBase::ProcessAttackFinish(AttackBase& attack)
 // 攻撃過程終了
 void PlayerBase::EndAttackSequence()
 {
-	SetStatus(PLAYER_STATUS::WAIT);
-	_iComboCount = 0;
-	_bCanCombo = false;
+	SetStatus(PLAYER_STATUS::WAIT);	// 状態を待機に戻す
+	_iComboCount = 0;				// コンボカウントリセット
+	_bCanCombo = false;				// コンボ不可にする
 }
 
 // 1段目の攻撃
 void PlayerBase::ProcessFirstAttack()
 {
+	// 汎用コンボ攻撃処理呼び出し
 	ProcessComboAttack(_firstAttack, 2, PLAYER_STATUS::SECOND_ATTACK, _secondAttack);
 }
 
 // 2段目の攻撃
 void PlayerBase::ProcessSecondAttack()
 {
+	// 汎用コンボ攻撃処理呼び出し
 	ProcessComboAttack(_secondAttack, 3, PLAYER_STATUS::THIRD_ATTACK, _thirdAttack);
 }
 
 // 3段目の攻撃
 void PlayerBase::ProcessThirdAttack()
 {
+	// 攻撃終了処理呼び出し
 	ProcessAttackFinish(_thirdAttack);
 }
 
@@ -251,25 +278,31 @@ void PlayerBase::ReceiveAttackColData()
 
 	switch(_ePlayerStatus)
 	{
-		case PLAYER_STATUS::FIRST_ATTACK:
+		case PLAYER_STATUS::FIRST_ATTACK:	// 1段目の攻撃
 		{
+			// 1段目の攻撃コリジョン情報取得
 			attackCol = _firstAttack.GetAttackCollision();
+
 			break;
 		}
 
-		case PLAYER_STATUS::SECOND_ATTACK:
+		case PLAYER_STATUS::SECOND_ATTACK:	// 2段目の攻撃
 		{
+			// 2段目の攻撃コリジョン情報取得
 			attackCol = _secondAttack.GetAttackCollision();
+
 			break;
 		}
 
-		case PLAYER_STATUS::THIRD_ATTACK:
+		case PLAYER_STATUS::THIRD_ATTACK:	// 3段目の攻撃
 		{
+			// 3段目の攻撃コリジョン情報取得
 			attackCol = _thirdAttack.GetAttackCollision();
+
 			break;
 		}
 
-		default:
+		default:	// 攻撃状態でない場合
 		{
 			// 攻撃状態でない場合は値をリセット
 			_vAttackColTop = VGet(0.0f, 0.0f, 0.0f);
@@ -291,17 +324,19 @@ bool PlayerBase::CanNextAttack()
 	// コンボが可能で、最大コンボ数以下の場合のみ次の攻撃可能
 	AttackConstants constants = GetAttackConstants();
 
+	// コンボ可能かつ最大コンボ数以下かチェック
 	return _bCanCombo && _iComboCount < constants.MAX_COMBO_COUNT;
 }
 
 // 攻撃状態中かどうかをチェック
 bool PlayerBase::IsAttacking()
 {
+	// 攻撃状態中かチェック
 	if(_ePlayerStatus == PLAYER_STATUS::FIRST_ATTACK ||
 		_ePlayerStatus == PLAYER_STATUS::SECOND_ATTACK ||
 		_ePlayerStatus == PLAYER_STATUS::THIRD_ATTACK)
 	{
-		_vMove = VGet(0, 0, 0);
+		_vMove = VGet(0, 0, 0);	// 攻撃中は移動不可
 		return true;
 	}
 

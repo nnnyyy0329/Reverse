@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <type_traits>
 
-// コンポーネント管理のためのユーティリティクラス
+// コンポーネント管理のためのクラス
 template<typename BaseType>
 
 class ComponentManager

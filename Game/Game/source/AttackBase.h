@@ -51,6 +51,7 @@ public:
 	virtual bool Terminate();
 	virtual bool Process();
 	virtual bool Render();
+
 	virtual bool ProcessStartAttack();	// 攻撃開始
 	virtual bool ProcessStopAttack();	// 攻撃停止
 	void UpdateAttackState();			// 攻撃状態更新
@@ -58,50 +59,50 @@ public:
 	// カプセル攻撃データ設定
 	void SetCapsuleAttackData
 	(
-		VECTOR top, 
-		VECTOR bottom, 
-		float radius, 
-		float delay, 
-		float duration, 
-		float recovery, 
-		float damage,
-		bool hit
+		VECTOR top,		// カプセル上部
+		VECTOR bottom,	// カプセル下部
+		float radius,	// 半径
+		float delay,	// 発生遅延
+		float duration, // 持続時間
+		float recovery, // 後隙
+		float damage,	// ダメージ	
+		bool hit		// ヒットフラグ
 	);
 
 	// 円形攻撃データ設定
 	void SetCircleAttackData
 	(
-		VECTOR center,
-		float radius,
-		float height,
-		float delay,
-		float duration,
-		float recovery,
-		float damage,
-		bool hit
+		VECTOR center,	// 中心位置
+		float radius,	// 半径
+		float height,	// 高さ
+		float delay,	// 発生遅延
+		float duration,	// 持続時間
+		float recovery,	// 後隙
+		float damage,	// ダメージ
+		bool hit		// ヒットフラグ
 	);
 
 	// 球攻撃データ設定
 	void SetSphereAttackData
 	(
-		VECTOR center,
-		float radius,
-		float delay,
-		float duration,
-		float recovery,
-		float damage,
-		bool hit
+		VECTOR center,	// 中心位置
+		float radius,	// 半径
+		float delay,	// 発生遅延
+		float duration,	// 持続時間
+		float recovery,	// 後隙
+		float damage,	// ダメージ
+		bool hit		// ヒットフラグ
 	);
 
 	void DrawAttackCollision();	// 攻撃コリジョン表示
 
 	// ゲッターセッター
-	COLLISION_TYPE GetCollisionType() const { return _eColType; }
-	ATTACK_COLLISION GetAttackCollision() const { return _stcAttackCol; }
-	ATTACK_STATE GetAttackState() const { return _eAttackState; }
+	COLLISION_TYPE GetCollisionType() const { return _eColType; }			// コリジョンタイプ取得
+	ATTACK_COLLISION GetAttackCollision() const { return _stcAttackCol; }	// 攻撃コリジョン情報取得
+	ATTACK_STATE GetAttackState() const { return _eAttackState; }			// 攻撃状態取得
 
-	bool GetHitFlag() const { return _stcAttackCol.isHit; }
-	void SetHitFlag(bool hit) { _stcAttackCol.isHit = hit; }
+	bool GetHitFlag() const { return _stcAttackCol.isHit; }		// ヒットフラグ取得
+	void SetHitFlag(bool hit) { _stcAttackCol.isHit = hit; }	// ヒットフラグ設定
 
 protected:
 	// 攻撃コリジョン関係
