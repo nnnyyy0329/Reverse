@@ -97,20 +97,6 @@ void ModeGame::CheckHitPlayerEnemy(std::shared_ptr<CharaBase> chara1, std::share
 	}
 }
 
-// キャラと弾の当たり判定
-void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara, std::shared_ptr<CharaBase> bullet)
-{
-	if(chara == nullptr || bullet == nullptr) { return; }
-
-	if(HitCheck_Capsule_Capsule(
-		chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
-		bullet->GetCollisionTop(), bullet->GetCollisionBottom(), bullet->GetCollisionR()
-	) != false)
-	{
-		printfDx("Chara and Bullet Hit!\n");
-	}
-}
-
 // キャラと攻撃コリジョンの当たり判定
 void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack)
 {

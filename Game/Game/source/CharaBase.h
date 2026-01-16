@@ -4,9 +4,14 @@
 enum class CHARA_TYPE
 {
 	NONE,
+
 	PLAYER,
 	ENEMY,
 	BULLET,
+
+	SURFACE_PLAYER,
+	INTERIOR_PLAYER,
+
 	_EOT_,
 };
 

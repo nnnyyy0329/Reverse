@@ -145,11 +145,11 @@ void PlayerBase::RegisterAttackToManager(AttackBase& attack, int comboCount)
 	// 所有者タイプの設定
 	ATTACK_OWNER_TYPE ownerType = ATTACK_OWNER_TYPE::NONE;
 
-	if(_eCharType == CHARA_TYPE::SURFACE_PLAYER)
+	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
 	{
 		ownerType = ATTACK_OWNER_TYPE::SURFACE_PLAYER;
 	}
-	else if(_eCharType == CHARA_TYPE::INTERIOR_PLAYER)
+	else if(_eCharaType == CHARA_TYPE::INTERIOR_PLAYER)
 	{
 		ownerType = ATTACK_OWNER_TYPE::INTERIOR_PLAYER;
 	}

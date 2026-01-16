@@ -36,8 +36,6 @@ public:
 	void SetBulletManager(std::shared_ptr<BulletManager> bulletManager) { _bulletManager = bulletManager; }// マネージャーをセット
 	void SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime);// 発射リクエストをする
 
-	std::vector<std::shared_ptr<Bullet>> GetBullet(){ return _bullets; }// 指定したインデックスの弾を取得
-
 protected:
 
 	VECTOR _vHomePos;// 敵の初期位置
