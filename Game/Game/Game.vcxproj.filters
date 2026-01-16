@@ -40,9 +40,6 @@
     <Filter Include="Game\Mode">
       <UniqueIdentifier>{52a7dade-3a1c-4d1e-b99a-499473420d5c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\ObjectBase\Bullet">
-      <UniqueIdentifier>{54c11930-a5b4-4a20-91b9-30e29e372437}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\ObjectBase\CharaBase\Bullet">
       <UniqueIdentifier>{4df65e72-934c-4dc5-91c5-1951c746b0d1}</UniqueIdentifier>
     </Filter>
@@ -129,7 +126,6 @@
     <ClCompile Include="source\Bullet.cpp">
       <Filter>Game\ObjectBase\CharaBase\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="source\HitCheckManager.cpp" />
     <ClCompile Include="source\ModeMenu.cpp">
       <Filter>Game\Mode\Menu</Filter>
     </ClCompile>
@@ -142,14 +138,9 @@
     <ClCompile Include="source\AttackManager.cpp">
       <Filter>Game\Attack</Filter>
     </ClCompile>
-    <ClCompile Include="source\ModeGame.cpp">
-      <Filter>Game\Mode</Filter>
+    <ClCompile Include="source\BulletManager.cpp">
+      <Filter>Game\ObjectBase\CharaBase\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="source\Bullet.cpp">
-      <Filter>Game\ObjectBase\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeGame.cpp" />
-    <ClCompile Include="source\BulletManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Enemy.h">
@@ -215,7 +206,6 @@
     <ClInclude Include="source\Bullet.h">
       <Filter>Game\ObjectBase\CharaBase\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="source\HitCheckManager.h" />
     <ClInclude Include="source\MenuItemBase.h">
       <Filter>Game\Mode\Menu</Filter>
     </ClInclude>
@@ -228,13 +218,8 @@
     <ClInclude Include="source\AttackManager.h">
       <Filter>Game\Attack</Filter>
     </ClInclude>
-    <ClInclude Include="source\ModeGame.h">
-      <Filter>Game\Mode</Filter>
+    <ClInclude Include="source\BulletManager.h">
+      <Filter>Game\ObjectBase\CharaBase\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="source\Bullet.h">
-      <Filter>Game\ObjectBase\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeGame.h" />
-    <ClInclude Include="source\BulletManager.h" />
   </ItemGroup>
 </Project>

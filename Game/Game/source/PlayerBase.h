@@ -94,18 +94,19 @@ protected:	// UŒ‚ŠÖŒW
 	bool IsAttacking();				// UŒ‚’†‚©ƒ`ƒFƒbƒN
 
 	// UŒ‚ƒVƒXƒeƒ€
-	AttackBase _firstAttack;		// ‘æ1UŒ‚
-	AttackBase _secondAttack;		// ‘æ2UŒ‚
-	AttackBase _thirdAttack;		// ‘æ3UŒ‚
+	std::shared_ptr<AttackBase> _firstAttack;	// ‘æ1UŒ‚
+	std::shared_ptr<AttackBase> _secondAttack;	// ‘æ2UŒ‚
+	std::shared_ptr<AttackBase> _thirdAttack;	// ‘æ3UŒ‚
 
 private:	// UŒ‚ŠÖŒW
 
-	void UpdateAttackColPos(AttackBase& attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);					// UŒ‚”»’è‚ÌˆÊ’uXVˆ—
-	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, AttackBase& attack);										// UŒ‚ŠJnˆ—
-	void RegisterAttackToManager(AttackBase& attack, int comboCount);															// UŒ‚ŠÇ—ƒNƒ‰ƒX‚É“o˜^
-	void ProcessComboAttack(AttackBase& currentAttack, int nextComboCount, PLAYER_STATUS nextStatus, AttackBase& nextAttack);	// ”Ä—pƒRƒ“ƒ{UŒ‚ˆ—
-	void ProcessAttackFinish(AttackBase& attack);																				// UŒ‚I—¹ˆ—
-	void EndAttackSequence();																									// UŒ‚‰Û’öC—¹
+	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);									// UŒ‚”»’è‚ÌˆÊ’uXVˆ—
+	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> attack);														// UŒ‚ŠJnˆ—
+	void ProcessComboAttack(std::shared_ptr<AttackBase> currentAttack, int nextComboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> nextAttack);	// ”Ä—pƒRƒ“ƒ{UŒ‚ˆ—
+	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);																								// UŒ‚I—¹ˆ—
+	void EndAttackSequence();																																	// UŒ‚‰Û’öC—¹
+	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_STATUS status);																						// ó‘Ô‚É‘Î‰‚·‚éUŒ‚‚ğæ“¾
+	int GetInstanceId();																																		// IDæ“¾ŠÖ”
 
 protected:
 

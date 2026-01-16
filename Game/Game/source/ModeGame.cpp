@@ -9,6 +9,7 @@
 #include "CameraManager.h"
 #include "DebugCamera.h"
 #include "BulletManager.h"
+#include "AttackManager.h"
 
 // ‚¢‚Á‚½‚ñ‚±‚ê
 #include "PlayerManager.h"
@@ -199,6 +200,7 @@ bool ModeGame::Render()
 		//_player->DebugRender();
 		_stage->DebugRender();
 		_debugCamera->DebugRender();
+		AttackManager::GetInstance().DrawDebug();
 	}
 
 	return true;

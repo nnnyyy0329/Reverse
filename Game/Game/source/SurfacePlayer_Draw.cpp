@@ -17,9 +17,9 @@ void SurfacePlayer::CallDraw()
 	DrawParameter();						// パラメーター表示
 	//DrawAnimationName();					// 再生されているアニメーション名表示
 	DrawColPos();							// コリジョン情報表示
-	_firstAttack.DrawAttackCollision();		// 第一攻撃コリジョン表示
-	_secondAttack.DrawAttackCollision();	// 第二攻撃コリジョン表示
-	_thirdAttack.DrawAttackCollision();		// 第三攻撃コリジョン表示
+	_firstAttack->DrawAttackCollision();	// 第一攻撃コリジョン表示
+	_secondAttack->DrawAttackCollision();	// 第二攻撃コリジョン表示
+	_thirdAttack->DrawAttackCollision();	// 第三攻撃コリジョン表示
 }
 
 // モデルの表示

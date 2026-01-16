@@ -7,7 +7,7 @@ AttackManager* AttackManager::_instance = nullptr;
 
 AttackManager::AttackManager()
 {
-	_frameCounter = 0;	// フレームカウンタ初期化
+	_frameCounter = 0;			// フレームカウンタ初期化
 }
 
 AttackManager::~AttackManager()
@@ -52,7 +52,7 @@ void AttackManager::RegisterAttack(std::shared_ptr<AttackBase> attack, ATTACK_OW
 	if(attack == nullptr){ return; }
 
 	// 既に登録されているかチェック
-	if(IsAttackRegistered(attack)) { return; }
+	if(IsAttackRegistered(attack)) { return; }	// 登録済みなら何もしない
 
 	// 攻撃情報を作成して登録リストに追加
 	ATTACK_INFO attackInfo;	// 攻撃情報構造体
@@ -61,7 +61,6 @@ void AttackManager::RegisterAttack(std::shared_ptr<AttackBase> attack, ATTACK_OW
 	attackInfo.ownerType = ownerType;				// 所有者タイプ
 	attackInfo.ownerId = ownerId;					// 所有者ID
 	attackInfo.registrationFrame = _frameCounter;	// 登録フレーム数
-	attackInfo.isValid = true;						// 有効フラグ
 
 	_registeredAttacks.push_back(attackInfo);		// リストに追加
 }
@@ -71,18 +70,35 @@ void AttackManager::UnregisterAttack(std::shared_ptr<AttackBase> attack)
 {
 	if(attack == nullptr){ return; }
 
-	// 登録リストから該当する攻撃を無効化
-	for(auto& attackInfo : _registeredAttacks) // 登録攻撃リストを走査
+	auto attackPtr = attack;
+
+	// 通常のforループで削除対象を探す
+	for(auto attacks = _registeredAttacks.begin(); attacks != _registeredAttacks.end();)
 	{
-		// 攻撃オブジェクトを取得
-		if(auto registeredAttack = attackInfo.attack.lock()) // weak_ptrをshared_ptrに変換
+		// weak_ptrが無効になっているかチェック
+		if(attacks->attack.expired())
 		{
-			// 攻撃オブジェクトが一致するかチェック
-			if(registeredAttack == attack)
-			{
-				attackInfo.isValid = false;	// 無効化
-				break;
-			}
+			// 無効な攻撃は削除
+			attacks = _registeredAttacks.erase(attacks);
+
+			continue;	// 次の要素へ
+		}
+
+		// 攻撃オブジェクトが一致するかチェック
+		auto registeredAttack = attacks->attack.lock();
+
+		// 一致するかチェック
+		if(registeredAttack == attackPtr)
+		{
+			// 一致した攻撃を削除
+			attacks = _registeredAttacks.erase(attacks);
+
+			break;	// 見つかったので終了
+		}
+		else
+		{
+			// 次の要素へ
+			++attacks;
 		}
 	}
 }
@@ -91,12 +107,18 @@ void AttackManager::UnregisterAttack(std::shared_ptr<AttackBase> attack)
 void AttackManager::UnregisterAttackByOwner(int ownerId)
 {
 	// 登録リストから該当する所有者IDの攻撃を無効化
-	for(auto& attackInfo : _registeredAttacks) // 登録攻撃リストを走査
+	for(auto attacks = _registeredAttacks.begin(); attacks != _registeredAttacks.end();)
 	{
 		// 所有者IDが一致するかチェック
-		if(attackInfo.ownerId == ownerId)
+		if(attacks->ownerId == ownerId)
 		{
-			attackInfo.isValid = false;	// 無効化
+			// 一致した攻撃を削除
+			attacks = _registeredAttacks.erase(attacks);
+		}
+		else // 一致しないなら
+		{
+			// 次の要素へ
+			++attacks;
 		}
 	}
 }
@@ -108,24 +130,42 @@ void AttackManager::ClearAllAttacks()
 	_registeredAttacks.clear();
 }
 
-// 無効な攻撃の削除
+// 無効な攻撃の削除//
 void AttackManager::CleanupInvalidAttacks()
 {
-	// 登録リストを走査
-	auto registeredList = _registeredAttacks.begin();
-
-	while(registeredList != _registeredAttacks.end())
+	// 通常のforループで無効な攻撃を削除
+	for(auto attacks = _registeredAttacks.begin(); attacks != _registeredAttacks.end();)
 	{
-		// 攻撃オブジェクトが無効か、有効フラグがfalseなら削除
-		if(registeredList->attack.expired() || !registeredList->isValid)
+		// 削除フラグ
+		bool shouldRemove = false;	
+
+		// weak_ptrが無効になっているかチェック
+		if(attacks->attack.expired())
 		{
-			// 無効ならリストから削除
-			registeredList = _registeredAttacks.erase(registeredList);
+			shouldRemove = true;
 		}
-		else
+		else // 有効な場合
 		{
-			// 有効なら次へ
-			++registeredList;
+			// 攻撃状態をチェック
+			auto attack = attacks->attack.lock();
+
+			// 攻撃状態がINACTIVEなら削除フラグを立てる
+			if(attack->GetAttackState() == ATTACK_STATE::INACTIVE)
+			{
+				shouldRemove = true;
+			}
+		}
+
+		// 削除が必要な場合
+		if(shouldRemove)
+		{
+			// 攻撃を削除
+			attacks = _registeredAttacks.erase(attacks);
+		}
+		else // 削除が不要な場合
+		{
+			// 次の要素へ
+			++attacks;
 		}
 	}
 }
@@ -263,4 +303,14 @@ void AttackManager::DestroyInstance()
 
 		delete _instance;		// インスタンス破棄
 	}
+}
+
+// デバッグ描画
+void AttackManager::DrawDebug()
+{
+	int registeredCount = GetRegisteredAttackCount();	// 登録攻撃数取得
+	int activeCount = GetActiveAttackCount();			// アクティブ攻撃数取得
+	
+	DrawFormatString(10, 210, GetColor(0, 255, 0), "Registered Attacks: %d", registeredCount);
+	DrawFormatString(10, 230, GetColor(0, 255, 0), "Active Attacks: %d", activeCount);
 }

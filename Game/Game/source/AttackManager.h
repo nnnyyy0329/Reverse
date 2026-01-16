@@ -10,6 +10,9 @@ enum class ATTACK_OWNER_TYPE
 	SURFACE_PLAYER,
 	INTERIOR_PLAYER,
 
+	PLAYER,
+	ENEMY,
+
 	// 敵もここに
 
 	_EOT_,
@@ -22,7 +25,6 @@ struct ATTACK_INFO
 	ATTACK_OWNER_TYPE ownerType;		// 所有者タイプ
 	int ownerId;						// 所有者ID
 	int registrationFrame;				// 登録されたフレーム数
-	bool isValid;						// 有効フラグ
 };
 
 class AttackManager
@@ -55,6 +57,9 @@ public:
 	int GetRegisteredAttackCount() const { return static_cast<int>(_registeredAttacks.size()); }	// 登録攻撃数取得
 	int GetActiveAttackCount() const;																// アクティブ攻撃数取得
 	int GetFrameCounter() const { return _frameCounter; }											// フレームカウンタ取得
+
+	// デバッグ機能
+	void DrawDebug();
 
 	// シングルトン
 	static AttackManager& GetInstance()	// インスタンス取得

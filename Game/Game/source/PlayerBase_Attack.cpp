@@ -3,6 +3,12 @@
 #include "PlayerBase.h"
 #include "AttackManager.h"
 
+namespace
+{
+	const int INTERIOR_PLAYER_ID = 1;	// 裏プレイヤーID
+	const int SURFACE_PLAYER_ID = 2;	// 表プレイヤーID
+}
+
 // 攻撃コリジョンの設定
 void PlayerBase::InitializeAttackData()
 {
@@ -12,7 +18,8 @@ void PlayerBase::InitializeAttackData()
 	GetAttackConfigs(configs);							// 攻撃設定取得
 
 	// 第1攻撃：カプセル攻撃
-	_firstAttack.SetCapsuleAttackData
+	_firstAttack = std::make_shared<AttackBase>();
+	_firstAttack->SetCapsuleAttackData
 	(
 		configs[0].topOffset,		// 上部
 		configs[0].bottomOffset,	// 下部
@@ -25,7 +32,8 @@ void PlayerBase::InitializeAttackData()
 	);
 
 	// 第2攻撃：カプセル攻撃
-	_secondAttack.SetCapsuleAttackData
+	_secondAttack = std::make_shared<AttackBase>();
+	_secondAttack->SetCapsuleAttackData
 	(
 		configs[1].topOffset,		// 上部
 		configs[1].bottomOffset,	// 下部
@@ -38,7 +46,8 @@ void PlayerBase::InitializeAttackData()
 	);
 
 	// 第3攻撃：カプセル攻撃
-	_thirdAttack.SetCapsuleAttackData
+	_thirdAttack = std::make_shared<AttackBase>();
+	_thirdAttack->SetCapsuleAttackData
 	(
 		configs[2].topOffset,		// 上部
 		configs[2].bottomOffset,	// 下部
@@ -54,17 +63,19 @@ void PlayerBase::InitializeAttackData()
 // 攻撃のコリジョン位置更新
 void PlayerBase::UpdateAttackColPos
 (
-	AttackBase& attack,
+	std::shared_ptr<AttackBase> attack,
 	VECTOR& topOffset,
 	VECTOR& bottomOffset, 
 	VECTOR& baseOffset
 )
 {
+	if(!attack) return;
+
 	// 攻撃コリジョン情報を取得
-	const ATTACK_COLLISION& col = attack.GetAttackCollision();
+	const ATTACK_COLLISION& col = attack->GetAttackCollision();
 
 	// コリジョン位置を更新
-	attack.SetCapsuleAttackData
+	attack->SetCapsuleAttackData
 	(
 		VAdd(baseOffset, topOffset),	// 上部
 		VAdd(baseOffset, bottomOffset),	// 下部
@@ -106,9 +117,9 @@ void PlayerBase::CallProcessAttack()
 	ProcessBranchAttack();
 
 	// 攻撃状態更新
-	_firstAttack.UpdateAttackState();
-	_secondAttack.UpdateAttackState();
-	_thirdAttack.UpdateAttackState();
+	_firstAttack->UpdateAttackState();
+	_secondAttack->UpdateAttackState();
+	_thirdAttack->UpdateAttackState();
 }
 
 // 攻撃処理
@@ -125,34 +136,22 @@ void PlayerBase::ProcessAttack()
 }
 
 // コンボ攻撃開始の処理
-void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, AttackBase& attack)
+void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> attack)
 {
 	ProcessAttackColPos();							// コリジョン位置更新処理
 	ReceiveAttackColData();							// 攻撃判定受け取り関数
 	SetStatus(nextStatus);							// 状態更新
-	attack.ProcessStartAttack();					// 攻撃処理開始
-	RegisterAttackToManager(attack, comboCount);	// 攻撃管理クラスに登録
+	attack->ProcessStartAttack();					// 攻撃処理開始
+
+	// AttackManagerに登録
+	std::shared_ptr<AttackBase> attackPtr = attack;
+	if(attackPtr != nullptr)
+	{
+		AttackManager::GetInstance().RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::PLAYER, GetInstanceId());
+	}
+
 	_iComboCount = comboCount;
 	_bCanCombo = false;
-}
-
-// 攻撃管理クラスに登録
-void PlayerBase::RegisterAttackToManager(AttackBase& attack, int comboCount)
-{
-	// AttackManagerインスタンス取得
-	auto attackManager = AttackManager::GetInstance();
-
-	// 所有者タイプの設定
-	ATTACK_OWNER_TYPE ownerType = ATTACK_OWNER_TYPE::NONE;
-
-	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
-	{
-		ownerType = ATTACK_OWNER_TYPE::SURFACE_PLAYER;
-	}
-	else if(_eCharaType == CHARA_TYPE::INTERIOR_PLAYER)
-	{
-		ownerType = ATTACK_OWNER_TYPE::INTERIOR_PLAYER;
-	}
 }
 
 // 攻撃分岐処理
@@ -195,14 +194,14 @@ void PlayerBase::ProcessBranchAttack()
 // 汎用コンボ攻撃処理
 void PlayerBase::ProcessComboAttack
 (
-	AttackBase& currentAttack,	// 現在の攻撃
-	int nextComboCount,			// 次のコンボカウント
-	PLAYER_STATUS nextStatus,	// 次の状態
-	AttackBase& nextAttack		// 次の攻撃
+	std::shared_ptr<AttackBase> currentAttack,	// 現在の攻撃
+	int nextComboCount,							// 次のコンボカウント
+	PLAYER_STATUS nextStatus,					// 次の状態
+	std::shared_ptr<AttackBase> nextAttack		// 次の攻撃
 )
 {
 	// 現在の攻撃状態を取得
-	ATTACK_STATE state = currentAttack.GetAttackState();
+	ATTACK_STATE state = currentAttack->GetAttackState();
 	
 	// 状態に応じた処理
 	switch(state)
@@ -253,10 +252,10 @@ void PlayerBase::ProcessComboAttack
 }
 
 // 攻撃終了処理
-void PlayerBase::ProcessAttackFinish(AttackBase& attack)
+void PlayerBase::ProcessAttackFinish(std::shared_ptr<AttackBase> attack)
 {
 	// 攻撃状態が非アクティブなら攻撃過程終了
-	if(attack.GetAttackState() == ATTACK_STATE::INACTIVE)
+	if(attack->GetAttackState() == ATTACK_STATE::INACTIVE)
 	{
 		// 攻撃過程終了処理
 		EndAttackSequence();
@@ -266,6 +265,9 @@ void PlayerBase::ProcessAttackFinish(AttackBase& attack)
 // 攻撃過程終了
 void PlayerBase::EndAttackSequence()
 {
+	// AttackManagerから自分の攻撃を全て解除
+	AttackManager::GetInstance().UnregisterAttackByOwner(GetInstanceId());
+
 	SetStatus(PLAYER_STATUS::WAIT);	// 状態を待機に戻す
 	_iComboCount = 0;				// コンボカウントリセット
 	_bCanCombo = false;				// コンボ不可にする
@@ -303,7 +305,7 @@ void PlayerBase::ReceiveAttackColData()
 		case PLAYER_STATUS::FIRST_ATTACK:	// 1段目の攻撃
 		{
 			// 1段目の攻撃コリジョン情報取得
-			attackCol = _firstAttack.GetAttackCollision();
+			attackCol = _firstAttack->GetAttackCollision();
 
 			break;
 		}
@@ -311,7 +313,7 @@ void PlayerBase::ReceiveAttackColData()
 		case PLAYER_STATUS::SECOND_ATTACK:	// 2段目の攻撃
 		{
 			// 2段目の攻撃コリジョン情報取得
-			attackCol = _secondAttack.GetAttackCollision();
+			attackCol = _secondAttack->GetAttackCollision();
 
 			break;
 		}
@@ -319,7 +321,7 @@ void PlayerBase::ReceiveAttackColData()
 		case PLAYER_STATUS::THIRD_ATTACK:	// 3段目の攻撃
 		{
 			// 3段目の攻撃コリジョン情報取得
-			attackCol = _thirdAttack.GetAttackCollision();
+			attackCol = _thirdAttack->GetAttackCollision();
 
 			break;
 		}
@@ -363,4 +365,54 @@ bool PlayerBase::IsAttacking()
 	}
 
 	return false;
+}
+
+// ヘルパー関数
+std::shared_ptr<AttackBase> PlayerBase::GetAttackByStatus(PLAYER_STATUS status)
+{
+	switch(status)
+	{
+		case PLAYER_STATUS::FIRST_ATTACK: // 1段目の攻撃
+		{
+			return _firstAttack;
+		}
+
+		case PLAYER_STATUS::SECOND_ATTACK: // 2段目の攻撃
+		{
+			return _secondAttack;
+		}
+
+		case PLAYER_STATUS::THIRD_ATTACK: // 3段目の攻撃
+		{
+			return _thirdAttack;
+		}
+
+		default: // 攻撃状態でない場合
+		{
+			return nullptr;
+		}
+	}
+}
+
+// ID取得関数
+int PlayerBase::GetInstanceId()
+{
+	// キャラタイプに応じたIDを返す
+	switch(_eCharaType)
+	{
+		case CHARA_TYPE::INTERIOR_PLAYER: // 裏プレイヤー
+		{
+			return INTERIOR_PLAYER_ID;	// 裏プレイヤーID
+		}
+
+		case CHARA_TYPE::SURFACE_PLAYER: // 表プレイヤー
+		{
+			return SURFACE_PLAYER_ID;	// 表プレイヤーID
+		}
+
+		default:
+		{
+			return 0;
+		}
+	}
 }
