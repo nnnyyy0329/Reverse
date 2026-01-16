@@ -15,6 +15,7 @@ namespace Melee
 	* Attack:攻撃(Chaseに戻り距離を再確認)
 	*/
 
+	// 待機
 	class Idle : public EnemyState
 	{
 		public:
@@ -23,6 +24,7 @@ namespace Melee
 		const char* GetName() const override { return "Melee:Idle"; }// 名前を返す(デバッグ用)
 	};
 
+	// 自動移動
 	class Move : public EnemyState
 	{
 		public:
@@ -40,6 +42,7 @@ namespace Melee
 		const char* GetName() const override { return "Melee:Detect"; }
 	};
 
+	// 追跡
 	class Chase : public EnemyState
 	{
 		public:
@@ -48,6 +51,7 @@ namespace Melee
 		bool IsChasing() const override { return true; }// 追跡状態である
 	};
 
+	// 攻撃
 	class Attack : public EnemyState
 	{
 		public:

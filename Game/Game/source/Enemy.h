@@ -2,9 +2,7 @@
 #include "CharaBase.h"
 #include "EnemyState.h"
 
-#include <memory>
-
-class Bullet;
+class BulletManager;
 
 class Enemy : public CharaBase
 {
@@ -34,7 +32,9 @@ public:
 	std::shared_ptr<CharaBase> GetTarget() const { return _targetPlayer; }
 	void SetTarget(std::shared_ptr<CharaBase> target) { _targetPlayer = target; }
 
-	void SpawnBullet(VECTOR vStartPos, VECTOR vDir);// 発射処理
+	// 弾関連
+	void SetBulletManager(std::shared_ptr<BulletManager> bulletManager) { _bulletManager = bulletManager; }// マネージャーをセット
+	void SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime);// 発射リクエストをする
 
 	std::vector<std::shared_ptr<Bullet>> GetBullet(){ return _bullets; }// 指定したインデックスの弾を取得
 
@@ -47,6 +47,6 @@ protected:
 	std::shared_ptr<EnemyState> _currentState;
 	EnemyParam _enemyParam;
 
-	std::vector<std::shared_ptr<Bullet>> _bullets;// 発射する弾のリスト
+	std::weak_ptr<BulletManager> _bulletManager;// マネージャーの参照を持つ(modegameが所有)
 };
 

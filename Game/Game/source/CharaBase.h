@@ -4,11 +4,9 @@
 enum class CHARA_TYPE
 {
 	NONE,
-	SURFACE_PLAYER,
-	INTERIOR_PLAYER,
-
-	// 敵もここに追加
-
+	PLAYER,
+	ENEMY,
+	BULLET,
 	_EOT_,
 };
 
@@ -52,8 +50,8 @@ public:
 	float GetGravity() { return _fGravity; }	// 重力
 	void SetGravity(float f) { _fGravity = f; }	// 重力
 
-	CHARA_TYPE GetCharaType() { return _eCharType; }					// キャラタイプ取得
-	void SetCharaType(CHARA_TYPE charaType) { _eCharType = charaType; }	// キャラタイプ設定
+	CHARA_TYPE GetCharaType() { return _eCharaType; }// キャラタイプ
+	void SetCharaType(CHARA_TYPE eType) { _eCharaType = eType; }
 
 protected:
 	// キャラカプセルの当たり判定用
@@ -73,6 +71,6 @@ protected:
 	float _fGravity;			// 重力	
 
 	// キャラタイプ
-	CHARA_TYPE _eCharType;
+	CHARA_TYPE _eCharaType;
 };
 

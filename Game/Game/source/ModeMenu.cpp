@@ -38,7 +38,8 @@ bool ModeMenu::Process() {
 	if (_bUseDebugCamera && _debugCamera) {
 		auto analog = ApplicationMain::GetInstance()->GetAnalog();
 		float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
-		_debugCamera->Process(analog.lx, analog.ly, analog.rx, analog.ry, analogMin);
+		bool bIsPut = (key & PAD_INPUT_2) != 0;// ボタン同時押し判定(B)
+		_debugCamera->Process(analog.lx, analog.ly, analog.rx, analog.ry, analogMin, bIsPut);
 	}
 
 	// spaceキーでメニューを閉じる

@@ -9,6 +9,7 @@ class AttackBase;
 class StageBase;
 class CameraManager;
 class DebugCamera;
+class BulletManager;
 
 // モード
 class ModeGame : public ModeBase
@@ -27,6 +28,8 @@ private:
 	void CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
 
 protected:
+	void CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara);// キャラとマップの当たり判定
+	void CheckHitCharaBullet(std::shared_ptr<CharaBase> chara);// キャラと弾の当たり判定
 
 	// プレイヤー管理をPlayerManagerに委譲
 	//std::shared_ptr<PlayerManager> _playerManager;
@@ -37,4 +40,5 @@ protected:
 	std::shared_ptr<StageBase> _stage;// ステージ
 	std::shared_ptr<CameraManager> _cameraManager;// カメラマネージャー
 	std::shared_ptr<DebugCamera> _debugCamera;// デバッグカメラ
+	std::shared_ptr<BulletManager> _bulletManager;// 弾マネージャー
 };

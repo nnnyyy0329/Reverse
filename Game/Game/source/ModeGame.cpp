@@ -7,12 +7,13 @@
 #include "StageBase.h"
 #include "Enemy.h"
 #include "CameraManager.h"
+#include "DebugCamera.h"
+#include "BulletManager.h"
 
 // いったんこれ
 #include "PlayerManager.h"
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
-#include "DebugCamera.h"
 
 bool ModeGame::Initialize() 
 {
@@ -21,6 +22,10 @@ bool ModeGame::Initialize()
 	// PlayerManagerの初期化
 	_playerManager = std::make_shared<PlayerManager>();
 	_playerManager->Initialize();
+
+	// BulletManagerの初期化
+	_bulletManager = std::make_shared<BulletManager>();
+	_bulletManager->Initialize();
 
 	// プレイヤーの作成と登録
 	{
@@ -40,9 +45,10 @@ bool ModeGame::Initialize()
 
 	_debugCamera = std::make_shared<DebugCamera>();
 
-	// 敵にターゲットのプレイヤーを設定
+	// 敵設定
 	for (const auto& enemy : _stage->GetEnemies()) {
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
+		enemy->SetBulletManager(_bulletManager);
 	}
 
 	return true;
@@ -89,6 +95,7 @@ bool ModeGame::Process()
 	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10) {
 		ModeMenu* modeMenu = new ModeMenu();
 		modeMenu->SetDebugCamera(_debugCamera);// デバッグカメラを渡す
+		_debugCamera->SetInfo(_cameraManager->GetVPos(), _cameraManager->GetVTarget());// 元カメラの情報を渡す
 		// ModeGameより上のレイヤーにメニューを登録する
 		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 	}
@@ -97,13 +104,25 @@ bool ModeGame::Process()
 	{
 		_playerManager->Process();
 		_stage->Process();
+		_bulletManager->Process();
 	}
 
 	// 当たり判定
 	{
-		//CheckCollisionCharaMap(_player);
-		for (const auto& enemy : _stage->GetEnemies()) {
-			//CheckCollisionCharaMap(enemy);
+		auto player = _playerManager->GetActivePlayerShared();
+		auto enemies = _stage->GetEnemies();
+
+		// マップ
+		//CheckCollisionCharaMap(player);
+		//for (const auto& enemy : enemies) {
+		//	CheckCollisionCharaMap(enemy);
+		//}
+
+
+		// 弾
+		CheckHitCharaBullet(player);
+		for (const auto& enemy : enemies) {
+			CheckHitCharaBullet(enemy);
 		}
 
 		// プレイヤーと敵の当たり判定
@@ -147,7 +166,7 @@ bool ModeGame::Render()
 	{
 		SetUseLighting(TRUE);
 
-		#if 0	// 平行ライト
+		#if 1	// 平行ライト
 			SetGlobalAmbientLight(GetColorF(0.5f, 0.f, 0.f, 0.f));
 			ChangeLightTypeDir(VGet(-1, -1, 0));
 		#endif
@@ -175,6 +194,7 @@ bool ModeGame::Render()
 	{
 		_playerManager->Render();
 		_stage->Render();
+		_bulletManager->Render();
 	}
 
 	// デバッグ情報の描画
@@ -187,3 +207,119 @@ bool ModeGame::Render()
 	return true;
 }
 
+// キャラとマップの当たり判定
+void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
+	if (!chara || !_stage) return;
+
+	auto& mapObjList = _stage->GetMapModelPosList();
+	VECTOR vCurrentPos = chara->GetPos();// 現在の移動後座標
+	VECTOR vOldPos = chara->GetOldPos();// 移動前の座標
+
+	// 移動ベクトルと移動量を計算
+	VECTOR vMove = VSub(vCurrentPos, vOldPos);
+	auto moveLength = VSize(vMove);
+
+	// 移動していないなら処理しない
+	if (moveLength < 0.001f) return;
+
+	// 移動角度を計算
+	auto moveRad = atan2(vMove.z, vMove.x);
+
+	// escapeTbl[]順に角度を変えて回避を試みる
+	const float escapeTbl[] = {
+		0, -10, 10, -20, 20, -30, 30, -40, 40, -50, 50, -60, 60, -70, 70, -80, 80,
+	};
+
+	bool isLanded = false;// 地面が見つかったか
+
+	for (int i = 0; i < static_cast<int>(sizeof(escapeTbl) / sizeof(escapeTbl[0])); i++) {
+		// escapeTbl[]分だけ角度をずらす
+		float escapeRad = DEG2RAD(escapeTbl[i]);
+		float checkRad = moveRad + escapeRad;
+
+		// 判定用の移動ベクトル
+		VECTOR testPos = vOldPos;
+		testPos.x += cos(checkRad) * moveLength;
+		testPos.z += sin(checkRad) * moveLength;
+
+		// 判定用の線分の始点と終点を設定
+		VECTOR lineStart = VAdd(testPos, VGet(0.0f, chara->GetColSubY(), 0.0f));// 始点：キャラの腰位置
+		VECTOR lineEnd = VAdd(testPos, VGet(0.0f, -50.0f, 0.0f));
+
+		// 当たった中で最も高い地面を記録する
+		auto highestY = -99999.0f;
+		bool hitAnyObj = false;
+
+		// 全てのマップオブジェクトと当たり判定を行う
+		for (const auto& obj : mapObjList) {
+			if (obj.collisionFrame == -1) continue;
+
+			// 線分とモデルの当たり判定
+			MV1_COLL_RESULT_POLY hitPoly = MV1CollCheck_Line(
+				obj.modelHandle, obj.collisionFrame, lineStart, lineEnd
+			);
+
+			if (hitPoly.HitFlag) {
+				// 当たった
+				// 最も高いY位置を記録
+				if (hitPoly.HitPosition.y > highestY) {
+					highestY = hitPoly.HitPosition.y;
+					hitAnyObj = true;
+				}
+			}
+		}
+
+		if (hitAnyObj) {
+			// 地面が見つかった
+			// 当たったY位置をキャラ座標にする
+			testPos.y = highestY;
+			chara->SetPos(testPos);// キャラの座標を更新
+			isLanded = true;
+			break;// ループから抜ける
+		}
+	}
+
+	if (!isLanded) {
+		// 地面が見つからなかった
+		// 元の座標に戻す
+		chara->SetPos(vOldPos);
+	}
+}
+
+// キャラと弾の当たり判定
+void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara) {
+	if (!chara) return;
+
+	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
+
+	const auto& bullets = _bulletManager->GetBullets();// 弾のリストを取得
+
+	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
+
+	// 全弾ループ
+	for (const auto& bullet : bullets) {
+		if (!bullet) continue;
+
+		// キャラと弾のタイプが同じなら無視する
+		if (bullet->GetShooterType() == myType) {
+			continue;
+		}
+
+		// 当たり判定
+		if(HitCheck_Capsule_Sphere(
+			chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
+			bullet->GetPos(), bullet->GetCollisionR()
+		)) {
+			// 当たった
+
+			// ダメージ処理とか
+
+			deadBullets.push_back(bullet);// 削除リストに追加
+		}
+	}
+
+	// 全ての判定が終わった後に、まとめて削除する
+	for (const auto& deadBullet : deadBullets) {
+		_bulletManager->RemoveBullet(deadBullet);
+	}
+}

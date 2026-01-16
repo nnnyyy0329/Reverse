@@ -117,7 +117,7 @@ float GetPointSegmentSq(const VECTOR& point, const VECTOR& segmentStart, const V
 }
 
 // カプセルと点の最短距離の二乗を計算
-float GetCapsulePointSq(const VECTOR& point, const VECTOR& capsuleTop, const VECTOR& capsuleBottom, float capsuleRadius)
+float GetCapsulePointSq(const VECTOR& point, const VECTOR& capsuleTop, const VECTOR& capsuleBottom)
 {
 	// カプセルの中心軸と点の最短距離の二乗を計算
 	float distSq = GetPointSegmentSq(point, capsuleTop, capsuleBottom);
@@ -128,7 +128,7 @@ float GetCapsulePointSq(const VECTOR& point, const VECTOR& capsuleTop, const VEC
 bool HitCheck_Capsule_Sphere(const VECTOR& capsuleTop, const VECTOR& capsuleBottom, float capsuleRadius, const VECTOR& sphereCenter, float sphereRadius)
 {
 	// カプセルの中心軸と球の中心点の最短距離の二乗を計算
-	float distSq = GetCapsulePointSq(sphereCenter, capsuleTop, capsuleBottom, capsuleRadius);
+	float distSq = GetCapsulePointSq(sphereCenter, capsuleTop, capsuleBottom);
 
 	// 半径の合計の二乗
 	float totalRadius = capsuleRadius + sphereRadius;

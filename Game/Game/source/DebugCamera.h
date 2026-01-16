@@ -7,10 +7,12 @@ public:
 	DebugCamera();
 	virtual ~DebugCamera();
 
-	void Process(float lx, float ly, float rx, float ry, float analogMin);
+	void Process(float lx, float ly, float rx, float ry, float analogMin, bool bIsPut);
 	void DebugRender();
 
 	void SetUp();
+
+	void SetInfo(VECTOR vPos, VECTOR vTarget);// 座標と注視点を設定
 
 protected:
 	void UpdatePosFromAngle();// 角度と距離から座標を計算
