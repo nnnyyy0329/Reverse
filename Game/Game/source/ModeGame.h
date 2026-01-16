@@ -25,6 +25,7 @@ private:
 	void CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
 	void CheckHitPlayerEnemy(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);		// プレイヤーと敵の当たり判定
 	void CheckHitCharaBullet(std::shared_ptr<CharaBase> chara);											// キャラと弾の当たり判定
+	void CheckHitCharaAttack(std::shared_ptr<CharaBase> chara);											// キャラと攻撃の当たり判定
 	void CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
 
 protected:

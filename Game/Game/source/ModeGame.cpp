@@ -6,12 +6,12 @@
 #include "CharaBase.h"
 #include "StageBase.h"
 #include "Enemy.h"
-#include "CameraManager.h"
 #include "DebugCamera.h"
+
+#include "CameraManager.h"
 #include "BulletManager.h"
 #include "AttackManager.h"
 
-// いったんこれ
 #include "PlayerManager.h"
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
@@ -133,9 +133,8 @@ bool ModeGame::Process()
 		}
 
 		// キャラと攻撃コリジョンの当たり判定
-		for (const auto& enemy : _stage->GetEnemies())
-		{
-		}
+		CheckHitCharaAttack(player);									// プレイヤー
+		for(const auto& enemy : enemies){ CheckHitCharaAttack(enemy); }	// 敵
 	}
 
 	// いったん
@@ -207,7 +206,7 @@ bool ModeGame::Render()
 }
 
 // キャラと弾の当たり判定
-void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara) {
+void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara){
 	if (!chara) return;
 
 	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
@@ -217,11 +216,11 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara) {
 	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
 
 	// 全弾ループ
-	for (const auto& bullet : bullets) {
+	for (const auto& bullet : bullets){
 		if (!bullet) continue;
 
 		// キャラと弾のタイプが同じなら無視する
-		if (bullet->GetShooterType() == myType) {
+		if (bullet->GetShooterType() == myType){
 			continue;
 		}
 

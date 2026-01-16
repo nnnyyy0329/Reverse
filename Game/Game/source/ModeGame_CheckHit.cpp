@@ -2,6 +2,7 @@
 #include "CharaBase.h"
 #include "StageBase.h"
 #include "AttackBase.h"
+#include "AttackManager.h"
 
 // キャラとマップの当たり判定
 void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) 
@@ -94,6 +95,25 @@ void ModeGame::CheckHitPlayerEnemy(std::shared_ptr<CharaBase> chara1, std::share
 	) != false)
 	{
 		printfDx("Player and Enemy Hit!\n");
+	}
+}
+
+// キャラと攻撃コリジョンの当たり判定
+void ModeGame::CheckHitCharaAttack(std::shared_ptr<CharaBase> chara)
+{
+	if(chara == nullptr) { return; }
+
+	// AttackManagerから全てのアクティブな攻撃を取得
+	auto& attackManager = AttackManager::GetInstance();
+	auto activeAttacks = attackManager.GetAllActiveAttacks();
+
+	// 各攻撃と当たり判定
+	for(auto& attack : activeAttacks)
+	{
+		if(attack == nullptr) continue;
+
+		// 当たり判定
+		CheckHitCharaAttackCol(chara, attack);
 	}
 }
 
