@@ -19,6 +19,9 @@
     <Filter Include="Manager\Component">
       <UniqueIdentifier>{e2d5dff1-1578-4f71-ad91-6fe0837b0092}</UniqueIdentifier>
     </Filter>
+    <Filter Include="a">
+      <UniqueIdentifier>{194dde9a-395d-4ede-97b1-e3bcd6951d8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\CFile\CFile.cpp">
@@ -64,5 +67,11 @@
       <Filter>Manager\Component</Filter>
     </ClInclude>
     <ClInclude Include="source\appframe.h" />
+    <ClInclude Include="source\template\aliastemplate.h">
+      <Filter>a</Filter>
+    </ClInclude>
+    <ClInclude Include="source\template\container.h">
+      <Filter>a</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

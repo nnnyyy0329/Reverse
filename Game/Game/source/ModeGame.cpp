@@ -52,10 +52,8 @@ bool ModeGame::Terminate()
 {
 	base::Terminate();
 
-
-	// いったんこれ
+	// プレイヤー開放
 	_playerManager.reset();
-
 
 	return true;
 }
@@ -112,6 +110,14 @@ bool ModeGame::Process()
 		for (const auto& enemy : _stage->GetEnemies())
 		{
 			CheckHitPlayerEnemy(_playerManager->GetActivePlayerShared(), enemy);
+		}
+
+		// キャラと攻撃コリジョンの当たり判定
+		for (const auto& enemy : _stage->GetEnemies())
+		{
+			CheckHitCharaAttackCol(enemy, _playerManager->GetActivePlayerShared()->GetFirstAttackShared());
+			CheckHitCharaAttackCol(enemy, _playerManager->GetActivePlayerShared()->GetSecondAttackShared());
+			CheckHitCharaAttackCol(enemy, _playerManager->GetActivePlayerShared()->GetThirdAttackShared());
 		}
 	}
 

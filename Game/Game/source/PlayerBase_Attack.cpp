@@ -1,5 +1,7 @@
+// 担当 : 成田
 
 #include "PlayerBase.h"
+#include "AttackManager.h"
 
 // 攻撃コリジョンの設定
 void PlayerBase::InitializeAttackData()
@@ -125,12 +127,32 @@ void PlayerBase::ProcessAttack()
 // コンボ攻撃開始の処理
 void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, AttackBase& attack)
 {
-	ProcessAttackColPos();			// コリジョン位置更新処理
-	ReceiveAttackColData();			// 攻撃判定受け取り関数
-	SetStatus(nextStatus);			// 状態更新
-	attack.ProcessStartAttack();	// 攻撃処理かいし
+	ProcessAttackColPos();							// コリジョン位置更新処理
+	ReceiveAttackColData();							// 攻撃判定受け取り関数
+	SetStatus(nextStatus);							// 状態更新
+	attack.ProcessStartAttack();					// 攻撃処理開始
+	RegisterAttackToManager(attack, comboCount);	// 攻撃管理クラスに登録
 	_iComboCount = comboCount;
 	_bCanCombo = false;
+}
+
+// 攻撃管理クラスに登録
+void PlayerBase::RegisterAttackToManager(AttackBase& attack, int comboCount)
+{
+	// AttackManagerインスタンス取得
+	auto attackManager = AttackManager::GetInstance();
+
+	// 所有者タイプの設定
+	ATTACK_OWNER_TYPE ownerType = ATTACK_OWNER_TYPE::NONE;
+
+	if(_eCharType == CHARA_TYPE::SURFACE_PLAYER)
+	{
+		ownerType = ATTACK_OWNER_TYPE::SURFACE_PLAYER;
+	}
+	else if(_eCharType == CHARA_TYPE::INTERIOR_PLAYER)
+	{
+		ownerType = ATTACK_OWNER_TYPE::INTERIOR_PLAYER;
+	}
 }
 
 // 攻撃分岐処理

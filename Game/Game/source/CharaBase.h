@@ -52,6 +52,9 @@ public:
 	float GetGravity() { return _fGravity; }	// 重力
 	void SetGravity(float f) { _fGravity = f; }	// 重力
 
+	CHARA_TYPE GetCharaType() { return _eCharType; }					// キャラタイプ取得
+	void SetCharaType(CHARA_TYPE charaType) { _eCharType = charaType; }	// キャラタイプ設定
+
 protected:
 	// キャラカプセルの当たり判定用
 	VECTOR _vCollisionTop;		// 当たり判定の上端

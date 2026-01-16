@@ -29,7 +29,8 @@ private:
 protected:
 
 	// プレイヤー管理をPlayerManagerに委譲
-	std::shared_ptr<PlayerManager> _playerManager;
+	//std::shared_ptr<PlayerManager> _playerManager;
+	at::vsp<PlayerManager> _playerManager;
 
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される

@@ -116,11 +116,14 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 {
 	if(chara == nullptr || attack == nullptr) { return; }
 
+	// UŒ‚ƒRƒŠƒWƒ‡ƒ“î•ñ‚ðŽæ“¾
+	const ATTACK_COLLISION& col = attack->GetAttackCollision();
 
-
-	if(HitCheck_Capsule_Capsule(
+	// “–‚½‚è”»’è
+	if(HitCheck_Capsule_Capsule
+	(
 		chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
-		attack->GetCollisionTop(), attack->GetCollisionBottom(), attack->GetCollisionR()
+		col.attackColTop, col.attackColBottom, col.attackColR
 	) != false)
 	{
 		printfDx("Chara and Attack Collision Hit!\n");

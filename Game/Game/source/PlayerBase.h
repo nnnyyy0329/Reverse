@@ -102,6 +102,7 @@ private:	// UŒ‚ŠÖŒW
 
 	void UpdateAttackColPos(AttackBase& attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);					// UŒ‚”»’è‚ÌˆÊ’uXVˆ—
 	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, AttackBase& attack);										// UŒ‚ŠJnˆ—
+	void RegisterAttackToManager(AttackBase& attack, int comboCount);															// UŒ‚ŠÇ—ƒNƒ‰ƒX‚É“o˜^
 	void ProcessComboAttack(AttackBase& currentAttack, int nextComboCount, PLAYER_STATUS nextStatus, AttackBase& nextAttack);	// ”Ä—pƒRƒ“ƒ{UŒ‚ˆ—
 	void ProcessAttackFinish(AttackBase& attack);																				// UŒ‚I—¹ˆ—
 	void EndAttackSequence();																									// UŒ‚‰Û’öC—¹

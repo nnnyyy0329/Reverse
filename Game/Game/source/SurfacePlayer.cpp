@@ -53,7 +53,7 @@ SurfacePlayer::SurfacePlayer()
 	_iComboCount = 0;
 
 	// キャラタイプ
-	_eCharType = CHARA_TYPE::SURFACE_PLAYER;
+	SetCharaType(CHARA_TYPE::SURFACE_PLAYER);
 
 	// 攻撃データの初期化
 	InitializeAttackData();

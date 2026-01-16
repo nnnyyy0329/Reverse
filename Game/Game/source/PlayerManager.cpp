@@ -35,12 +35,15 @@ bool PlayerManager::Process()
 	// プレイヤー切り替えの入力チェック
 	if(_trg & PAD_INPUT_6) 
 	{
-		if(_activePlayerType == PLAYER_TYPE::SURFACE)
+		// プレイヤー切り替え
+		if(_activePlayerType == PLAYER_TYPE::SURFACE) // 表プレイヤーなら裏プレイヤーに切り替え
 		{
+			// 表プレイヤーから裏プレイヤーに切り替え
 			SwitchPlayer(PLAYER_TYPE::INTERIOR);
 		}
-		else
+		else // 裏プレイヤーなら表プレイヤーに切り替え
 		{
+			// 裏プレイヤーから表プレイヤーに切り替え
 			SwitchPlayer(PLAYER_TYPE::SURFACE);
 		}
 	}
