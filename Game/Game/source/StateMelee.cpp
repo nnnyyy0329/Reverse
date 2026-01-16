@@ -1,6 +1,13 @@
 #include "StateMelee.h"
 #include "Enemy.h"
 
+namespace {
+	constexpr auto ATTACK_COLLISION_OFFSET_Z = 20.0f;// 攻撃コリジョン前方オフセット
+	constexpr auto ATTACK_COLLISION_OFFSET_Y = 20.0f;// 攻撃コリジョン高さオフセット
+	constexpr auto ATTACK_COLLISION_HEIGHT = 80.0f;// 攻撃コリジョン高さ
+	constexpr auto ATTACK_COLLISION_RADIUS = 40.0f;// 攻撃コリジョン半径
+}
+
 namespace Melee
 {
 
@@ -67,7 +74,7 @@ namespace Melee
 		auto targetAngle = 0.0f;
 
 		// 初期位置からの距離によって方向を変える
-		if (dist > limitRange * 0.9f) {// 90%以上離れていたなら、初期位置を向く
+		if (dist > limitRange * 0.8f) {// 80%以上離れていたなら、初期位置を向く
 			auto toHomeAngle = atan2f(vToHome.z, vToHome.x);// 初期位置への角度
 			// ランダムな角度を足して少しばらつかせる
 			auto randOffset = static_cast<float>(GetRand(90) - 45) * DEGREE_TO_RADIAN;
@@ -180,6 +187,7 @@ namespace Melee
 	void Attack::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
 		// ここでアニメーション設定
+
 	}
 
 	std::shared_ptr<EnemyState> Attack::Update(Enemy* owner) {

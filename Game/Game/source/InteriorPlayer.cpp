@@ -52,7 +52,7 @@ InteriorPlayer::InteriorPlayer()
 	_iComboCount = 0;
 
 	// キャラタイプ
-	_eCharType = CHARA_TYPE::INTERIOR_PLAYER;
+	SetCharaType(CHARA_TYPE::PLAYER);
 }
 
 InteriorPlayer::~InteriorPlayer()

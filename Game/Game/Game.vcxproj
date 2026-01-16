@@ -151,6 +151,7 @@
     <ClCompile Include="source\ApplicationMain.cpp" />
     <ClCompile Include="source\AttackBase.cpp" />
     <ClCompile Include="source\Bullet.cpp" />
+    <ClCompile Include="source\BulletManager.cpp" />
     <ClCompile Include="source\CameraManager.cpp" />
     <ClCompile Include="source\CharaBase.cpp" />
     <ClCompile Include="source\DebugCamera.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="source\ApplicationMain.h" />
     <ClInclude Include="source\AttackBase.h" />
     <ClInclude Include="source\Bullet.h" />
+    <ClInclude Include="source\BulletManager.h" />
     <ClInclude Include="source\CameraManager.h" />
     <ClInclude Include="source\CharaBase.h" />
     <ClInclude Include="source\DebugCamera.h" />

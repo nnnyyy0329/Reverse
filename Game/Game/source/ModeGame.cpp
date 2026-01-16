@@ -7,12 +7,13 @@
 #include "StageBase.h"
 #include "Enemy.h"
 #include "CameraManager.h"
+#include "DebugCamera.h"
+#include "BulletManager.h"
 
 // いったんこれ
 #include "PlayerManager.h"
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
-#include "DebugCamera.h"
 
 bool ModeGame::Initialize() 
 {
@@ -21,6 +22,10 @@ bool ModeGame::Initialize()
 	// PlayerManagerの初期化
 	_playerManager = std::make_shared<PlayerManager>();
 	_playerManager->Initialize();
+
+	// BulletManagerの初期化
+	_bulletManager = std::make_shared<BulletManager>();
+	_bulletManager->Initialize();
 
 	// プレイヤーの作成と登録
 	{
@@ -40,9 +45,10 @@ bool ModeGame::Initialize()
 
 	_debugCamera = std::make_shared<DebugCamera>();
 
-	// 敵にターゲットのプレイヤーを設定
+	// 敵設定
 	for (const auto& enemy : _stage->GetEnemies()) {
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
+		enemy->SetBulletManager(_bulletManager);
 	}
 
 	return true;
@@ -91,6 +97,7 @@ bool ModeGame::Process()
 	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10) {
 		ModeMenu* modeMenu = new ModeMenu();
 		modeMenu->SetDebugCamera(_debugCamera);// デバッグカメラを渡す
+		_debugCamera->SetInfo(_cameraManager->GetVPos(), _cameraManager->GetVTarget());// 元カメラの情報を渡す
 		// ModeGameより上のレイヤーにメニューを登録する
 		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 	}
@@ -99,13 +106,25 @@ bool ModeGame::Process()
 	{
 		_playerManager->Process();
 		_stage->Process();
+		_bulletManager->Process();
 	}
 
 	// 当たり判定
 	{
-		//CheckCollisionCharaMap(_player);
-		for (const auto& enemy : _stage->GetEnemies()) {
-			//CheckCollisionCharaMap(enemy);
+		auto player = _playerManager->GetActivePlayerShared();
+		auto enemies = _stage->GetEnemies();
+
+		// マップ
+		//CheckCollisionCharaMap(player);
+		//for (const auto& enemy : enemies) {
+		//	CheckCollisionCharaMap(enemy);
+		//}
+
+
+		// 弾
+		CheckHitCharaBullet(player);
+		for (const auto& enemy : enemies) {
+			CheckHitCharaBullet(enemy);
 		}
 	}
 
@@ -135,7 +154,7 @@ bool ModeGame::Render()
 	{
 		SetUseLighting(TRUE);
 
-		#if 0	// 平行ライト
+		#if 1	// 平行ライト
 			SetGlobalAmbientLight(GetColorF(0.5f, 0.f, 0.f, 0.f));
 			ChangeLightTypeDir(VGet(-1, -1, 0));
 		#endif
@@ -163,6 +182,7 @@ bool ModeGame::Render()
 	{
 		_playerManager->Render();
 		_stage->Render();
+		_bulletManager->Render();
 	}
 
 	// デバッグ情報の描画
@@ -251,5 +271,43 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
 		// 地面が見つからなかった
 		// 元の座標に戻す
 		chara->SetPos(vOldPos);
+	}
+}
+
+// キャラと弾の当たり判定
+void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara) {
+	if (!chara) return;
+
+	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
+
+	const auto& bullets = _bulletManager->GetBullets();// 弾のリストを取得
+
+	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
+
+	// 全弾ループ
+	for (const auto& bullet : bullets) {
+		if (!bullet) continue;
+
+		// キャラと弾のタイプが同じなら無視する
+		if (bullet->GetShooterType() == myType) {
+			continue;
+		}
+
+		// 当たり判定
+		if(HitCheck_Capsule_Sphere(
+			chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
+			bullet->GetPos(), bullet->GetCollisionR()
+		)) {
+			// 当たった
+
+			// ダメージ処理とか
+
+			deadBullets.push_back(bullet);// 削除リストに追加
+		}
+	}
+
+	// 全ての判定が終わった後に、まとめて削除する
+	for (const auto& deadBullet : deadBullets) {
+		_bulletManager->RemoveBullet(deadBullet);
 	}
 }

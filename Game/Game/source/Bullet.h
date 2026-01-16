@@ -13,9 +13,13 @@ public:
 	virtual bool Render();		// •`‰æ
 	virtual void DebugRender();	// ƒfƒoƒbƒO•`‰æ
 
-	void Activate(VECTOR vStartPos, VECTOR vDir, float fSpeed, int lifeTime);// ’e‚ğ”­Ëó‘Ô‚É‚·‚é
+	// ’e‚Ì”­Ëˆ—
+	void Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE type);
+
+	CHARA_TYPE GetShooterType() const { return _eShooterType; }// ’e‚Ì”­ËÒ‚ğæ“¾
 
 protected:
 	int _lifeTimer;// ’e‚Ìõ–½(ƒtƒŒ[ƒ€)
+	CHARA_TYPE _eShooterType;// ’N‚ª”­Ë‚µ‚½’e‚©
 };
 

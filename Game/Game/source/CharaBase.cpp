@@ -14,7 +14,7 @@ CharaBase::CharaBase()
 	_fGravity = 0.0f;
 
 	// キャラタイプ
-	_eCharType = CHARA_TYPE::NONE;
+	_eCharaType = CHARA_TYPE::NONE;
 }
 
 CharaBase::~CharaBase()

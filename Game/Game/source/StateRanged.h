@@ -44,6 +44,6 @@ namespace Ranged
 	private:
 		float _shotTimer;// 発射間隔タイマー
 		// 弾の発射処理などをここに追加
-		void Shoot(Enemy* owner);// 仮
+		void Shoot(Enemy* owner);// 発射
 	};
 }

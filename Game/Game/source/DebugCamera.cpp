@@ -24,9 +24,9 @@ DebugCamera::~DebugCamera()
 {
 }
 
-// 左スティック:ターゲットの移動
+// 左スティック:ターゲットの移動(ボタン同時押し(B)で高さ変更、ズーム)
 // 右スティック:カメラの回転
-void DebugCamera::Process(float lx, float ly, float rx, float ry, float analogMin)
+void DebugCamera::Process(float lx, float ly, float rx, float ry, float analogMin, bool bIsPut)
 {
 	// カメラの回転
 	{
@@ -44,19 +44,31 @@ void DebugCamera::Process(float lx, float ly, float rx, float ry, float analogMi
 	// ターゲットの移動
 	{
 		if (abs(lx) > analogMin || abs(ly) > analogMin) {
-			// カメラの向いている方向のベクトル
-			// Y成分は無視してXZ平面上のベクトルにする
-			VECTOR vForward = VGet(cos(_angleH), 0.0f, sin(_angleH));
-			VECTOR vRight = VGet(cos(_angleH + DX_PI_F / 2.0f), 0.0f, sin(_angleH + DX_PI_F / 2));
 
-			// 移動量を計算
-			VECTOR vMove = VAdd(
-				VScale(vForward, ly * MOVE_SPEED),
-				VScale(vRight, lx * MOVE_SPEED)
-			);
+			// ボタン同時押し中(B)
+			if (bIsPut) {
+				// ターゲットの高さ変更
+				_vTarget.y -= ly * MOVE_SPEED;
 
-			// ターゲット位置を更新
-			_vTarget = VAdd(_vTarget, vMove);
+				// ズームイン・アウト
+				_distance += lx * ZOOM_SPEED;
+				if (_distance < 1.0f) _distance = 1.0f;// 最小距離制限
+			}
+			else {// 通常時
+				// カメラの向いている方向のベクトル
+				// Y成分は無視してXZ平面上のベクトルにする
+				VECTOR vForward = VGet(cos(_angleH), 0.0f, sin(_angleH));
+				VECTOR vRight = VGet(cos(_angleH + DX_PI_F / 2.0f), 0.0f, sin(_angleH + DX_PI_F / 2));
+
+				// 移動量を計算
+				VECTOR vMove = VAdd(
+					VScale(vForward, ly * MOVE_SPEED),
+					VScale(vRight, lx * MOVE_SPEED)
+				);
+
+				// ターゲット位置を更新
+				_vTarget = VAdd(_vTarget, vMove);
+			}
 		}
 	}
 
@@ -93,6 +105,13 @@ void DebugCamera::SetUp()
 {
 	SetCameraPositionAndTarget_UpVecY(_vPos, _vTarget);// カメラ位置と注視点の設定
 	SetCameraNearFar(_nearClip, _farClip);// カメラからどれだけ離れた距離からどこまで描画するかを設定
+}
+
+void DebugCamera::SetInfo(VECTOR vPos, VECTOR vTarget)
+{
+	_vPos = vPos;
+	_vTarget = vTarget;
+	CalcAngleFromPos();// セットされた座標から角度と距離を再計算
 }
 
 // 角度と距離からカメラの座標を計算

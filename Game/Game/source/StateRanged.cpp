@@ -1,6 +1,17 @@
 #include "StateRanged.h"
 #include "Enemy.h"
 
+namespace {
+	constexpr auto SHOOT_OFFSET_Z = 20.0f;// 発射位置前方オフセット
+	constexpr auto SHOOT_OFFSET_Y = 40.0f;// 発射位置高さオフセット
+
+	constexpr auto TURN_LOCK_TIME = 10.0f;// 発射の何フレーム前になったら向きを固定するか
+
+	constexpr auto BULLET_RADIUS = 10.0f;// 弾の当たり判定半径
+	constexpr auto BULLET_SPEED = 15.0f;// 弾の速度
+	constexpr auto BULLET_LIFETIME = 120.0f;// 弾の寿命(フレーム数)
+}
+
 namespace Ranged
 {
 	// プレイヤーを見つけたかチェックする(共通)
@@ -90,7 +101,7 @@ namespace Ranged
 		_shotTimer++;
 
 		auto interval = owner->GetEnemyParam().attackInterval;// 攻撃間隔
-		auto lockTime = 10.0f;// 発射の何フレーム前になったら向きを固定するか
+		auto lockTime = TURN_LOCK_TIME;
 		auto moveBackRange = owner->GetEnemyParam().attackRange;// これより近づいたら後退する
 		auto moveSpeed = owner->GetEnemyParam().moveSpeed;// 後退速度
 
@@ -159,7 +170,7 @@ namespace Ranged
 		}
 
 		// 発射判定
-		if (_shotTimer >= interval && dot > 0.9f) {
+		if (_shotTimer >= interval && dot > 0.9f) {// ほぼ正面を向いているなら発射
 			Shoot(owner);// 発射
 			_shotTimer = 0.0f;// タイマーリセット
 		}
@@ -190,11 +201,11 @@ namespace Ranged
 		// 発射位置の計算
 		VECTOR vMuzzlePos = VAdd(
 			owner->GetPos(),
-			VScale(owner->GetDir(), 20.0f)// 少し前方にずらす
+			VScale(owner->GetDir(), SHOOT_OFFSET_Z)// 少し前方にずらす
 		);
-		vMuzzlePos.y += 40.0f;// 高さを合わせる
+		vMuzzlePos.y += SHOOT_OFFSET_Y;// 高さを合わせる
 
 		// 弾を生成
-		owner->SpawnBullet(vMuzzlePos, owner->GetDir());
+		owner->SpawnBullet(vMuzzlePos, owner->GetDir(), BULLET_RADIUS, BULLET_SPEED, BULLET_LIFETIME);
 	}
 }
