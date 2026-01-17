@@ -201,8 +201,8 @@ std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAllActiveAttacks()con
 		{
 			auto attack = attackInfo.attack.lock();	// 攻撃オブジェクト取得
 
-			// 攻撃状態がINACTIVEでないならアクティブ攻撃リストに追加
-			if(attack->GetAttackState() != ATTACK_STATE::INACTIVE)
+			// 攻撃状態がACTIVEならアクティブ攻撃リストに追加
+			if(attack->GetAttackState() == ATTACK_STATE::ACTIVE)
 			{
 				activeAttacks.push_back(attack); // リストに追加
 			}
@@ -273,8 +273,8 @@ int AttackManager::GetActiveAttackCount() const
 		{
 			auto attack = attackInfo.attack.lock();	// 攻撃オブジェクト取得
 
-			// 攻撃状態がINACTIVEでないならカウンタを増やす
-			if(attack->GetAttackState() != ATTACK_STATE::INACTIVE)
+			// 攻撃状態がACTIVEならカウンタを増やす
+			if(attack->GetAttackState() == ATTACK_STATE::ACTIVE)
 			{
 				count++;
 			}
