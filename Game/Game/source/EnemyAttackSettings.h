@@ -2,7 +2,7 @@
 #include "appframe.h"
 #include "AttackBase.h"
 
-// 敵のステートごとの攻撃コリジョン設定
+// 敵の種類ごとの攻撃コリジョン設定
 struct EnemyAttackSettings
 {
 	COLLISION_TYPE colType = COLLISION_TYPE::CAPSULE;// コリジョンタイプ	

@@ -14,34 +14,6 @@ namespace {
 
 namespace Ranged
 {
-	// プレイヤーを見つけたかチェックする(共通)
-	// 見つけたら:DetectStateを返す。見つからない:nullptrを返す
-	std::shared_ptr<EnemyState> TryDetectPlayer(Enemy* owner)
-	{
-		auto target = owner->GetTarget();
-		if (!target) return nullptr;
-
-		// 距離チェック
-		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
-		auto dist = VSize(vToTarget);// ターゲットまでの距離
-		if (dist > owner->GetEnemyParam().visionRange) return nullptr;// 索敵距離外
-
-		// 角度チェック
-		VECTOR vDir = owner->GetDir();
-		VECTOR vDirToTarget = VNorm(vToTarget);
-		auto dot = VDot(vDir, vDirToTarget);
-		auto limitCos = owner->GetEnemyParam().visionCos;
-		// dotがlimitCos以上なら視界内
-		if (dot >= limitCos) {
-			// 視界内にいる
-			return std::make_shared<Detect>();// 発見状態へ
-		}
-
-		return nullptr;
-	}
-
-
-
 	// 待機
 	void Idle::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
@@ -50,8 +22,11 @@ namespace Ranged
 
 	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner) {
 		// 索敵チェック
-		auto detectState = TryDetectPlayer(owner);
-		if (detectState) return detectState;// 発見状態へ
+		auto target = owner->GetTarget();// ターゲット取得
+		if (owner->IsTargetVisible(target))// 視界内なら
+		{
+			return std::make_shared<Detect>();// 発見状態へ
+		}
 
 		// 待機中に見渡すなどの動きを入れたいならここに追加
 
@@ -78,7 +53,7 @@ namespace Ranged
 		_fTimer++;
 
 		// 時間経過で
-		if (_fTimer >= owner->GetEnemyParam().detectTime) {
+		if (_fTimer >= owner->GetEnemyParam().fDetectTime) {
 			return std::make_shared<Attack>();// 攻撃状態へ
 		}
 	}
@@ -100,10 +75,10 @@ namespace Ranged
 		_fTimer++;
 		_shotTimer++;
 
-		auto interval = owner->GetEnemyParam().attackInterval;// 攻撃間隔
+		auto interval = owner->GetEnemyParam().fAttackInterval;// 攻撃間隔
 		auto lockTime = TURN_LOCK_TIME;
-		auto moveBackRange = owner->GetEnemyParam().attackRange;// これより近づいたら後退する
-		auto moveSpeed = owner->GetEnemyParam().moveSpeed;// 後退速度
+		auto moveBackRange = owner->GetEnemyParam().fAttackRange;// これより近づいたら後退する
+		auto moveSpeed = owner->GetEnemyParam().fMoveSpeed;// 後退速度
 
 		// ターゲットへのベクトル情報
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
@@ -131,7 +106,7 @@ namespace Ranged
 				while (diffAngle > DX_PI_F) diffAngle -= DX_TWO_PI_F;
 
 				// 旋回速度の制限
-				auto turnSpeedRad = owner->GetEnemyParam().turnSpeed * DEGREE_TO_RADIAN;// ラジアンに変換
+				auto turnSpeedRad = owner->GetEnemyParam().fTurnSpeed * DEGREE_TO_RADIAN;// ラジアンに変換
 				// 差が速度制限を超えていたら、速度分だけ回す
 				if (diffAngle > turnSpeedRad) diffAngle = turnSpeedRad;
 				else if (diffAngle < -turnSpeedRad) diffAngle = -turnSpeedRad;
@@ -179,10 +154,10 @@ namespace Ranged
 		{
 			// 距離が離れすぎたら待機状態へ
 			// 距離チェック
-			bool bIsOutRange = (dist > owner->GetEnemyParam().visionRange * 1.2f);// 少し余裕を持たせる
+			bool bIsOutRange = (dist > owner->GetEnemyParam().fVisionRange * 1.2f);// 少し余裕を持たせる
 
 			// 角度チェック
-			auto limitCos = owner->GetEnemyParam().visionCos;// 視界のcos値
+			auto limitCos = owner->GetEnemyParam().fVisionCos;// 視界のcos値
 
 			// 内積がlimitCos未満なら扇の外
 			bool bIsOutAngle = (dot < limitCos);

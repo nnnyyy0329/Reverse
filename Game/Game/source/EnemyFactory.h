@@ -6,6 +6,7 @@
 
 namespace {
 	constexpr auto DEFAULT_ENEMY_SPEED = 2.0f;// 敵の移動速度
+	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 100.0f;// 敵の最大体力
 
 	// Melee
 	constexpr auto MELEE_VISION_RANGE = 250.0f;// 索敵距離
@@ -24,10 +25,11 @@ namespace {
 	constexpr auto RANGED_DETECT_TIME = 30.0f;// 発見硬直
 }
 
+// 敵の種類
 enum class EnemyType
 {
-	MELEE,
-	RANGED,
+	MELEE,// 近接
+	RANGED,// 遠距離
 	_EOT_,
 };
 
@@ -46,24 +48,48 @@ public:
 
 		switch (type) {
 		case EnemyType::MELEE:// 近接型
-				param.moveSpeed = DEFAULT_ENEMY_SPEED;
-				param.visionRange = MELEE_VISION_RANGE;
-				param.attackRange = MELEE_ATTACK_RANGE;
-				param.chaseLimitRange = MELEE_CHASE_LIMIT_RANGE;
-				param.moveRadius = MELEE_MOVE_RADIUS;
-				param.idleTime = MELEE_IDLE_TIME;
-				param.moveTime = MELEE_MOVE_TIME;
-				param.detectTime = MELEE_DETECT_TIME;
-				param.attackTime = MELEE_ATTACK_TIME;
+				param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
+				param.fVisionRange = MELEE_VISION_RANGE;
+				param.fAttackRange = MELEE_ATTACK_RANGE;
+				param.fChaseLimitRange = MELEE_CHASE_LIMIT_RANGE;
+				param.fMoveRadius = MELEE_MOVE_RADIUS;
+				param.fIdleTime = MELEE_IDLE_TIME;
+				param.fMoveTime = MELEE_MOVE_TIME;
+				param.fDetectTime = MELEE_DETECT_TIME;
+				param.fAttackTime = MELEE_ATTACK_TIME;
+				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 				enemy->SetEnemyParam(param);// パラメータ設定
+
+				// ハンドラの中身を設定
+				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> {
+					// ターゲットが見えていれば追跡
+					if (e->IsTargetVisible(e->GetTarget())) {
+						return std::make_shared<Melee::Chase>();
+					}
+					// 見えていなければ待機
+					return std::make_shared<Melee::Idle>();
+				});
+
 				enemy->ChangeState(std::make_shared<Melee::Idle>());// 初期状態設定
 				break;
 		case EnemyType::RANGED:// 遠距離型
-				param.moveSpeed = DEFAULT_ENEMY_SPEED;
-				param.visionRange = RANGED_VISION_RANGE;
-				param.attackRange = RANGED_MOVEBACK_RANGE;
-				param.attackInterval = RANGED_ATTACK_INTERVAL;
+				param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
+				param.fVisionRange = RANGED_VISION_RANGE;
+				param.fAttackRange = RANGED_MOVEBACK_RANGE;
+				param.fAttackInterval = RANGED_ATTACK_INTERVAL;
+				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 				enemy->SetEnemyParam(param);// パラメータ設定
+
+				// ハンドラの中身を設定
+				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> {
+					// ターゲットが見えていれば攻撃
+					if (e->IsTargetVisible(e->GetTarget())) {
+						return std::make_shared<Ranged::Attack>();
+					}
+					// 見えていなければ待機
+					return std::make_shared<Ranged::Idle>();
+					});
+
 				enemy->ChangeState(std::make_shared<Ranged::Idle>());// 初期状態設定
 				break;
 		}

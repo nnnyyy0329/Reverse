@@ -170,6 +170,7 @@
     <ClCompile Include="source\PlayerBase_Attack.cpp" />
     <ClCompile Include="source\PlayerManager.cpp" />
     <ClCompile Include="source\StageBase.cpp" />
+    <ClCompile Include="source\StateCommon.cpp" />
     <ClCompile Include="source\StateMelee.cpp" />
     <ClCompile Include="source\StateRanged.cpp" />
     <ClCompile Include="source\SurfacePlayer.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="source\PlayerBase.h" />
     <ClInclude Include="source\PlayerManager.h" />
     <ClInclude Include="source\StageBase.h" />
+    <ClInclude Include="source\StateCommon.h" />
     <ClInclude Include="source\StateMelee.h" />
     <ClInclude Include="source\StateRanged.h" />
     <ClInclude Include="source\SurfacePlayer.h">

@@ -2,13 +2,15 @@
 #include "BulletManager.h"
 #include "AttackBase.h"
 #include "AttackManager.h"
+#include "StateCommon.h"
 
 namespace {
 	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
 	constexpr auto COLLISION_HEIGHT = 100.0f;// 敵の当たり判定高さ
 }
 
-Enemy::Enemy(){
+Enemy::Enemy()
+{
 	// モデル読み込み
 	_iHandle = MV1LoadModel("res/SDChar/SDChar.mv1");
 	_iAttachIndex = MV1AttachAnim(_iHandle, 0, -1, FALSE);
@@ -29,21 +31,25 @@ Enemy::Enemy(){
 	SetCharaType(CHARA_TYPE::ENEMY);// キャラタイプを設定
 }
 
-Enemy::~Enemy() {
+Enemy::~Enemy() 
+{
 }
 
-bool Enemy::Initialize() {
+bool Enemy::Initialize() 
+{
 	_vOldPos = _vPos;
 	_vHomePos = _vPos;// 初期位置を保存
 
 	return true;
 }
 
-bool Enemy::Terminate() {
+bool Enemy::Terminate() 
+{
 	return true;
 }
 
-bool Enemy::Process() {
+bool Enemy::Process() 
+{
 	_fPlayTime += 0.5f;// 再生時間を進める
 	// 再生時間がアニメーションの総再生時間に達したら再生時間を０に戻す
 	if (_fPlayTime >= _fTotalTime) {
@@ -71,7 +77,8 @@ bool Enemy::Process() {
 	return true;
 }
 
-bool Enemy::Render() {
+bool Enemy::Render() 
+{
 	// 再生時間をセットする
 	MV1SetAttachAnimTime(_iHandle, _iAttachIndex, _fPlayTime);
 
@@ -101,7 +108,8 @@ bool Enemy::Render() {
 	return true;
 }
 
-void Enemy::DebugRender() {
+void Enemy::DebugRender() 
+{
 	// カプセルの当たり判定を描画
 	DrawCapsule3D(
 		_vCollisionBottom,_vCollisionTop,_fCollisionR,16,
@@ -111,7 +119,7 @@ void Enemy::DebugRender() {
 	// 移動範囲を描画
 	{
 		unsigned int color = GetColor(0, 0, 255);// 青
-		DrawCircle3D(_vHomePos, _enemyParam.moveRadius, color, 16);
+		DrawCircle3D(_vHomePos, _enemyParam.fMoveRadius, color, 16);
 		DrawLine3D(_vPos, _vHomePos, color);// 現在位置から初期位置への線
 	}
 
@@ -121,7 +129,7 @@ void Enemy::DebugRender() {
 		int segments = 16;// 扇形の分割数
 
 		// 角度計算
-		auto halfAngleRad = DEGREE_TO_RADIAN * _enemyParam.visionAngle;// 視界の半分の角度のラジアン
+		auto halfAngleRad = DEGREE_TO_RADIAN * _enemyParam.fVisionAngle;// 視界の半分の角度のラジアン
 		auto currentDirAngle = atan2f(_vDir.x, _vDir.z);// 向きベクトルから現在の角度を計算
 		auto startAngle = currentDirAngle - halfAngleRad;// 扇形の左端
 		auto endAngle = currentDirAngle + halfAngleRad;// 扇形の右端
@@ -129,10 +137,10 @@ void Enemy::DebugRender() {
 		// 視界の左右の境界線を描画
 		// 敵の中心から視界の端の点までのオフセットを計算
 		VECTOR vLeftOffset = VGet(
-			sinf(startAngle) * _enemyParam.visionRange, 0.0f, cosf(startAngle) * _enemyParam.visionRange
+			sinf(startAngle) * _enemyParam.fVisionRange, 0.0f, cosf(startAngle) * _enemyParam.fVisionRange
 		);
 		VECTOR vRightOffset = VGet(
-			sinf(endAngle) * _enemyParam.visionRange, 0.0f, cosf(endAngle) * _enemyParam.visionRange
+			sinf(endAngle) * _enemyParam.fVisionRange, 0.0f, cosf(endAngle) * _enemyParam.fVisionRange
 		);
 		// 現在位置にオフセットを足して、ワールド座標上の点を計算
 		VECTOR vLeftEdge = VAdd(_vPos, vLeftOffset);
@@ -149,7 +157,7 @@ void Enemy::DebugRender() {
 			auto angle = startAngle + (halfAngleRad * 2.0f * ratio);// 視界の左端の角度に割合分の角度を足す
 
 			// 円周上の次の点を計算
-			VECTOR vNextPoint = VAdd(_vPos, VGet(sinf(angle) * _enemyParam.visionRange, 0.0f, cosf(angle) * _enemyParam.visionRange));
+			VECTOR vNextPoint = VAdd(_vPos, VGet(sinf(angle) * _enemyParam.fVisionRange, 0.0f, cosf(angle) * _enemyParam.fVisionRange));
 
 			// 前の点と次の点を結ぶ線を描画
 			DrawLine3D(vPrevPoint, vNextPoint, color);
@@ -162,11 +170,11 @@ void Enemy::DebugRender() {
 		if (_currentState && _currentState->IsChasing()) {
 			// 攻撃可能範囲を描画
 			unsigned int attackColor = GetColor(255, 0, 0);// 赤
-			DrawCircle3D(_vPos, _enemyParam.attackRange, attackColor, 16);
+			DrawCircle3D(_vPos, _enemyParam.fAttackRange, attackColor, 16);
 
 			// 追跡限界範囲を描画
 			unsigned int chaseColor = GetColor(255, 255, 0);// 黄
-			DrawCircle3D(_vPos, _enemyParam.chaseLimitRange, chaseColor, 16);
+			DrawCircle3D(_vPos, _enemyParam.fChaseLimitRange, chaseColor, 16);
 		}
 	}
 
@@ -199,7 +207,8 @@ void Enemy::DebugRender() {
 
 
 
-void Enemy::DrawCircle3D(VECTOR center, float radius, unsigned int color, int segments) {
+void Enemy::DrawCircle3D(VECTOR center, float radius, unsigned int color, int segments) 
+{
 	// 1区画当たりの角度(ラジアン)
 	auto step = DX_TWO_PI_F / static_cast<float>(segments);
 
@@ -228,7 +237,8 @@ void Enemy::DrawCircle3D(VECTOR center, float radius, unsigned int color, int se
 
 
 
-void Enemy::ChangeState(std::shared_ptr<EnemyState> newState) {
+void Enemy::ChangeState(std::shared_ptr<EnemyState> newState) 
+{
 	if (_currentState) {
 		_currentState->Exit(this);
 	}
@@ -238,12 +248,33 @@ void Enemy::ChangeState(std::shared_ptr<EnemyState> newState) {
 	}
 }
 
-void Enemy::SetEnemyParam(const EnemyParam& param) {
+void Enemy::SetEnemyParam(const EnemyParam& param) 
+{
 	_enemyParam = param;
 
 	// 視界のcos値を計算して設定
-	auto rad = _enemyParam.visionAngle * DEGREE_TO_RADIAN;
-	_enemyParam.visionCos = cosf(rad);
+	auto rad = _enemyParam.fVisionAngle * DEGREE_TO_RADIAN;
+	_enemyParam.fVisionCos = cosf(rad);
+}
+
+bool Enemy::IsTargetVisible(std::shared_ptr<CharaBase> target)
+{
+	if (!target) return false;
+
+	// 距離チェック
+	VECTOR vToTarget = VSub(target->GetPos(), _vPos);
+	auto dist = VSize(vToTarget);// ターゲットまでの距離
+	if (dist > _enemyParam.fVisionRange) return false;// 索敵距離外
+
+	// 角度チェック
+	VECTOR vDirToTarget = VNorm(vToTarget);
+	auto dot = VDot(_vDir, vDirToTarget);
+	// dotがlimitCos未満なら視界外
+	if (dot < _enemyParam.fVisionCos) return false;
+
+	// 障害物チェック
+
+	return true;// 視界内にいる
 }
 
 void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime) {
@@ -254,7 +285,8 @@ void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpe
 	}
 }
 
-void Enemy::StartAttack(const EnemyAttackSettings& settings) {
+void Enemy::StartAttack(const EnemyAttackSettings& settings)
+{
 
 	if (!_attackCollision) {// 攻撃コリジョンがなければ作成
 		_attackCollision = std::make_shared<AttackBase>();
@@ -283,7 +315,8 @@ void Enemy::StartAttack(const EnemyAttackSettings& settings) {
 	AttackManager::GetInstance().RegisterAttack(_attackCollision, ATTACK_OWNER_TYPE::ENEMY, settings.ownerId);
 }
 
-void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings) {
+void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings) 
+{
 	if (!_attackCollision) return;
 
 	// 敵の向きベクトルをラジアンに変換
@@ -313,8 +346,27 @@ void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings) {
 	);
 }
 
-void Enemy::StopAttack() {
+void Enemy::StopAttack() 
+{
 	if (!_attackCollision) return;
 	// 攻撃停止
 	_attackCollision->ProcessStopAttack();
+}
+
+void Enemy::ApplyDamage(float fDamage)
+{
+	CharaBase::ApplyDamage(fDamage);// 基底クラスの処理(ライフを減らす)
+
+	// ダメージステートへ遷移
+	ChangeState(std::make_shared<Common::Damage>());
+
+}
+
+std::shared_ptr<EnemyState> Enemy::GetRecoveryState() const
+{
+	if (_recoveryHandler) {// ハンドラが設定されていれば実行
+		return _recoveryHandler(const_cast<Enemy*>(this));
+	}
+
+	return nullptr;
 }

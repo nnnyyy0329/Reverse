@@ -4,29 +4,33 @@
 
 class Enemy;
 
+// “Gƒpƒ‰ƒ[ƒ^\‘¢‘Ì
 struct EnemyParam
 {
-	float moveSpeed = 2.0f;// “G‚ÌŠî–{ˆÚ“®‘¬“x
+	float fMoveSpeed = 2.0f;// “G‚ÌŠî–{ˆÚ“®‘¬“x
 
-	float visionRange = 0.0f;// “G‚Ìõ“G‹——£
-	float visionAngle = 45.0f;// “G‚Ì‹ŠE‚ÌŠp“x(”¼•ª)
-	float visionCos = 0.0f;// ”»’è‚Åg‚¤cos’l
+	float fVisionRange = 0.0f;// “G‚Ìõ“G‹——£
+	float fVisionAngle = 45.0f;// “G‚Ì‹ŠE‚ÌŠp“x(”¼•ª)
+	float fVisionCos = 0.0f;// ”»’è‚Åg‚¤cos’l
 
-	float attackRange = 0.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
-	float chaseLimitRange = 0.0f;// ‚±‚êˆÈã—£‚ê‚½‚ç’ÇÕ‚ğ‚â‚ß‚é‹——£
+	float fAttackRange = 0.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
+	float fChaseLimitRange = 0.0f;// ‚±‚êˆÈã—£‚ê‚½‚ç’ÇÕ‚ğ‚â‚ß‚é‹——£
 
-	float moveRadius = 0.0f;// œpœj‚·‚é”ÍˆÍ‚Ì”¼Œa(‰ŠúˆÊ’u‚©‚ç‚Ì‹——£)
+	float fMoveRadius = 0.0f;// œpœj‚·‚é”ÍˆÍ‚Ì”¼Œa(‰ŠúˆÊ’u‚©‚ç‚Ì‹——£)
 
-	float attackInterval = 0.0f;// UŒ‚ŠÔŠu
+	float fAttackInterval = 0.0f;// UŒ‚ŠÔŠu
 
-	float turnSpeed = 1.0f;// ù‰ñ‘¬“x(“x / ƒtƒŒ[ƒ€)
+	float fTurnSpeed = 1.0f;// ù‰ñ‘¬“x(“x / ƒtƒŒ[ƒ€)
 
-	float idleTime = 0.0f;// ‘Ò‹@ŠÔ
-	float moveTime = 0.0f;// ©“®ˆÚ“®ŠÔ
-	float detectTime = 0.0f;// ”­Œ©d’¼
-	float attackTime = 0.0f;// UŒ‚ŠÔ
+	float fIdleTime = 0.0f;// ‘Ò‹@ŠÔ
+	float fMoveTime = 0.0f;// ©“®ˆÚ“®ŠÔ
+	float fDetectTime = 0.0f;// ”­Œ©d’¼
+	float fAttackTime = 0.0f;// UŒ‚ŠÔ
+
+	float fMaxLife = 100.0f;// Å‘å‘Ì—Í
 };
 
+// “GƒXƒe[ƒgŠî’êƒNƒ‰ƒX
 class EnemyState
 {
 public:

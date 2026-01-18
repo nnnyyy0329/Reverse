@@ -141,6 +141,7 @@
     <ClCompile Include="source\BulletManager.cpp">
       <Filter>Game\ObjectBase\CharaBase\Bullet</Filter>
     </ClCompile>
+    <ClCompile Include="source\StateCommon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Enemy.h">
@@ -222,5 +223,6 @@
       <Filter>Game\ObjectBase\CharaBase\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="source\EnemyAttackSettings.h" />
+    <ClInclude Include="source\StateCommon.h" />
   </ItemGroup>
 </Project>
