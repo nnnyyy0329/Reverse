@@ -157,6 +157,7 @@
     <ClCompile Include="source\CharaBase.cpp" />
     <ClCompile Include="source\DebugCamera.cpp" />
     <ClCompile Include="source\Enemy.cpp" />
+    <ClCompile Include="source\EnergyManager.cpp" />
     <ClCompile Include="source\GameObjectBase.cpp" />
     <ClCompile Include="source\InteriorPlayer.cpp" />
     <ClCompile Include="source\InteriorPlayer_Draw.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="source\Enemy.h" />
     <ClInclude Include="source\EnemyFactory.h" />
     <ClInclude Include="source\EnemyState.h" />
+    <ClInclude Include="source\EnergyManager.h" />
     <ClInclude Include="source\GameObjectBase.h" />
     <ClInclude Include="source\InteriorPlayer.h" />
     <ClInclude Include="source\MenuItemBase.h" />

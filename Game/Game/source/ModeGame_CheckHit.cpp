@@ -89,7 +89,8 @@ void ModeGame::CheckHitPlayerEnemy(std::shared_ptr<CharaBase> chara1, std::share
 {
 	if(chara1 == nullptr || chara2 == nullptr) { return; }
 
-	if(HitCheck_Capsule_Capsule(
+	if(HitCheck_Capsule_Capsule
+	(
 		chara1->GetCollisionTop(), chara1->GetCollisionBottom(), chara1->GetCollisionR(),
 		chara2->GetCollisionTop(), chara2->GetCollisionBottom(), chara2->GetCollisionR()
 	) != false)
@@ -122,6 +123,9 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 {
 	if(chara == nullptr || attack == nullptr) { return; }
 
+	// ヒットしているならスキップ
+	if(attack->GetHitFlag()){ return; }
+
 	// 攻撃コリジョン情報を取得
 	const ATTACK_COLLISION& col = attack->GetAttackCollision();
 
@@ -132,6 +136,8 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		col.attackColTop, col.attackColBottom, col.attackColR
 	) != false)
 	{
+		attack->SetHitFlag(true);	// ヒットフラグを有効にする
+
 		printfDx("Chara and Attack Collision Hit!\n");
 	}
 }
