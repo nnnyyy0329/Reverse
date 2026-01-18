@@ -3,9 +3,26 @@
 
 namespace {
 	constexpr auto ATTACK_COLLISION_OFFSET_Z = 20.0f;// 攻撃コリジョン前方オフセット
-	constexpr auto ATTACK_COLLISION_OFFSET_Y = 20.0f;// 攻撃コリジョン高さオフセット
-	constexpr auto ATTACK_COLLISION_HEIGHT = 80.0f;// 攻撃コリジョン高さ
+	constexpr auto ATTACK_COLLISION_OFFSET_Y = 20.0f;// 攻撃コリジョンY位置オフセット
+	constexpr auto ATTACK_COLLISION_HEIGHT = 60.0f;// 攻撃コリジョン高さ
 	constexpr auto ATTACK_COLLISION_RADIUS = 40.0f;// 攻撃コリジョン半径
+
+	// 個別の攻撃コリジョン設定
+	EnemyAttackSettings MakeMeleeAttackSettings()
+	{
+		EnemyAttackSettings settings;
+		settings.colType = COLLISION_TYPE::CAPSULE;
+		settings.vTopOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y + ATTACK_COLLISION_HEIGHT, ATTACK_COLLISION_OFFSET_Z);
+		settings.vBottomOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y, ATTACK_COLLISION_OFFSET_Z);
+		settings.fRadius = ATTACK_COLLISION_RADIUS;
+		settings.fDelay = 0.0f;
+		settings.fDuration = 10.0f;
+		settings.fRecovery = 10.0f;
+		settings.fDamage = 10.0f;
+		settings.ownerId = 0;// 仮(どういう用途？)
+		return settings;
+	}
+	const EnemyAttackSettings MELEE_ATTACK_SETTINGS = MakeMeleeAttackSettings();
 }
 
 namespace Melee
@@ -186,6 +203,7 @@ namespace Melee
 	// 攻撃
 	void Attack::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
+		owner->StartAttack(MELEE_ATTACK_SETTINGS);// 攻撃コリジョン開始
 		// ここでアニメーション設定
 
 	}
@@ -196,11 +214,18 @@ namespace Melee
 		// 攻撃中は移動しない
 		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 
+		// 攻撃コリジョンの位置更新
+		owner->UpdateAttackTransform(MELEE_ATTACK_SETTINGS);
+
 		// 時間経過で
 		if (_fTimer >= owner->GetEnemyParam().attackTime) {
 			return std::make_shared<Chase>();// 追跡状態に戻ることで再度距離判定を行う
 		}
 
 		return nullptr;
+	}
+
+	void Attack::Exit(Enemy* owner) {
+		owner->StopAttack();// 攻撃コリジョン停止
 	}
 }

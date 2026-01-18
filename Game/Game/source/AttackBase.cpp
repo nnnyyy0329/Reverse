@@ -38,6 +38,7 @@ bool AttackBase::Terminate()
 
 bool AttackBase::Process()
 {
+	UpdateAttackState();// UŒ‚ó‘ÔXVˆ—
     return true;
 }
 

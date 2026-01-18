@@ -1,8 +1,10 @@
 #pragma once
 #include "CharaBase.h"
 #include "EnemyState.h"
+#include "EnemyAttackSettings.h"
 
 class BulletManager;
+class AttackBase;
 
 class Enemy : public CharaBase
 {
@@ -36,6 +38,11 @@ public:
 	void SetBulletManager(std::shared_ptr<BulletManager> bulletManager) { _bulletManager = bulletManager; }// マネージャーをセット
 	void SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime);// 発射リクエストをする
 
+	// 攻撃コリジョン関連(ステート側で呼び出し)
+	void StartAttack(const EnemyAttackSettings& settings);// 攻撃の開始
+	void UpdateAttackTransform(const EnemyAttackSettings& settings);// 攻撃コリジョンの位置更新
+	void StopAttack();// 攻撃の停止
+
 protected:
 
 	VECTOR _vHomePos;// 敵の初期位置
@@ -46,5 +53,7 @@ protected:
 	EnemyParam _enemyParam;
 
 	std::weak_ptr<BulletManager> _bulletManager;// マネージャーの参照を持つ(modegameが所有)
+
+	std::shared_ptr<AttackBase> _attackCollision;// 攻撃コリジョン
 };
 

@@ -1,5 +1,7 @@
 #include "Enemy.h"
 #include "BulletManager.h"
+#include "AttackBase.h"
+#include "AttackManager.h"
 
 namespace {
 	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
@@ -250,4 +252,69 @@ void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpe
 		// タイプを設定して、発射リクエストをする
 		bulletManager->Shoot(vStartPos, vDir, fRadius, fSpeed, lifeTime, _eCharaType);
 	}
+}
+
+void Enemy::StartAttack(const EnemyAttackSettings& settings) {
+
+	if (!_attackCollision) {// 攻撃コリジョンがなければ作成
+		_attackCollision = std::make_shared<AttackBase>();
+		_attackCollision->Initialize();
+	}
+
+	// 位置更新
+	UpdateAttackTransform(settings);// 初期座標をセット
+
+	// ステートごとの設定を反映
+	_attackCollision->SetCapsuleAttackData(
+		settings.vTopOffset,// top
+		settings.vBottomOffset,// bottom
+		settings.fRadius,// 半径
+		settings.fDelay,// 発生遅延
+		settings.fDuration,// 持続時間
+		settings.fRecovery,// 後隙
+		settings.fDamage,// ダメージ
+		false// ヒットフラグ
+	);
+
+	// 攻撃開始
+	_attackCollision->ProcessStartAttack();
+
+	// AttackManagerに登録
+	AttackManager::GetInstance().RegisterAttack(_attackCollision, ATTACK_OWNER_TYPE::ENEMY, settings.ownerId);
+}
+
+void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings) {
+	if (!_attackCollision) return;
+
+	// 敵の向きベクトルをラジアンに変換
+	auto yaw = atan2f(_vDir.x, _vDir.z);
+
+	MATRIX mRotY = MGetRotY(yaw);// Y軸回転行列を作成
+
+	// ローカルオフセットを回転行列で変換
+	VECTOR vTopOffsetRot = VTransform(settings.vTopOffset, mRotY);
+	VECTOR vBottomOffsetRot = VTransform(settings.vBottomOffset, mRotY);
+
+	// ワールド座標を計算
+	VECTOR vTopPos = VAdd(_vPos, vTopOffsetRot);
+	VECTOR vBottomPos = VAdd(_vPos, vBottomOffsetRot);
+
+	// 攻撃コリジョンの座標だけ更新
+	auto col = _attackCollision->GetAttackCollision();
+	_attackCollision->SetCapsuleAttackData(
+		vTopPos,// ワールド座標
+		vBottomPos,
+		col.attackColR,
+		col.attackDelay,
+		col.attackDuration,
+		col.recovery,
+		col.damage,
+		col.isHit
+	);
+}
+
+void Enemy::StopAttack() {
+	if (!_attackCollision) return;
+	// 攻撃停止
+	_attackCollision->ProcessStopAttack();
 }

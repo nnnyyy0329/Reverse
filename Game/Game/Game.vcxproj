@@ -187,6 +187,7 @@
     <ClInclude Include="source\CharaBase.h" />
     <ClInclude Include="source\DebugCamera.h" />
     <ClInclude Include="source\Enemy.h" />
+    <ClInclude Include="source\EnemyAttackSettings.h" />
     <ClInclude Include="source\EnemyFactory.h" />
     <ClInclude Include="source\EnemyState.h" />
     <ClInclude Include="source\GameObjectBase.h" />

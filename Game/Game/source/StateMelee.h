@@ -57,6 +57,7 @@ namespace Melee
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		void Exit(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:Attack"; }
 	};
 }

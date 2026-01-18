@@ -221,5 +221,6 @@
     <ClInclude Include="source\BulletManager.h">
       <Filter>Game\ObjectBase\CharaBase\Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="source\EnemyAttackSettings.h" />
   </ItemGroup>
 </Project>

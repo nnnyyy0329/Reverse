@@ -35,6 +35,16 @@ bool AttackManager::Process()
 	// フレームカウンタを増やす
 	_frameCounter++;
 
+	// 登録されている攻撃を更新
+	for (auto& attackInfo : _registeredAttacks)
+	{
+		if (attackInfo.attack.expired()) continue;// 無効な攻撃はスキップ
+
+		auto attack = attackInfo.attack.lock();
+		if (attack == nullptr) continue;
+		attack->Process();// 攻撃更新処理
+	}
+
 	// 無効な攻撃のクリーンアップ
 	CleanupInvalidAttacks();
 
