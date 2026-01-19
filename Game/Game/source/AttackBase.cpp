@@ -45,7 +45,7 @@ bool AttackBase::Process()
 bool AttackBase::Render()
 {
     // デバッグ表示
-    //DrawAttackCollision();
+    DrawAttackCollision();
 
     return true;
 }

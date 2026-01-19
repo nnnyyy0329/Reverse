@@ -125,44 +125,11 @@ void Enemy::DebugRender()
 
 	// 索敵範囲を描画
 	{
+		auto fVisionRange = _enemyParam.fVisionRange;// 索敵距離
+		auto fVisionAngle = _enemyParam.fVisionAngle;// 索敵角度(半分)
 		unsigned int color = GetColor(0, 255, 0);// 緑
 		int segments = 16;// 扇形の分割数
-
-		// 角度計算
-		auto halfAngleRad = DEGREE_TO_RADIAN * _enemyParam.fVisionAngle;// 視界の半分の角度のラジアン
-		auto currentDirAngle = atan2f(_vDir.x, _vDir.z);// 向きベクトルから現在の角度を計算
-		auto startAngle = currentDirAngle - halfAngleRad;// 扇形の左端
-		auto endAngle = currentDirAngle + halfAngleRad;// 扇形の右端
-
-		// 視界の左右の境界線を描画
-		// 敵の中心から視界の端の点までのオフセットを計算
-		VECTOR vLeftOffset = VGet(
-			sinf(startAngle) * _enemyParam.fVisionRange, 0.0f, cosf(startAngle) * _enemyParam.fVisionRange
-		);
-		VECTOR vRightOffset = VGet(
-			sinf(endAngle) * _enemyParam.fVisionRange, 0.0f, cosf(endAngle) * _enemyParam.fVisionRange
-		);
-		// 現在位置にオフセットを足して、ワールド座標上の点を計算
-		VECTOR vLeftEdge = VAdd(_vPos, vLeftOffset);
-		VECTOR vRightEdge = VAdd(_vPos, vRightOffset);
-		// 線を描画
-		DrawLine3D(_vPos, vLeftEdge, color);
-		DrawLine3D(_vPos, vRightEdge, color);
-
-		// 扇形の外周を線分で描画
-		VECTOR vPrevPoint = vLeftEdge;// 左端の点から開始
-		for (int i = 0; i <= segments; ++i) {
-			// 現在の点の角度を計算
-			auto ratio = static_cast<float>(i) / static_cast<float>(segments);// 全体の割合を計算
-			auto angle = startAngle + (halfAngleRad * 2.0f * ratio);// 視界の左端の角度に割合分の角度を足す
-
-			// 円周上の次の点を計算
-			VECTOR vNextPoint = VAdd(_vPos, VGet(sinf(angle) * _enemyParam.fVisionRange, 0.0f, cosf(angle) * _enemyParam.fVisionRange));
-
-			// 前の点と次の点を結ぶ線を描画
-			DrawLine3D(vPrevPoint, vNextPoint, color);
-			vPrevPoint = vNextPoint;// 次のループのために点を進める
-		}
+		DrawFan3D(_vPos, _vDir, fVisionRange, fVisionAngle, color, segments);
 	}
 
 	// 追跡中の各範囲の描画
@@ -207,16 +174,16 @@ void Enemy::DebugRender()
 
 
 
-void Enemy::DrawCircle3D(VECTOR center, float radius, unsigned int color, int segments) 
+void Enemy::DrawCircle3D(VECTOR vCenter, float fRadius, unsigned int color, int segments) 
 {
 	// 1区画当たりの角度(ラジアン)
 	auto step = DX_TWO_PI_F / static_cast<float>(segments);
 
 	// 最初の点を計算
 	VECTOR vPrevPos;
-	vPrevPos.x = center.x + sinf(0.0f) * radius;
-	vPrevPos.y = center.y;// 高さは中心と同じ
-	vPrevPos.z = center.z + cosf(0.0f) * radius;
+	vPrevPos.x = vCenter.x + sinf(0.0f) * fRadius;
+	vPrevPos.y = vCenter.y;// 高さは中心と同じ
+	vPrevPos.z = vCenter.z + cosf(0.0f) * fRadius;
 
 	// 分割数分ループして点を計算し、線を描画していく
 	for (int i = 0; i <= segments; i++) {
@@ -224,15 +191,64 @@ void Enemy::DrawCircle3D(VECTOR center, float radius, unsigned int color, int se
 
 		// 次の点を計算
 		VECTOR vNextPos;
-		vNextPos.x = center.x + sinf(angle) * radius;
-		vNextPos.y = center.y;// 高さは中心と同じ
-		vNextPos.z = center.z + cosf(angle) * radius;
+		vNextPos.x = vCenter.x + sinf(angle) * fRadius;
+		vNextPos.y = vCenter.y;// 高さは中心と同じ
+		vNextPos.z = vCenter.z + cosf(angle) * fRadius;
 
 		// 前の点と次の点を結ぶ線を描画
 		DrawLine3D(vPrevPos, vNextPos, color);
 
 		vPrevPos = vNextPos;// 次のループのために点を進める
 	}
+}
+
+void Enemy::DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAngleDeg, unsigned int color, int segments)
+{
+	// 角度計算
+	auto halfAngleRad = fHalfAngleDeg * DEGREE_TO_RADIAN;// 半分の角度(ラジアン)
+	auto currentDirAngle = atan2f(vDir.x, vDir.z);// 向きベクトルから現在の角度を計算
+	auto startAngle = currentDirAngle - halfAngleRad;// 扇形の左端
+	auto totalAngle = halfAngleRad * 2.0f;// 扇形の全体の角度
+
+	// 左端と右端の境界線を描画
+	// 左端の座標計算
+	VECTOR vLeftEdge = VAdd(
+		vCenter,
+		VGet(sinf(startAngle) * fRadius, 0.0f, cosf(startAngle) * fRadius)// 
+	);
+	// 右端の座標計算(start + total)
+	auto endAngle = startAngle + totalAngle;
+	VECTOR vRightEdge = VAdd(
+		vCenter,
+		VGet(sinf(endAngle) * fRadius, 0.0f, cosf(endAngle) * fRadius)
+	);
+
+	// 中心から端への線
+	DrawLine3D(vCenter, vLeftEdge, color);
+	DrawLine3D(vCenter, vRightEdge, color);
+
+	// 扇形の弧(外周)を描画
+	VECTOR vPrevPoint = vLeftEdge;// 左端から開始
+	for (int i = 1; i <= segments; ++i) {
+		// 現在の割合(0.0 ~ 1.0)
+		auto ratio = static_cast<float>(i) / static_cast<float>(segments);
+
+		// 現在の角度
+		auto angle = startAngle + (totalAngle * ratio);
+
+		// 次の点を計算
+		VECTOR vNextPoint = VAdd(
+			vCenter,
+			VGet(sinf(angle) * fRadius, 0.0f, cosf(angle) * fRadius)
+		);
+
+		// 前の点と次の点を結ぶ線を描画
+		DrawLine3D(vPrevPoint, vNextPoint, color);
+
+		// 次のループのために点を進める
+		vPrevPoint = vNextPoint;
+	}
+
 }
 
 

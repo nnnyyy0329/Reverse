@@ -39,7 +39,6 @@ bool AttackManager::Process()
 	for (auto& attackInfo : _registeredAttacks)
 	{
 		if (attackInfo.attack.expired()) continue;// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
-
 		auto attack = attackInfo.attack.lock();
 		if (attack == nullptr) continue;
 		attack->Process();// UŒ‚XVˆ—
@@ -53,6 +52,15 @@ bool AttackManager::Process()
 
 bool AttackManager::Render()
 {
+	// “o˜^‚³‚ê‚Ä‚¢‚éUŒ‚‚ğ•`‰æ
+	for (auto& attackInfo : _registeredAttacks)
+	{
+		if (attackInfo.attack.expired()) continue;// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
+		auto attack = attackInfo.attack.lock();
+		if (attack == nullptr) continue;
+		attack->Render();// UŒ‚•`‰æˆ—
+	}
+
 	return true;
 }
 

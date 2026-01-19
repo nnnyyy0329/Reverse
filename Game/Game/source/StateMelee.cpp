@@ -16,8 +16,8 @@ namespace {
 		settings.vBottomOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y, ATTACK_COLLISION_OFFSET_Z);
 		settings.fRadius = ATTACK_COLLISION_RADIUS;
 		settings.fDelay = 0.0f;
-		settings.fDuration = 10.0f;
-		settings.fRecovery = 10.0f;
+		settings.fDuration = 60.0f;
+		settings.fRecovery = 60.0f;
 		settings.fDamage = 10.0f;
 		settings.ownerId = 0;// âº(Ç«Ç§Ç¢Ç§ópìrÅH)
 		return settings;

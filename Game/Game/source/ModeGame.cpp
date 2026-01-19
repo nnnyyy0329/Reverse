@@ -106,6 +106,7 @@ bool ModeGame::Process()
 		_playerManager->Process();
 		_stage->Process();
 		_bulletManager->Process();
+		AttackManager::GetInstance().Process();
 	}
 
 	// 当たり判定
@@ -127,9 +128,9 @@ bool ModeGame::Process()
 		}
 
 		// プレイヤーと敵の当たり判定
-		for (const auto& enemy : _stage->GetEnemies())
+		for (const auto& enemy : enemies)
 		{
-			CheckHitPlayerEnemy(_playerManager->GetActivePlayerShared(), enemy);
+			CheckHitPlayerEnemy(player, enemy);
 		}
 
 		// キャラと攻撃コリジョンの当たり判定
@@ -192,6 +193,7 @@ bool ModeGame::Render()
 		_playerManager->Render();
 		_stage->Render();
 		_bulletManager->Render();
+		AttackManager::GetInstance().Render();
 	}
 
 	// デバッグ情報の描画

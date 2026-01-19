@@ -52,6 +52,9 @@
     <Filter Include="Game\Mode\Game">
       <UniqueIdentifier>{2afad796-da80-45cb-ba48-2f1612de6a9d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\ObjectBase\CharaBase\Enemy\State">
+      <UniqueIdentifier>{f268a5e5-1f63-4664-b4a1-bf7968928ccc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Enemy.cpp">
@@ -111,12 +114,6 @@
     <ClCompile Include="source\PlayerBase_Attack.cpp">
       <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
     </ClCompile>
-    <ClCompile Include="source\StateMelee.cpp">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="source\StateRanged.cpp">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="source\DebugCamera.cpp">
       <Filter>Game\Camera</Filter>
     </ClCompile>
@@ -141,7 +138,15 @@
     <ClCompile Include="source\BulletManager.cpp">
       <Filter>Game\ObjectBase\CharaBase\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="source\StateCommon.cpp" />
+    <ClCompile Include="source\StateCommon.cpp">
+      <Filter>Game\ObjectBase\CharaBase\Enemy\State</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StateMelee.cpp">
+      <Filter>Game\ObjectBase\CharaBase\Enemy\State</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StateRanged.cpp">
+      <Filter>Game\ObjectBase\CharaBase\Enemy\State</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Enemy.h">
@@ -186,16 +191,7 @@
     <ClInclude Include="source\PlayerManager.h">
       <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
     </ClInclude>
-    <ClInclude Include="source\EnemyState.h">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="source\EnemyFactory.h">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="source\StateRanged.h">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="source\StateMelee.h">
       <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="source\DebugCamera.h">
@@ -222,7 +218,20 @@
     <ClInclude Include="source\BulletManager.h">
       <Filter>Game\ObjectBase\CharaBase\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="source\EnemyAttackSettings.h" />
-    <ClInclude Include="source\StateCommon.h" />
+    <ClInclude Include="source\EnemyState.h">
+      <Filter>Game\ObjectBase\CharaBase\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateCommon.h">
+      <Filter>Game\ObjectBase\CharaBase\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateMelee.h">
+      <Filter>Game\ObjectBase\CharaBase\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateRanged.h">
+      <Filter>Game\ObjectBase\CharaBase\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnemyAttackSettings.h">
+      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
