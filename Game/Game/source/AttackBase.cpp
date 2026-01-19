@@ -38,13 +38,14 @@ bool AttackBase::Terminate()
 
 bool AttackBase::Process()
 {
+	UpdateAttackState();// 攻撃状態更新処理
     return true;
 }
 
 bool AttackBase::Render()
 {
     // デバッグ表示
-    //DrawAttackCollision();
+    DrawAttackCollision();
 
     return true;
 }

@@ -58,6 +58,9 @@ public:
 	CHARA_TYPE GetCharaType() { return _eCharaType; }// キャラタイプ
 	void SetCharaType(CHARA_TYPE eType) { _eCharaType = eType; }
 
+	// 被ダメージ処理
+	virtual void ApplyDamage(float fDamage);// ここではライフを減らすだけ
+
 protected:
 	// キャラカプセルの当たり判定用
 	VECTOR _vCollisionTop;		// 当たり判定の上端

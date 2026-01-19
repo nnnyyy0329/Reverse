@@ -1,12 +1,16 @@
 #include "Enemy.h"
 #include "BulletManager.h"
+#include "AttackBase.h"
+#include "AttackManager.h"
+#include "StateCommon.h"
 
 namespace {
 	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
 	constexpr auto COLLISION_HEIGHT = 100.0f;// 敵の当たり判定高さ
 }
 
-Enemy::Enemy(){
+Enemy::Enemy()
+{
 	// モデル読み込み
 	_iHandle = MV1LoadModel("res/SDChar/SDChar.mv1");
 	_iAttachIndex = MV1AttachAnim(_iHandle, 0, -1, FALSE);
@@ -27,21 +31,25 @@ Enemy::Enemy(){
 	SetCharaType(CHARA_TYPE::ENEMY);// キャラタイプを設定
 }
 
-Enemy::~Enemy() {
+Enemy::~Enemy() 
+{
 }
 
-bool Enemy::Initialize() {
+bool Enemy::Initialize() 
+{
 	_vOldPos = _vPos;
 	_vHomePos = _vPos;// 初期位置を保存
 
 	return true;
 }
 
-bool Enemy::Terminate() {
+bool Enemy::Terminate() 
+{
 	return true;
 }
 
-bool Enemy::Process() {
+bool Enemy::Process() 
+{
 	_fPlayTime += 0.5f;// 再生時間を進める
 	// 再生時間がアニメーションの総再生時間に達したら再生時間を０に戻す
 	if (_fPlayTime >= _fTotalTime) {
@@ -69,7 +77,8 @@ bool Enemy::Process() {
 	return true;
 }
 
-bool Enemy::Render() {
+bool Enemy::Render() 
+{
 	// 再生時間をセットする
 	MV1SetAttachAnimTime(_iHandle, _iAttachIndex, _fPlayTime);
 
@@ -99,7 +108,8 @@ bool Enemy::Render() {
 	return true;
 }
 
-void Enemy::DebugRender() {
+void Enemy::DebugRender() 
+{
 	// カプセルの当たり判定を描画
 	DrawCapsule3D(
 		_vCollisionBottom,_vCollisionTop,_fCollisionR,16,
@@ -109,50 +119,17 @@ void Enemy::DebugRender() {
 	// 移動範囲を描画
 	{
 		unsigned int color = GetColor(0, 0, 255);// 青
-		DrawCircle3D(_vHomePos, _enemyParam.moveRadius, color, 16);
+		DrawCircle3D(_vHomePos, _enemyParam.fMoveRadius, color, 16);
 		DrawLine3D(_vPos, _vHomePos, color);// 現在位置から初期位置への線
 	}
 
 	// 索敵範囲を描画
 	{
+		auto fVisionRange = _enemyParam.fVisionRange;// 索敵距離
+		auto fVisionAngle = _enemyParam.fVisionAngle;// 索敵角度(半分)
 		unsigned int color = GetColor(0, 255, 0);// 緑
 		int segments = 16;// 扇形の分割数
-
-		// 角度計算
-		auto halfAngleRad = DEGREE_TO_RADIAN * _enemyParam.visionAngle;// 視界の半分の角度のラジアン
-		auto currentDirAngle = atan2f(_vDir.x, _vDir.z);// 向きベクトルから現在の角度を計算
-		auto startAngle = currentDirAngle - halfAngleRad;// 扇形の左端
-		auto endAngle = currentDirAngle + halfAngleRad;// 扇形の右端
-
-		// 視界の左右の境界線を描画
-		// 敵の中心から視界の端の点までのオフセットを計算
-		VECTOR vLeftOffset = VGet(
-			sinf(startAngle) * _enemyParam.visionRange, 0.0f, cosf(startAngle) * _enemyParam.visionRange
-		);
-		VECTOR vRightOffset = VGet(
-			sinf(endAngle) * _enemyParam.visionRange, 0.0f, cosf(endAngle) * _enemyParam.visionRange
-		);
-		// 現在位置にオフセットを足して、ワールド座標上の点を計算
-		VECTOR vLeftEdge = VAdd(_vPos, vLeftOffset);
-		VECTOR vRightEdge = VAdd(_vPos, vRightOffset);
-		// 線を描画
-		DrawLine3D(_vPos, vLeftEdge, color);
-		DrawLine3D(_vPos, vRightEdge, color);
-
-		// 扇形の外周を線分で描画
-		VECTOR vPrevPoint = vLeftEdge;// 左端の点から開始
-		for (int i = 0; i <= segments; ++i) {
-			// 現在の点の角度を計算
-			auto ratio = static_cast<float>(i) / static_cast<float>(segments);// 全体の割合を計算
-			auto angle = startAngle + (halfAngleRad * 2.0f * ratio);// 視界の左端の角度に割合分の角度を足す
-
-			// 円周上の次の点を計算
-			VECTOR vNextPoint = VAdd(_vPos, VGet(sinf(angle) * _enemyParam.visionRange, 0.0f, cosf(angle) * _enemyParam.visionRange));
-
-			// 前の点と次の点を結ぶ線を描画
-			DrawLine3D(vPrevPoint, vNextPoint, color);
-			vPrevPoint = vNextPoint;// 次のループのために点を進める
-		}
+		DrawFan3D(_vPos, _vDir, fVisionRange, fVisionAngle, color, segments);
 	}
 
 	// 追跡中の各範囲の描画
@@ -160,11 +137,11 @@ void Enemy::DebugRender() {
 		if (_currentState && _currentState->IsChasing()) {
 			// 攻撃可能範囲を描画
 			unsigned int attackColor = GetColor(255, 0, 0);// 赤
-			DrawCircle3D(_vPos, _enemyParam.attackRange, attackColor, 16);
+			DrawCircle3D(_vPos, _enemyParam.fAttackRange, attackColor, 16);
 
 			// 追跡限界範囲を描画
 			unsigned int chaseColor = GetColor(255, 255, 0);// 黄
-			DrawCircle3D(_vPos, _enemyParam.chaseLimitRange, chaseColor, 16);
+			DrawCircle3D(_vPos, _enemyParam.fChaseLimitRange, chaseColor, 16);
 		}
 	}
 
@@ -197,15 +174,16 @@ void Enemy::DebugRender() {
 
 
 
-void Enemy::DrawCircle3D(VECTOR center, float radius, unsigned int color, int segments) {
+void Enemy::DrawCircle3D(VECTOR vCenter, float fRadius, unsigned int color, int segments) 
+{
 	// 1区画当たりの角度(ラジアン)
 	auto step = DX_TWO_PI_F / static_cast<float>(segments);
 
 	// 最初の点を計算
 	VECTOR vPrevPos;
-	vPrevPos.x = center.x + sinf(0.0f) * radius;
-	vPrevPos.y = center.y;// 高さは中心と同じ
-	vPrevPos.z = center.z + cosf(0.0f) * radius;
+	vPrevPos.x = vCenter.x + sinf(0.0f) * fRadius;
+	vPrevPos.y = vCenter.y;// 高さは中心と同じ
+	vPrevPos.z = vCenter.z + cosf(0.0f) * fRadius;
 
 	// 分割数分ループして点を計算し、線を描画していく
 	for (int i = 0; i <= segments; i++) {
@@ -213,9 +191,9 @@ void Enemy::DrawCircle3D(VECTOR center, float radius, unsigned int color, int se
 
 		// 次の点を計算
 		VECTOR vNextPos;
-		vNextPos.x = center.x + sinf(angle) * radius;
-		vNextPos.y = center.y;// 高さは中心と同じ
-		vNextPos.z = center.z + cosf(angle) * radius;
+		vNextPos.x = vCenter.x + sinf(angle) * fRadius;
+		vNextPos.y = vCenter.y;// 高さは中心と同じ
+		vNextPos.z = vCenter.z + cosf(angle) * fRadius;
 
 		// 前の点と次の点を結ぶ線を描画
 		DrawLine3D(vPrevPos, vNextPos, color);
@@ -224,9 +202,59 @@ void Enemy::DrawCircle3D(VECTOR center, float radius, unsigned int color, int se
 	}
 }
 
+void Enemy::DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAngleDeg, unsigned int color, int segments)
+{
+	// 角度計算
+	auto halfAngleRad = fHalfAngleDeg * DEGREE_TO_RADIAN;// 半分の角度(ラジアン)
+	auto currentDirAngle = atan2f(vDir.x, vDir.z);// 向きベクトルから現在の角度を計算
+	auto startAngle = currentDirAngle - halfAngleRad;// 扇形の左端
+	auto totalAngle = halfAngleRad * 2.0f;// 扇形の全体の角度
+
+	// 左端と右端の境界線を描画
+	// 左端の座標計算
+	VECTOR vLeftEdge = VAdd(
+		vCenter,
+		VGet(sinf(startAngle) * fRadius, 0.0f, cosf(startAngle) * fRadius)// 
+	);
+	// 右端の座標計算(start + total)
+	auto endAngle = startAngle + totalAngle;
+	VECTOR vRightEdge = VAdd(
+		vCenter,
+		VGet(sinf(endAngle) * fRadius, 0.0f, cosf(endAngle) * fRadius)
+	);
+
+	// 中心から端への線
+	DrawLine3D(vCenter, vLeftEdge, color);
+	DrawLine3D(vCenter, vRightEdge, color);
+
+	// 扇形の弧(外周)を描画
+	VECTOR vPrevPoint = vLeftEdge;// 左端から開始
+	for (int i = 1; i <= segments; ++i) {
+		// 現在の割合(0.0 ~ 1.0)
+		auto ratio = static_cast<float>(i) / static_cast<float>(segments);
+
+		// 現在の角度
+		auto angle = startAngle + (totalAngle * ratio);
+
+		// 次の点を計算
+		VECTOR vNextPoint = VAdd(
+			vCenter,
+			VGet(sinf(angle) * fRadius, 0.0f, cosf(angle) * fRadius)
+		);
+
+		// 前の点と次の点を結ぶ線を描画
+		DrawLine3D(vPrevPoint, vNextPoint, color);
+
+		// 次のループのために点を進める
+		vPrevPoint = vNextPoint;
+	}
+
+}
 
 
-void Enemy::ChangeState(std::shared_ptr<EnemyState> newState) {
+
+void Enemy::ChangeState(std::shared_ptr<EnemyState> newState) 
+{
 	if (_currentState) {
 		_currentState->Exit(this);
 	}
@@ -236,12 +264,33 @@ void Enemy::ChangeState(std::shared_ptr<EnemyState> newState) {
 	}
 }
 
-void Enemy::SetEnemyParam(const EnemyParam& param) {
+void Enemy::SetEnemyParam(const EnemyParam& param) 
+{
 	_enemyParam = param;
 
 	// 視界のcos値を計算して設定
-	auto rad = _enemyParam.visionAngle * DEGREE_TO_RADIAN;
-	_enemyParam.visionCos = cosf(rad);
+	auto rad = _enemyParam.fVisionAngle * DEGREE_TO_RADIAN;
+	_enemyParam.fVisionCos = cosf(rad);
+}
+
+bool Enemy::IsTargetVisible(std::shared_ptr<CharaBase> target)
+{
+	if (!target) return false;
+
+	// 距離チェック
+	VECTOR vToTarget = VSub(target->GetPos(), _vPos);
+	auto dist = VSize(vToTarget);// ターゲットまでの距離
+	if (dist > _enemyParam.fVisionRange) return false;// 索敵距離外
+
+	// 角度チェック
+	VECTOR vDirToTarget = VNorm(vToTarget);
+	auto dot = VDot(_vDir, vDirToTarget);
+	// dotがlimitCos未満なら視界外
+	if (dot < _enemyParam.fVisionCos) return false;
+
+	// 障害物チェック
+
+	return true;// 視界内にいる
 }
 
 void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime) {
@@ -250,4 +299,90 @@ void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpe
 		// タイプを設定して、発射リクエストをする
 		bulletManager->Shoot(vStartPos, vDir, fRadius, fSpeed, lifeTime, _eCharaType);
 	}
+}
+
+void Enemy::StartAttack(const EnemyAttackSettings& settings)
+{
+
+	if (!_attackCollision) {// 攻撃コリジョンがなければ作成
+		_attackCollision = std::make_shared<AttackBase>();
+		_attackCollision->Initialize();
+	}
+
+	// 位置更新
+	UpdateAttackTransform(settings);// 初期座標をセット
+
+	// ステートごとの設定を反映
+	_attackCollision->SetCapsuleAttackData(
+		settings.vTopOffset,// top
+		settings.vBottomOffset,// bottom
+		settings.fRadius,// 半径
+		settings.fDelay,// 発生遅延
+		settings.fDuration,// 持続時間
+		settings.fRecovery,// 後隙
+		settings.fDamage,// ダメージ
+		false// ヒットフラグ
+	);
+
+	// 攻撃開始
+	_attackCollision->ProcessStartAttack();
+
+	// AttackManagerに登録
+	AttackManager::GetInstance().RegisterAttack(_attackCollision, ATTACK_OWNER_TYPE::ENEMY, settings.ownerId);
+}
+
+void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings) 
+{
+	if (!_attackCollision) return;
+
+	// 敵の向きベクトルをラジアンに変換
+	auto yaw = atan2f(_vDir.x, _vDir.z);
+
+	MATRIX mRotY = MGetRotY(yaw);// Y軸回転行列を作成
+
+	// ローカルオフセットを回転行列で変換
+	VECTOR vTopOffsetRot = VTransform(settings.vTopOffset, mRotY);
+	VECTOR vBottomOffsetRot = VTransform(settings.vBottomOffset, mRotY);
+
+	// ワールド座標を計算
+	VECTOR vTopPos = VAdd(_vPos, vTopOffsetRot);
+	VECTOR vBottomPos = VAdd(_vPos, vBottomOffsetRot);
+
+	// 攻撃コリジョンの座標だけ更新
+	auto col = _attackCollision->GetAttackCollision();
+	_attackCollision->SetCapsuleAttackData(
+		vTopPos,// ワールド座標
+		vBottomPos,
+		col.attackColR,
+		col.attackDelay,
+		col.attackDuration,
+		col.recovery,
+		col.damage,
+		col.isHit
+	);
+}
+
+void Enemy::StopAttack() 
+{
+	if (!_attackCollision) return;
+	// 攻撃停止
+	_attackCollision->ProcessStopAttack();
+}
+
+void Enemy::ApplyDamage(float fDamage)
+{
+	CharaBase::ApplyDamage(fDamage);// 基底クラスの処理(ライフを減らす)
+
+	// ダメージステートへ遷移
+	ChangeState(std::make_shared<Common::Damage>());
+
+}
+
+std::shared_ptr<EnemyState> Enemy::GetRecoveryState() const
+{
+	if (_recoveryHandler) {// ハンドラが設定されていれば実行
+		return _recoveryHandler(const_cast<Enemy*>(this));
+	}
+
+	return nullptr;
 }

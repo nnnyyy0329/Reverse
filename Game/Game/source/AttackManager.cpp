@@ -35,6 +35,15 @@ bool AttackManager::Process()
 	// ƒtƒŒ[ƒ€ƒJƒEƒ“ƒ^‚ğ‘‚â‚·
 	_frameCounter++;
 
+	// “o˜^‚³‚ê‚Ä‚¢‚éUŒ‚‚ğXV
+	for (auto& attackInfo : _registeredAttacks)
+	{
+		if (attackInfo.attack.expired()) continue;// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
+		auto attack = attackInfo.attack.lock();
+		if (attack == nullptr) continue;
+		attack->Process();// UŒ‚XVˆ—
+	}
+
 	// –³Œø‚ÈUŒ‚‚ÌƒNƒŠ[ƒ“ƒAƒbƒv
 	CleanupInvalidAttacks();
 
@@ -43,6 +52,15 @@ bool AttackManager::Process()
 
 bool AttackManager::Render()
 {
+	// “o˜^‚³‚ê‚Ä‚¢‚éUŒ‚‚ğ•`‰æ
+	for (auto& attackInfo : _registeredAttacks)
+	{
+		if (attackInfo.attack.expired()) continue;// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
+		auto attack = attackInfo.attack.lock();
+		if (attack == nullptr) continue;
+		attack->Render();// UŒ‚•`‰æˆ—
+	}
+
 	return true;
 }
 

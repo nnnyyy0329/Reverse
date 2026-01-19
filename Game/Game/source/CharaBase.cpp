@@ -41,3 +41,10 @@ bool CharaBase::Render()
 {
 	return true;
 }
+
+void CharaBase::ApplyDamage(float fDamage)
+{
+	if (_fLife <= 0.0f) return;// 体力が0なら無効
+	_fLife -= fDamage;
+	if (_fLife < 0.0f) _fLife = 0.0f;// 体力がマイナスにならないようにする
+}
