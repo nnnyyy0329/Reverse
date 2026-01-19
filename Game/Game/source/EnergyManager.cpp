@@ -23,12 +23,12 @@ bool EnergyManager::Terminate()
 
 bool EnergyManager::Process()
 {
-
+	return true;
 }
 
 bool EnergyManager::Render()
 {
-
+	return true;
 }
 
 // ダメージをエネルギーに変換する関数
