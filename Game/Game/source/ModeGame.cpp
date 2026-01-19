@@ -198,7 +198,7 @@ bool ModeGame::Render()
 
 	// デバッグ情報の描画
 	{
-		//_player->DebugRender();
+		_playerManager->DebugRender();
 		_stage->DebugRender();
 		_debugCamera->DebugRender();
 		AttackManager::GetInstance().DrawDebug();

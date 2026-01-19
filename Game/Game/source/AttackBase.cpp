@@ -38,7 +38,8 @@ bool AttackBase::Terminate()
 
 bool AttackBase::Process()
 {
-	UpdateAttackState();// 攻撃状態更新処理
+	UpdateAttackState();    // 攻撃状態更新処理
+
     return true;
 }
 
