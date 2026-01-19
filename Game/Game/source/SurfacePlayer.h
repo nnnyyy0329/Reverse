@@ -10,10 +10,11 @@ public:
 	SurfacePlayer();
 	virtual ~SurfacePlayer();
 
-	virtual bool	Initialize();	// 初期化
-	virtual bool	Terminate();	// 終了
-	virtual bool	Process();		// 更新
-	virtual bool	Render();		// 描画
+	virtual bool	Initialize();
+	virtual bool	Terminate();
+	virtual bool	Process();	
+	virtual bool	Render();	
+	void ApplyDamage(float fDamage) override;	// 被ダメージ処理
 
 	// SurfacePlayer_Move.cppで定義
 	void CallProcess();				// アクション関係Process呼び出し用関数

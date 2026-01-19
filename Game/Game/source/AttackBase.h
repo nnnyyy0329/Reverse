@@ -2,6 +2,7 @@
 
 #pragma once
 #include "appframe.h"
+#include "EnergyManager.h"
 
 enum class COLLISION_TYPE
 {
@@ -104,10 +105,16 @@ public:
 	bool GetHitFlag() const { return _stcAttackCol.isHit; }		// ヒットフラグ取得
 	void SetHitFlag(bool hit) { _stcAttackCol.isHit = hit; }	// ヒットフラグ設定
 
+	float GetDamage() const { return _stcAttackCol.damage; }		// ダメージ取得
+	void SetDamage(float damage) { _stcAttackCol.damage = damage; }	// ダメージ設定
+
 protected:
 	// 攻撃コリジョン関係
-	COLLISION_TYPE _eColType;
-	ATTACK_COLLISION _stcAttackCol;
-	ATTACK_STATE _eAttackState;
+	COLLISION_TYPE _eColType;		// コリジョンタイプ
+	ATTACK_COLLISION _stcAttackCol;	// 攻撃コリジョン情報
+	ATTACK_STATE _eAttackState;		// 攻撃状態
+
+private:
+	std::shared_ptr<EnergyManager> _energyManager;	// エネルギーマネージャー
 };
 

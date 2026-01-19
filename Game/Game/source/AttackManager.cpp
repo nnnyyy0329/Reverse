@@ -38,10 +38,11 @@ bool AttackManager::Process()
 	// “o˜^‚³‚ê‚Ä‚¢‚éUŒ‚‚ğXV
 	for (auto& attackInfo : _registeredAttacks)
 	{
-		if (attackInfo.attack.expired()) continue;// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
-		auto attack = attackInfo.attack.lock();
-		if (attack == nullptr) continue;
-		attack->Process();// UŒ‚XVˆ—
+		if(attackInfo.attack.expired()){ continue; }	// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
+		auto attack = attackInfo.attack.lock();			// UŒ‚î•ñ‚Ìæ“¾
+
+		if(attack == nullptr){ continue; }	// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
+		attack->Process();					// UŒ‚XVˆ—
 	}
 
 	// –³Œø‚ÈUŒ‚‚ÌƒNƒŠ[ƒ“ƒAƒbƒv
@@ -55,10 +56,11 @@ bool AttackManager::Render()
 	// “o˜^‚³‚ê‚Ä‚¢‚éUŒ‚‚ğ•`‰æ
 	for (auto& attackInfo : _registeredAttacks)
 	{
-		if (attackInfo.attack.expired()) continue;// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
-		auto attack = attackInfo.attack.lock();
-		if (attack == nullptr) continue;
-		attack->Render();// UŒ‚•`‰æˆ—
+		if(attackInfo.attack.expired()){ continue; }	// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
+		auto attack = attackInfo.attack.lock();			// UŒ‚î•ñ‚Ìæ“¾
+
+		if(attack == nullptr){ continue; }	// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
+		attack->Render();					// UŒ‚•`‰æˆ—
 	}
 
 	return true;

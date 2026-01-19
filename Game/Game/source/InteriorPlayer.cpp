@@ -4,7 +4,10 @@
 
 namespace
 {
-	const float GRAVITY = -0.6f;	// 重力加速度
+	constexpr float GRAVITY = -0.6f;		// 重力加速度
+	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
+	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
+	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
 }
 
 InteriorPlayer::InteriorPlayer()
@@ -43,9 +46,9 @@ InteriorPlayer::InteriorPlayer()
 	_bViewCollision = false;
 
 	// 表示用オフセット
-	_iDrawSizeOffset = 16;
-	_iDrawOffsetX = 0;
-	_iDrawOffsetY = 0;
+	_iDrawSizeOffset = DRAW_SIZE_OFFSET;
+	_iDrawOffsetX = DRAW_OFFSET_X;
+	_iDrawOffsetY = DRAW_OFFSET_Y;
 
 	// 攻撃システム初期化
 	_bCanCombo = false;
@@ -112,6 +115,12 @@ bool InteriorPlayer::Render()
 	CallDraw();
 
 	return true;
+}
+
+// 被ダメージ処理
+void InteriorPlayer::ApplyDamage(float fDamage)
+{
+	CharaBase::ApplyDamage(fDamage);
 }
 
 // 攻撃判定のパラメーター

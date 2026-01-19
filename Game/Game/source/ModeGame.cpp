@@ -190,15 +190,14 @@ bool ModeGame::Render()
 	
 	// オブジェクトの描画
 	{
-		_playerManager->Render();
 		_stage->Render();
+		_playerManager->Render();
 		_bulletManager->Render();
 		AttackManager::GetInstance().Render();
 	}
 
 	// デバッグ情報の描画
 	{
-		_playerManager->DebugRender();
 		_stage->DebugRender();
 		_debugCamera->DebugRender();
 		AttackManager::GetInstance().DrawDebug();

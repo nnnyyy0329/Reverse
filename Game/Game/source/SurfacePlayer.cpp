@@ -5,7 +5,10 @@
 
 namespace
 {
-	const float GRAVITY = -0.6f;	// 重力加速度
+	const float GRAVITY = -0.6f;		// 重力加速度
+	const int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
+	const int DRAW_OFFSET_X = 900;		// 描画Xオフセット
+	const int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
 }
 
 SurfacePlayer::SurfacePlayer()
@@ -44,9 +47,9 @@ SurfacePlayer::SurfacePlayer()
 	_bViewCollision = false;
 
 	// 表示用オフセット
-	_iDrawSizeOffset = 16;
-	_iDrawOffsetX = 0;
-	_iDrawOffsetY = 0;
+	_iDrawSizeOffset = DRAW_SIZE_OFFSET;
+	_iDrawOffsetX = DRAW_OFFSET_X;
+	_iDrawOffsetY = DRAW_OFFSET_Y;
 
 	// 攻撃システム初期化
 	_bCanCombo = false;
@@ -116,6 +119,12 @@ bool SurfacePlayer::Render()
 	CallDraw();
 
 	return true;
+}
+
+// 被ダメージ処理
+void SurfacePlayer::ApplyDamage(float fDamage)
+{
+	CharaBase::ApplyDamage(fDamage);
 }
 
 // 攻撃判定のパラメーター

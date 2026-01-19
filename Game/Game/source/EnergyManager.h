@@ -29,8 +29,9 @@ public:
     void SetMaxEnergy(float energy){ _maxEnergy = energy; } // 最大のエネルギーの設定
 
 protected:
-    float _currentEnergy;   // 現在のエネルギー量
-    float _maxEnergy;       // 最大のエネルギー量
+    float _currentEnergy;       // 現在のエネルギー量
+    float _maxEnergy;           // 最大のエネルギー量
+	float _convertMultiplier;   // ダメージからエネルギーへの変換倍率
 
 };
 

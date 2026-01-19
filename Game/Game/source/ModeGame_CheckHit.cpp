@@ -136,7 +136,8 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		col.attackColTop, col.attackColBottom, col.attackColR
 	) != false)
 	{
-		attack->SetHitFlag(true);	// ヒットフラグを有効にする
+		attack->SetHitFlag(true);					// ヒットフラグを有効にする
+		chara->ApplyDamage(attack->GetDamage());	// ターゲットにダメージを与える
 
 		printfDx("Chara and Attack Collision Hit!\n");
 	}
