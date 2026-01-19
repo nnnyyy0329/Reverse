@@ -2,16 +2,16 @@
 
 namespace
 {
-	const float MIN_ENERGY = 0.0f;					// 最小エネルギー量
-	const float MAX_ENERGY = 100.0f;				// 最大エネルギー量（デフォルト値）
-	const float DEFAULT_CONVERT_MULTIPLIER = 1.5f;	// デフォルト変換倍率
+	const float MIN_ENERGY = 0.0f;			// 最小エネルギー量
+	const float MAX_ENERGY = 100.0f;		// 最大エネルギー量
+	const float CONVERT_MULTIPLIER = 1.5f;	// デフォルト変換倍率
 }
 
 EnergyManager::EnergyManager()
 {
-	_currentEnergy = MIN_ENERGY;						// 初期エネルギー量
-	_maxEnergy = MAX_ENERGY;							// 最大エネルギー量
-	_convertMultiplier = DEFAULT_CONVERT_MULTIPLIER;	// ダメージからエネルギーへの変換倍率
+	_currentEnergy = MIN_ENERGY;				// 初期エネルギー量
+	_maxEnergy = MAX_ENERGY;					// 最大エネルギー量
+	_convertMultiplier = CONVERT_MULTIPLIER;	// ダメージからエネルギーへの変換倍率
 }
 
 EnergyManager::~EnergyManager()
