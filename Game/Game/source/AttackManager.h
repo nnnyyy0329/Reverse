@@ -58,16 +58,19 @@ public:
 	int GetActiveAttackCount() const;																// アクティブ攻撃数取得
 	int GetFrameCounter() const { return _frameCounter; }											// フレームカウンタ取得
 
+	ATTACK_OWNER_TYPE GetAttackOwnerType(std::shared_ptr<AttackBase> attack) const;	// 攻撃の所有者を取得
+	int GetAttackOwnerId(std::shared_ptr<AttackBase> attack) const;					// 攻撃の所有者IDを取得
+
 	// デバッグ機能
-	void DrawDebug();
+	void DebugRender();
 
 	// シングルトン
-	static AttackManager& GetInstance()	// インスタンス取得
+	static AttackManager* GetInstance()	// インスタンス取得
 	{
 		// 静的ローカル変数シングルトン
 		static AttackManager instance;
 
-		return instance;
+		return &instance;
 	}
 	static void CreateInstance();	// インスタンス作成
 	static void DestroyInstance();	// インスタンス破棄

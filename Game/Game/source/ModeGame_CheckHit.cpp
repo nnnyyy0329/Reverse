@@ -95,18 +95,18 @@ void ModeGame::CheckHitPlayerEnemy(std::shared_ptr<CharaBase> chara1, std::share
 		chara2->GetCollisionTop(), chara2->GetCollisionBottom(), chara2->GetCollisionR()
 	) != false)
 	{
-		printfDx("Player and Enemy Hit!\n");
+		//printfDx("Player and Enemy Hit!\n");
 	}
 }
 
 // キャラと攻撃コリジョンの当たり判定
-void ModeGame::CheckHitCharaAttack(std::shared_ptr<CharaBase> chara)
+void ModeGame::CheckActiveAttack(std::shared_ptr<CharaBase> chara)
 {
 	if(chara == nullptr) { return; }
 
 	// AttackManagerから全てのアクティブな攻撃を取得
-	auto& attackManager = AttackManager::GetInstance();
-	auto activeAttacks = attackManager.GetAllActiveAttacks();
+	auto* attackManager = AttackManager::GetInstance();
+	auto activeAttacks = attackManager->GetAllActiveAttacks();
 
 	// 各攻撃と当たり判定
 	for(auto& attack : activeAttacks)
@@ -136,9 +136,30 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		col.attackColTop, col.attackColBottom, col.attackColR
 	) != false)
 	{
-		attack->SetHitFlag(true);					// ヒットフラグを有効にする
-		chara->ApplyDamage(attack->GetDamage());	// ターゲットにダメージを与える
+		attack->SetHitFlag(true);	// ヒットフラグを有効にする
 
-		printfDx("Chara and Attack Collision Hit!\n");
+		float damage = attack->GetDamage();	// ダメージ取得
+		chara->ApplyDamage(damage);			// ターゲットにダメージを与える
+
+		// ダメージをエネルギーに変換
+		ConvertEnergy(attack, damage);
+
+		//printfDx("Chara and Attack Collision Hit!\n");
+	}
+}
+
+// ダメージをエネルギーに変換する
+void ModeGame::ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage)
+{
+	// 攻撃管理クラスから所有者情報を取得
+	auto* attackManager = AttackManager::GetInstance();
+	ATTACK_OWNER_TYPE ownerType = attackManager->GetAttackOwnerType(attack);
+
+	// 表プレイヤーなら変換
+	if(ownerType == ATTACK_OWNER_TYPE::SURFACE_PLAYER)
+	{
+		// 変換
+		auto* energyManager = EnergyManager::GetInstance();
+		energyManager->ConvertDamageToEnergy(damage);
 	}
 }

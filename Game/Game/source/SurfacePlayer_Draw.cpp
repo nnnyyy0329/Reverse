@@ -59,8 +59,12 @@ void SurfacePlayer::DrawBaseData()
 {
 	// プレイヤーの名前表示
 	{
-		DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(color::R, color::G, color::B), "ーーーーーSerfacePlayerーーーーー");
-		_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
+		// キャラタイプが一致したなら
+		if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
+		{
+			DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(color::R, color::G, color::B), "ーーーーーSerfacePlayerーーーーー");
+			_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
+		}
 	}
 }
 

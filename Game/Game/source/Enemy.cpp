@@ -328,7 +328,7 @@ void Enemy::StartAttack(const EnemyAttackSettings& settings)
 	_attackCollision->ProcessStartAttack();
 
 	// AttackManager‚É“o˜^
-	AttackManager::GetInstance().RegisterAttack(_attackCollision, ATTACK_OWNER_TYPE::ENEMY, settings.ownerId);
+	AttackManager::GetInstance()->RegisterAttack(_attackCollision, ATTACK_OWNER_TYPE::ENEMY, settings.ownerId);
 }
 
 void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings) 

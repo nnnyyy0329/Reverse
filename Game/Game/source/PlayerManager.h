@@ -26,6 +26,7 @@ public:
 
 	// プレイヤー管理
 	bool RegisterPlayer(PLAYER_TYPE type, std::shared_ptr<PlayerBase> player);	// プレイヤーの登録関数
+	void SwitchPlayerByInput();													// 入力によるプレイヤー切り替え
 	void SwitchPlayer(PLAYER_TYPE type);										// プレイヤー切り替え関数
 	void EnableStateTransfer(bool enable) { _bEnableStateTransfer = enable; }	// 状態の引き継ぎ設定
 	void TransferPlayerState(PlayerBase* from, PlayerBase* to);					// 切り替え時の位置置き換え関数

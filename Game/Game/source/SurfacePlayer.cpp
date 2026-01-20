@@ -126,7 +126,6 @@ void SurfacePlayer::ApplyDamage(float fDamage)
 {
 	CharaBase::ApplyDamage(fDamage);
 }
-
 // 攻撃判定のパラメーター
 AttackConstants SurfacePlayer::GetAttackConstants()
 {

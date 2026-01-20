@@ -11,6 +11,7 @@
 #include "CameraManager.h"
 #include "BulletManager.h"
 #include "AttackManager.h"
+#include "EnergyManager.h"
 
 #include "PlayerManager.h"
 #include "SurfacePlayer.h"
@@ -106,7 +107,7 @@ bool ModeGame::Process()
 		_playerManager->Process();
 		_stage->Process();
 		_bulletManager->Process();
-		AttackManager::GetInstance().Process();
+		AttackManager::GetInstance()->Process();
 	}
 
 	// 当たり判定
@@ -134,8 +135,8 @@ bool ModeGame::Process()
 		}
 
 		// キャラと攻撃コリジョンの当たり判定
-		CheckHitCharaAttack(player);									// プレイヤー
-		for(const auto& enemy : enemies){ CheckHitCharaAttack(enemy); }	// 敵
+		CheckActiveAttack(player);										// プレイヤー
+		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
 	}
 
 	// いったん
@@ -193,14 +194,15 @@ bool ModeGame::Render()
 		_stage->Render();
 		_playerManager->Render();
 		_bulletManager->Render();
-		AttackManager::GetInstance().Render();
+		AttackManager::GetInstance()->Render();
 	}
 
 	// デバッグ情報の描画
 	{
 		_stage->DebugRender();
 		_debugCamera->DebugRender();
-		AttackManager::GetInstance().DrawDebug();
+		AttackManager::GetInstance()->DebugRender();
+		EnergyManager::GetInstance()->DebugRender();
 	}
 
 	return true;

@@ -60,8 +60,12 @@ void InteriorPlayer::DrawBaseData()
 {
 	// プレイヤーの名前表示
 	{
-		DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(color::R, color::G, color::B), "ーーーーーInteriorPlayerーーーーー");
-		_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
+		// キャラタイプが一致したなら
+		if(_eCharaType == CHARA_TYPE::INTERIOR_PLAYER)
+		{
+			DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(color::R, color::G, color::B), "ーーーーーInteriorPlayerーーーーー");
+			_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
+		}
 	}
 }
 

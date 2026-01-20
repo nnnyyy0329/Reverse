@@ -3,6 +3,7 @@
 #include "PlayerManager.h"
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
+#include "EnergyManager.h"
 
 PlayerManager::PlayerManager()
 {
@@ -32,21 +33,8 @@ bool PlayerManager::Terminate()
 
 bool PlayerManager::Process()
 {
-	// プレイヤー切り替えの入力チェック
-	if(_trg & PAD_INPUT_6) 
-	{
-		// プレイヤー切り替え
-		if(_activePlayerType == PLAYER_TYPE::SURFACE) // 表プレイヤーなら裏プレイヤーに切り替え
-		{
-			// 表プレイヤーから裏プレイヤーに切り替え
-			SwitchPlayer(PLAYER_TYPE::INTERIOR);
-		}
-		else // 裏プレイヤーなら表プレイヤーに切り替え
-		{
-			// 裏プレイヤーから表プレイヤーに切り替え
-			SwitchPlayer(PLAYER_TYPE::SURFACE);
-		}
-	}
+	// 入力によるプレイヤー切り替え
+	SwitchPlayerByInput();
 
 	// アクティブプレイヤーの処理
 	if(_activePlayer)
@@ -84,6 +72,30 @@ bool PlayerManager::RegisterPlayer(PLAYER_TYPE type, std::shared_ptr<PlayerBase>
 	}
 
 	return true;
+}
+
+// 入力によるプレイヤー切り替え
+void PlayerManager:: SwitchPlayerByInput()
+{
+	// プレイヤーの入力チェック
+	if(_trg & PAD_INPUT_6)
+	{
+		// エネルギーのインスタンス取得
+		auto* energyManager = EnergyManager::GetInstance();
+
+		// 表プレイヤーで切り替え可能なら
+		if(_activePlayerType == PLAYER_TYPE::SURFACE && energyManager->CanSwitchPlayer()) 
+		{
+			// 表プレイヤーから裏プレイヤーに切り替え
+			SwitchPlayer(PLAYER_TYPE::INTERIOR);
+		}
+		// 裏プレイヤーなら表プレイヤーに切り替え
+		else if(_activePlayerType == PLAYER_TYPE::INTERIOR)
+		{
+			// 裏プレイヤーから表プレイヤーに切り替え
+			SwitchPlayer(PLAYER_TYPE::SURFACE);
+		}
+	}
 }
 
 // プレイヤー切り替え関数

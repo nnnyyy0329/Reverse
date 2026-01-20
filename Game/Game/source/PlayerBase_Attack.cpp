@@ -147,7 +147,21 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, st
 	std::shared_ptr<AttackBase> attackPtr = attack;
 	if(attackPtr != nullptr)
 	{
-		AttackManager::GetInstance().RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::PLAYER, GetInstanceId());
+		// プレイヤーごとに情報を変えて登録する
+		switch(_eCharaType)
+		{
+			case CHARA_TYPE::SURFACE_PLAYER:
+			{
+				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::SURFACE_PLAYER, GetInstanceId());
+				break;
+			}
+
+			case CHARA_TYPE::INTERIOR_PLAYER:
+			{
+				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::INTERIOR_PLAYER, GetInstanceId());
+				break;
+			}
+		}
 	}
 
 	_iComboCount = comboCount;
@@ -266,7 +280,7 @@ void PlayerBase::ProcessAttackFinish(std::shared_ptr<AttackBase> attack)
 void PlayerBase::EndAttackSequence()
 {
 	// AttackManagerから自分の攻撃を全て解除
-	AttackManager::GetInstance().UnregisterAttackByOwner(GetInstanceId());
+	AttackManager::GetInstance()->UnregisterAttackByOwner(GetInstanceId());
 
 	SetStatus(PLAYER_STATUS::WAIT);	// 状態を待機に戻す
 	_iComboCount = 0;				// コンボカウントリセット

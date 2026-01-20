@@ -262,7 +262,7 @@ std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAttacksByOwner(int ow
 	std::vector<std::shared_ptr<AttackBase>> ownerAttacks;	// 所有者ID攻撃リスト
 
 	// 登録リストを走査
-	for(const auto& info : _registeredAttacks)
+	for(auto& info : _registeredAttacks)
 	{
 		// 攻撃オブジェクトが有効かつ所有者IDが一致するかチェック
 		if(!info.attack.expired() && info.ownerId == ownerId)
@@ -286,7 +286,7 @@ int AttackManager::GetActiveAttackCount() const
 	int count = 0;	// アクティブ攻撃数カウンタ
 
 	// 登録リストを走査
-	for(const auto& attackInfo : _registeredAttacks)
+	for(auto& attackInfo : _registeredAttacks)
 	{
 		// 攻撃オブジェクトが有効かチェック
 		if(!attackInfo.attack.expired())
@@ -302,6 +302,44 @@ int AttackManager::GetActiveAttackCount() const
 	}
 
 	return count;
+}
+
+// 攻撃の所有者タイプを取得
+ATTACK_OWNER_TYPE AttackManager::GetAttackOwnerType(std::shared_ptr<AttackBase> attack) const
+{
+	if(attack == nullptr) { return ATTACK_OWNER_TYPE::NONE; }
+
+	// 登録リストから該当する攻撃を検索
+	for(const auto& attackInfo : _registeredAttacks)
+	{
+		// 攻撃情報が有効かチェック
+		if(!attackInfo.attack.expired() && attackInfo.attack.lock() == attack)
+		{
+			// 攻撃の所有者タイプを返す
+			return attackInfo.ownerType;
+		}
+	}
+
+	return ATTACK_OWNER_TYPE::NONE;
+}
+
+// 攻撃の所有者IDを取得
+int AttackManager::GetAttackOwnerId(std::shared_ptr<AttackBase> attack) const
+{
+	if(attack == nullptr) { return -1; }
+
+	// 登録リストから該当する攻撃を検索
+	for(const auto& attackInfo : _registeredAttacks)
+	{
+		// 攻撃情報が有効かチェック
+		if(!attackInfo.attack.expired() && attackInfo.attack.lock() == attack)
+		{
+			// 攻撃の所有者IDを返す
+			return attackInfo.ownerId;
+		}
+	}
+
+	return -1;
 }
 
 // インスタンス作成
@@ -326,7 +364,7 @@ void AttackManager::DestroyInstance()
 }
 
 // デバッグ描画
-void AttackManager::DrawDebug()
+void AttackManager::DebugRender()
 {
 	int registeredCount = GetRegisteredAttackCount();	// 登録攻撃数取得
 	int activeCount = GetActiveAttackCount();			// アクティブ攻撃数取得
