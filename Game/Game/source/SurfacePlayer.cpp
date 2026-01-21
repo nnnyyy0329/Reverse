@@ -148,7 +148,7 @@ AttackConstants SurfacePlayer::GetAttackConstants()
 void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 {
 	// SurfacePlayerê—p‚ÌUŒ‚İ’è
-	configs[0] = { {0.0f, 100.0f, 50.0f}, {0.0f, 50.0f, 50.0f}, 5.0f };		// ‘æ1UŒ‚
-	configs[1] = { {0.0f, 250.0f, 50.0f}, {0.0f, 150.0f, 50.0f}, 5.0f };	// ‘æ2UŒ‚
-	configs[2] = { {0.0f, 200.0f, 50.0f}, {0.0f, 0.0f, 50.0f}, 20.0f };		// ‘æ3UŒ‚
+	configs[0] = { {0.0f, 100.0f, 0.0f}, {0.0f, 50.0f, 0.0f}, 5.0f };	// ‘æ1UŒ‚
+	configs[1] = { {0.0f, 250.0f, 0.0f}, {0.0f, 150.0f, 0.0f}, 5.0f };	// ‘æ2UŒ‚
+	configs[2] = { {0.0f, 200.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 20.0f };	// ‘æ3UŒ‚
 }

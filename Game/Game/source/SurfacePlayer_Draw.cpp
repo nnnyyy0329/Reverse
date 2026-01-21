@@ -16,8 +16,8 @@ void SurfacePlayer::CallDraw()
 	_iDrawOffsetY = 0;	// 毎フレーム初期位置にリセット
 
 	DrawBaseData();							// 基礎情報表示
-	//DrawCoordinate();						// 座標関係の表示
-	//DrawCapsuleCollision();					// カプセルコリジョンを表示
+	DrawCoordinate();						// 座標関係の表示
+	DrawCapsuleCollision();					// カプセルコリジョンを表示
 	DrawStatus();							// ステータスを表示
 	DrawParameter();						// パラメーター表示
 	//DrawAnimationName();					// 再生されているアニメーション名表示

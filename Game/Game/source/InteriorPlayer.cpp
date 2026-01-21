@@ -145,7 +145,7 @@ AttackConstants InteriorPlayer::GetAttackConstants()
 void InteriorPlayer::GetAttackConfigs(AttackConfig configs[3])
 {
 	// SurfacePlayerê—p‚ÌUŒ‚İ’è
-	configs[0] = {{0.0f, 80.0f, 40.0f}, {0.0f, 120.0f, 40.0f}, 4.0f};	// ‘æ1UŒ‚
-	configs[1] = {{0.0f, 20.0f, 30.0f}, {0.0f, 100.0f, 30.0f}, 4.0f};	// ‘æ2UŒ‚
-	configs[2] = {{0.0f, 150.0f, 35.0f}, {0.0f, 80.0f, 35.0f}, 15.0f};	// ‘æ3UŒ‚
+	configs[0] = {{0.0f, 80.0f, 40.0f}, {0.0f, 120.0f, 0.0f}, 4.0f};	// ‘æ1UŒ‚
+	configs[1] = {{0.0f, 20.0f, 30.0f}, {0.0f, 100.0f, 0.0f}, 4.0f};	// ‘æ2UŒ‚
+	configs[2] = {{0.0f, 150.0f, 35.0f}, {0.0f, 80.0f, 0.0f}, 15.0f};	// ‘æ3UŒ‚
 }

@@ -115,11 +115,6 @@ void PlayerBase::CallProcessAttack()
 
 	// UŒ‚•ªŠòˆ—
 	ProcessBranchAttack();
-
-	//// UŒ‚ó‘ÔXV
-	//_firstAttack->UpdateAttackState();
-	//_secondAttack->UpdateAttackState();
-	//_thirdAttack->UpdateAttackState();
 }
 
 // UŒ‚ˆ—
