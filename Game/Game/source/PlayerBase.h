@@ -7,14 +7,15 @@
 // 攻撃定数構造体
 struct AttackConstants
 {
-	float ATTACK_OFFSET_SCALE;
-	float COMMON_RADIUS;
-	float COMMON_DELAY;
-	float COMMON_DURATION;
-	float COMMON_RECOVERY;
-	float NORMAL_DAMAGE;
-	float FINISHER_DAMAGE;
-	int MAX_COMBO_COUNT;
+	float ATTACK_OFFSET_SCALE;		// 攻撃判定オフセット倍率
+	float COMMON_RADIUS;			// 半径
+	float COMMON_DELAY;				// 発生フレーム
+	float COMMON_DURATION;			// 持続フレーム
+	float COMMON_RECOVERY;			// 硬直フレーム
+	float NORMAL_DAMAGE;			// 通常ダメージ
+	float FINISHER_DAMAGE;			// フィニッシャーダメージ
+	int SURFACE_MAX_COMBO_COUNT;	// 表プレイヤー用コンボカウント
+	int INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
 };
 
 // 攻撃設定データ構造体
@@ -29,16 +30,19 @@ struct AttackConfig
 enum class PLAYER_STATUS
 {
 	NONE,
-	WAIT,
-	WALK,
-	FIRST_ATTACK,
-	SECOND_ATTACK,
-	THIRD_ATTACK,
-	JUMP_UP,
-	JUMP_DOWN,
-	CROUCH_WAIT,
-	CROUCH_WALK,
-	DEATH,
+	WAIT,			// 待機
+	WALK,			// 歩行
+	FIRST_ATTACK,	// 1段目攻撃
+	SECOND_ATTACK,	// 2段目攻撃
+	THIRD_ATTACK,	// 3段目攻撃
+	FOURTH_ATTACK,	// 4段目攻撃
+	FIFTH_ATTACK,	// 5段目攻撃
+	JUMP_UP,		// ジャンプ（上昇）
+	JUMP_DOWN,		// ジャンプ（下降）
+	CROUCH_WAIT,	// しゃがみ待機
+	CROUCH_WALK,	// しゃがみ歩行
+	HIT,			// 被弾
+	DEATH,			// 死亡
 	_EOT_,
 };
 
@@ -94,19 +98,30 @@ protected:	// 攻撃関係
 	bool IsAttacking();				// 攻撃中かチェック
 
 	// 攻撃システム
-	std::shared_ptr<AttackBase> _firstAttack;	// 第1攻撃
-	std::shared_ptr<AttackBase> _secondAttack;	// 第2攻撃
-	std::shared_ptr<AttackBase> _thirdAttack;	// 第3攻撃
+	//std::shared_ptr<AttackBase> _firstAttack;	// 第1攻撃
+	//std::shared_ptr<AttackBase> _secondAttack;	// 第2攻撃
+	//std::shared_ptr<AttackBase> _thirdAttack;	// 第3攻撃
+
+	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
+	std::vector<PLAYER_STATUS> _attackStatuses;			// 攻撃状態配列
 
 private:	// 攻撃関係
 
 	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);									// 攻撃判定の位置更新処理
 	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> attack);														// 攻撃開始処理
+
 	void ProcessComboAttack(std::shared_ptr<AttackBase> currentAttack, int nextComboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> nextAttack);	// 汎用コンボ攻撃処理
+	void ProcessComboAttack(int attackIndex);
+
 	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);																								// 攻撃終了処理
 	void EndAttackSequence();																																	// 攻撃課程修了
+
+	void ProcessNextAttack(int currentIndex);
+
 	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_STATUS status);																						// 状態に対応する攻撃を取得
 	int GetInstanceId();																																		// ID取得関数
+
+	int GetAttackIndexByStatus(PLAYER_STATUS status);
 
 protected:
 

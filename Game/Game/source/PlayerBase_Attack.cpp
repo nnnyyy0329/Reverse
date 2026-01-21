@@ -14,50 +14,57 @@ void PlayerBase::InitializeAttackData()
 {
 	// 子クラスから攻撃定数と設定を取得
 	AttackConstants constants = GetAttackConstants();	// 攻撃定数取得
-	AttackConfig configs[3];							// 攻撃設定取得
-	GetAttackConfigs(configs);							// 攻撃設定取得
 
-	// 第1攻撃：カプセル攻撃
-	_firstAttack = std::make_shared<AttackBase>();
-	_firstAttack->SetCapsuleAttackData
-	(
-		configs[0].topOffset,		// 上部
-		configs[0].bottomOffset,	// 下部
-		constants.COMMON_RADIUS,	// 半径
-		constants.COMMON_DELAY,		// 発生フレーム
-		constants.COMMON_DURATION, 	// 持続フレーム
-		constants.COMMON_RECOVERY,	// 硬直フレーム
-		configs[0].damage,			// ダメージ
-		false						// ヒットフラグ
-	);
+	// キャラタイプに応じた最大コンボ数を取得
+	int maxComboCount;
+	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
+	{
+		maxComboCount = constants.SURFACE_MAX_COMBO_COUNT;
+	}
+	else
+	{
+		maxComboCount = constants.INTERIOR_MAX_COMBO_COUNT;
+	}
 
-	// 第2攻撃：カプセル攻撃
-	_secondAttack = std::make_shared<AttackBase>();
-	_secondAttack->SetCapsuleAttackData
-	(
-		configs[1].topOffset,		// 上部
-		configs[1].bottomOffset,	// 下部
-		constants.COMMON_RADIUS,	// 半径
-		constants.COMMON_DELAY, 	// 発生フレーム
-		constants.COMMON_DURATION,	// 持続フレーム
-		constants.COMMON_RECOVERY,	// 硬直フレーム
-		configs[1].damage,			// ダメージ
-		false						// ヒットフラグ
-	);
+	// 攻撃設定取得
+	std::vector<AttackConfig>configs(maxComboCount);	
+	GetAttackConfigs(configs.data());
 
-	// 第3攻撃：カプセル攻撃
-	_thirdAttack = std::make_shared<AttackBase>();
-	_thirdAttack->SetCapsuleAttackData
-	(
-		configs[2].topOffset,		// 上部
-		configs[2].bottomOffset,	// 下部
-		constants.COMMON_RADIUS,	// 半径
-		constants.COMMON_DELAY,		// 発生フレーム
-		constants.COMMON_DURATION, 	// 持続フレーム
-		constants.COMMON_RECOVERY,	// 硬直フレーム
-		configs[2].damage,			// ダメージ
-		false						// ヒットフラグ
-	);
+	// 攻撃配列とステータス配列を初期化
+	_attacks.clear();
+	_attackStatuses.clear();
+
+	// 攻撃状態の定義
+	std::vector<PLAYER_STATUS> statuses =
+	{
+		PLAYER_STATUS::FIRST_ATTACK,
+		PLAYER_STATUS::SECOND_ATTACK,
+		PLAYER_STATUS::THIRD_ATTACK,
+		PLAYER_STATUS::FOURTH_ATTACK,
+		PLAYER_STATUS::FIFTH_ATTACK
+	};
+
+	// 動的に攻撃データを作成
+	for(int i = 0; i < maxComboCount; ++i)
+	{
+		auto attack = std::make_shared<AttackBase>();
+
+		// 攻撃配列に追加
+		attack->SetCapsuleAttackData
+		(
+			configs[i].topOffset,       // 上部
+			configs[i].bottomOffset,    // 下部
+			constants.COMMON_RADIUS,    // 半径
+			constants.COMMON_DELAY,     // 発生フレーム
+			constants.COMMON_DURATION,  // 持続フレーム
+			constants.COMMON_RECOVERY,  // 硬直フレーム
+			configs[i].damage,          // ダメージ
+			false                       // ヒットフラグ
+		);
+
+		_attacks.push_back(attack);
+		_attackStatuses.push_back(statuses[i]);
+	}
 }
 
 // 攻撃のコリジョン位置更新
@@ -93,18 +100,19 @@ void PlayerBase::ProcessAttackColPos()
 {
 	// 子クラスから攻撃定数と設定を取得
 	AttackConstants constants = GetAttackConstants();	// 攻撃定数取得
-	AttackConfig configs[3];							// 攻撃設定取得
-	GetAttackConfigs(configs);							// 攻撃設定取得
+	std::vector<AttackConfig> configs(_attacks.size());	// 攻撃設定取得
+	GetAttackConfigs(configs.data());					// 攻撃設定取得
 
 	// 判定を前方にずらす
 	VECTOR dirNorm = VNorm(_vDir);
 	VECTOR attackOffset = VScale(dirNorm, constants.ATTACK_OFFSET_SCALE);
 	VECTOR colOffset = VAdd(_vPos, attackOffset);
 
-	// 各攻撃のコリジョン位置を更新
-	UpdateAttackColPos(_firstAttack, configs[0].topOffset, configs[0].bottomOffset, colOffset);
-	UpdateAttackColPos(_secondAttack, configs[1].topOffset, configs[1].bottomOffset, colOffset);
-	UpdateAttackColPos(_thirdAttack, configs[2].topOffset, configs[2].bottomOffset, colOffset);
+	// 攻撃配列から各攻撃のコリジョン位置を更新
+	for(size_t i = 0; i < _attacks.size(); ++i)
+	{
+		UpdateAttackColPos(_attacks[i], configs[i].topOffset, configs[i].bottomOffset, colOffset);
+	}
 }
 
 // 攻撃Process呼び出し用関数
@@ -126,7 +134,7 @@ void PlayerBase::ProcessAttack()
 		&& _trg & PAD_INPUT_7) 
 	{
 		// 1段目の攻撃開始処理
-		ProcessStartAttack(1, PLAYER_STATUS::FIRST_ATTACK, _firstAttack);
+		ProcessStartAttack(1, PLAYER_STATUS::FIRST_ATTACK, _attacks[0]);
 	}
 }
 
@@ -167,51 +175,21 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, st
 void PlayerBase::ProcessBranchAttack()
 {
 	// 現在の状態に応じて攻撃処理を分岐
-	switch(_ePlayerStatus)
+	int currentAttackIndex = GetAttackIndexByStatus(_ePlayerStatus);
+
+	if(currentAttackIndex >= 0 && currentAttackIndex < static_cast<int>(_attacks.size()))
 	{
-		case PLAYER_STATUS::FIRST_ATTACK:	// 1段目の攻撃
-		{
-			// 1段目の攻撃処理
-			ProcessFirstAttack();
-
-			break;
-		}
-
-		case PLAYER_STATUS::SECOND_ATTACK:	// 2段目の攻撃
-		{
-			// 2段目の攻撃処理
-			ProcessSecondAttack();
-
-			break;
-		}
-
-		case PLAYER_STATUS::THIRD_ATTACK:	// 3段目の攻撃
-		{
-			// 3段目の攻撃処理
-			ProcessThirdAttack();
-
-			break;
-		}
-
-		default:	// 攻撃状態でない場合
-		{
-			break;
-		}
+		// 汎用コンボ処理
+		ProcessComboAttack(currentAttackIndex);
 	}
 }
 
 // 汎用コンボ攻撃処理
-void PlayerBase::ProcessComboAttack
-(
-	std::shared_ptr<AttackBase> currentAttack,	// 現在の攻撃
-	int nextComboCount,							// 次のコンボカウント
-	PLAYER_STATUS nextStatus,					// 次の状態
-	std::shared_ptr<AttackBase> nextAttack		// 次の攻撃
-)
+void PlayerBase::ProcessComboAttack(int attackIndex)
 {
-	// 現在の攻撃状態を取得
+	auto currentAttack = _attacks[attackIndex];
 	ATTACK_STATE state = currentAttack->GetAttackState();
-	
+
 	// 状態に応じた処理
 	switch(state)
 	{
@@ -219,22 +197,19 @@ void PlayerBase::ProcessComboAttack
 		{
 			// コンボ不可にする
 			_bCanCombo = false;	
-
 			break;
 		}
 
 		case ATTACK_STATE::ACTIVE:	// 攻撃判定中
 		{
 			// コンボ可能にする
-			_bCanCombo = true;	
+			_bCanCombo = true;
 
 			// 次の攻撃入力があれば次の攻撃へ
 			if((_trg & PAD_INPUT_7) && CanNextAttack())
 			{
-				// 次の攻撃へ
-				ProcessStartAttack(nextComboCount, nextStatus, nextAttack);
+				ProcessNextAttack(attackIndex);
 			}
-
 			break;
 		}
 
@@ -243,10 +218,8 @@ void PlayerBase::ProcessComboAttack
 			// 次の攻撃入力があれば次の攻撃へ
 			if((_trg & PAD_INPUT_7) && CanNextAttack())
 			{
-				// 次の攻撃へ
-				ProcessStartAttack(nextComboCount, nextStatus, nextAttack);
+				ProcessNextAttack(attackIndex);
 			}
-
 			break;
 		}
 
@@ -254,7 +227,6 @@ void PlayerBase::ProcessComboAttack
 		{
 			// 攻撃過程終了処理
 			EndAttackSequence();
-
 			break;
 		}
 	}
@@ -282,73 +254,43 @@ void PlayerBase::EndAttackSequence()
 	_bCanCombo = false;				// コンボ不可にする
 }
 
-// 1段目の攻撃
-void PlayerBase::ProcessFirstAttack()
+// 次の攻撃へ
+void PlayerBase::ProcessNextAttack(int currentIndex)
 {
-	// 汎用コンボ攻撃処理呼び出し
-	ProcessComboAttack(_firstAttack, 2, PLAYER_STATUS::SECOND_ATTACK, _secondAttack);
-}
+	// 次の攻撃インデックスを計算
+	int nextIndex = currentIndex + 1;
 
-// 2段目の攻撃
-void PlayerBase::ProcessSecondAttack()
-{
-	// 汎用コンボ攻撃処理呼び出し
-	ProcessComboAttack(_secondAttack, 3, PLAYER_STATUS::THIRD_ATTACK, _thirdAttack);
-}
-
-// 3段目の攻撃
-void PlayerBase::ProcessThirdAttack()
-{
-	// 攻撃終了処理呼び出し
-	ProcessAttackFinish(_thirdAttack);
+	// 次の攻撃が存在する場合
+	if(nextIndex < static_cast<int>(_attacks.size()))
+	{
+		PLAYER_STATUS nextStatus = _attackStatuses[nextIndex];								// 次の状態取得
+		ProcessStartAttack(nextIndex + 1, _attackStatuses[nextIndex], _attacks[nextIndex]);	// 次の攻撃へ
+	}
 }
 
 // 攻撃コリジョンの情報受け取り用関数
 void PlayerBase::ReceiveAttackColData()
 {
-	// 攻撃のコリジョン情報を取得
-	ATTACK_COLLISION attackCol;
+	// 現在の攻撃インデックスを取得
+	int attackIndex = GetAttackIndexByStatus(_ePlayerStatus);
 
-	switch(_ePlayerStatus)
+	if(attackIndex >= 0 && attackIndex < static_cast<int>(_attacks.size()))
 	{
-		case PLAYER_STATUS::FIRST_ATTACK:	// 1段目の攻撃
-		{
-			// 1段目の攻撃コリジョン情報取得
-			attackCol = _firstAttack->GetAttackCollision();
+		// 攻撃コリジョン情報を取得
+		ATTACK_COLLISION attackCol = _attacks[attackIndex]->GetAttackCollision();
 
-			break;
-		}
-
-		case PLAYER_STATUS::SECOND_ATTACK:	// 2段目の攻撃
-		{
-			// 2段目の攻撃コリジョン情報取得
-			attackCol = _secondAttack->GetAttackCollision();
-
-			break;
-		}
-
-		case PLAYER_STATUS::THIRD_ATTACK:	// 3段目の攻撃
-		{
-			// 3段目の攻撃コリジョン情報取得
-			attackCol = _thirdAttack->GetAttackCollision();
-
-			break;
-		}
-
-		default:	// 攻撃状態でない場合
-		{
-			// 攻撃状態でない場合は値をリセット
-			_vAttackColTop = VGet(0.0f, 0.0f, 0.0f);
-			_vAttackColBottom = VGet(0.0f, 0.0f, 0.0f);
-			_fAttackColR = 0.0f;
-			return;
-		}
+		// コリジョン情報を入れる
+		_vAttackColTop = attackCol.attackColTop;
+		_vAttackColBottom = attackCol.attackColBottom;
+		_fAttackColR = attackCol.attackColR;
 	}
-
-	// ProcessAttackColPos()で処理されたコリジョン情報を入れる
-	_vAttackColTop = attackCol.attackColTop;
-	_vAttackColBottom = attackCol.attackColBottom;
-	_fAttackColR = attackCol.attackColR;
+	else
+	{
+		// 攻撃状態でない場合は値をリセット
+		_vAttackColTop = VGet(0.0f, 0.0f, 0.0f);
+		_vAttackColBottom = VGet(0.0f, 0.0f, 0.0f);
+		_fAttackColR = 0.0f;
+	}
 }
 
 // 次の攻撃が可能かチェック
@@ -358,7 +300,20 @@ bool PlayerBase::CanNextAttack()
 	AttackConstants constants = GetAttackConstants();
 
 	// コンボ可能かつ最大コンボ数以下かチェック
-	return _bCanCombo && _iComboCount < constants.MAX_COMBO_COUNT;
+	int maxComboCount;
+
+	// キャラタイプに応じた最大コンボ数を取得
+	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
+	{
+		maxComboCount = constants.SURFACE_MAX_COMBO_COUNT;
+	}
+	else
+	{
+		maxComboCount = constants.INTERIOR_MAX_COMBO_COUNT;
+	}
+
+
+	return _bCanCombo && _iComboCount < maxComboCount;
 }
 
 // 攻撃状態中かどうかをチェック
@@ -379,28 +334,16 @@ bool PlayerBase::IsAttacking()
 // ヘルパー関数
 std::shared_ptr<AttackBase> PlayerBase::GetAttackByStatus(PLAYER_STATUS status)
 {
-	switch(status)
+	int index = GetAttackIndexByStatus(status);	// 攻撃インデックス取得
+
+	// インデックスが有効範囲内かチェック
+	if(index >= 0 && index < static_cast<int>(_attacks.size()))
 	{
-		case PLAYER_STATUS::FIRST_ATTACK: // 1段目の攻撃
-		{
-			return _firstAttack;
-		}
-
-		case PLAYER_STATUS::SECOND_ATTACK: // 2段目の攻撃
-		{
-			return _secondAttack;
-		}
-
-		case PLAYER_STATUS::THIRD_ATTACK: // 3段目の攻撃
-		{
-			return _thirdAttack;
-		}
-
-		default: // 攻撃状態でない場合
-		{
-			return nullptr;
-		}
+		// インデックスに対応する攻撃を返す
+		return _attacks[index];
 	}
+
+	return nullptr;
 }
 
 // ID取得関数
@@ -424,4 +367,21 @@ int PlayerBase::GetInstanceId()
 			return 0;
 		}
 	}
+}
+
+// 状態から攻撃インデックスを取得
+int PlayerBase::GetAttackIndexByStatus(PLAYER_STATUS status)
+{
+	// 攻撃状態配列からインデックスを検索
+	for(size_t i = 0; i < _attackStatuses.size(); ++i)
+	{
+		// 状態が一致したらインデックスを返す
+		if(_attackStatuses[i] == status)
+		{
+			// 一致したインデックスを返す
+			return static_cast<int>(i);
+		}
+	}
+
+	return -1; // 見つからなかった場合
 }

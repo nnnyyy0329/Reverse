@@ -96,9 +96,9 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 
 	// jsonファイルの読み込み(敵)
 	{
-		_stageEnemies.push_back(
-			EnemyFactory::CreateEnemy(EnemyType::MELEE, VGet(250.0f, 0.0f, 1060.0f))// テストで調整
-		);
+		//_stageEnemies.push_back(
+		//	EnemyFactory::CreateEnemy(EnemyType::MELEE, VGet(250.0f, 0.0f, 1060.0f))// テストで調整
+		//);
 		_stageEnemies.push_back(
 			EnemyFactory::CreateEnemy(EnemyType::RANGED, VGet(-200.0f, 0.0f, 900.0f))// テストで調整
 		);

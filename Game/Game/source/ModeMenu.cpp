@@ -39,6 +39,7 @@ bool ModeMenu::Process() {
 		auto analog = ApplicationMain::GetInstance()->GetAnalog();
 		float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
 		bool bIsPut = (key & PAD_INPUT_2) != 0;// ボタン同時押し判定(B)
+
 		_debugCamera->Process(analog.lx, analog.ly, analog.rx, analog.ry, analogMin, bIsPut);
 	}
 
@@ -81,7 +82,7 @@ bool ModeMenu::Render() {
 
 	// メニュー項目の確認
 	int x = 128, y = 128, w = 0, h = 0, fontSize = 32, fontPitch = fontSize + 8;
-	SetFontSize(fontSize);
+	//SetFontSize(fontSize);
 	for (auto ite = _menuItems.begin(); ite != _menuItems.end(); ite++) {
 		int itemW = GetDrawStringWidth((*ite)->_text.c_str(), strlen((*ite)->_text.c_str()));
 		if (w < itemW) {

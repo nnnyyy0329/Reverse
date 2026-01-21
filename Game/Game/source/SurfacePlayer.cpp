@@ -132,14 +132,14 @@ AttackConstants SurfacePlayer::GetAttackConstants()
 	// SurfacePlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.ATTACK_OFFSET_SCALE = 75.0f;
-	constants.COMMON_RADIUS = 30.0f;
-	constants.COMMON_DELAY = 10.0f;
-	constants.COMMON_DURATION = 15.0f;
-	constants.COMMON_RECOVERY = 20.0f;
-	constants.NORMAL_DAMAGE = 5.0f;
-	constants.FINISHER_DAMAGE = 20.0f;
-	constants.MAX_COMBO_COUNT = 3;
+	constants.ATTACK_OFFSET_SCALE = 75.0f;	// 攻撃判定オフセット倍率	
+	constants.COMMON_RADIUS = 30.0f;		// 半径	
+	constants.COMMON_DELAY = 10.0f;			// 発生フレーム
+	constants.COMMON_DURATION = 15.0f;		// 持続フレーム	
+	constants.COMMON_RECOVERY = 20.0f;		// 硬直フレーム
+	constants.NORMAL_DAMAGE = 5.0f;			// 通常ダメージ
+	constants.FINISHER_DAMAGE = 20.0f;		// フィニッシャーダメージ
+	constants.SURFACE_MAX_COMBO_COUNT = 3;	// 表プレイヤー用コンボカウント
 
 	return constants;
 }
