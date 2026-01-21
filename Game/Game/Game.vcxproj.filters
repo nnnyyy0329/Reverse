@@ -14,10 +14,10 @@
       <Filter>Attack</Filter>
     </ClCompile>
     <ClCompile Include="source\Bullet.cpp">
-      <Filter>Bullet</Filter>
+      <Filter>GameObject\Character\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="source\BulletManager.cpp">
-      <Filter>Bullet</Filter>
+      <Filter>GameObject\Character\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="source\CameraManager.cpp">
       <Filter>Camera</Filter>
@@ -91,6 +91,7 @@
     <ClCompile Include="source\EnergyManager.cpp">
       <Filter>Energy</Filter>
     </ClCompile>
+    <ClCompile Include="source\EffectServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h">
@@ -106,10 +107,10 @@
       <Filter>Attack</Filter>
     </ClInclude>
     <ClInclude Include="source\Bullet.h">
-      <Filter>Bullet</Filter>
+      <Filter>GameObject\Character\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="source\BulletManager.h">
-      <Filter>Bullet</Filter>
+      <Filter>GameObject\Character\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="source\CameraManager.h">
       <Filter>Camera</Filter>
@@ -130,9 +131,6 @@
       <Filter>GameObject\Character\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="source\EnemyFactory.h">
-      <Filter>GameObject\Character\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="source\EnemyState.h">
       <Filter>GameObject\Character\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerBase.h">
@@ -177,6 +175,10 @@
     <ClInclude Include="source\EnergyManager.h">
       <Filter>Energy</Filter>
     </ClInclude>
+    <ClInclude Include="source\EnemyState.h">
+      <Filter>GameObject\Character\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EffectServer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -184,9 +186,6 @@
     </Filter>
     <Filter Include="Attack">
       <UniqueIdentifier>{a89dff56-87bb-415e-90ef-a8e8ede02de8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Bullet">
-      <UniqueIdentifier>{bf4cb234-2228-463f-b2ba-cf0a862623ae}</UniqueIdentifier>
     </Filter>
     <Filter Include="Camera">
       <UniqueIdentifier>{74cb9dfd-fe6a-4bd9-a171-970749f2d8df}</UniqueIdentifier>
@@ -226,6 +225,9 @@
     </Filter>
     <Filter Include="Energy">
       <UniqueIdentifier>{f7332d90-2207-49b6-881d-254373fdcdfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Character\Bullet">
+      <UniqueIdentifier>{bf4cb234-2228-463f-b2ba-cf0a862623ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

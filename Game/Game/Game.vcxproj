@@ -156,6 +156,7 @@
     <ClCompile Include="source\CameraManager.cpp" />
     <ClCompile Include="source\CharaBase.cpp" />
     <ClCompile Include="source\DebugCamera.cpp" />
+    <ClCompile Include="source\EffectServer.cpp" />
     <ClCompile Include="source\Enemy.cpp" />
     <ClCompile Include="source\EnergyManager.cpp" />
     <ClCompile Include="source\GameObjectBase.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="source\CameraManager.h" />
     <ClInclude Include="source\CharaBase.h" />
     <ClInclude Include="source\DebugCamera.h" />
+    <ClInclude Include="source\EffectServer.h" />
     <ClInclude Include="source\Enemy.h" />
     <ClInclude Include="source\EnemyAttackSettings.h" />
     <ClInclude Include="source\EnemyFactory.h" />

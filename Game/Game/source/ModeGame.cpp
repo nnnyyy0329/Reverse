@@ -6,9 +6,10 @@
 #include "CharaBase.h"
 #include "StageBase.h"
 #include "Enemy.h"
-#include "DebugCamera.h"
 
+#include "DebugCamera.h"
 #include "CameraManager.h"
+
 #include "BulletManager.h"
 #include "AttackManager.h"
 
@@ -16,17 +17,22 @@
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
 
+#include "EffectServer.h"
+
 bool ModeGame::Initialize() 
 {
 	if (!base::Initialize()) { return false; }
 
-	// PlayerManagerの初期化
-	_playerManager = std::make_shared<PlayerManager>();
-	_playerManager->Initialize();
+	// Manager初期化
+	{
+		// PlayerManagerの初期化
+		_playerManager = std::make_shared<PlayerManager>();
+		_playerManager->Initialize();
 
-	// BulletManagerの初期化
-	_bulletManager = std::make_shared<BulletManager>();
-	_bulletManager->Initialize();
+		// BulletManagerの初期化
+		_bulletManager = std::make_shared<BulletManager>();
+		_bulletManager->Initialize();
+	}
 
 	// プレイヤーの作成と登録
 	{
@@ -39,18 +45,27 @@ bool ModeGame::Initialize()
 		_playerManager->RegisterPlayer(PLAYER_TYPE::INTERIOR, interiorPlayer);
 	}
 
-	// いったんこれ
-	_stage = std::make_shared<StageBase>(2);
-	_cameraManager = std::make_shared<CameraManager>();
-	_cameraManager->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
+	// ステージ初期化
+	_stage = std::make_shared<StageBase>(2);// ステージ番号で切り替え
 
-	_debugCamera = std::make_shared<DebugCamera>();
+	// カメラ初期化
+	{
+		_cameraManager = std::make_shared<CameraManager>();
+		_cameraManager->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
+		_debugCamera = std::make_shared<DebugCamera>();
+	}
 
 	// 敵設定
 	for (const auto& enemy : _stage->GetEnemies()) {
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
 		enemy->SetBulletManager(_bulletManager);
 	}
+
+	// エフェクトサーバー初期化
+	EffectServer::GetInstance()->Initialize();
+	// エフェクトリソース読み込み
+	EffectServer::GetInstance()->Load("Laser", "res/Laser01.efkefc", 10.0f);
+
 
 	return true;
 }
@@ -138,14 +153,20 @@ bool ModeGame::Process()
 		for(const auto& enemy : enemies){ CheckHitCharaAttack(enemy); }	// 敵
 	}
 
-	// いったん
-	std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
-	_cameraManager->SetTarget(activePlayer);	// 毎フレームプレイヤーにカメラを合わせる
-	// 敵にターゲットのプレイヤーを設定
-	for (const auto& enemy : _stage->GetEnemies()) {
-		enemy->SetTarget(activePlayer);
+	// ターゲット更新
+	{
+		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
+		_cameraManager->SetTarget(activePlayer);	// 毎フレームプレイヤーにカメラを合わせる
+		// 敵にターゲットのプレイヤーを設定
+		for (const auto& enemy : _stage->GetEnemies()) {
+			enemy->SetTarget(activePlayer);
+		}
 	}
 
+	// エフェクト更新
+	EffectServer::GetInstance()->Update();
+
+	// カメラ更新
 	_cameraManager->Process();
 
 	return true;
@@ -156,9 +177,11 @@ bool ModeGame::Render()
 	base::Render();
 
 	// 3D基本設定
-	SetUseZBuffer3D(TRUE);
-	SetWriteZBuffer3D(TRUE);
-	SetUseBackCulling(TRUE);
+	{
+		SetUseZBuffer3D(TRUE);
+		SetWriteZBuffer3D(TRUE);
+		SetUseBackCulling(TRUE);
+	}
 
 	// ライト設定
 	{
@@ -195,6 +218,9 @@ bool ModeGame::Render()
 		_bulletManager->Render();
 		AttackManager::GetInstance().Render();
 	}
+
+	// エフェクト描画
+	EffectServer::GetInstance()->Render();
 
 	// デバッグ情報の描画
 	{

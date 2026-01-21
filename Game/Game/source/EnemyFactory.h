@@ -72,6 +72,7 @@ public:
 
 				enemy->ChangeState(std::make_shared<Melee::Idle>());// ‰Šúó‘Ôİ’è
 				break;
+
 		case EnemyType::RANGED:// ‰“‹——£Œ^
 				param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
 				param.fVisionRange = RANGED_VISION_RANGE;
