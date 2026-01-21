@@ -18,6 +18,12 @@ void SurfacePlayer::CallProcess()
 	// しゃがみ処理
 	//ProcessCrouch();
 
+	// 被弾処理
+	ProcessHit();
+
+	// 回避処理
+	ProcessDodge();
+
 	// ステータスに応じたアニメーション処理
 	ProcessStatusAnimation();
 
@@ -210,7 +216,13 @@ void SurfacePlayer::ProcessPlayAnimation()
 				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "death"), -1, FALSE);
 				break;
 			}
-			case PLAYER_STATUS::DEATH:	// 死亡
+			case PLAYER_STATUS::DODGE:			// 回避
+			{
+				_iAttachIndex = -1;
+				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "dodge"), -1, FALSE);
+				break;
+			}
+			case PLAYER_STATUS::DEATH:			// 死亡
 			{
 				_iAttachIndex = -1;
 				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "death"), -1, FALSE);
@@ -300,8 +312,8 @@ void SurfacePlayer::ProcessCrouch()
 			// しゃがみ開始
 			const bool next = !_bIsStartCrouch;		// しゃがみ開始フラグを反転
 
-			_bIsStartCrouch = next;					// しゃがみ開始フラグを立てる
-			_bIsCrouching = next;					// しゃがみフラグを立てる
+			_bIsStartCrouch = next;							// しゃがみ開始フラグを立てる
+			_bIsCrouching = next;							// しゃがみフラグを立てる
 			_ePlayerStatus = PLAYER_STATUS::CROUCH_WAIT;	// ステータスをしゃがみにする
 		}
 		else // しゃがみ解除
@@ -310,6 +322,47 @@ void SurfacePlayer::ProcessCrouch()
 			_bIsStartCrouch = false;	// しゃがみ開始フラグを下ろす
 		}
 	}
+}
+
+// 被弾処理
+void SurfacePlayer::ProcessHit()
+{
+	// 攻撃中は被弾しない
+	if(IsAttacking()){ return; }
+
+	// 被弾ステータスなら
+	if(_ePlayerStatus == PLAYER_STATUS::HIT)
+	{
+
+	}
+}
+
+// 回避処理
+void SurfacePlayer::ProcessDodge()
+{
+	// 攻撃中は回避できない
+	if(IsAttacking()){ return; }
+
+	// 回避ボタンが押されたら
+	if(_trg & PAD_INPUT_C)	// Xボタン
+	{
+		// 回避ステータスに変更
+		_ePlayerStatus = PLAYER_STATUS::DODGE;
+
+		// 回避中なら
+		if(_ePlayerStatus == PLAYER_STATUS::DODGE)
+		{
+			// 回避移動処理
+			ProcessDodgeMove(); 
+		}
+	}
+}
+
+// 回避移動処理
+void SurfacePlayer::ProcessDodgeMove()
+{
+	VECTOR dirNorm = VNorm(_vDir);							// 回避方向
+	_vPos = VAdd(_vPos, VScale(dirNorm, _fDodgeMoveSpeed)); // 回避移動
 }
 
 // 死亡処理

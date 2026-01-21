@@ -135,6 +135,12 @@ void InteriorPlayer::DrawStatus()
 		case PLAYER_STATUS::THIRD_ATTACK:	// çUåÇ3
 			status = "THIRD_ATTACK";
 			break;
+		case PLAYER_STATUS::FOURTH_ATTACK:	// çUåÇ4
+			status = "FOURTH_ATTACK";
+			break;
+		case PLAYER_STATUS::FIFTH_ATTACK:	// çUåÇ5
+			status = "FIFTH_ATTACK";
+			break;
 		case PLAYER_STATUS::JUMP_UP:		// ÉWÉÉÉìÉvè„è∏
 			status = "JUMP_UP";
 			break;

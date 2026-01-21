@@ -30,6 +30,9 @@ PlayerBase::PlayerBase()
 	_fAttackColR = 0.0f;
 	_bCanCombo = false;
 	_iComboCount = 0;
+
+	// ‰ñ”ğŠÖŒW
+	_fDodgeMoveSpeed = 0.0f;	// ‰ñ”ğ‚Ì‹­§ˆÚ“®—Ê
 }
 
 PlayerBase::~PlayerBase()

@@ -5,6 +5,9 @@
 namespace
 {
 	constexpr float GRAVITY = -0.6f;		// 重力加速度
+	const float DEFAULT_LIFE = 50.0f;		// デフォルト体力
+	const float DODGE_MOVE_SPEED = 8.0f;	// 回避移動速度
+
 	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
 	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
 	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
@@ -23,18 +26,19 @@ InteriorPlayer::InteriorPlayer()
 	_vDir = VGet(0, 0, -1);
 
 	// 基礎ステータスの初期化
-	_ePlayerStatus = PLAYER_STATUS::NONE;
-	_fMoveSpeed = 0.0f;
-	_fDirSpeed = 0.0f;
-	_fLife = 50.0f;
-	_fGravity = GRAVITY;
+	_ePlayerStatus = PLAYER_STATUS::NONE;	// 状態
+	_fMoveSpeed = 0.0f;						// 移動速度
+	_fDirSpeed = 0.0f;						// 回転速度
+	_fLife = DEFAULT_LIFE;					// 体力
+	_fGravity = GRAVITY;					// 重力
+	_fDodgeMoveSpeed = DODGE_MOVE_SPEED;	// 回避移動速度
 
 	// アクション関係変数の初期化
-	_fVelY = 0.0f;
-	_bIsJumping = false;
-	_bIsStanding = true;
-	_bIsCrouching = false;
-	_bIsStartCrouch = false;
+	_fVelY = 0.0f;				// Y方向の速度
+	_bIsJumping = false;		// ジャンプ中かどうか
+	_bIsStanding = true;		// 着地しているかどうか
+	_bIsCrouching = false;		// しゃがんでいるかどうか
+	_bIsStartCrouch = false;	// しゃがみ開始フラグ
 
 	// カプセルコリジョンの設定
 	_vCollisionTop = VGet(0.0f, 0.0f, 0.0f);	// 上端
@@ -46,9 +50,9 @@ InteriorPlayer::InteriorPlayer()
 	_bViewCollision = false;
 
 	// 表示用オフセット
-	_iDrawSizeOffset = DRAW_SIZE_OFFSET;
-	_iDrawOffsetX = DRAW_OFFSET_X;
-	_iDrawOffsetY = DRAW_OFFSET_Y;
+	_iDrawSizeOffset = DRAW_SIZE_OFFSET;	// ずらす大きさ
+	_iDrawOffsetX = DRAW_OFFSET_X;			// 描画Xオフセット
+	_iDrawOffsetY = DRAW_OFFSET_Y;			// 描画Yオフセット
 
 	// 攻撃システム初期化
 	_bCanCombo = false;
@@ -117,11 +121,11 @@ bool InteriorPlayer::Render()
 	return true;
 }
 
-//// 被ダメージ処理
-//void InteriorPlayer::ApplyDamage(float fDamage)
-//{
-//	//CharaBase::ApplyDamage(fDamage,);
-//}
+// 被ダメージ処理
+void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+{
+	CharaBase::ApplyDamage(fDamage, eType);
+}
 
 // 攻撃判定のパラメーター
 AttackConstants InteriorPlayer::GetAttackConstants()

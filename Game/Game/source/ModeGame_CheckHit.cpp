@@ -137,15 +137,19 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 	) != false)
 	{
 		attack->SetHitFlag(true);	// ヒットフラグを有効にする
+		
+		float damage = attack->GetDamage();								// ダメージ取得
+		auto beforeLife = chara->GetLife();								// ヒット前のライフ取得
+		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
 
-		float damage = attack->GetDamage();	// ダメージ取得
-		auto beforLife = chara->GetLife();	// ヒット前のライフ取得
-		auto ownerType = _attackManager->GetAttackOwnerType(attack);// 攻撃の所有者タイプ取得
-		chara->ApplyDamage(damage, ownerType);						// ターゲットにダメージを与える
+		// ターゲットにダメージを与える
+		chara->ApplyDamage(damage, ownerType);							
+
 		auto afterLife = chara->GetLife();	// ヒット後のライフ取得
-		damage = beforLife - afterLife;		// 実際に与えたダメージを計算
+		damage = beforeLife - afterLife;	// 実際に与えたダメージを計算
+
 		// ダメージをエネルギーに変換
-		ConvertEnergy(attack, damage);
+		ConvertEnergy(attack, damage);									
 
 		//printfDx("Chara and Attack Collision Hit!\n");
 	}

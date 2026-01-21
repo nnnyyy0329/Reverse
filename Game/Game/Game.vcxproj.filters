@@ -91,7 +91,12 @@
     <ClCompile Include="source\ModeMenu.cpp">
       <Filter>Mode\Menu</Filter>
     </ClCompile>
-    <ClCompile Include="source\ModeLoading.cpp" />
+    <ClCompile Include="source\DodgeSystem.cpp">
+      <Filter>Dodge</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModeLoading.cpp">
+      <Filter>Mode\Loading</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h">
@@ -178,7 +183,12 @@
     <ClInclude Include="source\MenuItemBase.h">
       <Filter>Mode\Menu</Filter>
     </ClInclude>
-    <ClInclude Include="source\ModeLoading.h" />
+    <ClInclude Include="source\DodgeSystem.h">
+      <Filter>Dodge</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeLoading.h">
+      <Filter>Mode\Loading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -231,6 +241,12 @@
     </Filter>
     <Filter Include="Mode\Menu">
       <UniqueIdentifier>{2f3b5113-7d47-46d0-899a-b2e9043a3456}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dodge">
+      <UniqueIdentifier>{072ed45b-0e62-40f6-af12-853ab2794b9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Loading">
+      <UniqueIdentifier>{ea7943b7-fc6f-463e-b8d8-3765d716c1d6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

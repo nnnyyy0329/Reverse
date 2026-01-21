@@ -322,7 +322,9 @@ bool PlayerBase::IsAttacking()
 	// 攻撃状態中かチェック
 	if(_ePlayerStatus == PLAYER_STATUS::FIRST_ATTACK ||
 		_ePlayerStatus == PLAYER_STATUS::SECOND_ATTACK ||
-		_ePlayerStatus == PLAYER_STATUS::THIRD_ATTACK)
+		_ePlayerStatus == PLAYER_STATUS::THIRD_ATTACK ||
+		_ePlayerStatus == PLAYER_STATUS::FOURTH_ATTACK ||
+		_ePlayerStatus == PLAYER_STATUS::FIFTH_ATTACK)
 	{
 		_vMove = VGet(0, 0, 0);	// 攻撃中は移動不可
 		return true;

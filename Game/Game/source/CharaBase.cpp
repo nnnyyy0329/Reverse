@@ -44,7 +44,9 @@ bool CharaBase::Render()
 
 void CharaBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 {
-	if (_fLife <= 0.0f) return;// 体力が0なら無効
+	if (_fLife <= 0.0f) return;	// 体力が0なら無効
+
 	_fLife -= fDamage;
-	if (_fLife < 0.0f) _fLife = 0.0f;// 体力がマイナスにならないようにする
+
+	if (_fLife < 0.0f) _fLife = 0.0f;	// 体力がマイナスにならないようにする
 }

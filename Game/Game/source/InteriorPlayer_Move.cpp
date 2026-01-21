@@ -163,49 +163,73 @@ void InteriorPlayer::ProcessPlayAnimation()
 			case PLAYER_STATUS::JUMP_UP: // ÉWÉÉÉìÉvè„è∏
 			{
 				_iAttachIndex = -1;
-				// _iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "jump_up"), -1, FALSE);
+				 _iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "jump_up"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::JUMP_DOWN: // ÉWÉÉÉìÉvâ∫ç~
 			{
 				_iAttachIndex = -1;
-				// _iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "jump_down"), -1, FALSE);
+				 _iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "jump_down"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::CROUCH_WAIT:	// ÇµÇ·Ç™Ç›ë“ã@
 			{
 				_iAttachIndex = -1;
-				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch_idle"), -1, FALSE);
+				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch_idle"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::CROUCH_WALK:	// ÇµÇ·Ç™Ç›ï‡çs
 			{
 				_iAttachIndex = -1;
-				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch"), -1, FALSE);
+				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::FIRST_ATTACK:	// çUåÇ1
 			{
 				_iAttachIndex = -1;
-				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_01"), -1, FALSE);
+				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_01"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::SECOND_ATTACK:	// çUåÇ2
 			{
 				_iAttachIndex = -1;
-				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_02"), -1, FALSE);
+				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_02"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::THIRD_ATTACK:	// çUåÇ3
 			{
 				_iAttachIndex = -1;
-				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_03"), -1, FALSE);
+				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_03"), -1, FALSE);
 				break;
 			}
-			case PLAYER_STATUS::DEATH:	// éÄñS
+			case PLAYER_STATUS::FOURTH_ATTACK:	// çUåÇ4
 			{
 				_iAttachIndex = -1;
-				//_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "death"), -1, FALSE);
+				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_04"), -1, FALSE);
+				break;
+			}
+			case PLAYER_STATUS::FIFTH_ATTACK:	// çUåÇ5
+			{
+				_iAttachIndex = -1;
+				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_05"), -1, FALSE);
+				break;
+			}
+			case PLAYER_STATUS::HIT:			// îÌíe
+			{
+				_iAttachIndex = -1;
+				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "hit"), -1, FALSE);
+				break;
+			}
+			case PLAYER_STATUS::DODGE:			// âÒî
+			{
+				_iAttachIndex = -1;
+				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "dodge"), -1, FALSE);
+				break;
+			}
+			case PLAYER_STATUS::DEATH:			// éÄñS
+			{
+				_iAttachIndex = -1;
+				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "death"), -1, FALSE);
 				break;
 			}
 		}

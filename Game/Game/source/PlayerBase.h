@@ -42,6 +42,7 @@ enum class PLAYER_STATUS
 	CROUCH_WAIT,	// しゃがみ待機
 	CROUCH_WALK,	// しゃがみ歩行
 	HIT,			// 被弾
+	DODGE,			// 回避
 	DEATH,			// 死亡
 	_EOT_,
 };
@@ -70,14 +71,12 @@ public:
 	}
 
 	/*****ゲッターセッター*****/
-	// キャラの状態 
 	PLAYER_STATUS GetStatus() { return _ePlayerStatus; }	// 現在の状態を取得
 	void SetStatus(PLAYER_STATUS e) { _ePlayerStatus = e; }	// 現在の状態を設定
 
-	// 攻撃コリジョン情報の受け取り用
-	VECTOR GetAttackColTop(){ return _vAttackColTop; }
-	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }
-	float GetAttackColR(){ return _fAttackColR; }
+	VECTOR GetAttackColTop(){ return _vAttackColTop; }			// 攻撃コリジョン上部
+	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }	// 攻撃コリジョン下部
+	float GetAttackColR(){ return _fAttackColR; }				// 攻撃コリジョン半径
 
 protected:	// 攻撃関係
 
@@ -89,38 +88,25 @@ protected:	// 攻撃関係
 	void ProcessAttackColPos();		// コリジョン位置の更新処理
 	void ProcessAttack();			// 攻撃処理
 	void ProcessBranchAttack();		// 攻撃分岐処理
-	void ProcessFirstAttack();		// 第1攻撃処理
-	void ProcessSecondAttack();		// 第2攻撃処理
-	void ProcessThirdAttack();		// 第3攻撃処理
 	void InitializeAttackData();	// 攻撃データ初期化
 	void ReceiveAttackColData();	// 攻撃コリジョンの情報受け取り関数
 	bool CanNextAttack();			// 次の攻撃が可能かチェック
 	bool IsAttacking();				// 攻撃中かチェック
 
 	// 攻撃システム
-	//std::shared_ptr<AttackBase> _firstAttack;	// 第1攻撃
-	//std::shared_ptr<AttackBase> _secondAttack;	// 第2攻撃
-	//std::shared_ptr<AttackBase> _thirdAttack;	// 第3攻撃
-
 	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
 	std::vector<PLAYER_STATUS> _attackStatuses;			// 攻撃状態配列
 
 private:	// 攻撃関係
 
-	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);									// 攻撃判定の位置更新処理
-	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> attack);														// 攻撃開始処理
-
-	void ProcessComboAttack(std::shared_ptr<AttackBase> currentAttack, int nextComboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> nextAttack);	// 汎用コンボ攻撃処理
-	void ProcessComboAttack(int attackIndex);
-
-	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);																								// 攻撃終了処理
-	void EndAttackSequence();																																	// 攻撃課程修了
-
-	void ProcessNextAttack(int currentIndex);
-
-	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_STATUS status);																						// 状態に対応する攻撃を取得
-	int GetInstanceId();																																		// ID取得関数
-
+	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
+	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> attack);						// 攻撃開始処理
+	void ProcessComboAttack(int attackIndex);																					// コンボ攻撃処理
+	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);																// 攻撃終了処理
+	void EndAttackSequence();																									// 攻撃課程修了
+	void ProcessNextAttack(int currentIndex);																					// 次の攻撃処理
+	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_STATUS status);														// 状態に対応する攻撃を取得
+	int GetInstanceId();																										// ID取得関数
 	int GetAttackIndexByStatus(PLAYER_STATUS status);
 
 protected:
@@ -156,13 +142,11 @@ protected:
 	int _iDrawOffsetX;		
 	int _iDrawOffsetY;
 
-	// 攻撃コンボ関係
-	bool _bCanCombo;	// コンボ可能フラグ
-	int _iComboCount;	// コンボカウント
-
 	// 攻撃コリジョン情報の受け取り用
 	VECTOR _vAttackColTop;
 	VECTOR _vAttackColBottom;
 	float _fAttackColR;
+	bool _bCanCombo;	// コンボ可能フラグ
+	int _iComboCount;	// コンボカウント
 };
 
