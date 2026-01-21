@@ -148,7 +148,9 @@ namespace Ranged
 		// 発射判定
 		if (_shotTimer >= interval && dot > 0.9f) {// ほぼ正面を向いているなら発射
 			Shoot(owner);// 発射
-			EffectServer::GetInstance()->Play("Laser", owner->GetPos());
+
+			EffectServer::GetInstance()->Play("Laser", owner->GetPos());// エフェクト再生
+
 			_shotTimer = 0.0f;// タイマーリセット
 		}
 

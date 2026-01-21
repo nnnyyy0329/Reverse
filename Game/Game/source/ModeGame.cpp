@@ -61,12 +61,6 @@ bool ModeGame::Initialize()
 		enemy->SetBulletManager(_bulletManager);
 	}
 
-	// エフェクトサーバー初期化
-	EffectServer::GetInstance()->Initialize();
-	// エフェクトリソース読み込み
-	EffectServer::GetInstance()->Load("Laser", "res/Laser01.efkefc", 10.0f);
-
-
 	return true;
 }
 
