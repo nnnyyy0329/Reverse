@@ -14,10 +14,10 @@
       <Filter>Attack</Filter>
     </ClCompile>
     <ClCompile Include="source\Bullet.cpp">
-      <Filter>Bullet</Filter>
+      <Filter>GameObject\Character\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="source\BulletManager.cpp">
-      <Filter>Bullet</Filter>
+      <Filter>GameObject\Character\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="source\CameraManager.cpp">
       <Filter>Camera</Filter>
@@ -68,13 +68,10 @@
       <Filter>Ability</Filter>
     </ClCompile>
     <ClCompile Include="source\ModeGame.cpp">
-      <Filter>Game</Filter>
+      <Filter>Mode\Game</Filter>
     </ClCompile>
     <ClCompile Include="source\ModeGame_CheckHit.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeMenu.cpp">
-      <Filter>Mode</Filter>
+      <Filter>Mode\Game</Filter>
     </ClCompile>
     <ClCompile Include="source\StageBase.cpp">
       <Filter>Stage</Filter>
@@ -91,6 +88,12 @@
     <ClCompile Include="source\EnergyManager.cpp">
       <Filter>Energy</Filter>
     </ClCompile>
+    <ClCompile Include="source\EffectServer.cpp" />
+    <ClCompile Include="source\ModeMenu.cpp">
+      <Filter>Mode\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ResourceServer.cpp" />
+    <ClCompile Include="source\ModeLoading.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h">
@@ -106,10 +109,10 @@
       <Filter>Attack</Filter>
     </ClInclude>
     <ClInclude Include="source\Bullet.h">
-      <Filter>Bullet</Filter>
+      <Filter>GameObject\Character\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="source\BulletManager.h">
-      <Filter>Bullet</Filter>
+      <Filter>GameObject\Character\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="source\CameraManager.h">
       <Filter>Camera</Filter>
@@ -132,9 +135,6 @@
     <ClInclude Include="source\EnemyFactory.h">
       <Filter>GameObject\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="source\EnemyState.h">
-      <Filter>GameObject\Character\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="source\PlayerBase.h">
       <Filter>GameObject\Character\Player</Filter>
     </ClInclude>
@@ -154,13 +154,7 @@
       <Filter>Ability</Filter>
     </ClInclude>
     <ClInclude Include="source\ModeGame.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="source\MenuItemBase.h">
-      <Filter>Mode</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeMenu.h">
-      <Filter>Mode</Filter>
+      <Filter>Mode\Game</Filter>
     </ClInclude>
     <ClInclude Include="source\StageBase.h">
       <Filter>Stage</Filter>
@@ -177,6 +171,18 @@
     <ClInclude Include="source\EnergyManager.h">
       <Filter>Energy</Filter>
     </ClInclude>
+    <ClInclude Include="source\EnemyState.h">
+      <Filter>GameObject\Character\Enemy\State</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EffectServer.h" />
+    <ClInclude Include="source\ModeMenu.h">
+      <Filter>Mode\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MenuItemBase.h">
+      <Filter>Mode\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ResourceServer.h" />
+    <ClInclude Include="source\ModeLoading.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -184,9 +190,6 @@
     </Filter>
     <Filter Include="Attack">
       <UniqueIdentifier>{a89dff56-87bb-415e-90ef-a8e8ede02de8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Bullet">
-      <UniqueIdentifier>{bf4cb234-2228-463f-b2ba-cf0a862623ae}</UniqueIdentifier>
     </Filter>
     <Filter Include="Camera">
       <UniqueIdentifier>{74cb9dfd-fe6a-4bd9-a171-970749f2d8df}</UniqueIdentifier>
@@ -212,12 +215,6 @@
     <Filter Include="Ability">
       <UniqueIdentifier>{743ec4e5-4e82-4783-a699-b0b1ac46db76}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game">
-      <UniqueIdentifier>{ff08f5af-39c5-47e7-98fb-b40351b55998}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Mode">
-      <UniqueIdentifier>{5df96618-4b54-4554-b0bf-2b2751625d1d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Stage">
       <UniqueIdentifier>{e8774f89-67e5-4cc6-9a3e-4355c59f4327}</UniqueIdentifier>
     </Filter>
@@ -226,6 +223,18 @@
     </Filter>
     <Filter Include="Energy">
       <UniqueIdentifier>{f7332d90-2207-49b6-881d-254373fdcdfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Character\Bullet">
+      <UniqueIdentifier>{bf4cb234-2228-463f-b2ba-cf0a862623ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode">
+      <UniqueIdentifier>{5df96618-4b54-4554-b0bf-2b2751625d1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Game">
+      <UniqueIdentifier>{ff08f5af-39c5-47e7-98fb-b40351b55998}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Menu">
+      <UniqueIdentifier>{2f3b5113-7d47-46d0-899a-b2e9043a3456}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

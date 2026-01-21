@@ -21,6 +21,8 @@ public:
 	VECTOR GetHomePos() const { return _vHomePos; }
 	void SetHomePos(VECTOR pos) { _vHomePos = pos; }
 
+	void DrawLifeBar();// 体力バー描画
+
 	// AppFrameに移動予定
 	// DrawLine3Dを組み合わせて3D空間に円を描画する関数
 	// vCenter:中心座標, fRadius:半径, color:色, segment:分割数
@@ -77,6 +79,7 @@ protected:
 
 	RecoveryHandler _recoveryHandler;// 関数を保存する変数
 
-	
+	int _lifeBarHandle = -1;// 体力バー用
+	int _lifeBarFrameHandle = -1;// 体力バー枠用
 };
 
