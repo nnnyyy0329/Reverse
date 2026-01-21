@@ -1,5 +1,8 @@
 #pragma once
-#include "appframe.h"
+#include <map>
+#include <string>
+#include "DxLib.h"
+#include "EffekseerForDXLib.h"
 
 class EffectServer
 {

@@ -18,8 +18,6 @@
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
 
-#include "EffectServer.h"
-
 bool ModeGame::Initialize() 
 {
 	if (!base::Initialize()) { return false; }

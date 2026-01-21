@@ -4,8 +4,6 @@
 #include "AttackManager.h"
 #include "StateCommon.h"
 
-#include "ResourceServer.h"
-
 namespace {
 	constexpr auto COLLISION_RADIUS = 30.0f;// “G‚Ì“–‚½‚è”»’è”¼Œa
 	constexpr auto COLLISION_HEIGHT = 100.0f;// “G‚Ì“–‚½‚è”»’è‚‚³

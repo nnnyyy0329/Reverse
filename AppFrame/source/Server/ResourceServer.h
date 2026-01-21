@@ -1,5 +1,8 @@
 #pragma once
-#include "appframe.h"
+#include <string>
+#include <vector>
+#include <map>
+#include "DxLib.h"
 
 // ƒŠƒ\[ƒX‚Ìí—Ş
 enum class RESOURCE_TYPE

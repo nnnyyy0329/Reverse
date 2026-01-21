@@ -8,6 +8,8 @@
 #include "math/mymath.h"
 #include "Manager/ComponentManager.h"
 //#include "template/aliastemplate.h"
+#include "Server/EffectServer.h"
+#include "Server/ResourceServer.h"
 
 #include <stdio.h>
 #include <stdlib.h>

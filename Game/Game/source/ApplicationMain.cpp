@@ -1,7 +1,6 @@
 #include "appframe.h"
 #include "ApplicationMain.h"
 #include "ModeLoading.h"
-#include "ResourceServer.h"
 
 // 実体
 ApplicationMain				g_oApplicationMain;
@@ -20,6 +19,8 @@ bool ApplicationMain::Initialize(HINSTANCE hInstance) {
 		rs->Register("Laser", "res/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 		rs->Register("LifeBar", "res/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
 		rs->Register("LifeBarFrame", "res/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
+		rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 		// モードローディングの登録
 		ModeServer::GetInstance()->Add(new ModeLoading(), 100, "loading");

@@ -1,6 +1,5 @@
 #include "StateRanged.h"
 #include "Enemy.h"
-#include "EffectServer.h"
 
 namespace {
 	constexpr auto SHOOT_OFFSET_Z = 20.0f;// 発射位置前方オフセット

@@ -1,8 +1,6 @@
 #pragma once
 #include "appframe.h"
 
-#include <memory>
-
 class Enemy;
 
 // 敵パラメータ構造体

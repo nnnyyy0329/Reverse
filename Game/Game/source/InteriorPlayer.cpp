@@ -13,7 +13,7 @@ namespace
 InteriorPlayer::InteriorPlayer()
 {
 	// ƒ‚ƒfƒ‹•\Ž¦ŠÖŒW
-	_iHandle = MV1LoadModel("res/SDChar/SDChar.mv1");
+	_iHandle = ResourceServer::GetInstance()->GetHandle("InteriorPlayer");
 	_iAttachIndex = MV1AttachAnim(_iHandle, -1, -1, FALSE);
 	_fTotalTime = MV1GetAttachAnimTotalTime(_iHandle, _iAttachIndex);
 	_fPlayTime = 0.0f;

@@ -1,6 +1,5 @@
 #include "ModeLoading.h"
 #include "ModeGame.h"
-#include "ResourceServer.h"
 
 bool ModeLoading::Initialize() 
 {

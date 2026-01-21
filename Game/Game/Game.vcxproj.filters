@@ -88,11 +88,9 @@
     <ClCompile Include="source\EnergyManager.cpp">
       <Filter>Energy</Filter>
     </ClCompile>
-    <ClCompile Include="source\EffectServer.cpp" />
     <ClCompile Include="source\ModeMenu.cpp">
       <Filter>Mode\Menu</Filter>
     </ClCompile>
-    <ClCompile Include="source\ResourceServer.cpp" />
     <ClCompile Include="source\ModeLoading.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -174,14 +172,12 @@
     <ClInclude Include="source\EnemyState.h">
       <Filter>GameObject\Character\Enemy\State</Filter>
     </ClInclude>
-    <ClInclude Include="source\EffectServer.h" />
     <ClInclude Include="source\ModeMenu.h">
       <Filter>Mode\Menu</Filter>
     </ClInclude>
     <ClInclude Include="source\MenuItemBase.h">
       <Filter>Mode\Menu</Filter>
     </ClInclude>
-    <ClInclude Include="source\ResourceServer.h" />
     <ClInclude Include="source\ModeLoading.h" />
   </ItemGroup>
   <ItemGroup>
