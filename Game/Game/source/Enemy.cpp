@@ -4,6 +4,8 @@
 #include "AttackManager.h"
 #include "StateCommon.h"
 
+#include "ResourceServer.h"
+
 namespace {
 	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
 	constexpr auto COLLISION_HEIGHT = 100.0f;// 敵の当たり判定高さ
@@ -28,6 +30,9 @@ Enemy::Enemy()
 	_vCollisionBottom = VGet(0.0f, 0.0f, 0.0f);
 	_vCollisionTop = VGet(0.0f, _fCollisionHeight, 0.0f);
 
+	_lifeBarHandle = ResourceServer::GetInstance()->GetHandle("LifeBar");
+	_lifeBarFrameHandle = ResourceServer::GetInstance()->GetHandle("LifeBarFrame");
+
 	SetCharaType(CHARA_TYPE::ENEMY);// キャラタイプを設定
 }
 
@@ -39,6 +44,7 @@ bool Enemy::Initialize()
 {
 	_vOldPos = _vPos;
 	_vHomePos = _vPos;// 初期位置を保存
+	_fLife = _enemyParam.fMaxLife;// 体力に最大値をセット
 
 	return true;
 }
@@ -105,6 +111,8 @@ bool Enemy::Render()
 	// モデルの描画
 	MV1DrawModel(_iHandle);
 
+	DrawLifeBar();
+
 	return true;
 }
 
@@ -160,6 +168,7 @@ void Enemy::DebugRender()
 			int size = 16;// 改行用
 			SetFontSize(size);
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
+			DrawFormatString(x, y, GetColor(255, 255, 0), "  life   = %5.2f / %5.2f", _fLife, _enemyParam.fMaxLife); y += size;
 
 			// 状態名
 			// ステートから名前を取得
@@ -169,6 +178,94 @@ void Enemy::DebugRender()
 			}
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  state  = %s", stateName); y += size;
 		}
+	}
+}
+
+void Enemy::DrawLifeBar()
+{
+	if (_lifeBarHandle == -1 || _lifeBarFrameHandle == -1) return;
+
+	// 座標と距離の変換
+	// 敵の頭上の座標
+	VECTOR vHeadPos = VAdd(_vPos, VGet(0.0f, 100.0f, 0.0f));
+
+	// カメラ座標を取得
+	VECTOR vCamPos = GetCameraPosition();
+
+	// カメラから敵までの距離
+	auto dist = VSize(VSub(vHeadPos, vCamPos));
+
+	// 画面上の座標に変換
+	VECTOR vPos2D = ConvWorldPosToScreenPos(vHeadPos);
+
+	// カメラ範囲外チェック
+	if (vPos2D.z < 0.0f || vPos2D.z > 1.0f) return;
+
+	// 遠近感のスケール計算
+	// ライフバーを3D空間上でどれくらいの幅にするか
+	auto worldBarWidth = 80.0f;
+
+	// カメラの右方向ベクトルを取得
+	MATRIX mViewMat = GetCameraViewMatrix();// ビュー行列を取得
+	VECTOR vCamRight = VGet(mViewMat.m[0][0], mViewMat.m[1][0], mViewMat.m[2][0]);
+
+	// 中心座標から、右に幅の半分だけずらした3D座標を計算
+	VECTOR vRightEdgePos = VAdd(
+		vHeadPos,
+		VScale(vCamRight, worldBarWidth / 2.0f)
+	);
+
+	// ずらした点を画面座標に変換
+	VECTOR vRightEdgePos2D = ConvWorldPosToScreenPos(vRightEdgePos);
+
+	// 画面上のピクセル幅を計算
+	auto dx = vRightEdgePos2D.x - vPos2D.x;
+	auto dy = vRightEdgePos2D.y - vPos2D.y;
+	auto halfWidth2D = sqrtf(dx * dx + dy * dy);
+
+	// 最終的な描画幅
+	int drawW = static_cast<int>(halfWidth2D * 2.0f);
+
+	// 高さは画像の比率に合わせて計算
+	int originW, originH;
+	GetGraphSize(_lifeBarHandle, &originW, &originH);
+	auto aspectScale = static_cast<float>(drawW) / static_cast<float>(originW);
+	int drawH = static_cast<int>(originH * aspectScale);
+
+	// 描画基準位置
+	// 中心座標から幅の半分を引いて左上座標を求める
+	int screenX = static_cast<int>(vPos2D.x) - (drawW / 2);
+	int screenY = static_cast<int>(vPos2D.y) - (drawH / 2);
+
+	// 描画
+	// ライフの割合
+	auto lifeRatio = _fLife / _enemyParam.fMaxLife;
+	if (lifeRatio < 0.0f) lifeRatio = 0.0f;
+	if (lifeRatio > 1.0f) lifeRatio = 1.0f;
+
+	// 枠
+	DrawExtendGraph(
+		screenX, screenY,
+		screenX + drawW, screenY + drawH,
+		_lifeBarFrameHandle,
+		TRUE
+	);
+
+	// 中身
+	if (lifeRatio > 0.0f) {// ライフがあるとき
+		// 画面上で表示する幅
+		int currentDrawW = static_cast<int>(drawW * lifeRatio);
+		// 元画像から切り取る幅
+		int cutW = static_cast<int>(originW * lifeRatio);
+
+		DrawRectExtendGraph(
+			screenX, screenY,
+			screenX + currentDrawW, screenY + drawH,
+			0, 0,
+			cutW, originH,
+			_lifeBarHandle,
+			TRUE
+		);
 	}
 }
 
