@@ -43,6 +43,9 @@ bool Enemy::Initialize()
 	_vOldPos = _vPos;
 	_vHomePos = _vPos;// 初期位置を保存
 	_fLife = _enemyParam.fMaxLife;// 体力に最大値をセット
+	_damageCnt = 0;
+	_bIsExist = true;
+	_bCanRemove = false;
 
 	return true;
 }
@@ -466,19 +469,49 @@ void Enemy::StopAttack()
 
 void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 {
+	// 体力を減らす
 	if(_fLife <= 0.0f) return;// 体力が0なら無効
 	_fLife -= fDamage;
+
+	// 変身前プレイヤーからの攻撃なら最低1は残す
 	if(eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER){
-		if(_fLife <= 1.0f)
-		{
+		if(_fLife <= 1.0f){
 			_fLife = 1.0f;
+			// スタンステートへ遷移
+			ChangeState(std::make_shared<Common::Stun>());
+			return;
 		}
 	}
-	if(_fLife < 0.0f) _fLife = 0.0f;// 体力がマイナスにならないようにする
 
-	// ダメージステートへ遷移
-	ChangeState(std::make_shared<Common::Damage>());
+	// 死亡判定
+	if (IsDead()) {
+		// 死亡時
+		_fLife = 0.0f;// マイナス防止
 
+		// 死亡ステートへ遷移
+		ChangeState(std::make_shared<Common::Dead>());
+		return;
+	}
+
+	// 生存時
+	// スタンかダウン中ならステートの変更はしない
+	if (_currentState) {
+		bool isStun = (std::dynamic_pointer_cast<Common::Stun>(_currentState) != nullptr);
+		bool isDown = (std::dynamic_pointer_cast<Common::Down>(_currentState) != nullptr);
+
+		if (isStun || isDown) {
+			return;
+		}
+	}
+
+	// 通常ダメージ
+	_damageCnt++;// ダメージ回数をカウントアップ
+	ChangeState(std::make_shared<Common::Damage>());// ダメージステートへ遷移
+}
+
+bool Enemy::IsDead() const
+{
+	return _fLife <= 0.0f;// 体力が0以下なら死亡
 }
 
 std::shared_ptr<EnemyState> Enemy::GetRecoveryState() const

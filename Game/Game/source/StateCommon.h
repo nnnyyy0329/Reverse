@@ -24,5 +24,23 @@ namespace Common
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Common:Dead"; }
 	};
+
+	// スタン
+	class Stun : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() const override { return "Common:Stun"; }
+	};
+
+	// ダウン
+	class Down : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() const override { return "Common:Down"; }
+	};
 }
 

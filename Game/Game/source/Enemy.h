@@ -17,28 +17,23 @@ public:
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
 	virtual void DebugRender();	// デバッグ描画
+	void DrawLifeBar();// 体力バー描画
 
 	VECTOR GetHomePos() const { return _vHomePos; }
 	void SetHomePos(VECTOR pos) { _vHomePos = pos; }
 
-	void DrawLifeBar();// 体力バー描画
-
-	// AppFrameに移動予定
-	// DrawLine3Dを組み合わせて3D空間に円を描画する関数
-	// vCenter:中心座標, fRadius:半径, color:色, segment:分割数
-	void DrawCircle3D(VECTOR vCenter, float fRadius, unsigned int color, int segments);
-
-	// DrawLine3Dを組み合わせて3D空間に扇形を描画する関数
-	// vCenter:中心座標, vDir:基準の向きベクトル, fRadius:半径, fHalfAngleDeg:半角(度), color:色, segments:分割数
-	void DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAngleDeg, unsigned int color, int segments);
-
-	void ChangeState(std::shared_ptr<EnemyState> newState);
+	bool CanRemove() const { return _bCanRemove; }// delete可能か
 
 	const EnemyParam& GetEnemyParam() const { return _enemyParam; }
 	void SetEnemyParam(const EnemyParam& param);// パラメータを設定したときに視界のcos値を計算
 
 	std::shared_ptr<CharaBase> GetTarget() const { return _targetPlayer; }
 	void SetTarget(std::shared_ptr<CharaBase> target) { _targetPlayer = target; }
+
+	int GetDamageCount() const { return _damageCnt; }// 何回ダメージを受けたか
+
+	// ステート変更
+	void ChangeState(std::shared_ptr<EnemyState> newState);
 
 	// ターゲットチェック(索敵)
 	bool IsTargetVisible(std::shared_ptr<CharaBase> target);// 視界内ならtrueを返す
@@ -54,6 +49,11 @@ public:
 
 	// 被ダメージ処理
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;
+	void ResetDamageCount() { _damageCnt = 0; }// ダメージカウントリセット
+
+	// 死亡判定
+	bool IsDead() const;
+	void EnableRemove() { _bCanRemove = true; }// delete可能にする
 
 	// Enemyポインタを受け取ってEnemyStateのshared_ptrを返す関数
 	// ↑をRecoveryHandlerとして定義
@@ -63,6 +63,17 @@ public:
 	void SetRecoveryHandler(RecoveryHandler handler) { _recoveryHandler = handler; }
 	// ハンドラを実行する(ステート側から呼ばれる関数)
 	std::shared_ptr<EnemyState> GetRecoveryState() const;
+
+
+
+	// AppFrameに移動予定
+	// DrawLine3Dを組み合わせて3D空間に円を描画する関数
+	// vCenter:中心座標, fRadius:半径, color:色, segment:分割数
+	void DrawCircle3D(VECTOR vCenter, float fRadius, unsigned int color, int segments);
+
+	// DrawLine3Dを組み合わせて3D空間に扇形を描画する関数
+	// vCenter:中心座標, vDir:基準の向きベクトル, fRadius:半径, fHalfAngleDeg:半角(度), color:色, segments:分割数
+	void DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAngleDeg, unsigned int color, int segments);
 
 protected:
 
@@ -81,5 +92,10 @@ protected:
 
 	int _lifeBarHandle = -1;// 体力バー用
 	int _lifeBarFrameHandle = -1;// 体力バー枠用
+
+	int _damageCnt = 0;// 何回ダメージを受けたか(スタン用)
+
+	bool _bIsExist = true;// 生存フラグ
+	bool _bCanRemove = false;// delete可能フラグ
 };
 

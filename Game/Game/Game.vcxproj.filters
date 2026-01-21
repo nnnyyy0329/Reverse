@@ -91,7 +91,9 @@
     <ClCompile Include="source\ModeMenu.cpp">
       <Filter>Mode\Menu</Filter>
     </ClCompile>
-    <ClCompile Include="source\ModeLoading.cpp" />
+    <ClCompile Include="source\ModeLoading.cpp">
+      <Filter>Mode\Loading</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h">
@@ -178,7 +180,9 @@
     <ClInclude Include="source\MenuItemBase.h">
       <Filter>Mode\Menu</Filter>
     </ClInclude>
-    <ClInclude Include="source\ModeLoading.h" />
+    <ClInclude Include="source\ModeLoading.h">
+      <Filter>Mode\Loading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -231,6 +235,9 @@
     </Filter>
     <Filter Include="Mode\Menu">
       <UniqueIdentifier>{2f3b5113-7d47-46d0-899a-b2e9043a3456}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Loading">
+      <UniqueIdentifier>{39954c89-3fd1-4c7f-b458-81424ac734d4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -96,9 +96,9 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 
 	// jsonファイルの読み込み(敵)
 	{
-		//_stageEnemies.push_back(
-		//	EnemyFactory::CreateEnemy(EnemyType::MELEE, VGet(250.0f, 0.0f, 1060.0f))// テストで調整
-		//);
+		_stageEnemies.push_back(
+			EnemyFactory::CreateEnemy(EnemyType::MELEE, VGet(250.0f, 0.0f, 1060.0f))// テストで調整
+		);
 		_stageEnemies.push_back(
 			EnemyFactory::CreateEnemy(EnemyType::RANGED, VGet(-200.0f, 0.0f, 900.0f))// テストで調整
 		);
@@ -117,8 +117,19 @@ void StageBase::Process()
 
 	// 敵の更新
 	{
-		for (auto& enemy : _stageEnemies) {
+		// 敵の更新と削除処理
+		for (auto it = _stageEnemies.begin(); it != _stageEnemies.end(); ) {
+			std::shared_ptr<Enemy> enemy = *it;
+
 			enemy->Process();
+
+			// 削除可能ならリストから削除
+			if (enemy->CanRemove()) {
+				it = _stageEnemies.erase(it);
+			}
+			else {
+				++it;
+			}
 		}
 	}
 }

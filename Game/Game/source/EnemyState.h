@@ -27,6 +27,7 @@ struct EnemyParam
 	float fAttackTime = 0.0f;// 攻撃時間
 
 	float fMaxLife = 100.0f;// 最大体力
+	int damageToDown = 3;// ダウンまでの被ダメージ回数
 };
 
 // 敵ステート基底クラス
