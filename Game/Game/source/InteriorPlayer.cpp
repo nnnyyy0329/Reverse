@@ -117,11 +117,11 @@ bool InteriorPlayer::Render()
 	return true;
 }
 
-// ”íƒ_ƒ[ƒWˆ—
-void InteriorPlayer::ApplyDamage(float fDamage)
-{
-	CharaBase::ApplyDamage(fDamage);
-}
+//// ”íƒ_ƒ[ƒWˆ—
+//void InteriorPlayer::ApplyDamage(float fDamage)
+//{
+//	//CharaBase::ApplyDamage(fDamage,);
+//}
 
 // UŒ‚”»’è‚Ìƒpƒ‰ƒ[ƒ^[
 AttackConstants InteriorPlayer::GetAttackConstants()
@@ -142,10 +142,12 @@ AttackConstants InteriorPlayer::GetAttackConstants()
 }
 
 // UŒ‚”»’è‚Ì‘å‚«‚³İ’è
-void InteriorPlayer::GetAttackConfigs(AttackConfig configs[3])
+void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 {
 	// SurfacePlayerê—p‚ÌUŒ‚İ’è
 	configs[0] = { {0.0f, 80.0f, 0.0f}, {0.0f, 120.0f, 0.0f}, 4.0f };	// ‘æ1UŒ‚
 	configs[1] = { {0.0f, 20.0f, 0.0f}, {0.0f, 100.0f, 0.0f}, 4.0f };	// ‘æ2UŒ‚
-	configs[2] = { {0.0f, 150.0f, 0.0f}, {0.0f, 80.0f, 0.0f}, 15.0f };	// ‘æ3UŒ‚
+	configs[2] = { {0.0f, 150.0f, 0.0f}, {0.0f, 80.0f, 0.0f}, 4.0f };	// ‘æ3UŒ‚
+	configs[3] = { {0.0f, 100.0f, 0.0f}, {0.0f, 50.0f, 0.0f}, 4.0f };	// ‘æ4UŒ‚
+	configs[4] = { {0.0f, 150.0f, 0.0f}, {0.0f, 80.0f, 0.0f}, 15.0f };	// ‘æ5UŒ‚
 }

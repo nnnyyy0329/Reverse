@@ -42,7 +42,7 @@ bool CharaBase::Render()
 	return true;
 }
 
-void CharaBase::ApplyDamage(float fDamage)
+void CharaBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 {
 	if (_fLife <= 0.0f) return;// ‘Ì—Í‚ª0‚È‚ç–³Œø
 	_fLife -= fDamage;

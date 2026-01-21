@@ -139,8 +139,11 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		attack->SetHitFlag(true);	// ヒットフラグを有効にする
 
 		float damage = attack->GetDamage();	// ダメージ取得
-		chara->ApplyDamage(damage);			// ターゲットにダメージを与える
-
+		auto beforLife = chara->GetLife();	// ヒット前のライフ取得
+		auto ownerType = _attackManager->GetAttackOwnerType(attack);// 攻撃の所有者タイプ取得
+		chara->ApplyDamage(damage, ownerType);						// ターゲットにダメージを与える
+		auto afterLife = chara->GetLife();	// ヒット後のライフ取得
+		damage = beforLife - afterLife;		// 実際に与えたダメージを計算
 		// ダメージをエネルギーに変換
 		ConvertEnergy(attack, damage);
 

@@ -464,9 +464,17 @@ void Enemy::StopAttack()
 	_attackCollision->ProcessStopAttack();
 }
 
-void Enemy::ApplyDamage(float fDamage)
+void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 {
-	CharaBase::ApplyDamage(fDamage);// 基底クラスの処理(ライフを減らす)
+	if(_fLife <= 0.0f) return;// 体力が0なら無効
+	_fLife -= fDamage;
+	if(eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER){
+		if(_fLife <= 1.0f)
+		{
+			_fLife = 1.0f;
+		}
+	}
+	if(_fLife < 0.0f) _fLife = 0.0f;// 体力がマイナスにならないようにする
 
 	// ダメージステートへ遷移
 	ChangeState(std::make_shared<Common::Damage>());

@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObjectBase.h"
 
+#include "AttackManager.h"
+
 enum class CHARA_TYPE
 {
 	NONE,
@@ -59,7 +61,7 @@ public:
 	void SetCharaType(CHARA_TYPE eType) { _eCharaType = eType; }
 
 	// 被ダメージ処理
-	virtual void ApplyDamage(float fDamage);// ここではライフを減らすだけ
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType);// ここではライフを減らすだけ
 
 protected:
 	// キャラカプセルの当たり判定用

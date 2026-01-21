@@ -121,11 +121,12 @@ bool SurfacePlayer::Render()
 	return true;
 }
 
-// 被ダメージ処理
-void SurfacePlayer::ApplyDamage(float fDamage)
-{
-	CharaBase::ApplyDamage(fDamage);
-}
+//// 被ダメージ処理
+//void SurfacePlayer::ApplyDamage(float fDamage)
+//{
+//	CharaBase::ApplyDamage(fDamage);
+//}
+
 // 攻撃判定のパラメーター
 AttackConstants SurfacePlayer::GetAttackConstants()
 {

@@ -14,7 +14,7 @@ public:
 	virtual bool	Terminate();
 	virtual bool	Process();	
 	virtual bool	Render();	
-	void ApplyDamage(float fDamage) override;	// 被ダメージ処理
+	//void ApplyDamage(float fDamage,) override;	// 被ダメージ処理
 
 	// InteriorPlayer_Move.cppで定義
 	void CallProcess();				// アクション関係Process呼び出し用関数

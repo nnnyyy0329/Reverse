@@ -53,7 +53,7 @@ public:
 	void StopAttack();// 攻撃の停止
 
 	// 被ダメージ処理
-	void ApplyDamage(float fDamage) override;
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;
 
 	// Enemyポインタを受け取ってEnemyStateのshared_ptrを返す関数
 	// ↑をRecoveryHandlerとして定義
