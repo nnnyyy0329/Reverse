@@ -5,7 +5,9 @@ namespace
 	const float MIN_ENERGY = 0.0f;			// 最小エネルギー量
 	const float MAX_ENERGY = 100.0f;		// 最大エネルギー量
 	const float CONVERT_MULTIPLIER = 0.5f;	// デフォルト変換倍率
+	const float CONSUME_MULTIPLIER = 0.75f;	// デフォルト消費倍率
 	const float SWITCH_COST_ENERGY = 50.0f;	// 切り替え可能エネルギー
+	const float SWITCH_KEEP_ENERGY = 0.1f;	// 切り替え維持エネルギー
 }
 
 // シングルトン用メンバ初期化
@@ -13,10 +15,12 @@ EnergyManager* EnergyManager::_instance = nullptr;
 
 EnergyManager::EnergyManager()
 {
-	_currentEnergy = MIN_ENERGY;				// 初期エネルギー量
-	_maxEnergy = MAX_ENERGY;					// 最大エネルギー量
-	_convertMultiplier = CONVERT_MULTIPLIER;	// ダメージからエネルギーへの変換倍率
-	_switchCostEnergy = SWITCH_COST_ENERGY;		// 切り替え可能エネルギー
+	_currentEnergy = MIN_ENERGY;					// 初期エネルギー量
+	_maxEnergy = MAX_ENERGY;						// 最大エネルギー量
+	_convertMultiplier = CONVERT_MULTIPLIER;		// ダメージからエネルギーへの変換倍率
+	_consumeConvertMultiplier = CONSUME_MULTIPLIER;	// ダメージから消費エネルギーへの変換倍率
+	_switchCostEnergy = SWITCH_COST_ENERGY;			// 切り替え可能エネルギー
+	_switchKeepEnergy = SWITCH_KEEP_ENERGY;			// 切り替え維持エネルギー
 }
 
 EnergyManager::~EnergyManager()
@@ -57,11 +61,31 @@ bool EnergyManager::CanSwitchPlayer()
 	return false;
 }
 
+// 切り替え維持可能かチェック
+bool EnergyManager::CanKeepSwitchPlayer()
+{
+	// 切り替え維持に必要なエネルギーが足りているか
+	if(_currentEnergy >= _switchKeepEnergy)
+	{
+		// 足りている
+		return true;
+	}
+
+	return false;
+}
+
 // ダメージをエネルギーに変換する関数
 void EnergyManager::ConvertDamageToEnergy(float damage)
 {
 	float convertEnergy = damage * _convertMultiplier;	// ダメージをエネルギーに変換
 	AddEnergy(convertEnergy);							// エネルギー追加
+}
+
+// ダメージを消費エネルギーに変換する関数
+void EnergyManager::ConvertDamageToConsumeEnergy(float damage)
+{
+	float consumeEnergy = damage * _consumeConvertMultiplier;	// ダメージを消費エネルギーに変換
+	ConsumeEnergy(consumeEnergy);								// エネルギー消費
 }
 
 // エネルギー追加関数
@@ -76,7 +100,7 @@ void EnergyManager::AddEnergy(float energy)
 	}
 }
 
-// エネルギー消費関数
+// 攻撃ヒット時のエネルギー消費関数
 void EnergyManager::ConsumeEnergy(float energy)
 {
 	_currentEnergy -= energy;

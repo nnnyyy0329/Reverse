@@ -152,14 +152,19 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 void ModeGame::ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage)
 {
 	// 攻撃管理クラスから所有者情報を取得
-	auto* attackManager = AttackManager::GetInstance();
-	ATTACK_OWNER_TYPE ownerType = attackManager->GetAttackOwnerType(attack);
+	ATTACK_OWNER_TYPE ownerType = _attackManager->GetAttackOwnerType(attack);
 
-	// 表プレイヤーなら変換
+	// 表プレイヤーならエネルギー獲得
 	if(ownerType == ATTACK_OWNER_TYPE::SURFACE_PLAYER)
 	{
 		// 変換
-		auto* energyManager = EnergyManager::GetInstance();
-		energyManager->ConvertDamageToEnergy(damage);
+		_energyManager->ConvertDamageToEnergy(damage);
+	}
+
+	// 裏プレイヤーならエネルギー消費
+	else if(ownerType == ATTACK_OWNER_TYPE::INTERIOR_PLAYER)
+	{
+		// 消費変換
+		_energyManager->ConvertDamageToConsumeEnergy(damage);
 	}
 }

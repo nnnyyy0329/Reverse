@@ -1,7 +1,7 @@
 #pragma once
 #include "appframe.h"
 
-//いったんこれ
+// 前方宣言
 class CharaBase;
 class PlayerBase;
 class PlayerManager;
@@ -10,6 +10,8 @@ class StageBase;
 class CameraManager;
 class DebugCamera;
 class BulletManager;
+class AttackManager;
+class EnergyManager;
 
 // モード
 class ModeGame : public ModeBase
@@ -39,4 +41,8 @@ protected:
 	std::shared_ptr<CameraManager> _cameraManager;// カメラマネージャー
 	std::shared_ptr<DebugCamera> _debugCamera;// デバッグカメラ
 	std::shared_ptr<BulletManager> _bulletManager;// 弾マネージャー
+	
+	// シングルトン取得
+	AttackManager* _attackManager = nullptr;
+	EnergyManager* _energyManager = nullptr;
 };

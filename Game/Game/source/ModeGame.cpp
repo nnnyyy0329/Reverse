@@ -29,6 +29,10 @@ bool ModeGame::Initialize()
 	_bulletManager = std::make_shared<BulletManager>();
 	_bulletManager->Initialize();
 
+	// シングルトンインスタンスを取得
+	_attackManager = AttackManager::GetInstance();
+	_energyManager = EnergyManager::GetInstance();
+
 	// プレイヤーの作成と登録
 	{
 		auto surfacePlayer = std::make_shared<SurfacePlayer>();

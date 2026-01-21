@@ -36,6 +36,9 @@ bool PlayerManager::Process()
 	// 入力によるプレイヤー切り替え
 	SwitchPlayerByInput();
 
+	// エネルギーによるプレイヤー切り替え
+	SwitchPlayerByEenrgy();
+
 	// アクティブプレイヤーの処理
 	if(_activePlayer)
 	{
@@ -98,44 +101,61 @@ void PlayerManager:: SwitchPlayerByInput()
 	}
 }
 
+// エネルギーによるプレイヤー切り替え
+void PlayerManager:: SwitchPlayerByEenrgy()
+{
+	// エネルギーのインスタンス取得
+	auto* energyManager = EnergyManager::GetInstance();
+
+	// 裏プレイヤーがアクティブで、エネルギー不足なら
+	if(_activePlayerType == PLAYER_TYPE::INTERIOR && !energyManager->CanKeepSwitchPlayer()) 
+	{
+		// 強制的に表プレイヤーに切り替え
+		SwitchPlayer(PLAYER_TYPE::SURFACE);
+	}
+}
+
 // プレイヤー切り替え関数
 void PlayerManager::SwitchPlayer(PLAYER_TYPE type)
 {
 	// 指定されたタイプのプレイヤーが存在するかチェック
-	auto it = _players.find(type);
-	if(it == _players.end()) return;
+	auto player = _players.find(type);
+	if(player == _players.end()){ return; }
 
 	// 現在のプレイヤーと同じ場合は何もしない
-	if(_activePlayerType == type) return;
+	if(_activePlayerType == type){ return; }
 
-	PlayerBase* oldPlayer = _activePlayer;
-	PlayerBase* newPlayer = it->second.get();
+	PlayerBase* oldPlayer = _activePlayer;			// 古いプレイヤー
+	PlayerBase* newPlayer = player->second.get();	// 新しいプレイヤー
 
 	// 状態の引き継ぎ
 	if(_bEnableStateTransfer && oldPlayer && newPlayer)
 	{
+		// 位置と状態の引き継ぎ
 		TransferPlayerState(oldPlayer, newPlayer);
 	}
 
 	// プレイヤーを切り替え
-	_activePlayer = newPlayer;
-	_activePlayer->Initialize();
-	_activePlayerType = type;
+	_activePlayer = newPlayer;		// 新しいアクティブプレイヤーに設定
+	_activePlayer->Initialize();	// 新しいプレイヤーを初期化
+	_activePlayerType = type;		// アクティブプレイヤータイプを更新
 }
 
 // アクティブプレイヤー取得
 PlayerBase* PlayerManager::GetActivePlayer() const
 {
-	return _activePlayer;
+	return _activePlayer;	// 生ポインタを返す
 }
 
 // アクティブプレイヤー取得（shared_ptr版）
 std::shared_ptr<PlayerBase> PlayerManager::GetActivePlayerShared() const
 {
-	auto it = _players.find(_activePlayerType);
-	if(it != _players.end())
+	auto player = _players.find(_activePlayerType);
+
+	// 見つかったら
+	if(player != _players.end())
 	{
-		return it->second;
+		return player->second;	// shared_ptrを返す
 	}
 
 	return nullptr;
@@ -144,24 +164,26 @@ std::shared_ptr<PlayerBase> PlayerManager::GetActivePlayerShared() const
 // タイプによって取得
 std::shared_ptr<PlayerBase> PlayerManager::GetPlayerByType(PLAYER_TYPE type) const
 {
-	auto it = _players.find(type);
-	if(it != _players.end())
+	auto player = _players.find(type);
+
+	// 見つかったら
+	if(player != _players.end())
 	{
-		return it->second;
+		return player->second;	// shared_ptrを返す
 	}
 
 	return nullptr;
 }
 
 // 切り替え時の位置置き換え関数
-void PlayerManager::TransferPlayerState(PlayerBase* from, PlayerBase* to)
+void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPlayer)
 {
-	if(!from || !to) return;
+	if(!oldPlayer || !newPlayer) return;
 
 	// 位置と向きの引き継ぎ
-	to->SetPos(from->GetPos());
-	to->SetDir(from->GetDir());
+	newPlayer->SetPos(oldPlayer->GetPos());
+	newPlayer->SetDir(oldPlayer->GetDir());
 
 	// ステータスの引き継ぎ
-	to->SetLife(from->GetLife());
+	newPlayer->SetLife(oldPlayer->GetLife());
 }
