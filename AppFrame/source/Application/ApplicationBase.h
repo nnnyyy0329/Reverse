@@ -5,6 +5,9 @@
 #include <time.h>
 #include "../Mode//ModeServer.h"
 
+// EffekseerForDXLib.hをインクルードします。
+#include "EffekseerForDXLib.h"
+
 class ApplicationBase
 {
 public:

@@ -20,8 +20,8 @@ public:
 	VECTOR GetOldPos() { return _vOldPos; }
 	void SetOldPos(VECTOR v) { _vOldPos = v; }
 
-	VECTOR GetRad() { return _vDir; }
-	void SetRad(VECTOR v) { _vDir = v; }
+	VECTOR GetDir() { return _vDir; }
+	void SetDir(VECTOR v) { _vDir = v; }
 
 	VECTOR GetScale() { return _vScale; }
 	void SetScale(VECTOR v) { _vScale = v; }

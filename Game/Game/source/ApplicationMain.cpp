@@ -1,6 +1,6 @@
 #include "appframe.h"
 #include "ApplicationMain.h"
-#include "ModeGame.h"
+#include "ModeLoading.h"
 
 // ŽÀ‘Ì
 ApplicationMain				g_oApplicationMain;
@@ -9,7 +9,22 @@ bool ApplicationMain::Initialize(HINSTANCE hInstance) {
 	if (!base::Initialize(hInstance)) { return false; }
 
 	// ƒ‚[ƒh‚Ì“o˜^
-	ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
+	//ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
+
+	// ”ñ“¯Šúƒ[ƒh—p(test)
+	{
+		auto rs = ResourceServer::GetInstance();
+
+		// ƒŠƒXƒg‚É“o˜^
+		rs->Register("Laser", "res/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+		rs->Register("LifeBar", "res/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("LifeBarFrame", "res/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
+		rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
+
+		// ƒ‚[ƒhƒ[ƒfƒBƒ“ƒO‚Ì“o˜^
+		ModeServer::GetInstance()->Add(new ModeLoading(), 100, "loading");
+	}
 
 	return true;
 }

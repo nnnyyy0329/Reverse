@@ -1,5 +1,50 @@
+// 担当 : 成田
+
 #pragma once
 #include "CharaBase.h"
+#include "AttackBase.h"
+
+// 攻撃定数構造体
+struct AttackConstants
+{
+	float ATTACK_OFFSET_SCALE;		// 攻撃判定オフセット倍率
+	float COMMON_RADIUS;			// 半径
+	float COMMON_DELAY;				// 発生フレーム
+	float COMMON_DURATION;			// 持続フレーム
+	float COMMON_RECOVERY;			// 硬直フレーム
+	float NORMAL_DAMAGE;			// 通常ダメージ
+	float FINISHER_DAMAGE;			// フィニッシャーダメージ
+	int SURFACE_MAX_COMBO_COUNT;	// 表プレイヤー用コンボカウント
+	int INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
+};
+
+// 攻撃設定データ構造体
+struct AttackConfig
+{
+	VECTOR topOffset;
+	VECTOR bottomOffset;
+	float damage;
+};
+
+// 状態列挙型
+enum class PLAYER_STATUS
+{
+	NONE,
+	WAIT,			// 待機
+	WALK,			// 歩行
+	FIRST_ATTACK,	// 1段目攻撃
+	SECOND_ATTACK,	// 2段目攻撃
+	THIRD_ATTACK,	// 3段目攻撃
+	FOURTH_ATTACK,	// 4段目攻撃
+	FIFTH_ATTACK,	// 5段目攻撃
+	JUMP_UP,		// ジャンプ（上昇）
+	JUMP_DOWN,		// ジャンプ（下降）
+	CROUCH_WAIT,	// しゃがみ待機
+	CROUCH_WALK,	// しゃがみ歩行
+	HIT,			// 被弾
+	DEATH,			// 死亡
+	_EOT_,
+};
 
 class PlayerBase : public CharaBase
 {
@@ -24,8 +69,66 @@ public:
 		_analogMin = analogMin;
 	}
 
+	/*****ゲッターセッター*****/
+	// キャラの状態 
+	PLAYER_STATUS GetStatus() { return _ePlayerStatus; }	// 現在の状態を取得
+	void SetStatus(PLAYER_STATUS e) { _ePlayerStatus = e; }	// 現在の状態を設定
+
+	// 攻撃コリジョン情報の受け取り用
+	VECTOR GetAttackColTop(){ return _vAttackColTop; }
+	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }
+	float GetAttackColR(){ return _fAttackColR; }
+
+protected:	// 攻撃関係
+
+	virtual AttackConstants GetAttackConstants() = 0;			// 攻撃定数を取得
+	virtual void GetAttackConfigs(AttackConfig configs[3]) = 0;	// 攻撃設定を取得
+
+	// PlayerBase_Attack.cppで定義
+	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数																				// 攻撃関係Process呼び出し用関数
+	void ProcessAttackColPos();		// コリジョン位置の更新処理
+	void ProcessAttack();			// 攻撃処理
+	void ProcessBranchAttack();		// 攻撃分岐処理
+	void ProcessFirstAttack();		// 第1攻撃処理
+	void ProcessSecondAttack();		// 第2攻撃処理
+	void ProcessThirdAttack();		// 第3攻撃処理
+	void InitializeAttackData();	// 攻撃データ初期化
+	void ReceiveAttackColData();	// 攻撃コリジョンの情報受け取り関数
+	bool CanNextAttack();			// 次の攻撃が可能かチェック
+	bool IsAttacking();				// 攻撃中かチェック
+
+	// 攻撃システム
+	//std::shared_ptr<AttackBase> _firstAttack;	// 第1攻撃
+	//std::shared_ptr<AttackBase> _secondAttack;	// 第2攻撃
+	//std::shared_ptr<AttackBase> _thirdAttack;	// 第3攻撃
+
+	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
+	std::vector<PLAYER_STATUS> _attackStatuses;			// 攻撃状態配列
+
+private:	// 攻撃関係
+
+	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);									// 攻撃判定の位置更新処理
+	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> attack);														// 攻撃開始処理
+
+	void ProcessComboAttack(std::shared_ptr<AttackBase> currentAttack, int nextComboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> nextAttack);	// 汎用コンボ攻撃処理
+	void ProcessComboAttack(int attackIndex);
+
+	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);																								// 攻撃終了処理
+	void EndAttackSequence();																																	// 攻撃課程修了
+
+	void ProcessNextAttack(int currentIndex);
+
+	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_STATUS status);																						// 状態に対応する攻撃を取得
+	int GetInstanceId();																																		// ID取得関数
+
+	int GetAttackIndexByStatus(PLAYER_STATUS status);
+
 protected:
-	// 入力状態
+
+	PLAYER_STATUS _ePlayerStatus;		// キャラの状態
+	PLAYER_STATUS _eOldPlayerStatus;	// 前フレームのキャラの状態
+
+	// 入力関係
 	int _key = 0;
 	int _trg = 0;
 	float _lx = 0.0f;
@@ -33,5 +136,33 @@ protected:
 	float _rx = 0.0f;
 	float _ry = 0.0f;
 	float _analogMin = 0.0f;
+
+
+	// 3Dモデル描画用
+	float _colSubY;	// コリジョン判定時のY補正(腰位置）
+	// デバッグ用
+	bool	_bViewCollision;
+
+
+	// アクション関係変数
+	float _fVelY;			// Y方向の速度
+	bool _bIsJumping;		// ジャンプ中かどうか
+	bool _bIsStanding;		// 着地しているかどうか
+	bool _bIsCrouching;		// しゃがんでいるかどうか
+	bool _bIsStartCrouch;	// しゃがみ開始フラグ
+
+	// 表示用オフセット
+	int _iDrawSizeOffset;	// ずらす大きさ
+	int _iDrawOffsetX;		
+	int _iDrawOffsetY;
+
+	// 攻撃コンボ関係
+	bool _bCanCombo;	// コンボ可能フラグ
+	int _iComboCount;	// コンボカウント
+
+	// 攻撃コリジョン情報の受け取り用
+	VECTOR _vAttackColTop;
+	VECTOR _vAttackColBottom;
+	float _fAttackColR;
 };
 

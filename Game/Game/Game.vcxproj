@@ -149,32 +149,71 @@
   <ItemGroup>
     <ClCompile Include="source\ApplicationGlobal.cpp" />
     <ClCompile Include="source\ApplicationMain.cpp" />
-    <ClCompile Include="source\BattleEnemy.cpp" />
+    <ClCompile Include="source\AttackBase.cpp" />
+    <ClCompile Include="source\AttackManager.cpp" />
+    <ClCompile Include="source\Bullet.cpp" />
+    <ClCompile Include="source\BulletManager.cpp" />
     <ClCompile Include="source\CameraManager.cpp" />
     <ClCompile Include="source\CharaBase.cpp" />
-    <ClCompile Include="source\EnemyBase.cpp" />
+    <ClCompile Include="source\DebugCamera.cpp" />
+    <ClCompile Include="source\Enemy.cpp" />
+    <ClCompile Include="source\EnergyManager.cpp" />
     <ClCompile Include="source\GameObjectBase.cpp" />
     <ClCompile Include="source\InteriorPlayer.cpp" />
+    <ClCompile Include="source\InteriorPlayer_Draw.cpp" />
+    <ClCompile Include="source\InteriorPlayer_Move.cpp" />
     <ClCompile Include="source\ModeGame.cpp" />
+    <ClCompile Include="source\ModeGame_CheckHit.cpp" />
+    <ClCompile Include="source\ModeLoading.cpp" />
+    <ClCompile Include="source\ModeMenu.cpp" />
+    <ClCompile Include="source\PlayerAbilityBase.cpp" />
+    <ClCompile Include="source\PlayerAbilityManager.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
+    <ClCompile Include="source\PlayerBase_Attack.cpp" />
+    <ClCompile Include="source\PlayerManager.cpp" />
     <ClCompile Include="source\StageBase.cpp" />
-    <ClCompile Include="source\StealthEnemy.cpp" />
+    <ClCompile Include="source\StateCommon.cpp" />
+    <ClCompile Include="source\StateMelee.cpp" />
+    <ClCompile Include="source\StateRanged.cpp" />
     <ClCompile Include="source\SurfacePlayer.cpp" />
+    <ClCompile Include="source\SurfacePlayer_Draw.cpp" />
+    <ClCompile Include="source\SurfacePlayer_Move.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h" />
     <ClInclude Include="source\ApplicationMain.h" />
-    <ClInclude Include="source\BattleEnemy.h" />
+    <ClInclude Include="source\AttackBase.h" />
+    <ClInclude Include="source\AttackManager.h" />
+    <ClInclude Include="source\Bullet.h" />
+    <ClInclude Include="source\BulletManager.h" />
     <ClInclude Include="source\CameraManager.h" />
     <ClInclude Include="source\CharaBase.h" />
-    <ClInclude Include="source\EnemyBase.h" />
+    <ClInclude Include="source\DebugCamera.h" />
+    <ClInclude Include="source\Enemy.h" />
+    <ClInclude Include="source\EnemyAttackSettings.h" />
+    <ClInclude Include="source\EnemyFactory.h" />
+    <ClInclude Include="source\EnemyState.h" />
+    <ClInclude Include="source\EnergyManager.h" />
     <ClInclude Include="source\GameObjectBase.h" />
     <ClInclude Include="source\InteriorPlayer.h" />
+    <ClInclude Include="source\MenuItemBase.h" />
     <ClInclude Include="source\ModeGame.h" />
+    <ClInclude Include="source\ModeLoading.h" />
+    <ClInclude Include="source\ModeMenu.h" />
+    <ClInclude Include="source\PlayerAbilityBase.h" />
+    <ClInclude Include="source\PlayerAbilityManager.h" />
     <ClInclude Include="source\PlayerBase.h" />
+    <ClInclude Include="source\PlayerManager.h" />
     <ClInclude Include="source\StageBase.h" />
-    <ClInclude Include="source\StealthEnemy.h" />
-    <ClInclude Include="source\SurfacePlayer.h" />
+    <ClInclude Include="source\StateCommon.h" />
+    <ClInclude Include="source\StateMelee.h" />
+    <ClInclude Include="source\StateRanged.h" />
+    <ClInclude Include="source\SurfacePlayer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
