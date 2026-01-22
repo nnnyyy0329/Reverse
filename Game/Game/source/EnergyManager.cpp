@@ -8,6 +8,7 @@ namespace
 	const float CONSUME_MULTIPLIER = 0.5f;	// デフォルト消費倍率
 	const float SWITCH_COST_ENERGY = 50.0f;	// 切り替え可能エネルギー
 	const float SWITCH_KEEP_ENERGY = 0.01f;	// 切り替え維持エネルギー
+	const float SWUI;
 }
 
 // シングルトン用メンバ初期化
