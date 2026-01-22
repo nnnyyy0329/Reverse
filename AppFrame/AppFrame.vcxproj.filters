@@ -31,6 +31,9 @@
     <Filter Include="Server\Effect">
       <UniqueIdentifier>{09993c2b-44e7-449b-9c0a-bf9ec57d3c9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Vector">
+      <UniqueIdentifier>{5a6ded67-76b3-46e3-b038-62209afcda57}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\CFile\CFile.cpp">
@@ -56,6 +59,9 @@
     </ClCompile>
     <ClCompile Include="source\Server\ResourceServer.cpp">
       <Filter>Server\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Vector\Vecto3D.cpp">
+      <Filter>Vector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -93,6 +99,9 @@
     </ClInclude>
     <ClInclude Include="source\Server\ResourceServer.h">
       <Filter>Server\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Vector\Vecto3D.h">
+      <Filter>Vector</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -12,6 +12,7 @@ class DebugCamera;
 class BulletManager;
 class AttackManager;
 class EnergyManager;
+class DodgeSystem;
 
 // モード
 class ModeGame : public ModeBase
@@ -37,10 +38,11 @@ protected:
 
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される
-	std::shared_ptr<StageBase> _stage;// ステージ
-	std::shared_ptr<CameraManager> _cameraManager;// カメラマネージャー
-	std::shared_ptr<DebugCamera> _debugCamera;// デバッグカメラ
-	std::shared_ptr<BulletManager> _bulletManager;// 弾マネージャー
+	std::shared_ptr<StageBase>		_stage;			// ステージ
+	std::shared_ptr<CameraManager>	_cameraManager;	// カメラマネージャー
+	std::shared_ptr<DebugCamera>	_debugCamera;	// デバッグカメラ
+	std::shared_ptr<BulletManager>	_bulletManager;	// 弾マネージャー
+	//std::shared_ptr<DodgeSystem>	_dodgeSystem;	// 回避システム
 	
 	// シングルトン取得
 	AttackManager* _attackManager = nullptr;

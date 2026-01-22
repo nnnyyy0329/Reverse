@@ -161,6 +161,7 @@
     <ClCompile Include="source\Mode\ModeServer.cpp" />
     <ClCompile Include="source\Server\EffectServer.cpp" />
     <ClCompile Include="source\Server\ResourceServer.cpp" />
+    <ClCompile Include="source\Vector\Vecto3D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\appframe.h" />
@@ -186,6 +187,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="source\Vector\Vecto3D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

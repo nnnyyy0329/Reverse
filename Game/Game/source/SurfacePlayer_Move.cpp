@@ -3,6 +3,12 @@
 #include "SurfacePlayer.h"
 #include "ApplicationMain.h"
 
+namespace
+{
+	const float CROUCH_MOVE_SPEED = 2.0f;	// しゃがみ移動速度
+	const float NORMAL_MOVE_SPEED = 5.0f;	// 通常移動速度
+}
+
 // アクション関係Process呼び出し用関数
 void SurfacePlayer::CallProcess()
 {
@@ -28,7 +34,7 @@ void SurfacePlayer::CallProcess()
 	ProcessStatusAnimation();
 
 	// デバッグ用の処理
-	ProcessDebug();
+	//ProcessDebug();
 }
 
 // プレイヤー移動処理
@@ -41,8 +47,8 @@ void SurfacePlayer::ProcessMovePlayer()
 	if(!IsAttacking())
 	{
 		// しゃがみ中かどうかで移動速度を変える
-		if(_bIsCrouching){ _fMoveSpeed = 3.0f; }
-		else{ _fMoveSpeed = 6.0f; }
+		if(_bIsCrouching){ _fMoveSpeed = CROUCH_MOVE_SPEED; }
+		else{ _fMoveSpeed = NORMAL_MOVE_SPEED; }
 
 		if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
 		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }

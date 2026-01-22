@@ -2,8 +2,8 @@
 
 namespace
 {
-	const float ZERO = 0.0f;				// ゼロ
-	const float TIME_STEP = 1.0f / 60.0f;	// タイムステップ
+	const float ZERO = 0.0f;		// ゼロ
+	const float TIME_STEP = 1.0f;	// タイムステップ
 }
 
 DodgeSystem::DodgeSystem()
@@ -77,8 +77,11 @@ void DodgeSystem::CallDodge
 	DodgeConfig& config					// 回避設定		
 )
 {
+	if(chara == nullptr){ return; }	// キャラオブジェクトが無効なら処理しない
+
 	// 設定を初期化
 	SetConfig(config);
+	_eDodgeState = DODGE_STATE::INACTIVE;	// 回避状態初期化
 
 	// 回避可能なら開始
 	if(CanDodge())
@@ -126,16 +129,16 @@ void DodgeSystem::UpdateDodgeState()
 		{	
 			_currentTime += TIME_STEP;	// 経過時間を進める
 
-// 開始時間を超えたら実行中に移行
-if(_currentTime >= _stcDodgeConfig.startTime)
-{
-	_eDodgeState = DODGE_STATE::ACTIVE;	// 回避状態を実行中に設定
-	_bIsInvincible = true;				// 無敵状態フラグを立てる
-	_currentTime = ZERO;				// 経過時間リセット
-	_invincibleTime = ZERO;				// 無敵経過時間リセット
-}
-
-break;
+			// 開始時間を超えたら実行中に移行
+			if(_currentTime >= _stcDodgeConfig.startTime)
+			{
+				_eDodgeState = DODGE_STATE::ACTIVE;	// 回避状態を実行中に設定
+				_bIsInvincible = true;				// 無敵状態フラグを立てる
+				_currentTime = ZERO;				// 経過時間リセット
+				_invincibleTime = ZERO;				// 無敵経過時間リセット
+			}
+			
+			break;
 		}
 
 		case DODGE_STATE::ACTIVE:	// 実行中
@@ -173,26 +176,18 @@ break;
 // 回避位置更新
 void DodgeSystem::UpdateDodgePos(std::shared_ptr<CharaBase>chara)
 {
-	if(chara == nullptr){ return; }
+	if(chara == nullptr){ return; }	// キャラオブジェクトが無効なら処理しない
+	if(!IsDodging()){ return; }		// 回避中でなければ処理しない
 
-	if(IsDodging())
-	{
-		// 回避移動量計算
-		VECTOR vDir = chara->GetDir();	// キャラの向き取得
-		VECTOR vMove = VGet
-		(
-			cosf(vDir.y) * _stcDodgeConfig.dodgeMoveSpeed,
-			ZERO,
-			sinf(vDir.y) * _stcDodgeConfig.dodgeMoveSpeed
-		);
+	VECTOR vDir = chara->GetDir();										// キャラの向き取得
+	VECTOR dodgeDir = VGet(vDir.x, ZERO, vDir.z);						// 水平方向の回避方向ベクトル計算
+	VECTOR normDir = VNorm(dodgeDir);									// 正規化
+	VECTOR dodgeMove = VScale(normDir, _stcDodgeConfig.dodgeMoveSpeed);	// 回避移動ベクトル計算
 
-		// キャラの移動量に回避移動量を加算
-		VECTOR vCurrentMove = chara->GetMove();
-		vCurrentMove.x += vMove.x;
-		vCurrentMove.y += vMove.y;
-		vCurrentMove.z += vMove.z;
-		chara->SetMove(vCurrentMove);
-	}
+	// キャラの移動量に回避移動ベクトルを加算
+	VECTOR currentMove = chara->GetMove();		// キャラの現在の移動量取得
+	currentMove = VAdd(currentMove, dodgeMove);	// 回避移動量加算
+	chara->SetMove(currentMove);				// キャラの移動量更新
 }
 
 // 無敵状態更新

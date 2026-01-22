@@ -59,6 +59,12 @@ bool ModeGame::Initialize()
 		_debugCamera = std::make_shared<DebugCamera>();
 	}
 
+	// ‰ñ”ğƒVƒXƒeƒ€‰Šú‰»
+	{
+		//_dodgeSystem = std::make_shared<DodgeSystem>();
+		//_dodgeSystem->Initialize();
+	}
+
 	// “Gİ’è
 	for (const auto& enemy : _stage->GetEnemies()) {
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
@@ -120,6 +126,7 @@ bool ModeGame::Process()
 		_stage->Process();
 		_bulletManager->Process();
 		AttackManager::GetInstance()->Process();
+		//_dodgeSystem->Process();
 	}
 
 	// “–‚½‚è”»’è
