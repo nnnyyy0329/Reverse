@@ -13,6 +13,7 @@
 #include "BulletManager.h"
 #include "AttackManager.h"
 #include "EnergyManager.h"
+#include "DodgeSystem.h"
 
 #include "PlayerManager.h"
 #include "SurfacePlayer.h"

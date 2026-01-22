@@ -349,20 +349,14 @@ void SurfacePlayer::ProcessDodge()
 		// 回避ステータスに変更
 		_ePlayerStatus = PLAYER_STATUS::DODGE;
 
-		// 回避中なら
-		if(_ePlayerStatus == PLAYER_STATUS::DODGE)
-		{
-			// 回避移動処理
-			ProcessDodgeMove(); 
-		}
+		
 	}
 }
 
 // 回避移動処理
 void SurfacePlayer::ProcessDodgeMove()
 {
-	VECTOR dirNorm = VNorm(_vDir);							// 回避方向
-	_vPos = VAdd(_vPos, VScale(dirNorm, _fDodgeMoveSpeed)); // 回避移動
+	
 }
 
 // 死亡処理

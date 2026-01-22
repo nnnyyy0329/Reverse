@@ -6,7 +6,6 @@ namespace
 {
 	constexpr float GRAVITY = -0.6f;		// 重力加速度
 	const float DEFAULT_LIFE = 50.0f;		// デフォルト体力
-	const float DODGE_MOVE_SPEED = 8.0f;	// 回避移動速度
 
 	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
 	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
@@ -31,7 +30,6 @@ InteriorPlayer::InteriorPlayer()
 	_fDirSpeed = 0.0f;						// 回転速度
 	_fLife = DEFAULT_LIFE;					// 体力
 	_fGravity = GRAVITY;					// 重力
-	_fDodgeMoveSpeed = DODGE_MOVE_SPEED;	// 回避移動速度
 
 	// アクション関係変数の初期化
 	_fVelY = 0.0f;				// Y方向の速度
