@@ -5,6 +5,17 @@ bool ModeLoading::Initialize()
 {
 	if (!base::Initialize()) { return false; }
 	_bIsAddGame = false;
+
+	// リソースの登録
+	{
+		auto rs = ResourceServer::GetInstance();
+		rs->Register("Laser", "res/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+		rs->Register("LifeBar", "res/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("LifeBarFrame", "res/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
+		rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
+	}
+
 	// リソースのロード開始
 	ResourceServer::GetInstance()->StartLoadAsync();
 	return true;

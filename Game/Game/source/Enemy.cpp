@@ -371,26 +371,6 @@ void Enemy::SetEnemyParam(const EnemyParam& param)
 	_enemyParam.fVisionCos = cosf(rad);
 }
 
-bool Enemy::IsTargetVisible(std::shared_ptr<CharaBase> target)
-{
-	if (!target) return false;
-
-	// 距離チェック
-	VECTOR vToTarget = VSub(target->GetPos(), _vPos);
-	auto dist = VSize(vToTarget);// ターゲットまでの距離
-	if (dist > _enemyParam.fVisionRange) return false;// 索敵距離外
-
-	// 角度チェック
-	VECTOR vDirToTarget = VNorm(vToTarget);
-	auto dot = VDot(_vDir, vDirToTarget);
-	// dotがlimitCos未満なら視界外
-	if (dot < _enemyParam.fVisionCos) return false;
-
-	// 障害物チェック
-
-	return true;// 視界内にいる
-}
-
 void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime) {
 	auto bulletManager = _bulletManager.lock();// マネージャーが有効か確認
 	if (bulletManager) {

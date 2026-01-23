@@ -35,9 +35,6 @@ public:
 	// ステート変更
 	void ChangeState(std::shared_ptr<EnemyState> newState);
 
-	// ターゲットチェック(索敵)
-	bool IsTargetVisible(std::shared_ptr<CharaBase> target);// 視界内ならtrueを返す
-
 	// 弾関連
 	void SetBulletManager(std::shared_ptr<BulletManager> bulletManager) { _bulletManager = bulletManager; }// マネージャーをセット
 	void SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime);// 発射リクエストをする
