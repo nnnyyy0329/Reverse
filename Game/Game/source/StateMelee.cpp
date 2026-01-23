@@ -2,11 +2,13 @@
 #include "Enemy.h"
 
 namespace {
-	constexpr auto ATTACK_COLLISION_OFFSET_Z = 20.0f;// 攻撃コリジョン前方オフセット
-	constexpr auto ATTACK_COLLISION_OFFSET_Y = 20.0f;// 攻撃コリジョンY位置オフセット
+	constexpr auto ATTACK_COLLISION_OFFSET_Z = 200.0f;// 攻撃コリジョン前方オフセット
+	constexpr auto ATTACK_COLLISION_OFFSET_Y = 60.0f;// 攻撃コリジョンY位置オフセット
 	constexpr auto ATTACK_COLLISION_HEIGHT = 60.0f;// 攻撃コリジョン高さ
 	constexpr auto ATTACK_COLLISION_RADIUS = 40.0f;// 攻撃コリジョン半径
 	constexpr auto NEARBY_HOME = 10.0f;// 初期位置とみなす距離
+
+	constexpr auto ATTACK_CONFIRM_TIME = 60.0f;// 攻撃判定が有効になるまでの時間
 
 	// 個別の攻撃コリジョン設定
 	EnemyAttackSettings MakeMeleeAttackSettings()
@@ -190,7 +192,7 @@ namespace Melee
 	// 攻撃
 	void Attack::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
-		owner->StartAttack(MELEE_ATTACK_SETTINGS);// 攻撃コリジョン開始
+		_bHasCollision = false;
 		// ここでアニメーション設定
 
 	}
@@ -201,11 +203,34 @@ namespace Melee
 		// 攻撃中は移動しない
 		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 
-		// 攻撃コリジョンの位置更新
-		owner->UpdateAttackTransform(MELEE_ATTACK_SETTINGS);
+		// 溜め時間:ターゲットの方向を追従
+		if (_fTimer < ATTACK_CONFIRM_TIME)
+		{
+			auto target = owner->GetTarget();
+			if (target)
+			{
+				VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
+				VECTOR vDir = VNorm(vToTarget);
+				owner->SetDir(vDir);
+			
+			}
+		}
+		// 攻撃確定:コリジョンを生成
+		else if (!_bHasCollision)
+		{
+			owner->StartAttack(MELEE_ATTACK_SETTINGS);
+			_bHasCollision = true;
+		}
 
-		// 時間経過で
-		if (_fTimer >= owner->GetEnemyParam().fAttackTime) {
+		// 攻撃持続中:コリジョン位置更新
+		if (_bHasCollision)
+		{
+			owner->UpdateAttackTransform(MELEE_ATTACK_SETTINGS);
+		}
+
+		// 攻撃終了
+		if (_fTimer >= owner->GetEnemyParam().fAttackTime)
+		{
 			return std::make_shared<Chase>();// 追跡状態に戻ることで再度距離判定を行う
 		}
 
@@ -213,9 +238,20 @@ namespace Melee
 	}
 
 	void Attack::Exit(Enemy* owner) {
-		owner->StopAttack();// 攻撃コリジョン停止
+		if (_bHasCollision)
+		{
+			owner->StopAttack();// 攻撃コリジョン停止
+			_bHasCollision = false;
+		}
 	}
 
+	bool Attack::CanChangeState() {
+		// 攻撃中は通常のステート変更は許可しない
+		return false;
+	}
+
+
+	// 帰還
 	void ReturnHome::Enter(Enemy* owner){
 	}
 

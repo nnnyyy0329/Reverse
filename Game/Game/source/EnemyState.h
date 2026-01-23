@@ -3,6 +3,13 @@
 
 class Enemy;
 
+enum class STATE_PRIORITY
+{
+	NORMAL = 0,// 通常
+	DAMAGE = 50,// 被ダメージ
+	TOP = 100,// 最優先(Dead, Stun, Down)
+};
+
 // 敵パラメータ構造体
 struct EnemyParam
 {
@@ -43,6 +50,10 @@ public:
 	virtual const char* GetName() const { return "None"; }// デバッグ用に状態名を取得
 
 	virtual bool IsChasing() const { return false; }// 追跡状態かどうか
+
+	virtual bool CanChangeState() { return true; }// ステート変更可能かどうか
+
+	virtual STATE_PRIORITY GetPriority() { return STATE_PRIORITY::NORMAL; }// ステートの優先度を取得(デフォルトはNORMAL)
 
 	float _fTimer = 0.0f;
 };

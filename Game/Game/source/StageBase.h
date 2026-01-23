@@ -17,6 +17,14 @@ public:
 		int collisionFrame;// コリジョンフレーム
 	};
 
+	// 敵の座標設定情報
+	struct ENEMYPOS
+	{
+		std::string typeName;// 敵の種類
+		VECTOR vPos;// 位置
+		VECTOR vRot;// 回転
+	};
+
 	StageBase(int stageNum);
 	virtual ~StageBase();
 

@@ -62,6 +62,9 @@ namespace Melee
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		void Exit(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:Attack"; }
+		bool CanChangeState() override;
+	private:
+		bool _bHasCollision;// 攻撃コリジョンが生成されたか
 	};
 
 	// 初期位置への復帰

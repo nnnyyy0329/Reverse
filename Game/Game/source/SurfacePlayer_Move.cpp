@@ -13,7 +13,7 @@ void SurfacePlayer::CallProcess()
 	ProcessJump();
 
 	// ’…’nˆ—
-	ProcessStanding();
+	//ProcessStanding();
 
 	// ‚µ‚á‚ª‚İˆ—
 	//ProcessCrouch();

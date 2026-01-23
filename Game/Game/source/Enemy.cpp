@@ -353,6 +353,19 @@ void Enemy::DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAng
 
 void Enemy::ChangeState(std::shared_ptr<EnemyState> newState) 
 {
+	if (!newState) { return; }
+
+	// 現在のステートがステート変更を許可しているかチェック
+	if (_currentState)
+	{
+		// 優先度によるチェック
+		// 新しいステートが現在のステート以上なら変更を許可
+		bool canChange = _currentState->CanChangeState() ||
+			(newState->GetPriority() >= _currentState->GetPriority());
+
+		if (!canChange) { return; }// 変更不可
+	}
+
 	if (_currentState) {
 		_currentState->Exit(this);
 	}
@@ -449,14 +462,33 @@ void Enemy::StopAttack()
 
 void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 {
-	// 体力を減らす
-	if(_fLife <= 0.0f) return;// 体力が0なら無効
+	if(_fLife <= 0.0f) return;
+
+	// 現在のステートが最優先の場合、ダメージのみ受付
+	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::TOP)
+	{
+		_fLife -= fDamage;
+
+		// 死亡判定のみチェック
+		if (_fLife <= 0.0f)
+		{
+			_fLife = 0.0f;// マイナス防止
+			// 死亡ステートへ遷移
+			ChangeState(std::make_shared<Common::Dead>());
+		}
+
+		return;
+	}
+
+	// 通常のダメージ処理
 	_fLife -= fDamage;
 
 	// 変身前プレイヤーからの攻撃なら最低1は残す
-	if(eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER){
-		if(_fLife <= 1.0f){
-			_fLife = 1.0f;
+	if (eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER)
+	{
+		if (_fLife <= 1.0f)
+		{
+			_fLife = 1.0f;// 最低1は残す
 			// スタンステートへ遷移
 			ChangeState(std::make_shared<Common::Stun>());
 			return;
@@ -464,29 +496,18 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 	}
 
 	// 死亡判定
-	if (IsDead()) {
-		// 死亡時
+	if (IsDead())
+	{
 		_fLife = 0.0f;// マイナス防止
-
 		// 死亡ステートへ遷移
 		ChangeState(std::make_shared<Common::Dead>());
 		return;
 	}
 
-	// 生存時
-	// スタンかダウン中ならステートの変更はしない
-	if (_currentState) {
-		bool isStun = (std::dynamic_pointer_cast<Common::Stun>(_currentState) != nullptr);
-		bool isDown = (std::dynamic_pointer_cast<Common::Down>(_currentState) != nullptr);
-
-		if (isStun || isDown) {
-			return;
-		}
-	}
-
-	// 通常ダメージ
+	// 生存時:通常ダメージ
 	_damageCnt++;// ダメージ回数をカウントアップ
-	ChangeState(std::make_shared<Common::Damage>());// ダメージステートへ遷移
+	// ダメージステートへ遷移
+	ChangeState(std::make_shared<Common::Damage>());
 }
 
 bool Enemy::IsDead() const
