@@ -100,6 +100,9 @@
     <ClCompile Include="source\AbilittySelectScreen.cpp">
       <Filter>Ability\Select</Filter>
     </ClCompile>
+    <ClCompile Include="source\GameCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h">
@@ -194,6 +197,9 @@
     </ClInclude>
     <ClInclude Include="source\AbilittySelectScreen.h">
       <Filter>Ability\Select</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GameCamera.h">
+      <Filter>Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

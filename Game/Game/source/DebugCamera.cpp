@@ -26,7 +26,7 @@ DebugCamera::~DebugCamera()
 
 // 左スティック:ターゲットの移動(ボタン同時押し(B)で高さ変更、ズーム)
 // 右スティック:カメラの回転
-void DebugCamera::Process(float lx, float ly, float rx, float ry, float analogMin, bool bIsPut)
+void DebugCamera::Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool bIsPut)
 {
 	// カメラの回転
 	{
@@ -40,13 +40,13 @@ void DebugCamera::Process(float lx, float ly, float rx, float ry, float analogMi
 		}
 	}
 
-
 	// ターゲットの移動
 	{
 		if (abs(lx) > analogMin || abs(ly) > analogMin) {
 
 			// ボタン同時押し中(B)
-			if (bIsPut) {
+			if (bIsPut)
+			{
 				// ターゲットの高さ変更
 				_vTarget.y -= ly * MOVE_SPEED;
 
@@ -54,7 +54,8 @@ void DebugCamera::Process(float lx, float ly, float rx, float ry, float analogMi
 				_distance += lx * ZOOM_SPEED;
 				if (_distance < 1.0f) _distance = 1.0f;// 最小距離制限
 			}
-			else {// 通常時
+			else // 通常時
+			{
 				// カメラの向いている方向のベクトル
 				// Y成分は無視してXZ平面上のベクトルにする
 				VECTOR vForward = VGet(cos(_angleH), 0.0f, sin(_angleH));

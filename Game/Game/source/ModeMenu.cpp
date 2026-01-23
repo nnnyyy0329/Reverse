@@ -36,7 +36,8 @@ bool ModeMenu::Process() {
 	}
 
 	// デバッグカメラがONならProcess()を呼ぶ
-	if (_bUseDebugCamera && _debugCamera) {
+	if (_bUseDebugCamera && _debugCamera)
+	{
 		auto analog = ApplicationMain::GetInstance()->GetAnalog();
 		float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
 		bool bIsPut = (key & PAD_INPUT_2) != 0;// ボタン同時押し判定(B)

@@ -1,23 +1,36 @@
 #pragma once
 #include "appframe.h"
 
-#include <memory>
+class GameCamera;
+class DebugCamera;
 
-class PlayerBase;
+enum class CAMERA_TYPE
+{
+	NONE,
+	GAME_CAMERA,
+	DEBUG_CAMERA,
+	_EOT_,
+};
 
 class CameraManager
 {
-public:
+	public:
 	CameraManager();
 	virtual ~CameraManager() {};
-	void Process();
-	void SetUp();
 
-	VECTOR GetVPos() const { return _vPos; }
-	VECTOR GetVTarget() const { return _vTarget; }
-	// ターゲットを設定する関数
-	void SetTarget(std::shared_ptr<PlayerBase> target);
+	bool Initialize();
+	bool Terminate();
+	bool Process();
+	bool Render();
 
+	void SwitchCamera();		// カメラ切り替え
+	void SwitchCameraProcess();	// カメラ処理切り替え
+
+	// ゲッターセッター
+	CAMERA_TYPE GetCameraType()const { return _eCameraType; }
+
+	void SetGameCamera(std::shared_ptr<GameCamera> gameCamera) { _gameCamera = gameCamera; }		// ゲームカメラ設定
+	void SetDebugCamera(std::shared_ptr<DebugCamera> debugCamera) { _debugCamera = debugCamera; }	// デバッグカメラ設定
 
 	// 入力状態を設定する
 	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
@@ -31,16 +44,11 @@ public:
 		_analogMin = analogMin;
 	}
 
-
 protected:
-	VECTOR _vPos;
-	VECTOR _vTarget;// 注視点
-	float _nearClip;// 描画する手前の距離
-	float _farClip;// 描画する奥の距離
-	VECTOR _posOffset;// カメラ位置のオフセット
-	VECTOR _targetOffset;// 注視点のオフセット
-	// ターゲットとなるゲームオブジェクト
-	std::shared_ptr<PlayerBase> _targetObject;
+	std::shared_ptr<GameCamera> _gameCamera;
+	std::shared_ptr<DebugCamera> _debugCamera;
+
+	CAMERA_TYPE _eCameraType;
 
 	// 入力状態
 	int _key = 0;
@@ -50,5 +58,6 @@ protected:
 	float _rx = 0.0f;
 	float _ry = 0.0f;
 	float _analogMin = 0.0f;
+
 };
 

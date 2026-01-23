@@ -7,8 +7,9 @@
 #include "StageBase.h"
 #include "Enemy.h"
 
-#include "DebugCamera.h"
 #include "CameraManager.h"
+#include "GameCamera.h"
+#include "DebugCamera.h"
 
 #include "BulletManager.h"
 #include "AttackManager.h"
@@ -55,7 +56,10 @@ bool ModeGame::Initialize()
 	// カメラ初期化
 	{
 		_cameraManager = std::make_shared<CameraManager>();
-		_cameraManager->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
+
+		_gameCamera = std::make_shared<GameCamera>();
+		_gameCamera->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
+
 		_debugCamera = std::make_shared<DebugCamera>();
 	}
 
@@ -66,7 +70,8 @@ bool ModeGame::Initialize()
 	}
 
 	// 敵設定
-	for (const auto& enemy : _stage->GetEnemies()) {
+	for (const auto& enemy : _stage->GetEnemies())
+	{
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
 		enemy->SetBulletManager(_bulletManager);
 	}
@@ -118,8 +123,8 @@ bool ModeGame::Process()
 
 		// デバッグカメラ
 		{
-			modeMenu->SetDebugCamera(_debugCamera);// デバッグカメラを渡す
-			_debugCamera->SetInfo(_cameraManager->GetVPos(), _cameraManager->GetVTarget());// 元カメラの情報を渡す
+			//modeMenu->SetDebugCamera(_debugCamera);// デバッグカメラを渡す
+			//_debugCamera->SetInfo(_cameraManager->GetVPos(), _cameraManager->GetVTarget());// 元カメラの情報を渡す
 		}
 
 
@@ -169,9 +174,11 @@ bool ModeGame::Process()
 	// ターゲット更新
 	{
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
-		_cameraManager->SetTarget(activePlayer);	// 毎フレームプレイヤーにカメラを合わせる
+		_gameCamera->SetTarget(activePlayer);	// 毎フレームプレイヤーにカメラを合わせる
+
 		// 敵にターゲットのプレイヤーを設定
-		for (const auto& enemy : _stage->GetEnemies()) {
+		for (const auto& enemy : _stage->GetEnemies()) 
+		{
 			enemy->SetTarget(activePlayer);
 		}
 	}
@@ -215,12 +222,14 @@ bool ModeGame::Render()
 	// カメラ設定
 	{
 		// メニューが開いていて、デバッグカメラが使われているなら
-		auto* menu = dynamic_cast<ModeMenu*>(ModeServer::GetInstance()->Get("menu"));
-		if (menu && menu->IsUseDebugCamera() && _debugCamera) {
+		//auto* menu = dynamic_cast<ModeMenu*>(ModeServer::GetInstance()->Get("menu"));
+		if(menu && menu->IsUseDebugCamera() && _debugCamera)
+		{
 			_debugCamera->SetUp();// デバッグカメラ設定更新
 		}
-		else {
-			_cameraManager->SetUp();// カメラ設定更新
+		else
+		{
+			_gameCamera->SetUp();// カメラ設定更新
 		}
 	}
 	
