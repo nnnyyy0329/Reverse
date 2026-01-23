@@ -1,8 +1,10 @@
 #pragma once
-#include <string>
+#include "appframe.h"
+#include "ModeGame.h"
 
 // メニュー項目用ベースクラス
-class MenuItemBase {
+class MenuItemBase 
+{
 public:
 	MenuItemBase(void* param, std::string text) : _param(param), _text(text) {}
 	virtual ~MenuItemBase() {};
@@ -13,4 +15,29 @@ public:
 
 	void* _param;
 	std::string _text;
+};
+
+class MenuItemViewCollision : public MenuItemBase
+{
+public:
+	MenuItemViewCollision(void* param, std::string text) : MenuItemBase(param, text) {}
+
+	virtual int Selected()
+	{
+		ModeGame* mdGame = static_cast<ModeGame*>(_param);
+		mdGame->SetDebugViewCollision(!mdGame->GetDebugViewCollision());
+		return 1;
+	}
+};
+
+class MenuItemUseCollision : public MenuItemBase
+{
+public:
+	MenuItemUseCollision(void* param, std::string text) : MenuItemBase(param, text) {}
+	virtual int Selected()
+	{
+		ModeGame* mdGame = static_cast<ModeGame*>(_param);
+		mdGame->SetUseCollision(!mdGame->GetUseCollision());
+		return 1;
+	}
 };

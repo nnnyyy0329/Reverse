@@ -28,6 +28,7 @@ void SurfacePlayer::CallProcess()
 // プレイヤー移動処理
 void SurfacePlayer::ProcessMovePlayer()
 {
+	_vOldPos = _vPos; // 前フレームの位置を保存
 	// 移動方向を決める
 	_vMove = { 0,0,0 };
 

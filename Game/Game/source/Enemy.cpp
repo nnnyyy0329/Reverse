@@ -9,7 +9,7 @@ namespace {
 	constexpr auto COLLISION_HEIGHT = 100.0f;// “G‚Ì“–‚½‚è”»’è‚‚³
 }
 
-Enemy::Enemy()
+Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
 {
 	// ƒ‚ƒfƒ‹“Ç‚İ‚İ
 	_iHandle = MV1LoadModel("res/SDChar/SDChar.mv1");

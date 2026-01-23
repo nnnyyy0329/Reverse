@@ -49,7 +49,7 @@ bool ModeGame::Initialize()
 	}
 
 	// ステージ初期化
-	_stage = std::make_shared<StageBase>(2);// ステージ番号で切り替え
+	_stage = std::make_shared<StageBase>(3);// ステージ番号で切り替え
 
 	// カメラ初期化
 	{
@@ -126,13 +126,6 @@ bool ModeGame::Process()
 		auto player = _playerManager->GetActivePlayerShared();
 		auto enemies = _stage->GetEnemies();
 
-		// マップ
-		//CheckCollisionCharaMap(player);
-		//for (const auto& enemy : enemies) {
-		//	CheckCollisionCharaMap(enemy);
-		//}
-
-
 		// 弾
 		CheckHitCharaBullet(player);
 		for (const auto& enemy : enemies) {
@@ -148,6 +141,12 @@ bool ModeGame::Process()
 		// キャラと攻撃コリジョンの当たり判定
 		CheckActiveAttack(player);										// プレイヤー
 		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
+
+		// マップ
+		CheckCollisionCharaMap(player);
+		for (const auto& enemy : enemies) {
+			CheckCollisionCharaMap(enemy);
+		}
 	}
 
 	// ターゲット更新
@@ -223,8 +222,8 @@ bool ModeGame::Render()
 	{
 		_stage->DebugRender();
 		_debugCamera->DebugRender();
-		AttackManager::GetInstance()->DebugRender();
-		EnergyManager::GetInstance()->DebugRender();
+		//AttackManager::GetInstance()->DebugRender();
+		//EnergyManager::GetInstance()->DebugRender();
 	}
 
 	return true;
