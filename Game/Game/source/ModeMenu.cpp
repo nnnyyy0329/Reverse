@@ -1,6 +1,12 @@
 #include "ModeMenu.h"
 #include "ApplicationMain.h"
-#include "DebugCamera.h"
+//#include "DebugCamera.h"
+#include "CameraManager.h"
+
+
+// 消す
+#include "ApplicationGlobal.h"
+
 
 bool ModeMenu::Initialize() {
 	if (!base::Initialize()) { return false; }
@@ -16,7 +22,8 @@ bool ModeMenu::Terminate() {
 	base::Terminate();
 
 	ClearMenuItems();
-	_debugCamera.reset();
+	//_debugCamera.reset();
+	_cameraManager.reset();
 
 	return true;
 }
@@ -26,28 +33,34 @@ bool ModeMenu::Process() {
 	int key = ApplicationMain::GetInstance()->GetKey();
 	int trg = ApplicationMain::GetInstance()->GetTrg();
 
+	auto analog = ApplicationMain::GetInstance()->GetAnalog();
+	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
+
+
 	// このモードより下のレイヤーはProcess()を呼ばない
 	ModeServer::GetInstance()->SkipProcessUnderLayer();
-
-
-	// qキーでデバッグカメラのON/OFF切り替え
-	if (trg & PAD_INPUT_7) {
-		_bUseDebugCamera = !_bUseDebugCamera;
-	}
-
-	// デバッグカメラがONならProcess()を呼ぶ
-	if (_bUseDebugCamera && _debugCamera)
+	
+	if(_bUseDebugCamera)
 	{
-		auto analog = ApplicationMain::GetInstance()->GetAnalog();
-		float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
-		bool bIsPut = (key & PAD_INPUT_2) != 0;// ボタン同時押し判定(B)
-
-		_debugCamera->Process(analog.lx, analog.ly, analog.rx, analog.ry, analogMin, bIsPut);
+		// デバッグカメラがONならProcess()を呼ぶ
+		if(_cameraManager->GetIsUseDebugCamera())
+		{
+			_cameraManager->SetInput(key, trg, analog.lx, analog.ly, analog.rx, analog.ry, analogMin);
+			_cameraManager->Process();
+		}
 	}
+	else
+	{
+		// ほかの処理
+	}
+
 
 	// spaceキーでメニューを閉じる
 	bool close = false;
-	if (trg & PAD_INPUT_10) {
+	if (trg & PAD_INPUT_10)
+	{
+		_cameraManager->SetIsUseDebugCamera(false); // デバッグカメラOFFにする
+
 		close = true;
 	}
 
@@ -55,18 +68,22 @@ bool ModeMenu::Process() {
 	if (trg & PAD_INPUT_UP) { _curPos--; _curAnimCnt = 0; }
 	if (trg & PAD_INPUT_DOWN) { _curPos++; _curAnimCnt = 0; }
 
-	//// カーソル位置を上下ループ
-	//int itemNum = _menuItems.size();
-	//_curPos = (_curPos + itemNum) % itemNum;
 
-	//// zキーでアイテムのSelected()を呼ぶ
-	//if (trg & PAD_INPUT_1) {
-	//	int ret = _menuItems[_curPos]->Selected();
-	//	if (ret == 1) {
-	//		// メニューを閉じる
-	//		close = true;
-	//	}
-	//}
+
+	// カーソル位置を上下ループ
+	int itemNum = _menuItems.size();
+	_curPos = (_curPos + itemNum) % itemNum;
+
+	// zキーでアイテムのSelected()を呼ぶ
+	if (trg & PAD_INPUT_1){
+		int ret = _menuItems[_curPos]->Selected();
+		if (ret == 1) {
+			// メニューを閉じる
+			close = true;
+		}
+	}
+
+
 
 	// メニューを閉じる
 	if (close) {
@@ -82,6 +99,8 @@ bool ModeMenu::Process() {
 bool ModeMenu::Render() {
 	base::Render();
 
+	if(_bUseDebugCamera){ return; }
+
 	// メニュー項目の確認
 	int x = 128, y = 128, w = 0, h = 0, fontSize = 32, fontPitch = fontSize + 8;
 	//SetFontSize(fontSize);
@@ -95,7 +114,6 @@ bool ModeMenu::Render() {
 	// カーソル, 枠分のサイズ拡張
 	w += 64 + 16; h += 16;
 
-
 	// 下地の描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 	DrawBox(x, y, x + w, y + h, GetColor(0, 0, 255), TRUE);
@@ -105,13 +123,16 @@ bool ModeMenu::Render() {
 	// メニュー項目の描画
 	int startY = 16 / 2;
 	h = 0;
-	for (auto ite = _menuItems.begin(); ite != _menuItems.end(); ite++) {
+	for(auto ite = _menuItems.begin(); ite != _menuItems.end(); ite++) {
 		DrawString(x + 64, y + startY + h, (*ite)->_text.c_str(), GetColor(255, 0, 0));
 		h += fontPitch;
 	}
 
+	DrawGraph(x + 4 + ((_curAnimCnt / 6) % 4) * 4, y + startY + fontPitch * _curPos, gGlobal._cgCursor, TRUE);
+
 	// デバッグカメラ状態表示
-	DrawString(x + 16, y + h + startY, _bUseDebugCamera ? "DebugCam:ON" : "DebugCam:OFF", GetColor(255, 255, 0));
+	//DrawString(x + 16, y + h + startY, _bUseDebugCamera ? "DebugCam:ON" : "DebugCam:OFF", GetColor(255, 255, 0));
+
 
 	return true;
 }

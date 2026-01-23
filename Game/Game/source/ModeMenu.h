@@ -2,7 +2,8 @@
 #include "appframe.h"
 #include "MenuItemBase.h"
 
-class DebugCamera;
+//class DebugCamera;
+class CameraManager;
 
 class ModeMenu : public ModeBase
 {
@@ -16,8 +17,8 @@ public:
 	void AddMenuItem(MenuItemBase* item);
 	void ClearMenuItems();
 
-	// modegame側からデバッグカメラを渡す
-	void SetDebugCamera(std::shared_ptr<DebugCamera> debugCamera) { _debugCamera = debugCamera; }
+	// カメラ設定
+	void SetCameraManager(std::shared_ptr<CameraManager> camera) { _cameraManager = camera; }
 
 	// メニュー中にデバッグカメラを使っているか
 	bool IsUseDebugCamera() const { return _bUseDebugCamera; }
@@ -28,7 +29,8 @@ protected:
 	int _curPos;
 	int _curAnimCnt;
 
-	std::shared_ptr<DebugCamera> _debugCamera;
+	//std::shared_ptr<DebugCamera> _debugCamera;
+	std::shared_ptr<CameraManager> _cameraManager;
 	bool _bUseDebugCamera;
 };
 

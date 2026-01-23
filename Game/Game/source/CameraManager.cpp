@@ -4,8 +4,8 @@
 
 CameraManager::CameraManager()
 {
-	// 初期タイプはゲームカメラ
-	_eCameraType = CAMERA_TYPE::GAME_CAMERA;
+	_eCameraType = CAMERA_TYPE::GAME_CAMERA;	// 初期タイプはゲームカメラ
+	_bIsUseDebugCamera = false;					// デバッグカメラ使用フラグ初期化
 
 	_gameCamera = nullptr;	// ゲームカメラ初期化
 	_debugCamera = nullptr;	// デバッグカメラ初期化
@@ -40,24 +40,31 @@ bool CameraManager::Process()
 
 bool CameraManager::Render()
 {
+	// カメラ描画切り替え
+	SwitchCameraRender();
+
 	return true;
 }
 
 // カメラ切り替え
 void CameraManager::SwitchCamera()
 {
-	if(_trg & KEY_INPUT_1)
+	if(_trg & PAD_INPUT_4)
+	{
+		// デバッグカメラ使用フラグ切り替え
+		//_bIsUseDebugCamera = !_bIsUseDebugCamera;
+	}
+
+	// カメラタイプ切り替え
+	if(_bIsUseDebugCamera)
 	{
 		// デバッグカメラへ切り替え
-		if(_eCameraType == CAMERA_TYPE::GAME_CAMERA)
-		{
-			_eCameraType = CAMERA_TYPE::DEBUG_CAMERA;
-		}
+		_eCameraType = CAMERA_TYPE::DEBUG_CAMERA;
+	}
+	else 
+	{
 		// ゲームカメラへ切り替え
-		else if(_eCameraType == CAMERA_TYPE::DEBUG_CAMERA)
-		{
-			_eCameraType = CAMERA_TYPE::GAME_CAMERA;
-		}
+		_eCameraType = CAMERA_TYPE::GAME_CAMERA;
 	}
 }
 
@@ -72,7 +79,7 @@ void CameraManager::SwitchCameraProcess()
 		{
 			if(_gameCamera)
 			{
-				_gameCamera->Process(_key, _trg, _lx, _ly, _rx, _ry, _analogMin, true);
+				_gameCamera->Process(_key, _trg, _lx, _ly, _rx, _ry, _analogMin, false);
 			}
 
 			break;
@@ -83,12 +90,50 @@ void CameraManager::SwitchCameraProcess()
 		{
 			if(_debugCamera)
 			{
-				bool bIsPut = (_key & PAD_INPUT_2) != 0;// ボタン同時押し判定(B)
+				bool isInput = false;
 
-				_debugCamera->Process(_key, _trg, _lx, _ly, _rx, _ry, _analogMin, bIsPut);
+				// 押している間は入力を有効にする
+				if(_key & PAD_INPUT_2){ isInput = true; }
+
+				_debugCamera->Process(_key, _trg, _lx, _ly, _rx, _ry, _analogMin, isInput);
 			}
 
 			break;
 		}
 	}
+}
+
+// カメラ描画切り替え
+void CameraManager::SwitchCameraRender()
+{
+	// カメラタイプによる処理分岐
+	switch(_eCameraType)
+	{
+		// ゲームカメラ描画
+		case CAMERA_TYPE::GAME_CAMERA:
+		{
+			if(_gameCamera)
+			{
+				_gameCamera->SetUp();		// ゲームカメラ設定更新
+				_gameCamera->DebugRender();	// ゲームカメラ描画
+			}
+			break;
+		}
+		// デバッグカメラ描画
+		case CAMERA_TYPE::DEBUG_CAMERA:
+		{
+			if(_debugCamera)
+			{
+				_debugCamera->SetUp();			// デバッグカメラ設定更新
+				_debugCamera->DebugRender();	// デバッグカメラ描画
+			}
+			break;
+		}
+	}
+
+	int x = 900;
+	int y = 450;
+
+	// デバッグカメラ使用フラグ表示
+	DrawFormatString(x, y, GetColor(55, 0, 0), "Use Debug Camera: %s", _bIsUseDebugCamera ? "True" : "False");
 }

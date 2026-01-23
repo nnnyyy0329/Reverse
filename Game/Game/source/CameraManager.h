@@ -16,7 +16,7 @@ class CameraManager
 {
 	public:
 	CameraManager();
-	virtual ~CameraManager() {};
+	virtual ~CameraManager();
 
 	bool Initialize();
 	bool Terminate();
@@ -25,12 +25,16 @@ class CameraManager
 
 	void SwitchCamera();		// カメラ切り替え
 	void SwitchCameraProcess();	// カメラ処理切り替え
+	void SwitchCameraRender();	// カメラ描画切り替え
 
 	// ゲッターセッター
 	CAMERA_TYPE GetCameraType()const { return _eCameraType; }
 
 	void SetGameCamera(std::shared_ptr<GameCamera> gameCamera) { _gameCamera = gameCamera; }		// ゲームカメラ設定
 	void SetDebugCamera(std::shared_ptr<DebugCamera> debugCamera) { _debugCamera = debugCamera; }	// デバッグカメラ設定
+
+	bool GetIsUseDebugCamera()const { return _bIsUseDebugCamera; }	// デバッグカメラ使用フラグ取得
+	void SetIsUseDebugCamera(bool bIsUse) { _bIsUseDebugCamera = bIsUse; }	// デバッグカメラ使用フラグ設定
 
 	// 入力状態を設定する
 	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
@@ -49,6 +53,9 @@ protected:
 	std::shared_ptr<DebugCamera> _debugCamera;
 
 	CAMERA_TYPE _eCameraType;
+
+	// デバッグカメラ使用フラグ
+	bool _bIsUseDebugCamera;
 
 	// 入力状態
 	int _key = 0;

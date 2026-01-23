@@ -10,6 +10,7 @@ public:
 	virtual ~GameCamera() {};
 
 	void Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool isInput);
+	void DebugRender();
 
 	void SetUp();															// カメラ設定
 	void UpdateCamera();													// カメラの更新処理	

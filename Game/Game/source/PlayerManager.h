@@ -55,7 +55,7 @@ protected:
 	PLAYER_TYPE _activePlayerType;
 	std::unordered_map<PLAYER_TYPE, std::shared_ptr<PlayerBase>> _players;
 
-	bool _bEnableStateTransfer;	// プレイヤー切り替え時の状態引き継ぎフラグ
+	bool _bEnableStateTransfer;		// プレイヤー切り替え時の状態引き継ぎフラグ
 
 	// 入力関係
 	int _key = 0;

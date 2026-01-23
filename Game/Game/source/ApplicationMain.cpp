@@ -2,6 +2,11 @@
 #include "ApplicationMain.h"
 #include "ModeLoading.h"
 
+
+// 消す
+#include "ApplicationGlobal.h"
+
+
 // 実体
 ApplicationMain				g_oApplicationMain;
 
@@ -10,6 +15,13 @@ bool ApplicationMain::Initialize(HINSTANCE hInstance) {
 
 	// モードの登録
 	//ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
+
+
+
+	// 消す
+	gGlobal.Init();
+
+
 
 	// 非同期ロード用(test)
 	{
@@ -28,6 +40,7 @@ bool ApplicationMain::Initialize(HINSTANCE hInstance) {
 
 		// モードローディングの登録
 		ModeServer::GetInstance()->Add(new ModeLoading(), 100, "loading");
+
 	}
 
 	return true;

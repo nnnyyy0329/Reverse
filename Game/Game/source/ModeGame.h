@@ -25,6 +25,16 @@ public:
 	virtual bool Process();
 	virtual bool Render();
 
+
+	// 消す
+	bool GetDebugViewColloion() { return _bViewCollision; }
+	void SetDebugViewColloion(bool b) { _bViewCollision = b; }
+	bool GetDebugUseColloion() { return _bUseCollision; }
+	void SetDebugUseColloion(bool b) { _bUseCollision = b; }
+	bool GetDebugViewCameraInfo() { return _bViewCameraInfo; }
+	void SetDebugViewCameraInfo(bool b) { _bViewCameraInfo = b; }
+
+
 private:
 	void CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
 	void CheckHitPlayerEnemy(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);		// プレイヤーと敵の当たり判定
@@ -49,4 +59,11 @@ protected:
 	// シングルトン取得
 	AttackManager* _attackManager = nullptr;
 	EnergyManager* _energyManager = nullptr;
+
+
+
+	// 消す
+	bool	_bViewCollision;
+	bool	_bUseCollision;
+	bool	_bViewCameraInfo;
 };
