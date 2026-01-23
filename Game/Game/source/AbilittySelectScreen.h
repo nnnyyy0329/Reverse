@@ -1,6 +1,7 @@
 #pragma once
 #include "appframe.h"
 
+// アビリティ選択画面クラス
 class AbilittySelectScreen
 {
 public:

@@ -1,66 +1,140 @@
 #include "CameraManager.h"
-#include "PlayerBase.h"
+#include "GameCamera.h"
+#include "DebugCamera.h"
 
 CameraManager::CameraManager()
 {
-	// カメラの設定（わかりやすい位置に）
-	_vPos = VGet(0.0f, 0.0f, 0.0f);
-	_vTarget = VGet(0.0f, 0.0f, 0.0f);
-	_nearClip = 1.f;
-	_farClip = 5000.f;
-	_posOffset = VGet(0.0f, 200.0f, 500.0f);
-	_targetOffset = VGet(0.0f, 100.0f, 0.0f);
+
 }
 
-void CameraManager::Process()
+CameraManager::~CameraManager()
 {
-	// ターゲットオブジェクトがあれば、カメラ位置と注視点を更新
-	if (_targetObject) {
-		// ターゲットの位置を取得
-		VECTOR targetPos = _targetObject->GetPos();
 
-		// カメラ位置と注視点をターゲットの位置にオフセットを加算して設定
-		// Y座標は変更しない
-		VECTOR newPos = VAdd(targetPos, _posOffset);
-		_vPos = newPos;
+}
 
-		VECTOR newTarget = VAdd(targetPos, _targetOffset);
-		_vTarget = newTarget;
-	}
+bool CameraManager::Initialize()
+{
+	// ゲームカメラの生成と初期化
+	_gameCamera = std::make_shared<GameCamera>();
+	_gameCamera->Initialize();
+	// デバッグカメラの生成と初期化
+	_debugCamera =  std::make_shared<DebugCamera>();
+	_debugCamera->Initialize();
+	// 初期アクティブカメラはゲームカメラ
+	_activeCameraType = CameraType::GAME;
+	return true;
+}
 
-	// カメラ操作を行う（右スティック）
+bool CameraManager::Terminate()
+{
+	// ゲームカメラの終了と解放
+	if(_gameCamera)
 	{
-		// Y軸回転
-		float sx = _vPos.x - _vTarget.x;
-		float sz = _vPos.z - _vTarget.z;
-		float rad = atan2(sz, sx);
-		float length = sqrt(sz * sz + sx * sx);
-		if(_rx > _analogMin) { rad -= 0.05f; }
-		if(_rx < -_analogMin) { rad += 0.05f; }
-		_vPos.x = _vTarget.x + cos(rad) * length;
-		_vPos.z = _vTarget.z + sin(rad) * length;
+		_gameCamera->Terminate();
+		_gameCamera.reset();
+	}
+	// デバッグカメラの終了と解放
+	if(_debugCamera)
+	{
+		_debugCamera->Terminate();
+		_debugCamera.reset();
+	}
+	return true;
+}
 
-		// Y位置
-		if(_ry > _analogMin) { _vPos.y -= 5.f; }
-		if(_ry < -_analogMin) { _vPos.y += 5.f; }
+bool CameraManager::Process()
+{
+	// アクティブカメラの更新
+	if(_activeCameraType == CameraType::GAME && _gameCamera)
+	{
+		_gameCamera->SetInput(_key, _trg, _lx, _ly, _rx, _ry, _analogMin);
+		_gameCamera->Process();
+	}
+	else if(_activeCameraType == CameraType::DEBUG && _debugCamera)
+	{
+		_debugCamera->SetInput(_key, _trg, _lx, _ly, _rx, _ry, _analogMin);
+		_debugCamera->Process();
+	}
+	return true;
+}
+
+bool CameraManager::Render()
+{
+	// アクティブカメラの描画
+	if(_activeCameraType == CameraType::GAME && _gameCamera)
+	{
+		_gameCamera->Render();
+	}
+	else if(_activeCameraType == CameraType::DEBUG && _debugCamera)
+	{
+		_debugCamera->Render();
+	}
+	return true;
+}
+
+// カメラ切り替え
+void CameraManager::SwitchCamera(CameraType type)
+{
+	_activeCameraType = type;
+}
+
+void CameraManager::ToggleCamera()
+{
+	if(_activeCameraType == CameraType::GAME)
+	{
+		_activeCameraType = CameraType::DEBUG;
+	}
+	else
+	{
+		_activeCameraType = CameraType::GAME;
 	}
 }
 
-void CameraManager::SetUp()
+// 現在のアクティブカメラの情報を取得
+VECTOR CameraManager::GetCameraPos() const
 {
-	// カメラの位置と注視点を設定
-	SetCameraPositionAndTarget_UpVecY(_vPos, _vTarget);
-	// カメラからどれだけ離れた距離からどこまで描画するかを設定
-	SetCameraNearFar(_nearClip, _farClip);
+	if(_activeCameraType == CameraType::GAME && _gameCamera)
+	{
+		return _gameCamera->GetVPos();
+	}
+	else if(_activeCameraType == CameraType::DEBUG && _debugCamera)
+	{
+		return _debugCamera->GetVPos();
+	}
+	return VGet(0, 0, 0);
 }
 
-void CameraManager::SetTarget(std::shared_ptr<PlayerBase> target) {
-	_targetObject = target;
+VECTOR CameraManager::GetCameraTarget() const
+{
+	if(_activeCameraType == CameraType::GAME && _gameCamera)
+	{
+		return _gameCamera->GetVTarget();
+	}
+	else if(_activeCameraType == CameraType::DEBUG && _debugCamera)
+	{
+		return _debugCamera->GetVTarget();
+	}
+	return VGet(0, 0, 0);
+}
 
-	// カメラ位置と注視点の初期設定
-	if (_targetObject) {
-		const VECTOR targetPos = _targetObject->GetPos();
-		_vPos = VAdd(targetPos, _posOffset);
-		_vTarget = VAdd(targetPos, _targetOffset);
+// ターゲット設定（ゲームカメラ用）
+void CameraManager::SetTarget(std::shared_ptr<PlayerBase> target)
+{
+	if(_gameCamera)
+	{
+		_gameCamera->SetTarget(target);
+	}
+}
+
+// カメラ設定を適用
+void CameraManager::ApplyCameraSettings()
+{
+	if(_activeCameraType == CameraType::GAME && _gameCamera)
+	{
+		_gameCamera->SetUp();
+	}
+	else if(_activeCameraType == CameraType::DEBUG && _debugCamera)
+	{
+		_debugCamera->SetUp();
 	}
 }

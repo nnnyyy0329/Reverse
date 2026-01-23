@@ -1,23 +1,43 @@
 #pragma once
 #include "appframe.h"
 
-#include <memory>
-
+class GameCamera;
+class DebugCamera;
 class PlayerBase;
 
+// カメラの切り替えクラス
 class CameraManager
 {
 public:
+
+	// カメラタイプ列挙
+	enum class CameraType
+	{
+		GAME,
+		DEBUG
+	};
+
 	CameraManager();
-	virtual ~CameraManager() {};
-	void Process();
-	void SetUp();
+	virtual ~CameraManager();
+	bool Initialize();		
+	bool Terminate();		
+	bool Process();			
+	bool Render();		
 
-	VECTOR GetVPos() const { return _vPos; }
-	VECTOR GetVTarget() const { return _vTarget; }
-	// ターゲットを設定する関数
+	// カメラインスタンスを設定
+	void SetGameCamera(std::shared_ptr<GameCamera> gameCamera);
+	void SetDebugCamera(std::shared_ptr<DebugCamera> debugCamera);
+
+	// カメラ切り替え
+	void SwitchCamera(CameraType type);
+	void ToggleCamera();			
+
+	// 現在のアクティブカメラの情報を取得
+	VECTOR GetCameraPos() const;
+	VECTOR GetCameraTarget() const;
+
+	// ターゲット設定（ゲームカメラ用）
 	void SetTarget(std::shared_ptr<PlayerBase> target);
-
 
 	// 入力状態を設定する
 	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
@@ -31,16 +51,23 @@ public:
 		_analogMin = analogMin;
 	}
 
+	// カメラ設定を適用
+	void ApplyCameraSettings();
+
+	// ゲッターセッター
+	CameraType GetActiveCameraType() const { return _activeCameraType; }
+
+	// 現在のアクティブカメラの情報を取得
+	VECTOR GetCameraPos() const;
+	VECTOR GetCameraTarget() const;
 
 protected:
-	VECTOR _vPos;
-	VECTOR _vTarget;// 注視点
-	float _nearClip;// 描画する手前の距離
-	float _farClip;// 描画する奥の距離
-	VECTOR _posOffset;// カメラ位置のオフセット
-	VECTOR _targetOffset;// 注視点のオフセット
-	// ターゲットとなるゲームオブジェクト
-	std::shared_ptr<PlayerBase> _targetObject;
+	// カメラインスタンス
+	std::shared_ptr<GameCamera> _gameCamera;
+	std::shared_ptr<DebugCamera> _debugCamera;
+
+	// アクティブカメラタイプ
+	CameraType _activeCameraType;
 
 	// 入力状態
 	int _key = 0;
