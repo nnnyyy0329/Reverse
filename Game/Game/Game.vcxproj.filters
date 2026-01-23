@@ -97,6 +97,9 @@
     <ClCompile Include="source\ModeLoading.cpp">
       <Filter>Mode\Loading</Filter>
     </ClCompile>
+    <ClCompile Include="source\AbilittySelectScreen.cpp">
+      <Filter>Ability\Select</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h">
@@ -189,6 +192,9 @@
     <ClInclude Include="source\ModeLoading.h">
       <Filter>Mode\Loading</Filter>
     </ClInclude>
+    <ClInclude Include="source\AbilittySelectScreen.h">
+      <Filter>Ability\Select</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -247,6 +253,9 @@
     </Filter>
     <Filter Include="Mode\Loading">
       <UniqueIdentifier>{ea7943b7-fc6f-463e-b8d8-3765d716c1d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ability\Select">
+      <UniqueIdentifier>{079ce18b-810d-4703-aef1-ad2ea57ecb47}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

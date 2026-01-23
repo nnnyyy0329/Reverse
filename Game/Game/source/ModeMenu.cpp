@@ -29,6 +29,7 @@ bool ModeMenu::Process() {
 	// このモードより下のレイヤーはProcess()を呼ばない
 	ModeServer::GetInstance()->SkipProcessUnderLayer();
 
+
 	// qキーでデバッグカメラのON/OFF切り替え
 	if (trg & PAD_INPUT_7) {
 		_bUseDebugCamera = !_bUseDebugCamera;
@@ -92,6 +93,7 @@ bool ModeMenu::Render() {
 	}
 	// カーソル, 枠分のサイズ拡張
 	w += 64 + 16; h += 16;
+
 
 	// 下地の描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);

@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\AbilittySelectScreen.cpp" />
     <ClCompile Include="source\ApplicationGlobal.cpp" />
     <ClCompile Include="source\ApplicationMain.cpp" />
     <ClCompile Include="source\AttackBase.cpp" />
@@ -181,6 +182,7 @@
     <ClCompile Include="source\SurfacePlayer_Move.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\AbilittySelectScreen.h" />
     <ClInclude Include="source\ApplicationGlobal.h" />
     <ClInclude Include="source\ApplicationMain.h" />
     <ClInclude Include="source\AttackBase.h" />

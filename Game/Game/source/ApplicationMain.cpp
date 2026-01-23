@@ -22,6 +22,10 @@ bool ApplicationMain::Initialize(HINSTANCE hInstance) {
 		rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
 		rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
 
+		rs->Register("select1", "res/try3/select1.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("select2", "res/try3/select2.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("select3", "res/try3/select3.png", RESOURCE_TYPE::Graph, 1.0f);
+
 		// モードローディングの登録
 		ModeServer::GetInstance()->Add(new ModeLoading(), 100, "loading");
 	}

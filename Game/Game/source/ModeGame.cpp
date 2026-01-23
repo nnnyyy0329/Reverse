@@ -112,12 +112,20 @@ bool ModeGame::Process()
 	}
 
 	// spaceキーでメニューを開く
-	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10) {
+	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10){
+
 		ModeMenu* modeMenu = new ModeMenu();
-		modeMenu->SetDebugCamera(_debugCamera);// デバッグカメラを渡す
-		_debugCamera->SetInfo(_cameraManager->GetVPos(), _cameraManager->GetVTarget());// 元カメラの情報を渡す
-		// ModeGameより上のレイヤーにメニューを登録する
+
+		// デバッグカメラ
+		{
+			modeMenu->SetDebugCamera(_debugCamera);// デバッグカメラを渡す
+			_debugCamera->SetInfo(_cameraManager->GetVPos(), _cameraManager->GetVTarget());// 元カメラの情報を渡す
+		}
+
+
 		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+
+
 	}
 
 	// オブジェクトの更新
