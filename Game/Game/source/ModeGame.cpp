@@ -156,16 +156,22 @@ bool ModeGame::Process()
 	/// 入力取得
 	{
 		// プレイヤーマネージャーに入力状態を渡す
-		if (_playerManager)
+		if(_playerManager)
 		{
 			_playerManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
 		}
 		// カメラマネージャーに入力状態を渡す
-		if (_cameraManager)
+		if(_cameraManager)
 		{
 			_cameraManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
 		}
+		// 能力選択画面に入力状態を渡す
+		if(_abilitySelectScreen)
+		{
+			_abilitySelectScreen->SetInput(key, trg, lx, ly, rx, ry, analogMin);
+		}
 	}
+
 
 
 	// 能力選択画面のデバッグ寄関数
