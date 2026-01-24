@@ -22,6 +22,7 @@ public:
 
 	// メニュー中にデバッグカメラを使っているか
 	bool IsUseDebugCamera() const { return _bUseDebugCamera; }
+	void SetUseDebugCamera(bool useCamera){ _bUseDebugCamera = useCamera; }
 
 protected:
 	std::vector<std::unique_ptr<MenuItemBase>> _menuItems;

@@ -26,16 +26,16 @@ class MenuDebugCamera : public MenuItemBase {
 public:
 	MenuDebugCamera(void* param, std::string text) : MenuItemBase(param, text) {}
 
-	void SetGameCamera(std::shared_ptr<GameCamera> gameCamera) { __gameCamera = gameCamera; }
-	void SetDebugCamera(std::shared_ptr<DebugCamera> debugCamera) { __debugCamera = debugCamera; }
+	void SetCameraManagerMenu(std::shared_ptr<CameraManager> cameraManager) { __cameraManager = cameraManager; }
+	void SetGameCameraMenu(std::shared_ptr<GameCamera> gameCamera) { __gameCamera = gameCamera; }
+	void SetDebugCameraMenu(std::shared_ptr<DebugCamera> debugCamera) { __debugCamera = debugCamera; }
 
 	// 項目を決定したらこの関数が呼ばれる
 	// return int : 0 = メニュー継続, 1 = メニュー終了
-	virtual int Selected() {
+	virtual int Selected() 
+	{
 		ModeGame* mdGame = static_cast<ModeGame*>(_param);
 		mdGame->SetDebugViewColloion(!mdGame->GetDebugViewColloion());
-
-
 
 		int key = ApplicationMain::GetInstance()->GetKey();
 		int trg = ApplicationMain::GetInstance()->GetTrg();
@@ -45,29 +45,22 @@ public:
 		float rx = analog.rx;
 		float ry = analog.ry;
 		float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
-		std::shared_ptr<CameraManager>	cameraManager;	// カメラマネージャー
-
 
 		// デバッグカメラ
 		{
-			debugCamera->SetInfo(gameCamera->GetVPos(), gameCamera->GetVTarget());// 元カメラの情報を渡す
-			cameraManager->SetIsUseDebugCamera(true);
+			__debugCamera->SetInfo(__gameCamera->GetVPos(), __gameCamera->GetVTarget());// 元カメラの情報を渡す
+			__cameraManager->SetIsUseDebugCamera(true);
+
+			auto* modeMenu = dynamic_cast<ModeMenu*>(ModeServer::GetInstance()->Get("menu"));
+			modeMenu->SetUseDebugCamera(true);
 		}
-
-		// デバッグカメラがONならProcess()を呼ぶ
-		if(cameraManager->GetIsUseDebugCamera())
-		{
-			cameraManager->SetInput(key, trg, analog.lx, analog.ly, analog.rx, analog.ry, analogMin);
-			cameraManager->Process();
-		}
-
-
 
 		return 1;
 	}
 
 protected:
 
+	std::shared_ptr<CameraManager>	__cameraManager;	// カメラマネージャー
 	std::shared_ptr<DebugCamera>	__debugCamera;	// デバッグカメラ
 	std::shared_ptr<GameCamera>	__gameCamera;		// ゲームカメラ
 
@@ -180,18 +173,17 @@ bool ModeGame::Process()
 	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10)
 	{
 		ModeMenu* modeMenu = new ModeMenu();
-
-		//// デバッグカメラ
-		//{
-		//	modeMenu->SetCameraManager(_cameraManager);
-		//	_debugCamera->SetInfo(_gameCamera->GetVPos(), _gameCamera->GetVTarget());// 元カメラの情報を渡す
-		//	_cameraManager->SetIsUseDebugCamera(true);
-		//}
 		modeMenu->SetCameraManager(_cameraManager);
+
+		// デバッグカメラ
+		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+		debugCamera->SetCameraManagerMenu(_cameraManager);
+		debugCamera->SetDebugCameraMenu(_debugCamera);
+		debugCamera->SetGameCameraMenu(_gameCamera);
 
 
 		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
-		modeMenu->AddMenuItem(new MenuDebugCamera(this, "DebugCamera"));
+		modeMenu->AddMenuItem(debugCamera);
 	}
 
 	// クラスセット

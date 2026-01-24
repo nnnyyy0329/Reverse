@@ -75,11 +75,14 @@ bool ModeMenu::Process() {
 	_curPos = (_curPos + itemNum) % itemNum;
 
 	// zキーでアイテムのSelected()を呼ぶ
-	if (trg & PAD_INPUT_1){
+	if (trg & PAD_INPUT_1)
+	{
 		int ret = _menuItems[_curPos]->Selected();
-		if (ret == 1) {
+
+		if (ret == 1) 
+		{
 			// メニューを閉じる
-			close = true;
+			//close = true;
 		}
 	}
 
@@ -99,7 +102,7 @@ bool ModeMenu::Process() {
 bool ModeMenu::Render() {
 	base::Render();
 
-	if(_bUseDebugCamera){ return; }
+	if(_bUseDebugCamera){ return false; }
 
 	// メニュー項目の確認
 	int x = 128, y = 128, w = 0, h = 0, fontSize = 32, fontPitch = fontSize + 8;
@@ -131,7 +134,7 @@ bool ModeMenu::Render() {
 	DrawGraph(x + 4 + ((_curAnimCnt / 6) % 4) * 4, y + startY + fontPitch * _curPos, gGlobal._cgCursor, TRUE);
 
 	// デバッグカメラ状態表示
-	//DrawString(x + 16, y + h + startY, _bUseDebugCamera ? "DebugCam:ON" : "DebugCam:OFF", GetColor(255, 255, 0));
+	DrawString(x + 16, y + h + startY, _bUseDebugCamera ? "DebugCam:ON" : "DebugCam:OFF", GetColor(255, 255, 0));
 
 
 	return true;
