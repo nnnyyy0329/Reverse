@@ -94,6 +94,7 @@
     <ClCompile Include="source\ModeLoading.cpp">
       <Filter>Mode\Loading</Filter>
     </ClCompile>
+    <ClCompile Include="source\LightManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h">
@@ -183,6 +184,7 @@
     <ClInclude Include="source\ModeLoading.h">
       <Filter>Mode\Loading</Filter>
     </ClInclude>
+    <ClInclude Include="source\LightManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">

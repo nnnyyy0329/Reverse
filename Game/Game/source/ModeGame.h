@@ -12,6 +12,15 @@ class DebugCamera;
 class BulletManager;
 class AttackManager;
 class EnergyManager;
+class LightManager;
+
+// ライト情報構造体
+struct LightInfo
+{
+	int handle;// ライトハンドル
+	VECTOR vPos;// ライト位置
+	bool bisActive;// ライト有効フラグ
+};
 
 // モード
 class ModeGame : public ModeBase
@@ -28,14 +37,6 @@ public:
 	void SetDebugViewCollision(bool bView) { _bViewCollision = bView; }
 	bool GetUseCollision() { return _bUseCollision; }
 	void SetUseCollision(bool bUse) { _bUseCollision = bUse; }
-
-private:
-	void CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
-	void CheckHitPlayerEnemy(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);		// プレイヤーと敵の当たり判定
-	void CheckHitCharaBullet(std::shared_ptr<CharaBase> chara);											// キャラと弾の当たり判定
-	void CheckActiveAttack(std::shared_ptr<CharaBase> chara);											// 有効な攻撃のチェック
-	void CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
-	void ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage);								// ダメージをエネルギーに変換する
 
 protected:
 	// プレイヤー管理をPlayerManagerに委譲
@@ -55,4 +56,32 @@ protected:
 	// デバッグ用
 	bool _bViewCollision;// 当たり判定表示
 	bool _bUseCollision;// 当たり判定有効
+
+
+
+	std::shared_ptr<LightManager> _lightManager;// ライトマネージャー 
+	// 生成されたライトを管理
+	std::vector<LightInfo> _lights;
+
+private:
+	void CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
+	void CheckHitPlayerEnemy(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);		// プレイヤーと敵の当たり判定
+	void CheckHitCharaBullet(std::shared_ptr<CharaBase> chara);											// キャラと弾の当たり判定
+	void CheckActiveAttack(std::shared_ptr<CharaBase> chara);											// 有効な攻撃のチェック
+	void CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
+	void ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage);								// ダメージをエネルギーに変換する
+
+
+
+	// ライト関連
+	void InitializeLights();// ライト初期化
+	void ProcessLights();// ライト更新
+	void TerminateLights();// ライトの終了処理
+
+	// 指定座標にポイントライトを追加
+	// ライトを生成して、コンテナに追加
+	// ライトの位置、影響範囲、ライトの色
+	int AddPointLight(VECTOR vPos, float fRange, COLOR_F color);
+
+	void RemoveLight(int lightHandle);// 指定ライトを削除
 };
