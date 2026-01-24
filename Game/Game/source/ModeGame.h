@@ -15,6 +15,8 @@ class AttackManager;
 class EnergyManager;
 class DodgeSystem;
 
+class AbilitySelectScreen;
+
 // モード
 class ModeGame : public ModeBase
 {
@@ -24,16 +26,6 @@ public:
 	virtual bool Terminate();
 	virtual bool Process();
 	virtual bool Render();
-
-
-	// 消す
-	bool GetDebugViewColloion() { return _bViewCollision; }
-	void SetDebugViewColloion(bool b) { _bViewCollision = b; }
-	bool GetDebugUseColloion() { return _bUseCollision; }
-	void SetDebugUseColloion(bool b) { _bUseCollision = b; }
-	bool GetDebugViewCameraInfo() { return _bViewCameraInfo; }
-	void SetDebugViewCameraInfo(bool b) { _bViewCameraInfo = b; }
-
 
 private:
 	void CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
@@ -55,15 +47,14 @@ protected:
 	std::shared_ptr<DebugCamera>	_debugCamera;	// デバッグカメラ
 	std::shared_ptr<BulletManager>	_bulletManager;	// 弾マネージャー
 	//std::shared_ptr<DodgeSystem>	_dodgeSystem;	// 回避システム
+
+	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;
 	
 	// シングルトン取得
 	AttackManager* _attackManager = nullptr;
 	EnergyManager* _energyManager = nullptr;
 
 
-
-	// 消す
-	bool	_bViewCollision;
-	bool	_bUseCollision;
-	bool	_bViewCameraInfo;
+	/// のうりょくせんたくがめんよう
+	bool _isUseDebugScreen;
 };

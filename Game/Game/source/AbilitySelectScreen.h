@@ -1,11 +1,11 @@
 #pragma once
 #include "appframe.h"
 
-class AbilittySelectScreen
+class AbilitySelectScreen
 {
 public:
-	AbilittySelectScreen();
-	~AbilittySelectScreen();
+	AbilitySelectScreen();
+	~AbilitySelectScreen();
 	bool Initialize();
 	bool Terminate();
 	bool Process();
@@ -16,8 +16,5 @@ protected:
 	int _iHandle1;
 	int _iHandle2;
 	int _iHandle3;
-
-	int _drawX;
-	int _drawY;
 };
 

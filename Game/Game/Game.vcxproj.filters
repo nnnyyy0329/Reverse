@@ -97,7 +97,7 @@
     <ClCompile Include="source\ModeLoading.cpp">
       <Filter>Mode\Loading</Filter>
     </ClCompile>
-    <ClCompile Include="source\AbilittySelectScreen.cpp">
+    <ClCompile Include="source\AbilitySelectScreen.cpp">
       <Filter>Ability\Select</Filter>
     </ClCompile>
     <ClCompile Include="source\GameCamera.cpp">
@@ -195,7 +195,7 @@
     <ClInclude Include="source\ModeLoading.h">
       <Filter>Mode\Loading</Filter>
     </ClInclude>
-    <ClInclude Include="source\AbilittySelectScreen.h">
+    <ClInclude Include="source\AbilitySelectScreen.h">
       <Filter>Ability\Select</Filter>
     </ClInclude>
     <ClInclude Include="source\GameCamera.h">

@@ -20,9 +20,11 @@
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
 
+#include "AbilitySelectScreen.h"
 
 // メニュー項目
-class MenuDebugCamera : public MenuItemBase {
+class MenuDebugCamera : public MenuItemBase
+{
 public:
 	MenuDebugCamera(void* param, std::string text) : MenuItemBase(param, text) {}
 
@@ -34,9 +36,6 @@ public:
 	// return int : 0 = メニュー継続, 1 = メニュー終了
 	virtual int Selected() 
 	{
-		ModeGame* mdGame = static_cast<ModeGame*>(_param);
-		mdGame->SetDebugViewColloion(!mdGame->GetDebugViewColloion());
-
 		int key = ApplicationMain::GetInstance()->GetKey();
 		int trg = ApplicationMain::GetInstance()->GetTrg();
 		auto analog = ApplicationMain::GetInstance()->GetAnalog();
@@ -123,11 +122,10 @@ bool ModeGame::Initialize()
 		enemy->SetBulletManager(_bulletManager);
 	}
 
-
-	// 消す
-	_bUseCollision = TRUE;
-	_bViewCameraInfo = TRUE;
-
+	// 能力選択画面初期化
+	_abilitySelectScreen = std::make_shared<AbilitySelectScreen>();
+	_abilitySelectScreen->Initialize();
+	_isUseDebugScreen = false;
 
 	return true;
 }
@@ -145,18 +143,18 @@ bool ModeGame::Terminate()
 bool ModeGame::Process()
 {
 	base::Process();
+	
+	int key = ApplicationMain::GetInstance()->GetKey();
+	int trg = ApplicationMain::GetInstance()->GetTrg();
+	auto analog = ApplicationMain::GetInstance()->GetAnalog();
+	float lx = analog.lx;
+	float ly = analog.ly;
+	float rx = analog.rx;
+	float ry = analog.ry;
+	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
 
 	/// 入力取得
 	{
-		int key = ApplicationMain::GetInstance()->GetKey();
-		int trg = ApplicationMain::GetInstance()->GetTrg();
-		auto analog = ApplicationMain::GetInstance()->GetAnalog();
-		float lx = analog.lx;
-		float ly = analog.ly;
-		float rx = analog.rx;
-		float ry = analog.ry;
-		float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
-
 		// プレイヤーマネージャーに入力状態を渡す
 		if (_playerManager)
 		{
@@ -168,6 +166,19 @@ bool ModeGame::Process()
 			_cameraManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
 		}
 	}
+
+
+	// 能力選択画面のデバッグ寄関数
+	if(trg & PAD_INPUT_8)
+	{
+		_isUseDebugScreen = !_isUseDebugScreen;
+	}
+	if(_isUseDebugScreen)
+	{
+		_abilitySelectScreen->Process();
+	}
+
+
 
 	// spaceキーでメニューを開く
 	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10)
@@ -298,6 +309,14 @@ bool ModeGame::Render()
 		_playerManager->Render();
 		_bulletManager->Render();
 		AttackManager::GetInstance()->Render();
+
+
+
+		// のうりょk選択画面
+		if(_isUseDebugScreen)
+		{
+			_abilitySelectScreen->Render();
+		}
 	}
 
 	// エフェクト描画
