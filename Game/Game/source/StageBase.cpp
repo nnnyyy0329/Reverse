@@ -5,7 +5,9 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 
-StageBase::StageBase(int stageNum) : _stageNum(stageNum)
+StageBase::StageBase(int stageNum) 
+	: _stageNum(stageNum)
+	, _totalEnemyCnt(0)
 {
 	// jsonファイルの読み込み(マップ)
 	{
@@ -142,9 +144,12 @@ StageBase::StageBase(int stageNum) : _stageNum(stageNum)
 		_stageEnemies.push_back(
 			EnemyFactory::CreateEnemy(EnemyType::MELEE, VGet(1800, 0.0f, -180.0f))// テストで調整
 		);
+		_totalEnemyCnt++;// 敵を追加したらカウントアップ
+
 		_stageEnemies.push_back(
 			EnemyFactory::CreateEnemy(EnemyType::RANGED, VGet(1800.0f, 0.0f, -180.0f))// テストで調整
 		);
+		_totalEnemyCnt++;// 敵を追加したらカウントアップ
 	}
 }
 
@@ -208,5 +213,16 @@ void StageBase::DebugRender()
 		for (auto& enemy : _stageEnemies) {
 			enemy->DebugRender();
 		}
+	}
+
+	// 敵の残数をデバッグ表示
+	{
+		int x = 10;
+		int y = 10;
+		int size = 20;
+
+		DrawFormatString(x, y, GetColor(255, 255, 0), "敵総数 : %d", _totalEnemyCnt); y += size;
+		DrawFormatString(x, y, GetColor(255, 255, 0), "残り敵数 : %d", GetCurrentEnemyCnt()); y += size;
+		DrawFormatString(x, y, GetColor(255, 255, 0), "全滅判定 : %s", IsAllEnemiesDefeated() ? "True" : "False"); y += size;
 	}
 }

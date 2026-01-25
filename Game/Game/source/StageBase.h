@@ -37,6 +37,11 @@ public:
 	//int GetHandleMap() const { return _handleMap; }// マップモデルのハンドルを取得
 	//int GetFrameMapCollision() const { return _frameMapCollision; }// マップのコリジョンフレームを取得
 
+	// 敵の残数管理
+	int GetTotalEnemyCnt() { return _totalEnemyCnt; }// ステージ内の敵の総数を取得
+	int GetCurrentEnemyCnt() { return static_cast<int>(_stageEnemies.size()); }// 現在の敵の数を取得
+	bool IsAllEnemiesDefeated() { return _stageEnemies.empty() && _totalEnemyCnt > 0; }// すべての敵が倒されたか
+
 protected:
 	std::map<std::string, int> _mapModelHandle;// マップモデル用ハンドル(名前、モデルハンドル)
 	std::vector<std::shared_ptr<Enemy>> _stageEnemies;// ステージ内の敵リスト
@@ -49,5 +54,7 @@ protected:
 	//int _handleMap;
 	//int _handleSkySphere;
 	//int _frameMapCollision;
+
+	int _totalEnemyCnt;// ステージ内の敵の総数
 };
 

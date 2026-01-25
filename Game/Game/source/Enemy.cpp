@@ -464,6 +464,21 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 {
 	if(_fLife <= 0.0f) return;
 
+	// 変身前プレイヤーからの攻撃なら最低1は残す
+	if (eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER)
+	{
+		// ダメージ適用後のライフを計算
+		auto lifeAfterDamage = _fLife - fDamage;
+
+		if (lifeAfterDamage <= 1.0f)
+		{
+			_fLife = 1.0f;// 最低1は残す
+			// スタンステートへ遷移
+			ChangeState(std::make_shared<Common::Stun>());
+			return;
+		}
+	}
+
 	// 現在のステートが最優先の場合、ダメージのみ受付
 	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::TOP)
 	{
@@ -482,18 +497,6 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 
 	// 通常のダメージ処理
 	_fLife -= fDamage;
-
-	// 変身前プレイヤーからの攻撃なら最低1は残す
-	if (eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER)
-	{
-		if (_fLife <= 1.0f)
-		{
-			_fLife = 1.0f;// 最低1は残す
-			// スタンステートへ遷移
-			ChangeState(std::make_shared<Common::Stun>());
-			return;
-		}
-	}
 
 	// 死亡判定
 	if (IsDead())
