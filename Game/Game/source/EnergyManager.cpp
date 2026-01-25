@@ -136,5 +136,5 @@ void EnergyManager::DestroyInstance()
 // デバッグ表示
 void EnergyManager::DebugRender()
 {
-	DrawFormatString(10, 250, GetColor(0, 55, 0), "現在のエネルギー: %3.1f/100", _currentEnergy);
+	DrawFormatString(900, 290, GetColor(0, 55, 0), "現在のエネルギー: %3.1f/100", _currentEnergy);
 }

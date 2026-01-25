@@ -103,6 +103,9 @@
     <ClCompile Include="source\GameCamera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
+    <ClCompile Include="source\EnergyUI.cpp">
+      <Filter>Energy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h">
@@ -200,6 +203,9 @@
     </ClInclude>
     <ClInclude Include="source\GameCamera.h">
       <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnergyUI.h">
+      <Filter>Energy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -38,6 +38,12 @@ bool ApplicationMain::Initialize(HINSTANCE hInstance) {
 		rs->Register("select2", "res/try3/select2.png", RESOURCE_TYPE::Graph, 1.0f);
 		rs->Register("select3", "res/try3/select3.png", RESOURCE_TYPE::Graph, 1.0f);
 
+		rs->Register("energyFrame", "res/try3/energy_frame.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("energy1", "res/try3/energy_1.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("energy2", "res/try3/energy_2.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("energy3", "res/try3/energy_3.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("tryEnergy1", "res/try3/energy_1try.png", RESOURCE_TYPE::Graph, 1.0f);
+
 		// モードローディングの登録
 		ModeServer::GetInstance()->Add(new ModeLoading(), 100, "loading");
 

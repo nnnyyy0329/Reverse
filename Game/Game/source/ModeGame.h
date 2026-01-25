@@ -13,6 +13,7 @@ class DebugCamera;
 class BulletManager;
 class AttackManager;
 class EnergyManager;
+class EnergyUI;
 class DodgeSystem;
 
 class AbilitySelectScreen;
@@ -47,6 +48,7 @@ protected:
 	std::shared_ptr<DebugCamera>	_debugCamera;	// デバッグカメラ
 	std::shared_ptr<BulletManager>	_bulletManager;	// 弾マネージャー
 	//std::shared_ptr<DodgeSystem>	_dodgeSystem;	// 回避システム
+	std::shared_ptr<EnergyUI>		_energyUI;		// エネルギーUI
 
 	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;
 	

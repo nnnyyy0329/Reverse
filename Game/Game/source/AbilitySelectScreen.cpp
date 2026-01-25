@@ -4,7 +4,7 @@ namespace
 {
 	const int MIN_SELECT = 0;
 	const int MAX_SELECT = 2;
-	const int BLINK_SPEED = 30;
+	const int BLINK_SPEED = 15;
 }
 
 AbilitySelectScreen::AbilitySelectScreen()
@@ -112,7 +112,7 @@ void AbilitySelectScreen::SelectRender()
 
 	// 背景の半透明黒
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-	DrawBox(x, y, x + w, y + h, GetColor(0, 0, 0), TRUE);
+	DrawBox(x, y, x + w, y + h, GetColor(255, 255, 255), TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	// アビリティ画像の座標
@@ -147,10 +147,10 @@ void AbilitySelectScreen::SelectFrameRender()
 			int frameH = 1080;
 
 			// 選択フレームを描画
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
-			DrawBox(frameX - 5, frameY - 5, frameX + frameW + 5, frameY + frameH + 5, GetColor(255, 255, 0), FALSE);
-			DrawBox(frameX - 3, frameY - 3, frameX + frameW + 3, frameY + frameH + 3, GetColor(255, 255, 0), FALSE);
-			DrawBox(frameX - 1, frameY - 1, frameX + frameW + 1, frameY + frameH + 1, GetColor(255, 255, 0), FALSE);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+			DrawBox(frameX - 5, frameY - 5, frameX + frameW + 5, frameY + frameH + 5, GetColor(0, 0, 0), TRUE);
+			DrawBox(frameX - 3, frameY - 3, frameX + frameW + 3, frameY + frameH + 3, GetColor(0, 0, 0), TRUE);
+			DrawBox(frameX - 1, frameY - 1, frameX + frameW + 1, frameY + frameH + 1, GetColor(0, 0, 0), TRUE);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
 	}

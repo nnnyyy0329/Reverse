@@ -14,6 +14,7 @@
 #include "BulletManager.h"
 #include "AttackManager.h"
 #include "EnergyManager.h"
+#include "EnergyUI.h"
 #include "DodgeSystem.h"
 
 #include "PlayerManager.h"
@@ -127,6 +128,10 @@ bool ModeGame::Initialize()
 	_abilitySelectScreen->Initialize();
 	_isUseDebugScreen = false;
 
+	// ƒGƒlƒ‹ƒM[UI‰Šú‰»
+	_energyUI = std::make_shared<EnergyUI>();
+	_energyUI->Initialize();
+
 	return true;
 }
 
@@ -216,6 +221,7 @@ bool ModeGame::Process()
 		_bulletManager->Process();
 		AttackManager::GetInstance()->Process();
 		//_dodgeSystem->Process();
+		_energyUI->Process();
 	}
 
 	// “–‚½‚è”»’è
@@ -315,6 +321,7 @@ bool ModeGame::Render()
 		_playerManager->Render();
 		_bulletManager->Render();
 		AttackManager::GetInstance()->Render();
+		_energyUI->Render();
 
 
 
@@ -333,7 +340,7 @@ bool ModeGame::Render()
 		_stage->DebugRender();
 		//_debugCamera->DebugRender();
 		_cameraManager->Render();
-		AttackManager::GetInstance()->DebugRender();
+		//AttackManager::GetInstance()->DebugRender();
 		EnergyManager::GetInstance()->DebugRender();
 	}
 

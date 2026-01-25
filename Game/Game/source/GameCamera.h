@@ -12,9 +12,10 @@ public:
 	void Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool isInput);
 	void DebugRender();
 
-	void SetUp();															// カメラ設定
-	void UpdateCamera();													// カメラの更新処理	
-	void ControlCamera(float rx, float ry, float analogMin, bool isInput);	// カメラ操作処理
+	void SetUp();												// カメラ設定
+	void UpdateCamera();										// カメラの更新処理	
+	void UpdateCameraPos();										// カメラ位置の更新
+	void ControlCamera(float rx, float ry, float analogMin);	// カメラ操作処理
 
 	// ゲッター
 	VECTOR GetVPos() const { return _vPos; }
@@ -42,4 +43,8 @@ protected:
 	float _rx = 0.0f;
 	float _ry = 0.0f;
 	float _analogMin = 0.0f;
+
+	float _distance;	// 注視点からカメラまでの距離
+	float _angleH;		// 水平方向の角度(ラジアン)
+	float _angleV;		// 垂直方向の角度(ラジアン)
 };
