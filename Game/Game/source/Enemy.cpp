@@ -259,6 +259,7 @@ void Enemy::DrawLifeBar()
 		// 元画像から切り取る幅
 		int cutW = static_cast<int>(originW * lifeRatio);
 
+		// ライフバー本体の描画
 		DrawRectExtendGraph(
 			screenX, screenY,
 			screenX + currentDrawW, screenY + drawH,

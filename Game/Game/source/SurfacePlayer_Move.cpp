@@ -6,7 +6,7 @@
 namespace
 {
 	const float CROUCH_MOVE_SPEED = 2.0f;	// しゃがみ移動速度
-	const float NORMAL_MOVE_SPEED = 5.0f;	// 通常移動速度
+	const float NORMAL_MOVE_SPEED = 45.0f;	// 通常移動速度
 }
 
 // アクション関係Process呼び出し用関数
