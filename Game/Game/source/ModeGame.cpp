@@ -14,6 +14,7 @@
 #include "BulletManager.h"
 #include "AttackManager.h"
 #include "EnergyManager.h"
+#include "LightManager.h"
 #include "EnergyUI.h"
 #include "DodgeSystem.h"
 
