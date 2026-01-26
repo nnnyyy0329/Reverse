@@ -2,10 +2,13 @@
 #include "Enemy.h"
 
 namespace {
-	constexpr auto ATTACK_COLLISION_OFFSET_Z = 20.0f;// 攻撃コリジョン前方オフセット
-	constexpr auto ATTACK_COLLISION_OFFSET_Y = 20.0f;// 攻撃コリジョンY位置オフセット
+	constexpr auto ATTACK_COLLISION_OFFSET_Z = 200.0f;// 攻撃コリジョン前方オフセット
+	constexpr auto ATTACK_COLLISION_OFFSET_Y = 60.0f;// 攻撃コリジョンY位置オフセット
 	constexpr auto ATTACK_COLLISION_HEIGHT = 60.0f;// 攻撃コリジョン高さ
 	constexpr auto ATTACK_COLLISION_RADIUS = 40.0f;// 攻撃コリジョン半径
+	constexpr auto NEARBY_HOME = 10.0f;// 初期位置とみなす距離
+
+	constexpr auto ATTACK_CONFIRM_TIME = 60.0f;// 攻撃判定が有効になるまでの時間
 
 	// 個別の攻撃コリジョン設定
 	EnemyAttackSettings MakeMeleeAttackSettings()
@@ -27,6 +30,21 @@ namespace {
 
 namespace Melee
 {
+	bool IsTargetVisible(Enemy* owner)
+	{
+		auto target = owner->GetTarget();
+		if (!target) { return false; }
+
+		// 距離チェック
+		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());// ターゲットへのベクトル
+		auto dist = VSize(vToTarget);// ターゲットまでの距離
+		if (dist > owner->GetEnemyParam().fVisionRange) { return false; }// 索敵距離外
+
+		// 障害物チェック
+
+		return true;// 視界内
+	}
+
 	// 待機
 	void Idle::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
@@ -36,7 +54,7 @@ namespace Melee
 	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner) {
 		// 索敵チェック
 		auto target = owner->GetTarget();// ターゲット取得
-		if (owner->IsTargetVisible(target))// 視界内なら
+		if (IsTargetVisible(owner))// 視界内なら
 		{
 			return std::make_shared<Detect>();// 発見状態へ
 		}
@@ -83,7 +101,7 @@ namespace Melee
 	std::shared_ptr<EnemyState> Move::Update(Enemy* owner) {
 		// 索敵チェック
 		auto target = owner->GetTarget();// ターゲット取得
-		if (owner->IsTargetVisible(target))// 視界内なら
+		if (IsTargetVisible(owner))// 視界内なら
 		{
 			return std::make_shared<Detect>();// 発見状態へ
 		}
@@ -95,14 +113,8 @@ namespace Melee
 		auto distSq = VSquareSize(vFromHome);// 平方根を使わない距離の2乗で
 		auto limitRange = owner->GetEnemyParam().fMoveRadius;
 		if (distSq > limitRange * limitRange) {// 範囲外なら
-			// 初期位置の方向を向いているかチェック
-			VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
-			if (VDot(vToHome, owner->GetDir()) < 0) {// 内積が負なら逆方向を向いている
-				return std::make_shared<Idle>();// 待機状態に戻る
-			}
+			return std::make_shared<ReturnHome>();// 帰還状態へ
 		}
-
-		//　内積が正なら初期位置を向いているのでそのまま移動
 
 		// 移動処理
 		VECTOR vDir = owner->GetDir();
@@ -180,7 +192,7 @@ namespace Melee
 	// 攻撃
 	void Attack::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
-		owner->StartAttack(MELEE_ATTACK_SETTINGS);// 攻撃コリジョン開始
+		_bHasCollision = false;
 		// ここでアニメーション設定
 
 	}
@@ -191,11 +203,34 @@ namespace Melee
 		// 攻撃中は移動しない
 		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 
-		// 攻撃コリジョンの位置更新
-		owner->UpdateAttackTransform(MELEE_ATTACK_SETTINGS);
+		// 溜め時間:ターゲットの方向を追従
+		if (_fTimer < ATTACK_CONFIRM_TIME)
+		{
+			auto target = owner->GetTarget();
+			if (target)
+			{
+				VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
+				VECTOR vDir = VNorm(vToTarget);
+				owner->SetDir(vDir);
+			
+			}
+		}
+		// 攻撃確定:コリジョンを生成
+		else if (!_bHasCollision)
+		{
+			owner->StartAttack(MELEE_ATTACK_SETTINGS);
+			_bHasCollision = true;
+		}
 
-		// 時間経過で
-		if (_fTimer >= owner->GetEnemyParam().fAttackTime) {
+		// 攻撃持続中:コリジョン位置更新
+		if (_bHasCollision)
+		{
+			owner->UpdateAttackTransform(MELEE_ATTACK_SETTINGS);
+		}
+
+		// 攻撃終了
+		if (_fTimer >= owner->GetEnemyParam().fAttackTime)
+		{
 			return std::make_shared<Chase>();// 追跡状態に戻ることで再度距離判定を行う
 		}
 
@@ -203,6 +238,47 @@ namespace Melee
 	}
 
 	void Attack::Exit(Enemy* owner) {
-		owner->StopAttack();// 攻撃コリジョン停止
+		if (_bHasCollision)
+		{
+			owner->StopAttack();// 攻撃コリジョン停止
+			_bHasCollision = false;
+		}
+	}
+
+	bool Attack::CanChangeState() {
+		// 攻撃中は通常のステート変更は許可しない
+		return false;
+	}
+
+
+	// 帰還
+	void ReturnHome::Enter(Enemy* owner){
+	}
+
+	std::shared_ptr<EnemyState> ReturnHome::Update(Enemy* owner){
+		// 索敵チェック
+		auto target = owner->GetTarget();// ターゲット取得
+		if (IsTargetVisible(owner))// 視界内なら
+		{
+			return std::make_shared<Detect>();// 発見状態へ
+		}
+
+		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());// 初期位置へのベクトル
+		auto dist = VSize(vToHome);// 初期位置までの距離
+
+		// 初期位置に到達したか
+		if (dist <= NEARBY_HOME) {
+			return std::make_shared<Idle>();// 待機状態へ
+		}
+
+		// 初期位置に向かって移動
+		VECTOR vDir = VNorm(vToHome);// 初期位置への方向ベクトル
+		owner->SetDir(vDir);
+
+		auto speed = owner->GetEnemyParam().fMoveSpeed;
+		VECTOR vMove = VScale(vDir, speed);
+		owner->SetMove(vMove);// 移動量を更新
+
+		return nullptr;
 	}
 }

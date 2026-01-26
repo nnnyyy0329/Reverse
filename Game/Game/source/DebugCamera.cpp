@@ -127,7 +127,7 @@ void DebugCamera::UpdatePosFromAngle()
 	* Z軸 = 水平半径 * sin(水平角度)
 	*/
 
-	// 1/高さ(y)と水平面でのターゲットまでの距離(r)を計算
+	// 1.高さ(y)と水平面でのターゲットまでの距離(r)を計算
 	auto y = sin(_angleV) * _distance;
 	auto r = cos(_angleV) * _distance;
 

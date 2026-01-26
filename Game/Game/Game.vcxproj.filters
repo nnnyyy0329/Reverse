@@ -91,6 +91,10 @@
     <ClCompile Include="source\ModeMenu.cpp">
       <Filter>Mode\Menu</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeLoading.cpp">
+      <Filter>Mode\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="source\LightManager.cpp" />
     <ClCompile Include="source\DodgeSystem.cpp">
       <Filter>Dodge</Filter>
     </ClCompile>
@@ -207,6 +211,10 @@
     <ClInclude Include="source\EnergyUI.h">
       <Filter>Energy</Filter>
     </ClInclude>
+    <ClInclude Include="source\ModeLoading.h">
+      <Filter>Mode\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="source\LightManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -268,6 +276,9 @@
     </Filter>
     <Filter Include="Ability\Select">
       <UniqueIdentifier>{079ce18b-810d-4703-aef1-ad2ea57ecb47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Loading">
+      <UniqueIdentifier>{39954c89-3fd1-4c7f-b458-81424ac734d4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

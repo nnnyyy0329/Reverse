@@ -15,6 +15,9 @@ namespace Melee
 	* Attack:攻撃(Chaseに戻り距離を再確認)
 	*/
 
+	// 円形視界判定(距離のみチェック)
+	bool IsTargetVisible(Enemy* owner);
+
 	// 待機
 	class Idle : public EnemyState
 	{
@@ -59,6 +62,18 @@ namespace Melee
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		void Exit(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:Attack"; }
+		bool CanChangeState() override;
+	private:
+		bool _bHasCollision;// 攻撃コリジョンが生成されたか
+	};
+
+	// 初期位置への復帰
+	class ReturnHome : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() const override { return "Melee:ReturnHome"; }
 	};
 }
 

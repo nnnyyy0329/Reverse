@@ -15,39 +15,7 @@ bool ApplicationMain::Initialize(HINSTANCE hInstance) {
 
 	// ƒ‚[ƒh‚Ì“o˜^
 	//ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
-
-
-
-	// Á‚·
-	gGlobal.Init();
-
-
-
-	// ”ñ“¯Šúƒ[ƒh—p(test)
-	{
-		auto rs = ResourceServer::GetInstance();
-
-		// ƒŠƒXƒg‚É“o˜^
-		rs->Register("Laser", "res/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-		rs->Register("LifeBar", "res/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("LifeBarFrame", "res/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
-		rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
-
-		rs->Register("select1", "res/try3/select1.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("select2", "res/try3/select2.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("select3", "res/try3/select3.png", RESOURCE_TYPE::Graph, 1.0f);
-
-		rs->Register("energyFrame", "res/try3/energy_frame.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("energy1", "res/try3/energy_1.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("energy2", "res/try3/energy_2.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("energy3", "res/try3/energy_3.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("tryEnergy1", "res/try3/energy_1try.png", RESOURCE_TYPE::Graph, 1.0f);
-
-		// ƒ‚[ƒhƒ[ƒfƒBƒ“ƒO‚Ì“o˜^
-		ModeServer::GetInstance()->Add(new ModeLoading(), 100, "loading");
-
-	}
+	ModeServer::GetInstance()->Add(new ModeLoading(), 9999, "loading");
 
 	return true;
 }

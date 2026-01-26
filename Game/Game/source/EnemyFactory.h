@@ -10,19 +10,20 @@ namespace {
 
 	// Melee
 	constexpr auto MELEE_VISION_RANGE = 250.0f;// õ“G‹——£
-	constexpr auto MELEE_ATTACK_RANGE = 50.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
-	constexpr auto MELEE_CHASE_LIMIT_RANGE = 800.0f;// ‚±‚êˆÈã—£‚ê‚½‚ç’ÇÕ‚ð‚â‚ß‚é‹——£
-	constexpr auto MELEE_MOVE_RADIUS = 1000.0f;// œpœj‚·‚é”ÍˆÍ‚Ì”¼Œa(‰ŠúˆÊ’u‚©‚ç‚Ì‹——£)
+	constexpr auto MELEE_VISION_ANGLE = 180.0f;// ‰~‚Å‚Ìõ“G
+	constexpr auto MELEE_ATTACK_RANGE = 120.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
+	constexpr auto MELEE_CHASE_LIMIT_RANGE = 600.0f;// ‚±‚êˆÈã—£‚ê‚½‚ç’ÇÕ‚ð‚â‚ß‚é‹——£
+	constexpr auto MELEE_MOVE_RADIUS = 800.0f;// œpœj‚·‚é”ÍˆÍ‚Ì”¼Œa(‰ŠúˆÊ’u‚©‚ç‚Ì‹——£)
 	constexpr auto MELEE_IDLE_TIME = 120.0f;// ‘Ò‹@ŽžŠÔ
 	constexpr auto MELEE_MOVE_TIME = 180.0f;// Ž©“®ˆÚ“®ŽžŠÔ
-	constexpr auto MELEE_DETECT_TIME = 30.0f;// ”­Œ©d’¼
-	constexpr auto MELEE_ATTACK_TIME = 60.0f;// UŒ‚ŽžŠÔ
+	constexpr auto MELEE_DETECT_TIME = 90.0f;// ”­Œ©d’¼
+	constexpr auto MELEE_ATTACK_TIME = 180.0f;// UŒ‚ŽžŠÔ
 
 	// Ranged
 	constexpr auto RANGED_VISION_RANGE = 800.0f;// õ“G‹——£
 	constexpr auto RANGED_MOVEBACK_RANGE = 300.0f;// ‚±‚ê‚æ‚è‹ß‚Ã‚¢‚½‚çŒã‘Þ‚·‚é
 	constexpr auto RANGED_ATTACK_INTERVAL = 120.0f;// UŒ‚ŠÔŠu
-	constexpr auto RANGED_DETECT_TIME = 30.0f;// ”­Œ©d’¼
+	constexpr auto RANGED_DETECT_TIME = 60.0f;// ”­Œ©d’¼
 }
 
 // “G‚ÌŽí—Þ
@@ -50,6 +51,7 @@ public:
 		case EnemyType::MELEE:// ‹ßÚŒ^
 				param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
 				param.fVisionRange = MELEE_VISION_RANGE;
+				param.fVisionAngle = MELEE_VISION_ANGLE;
 				param.fAttackRange = MELEE_ATTACK_RANGE;
 				param.fChaseLimitRange = MELEE_CHASE_LIMIT_RANGE;
 				param.fMoveRadius = MELEE_MOVE_RADIUS;
@@ -62,8 +64,8 @@ public:
 
 				// ƒnƒ“ƒhƒ‰‚Ì’†g‚ðÝ’è
 				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> {
-					// ƒ^[ƒQƒbƒg‚ªŒ©‚¦‚Ä‚¢‚ê‚Î’ÇÕ
-					if (e->IsTargetVisible(e->GetTarget())) {
+					// ƒ^[ƒQƒbƒg‚ª‘¶Ý‚·‚ê‚Î’ÇÕ
+					if (e->GetTarget()) {
 						return std::make_shared<Melee::Chase>();
 					}
 					// Œ©‚¦‚Ä‚¢‚È‚¯‚ê‚Î‘Ò‹@
@@ -83,8 +85,8 @@ public:
 
 				// ƒnƒ“ƒhƒ‰‚Ì’†g‚ðÝ’è
 				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> {
-					// ƒ^[ƒQƒbƒg‚ªŒ©‚¦‚Ä‚¢‚ê‚ÎUŒ‚
-					if (e->IsTargetVisible(e->GetTarget())) {
+					// ƒ^[ƒQƒbƒg‚ª‘¶Ý‚·‚ê‚ÎUŒ‚
+					if (e->GetTarget()) {
 						return std::make_shared<Ranged::Attack>();
 					}
 					// Œ©‚¦‚Ä‚¢‚È‚¯‚ê‚Î‘Ò‹@

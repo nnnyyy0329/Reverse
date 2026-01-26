@@ -9,7 +9,7 @@ namespace {
 	constexpr auto COLLISION_HEIGHT = 100.0f;// 敵の当たり判定高さ
 }
 
-Enemy::Enemy()
+Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
 {
 	// モデル読み込み
 	_iHandle = MV1LoadModel("res/SDChar/SDChar.mv1");
@@ -43,6 +43,9 @@ bool Enemy::Initialize()
 	_vOldPos = _vPos;
 	_vHomePos = _vPos;// 初期位置を保存
 	_fLife = _enemyParam.fMaxLife;// 体力に最大値をセット
+	_damageCnt = 0;
+	_bIsExist = true;
+	_bCanRemove = false;
 
 	return true;
 }
@@ -350,6 +353,19 @@ void Enemy::DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAng
 
 void Enemy::ChangeState(std::shared_ptr<EnemyState> newState) 
 {
+	if (!newState) { return; }
+
+	// 現在のステートがステート変更を許可しているかチェック
+	if (_currentState)
+	{
+		// 優先度によるチェック
+		// 新しいステートが現在のステート以上なら変更を許可
+		bool canChange = _currentState->CanChangeState() ||
+			(newState->GetPriority() >= _currentState->GetPriority());
+
+		if (!canChange) { return; }// 変更不可
+	}
+
 	if (_currentState) {
 		_currentState->Exit(this);
 	}
@@ -366,26 +382,6 @@ void Enemy::SetEnemyParam(const EnemyParam& param)
 	// 視界のcos値を計算して設定
 	auto rad = _enemyParam.fVisionAngle * DEGREE_TO_RADIAN;
 	_enemyParam.fVisionCos = cosf(rad);
-}
-
-bool Enemy::IsTargetVisible(std::shared_ptr<CharaBase> target)
-{
-	if (!target) return false;
-
-	// 距離チェック
-	VECTOR vToTarget = VSub(target->GetPos(), _vPos);
-	auto dist = VSize(vToTarget);// ターゲットまでの距離
-	if (dist > _enemyParam.fVisionRange) return false;// 索敵距離外
-
-	// 角度チェック
-	VECTOR vDirToTarget = VNorm(vToTarget);
-	auto dot = VDot(_vDir, vDirToTarget);
-	// dotがlimitCos未満なら視界外
-	if (dot < _enemyParam.fVisionCos) return false;
-
-	// 障害物チェック
-
-	return true;// 視界内にいる
 }
 
 void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime) {
@@ -466,19 +462,60 @@ void Enemy::StopAttack()
 
 void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 {
-	if(_fLife <= 0.0f) return;// 体力が0なら無効
-	_fLife -= fDamage;
-	//if(eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER){
-	//	if(_fLife <= 1.0f)
-	//	{
-	//		_fLife = 1.0f;
-	//	}
-	//}
-	if(_fLife < 0.0f) _fLife = 0.0f;// 体力がマイナスにならないようにする
+	if(_fLife <= 0.0f) return;
 
+	// 変身前プレイヤーからの攻撃なら最低1は残す
+	if (eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER)
+	{
+		// ダメージ適用後のライフを計算
+		auto lifeAfterDamage = _fLife - fDamage;
+
+		if (lifeAfterDamage <= 1.0f)
+		{
+			_fLife = 1.0f;// 最低1は残す
+			// スタンステートへ遷移
+			ChangeState(std::make_shared<Common::Stun>());
+			return;
+		}
+	}
+
+	// 現在のステートが最優先の場合、ダメージのみ受付
+	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::TOP)
+	{
+		_fLife -= fDamage;
+
+		// 死亡判定のみチェック
+		if (_fLife <= 0.0f)
+		{
+			_fLife = 0.0f;// マイナス防止
+			// 死亡ステートへ遷移
+			ChangeState(std::make_shared<Common::Dead>());
+		}
+
+		return;
+	}
+
+	// 通常のダメージ処理
+	_fLife -= fDamage;
+
+	// 死亡判定
+	if (IsDead())
+	{
+		_fLife = 0.0f;// マイナス防止
+		// 死亡ステートへ遷移
+		ChangeState(std::make_shared<Common::Dead>());
+		return;
+	}
+
+	// 生存時:通常ダメージ
+	_damageCnt++;// ダメージ回数をカウントアップ
 	// ダメージステートへ遷移
 	ChangeState(std::make_shared<Common::Damage>());
+}
 
+bool Enemy::IsDead() const
+{
+	return _fLife <= 0.0f;// 体力が0以下なら死亡
 }
 
 std::shared_ptr<EnemyState> Enemy::GetRecoveryState() const

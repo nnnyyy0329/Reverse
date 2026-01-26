@@ -10,25 +10,125 @@ namespace {
 	constexpr auto BULLET_RADIUS = 10.0f;// 弾の当たり判定半径
 	constexpr auto BULLET_SPEED = 15.0f;// 弾の速度
 	constexpr auto BULLET_LIFETIME = 120.0f;// 弾の寿命(フレーム数)
+
+	constexpr auto LOOK_AROUND_INTERVAL = 120.0f;// 見渡す間隔(フレーム数)
+	constexpr auto LOOK_AROUND_ANGLE = 45.0f;// 左右を向く角度(度)
+	constexpr auto LOOK_AROUND_SPEED = 0.1f;// 見渡しの回転速度(度/フレーム)
 }
 
 namespace Ranged
 {
+	bool IsTargetVisible(Enemy* owner)
+	{
+		auto target = owner->GetTarget();
+		if (!target) return false;
+
+		// 距離チェック
+		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());// ターゲットへのベクトル
+		auto dist = VSize(vToTarget);// ターゲットまでの距離
+		if (dist > owner->GetEnemyParam().fVisionRange) { return false; }// 索敵距離外
+
+		// 角度チェック
+		VECTOR vDirToTarget = VNorm(vToTarget);// ターゲット方向(正規化)
+		auto dot = VDot(owner->GetDir(), vDirToTarget);// 内積
+		// dotがlimitCos未満なら視界外
+		if (dot < owner->GetEnemyParam().fVisionCos) { return false; }
+
+		// 障害物チェック
+
+		return true;// 視界内
+	}
+
 	// 待機
 	void Idle::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
+		_fLookAroundTimer = 0.0f;
+		_bLookingLeft = true;// 最初は左を向く
+		_bisRotating = false;// 回転中フラグを初期化
+		_vInitialDir = owner->GetDir();// 初期方向を保存
 		// ここでアニメーション設定
 	}
 
 	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner) {
 		// 索敵チェック
 		auto target = owner->GetTarget();// ターゲット取得
-		if (owner->IsTargetVisible(target))// 視界内なら
+		if (IsTargetVisible(owner))// 視界内なら
 		{
 			return std::make_shared<Detect>();// 発見状態へ
 		}
 
-		// 待機中に見渡すなどの動きを入れたいならここに追加
+		_fTimer++;
+		_fLookAroundTimer++;
+
+		// 見渡す:一定間隔で左右を向く
+		// 旋回速度制限を適用して滑らかに回転させる
+		{
+			// 次の目標を設定するタイミング
+			if (_fLookAroundTimer >= LOOK_AROUND_INTERVAL && !_bisRotating)
+			{
+				// 初期方向を基準に次の目標角度を計算
+				auto baseAngle = atan2f(_vInitialDir.x, _vInitialDir.z);// 初期方向の角度
+				auto lookAngleRad = LOOK_AROUND_ANGLE * DEGREE_TO_RADIAN;
+
+				if (_bLookingLeft)
+				{
+					// 左を向く(+方向)
+					_fTargetAngle = baseAngle + lookAngleRad;
+				}
+				else
+				{
+					// 右を向く(-方向)
+					_fTargetAngle = baseAngle - lookAngleRad;
+				}
+
+				// 回転開始フラグを立てる
+				_bisRotating = true;
+
+				// 次は反対方向を向く
+				_bLookingLeft = !_bLookingLeft;
+
+				_fLookAroundTimer = 0.0f;// タイマーリセット
+			}
+
+			// 滑らかな回転処理
+			if (_bisRotating)
+			{
+				// 現在の角度を計算
+				VECTOR vCurrentDir = owner->GetDir();
+				auto currentAngle = atan2f(vCurrentDir.x, vCurrentDir.z);
+
+				// 角度差を計算(-PI ~ +PI の範囲に収める)
+				auto diffAngle = _fTargetAngle - currentAngle;
+				// 180度を超えないように補正
+				while (diffAngle <= -DX_PI_F) diffAngle += DX_TWO_PI_F;
+				while (diffAngle > DX_PI_F) diffAngle -= DX_TWO_PI_F;
+
+				// 旋回速度の制限
+				auto turnSpeedRad = LOOK_AROUND_SPEED * DEGREE_TO_RADIAN;
+
+				// 目標角度に到達したかチェック
+				if (fabs(diffAngle) < 0.01f)
+				{
+					// 目標角度に到達したので回転終了
+					_bisRotating = false;
+					// 目標角度に正確に合わせる
+					VECTOR vNewDir = VGet(sinf(_fTargetAngle), 0.0f, cosf(_fTargetAngle));
+					owner->SetDir(vNewDir);
+				}
+				else
+				{
+					// まだ目標角度に到達していないので回転を続ける
+					// 差が速度制限を超えていたら、速度分だけ回す
+					if(diffAngle > turnSpeedRad) { diffAngle = turnSpeedRad;  }
+					else if (diffAngle < -turnSpeedRad) { diffAngle = -turnSpeedRad; }
+
+					// 新しい向きベクトルを計算して設定
+					auto newAngle = currentAngle + diffAngle;
+					VECTOR vNewDir = VGet(sinf(newAngle), 0.0f, cosf(newAngle));
+					owner->SetDir(vNewDir);
+				}
+			}
+		}
 
 		return nullptr;
 	}

@@ -80,6 +80,10 @@ bool ModeGame::Initialize()
 		// BulletManagerの初期化
 		_bulletManager = std::make_shared<BulletManager>();
 		_bulletManager->Initialize();
+
+		// LightManagerの初期化
+		_lightManager = std::make_shared<LightManager>();
+		_lightManager->Initialize();
 	}
 
 	// シングルトンインスタンスを取得
@@ -98,7 +102,7 @@ bool ModeGame::Initialize()
 	}
 
 	// ステージ初期化
-	_stage = std::make_shared<StageBase>(2);// ステージ番号で切り替え
+	_stage = std::make_shared<StageBase>(3);// ステージ番号で切り替え
 
 	// カメラ初期化
 	{
@@ -132,12 +136,18 @@ bool ModeGame::Initialize()
 	_energyUI = std::make_shared<EnergyUI>();
 	_energyUI->Initialize();
 
+	// ライトの初期化
+	InitializeLights();
+
 	return true;
 }
 
 bool ModeGame::Terminate() 
 {
 	base::Terminate();
+
+	// ライトの終了処理
+	TerminateLights();
 
 	// プレイヤー開放
 	_playerManager.reset();
@@ -224,17 +234,13 @@ bool ModeGame::Process()
 		_energyUI->Process();
 	}
 
+	// ライト更新
+	ProcessLights();
+
 	// 当たり判定
 	{
 		auto player = _playerManager->GetActivePlayerShared();
 		auto enemies = _stage->GetEnemies();
-
-		// マップ
-		//CheckCollisionCharaMap(player);
-		//for (const auto& enemy : enemies) {
-		//	CheckCollisionCharaMap(enemy);
-		//}
-
 
 		// 弾
 		CheckHitCharaBullet(player);
@@ -251,6 +257,12 @@ bool ModeGame::Process()
 		// キャラと攻撃コリジョンの当たり判定
 		CheckActiveAttack(player);										// プレイヤー
 		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
+
+		// マップ
+		CheckCollisionCharaMap(player);
+		for (const auto& enemy : enemies) {
+			CheckCollisionCharaMap(enemy);
+		}
 	}
 
 	// ターゲット更新
@@ -287,18 +299,15 @@ bool ModeGame::Render()
 
 	// ライト設定
 	{
-		SetUseLighting(TRUE);
+		// ライティングを有効化
+		_lightManager->SetLightEnable(true);
 
-		#if 1	// 平行ライト
-			SetGlobalAmbientLight(GetColorF(0.5f, 0.f, 0.f, 0.f));
-			ChangeLightTypeDir(VGet(-1, -1, 0));
-		#endif
-		#if 0	// ポイントライト
-			PlayerBase* activePlayer = _playerManager->GetActivePlayer();
+		// 標準ライトをディレクショナルライトとして設定
+		_lightManager->SetLightType(LightManager::LIGHT_TYPE::DIRECTIONAL);
+		_lightManager->SetDirectionalLightDir(VGet(-1.0f, -1.0f, -1.0f));
 
-			SetGlobalAmbientLight(GetColorF(0.f, 0.f, 0.f, 0.f));
-			ChangeLightTypePoint(VAdd(activePlayer->GetPos(), VGet(0, 50.f, 0)), 1000.f, 0.f, 0.005f, 0.f);
-		#endif
+		// グローバルアンビエントライト設定
+		_lightManager->SetAmbientLight(GetColorF(0.3f, 0.3f, 0.3f, 0.0f));
 	}
 
 	// カメラ設定
@@ -338,6 +347,12 @@ bool ModeGame::Render()
 	// デバッグ情報の描画
 	{
 		_stage->DebugRender();
+		_debugCamera->DebugRender();
+		//AttackManager::GetInstance()->DebugRender();
+		//EnergyManager::GetInstance()->DebugRender();
+
+		// ライト情報
+		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());
 		//_debugCamera->DebugRender();
 		_cameraManager->Render();
 		//AttackManager::GetInstance()->DebugRender();
@@ -382,5 +397,73 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara){
 	// 全ての判定が終わった後に、まとめて削除する
 	for (const auto& deadBullet : deadBullets) {
 		_bulletManager->RemoveBullet(deadBullet);
+	}
+}
+
+void ModeGame::InitializeLights()
+{
+	// ライトコンテナをクリア
+	_lights.clear();
+
+	// ライトを追加
+	// test
+	AddPointLight(VGet(0.0f, 500.0f, 0.0f), 1000.0f, GetColorF(1.0f, 1.0f, 1.0f, 0.0f));
+}
+
+void ModeGame::ProcessLights()
+{
+	// 各ライトの更新処理
+	// キャラの位置に追従するライトなど
+}
+
+void ModeGame::TerminateLights()
+{
+	// すべてのライトを削除
+	for (auto& lightInfo : _lights)
+	{
+		if (lightInfo.handle != -1)
+		{
+			DeleteLightHandle(lightInfo.handle);
+			lightInfo.handle = -1;
+		}
+	}
+
+	// ライトコンテナをクリア
+	_lights.clear();
+}
+
+int ModeGame::AddPointLight(VECTOR vPos, float fRange, COLOR_F color)
+{
+	// ポイントライトを生成
+	int lightHandle = _lightManager->CreatePointLight(vPos, fRange, color);
+
+	if (lightHandle == -1) { return -1; }// 生成失敗
+
+	// ライト情報を作成
+	LightInfo lightInfo;
+	lightInfo.handle = lightHandle;
+	lightInfo.vPos = vPos;
+	lightInfo.bisActive = true;
+
+	// コンテナに追加
+	_lights.push_back(lightInfo);
+
+	return lightHandle;
+}
+
+void ModeGame::RemoveLight(int lightHandle)
+{
+	// コンテナから該当するライトを検索
+	for (auto it = _lights.begin(); it != _lights.end(); ++it)
+	{
+		if (it->handle == lightHandle)
+		{
+			// ライトハンドルを削除
+			DeleteLightHandle(lightHandle);
+
+			// コンテナから削除
+			_lights.erase(it);
+			break;
+		}
 	}
 }
