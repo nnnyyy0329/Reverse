@@ -461,7 +461,7 @@ void Enemy::StopAttack()
 }
 
 void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
-{
+{ 
 	if(_fLife <= 0.0f) return;
 
 	// 変身前プレイヤーからの攻撃なら最低1は残す

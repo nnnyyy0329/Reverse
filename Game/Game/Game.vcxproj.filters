@@ -1,6 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="source\PlayerAbilityBase.cpp">
+      <Filter>Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerAbilityManager.cpp">
+      <Filter>Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AbilitySelectScreen.cpp">
+      <Filter>Ability\Select</Filter>
+    </ClCompile>
     <ClCompile Include="source\ApplicationGlobal.cpp">
       <Filter>Application</Filter>
     </ClCompile>
@@ -14,10 +23,10 @@
       <Filter>Attack</Filter>
     </ClCompile>
     <ClCompile Include="source\Bullet.cpp">
-      <Filter>GameObject\Character\Bullet</Filter>
+      <Filter>Bullet</Filter>
     </ClCompile>
     <ClCompile Include="source\BulletManager.cpp">
-      <Filter>GameObject\Character\Bullet</Filter>
+      <Filter>Bullet</Filter>
     </ClCompile>
     <ClCompile Include="source\CameraManager.cpp">
       <Filter>Camera</Filter>
@@ -25,47 +34,29 @@
     <ClCompile Include="source\DebugCamera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
+    <ClCompile Include="source\DodgeSystem.cpp">
+      <Filter>Dodge</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Enemy.cpp">
+      <Filter>GameObject\CharaBase\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EnergyManager.cpp">
+      <Filter>Energy</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EnergyUI.cpp">
+      <Filter>Energy</Filter>
+    </ClCompile>
+    <ClCompile Include="source\GameCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
     <ClCompile Include="source\GameObjectBase.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
     <ClCompile Include="source\CharaBase.cpp">
-      <Filter>GameObject\Character</Filter>
+      <Filter>GameObject\CharaBase</Filter>
     </ClCompile>
-    <ClCompile Include="source\Enemy.cpp">
-      <Filter>GameObject\Character\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PlayerBase.cpp">
-      <Filter>GameObject\Character\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PlayerBase_Attack.cpp">
-      <Filter>GameObject\Character\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PlayerManager.cpp">
-      <Filter>GameObject\Character\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="source\InteriorPlayer.cpp">
-      <Filter>GameObject\Character\Player\Interior</Filter>
-    </ClCompile>
-    <ClCompile Include="source\InteriorPlayer_Draw.cpp">
-      <Filter>GameObject\Character\Player\Interior</Filter>
-    </ClCompile>
-    <ClCompile Include="source\InteriorPlayer_Move.cpp">
-      <Filter>GameObject\Character\Player\Interior</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SurfacePlayer.cpp">
-      <Filter>GameObject\Character\Player\Surface</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SurfacePlayer_Draw.cpp">
-      <Filter>GameObject\Character\Player\Surface</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SurfacePlayer_Move.cpp">
-      <Filter>GameObject\Character\Player\Surface</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PlayerAbilityBase.cpp">
-      <Filter>Ability</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PlayerAbilityManager.cpp">
-      <Filter>Ability</Filter>
+    <ClCompile Include="source\LightManager.cpp">
+      <Filter>Light</Filter>
     </ClCompile>
     <ClCompile Include="source\ModeGame.cpp">
       <Filter>Mode\Game</Filter>
@@ -73,45 +64,62 @@
     <ClCompile Include="source\ModeGame_CheckHit.cpp">
       <Filter>Mode\Game</Filter>
     </ClCompile>
-    <ClCompile Include="source\StageBase.cpp">
-      <Filter>Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="source\StateCommon.cpp">
-      <Filter>GameObject\Character\Enemy\State</Filter>
-    </ClCompile>
-    <ClCompile Include="source\StateMelee.cpp">
-      <Filter>GameObject\Character\Enemy\State</Filter>
-    </ClCompile>
-    <ClCompile Include="source\StateRanged.cpp">
-      <Filter>GameObject\Character\Enemy\State</Filter>
-    </ClCompile>
-    <ClCompile Include="source\EnergyManager.cpp">
-      <Filter>Energy</Filter>
-    </ClCompile>
     <ClCompile Include="source\ModeMenu.cpp">
       <Filter>Mode\Menu</Filter>
     </ClCompile>
     <ClCompile Include="source\ModeLoading.cpp">
-      <Filter>Mode\Loading</Filter>
+      <Filter>Mode\Load</Filter>
     </ClCompile>
-    <ClCompile Include="source\LightManager.cpp" />
-    <ClCompile Include="source\DodgeSystem.cpp">
-      <Filter>Dodge</Filter>
+    <ClCompile Include="source\PlayerBase.cpp">
+      <Filter>GameObject\CharaBase\Player</Filter>
     </ClCompile>
-    <ClCompile Include="source\ModeLoading.cpp">
-      <Filter>Mode\Loading</Filter>
+    <ClCompile Include="source\PlayerBase_Attack.cpp">
+      <Filter>GameObject\CharaBase\Player</Filter>
     </ClCompile>
-    <ClCompile Include="source\AbilitySelectScreen.cpp">
-      <Filter>Ability\Select</Filter>
+    <ClCompile Include="source\PlayerManager.cpp">
+      <Filter>GameObject\CharaBase\Player</Filter>
     </ClCompile>
-    <ClCompile Include="source\GameCamera.cpp">
-      <Filter>Camera</Filter>
+    <ClCompile Include="source\StateCommon.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClCompile>
-    <ClCompile Include="source\EnergyUI.cpp">
-      <Filter>Energy</Filter>
+    <ClCompile Include="source\StateMelee.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StateRanged.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InteriorPlayer.cpp">
+      <Filter>GameObject\CharaBase\Player\Interior</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InteriorPlayer_Draw.cpp">
+      <Filter>GameObject\CharaBase\Player\Interior</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InteriorPlayer_Move.cpp">
+      <Filter>GameObject\CharaBase\Player\Interior</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SurfacePlayer.cpp">
+      <Filter>GameObject\CharaBase\Player\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SurfacePlayer_Draw.cpp">
+      <Filter>GameObject\CharaBase\Player\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SurfacePlayer_Move.cpp">
+      <Filter>GameObject\CharaBase\Player\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StageBase.cpp">
+      <Filter>Stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\PlayerAbilityBase.h">
+      <Filter>Ability</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerAbilityManager.h">
+      <Filter>Ability</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AbilitySelectScreen.h">
+      <Filter>Ability\Select</Filter>
+    </ClInclude>
     <ClInclude Include="source\ApplicationGlobal.h">
       <Filter>Application</Filter>
     </ClInclude>
@@ -125,10 +133,10 @@
       <Filter>Attack</Filter>
     </ClInclude>
     <ClInclude Include="source\Bullet.h">
-      <Filter>GameObject\Character\Bullet</Filter>
+      <Filter>Bullet</Filter>
     </ClInclude>
     <ClInclude Include="source\BulletManager.h">
-      <Filter>GameObject\Character\Bullet</Filter>
+      <Filter>Bullet</Filter>
     </ClInclude>
     <ClInclude Include="source\CameraManager.h">
       <Filter>Camera</Filter>
@@ -136,149 +144,139 @@
     <ClInclude Include="source\DebugCamera.h">
       <Filter>Camera</Filter>
     </ClInclude>
-    <ClInclude Include="source\GameObjectBase.h">
-      <Filter>GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="source\CharaBase.h">
-      <Filter>GameObject\Character</Filter>
+    <ClInclude Include="source\DodgeSystem.h">
+      <Filter>Dodge</Filter>
     </ClInclude>
     <ClInclude Include="source\Enemy.h">
-      <Filter>GameObject\Character\Enemy</Filter>
+      <Filter>GameObject\CharaBase\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="source\EnemyAttackSettings.h">
-      <Filter>GameObject\Character\Enemy</Filter>
+      <Filter>GameObject\CharaBase\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="source\EnemyFactory.h">
-      <Filter>GameObject\Character\Enemy</Filter>
+      <Filter>GameObject\CharaBase\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="source\PlayerBase.h">
-      <Filter>GameObject\Character\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="source\PlayerManager.h">
-      <Filter>GameObject\Character\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="source\InteriorPlayer.h">
-      <Filter>GameObject\Character\Player\Interior</Filter>
-    </ClInclude>
-    <ClInclude Include="source\SurfacePlayer.h">
-      <Filter>GameObject\Character\Player\Surface</Filter>
-    </ClInclude>
-    <ClInclude Include="source\PlayerAbilityBase.h">
-      <Filter>Ability</Filter>
-    </ClInclude>
-    <ClInclude Include="source\PlayerAbilityManager.h">
-      <Filter>Ability</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeGame.h">
-      <Filter>Mode\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="source\StageBase.h">
-      <Filter>Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="source\StateCommon.h">
-      <Filter>GameObject\Character\Enemy\State</Filter>
-    </ClInclude>
-    <ClInclude Include="source\StateMelee.h">
-      <Filter>GameObject\Character\Enemy\State</Filter>
-    </ClInclude>
-    <ClInclude Include="source\StateRanged.h">
-      <Filter>GameObject\Character\Enemy\State</Filter>
+    <ClInclude Include="source\EnemyState.h">
+      <Filter>GameObject\CharaBase\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="source\EnergyManager.h">
       <Filter>Energy</Filter>
     </ClInclude>
-    <ClInclude Include="source\EnemyState.h">
-      <Filter>GameObject\Character\Enemy\State</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeMenu.h">
-      <Filter>Mode\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="source\MenuItemBase.h">
-      <Filter>Mode\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="source\DodgeSystem.h">
-      <Filter>Dodge</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeLoading.h">
-      <Filter>Mode\Loading</Filter>
-    </ClInclude>
-    <ClInclude Include="source\AbilitySelectScreen.h">
-      <Filter>Ability\Select</Filter>
+    <ClInclude Include="source\EnergyUI.h">
+      <Filter>Energy</Filter>
     </ClInclude>
     <ClInclude Include="source\GameCamera.h">
       <Filter>Camera</Filter>
     </ClInclude>
-    <ClInclude Include="source\EnergyUI.h">
-      <Filter>Energy</Filter>
+    <ClInclude Include="source\GameObjectBase.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CharaBase.h">
+      <Filter>GameObject\CharaBase</Filter>
+    </ClInclude>
+    <ClInclude Include="source\LightManager.h">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MenuItemBase.h">
+      <Filter>Mode\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeGame.h">
+      <Filter>Mode\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeMenu.h">
+      <Filter>Mode\Menu</Filter>
     </ClInclude>
     <ClInclude Include="source\ModeLoading.h">
-      <Filter>Mode\Loading</Filter>
+      <Filter>Mode\Load</Filter>
     </ClInclude>
-    <ClInclude Include="source\LightManager.h" />
+    <ClInclude Include="source\PlayerBase.h">
+      <Filter>GameObject\CharaBase\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerManager.h">
+      <Filter>GameObject\CharaBase\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateRanged.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateCommon.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateMelee.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\InteriorPlayer.h">
+      <Filter>GameObject\CharaBase\Player\Interior</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SurfacePlayer.h">
+      <Filter>GameObject\CharaBase\Player\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StageBase.h">
+      <Filter>Stage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
-      <UniqueIdentifier>{987de252-21da-425e-83e8-4927305308ed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Attack">
-      <UniqueIdentifier>{a89dff56-87bb-415e-90ef-a8e8ede02de8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Camera">
-      <UniqueIdentifier>{74cb9dfd-fe6a-4bd9-a171-970749f2d8df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject">
-      <UniqueIdentifier>{a9830f24-bd9e-4ef8-873a-743de6efec05}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Character">
-      <UniqueIdentifier>{e76ed34a-8d14-4819-aeea-e2c8785433e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Character\Enemy">
-      <UniqueIdentifier>{7e2c4c01-0c75-4b89-9aa6-cab047118fe0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Character\Player">
-      <UniqueIdentifier>{91200e8a-101f-46bf-99b3-2c7ae7667029}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Character\Player\Interior">
-      <UniqueIdentifier>{f4a1ae9e-db29-403f-a88d-ee8fbcf799d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Character\Player\Surface">
-      <UniqueIdentifier>{bb812abb-7299-4c1a-9bc5-d8db53e68f26}</UniqueIdentifier>
+      <UniqueIdentifier>{87c0314d-652a-4329-9004-ec2304255003}</UniqueIdentifier>
     </Filter>
     <Filter Include="Ability">
-      <UniqueIdentifier>{743ec4e5-4e82-4783-a699-b0b1ac46db76}</UniqueIdentifier>
+      <UniqueIdentifier>{b86c23fd-ce8b-42c7-add5-9af80d66bc70}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Stage">
-      <UniqueIdentifier>{e8774f89-67e5-4cc6-9a3e-4355c59f4327}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Character\Enemy\State">
-      <UniqueIdentifier>{74ec611d-19da-430c-a309-a9627fd91d56}</UniqueIdentifier>
+    <Filter Include="Attack">
+      <UniqueIdentifier>{11a771de-2886-4c94-ba6d-eb82ee0753dc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Energy">
-      <UniqueIdentifier>{f7332d90-2207-49b6-881d-254373fdcdfe}</UniqueIdentifier>
+      <UniqueIdentifier>{b62c61cf-7a0d-4327-9eeb-cd79776299fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Character\Bullet">
-      <UniqueIdentifier>{bf4cb234-2228-463f-b2ba-cf0a862623ae}</UniqueIdentifier>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{aafd3f0c-c6bc-4625-9d3d-04e69443e631}</UniqueIdentifier>
     </Filter>
     <Filter Include="Mode">
-      <UniqueIdentifier>{5df96618-4b54-4554-b0bf-2b2751625d1d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Mode\Game">
-      <UniqueIdentifier>{ff08f5af-39c5-47e7-98fb-b40351b55998}</UniqueIdentifier>
+      <UniqueIdentifier>{b7cc6313-7f14-4cc0-b019-dd08b1d273f0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Mode\Menu">
-      <UniqueIdentifier>{2f3b5113-7d47-46d0-899a-b2e9043a3456}</UniqueIdentifier>
+      <UniqueIdentifier>{ab85a906-0c93-42e0-85fc-4b39edfd7ff8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Dodge">
-      <UniqueIdentifier>{072ed45b-0e62-40f6-af12-853ab2794b9d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Mode\Loading">
-      <UniqueIdentifier>{ea7943b7-fc6f-463e-b8d8-3765d716c1d6}</UniqueIdentifier>
+    <Filter Include="Mode\Game">
+      <UniqueIdentifier>{071a6f3c-32d1-44fa-aad2-806ad8cdef07}</UniqueIdentifier>
     </Filter>
     <Filter Include="Ability\Select">
-      <UniqueIdentifier>{079ce18b-810d-4703-aef1-ad2ea57ecb47}</UniqueIdentifier>
+      <UniqueIdentifier>{a6f37d0f-4ec0-4fde-8678-b0a924ba8e04}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Mode\Loading">
-      <UniqueIdentifier>{39954c89-3fd1-4c7f-b458-81424ac734d4}</UniqueIdentifier>
+    <Filter Include="Bullet">
+      <UniqueIdentifier>{dbd2dd3d-1e6f-4956-b6b1-3c0631975688}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{893ad2ee-5aab-40b9-aa68-c9e294459396}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dodge">
+      <UniqueIdentifier>{ba95561e-67be-42ca-ac72-9c02e57f6953}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase">
+      <UniqueIdentifier>{115adbb7-abe7-4a29-982e-3bf615a4c0a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player">
+      <UniqueIdentifier>{0508fdec-9467-4497-890d-aea969da1e84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Enemy">
+      <UniqueIdentifier>{1438df41-e46a-4b94-8d9f-b3c871467f7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Enemy\state">
+      <UniqueIdentifier>{44c6c8a1-7651-4700-9499-36dde91a8f9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Light">
+      <UniqueIdentifier>{5f3de31b-18bc-4482-b88b-2588d6bd9f6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Load">
+      <UniqueIdentifier>{35198714-23c1-46cf-8a55-86d69483f8d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player\Surface">
+      <UniqueIdentifier>{5b68afb6-e1f7-435d-a520-87474eae2fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player\Interior">
+      <UniqueIdentifier>{b58c1215-8fb2-471f-9ae2-7fa0077cff40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Stage">
+      <UniqueIdentifier>{f51f6167-8088-48fb-bc30-d4d31501d52c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

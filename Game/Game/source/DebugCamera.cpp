@@ -30,7 +30,7 @@ void DebugCamera::Process(int key, int trg, float lx, float ly, float rx, float 
 {
 	// ƒJƒƒ‰‚Ì‰ñ“]
 	{
-		if (abs(rx) > analogMin) _angleH += rx * ROTATE_SPEED;
+		if (abs(rx) > analogMin) _angleH -= rx * ROTATE_SPEED;
 		if (abs(ry) > analogMin) {
 			_angleV += ry * ROTATE_SPEED;
 

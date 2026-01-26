@@ -103,7 +103,7 @@ bool ModeGame::Initialize()
 	}
 
 	// ステージ初期化
-	_stage = std::make_shared<StageBase>(3);// ステージ番号で切り替え
+	_stage = std::make_shared<StageBase>(1);// ステージ番号で切り替え
 
 	// カメラ初期化
 	{
@@ -269,7 +269,9 @@ bool ModeGame::Process()
 	// ターゲット更新
 	{
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
-		_gameCamera->SetTarget(activePlayer);	// 毎フレームプレイヤーにカメラを合わせる
+
+		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
+		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
 
 		// 敵にターゲットのプレイヤーを設定
 		for (const auto& enemy : _stage->GetEnemies()) 

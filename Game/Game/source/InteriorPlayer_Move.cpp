@@ -16,10 +16,10 @@ void InteriorPlayer::CallProcess()
 	ProcessMovePlayer();
 
 	// ジャンプ処理
-	ProcessJump();
+	//ProcessJump();
 
 	// 着地処理
-	ProcessStanding();
+	//ProcessStanding();
 
 	// しゃがみ処理
 	//ProcessCrouch();
@@ -49,6 +49,9 @@ void InteriorPlayer::ProcessMovePlayer()
 		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
 		if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
 		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
+
+		// カメラの向きに基づいて移動方向を変換
+		_vMove = TransformMoveDirection(_vMove, _cameraAngle - DX_PI_F / 2.0f);
 
 		// 移動量を正規化
 		float len = VSize(_vMove);

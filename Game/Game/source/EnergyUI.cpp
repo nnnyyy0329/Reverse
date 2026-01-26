@@ -17,8 +17,7 @@ namespace
 EnergyUI::EnergyUI()
 {
 	_iEnergyFrameHandle = ResourceServer::GetInstance()->GetHandle("energyFrame");
-	_iEnergyHandle1 = ResourceServer::GetInstance()->GetHandle("tryEnergy1");
-	//_iEnergyHandle1 = ResourceServer::GetInstance()->GetHandle("energy1");
+	_iEnergyHandle1 = ResourceServer::GetInstance()->GetHandle("energy1");
 	_iEnergyHandle2 = ResourceServer::GetInstance()->GetHandle("energy2");
 	_iEnergyHandle3 = ResourceServer::GetInstance()->GetHandle("energy3");
 }
@@ -96,7 +95,7 @@ void EnergyUI::EnergyGaugeRender(float ratio)
 	int cutH = static_cast<int>(graphH * ratio);			// 描画する高さ
 
 	// 下から満たされるように画面上での描画Y座標を調整
-	int fillScreenY = DRAW_Y + cutY;	// 上部がカットされた分だけY座標を下げる
+	int fillScreenY = /*DRAW_Y +*/ cutY;	// 上部がカットされた分だけY座標を下げる
 	int fillDrawH = cutH;				// 描画する高さ
 
 	// 円形ゲージを描画（下から上に満たされる）

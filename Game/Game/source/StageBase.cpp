@@ -16,9 +16,9 @@ StageBase::StageBase(int stageNum)
 		switch (_stageNum) {// ステージ番号で読み込むファイルを分ける
 		case 1:
 			// jsonお試し
-			path = "res/try2/";
-			jsonFile = "protostage.json";
-			jsonObjName = "Playground";
+			path = "res/a3/";
+			jsonFile = "tryroom3.json";
+			jsonObjName = "object";
 			break;
 		case 2:
 			// 浮島
@@ -98,58 +98,58 @@ StageBase::StageBase(int stageNum)
 
 	// jsonファイルの読み込み(敵)
 	{
-		//std::string path, jsonFile, jsonObjName;
-		//path = "res/try_enemy_marker/";
-		//jsonFile = "try_enemy_marker.json";
-		//jsonObjName = "res";
+		std::string path, jsonFile, jsonObjName;
+		path = "res/try_enemy_marker/";
+		jsonFile = "try_enemy_marker.json";
+		jsonObjName = "res";
 
-		//std::ifstream file(path + jsonFile);
-		//nlohmann::json json;
-		//file >> json;
-		//nlohmann::json enemy = json.at(jsonObjName);
+		std::ifstream file(path + jsonFile);
+		nlohmann::json json;
+		file >> json;
+		nlohmann::json enemy = json.at(jsonObjName);
 
-		//for (auto& data : enemy)
-		//{
-		//	ENEMYPOS enPos;
-		//	data.at("objectName").get_to(enPos.typeName);
-		//	// UEは左手座標系/Zup →左手座標系/Yup に変換しつつ取得
-		//	data.at("translate").at("x").get_to(enPos.vPos.x);
-		//	data.at("translate").at("z").get_to(enPos.vPos.y);
-		//	data.at("translate").at("y").get_to(enPos.vPos.z);
-		//	enPos.vPos.z *= -1.0f;// 座標の変換
-		//	data.at("rotate").at("x").get_to(enPos.vRot.x);
-		//	data.at("rotate").at("z").get_to(enPos.vRot.y);
-		//	data.at("rotate").at("y").get_to(enPos.vRot.z);
-		//	enPos.vRot.x = enPos.vRot.x * DEGREE_TO_RADIAN;// 回転はdegree→radianに
-		//	enPos.vRot.y = enPos.vRot.y * DEGREE_TO_RADIAN;
-		//	enPos.vRot.z = enPos.vRot.z * DEGREE_TO_RADIAN;
+		for (auto& data : enemy)
+		{
+			ENEMYPOS enPos;
+			data.at("objectName").get_to(enPos.typeName);
+			// UEは左手座標系/Zup →左手座標系/Yup に変換しつつ取得
+			data.at("translate").at("x").get_to(enPos.vPos.x);
+			data.at("translate").at("z").get_to(enPos.vPos.y);
+			data.at("translate").at("y").get_to(enPos.vPos.z);
+			enPos.vPos.z *= -1.0f;// 座標の変換
+			data.at("rotate").at("x").get_to(enPos.vRot.x);
+			data.at("rotate").at("z").get_to(enPos.vRot.y);
+			data.at("rotate").at("y").get_to(enPos.vRot.z);
+			enPos.vRot.x = enPos.vRot.x * DEGREE_TO_RADIAN;// 回転はdegree→radianに
+			enPos.vRot.y = enPos.vRot.y * DEGREE_TO_RADIAN;
+			enPos.vRot.z = enPos.vRot.z * DEGREE_TO_RADIAN;
 
-		//	// 種類ごとに敵を生成
-		//	if (enPos.typeName == "S_MarkerA")
-		//	{
-		//		_stageEnemies.push_back(
-		//			EnemyFactory::CreateEnemy(EnemyType::MELEE, enPos.vPos)
-		//		);
-		//	}
-		//	else if (enPos.typeName == "S_MarkerB")
-		//	{
-		//		_stageEnemies.push_back(
-		//			EnemyFactory::CreateEnemy(EnemyType::RANGED, enPos.vPos)
-		//		);
-		//	}
-		//}
+			// 種類ごとに敵を生成
+			if (enPos.typeName == "S_MarkerA")
+			{
+				_stageEnemies.push_back(
+					EnemyFactory::CreateEnemy(EnemyType::MELEE, enPos.vPos)
+				);
+			}
+			else if (enPos.typeName == "S_MarkerB")
+			{
+				_stageEnemies.push_back(
+					EnemyFactory::CreateEnemy(EnemyType::RANGED, enPos.vPos)
+				);
+			}
+		}
 
 
 
-		_stageEnemies.push_back(
-			EnemyFactory::CreateEnemy(EnemyType::MELEE, VGet(1800, 0.0f, -180.0f))// テストで調整
-		);
-		_totalEnemyCnt++;// 敵を追加したらカウントアップ
+		//_stageEnemies.push_back(
+		//	EnemyFactory::CreateEnemy(EnemyType::MELEE, VGet(1800, 0.0f, -180.0f))// テストで調整
+		//);
+		//_totalEnemyCnt++;// 敵を追加したらカウントアップ
 
-		_stageEnemies.push_back(
-			EnemyFactory::CreateEnemy(EnemyType::RANGED, VGet(1800.0f, 0.0f, -180.0f))// テストで調整
-		);
-		_totalEnemyCnt++;// 敵を追加したらカウントアップ
+		//_stageEnemies.push_back(
+		//	EnemyFactory::CreateEnemy(EnemyType::RANGED, VGet(1800.0f, 0.0f, -180.0f))// テストで調整
+		//);
+		//_totalEnemyCnt++;// 敵を追加したらカウントアップ
 	}
 }
 
@@ -187,8 +187,9 @@ void StageBase::Render()
 	// マップモデルの描画
 	{
 		for (auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) {
-			MV1DrawFrame(ite->modelHandle, ite->drawFrame);
+			//MV1DrawFrame(ite->modelHandle, ite->drawFrame);
 			//MV1DrawFrame(ite->modelHandle, ite->collisionFrame);// コリジョンフレームの描画
+			MV1DrawModel(ite->modelHandle);
 		}
 	}
 

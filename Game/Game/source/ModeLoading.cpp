@@ -14,6 +14,17 @@ bool ModeLoading::Initialize()
 		rs->Register("LifeBarFrame", "res/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
 		rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
 		rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
+
+		// 能力選択画面用
+		rs->Register("select1", "res/try3/select1.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("select2", "res/try3/select2.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("select3", "res/try3/select3.png", RESOURCE_TYPE::Graph, 1.0f);
+
+		// エネルギーUI用
+		rs->Register("energyFrame", "res/try3/energy_frame.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("energy1", "res/try3/energy_1.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("energy2", "res/try3/energy_2.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("energy3", "res/try3/energy_3.png", RESOURCE_TYPE::Graph, 1.0f);
 	}
 
 	// リソースのロード開始

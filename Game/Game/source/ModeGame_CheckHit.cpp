@@ -295,11 +295,19 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		col.attackColTop, col.attackColBottom, col.attackColR
 	) != false)
 	{
+		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
+		auto charaType = chara->GetCharaType();							// キャラのタイプ取得
+
+		if(charaType == CHARA_TYPE::ENEMY &&
+		   ownerType == ATTACK_OWNER_TYPE::ENEMY)
+		{
+			return;
+		}
+
 		attack->SetHitFlag(true);	// ヒットフラグを有効にする
 		
 		float damage = attack->GetDamage();								// ダメージ取得
 		auto beforeLife = chara->GetLife();								// ヒット前のライフ取得
-		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
 
 		// ターゲットにダメージを与える
 		chara->ApplyDamage(damage, ownerType);							

@@ -58,6 +58,9 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
+	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
+	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
+
 	// 入力状態を設定する
 	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
 	{
@@ -148,5 +151,8 @@ protected:
 	float _fAttackColR;
 	bool _bCanCombo;	// コンボ可能フラグ
 	int _iComboCount;	// コンボカウント
+
+	// カメラ角度
+	float _cameraAngle;
 };
 
