@@ -17,6 +17,7 @@ public:
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
 	virtual void DebugRender();	// デバッグ描画
+	virtual void CollisionRender(); // コリジョン描画
 	void DrawLifeBar();// 体力バー描画
 
 	VECTOR GetHomePos() const { return _vHomePos; }

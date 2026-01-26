@@ -167,6 +167,7 @@
     <ClCompile Include="source\InteriorPlayer_Draw.cpp" />
     <ClCompile Include="source\InteriorPlayer_Move.cpp" />
     <ClCompile Include="source\LightManager.cpp" />
+    <ClCompile Include="source\MenuItemBase.cpp" />
     <ClCompile Include="source\ModeGame.cpp" />
     <ClCompile Include="source\ModeGame_CheckHit.cpp" />
     <ClCompile Include="source\ModeLoading.cpp" />

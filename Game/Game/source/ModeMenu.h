@@ -30,7 +30,6 @@ protected:
 	int _curPos;
 	int _curAnimCnt;
 
-	//std::shared_ptr<DebugCamera> _debugCamera;
 	std::shared_ptr<CameraManager> _cameraManager;
 	bool _bUseDebugCamera;
 };

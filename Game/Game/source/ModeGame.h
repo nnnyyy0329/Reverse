@@ -38,10 +38,18 @@ public:
 	virtual bool Render();
 
 	// デバッグ関連
+	bool GetDebugViewDebugInfo() { return _bViewDebugInfo; }
+	void SetDebugViewDebugInfo(bool bView) { _bViewDebugInfo = bView; }
 	bool GetDebugViewCollision() { return _bViewCollision; }
 	void SetDebugViewCollision(bool bView) { _bViewCollision = bView; }
-	bool GetUseCollision() { return _bUseCollision; }
-	void SetUseCollision(bool bUse) { _bUseCollision = bUse; }
+	bool GetDebugUseCollision() { return _bUseCollision; }
+	void SetDebugUseCollision(bool bUse) { _bUseCollision = bUse; }
+	// カメラマネージャー取得
+	std::shared_ptr<CameraManager> GetCameraManager() const { return _cameraManager; }
+	// ゲームカメラ取得
+	std::shared_ptr<GameCamera> GetGameCamera() const { return _gameCamera; }
+	// デバッグカメラ取得
+	std::shared_ptr<DebugCamera> GetDebugCamera() const { return _debugCamera; }
 
 protected:
 	// プレイヤー管理をPlayerManagerに委譲
@@ -64,6 +72,7 @@ protected:
 	EnergyManager* _energyManager = nullptr;
 
 	// デバッグ用
+	bool _bViewDebugInfo;// デバッグ情報表示
 	bool _bViewCollision;// 当たり判定表示
 	bool _bUseCollision;// 当たり判定有効
 
@@ -72,6 +81,9 @@ protected:
 	std::shared_ptr<LightManager> _lightManager;// ライトマネージャー 
 	// 生成されたライトを管理
 	std::vector<LightInfo> _lights;
+
+	// のうりょくせんたくがめんよう
+	bool _isUseDebugScreen;
 
 private:
 	void CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
@@ -94,8 +106,4 @@ private:
 	int AddPointLight(VECTOR vPos, float fRange, COLOR_F color);
 
 	void RemoveLight(int lightHandle);// 指定ライトを削除
-
-
-	/// のうりょくせんたくがめんよう
-	bool _isUseDebugScreen;
 };

@@ -1,12 +1,7 @@
 #include "ModeMenu.h"
 #include "ApplicationMain.h"
-//#include "DebugCamera.h"
-#include "CameraManager.h"
-
-
-// 消す
 #include "ApplicationGlobal.h"
-
+#include "CameraManager.h"
 
 bool ModeMenu::Initialize() {
 	if (!base::Initialize()) { return false; }
@@ -60,7 +55,6 @@ bool ModeMenu::Process() {
 	if (trg & PAD_INPUT_10)
 	{
 		_cameraManager->SetIsUseDebugCamera(false); // デバッグカメラOFFにする
-
 		close = true;
 	}
 
@@ -81,8 +75,8 @@ bool ModeMenu::Process() {
 
 		if (ret == 1) 
 		{
-			// メニューを閉じる
-			//close = true;
+			 //メニューを閉じる
+			close = true;
 		}
 	}
 

@@ -11,7 +11,8 @@ public:
 	virtual bool Terminate();	// 終了
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
-	virtual void DebugRender();	// デバッグ描画
+	virtual void DebugRender() {};	// デバッグ情報描画
+	virtual void CollisionRender() {}; // コリジョン描画
 
 	// ゲッターセッター
 	VECTOR GetPos() { return _vPos; }
@@ -44,7 +45,6 @@ protected:
 	float _fPlayTime;	// 再生時間
 
 private:
-
 
 };
 

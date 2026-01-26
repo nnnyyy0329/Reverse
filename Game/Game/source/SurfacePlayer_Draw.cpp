@@ -76,15 +76,6 @@ void SurfacePlayer::DrawCoordinate()
 {
 	// プレイヤーの座標情報
 	{
-		// 0,0,0を中心に線を引く
-		{
-			float linelength = 1000.f;
-			VECTOR v = { 0, 0, 0 };
-			DrawLine3D(VAdd(v, VGet(-linelength, 0, 0)), VAdd(v, VGet(linelength, 0, 0)), GetColor(255, 0, 0));
-			DrawLine3D(VAdd(v, VGet(0, -linelength, 0)), VAdd(v, VGet(0, linelength, 0)), GetColor(0, 255, 0));
-			DrawLine3D(VAdd(v, VGet(0, 0, -linelength)), VAdd(v, VGet(0, 0, linelength)), GetColor(0, 0, 255));
-		}
-
 		// プレイヤー位置情報表示
 		{
 			DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(color::R, color::G, color::B), "Player:");

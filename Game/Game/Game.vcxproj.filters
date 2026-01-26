@@ -110,6 +110,7 @@
     <ClCompile Include="source\EnergyUI.cpp">
       <Filter>Energy</Filter>
     </ClCompile>
+    <ClCompile Include="source\MenuItemBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ApplicationGlobal.h">
