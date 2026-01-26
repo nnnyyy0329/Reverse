@@ -40,7 +40,7 @@ bool AbilitySelectScreen::Terminate()
 
 bool AbilitySelectScreen::Process()
 {
-	//// このモードより下のレイヤーはProcess()を呼ばない
+	// このモードより下のレイヤーはProcess()を呼ばない
 	//ModeServer::GetInstance()->SkipProcessUnderLayer();
 
 	// 入力による選択処理
@@ -112,7 +112,7 @@ void AbilitySelectScreen::SelectRender()
 
 	// 背景の半透明黒
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-	DrawBox(x, y, x + w, y + h, GetColor(255, 255, 255), TRUE);
+	//DrawBox(x, y, x + w, y + h, GetColor(255, 255, 255), TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	// アビリティ画像の座標
@@ -121,8 +121,8 @@ void AbilitySelectScreen::SelectRender()
 
 	// アビリティ画像を描画
 	DrawGraph(selectX[0], selectY, _iHandle1, TRUE);
-	DrawGraph(selectX[1], selectY, _iHandle2, TRUE);
-	DrawGraph(selectX[2], selectY, _iHandle3, TRUE);
+	DrawGraph(selectX[1], selectY, _iHandle1, TRUE);
+	DrawGraph(selectX[2], selectY, _iHandle1, TRUE);
 }
 
 // 選択画面表示
@@ -147,10 +147,10 @@ void AbilitySelectScreen::SelectFrameRender()
 			int frameH = 1080;
 
 			// 選択フレームを描画
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
-			DrawBox(frameX - 5, frameY - 5, frameX + frameW + 5, frameY + frameH + 5, GetColor(0, 0, 0), TRUE);
-			DrawBox(frameX - 3, frameY - 3, frameX + frameW + 3, frameY + frameH + 3, GetColor(0, 0, 0), TRUE);
-			DrawBox(frameX - 1, frameY - 1, frameX + frameW + 1, frameY + frameH + 1, GetColor(0, 0, 0), TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+			DrawBox(frameX - 5, frameY - 5, frameX + frameW + 5, frameY + frameH + 5, GetColor(255, 255, 0), TRUE);
+			DrawBox(frameX - 3, frameY - 3, frameX + frameW + 3, frameY + frameH + 3, GetColor(0, 255, 0), TRUE);
+			DrawBox(frameX - 1, frameY - 1, frameX + frameW + 1, frameY + frameH + 1, GetColor(255, 0, 0), TRUE);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
 	}

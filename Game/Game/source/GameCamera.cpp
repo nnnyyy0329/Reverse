@@ -16,12 +16,13 @@ GameCamera::GameCamera()
 	_nearClip = 1.f;
 	_farClip = 5000.f;
 
-	_distance = 100.0f;
+	_distance = 450.0f;
 	_angleH = 0.0f;
 	_angleV = 0.0f;
 
-	_posOffset = VGet(0.0f, 200.0f, 500.0f);
-	_targetOffset = VGet(0.0f, 100.0f, 0.0f);
+	//_posOffset = VGet(0.0f, 0.0f, 0.0f);
+	//_targetOffset = VGet(0.0f, 100.0f, 0.0f);
+	_targetOffset = VGet(0.0f, 150.0f, 0.0f);
 }
 
 void GameCamera::Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool isInput)
@@ -42,7 +43,7 @@ void GameCamera::Process(int key, int trg, float lx, float ly, float rx, float r
 	UpdateCamera();
 
 	// カメラ位置の更新
-	//UpdateCameraPos();
+	UpdateCameraPos();
 
 	// カメラ操作処理
 	ControlCamera(rx, ry, analogMin);
@@ -107,7 +108,6 @@ void GameCamera::UpdateCameraPos()
 
 	// 3.相対位置をターゲットの座標に足してカメラの絶対座標を計算
 	_vPos = VAdd(_vTarget, VGet(x, y, z));
-
 }
 
 // カメラ操作処理
