@@ -32,6 +32,7 @@ enum class PLAYER_STATUS
 	NONE,
 	WAIT,			// 待機
 	WALK,			// 歩行
+	RUN,			// 走行
 	FIRST_ATTACK,	// 1段目攻撃
 	SECOND_ATTACK,	// 2段目攻撃
 	THIRD_ATTACK,	// 3段目攻撃

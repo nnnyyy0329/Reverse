@@ -117,6 +117,9 @@ void SurfacePlayer::DrawStatus()
 		case PLAYER_STATUS::WALK:			// 歩行
 			status = "WALK";
 			break;
+		case PLAYER_STATUS::RUN:			// 走行
+			status = "RUN";
+			break;
 		case PLAYER_STATUS::FIRST_ATTACK:	// 攻撃1
 			status = "FIRST_ATTACK";
 			break;
@@ -173,6 +176,11 @@ void SurfacePlayer::DrawAnimationName()
 		case PLAYER_STATUS::WALK:	// 歩行
 		{
 			animName = "WALK";
+			break;
+		}
+		case PLAYER_STATUS::RUN:	// 走行
+		{
+			animName = "RUN";
 			break;
 		}
 		case PLAYER_STATUS::JUMP_UP: // ジャンプ上昇

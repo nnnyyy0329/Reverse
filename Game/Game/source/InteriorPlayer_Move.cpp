@@ -143,13 +143,23 @@ void InteriorPlayer::ProcessStatusAnimation()
 		// 通常移動
 		else
 		{
-			// 通常 
-			if(VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f) // 歩いているかどうか
+			bool isWalking = VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f;	// 歩いているかどうか
+			bool isRunning = (_key & PAD_INPUT_5) != 0;						// ダッシュ入力があるかどうか
+
+			// 走り
+			if(isWalking && isRunning)
+			{
+				_vDir = _vMove;							// 移動方向を向く
+				_ePlayerStatus = PLAYER_STATUS::RUN;	// 走行
+			}
+			// 歩き
+			else if(isWalking)
 			{
 				_vDir = _vMove;							// 移動方向を向く
 				_ePlayerStatus = PLAYER_STATUS::WALK;	// 歩行
 			}
-			else // 止まっている
+			// 待機
+			else
 			{
 				_ePlayerStatus = PLAYER_STATUS::WAIT;	// 待機
 			}
@@ -316,7 +326,7 @@ void InteriorPlayer::ProcessJump()
 	if(IsAttacking()){ return; }
 
 	// ジャンプボタンが押されたら
-	if(_trg & PAD_INPUT_A && _ePlayerStatus != PLAYER_STATUS::JUMP_UP)	// Zボタン
+	if(_trg & PAD_INPUT_2 && _ePlayerStatus != PLAYER_STATUS::JUMP_UP)	// Zボタン
 	{
 		// ジャンプ中でなく、着地しているなら
 		if(!_bIsJumping && _bIsStanding)
@@ -339,7 +349,7 @@ void InteriorPlayer::ProcessCrouch()
 	if(IsAttacking()){ return; }
 
 	// しゃがみボタンが押されたら
-	if(_trg & PAD_INPUT_B)
+	if(_trg & PAD_INPUT_10)
 	{
 		// しゃがみ開始フラグが立っておらず、しゃがみステータスでなければ
 		if(!_bIsStartCrouch && _ePlayerStatus != PLAYER_STATUS::CROUCH_WAIT)
@@ -378,6 +388,6 @@ void InteriorPlayer::ProcessDebug()
 {
 	// 体力減少
 	{
-		if(_trg & PAD_INPUT_8){ _fLife -= 5.0f; }
+		//if(_trg & PAD_INPUT_8){ _fLife -= 5.0f; }
 	}
 }

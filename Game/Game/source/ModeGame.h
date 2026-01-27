@@ -74,15 +74,12 @@ protected:
 	EnergyManager* _energyManager = nullptr;
 
 	// デバッグ用
-	bool _bViewDebugInfo;// デバッグ情報表示
-	bool _bViewCollision;// 当たり判定表示
-	bool _bUseCollision;// 当たり判定有効
-
+	bool _bViewDebugInfo;	// デバッグ情報表示
+	bool _bViewCollision;	// 当たり判定表示
+	bool _bUseCollision;	// 当たり判定有効
 
 	// ベクターコンテナ
 	std::vector<LightInfo>	_lights;	// 生成されたライトを管理
-	std::vector<CharaBase>	_hitCharas;	// 当たったキャラを管理
-
 
 	// のうりょくせんたくがめんよう
 	bool _isUseDebugScreen;

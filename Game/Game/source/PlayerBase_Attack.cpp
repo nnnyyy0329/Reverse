@@ -131,7 +131,7 @@ void PlayerBase::ProcessAttack()
 	// 攻撃入力チェック（通常状態時）
 	if((_ePlayerStatus == PLAYER_STATUS::WAIT ||
 		_ePlayerStatus == PLAYER_STATUS::WALK)
-		&& _trg & PAD_INPUT_7) 
+		&& _trg & PAD_INPUT_1) 
 	{
 		// 1段目の攻撃開始処理
 		ProcessStartAttack(1, PLAYER_STATUS::FIRST_ATTACK, _attacks[0]);
@@ -206,7 +206,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 			_bCanCombo = true;
 
 			// 次の攻撃入力があれば次の攻撃へ
-			if((_trg & PAD_INPUT_7) && CanNextAttack())
+			if((_trg & PAD_INPUT_1) && CanNextAttack())
 			{
 				ProcessNextAttack(attackIndex);
 			}
@@ -216,7 +216,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 		case ATTACK_STATE::RECOVERY:	// 硬直中
 		{
 			// 次の攻撃入力があれば次の攻撃へ
-			if((_trg & PAD_INPUT_7) && CanNextAttack())
+			if((_trg & PAD_INPUT_1) && CanNextAttack())
 			{
 				ProcessNextAttack(attackIndex);
 			}

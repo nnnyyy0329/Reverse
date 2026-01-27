@@ -131,6 +131,7 @@ void SurfacePlayer::ProcessStatusAnimation()
 			_ePlayerStatus = PLAYER_STATUS::JUMP_DOWN;
 		}
 	}
+	// 地上にいる場合
 	else
 	{
 		// しゃがみ中かどうか
@@ -150,13 +151,23 @@ void SurfacePlayer::ProcessStatusAnimation()
 		// 通常移動
 		else
 		{
-			// 通常 
-			if(VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f) // 歩いているかどうか
+			bool isWalking = VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f;
+			bool isRunning = (_key & PAD_INPUT_5) != 0;
+			
+			// 走り
+			if(isWalking && isRunning)
+			{
+				_vDir = _vMove;							// 移動方向を向く
+				_ePlayerStatus = PLAYER_STATUS::RUN;	// 走行
+			}
+			// 歩き
+			else if(isWalking)
 			{
 				_vDir = _vMove;							// 移動方向を向く
 				_ePlayerStatus = PLAYER_STATUS::WALK;	// 歩行
 			}
-			else // 止まっている
+			// 待機
+			else
 			{
 				_ePlayerStatus = PLAYER_STATUS::WAIT;	// 待機
 			}
@@ -198,6 +209,12 @@ void SurfacePlayer::ProcessPlayAnimation()
 			{
 				_iAttachIndex = -1;
 				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "run"), -1, FALSE);
+				break;
+			}
+			case PLAYER_STATUS::RUN:	// 走行
+			{
+				_iAttachIndex = -1;
+				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "dash"), -1, FALSE);
 				break;
 			}
 			case PLAYER_STATUS::JUMP_UP: // ジャンプ上昇
@@ -313,7 +330,7 @@ void SurfacePlayer::ProcessJump()
 	if(IsAttacking()){ return; }
 
 	// ジャンプボタンが押されたら
-	if(_trg & PAD_INPUT_A && _ePlayerStatus != PLAYER_STATUS::JUMP_UP)	// Zボタン
+	if(_trg & PAD_INPUT_2 && _ePlayerStatus != PLAYER_STATUS::JUMP_UP)	// Zボタン
 	{
 		// ジャンプ中でなく、着地しているなら
 		if(!_bIsJumping && _bIsStanding)
@@ -336,7 +353,7 @@ void SurfacePlayer::ProcessCrouch()
 	if(IsAttacking()){ return; }
 
 	// しゃがみボタンが押されたら
-	if(_trg & PAD_INPUT_B)
+	if(_trg & PAD_INPUT_10)
 	{
 		// しゃがみ開始フラグが立っておらず、しゃがみステータスでなければ
 		if(!_bIsStartCrouch && _ePlayerStatus != PLAYER_STATUS::CROUCH_WAIT)
@@ -376,7 +393,7 @@ void SurfacePlayer::ProcessDodge()
 	if(IsAttacking()){ return; }
 
 	// 回避ボタンが押されたら
-	if(_trg & PAD_INPUT_C)	// Xボタン
+	if(_trg & PAD_INPUT_3)	// Xボタン
 	{
 		// 回避ステータスに変更
 		_ePlayerStatus = PLAYER_STATUS::DODGE;
@@ -410,7 +427,7 @@ void SurfacePlayer::ProcessDebug()
 {
 	// 体力減少
 	{
-		if(_trg & PAD_INPUT_8){ _fLife -= 5.0f; }
+		//if(_trg & PAD_INPUT_8){ _fLife -= 5.0f; }
 	}
 
 	// エネルギーを増やす
