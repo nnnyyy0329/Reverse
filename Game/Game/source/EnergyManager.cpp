@@ -3,8 +3,8 @@
 namespace
 {
 	const float MIN_ENERGY = 0.0f;			// 最小エネルギー量
-	const float MAX_ENERGY = 100.0f;		// 最大エネルギー量
-	const float CONVERT_MULTIPLIER = 0.5f;	// デフォルト変換倍率
+	const float MAX_ENERGY = 300.0f;		// 最大エネルギー量
+	const float CONVERT_MULTIPLIER = 3.5f;	// デフォルト変換倍率
 	const float CONSUME_MULTIPLIER = 0.5f;	// デフォルト消費倍率
 	const float SWITCH_COST_ENERGY = 50.0f;	// 切り替え可能エネルギー
 	const float SWITCH_KEEP_ENERGY = 0.01f;	// 切り替え維持エネルギー

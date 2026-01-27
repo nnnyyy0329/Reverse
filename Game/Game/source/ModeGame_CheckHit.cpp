@@ -313,7 +313,7 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		chara->ApplyDamage(damage, ownerType);							
 
 		auto afterLife = chara->GetLife();	// ヒット後のライフ取得
-		damage = beforeLife - afterLife;	// 実際に与えたダメージを計算
+		//damage = beforeLife - afterLife;	// 実際に与えたダメージを計算
 
 		// ダメージをエネルギーに変換
 		ConvertEnergy(attack, damage);									
