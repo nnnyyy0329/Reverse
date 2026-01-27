@@ -9,9 +9,20 @@ bool ModeLoading::Initialize()
 	// リソースの登録
 	{
 		auto rs = ResourceServer::GetInstance();
+		// エフェクト
 		rs->Register("Laser", "res/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-		rs->Register("LifeBar", "res/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("LifeBarFrame", "res/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
+
+		// 敵関連
+		{
+			// モデル
+			rs->Register("Enemy", "res/toki_teki_ver006.mv1", RESOURCE_TYPE::Model, 1.0f);
+
+			// ライフバー
+			rs->Register("LifeBar", "res/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("LifeBarFrame", "res/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
+		}
+
+		// プレイヤー関連
 		rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
 		rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
 

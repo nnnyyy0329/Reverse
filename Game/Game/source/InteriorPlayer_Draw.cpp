@@ -33,21 +33,18 @@ void InteriorPlayer::CallDraw()
 // モデルの表示
 void InteriorPlayer::DrawModel()
 {
-	// 再生時間をセットする
-	MV1SetAttachAnimTime(_iHandle, _iAttachIndex, _fPlayTime);
-
 	// モデルを描画する
 	{
-		// 位置
-		MV1SetPosition(_iHandle, _vPos);
+		//// 位置
+		//MV1SetPosition(_iHandle, _vPos);
 
-		// 向きからY軸回転を算出
-		VECTOR vRot = { 0,0,0 };
-		vRot.y = atan2(_vDir.x * -1, _vDir.z * -1);	// モデルが標準でどちらを向いているかで式が変わる(これは-zを向いている場合)
-		MV1SetRotationXYZ(_iHandle, vRot);
+		//// 向きからY軸回転を算出
+		//VECTOR vRot = { 0,0,0 };
+		//vRot.y = atan2(_vDir.x * -1, _vDir.z * -1);	// モデルが標準でどちらを向いているかで式が変わる(これは-zを向いている場合)
+		//MV1SetRotationXYZ(_iHandle, vRot);
 
-		// 描画
-		MV1DrawModel(_iHandle);
+		//// 描画
+		//MV1DrawModel(_iHandle);
 
 		// コリジョン判定用ラインの描画
 		if(_bViewCollision)
@@ -223,7 +220,7 @@ void InteriorPlayer::DrawAnimationName()
 		}
 	}
 
-	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(color::R, color::G, color::B), "Player AnimName: %d", _iAttachIndex);
+	//DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(color::R, color::G, color::B), "Player AnimName: %d", _iAttachIndex);
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 }
 

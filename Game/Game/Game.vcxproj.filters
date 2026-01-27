@@ -110,6 +110,7 @@
       <Filter>Stage</Filter>
     </ClCompile>
     <ClCompile Include="source\MenuItemBase.cpp" />
+    <ClCompile Include="source\AnimManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\PlayerAbilityBase.h">
@@ -214,6 +215,7 @@
     <ClInclude Include="source\StageBase.h">
       <Filter>Stage</Filter>
     </ClInclude>
+    <ClInclude Include="source\AnimManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">

@@ -1,5 +1,6 @@
 #pragma once
 #include "appframe.h"
+#include "AnimManager.h"
 
 class GameObjectBase
 {
@@ -30,6 +31,8 @@ public:
 	VECTOR GetMove() { return _vMove; }
 	void SetMove(VECTOR v) { _vMove = v; }
 
+	AnimManager* GetAnimManager() { return &_animManager; }
+
 protected:
 	// 位置関連
 	VECTOR _vPos;		// 位置
@@ -38,11 +41,8 @@ protected:
 	VECTOR _vScale;		// 拡縮
 	VECTOR _vMove;		// 移動量
 
-	// モデル関連
-	int _iHandle;		// グラフィックハンドル
-	int _iAttachIndex;	// アタッチインデックス
-	float _fTotalTime;	// 総経過時間
-	float _fPlayTime;	// 再生時間
+	// アニメーション管理
+	AnimManager _animManager;
 
 private:
 

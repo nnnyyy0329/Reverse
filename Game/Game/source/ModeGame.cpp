@@ -61,7 +61,7 @@ bool ModeGame::Initialize()
 	}
 
 	// ステージ初期化
-	_stage = std::make_shared<StageBase>(2);// ステージ番号で切り替え
+	_stage = std::make_shared<StageBase>(3);// ステージ番号で切り替え
 
 	// カメラ初期化
 	{
@@ -236,10 +236,10 @@ bool ModeGame::Process()
 		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
 
 		// マップ
-		CheckCollisionCharaMap(player);
-		for (const auto& enemy : enemies) {
-			CheckCollisionCharaMap(enemy);
-		}
+		//CheckCollisionCharaMap(player);
+		//for (const auto& enemy : enemies) {
+		//	CheckCollisionCharaMap(enemy);
+		//}
 	}
 
 	// ターゲット更新
