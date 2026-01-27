@@ -10,6 +10,7 @@ public:
 	virtual ~GameCamera() {};
 
 	void Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool isInput);
+	void Render();
 	void DebugRender();
 
 	void SetUp();												// ƒJƒƒ‰İ’è

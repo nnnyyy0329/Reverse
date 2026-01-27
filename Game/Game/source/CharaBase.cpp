@@ -42,6 +42,24 @@ bool CharaBase::Render()
 	return true;
 }
 
+void CharaBase::DebugRender()
+{
+}
+
+void CharaBase::CollisionRender()
+{
+	// ƒJƒvƒZƒ‹“–‚½‚è”»’è
+	DrawCapsule3D(
+		_vCollisionBottom,
+		_vCollisionTop,
+		_fCollisionR,
+		8,
+		GetColor(255, 0, 0),
+		GetColor(0, 255, 0),
+		FALSE
+	);
+}
+
 void CharaBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 {
 	if (_fLife <= 0.0f) return;	// ‘Ì—Í‚ª0‚È‚ç–³Œø

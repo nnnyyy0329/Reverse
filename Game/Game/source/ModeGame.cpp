@@ -24,49 +24,7 @@
 
 #include "AbilitySelectScreen.h"
 
-// メニュー項目
-class MenuDebugCamera : public MenuItemBase
-{
-public:
-	MenuDebugCamera(void* param, std::string text) : MenuItemBase(param, text) {}
-
-	void SetCameraManagerMenu(std::shared_ptr<CameraManager> cameraManager) { __cameraManager = cameraManager; }
-	void SetGameCameraMenu(std::shared_ptr<GameCamera> gameCamera) { __gameCamera = gameCamera; }
-	void SetDebugCameraMenu(std::shared_ptr<DebugCamera> debugCamera) { __debugCamera = debugCamera; }
-
-	// 項目を決定したらこの関数が呼ばれる
-	// return int : 0 = メニュー継続, 1 = メニュー終了
-	virtual int Selected() 
-	{
-		int key = ApplicationMain::GetInstance()->GetKey();
-		int trg = ApplicationMain::GetInstance()->GetTrg();
-		auto analog = ApplicationMain::GetInstance()->GetAnalog();
-		float lx = analog.lx;
-		float ly = analog.ly;
-		float rx = analog.rx;
-		float ry = analog.ry;
-		float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
-
-		// デバッグカメラ
-		{
-			__debugCamera->SetInfo(__gameCamera->GetVPos(), __gameCamera->GetVTarget());// 元カメラの情報を渡す
-			__cameraManager->SetIsUseDebugCamera(true);
-
-			auto* modeMenu = dynamic_cast<ModeMenu*>(ModeServer::GetInstance()->Get("menu"));
-			modeMenu->SetUseDebugCamera(true);
-		}
-
-		return 1;
-	}
-
-protected:
-
-	std::shared_ptr<CameraManager>	__cameraManager;	// カメラマネージャー
-	std::shared_ptr<DebugCamera>	__debugCamera;	// デバッグカメラ
-	std::shared_ptr<GameCamera>	__gameCamera;		// ゲームカメラ
-
-};
-
+#include "MenuItemBase.h"
 
 bool ModeGame::Initialize() 
 {
@@ -85,11 +43,11 @@ bool ModeGame::Initialize()
 		// LightManagerの初期化
 		_lightManager = std::make_shared<LightManager>();
 		_lightManager->Initialize();
-	}
 
-	// シングルトンインスタンスを取得
-	_attackManager = AttackManager::GetInstance();
-	_energyManager = EnergyManager::GetInstance();
+		// シングルトンインスタンスを取得
+		_attackManager = AttackManager::GetInstance();
+		_energyManager = EnergyManager::GetInstance();
+	}
 
 	// プレイヤーの作成と登録
 	{
@@ -129,16 +87,27 @@ bool ModeGame::Initialize()
 	}
 
 	// 能力選択画面初期化
-	_abilitySelectScreen = std::make_shared<AbilitySelectScreen>();
-	_abilitySelectScreen->Initialize();
-	_isUseDebugScreen = false;
+	{
+		_abilitySelectScreen = std::make_shared<AbilitySelectScreen>();
+		_abilitySelectScreen->Initialize();
+		_isUseDebugScreen = false;
+	}
 
 	// エネルギーUI初期化
-	_energyUI = std::make_shared<EnergyUI>();
-	_energyUI->Initialize();
+	{
+		_energyUI = std::make_shared<EnergyUI>();
+		_energyUI->Initialize();
+	}
 
 	// ライトの初期化
 	InitializeLights();
+
+	// デバッグ関連初期化
+	{
+		_bViewDebugInfo = false;
+		_bViewCollision = false;
+		_bUseCollision = true;
+	}
 
 	return true;
 }
@@ -190,7 +159,7 @@ bool ModeGame::Process()
 
 
 
-	// 能力選択画面のデバッグ寄関数
+	// 能力選択画面のデバッグ関数
 	if(trg & PAD_INPUT_8)
 	{
 		_isUseDebugScreen = !_isUseDebugScreen;
@@ -208,14 +177,21 @@ bool ModeGame::Process()
 		ModeMenu* modeMenu = new ModeMenu();
 		modeMenu->SetCameraManager(_cameraManager);
 
-		// デバッグカメラ
+		// メニュー項目を作成
+		auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
+		auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
+		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
 		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+
+		// カメラ情報を設定
 		debugCamera->SetCameraManagerMenu(_cameraManager);
 		debugCamera->SetDebugCameraMenu(_debugCamera);
 		debugCamera->SetGameCameraMenu(_gameCamera);
 
-
 		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+		modeMenu->AddMenuItem(viewDebugInfo);
+		modeMenu->AddMenuItem(viewCollision);
+		modeMenu->AddMenuItem(useCollision);
 		modeMenu->AddMenuItem(debugCamera);
 	}
 
@@ -241,7 +217,7 @@ bool ModeGame::Process()
 	// 当たり判定
 	{
 		auto player = _playerManager->GetActivePlayerShared();
-		auto enemies = _stage->GetEnemies();
+		auto& enemies = _stage->GetEnemies();
 
 		// 弾
 		CheckHitCharaBullet(player);
@@ -315,16 +291,7 @@ bool ModeGame::Render()
 
 	// カメラ設定
 	{
-		// メニューが開いていて、デバッグカメラが使われているなら
-		//auto* menu = dynamic_cast<ModeMenu*>(ModeServer::GetInstance()->Get("menu"));
-		//if(menu && menu->IsUseDebugCamera() && _debugCamera)
-		//{
-		//	_debugCamera->SetUp();// デバッグカメラ設定更新
-		//}
-		//else
-		//{
-		//	_gameCamera->SetUp();// カメラ設定更新
-		//}
+		_cameraManager->SwitchCameraSetUp();
 	}
 	
 	// オブジェクトの描画
@@ -332,10 +299,7 @@ bool ModeGame::Render()
 		_stage->Render();
 		_playerManager->Render();
 		_bulletManager->Render();
-		AttackManager::GetInstance()->Render();
 		_energyUI->Render();
-
-
 
 		// のうりょk選択画面
 		if(_isUseDebugScreen)
@@ -348,19 +312,39 @@ bool ModeGame::Render()
 	EffectServer::GetInstance()->Render();
 
 	// デバッグ情報の描画
+	if (_bViewDebugInfo)
 	{
+		// 0,0,0を中心に線を引く
+		{
+			float linelength = 1000.f;
+			VECTOR v = { 0, 0, 0 };
+			DrawLine3D(VAdd(v, VGet(-linelength, 0, 0)), VAdd(v, VGet(linelength, 0, 0)), GetColor(255, 0, 0));
+			DrawLine3D(VAdd(v, VGet(0, -linelength, 0)), VAdd(v, VGet(0, linelength, 0)), GetColor(0, 255, 0));
+			DrawLine3D(VAdd(v, VGet(0, 0, -linelength)), VAdd(v, VGet(0, 0, linelength)), GetColor(0, 0, 255));
+		}
+
 		_stage->DebugRender();
-		_debugCamera->DebugRender();
-		//AttackManager::GetInstance()->DebugRender();
+		AttackManager::GetInstance()->DebugRender();
 		//EnergyManager::GetInstance()->DebugRender();
+		_debugCamera->DebugRender();
 
 		// ライト情報
 		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());
-		//_debugCamera->DebugRender();
-		_cameraManager->Render();
+
 		//AttackManager::GetInstance()->DebugRender();
 		EnergyManager::GetInstance()->DebugRender();
+
+		_cameraManager->SwitchCameraDebugRender();
 	}
+	
+	// コリジョンの描画
+	if (_bViewCollision)
+	{
+		_stage->CollisionRender();
+		AttackManager::GetInstance()->CollisionRender();
+	}
+
+	_cameraManager->SwitchCameraRender();
 
 	return true;
 }

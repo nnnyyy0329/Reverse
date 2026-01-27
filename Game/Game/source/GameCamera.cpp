@@ -46,6 +46,10 @@ void GameCamera::SetUp()
 	SetCameraNearFar(_nearClip, _farClip);
 }
 
+void GameCamera::Render()
+{
+}
+
 // デバッグ用描画処理
 void GameCamera::DebugRender()
 {

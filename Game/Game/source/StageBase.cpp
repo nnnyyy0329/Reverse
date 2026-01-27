@@ -199,17 +199,11 @@ void StageBase::Render()
 			enemy->Render();
 		}
 	}
-
-	// テスト用マップの描画
-	//{
-	//	MV1DrawModel(_handleMap);
-	//	MV1DrawModel(_handleSkySphere);
-	//}
 }
 
 void StageBase::DebugRender()
 {
-	// 敵のデバッグ描画
+	// 敵のデバッグ情報描画
 	{
 		for (auto& enemy : _stageEnemies) {
 			enemy->DebugRender();
@@ -225,5 +219,22 @@ void StageBase::DebugRender()
 		DrawFormatString(x, y, GetColor(255, 255, 0), "敵総数 : %d", _totalEnemyCnt); y += size;
 		DrawFormatString(x, y, GetColor(255, 255, 0), "残り敵数 : %d", GetCurrentEnemyCnt()); y += size;
 		DrawFormatString(x, y, GetColor(255, 255, 0), "全滅判定 : %s", IsAllEnemiesDefeated() ? "True" : "False"); y += size;
+	}
+}
+
+void StageBase::CollisionRender()
+{
+	// マップモデルのコリジョン描画
+	{
+		for (auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) {
+			MV1DrawFrame(ite->modelHandle, ite->collisionFrame);
+		}
+	}
+
+	// 敵のコリジョン描画
+	{
+		for (auto& enemy : _stageEnemies) {
+			enemy->CollisionRender();
+		}
 	}
 }

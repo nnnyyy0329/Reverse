@@ -31,6 +31,7 @@ public:
 	virtual void Process();
 	virtual void Render();
 	virtual void DebugRender();
+	virtual void CollisionRender();
 
 	const std::vector<std::shared_ptr<Enemy>>& GetEnemies() const { return _stageEnemies; }// ステージ内の敵リストを取得
 	const std::vector<MODELPOS>& GetMapModelPosList() const { return _mapModelPosList; }

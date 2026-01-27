@@ -112,6 +112,7 @@ bool Enemy::Render()
 	// モデルの描画
 	MV1DrawModel(_iHandle);
 
+	// 体力バー描画
 	DrawLifeBar();
 
 	return true;
@@ -119,12 +120,6 @@ bool Enemy::Render()
 
 void Enemy::DebugRender() 
 {
-	// カプセルの当たり判定を描画
-	DrawCapsule3D(
-		_vCollisionBottom,_vCollisionTop,_fCollisionR,16,
-		GetColor(255, 0, 0),GetColor(255, 255, 255),FALSE
-	);
-
 	// 移動範囲を描画
 	{
 		unsigned int color = GetColor(0, 0, 255);// 青
@@ -180,6 +175,11 @@ void Enemy::DebugRender()
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  state  = %s", stateName); y += size;
 		}
 	}
+}
+
+void Enemy::CollisionRender() 
+{
+	CharaBase::CollisionRender();
 }
 
 void Enemy::DrawLifeBar()
