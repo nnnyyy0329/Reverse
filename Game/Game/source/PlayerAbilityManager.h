@@ -17,12 +17,13 @@ public:
 	bool Process();
 
 	// 能力管理用
-	bool AddAbility(std::unique_ptr<PlayerAbilityBase> ability);	// 能力追加
-	bool RemoveAbility(ABILITY_TYPE type);							// 能力削除
-	bool HasAbility(ABILITY_TYPE type) const;						// 能力チェック
-	PlayerAbilityBase* GetAbility(ABILITY_TYPE type) const;			// 能力取得
+	bool SetAbility(std::unique_ptr<PlayerAbilityBase> ability);	// 能力追加
+	bool RemoveAbility();											// 能力削除
+	bool HasAbility() const;										// 能力チェック
+	PlayerAbilityBase* GetAbility() const;							// 能力取得
+	ABILITY_TYPE GetAbilityType() const;							// 能力タイプ取得
 
 protected:
-	std::unordered_map<ABILITY_TYPE, std::unique_ptr<PlayerAbilityBase>> _abilities;
+	std::unique_ptr<PlayerAbilityBase> _ability;
 	PlayerBase* _playerBase;
 };

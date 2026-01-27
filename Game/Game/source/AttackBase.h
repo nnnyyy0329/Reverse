@@ -1,7 +1,8 @@
-// 作成 : 成田
+// 担当 : 成田
 
 #pragma once
 #include "appframe.h"
+#include "EnergyManager.h"
 
 enum class COLLISION_TYPE
 {
@@ -26,6 +27,7 @@ struct ATTACK_COLLISION
 	float damage;			// ダメージ量
 	float currentTime;		// 現在の経過時間
 	bool isActive;			// 現在アクティブかどうか
+	bool isHit;				// ヒットしたかどうか
 };
 
 // 攻撃の状態を管理
@@ -50,6 +52,7 @@ public:
 	virtual bool Terminate();
 	virtual bool Process();
 	virtual bool Render();
+
 	virtual bool ProcessStartAttack();	// 攻撃開始
 	virtual bool ProcessStopAttack();	// 攻撃停止
 	void UpdateAttackState();			// 攻撃状態更新
@@ -57,49 +60,61 @@ public:
 	// カプセル攻撃データ設定
 	void SetCapsuleAttackData
 	(
-		VECTOR top, 
-		VECTOR bottom, 
-		float radius, 
-		float delay, 
-		float duration, 
-		float recovery, 
-		float damage
+		VECTOR top,		// カプセル上部
+		VECTOR bottom,	// カプセル下部
+		float radius,	// 半径
+		float delay,	// 発生遅延
+		float duration, // 持続時間
+		float recovery, // 後隙
+		float damage,	// ダメージ	
+		bool hit		// ヒットフラグ
 	);
 
 	// 円形攻撃データ設定
 	void SetCircleAttackData
 	(
-		VECTOR center,
-		float radius,
-		float height,
-		float delay,
-		float duration,
-		float recovery,
-		float damage
+		VECTOR center,	// 中心位置
+		float radius,	// 半径
+		float height,	// 高さ
+		float delay,	// 発生遅延
+		float duration,	// 持続時間
+		float recovery,	// 後隙
+		float damage,	// ダメージ
+		bool hit		// ヒットフラグ
 	);
 
 	// 球攻撃データ設定
 	void SetSphereAttackData
 	(
-		VECTOR center,
-		float radius,
-		float delay,
-		float duration,
-		float recovery,
-		float damage
+		VECTOR center,	// 中心位置
+		float radius,	// 半径
+		float delay,	// 発生遅延
+		float duration,	// 持続時間
+		float recovery,	// 後隙
+		float damage,	// ダメージ
+		bool hit		// ヒットフラグ
 	);
 
 	void DrawAttackCollision();	// 攻撃コリジョン表示
 
 	// ゲッターセッター
-	COLLISION_TYPE GetCollisionType() const { return _eColType; }
-	ATTACK_COLLISION GetAttackCollision() const { return _stcAttackCol; }
-	ATTACK_STATE GetAttackState() const { return _eAttackState; }
+	COLLISION_TYPE GetCollisionType() const { return _eColType; }			// コリジョンタイプ取得
+	ATTACK_COLLISION GetAttackCollision() const { return _stcAttackCol; }	// 攻撃コリジョン情報取得
+	ATTACK_STATE GetAttackState() const { return _eAttackState; }			// 攻撃状態取得
+
+	bool GetHitFlag() const { return _stcAttackCol.isHit; }		// ヒットフラグ取得
+	void SetHitFlag(bool hit) { _stcAttackCol.isHit = hit; }	// ヒットフラグ設定
+
+	float GetDamage() const { return _stcAttackCol.damage; }		// ダメージ取得
+	void SetDamage(float damage) { _stcAttackCol.damage = damage; }	// ダメージ設定
 
 protected:
 	// 攻撃コリジョン関係
-	COLLISION_TYPE _eColType;
-	ATTACK_COLLISION _stcAttackCol;
-	ATTACK_STATE _eAttackState;
+	COLLISION_TYPE _eColType;		// コリジョンタイプ
+	ATTACK_COLLISION _stcAttackCol;	// 攻撃コリジョン情報
+	ATTACK_STATE _eAttackState;		// 攻撃状態
+
+private:
+	std::shared_ptr<EnergyManager> _energyManager;	// エネルギーマネージャー
 };
 

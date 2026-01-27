@@ -1,13 +1,18 @@
 #pragma once
 #include "GameObjectBase.h"
 
+#include "AttackManager.h"
+
 enum class CHARA_TYPE
 {
 	NONE,
+
+	PLAYER,
+	ENEMY,
+	BULLET,
+
 	SURFACE_PLAYER,
 	INTERIOR_PLAYER,
-
-	// 敵もここに追加
 
 	_EOT_,
 };
@@ -22,6 +27,8 @@ public:
 	virtual bool Terminate();	// 終了
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
+	virtual void DebugRender();	// デバッグ情報描画
+	virtual void CollisionRender(); // コリジョン描画
 
 	/*****ゲッターセッター*****/
 	// 当たり判定用
@@ -52,6 +59,12 @@ public:
 	float GetGravity() { return _fGravity; }	// 重力
 	void SetGravity(float f) { _fGravity = f; }	// 重力
 
+	CHARA_TYPE GetCharaType() { return _eCharaType; }// キャラタイプ
+	void SetCharaType(CHARA_TYPE eType) { _eCharaType = eType; }
+
+	// 被ダメージ処理
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType);// ここではライフを減らすだけ
+
 protected:
 	// キャラカプセルの当たり判定用
 	VECTOR _vCollisionTop;		// 当たり判定の上端
@@ -70,6 +83,6 @@ protected:
 	float _fGravity;			// 重力	
 
 	// キャラタイプ
-	CHARA_TYPE _eCharType;
+	CHARA_TYPE _eCharaType;
 };
 

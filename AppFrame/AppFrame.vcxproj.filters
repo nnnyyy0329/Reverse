@@ -19,6 +19,21 @@
     <Filter Include="Manager\Component">
       <UniqueIdentifier>{e2d5dff1-1578-4f71-ad91-6fe0837b0092}</UniqueIdentifier>
     </Filter>
+    <Filter Include="a">
+      <UniqueIdentifier>{194dde9a-395d-4ede-97b1-e3bcd6951d8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server">
+      <UniqueIdentifier>{662623ac-6fcc-4c94-83b4-49a6d0f569b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\Resource">
+      <UniqueIdentifier>{c3e18e48-654c-41ff-9b0a-11a27eb89afb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\Effect">
+      <UniqueIdentifier>{09993c2b-44e7-449b-9c0a-bf9ec57d3c9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vector">
+      <UniqueIdentifier>{5a6ded67-76b3-46e3-b038-62209afcda57}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\CFile\CFile.cpp">
@@ -38,6 +53,15 @@
     </ClCompile>
     <ClCompile Include="source\math\mymath.cpp">
       <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Server\EffectServer.cpp">
+      <Filter>Server\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Server\ResourceServer.cpp">
+      <Filter>Server\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Vector\Vecto3D.cpp">
+      <Filter>Vector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,5 +88,20 @@
       <Filter>Manager\Component</Filter>
     </ClInclude>
     <ClInclude Include="source\appframe.h" />
+    <ClInclude Include="source\template\aliastemplate.h">
+      <Filter>a</Filter>
+    </ClInclude>
+    <ClInclude Include="source\template\container.h">
+      <Filter>a</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Server\EffectServer.h">
+      <Filter>Server\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Server\ResourceServer.h">
+      <Filter>Server\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Vector\Vecto3D.h">
+      <Filter>Vector</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

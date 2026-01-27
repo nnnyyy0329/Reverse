@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <type_traits>
 
-// コンポーネント管理のためのユーティリティクラス
+// コンポーネント管理のためのクラス
 template<typename BaseType>
 
 class ComponentManager
@@ -57,6 +57,7 @@ public:
 				result.push_back(specific_component); // 見つかった場合は結果に追加
 			}
 		}
+
 		return result; // 結果のベクターを返す
 	}
 

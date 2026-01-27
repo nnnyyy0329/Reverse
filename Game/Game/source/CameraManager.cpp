@@ -1,66 +1,182 @@
 #include "CameraManager.h"
-#include "PlayerBase.h"
+#include "GameCamera.h"
+#include "DebugCamera.h"
 
 CameraManager::CameraManager()
 {
-	// カメラの設定（わかりやすい位置に）
-	_vPos = VGet(0.0f, 0.0f, 0.0f);
-	_vTarget = VGet(0.0f, 0.0f, 0.0f);
-	_nearClip = 1.f;
-	_farClip = 5000.f;
-	_posOffset = VGet(0.0f, 200.0f, 500.0f);
-	_targetOffset = VGet(0.0f, 100.0f, 0.0f);
+	_eCameraType = CAMERA_TYPE::GAME_CAMERA;	// 初期タイプはゲームカメラ
+	_bIsUseDebugCamera = false;					// デバッグカメラ使用フラグ初期化
+
+	_gameCamera = nullptr;	// ゲームカメラ初期化
+	_debugCamera = nullptr;	// デバッグカメラ初期化
 }
 
-void CameraManager::Process()
+CameraManager::~CameraManager()
 {
-	// ターゲットオブジェクトがあれば、カメラ位置と注視点を更新
-	if (_targetObject) {
-		// ターゲットの位置を取得
-		VECTOR targetPos = _targetObject->GetPos();
+	_gameCamera.reset();
+	_debugCamera.reset();
+}
 
-		// カメラ位置と注視点をターゲットの位置にオフセットを加算して設定
-		// Y座標は変更しない
-		VECTOR newPos = VAdd(targetPos, _posOffset);
-		_vPos = newPos;
+bool CameraManager::Initialize()
+{
+	return true;
+}
 
-		VECTOR newTarget = VAdd(targetPos, _targetOffset);
-		_vTarget = newTarget;
-	}
+bool CameraManager::Terminate()
+{
+	return true;
+}
 
-	// カメラ操作を行う（右スティック）
+bool CameraManager::Process()
+{
+	// カメラ切り替え処理
+	SwitchCamera();
+
+	// カメラ処理切り替え
+	SwitchCameraProcess();
+
+	return true;
+}
+
+// カメラ切り替え
+void CameraManager::SwitchCamera()
+{
+	if(_trg & PAD_INPUT_4)
 	{
-		// Y軸回転
-		float sx = _vPos.x - _vTarget.x;
-		float sz = _vPos.z - _vTarget.z;
-		float rad = atan2(sz, sx);
-		float length = sqrt(sz * sz + sx * sx);
-		if(_rx > _analogMin) { rad -= 0.05f; }
-		if(_rx < -_analogMin) { rad += 0.05f; }
-		_vPos.x = _vTarget.x + cos(rad) * length;
-		_vPos.z = _vTarget.z + sin(rad) * length;
+		// デバッグカメラ使用フラグ切り替え
+		//_bIsUseDebugCamera = !_bIsUseDebugCamera;
+	}
 
-		// Y位置
-		if(_ry > _analogMin) { _vPos.y -= 5.f; }
-		if(_ry < -_analogMin) { _vPos.y += 5.f; }
+	// カメラタイプ切り替え
+	if(_bIsUseDebugCamera)
+	{
+		// デバッグカメラへ切り替え
+		_eCameraType = CAMERA_TYPE::DEBUG_CAMERA;
+	}
+	else 
+	{
+		// ゲームカメラへ切り替え
+		_eCameraType = CAMERA_TYPE::GAME_CAMERA;
 	}
 }
 
-void CameraManager::SetUp()
+// カメラ処理切り替え
+void CameraManager::SwitchCameraProcess()
 {
-	// カメラの位置と注視点を設定
-	SetCameraPositionAndTarget_UpVecY(_vPos, _vTarget);
-	// カメラからどれだけ離れた距離からどこまで描画するかを設定
-	SetCameraNearFar(_nearClip, _farClip);
+	// カメラタイプによる処理分岐
+	switch(_eCameraType)
+	{
+		// ゲームカメラ処理
+		case CAMERA_TYPE::GAME_CAMERA:
+		{
+			if(_gameCamera)
+			{
+				_gameCamera->Process(_key, _trg, _lx, _ly, _rx, _ry, _analogMin, false);
+			}
+
+			break;
+		}
+
+		// デバッグカメラ処理
+		case CAMERA_TYPE::DEBUG_CAMERA:
+		{
+			if(_debugCamera)
+			{
+				bool isInput = false;
+
+				// 押している間は入力を有効にする
+				if(_key & PAD_INPUT_2){ isInput = true; }
+
+				_debugCamera->Process(_key, _trg, _lx, _ly, _rx, _ry, _analogMin, isInput);
+			}
+
+			break;
+		}
+	}
 }
 
-void CameraManager::SetTarget(std::shared_ptr<PlayerBase> target) {
-	_targetObject = target;
-
-	// カメラ位置と注視点の初期設定
-	if (_targetObject) {
-		const VECTOR targetPos = _targetObject->GetPos();
-		_vPos = VAdd(targetPos, _posOffset);
-		_vTarget = VAdd(targetPos, _targetOffset);
+// カメラ設定切り替え
+void CameraManager::SwitchCameraSetUp()
+{
+	// カメラタイプによる処理分岐
+	switch(_eCameraType)
+	{
+		// ゲームカメラ設定
+		case CAMERA_TYPE::GAME_CAMERA:
+		{
+			if(_gameCamera)
+			{
+				_gameCamera->SetUp();	// ゲームカメラ設定更新
+			}
+			break;
+		}
+		// デバッグカメラ設定
+		case CAMERA_TYPE::DEBUG_CAMERA:
+		{
+			if(_debugCamera)
+			{
+				_debugCamera->SetUp();	// デバッグカメラ設定更新
+			}
+			break;
+		}
 	}
+}
+
+// カメラ描画切り替え
+void CameraManager::SwitchCameraRender()
+{
+	// カメラタイプによる処理分岐
+	switch(_eCameraType)
+	{
+		// ゲームカメラ描画
+		case CAMERA_TYPE::GAME_CAMERA:
+		{
+			if(_gameCamera)
+			{
+				_gameCamera->Render();	// ゲームカメラ描画
+			}
+			break;
+		}
+		// デバッグカメラ描画
+		case CAMERA_TYPE::DEBUG_CAMERA:
+		{
+			if(_debugCamera)
+			{
+				_debugCamera->Render();	// デバッグカメラ描画
+			}
+			break;
+		}
+	}
+}
+
+// カメラデバッグ描画切り替え
+void CameraManager::SwitchCameraDebugRender()
+{
+	// カメラタイプによる処理分岐
+	switch(_eCameraType)
+	{
+		// ゲームカメラデバッグ描画
+		case CAMERA_TYPE::GAME_CAMERA:
+		{
+			if(_gameCamera)
+			{
+				_gameCamera->DebugRender();	// ゲームカメラデバッグ描画
+			}
+			break;
+		}
+		// デバッグカメラデバッグ描画
+		case CAMERA_TYPE::DEBUG_CAMERA:
+		{
+			if(_debugCamera)
+			{
+				_debugCamera->DebugRender();	// デバッグカメラデバッグ描画
+			}
+			break;
+		}
+	}
+
+	int x = 900;
+	int y = 450;
+	// デバッグカメラ使用フラグ表示
+	DrawFormatString(x, y, GetColor(55, 0, 0), "Use Debug Camera: %s", _bIsUseDebugCamera ? "True" : "False");
 }

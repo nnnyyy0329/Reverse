@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "../Mode//ModeServer.h"
+#include "EffekseerForDXLib.h"
 
 class ApplicationBase
 {
@@ -18,8 +19,8 @@ public:
 	virtual bool Render();
 
 	virtual bool AppWindowed() { return true; }
-	virtual int DispSizeW() { return 640; }
-	virtual int DispSizeH() { return 480; }
+	virtual int DispSizeW() { return 1920; }
+	virtual int DispSizeH() { return 1080; }
 
 	static	ApplicationBase	*GetInstance() { return _lpInstance; }
 	virtual int GetKey() { return _gKey; }

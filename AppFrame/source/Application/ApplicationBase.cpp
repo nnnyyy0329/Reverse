@@ -24,11 +24,32 @@ bool ApplicationBase::Initialize(HINSTANCE hInstance)
 	}
 	SetGraphMode(DispSizeW(), DispSizeH(), 32);
 
+	// DirectX11を使用するようにする。(DirectX9も可、一部機能不可)
+	// Effekseerを使用するには必ず設定する。
+	SetUseDirect3DVersion(DX_DIRECT3D_11);
+
 	if (DxLib_Init() == -1)
 	{	// エラーが起きたら直ちに終了
 		return false;
 	}
 	SetDrawScreen(DX_SCREEN_BACK);		// 描画先画面を裏画面にセット
+
+	// Effekseerを初期化する。
+	// 引数には画面に表示する最大パーティクル数を設定する。
+	if (Effekseer_Init(8000) == -1)
+	{
+		DxLib_End();
+		return -1;
+	}
+
+	// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ。
+	// Effekseerを使用する場合は必ず設定する。
+	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
+
+	// DXライブラリのデバイスロストした時のコールバックを設定する。
+	// ウインドウとフルスクリーンの切り替えが発生する場合は必ず実行する。
+	// ただし、DirectX11を使用する場合は実行する必要はない。
+	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
 	// 乱数初期化
 	srand((unsigned int)time(NULL));
@@ -41,6 +62,9 @@ bool ApplicationBase::Initialize(HINSTANCE hInstance)
 
 bool ApplicationBase::Terminate() 
 {
+	// Effekseerを終了する。
+	Effkseer_End();
+
 	// DXライブラリ開放
 	DxLib_End();
 
@@ -61,7 +85,7 @@ bool ApplicationBase::Input()
 	float lx, ly, rx, ry;// 左右アナログスティックの座標
 	// Logicoolパッドの場合
 	lx = (float)di.X / 1000.f; ly = (float)di.Y / 1000.f;// 左スティック
-	rx = (float)di.Z / 1000.f; ry = (float)di.Rz / 1000.f;// 右スティック
+	rx = (float)di.Rx / 1000.f; ry = (float)di.Ry / 1000.f;// 右スティック
 	_analog.lx = lx;
 	_analog.ly = ly;
 	_analog.rx = rx;

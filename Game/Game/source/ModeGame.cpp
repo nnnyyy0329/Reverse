@@ -1,28 +1,112 @@
 #include "AppFrame.h"
 #include "ApplicationMain.h"
 #include "ModeGame.h"
+#include "ModeMenu.h"
 
 #include "CharaBase.h"
 #include "StageBase.h"
-#include "EnemyBase.h"
-#include "CameraManager.h"
-#include "SurfacePlayer.h"
+#include "Enemy.h"
 
-#include "CollisionSegmentTriangle.h"
+#include "CameraManager.h"
+#include "GameCamera.h"
+#include "DebugCamera.h"
+
+#include "BulletManager.h"
+#include "AttackManager.h"
+#include "EnergyManager.h"
+#include "LightManager.h"
+#include "EnergyUI.h"
+#include "DodgeSystem.h"
+
+#include "PlayerManager.h"
+#include "SurfacePlayer.h"
+#include "InteriorPlayer.h"
+
+#include "AbilitySelectScreen.h"
+
+#include "MenuItemBase.h"
 
 bool ModeGame::Initialize() 
 {
 	if (!base::Initialize()) { return false; }
 
-	// オブジェクトの生成、初期設定
+	// Manager初期化
 	{
-		_player = std::make_shared<SurfacePlayer>();
-		_player->Initialize();
+		// PlayerManagerの初期化
+		_playerManager = std::make_shared<PlayerManager>();
+		_playerManager->Initialize();
 
-		_stage = std::make_shared<StageBase>(3);
+		// BulletManagerの初期化
+		_bulletManager = std::make_shared<BulletManager>();
+		_bulletManager->Initialize();
 
+		// LightManagerの初期化
+		_lightManager = std::make_shared<LightManager>();
+		_lightManager->Initialize();
+
+		// シングルトンインスタンスを取得
+		_attackManager = AttackManager::GetInstance();
+		_energyManager = EnergyManager::GetInstance();
+	}
+
+	// プレイヤーの作成と登録
+	{
+		auto surfacePlayer = std::make_shared<SurfacePlayer>();
+		surfacePlayer->Initialize();
+		_playerManager->RegisterPlayer(PLAYER_TYPE::SURFACE, surfacePlayer);
+
+		auto interiorPlayer = std::make_shared<InteriorPlayer>();
+		interiorPlayer->Initialize();
+		_playerManager->RegisterPlayer(PLAYER_TYPE::INTERIOR, interiorPlayer);
+	}
+
+	// ステージ初期化
+	_stage = std::make_shared<StageBase>(3);// ステージ番号で切り替え
+
+	// カメラ初期化
+	{
 		_cameraManager = std::make_shared<CameraManager>();
-		_cameraManager->SetTarget(_player);
+
+		_gameCamera = std::make_shared<GameCamera>();
+		_gameCamera->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
+
+		_debugCamera = std::make_shared<DebugCamera>();
+	}
+
+	// 回避システム初期化
+	{
+		//_dodgeSystem = std::make_shared<DodgeSystem>();
+		//_dodgeSystem->Initialize();
+	}
+
+	// 敵設定
+	for (const auto& enemy : _stage->GetEnemies())
+	{
+		enemy->SetTarget(_playerManager->GetActivePlayerShared());
+		enemy->SetBulletManager(_bulletManager);
+	}
+
+	// 能力選択画面初期化
+	{
+		_abilitySelectScreen = std::make_shared<AbilitySelectScreen>();
+		_abilitySelectScreen->Initialize();
+		_isUseDebugScreen = false;
+	}
+
+	// エネルギーUI初期化
+	{
+		_energyUI = std::make_shared<EnergyUI>();
+		_energyUI->Initialize();
+	}
+
+	// ライトの初期化
+	InitializeLights();
+
+	// デバッグ関連初期化
+	{
+		_bViewDebugInfo = false;
+		_bViewCollision = false;
+		_bUseCollision = true;
 	}
 
 	return true;
@@ -32,7 +116,11 @@ bool ModeGame::Terminate()
 {
 	base::Terminate();
 
-	_player.reset();
+	// ライトの終了処理
+	TerminateLights();
+
+	// プレイヤー開放
+	_playerManager.reset();
 
 	return true;
 }
@@ -40,47 +128,139 @@ bool ModeGame::Terminate()
 bool ModeGame::Process()
 {
 	base::Process();
+	
+	int key = ApplicationMain::GetInstance()->GetKey();
+	int trg = ApplicationMain::GetInstance()->GetTrg();
+	auto analog = ApplicationMain::GetInstance()->GetAnalog();
+	float lx = analog.lx;
+	float ly = analog.ly;
+	float rx = analog.rx;
+	float ry = analog.ry;
+	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
+
 	/// 入力取得
 	{
-		int key = ApplicationMain::GetInstance()->GetKey();
-		int trg = ApplicationMain::GetInstance()->GetTrg();
-		auto analog = ApplicationMain::GetInstance()->GetAnalog();
-		float lx = analog.lx;
-		float ly = analog.ly;
-		float rx = analog.rx;
-		float ry = analog.ry;
-		float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
-
-		// プレイヤーに入力状態を渡す
-		if (_player) 
+		// プレイヤーマネージャーに入力状態を渡す
+		if(_playerManager)
 		{
-			_player->SetInput(key, trg, lx, ly, rx, ry, analogMin);
+			_playerManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
 		}
 		// カメラマネージャーに入力状態を渡す
-		if (_cameraManager)
+		if(_cameraManager)
 		{
 			_cameraManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
 		}
+		// 能力選択画面に入力状態を渡す
+		if(_abilitySelectScreen)
+		{
+			_abilitySelectScreen->SetInput(key, trg, lx, ly, rx, ry, analogMin);
+		}
+	}
+
+
+
+	// 能力選択画面のデバッグ関数
+	if(trg & PAD_INPUT_8)
+	{
+		_isUseDebugScreen = !_isUseDebugScreen;
+	}
+	if(_isUseDebugScreen)
+	{
+		_abilitySelectScreen->Process();
+	}
+
+
+
+	// spaceキーでメニューを開く
+	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10)
+	{
+		ModeMenu* modeMenu = new ModeMenu();
+		modeMenu->SetCameraManager(_cameraManager);
+
+		// メニュー項目を作成
+		auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
+		auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
+		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
+		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+
+		// カメラ情報を設定
+		debugCamera->SetCameraManagerMenu(_cameraManager);
+		debugCamera->SetDebugCameraMenu(_debugCamera);
+		debugCamera->SetGameCameraMenu(_gameCamera);
+
+		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+		modeMenu->AddMenuItem(viewDebugInfo);
+		modeMenu->AddMenuItem(viewCollision);
+		modeMenu->AddMenuItem(useCollision);
+		modeMenu->AddMenuItem(debugCamera);
+	}
+
+	// クラスセット
+	{
+		_cameraManager->SetGameCamera(_gameCamera);
+		_cameraManager->SetDebugCamera(_debugCamera);
 	}
 
 	// オブジェクトの更新
 	{
-		_player->Process();
+		_playerManager->Process();
 		_stage->Process();
+		_bulletManager->Process();
+		AttackManager::GetInstance()->Process();
+		//_dodgeSystem->Process();
+		_energyUI->Process();
 	}
+
+	// ライト更新
+	ProcessLights();
 
 	// 当たり判定
 	{
-		CheckCollisionCharaMap(_player);
-		for (const auto& enemy : _stage->GetEnemies()) {
-			CheckCollisionCharaMap(enemy);
+		auto player = _playerManager->GetActivePlayerShared();
+		auto& enemies = _stage->GetEnemies();
+
+		// 弾
+		CheckHitCharaBullet(player);
+		for (const auto& enemy : enemies) {
+			CheckHitCharaBullet(enemy);
+		}
+
+		// プレイヤーと敵の当たり判定
+		for (const auto& enemy : enemies)
+		{
+			CheckHitPlayerEnemy(player, enemy);
+		}
+
+		// キャラと攻撃コリジョンの当たり判定
+		CheckActiveAttack(player);										// プレイヤー
+		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
+
+		// マップ
+		//CheckCollisionCharaMap(player);
+		//for (const auto& enemy : enemies) {
+		//	CheckCollisionCharaMap(enemy);
+		//}
+	}
+
+	// ターゲット更新
+	{
+		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
+
+		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
+		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
+
+		// 敵にターゲットのプレイヤーを設定
+		for (const auto& enemy : _stage->GetEnemies()) 
+		{
+			enemy->SetTarget(activePlayer);
 		}
 	}
 
-	// 敵の視界判定
-	//CheckEnemiesVision();
+	// エフェクト更新
+	EffectServer::GetInstance()->Update();
 
-	_cameraManager->Process();// カメラ更新
+	// カメラ更新
+	_cameraManager->Process();
 
 	return true;
 }
@@ -90,198 +270,187 @@ bool ModeGame::Render()
 	base::Render();
 
 	// 3D基本設定
-	SetUseZBuffer3D(TRUE);
-	SetWriteZBuffer3D(TRUE);
-	SetUseBackCulling(TRUE);
+	{
+		SetUseZBuffer3D(TRUE);
+		SetWriteZBuffer3D(TRUE);
+		SetUseBackCulling(TRUE);
+	}
 
 	// ライト設定
 	{
-		SetUseLighting(TRUE);
+		// ライティングを有効化
+		_lightManager->SetLightEnable(true);
 
-#if 1	// 平行ライト
-		SetGlobalAmbientLight(GetColorF(0.5f, 0.f, 0.f, 0.f));
-		ChangeLightTypeDir(VGet(-1, -1, 0));
-#endif
-#if 0	// ポイントライト
-		SetGlobalAmbientLight(GetColorF(0.f, 0.f, 0.f, 0.f));
-		ChangeLightTypePoint(VAdd(_player->GetPos(), VGet(0, 50.f, 0)), 1000.f, 0.f, 0.005f, 0.f);
-#endif
+		// 標準ライトをディレクショナルライトとして設定
+		_lightManager->SetLightType(LightManager::LIGHT_TYPE::DIRECTIONAL);
+		_lightManager->SetDirectionalLightDir(VGet(-1.0f, -1.0f, -1.0f));
+
+		// グローバルアンビエントライト設定
+		_lightManager->SetAmbientLight(GetColorF(0.3f, 0.3f, 0.3f, 0.0f));
 	}
 
-	_cameraManager->SetUp();// カメラ設定更新
+	// カメラ設定
+	{
+		_cameraManager->SwitchCameraSetUp();
+	}
 	
 	// オブジェクトの描画
 	{
-		_player->Render();
 		_stage->Render();
+		_playerManager->Render();
+		_bulletManager->Render();
+		_energyUI->Render();
+
+		// のうりょk選択画面
+		if(_isUseDebugScreen)
+		{
+			_abilitySelectScreen->Render();
+		}
 	}
 
+	// エフェクト描画
+	EffectServer::GetInstance()->Render();
+
 	// デバッグ情報の描画
+	if (_bViewDebugInfo)
 	{
-		//_player->DebugRender();
+		// 0,0,0を中心に線を引く
+		{
+			float linelength = 1000.f;
+			VECTOR v = { 0, 0, 0 };
+			DrawLine3D(VAdd(v, VGet(-linelength, 0, 0)), VAdd(v, VGet(linelength, 0, 0)), GetColor(255, 0, 0));
+			DrawLine3D(VAdd(v, VGet(0, -linelength, 0)), VAdd(v, VGet(0, linelength, 0)), GetColor(0, 255, 0));
+			DrawLine3D(VAdd(v, VGet(0, 0, -linelength)), VAdd(v, VGet(0, 0, linelength)), GetColor(0, 0, 255));
+		}
+
 		_stage->DebugRender();
+		AttackManager::GetInstance()->DebugRender();
+		//EnergyManager::GetInstance()->DebugRender();
+		_debugCamera->DebugRender();
+
+		// ライト情報
+		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());
+
+		//AttackManager::GetInstance()->DebugRender();
+		EnergyManager::GetInstance()->DebugRender();
+
+		_cameraManager->SwitchCameraDebugRender();
 	}
+	
+	// コリジョンの描画
+	if (_bViewCollision)
+	{
+		_stage->CollisionRender();
+		AttackManager::GetInstance()->CollisionRender();
+	}
+
+	_cameraManager->SwitchCameraRender();
 
 	return true;
 }
 
-// キャラとマップの当たり判定（接地維持 + カプセル押し出し方式）
-// 前提：GetCollisionBottom()/Top() は「ワールド座標」をキャラ側で毎フレーム更新している
-void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara) {
-	if (!chara || !_stage) return;
+// キャラと弾の当たり判定
+void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara){
+	if (!chara) return;
 
-	const auto& mapObjList = _stage->GetMapModelPosList();
+	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
 
-	// 現在の（移動入力反映後の）座標
-	VECTOR vCurrentPos = chara->GetPos();
+	const auto& bullets = _bulletManager->GetBullets();// 弾のリストを取得
 
-	// カプセル（半径のみキャラ設定から取得、線分端点はワールド座標をそのまま使う）
-	const float capsuleRadius = chara->GetCollisionR();
+	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
 
-	// ここで取得する Bottom/Top は「ワールド座標」前提
-	VECTOR vCapBottomWS = chara->GetCollisionBottom();
-	VECTOR vCapTopWS = chara->GetCollisionTop();
+	// 全弾ループ
+	for (const auto& bullet : bullets){
+		if (!bullet) continue;
 
-	// ---------------------------------------------------------
-	// 1) 接地維持（床スナップ）
-	// ---------------------------------------------------------
-	// 足元（Bottom）から下に線分を飛ばして床を拾い、最も高い床へ吸着させる
-	{
-		const float groundProbeLen = 2000.0f; // ステージ規模に合わせて調整
-		const float groundSnapEps = 1.0f;     // めり込み防止で少し浮かせる
-		bool snapped = false;
-		float bestHitY = -FLT_MAX;
-
-		for (const auto& obj : mapObjList) {
-			if (obj.collisionFrame == -1) continue;
-
-			const VECTOR start = vCapBottomWS;
-			const VECTOR end = VSub(vCapBottomWS, VGet(0.0f, groundProbeLen, 0.0f));
-
-			auto hitLine = MV1CollCheck_Line(
-				obj.modelHandle,
-				obj.collisionFrame,
-				start,
-				end
-			);
-
-			if (!hitLine.HitFlag) continue;
-
-			// 一番高い床を採用（段差で下の床に吸われにくくする）
-			if (!snapped || hitLine.HitPosition.y > bestHitY) {
-				bestHitY = hitLine.HitPosition.y;
-				snapped = true;
-			}
+		// キャラと弾のタイプが同じなら無視する
+		if (bullet->GetShooterType() == myType){
+			continue;
 		}
 
-		if (snapped) {
-			const float targetBottomY = bestHitY + groundSnapEps;
-			const float dy = targetBottomY - vCapBottomWS.y;
+		// 当たり判定
+		if(HitCheck_Capsule_Sphere(
+			chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
+			bullet->GetPos(), bullet->GetCollisionR()
+		)) {
+			// 当たった
 
-			// 位置とカプセル線分（WS）を同じだけ上げる
-			vCurrentPos.y += dy;
-			vCapBottomWS.y += dy;
-			vCapTopWS.y += dy;
+			// ダメージ処理とか
+
+			deadBullets.push_back(bullet);// 削除リストに追加
 		}
 	}
 
-	// ---------------------------------------------------------
-	// 2) カプセル押し出し（Iterative Solver）
-	// ---------------------------------------------------------
-	const float skin = 0.01f;
-	const int maxSolveIters = 20;
-	const float maxPushPerIter = capsuleRadius * 1.5f;
-
-	for (int iter = 0; iter < maxSolveIters; ++iter) {
-		bool anyHit = false;
-		float bestPenetration = 0.0f;
-		VECTOR vBestPush = VGet(0.0f, 0.0f, 0.0f);
-
-		for (const auto& obj : mapObjList) {
-			if (obj.collisionFrame == -1) continue;
-
-			MV1_COLL_RESULT_POLY_DIM hit = MV1CollCheck_Capsule(
-				obj.modelHandle,
-				obj.collisionFrame,
-				vCapBottomWS,
-				vCapTopWS,
-				capsuleRadius + skin
-			);
-
-			if (hit.HitNum > 0) {
-				anyHit = true;
-
-				for (int i = 0; i < hit.HitNum; ++i) {
-					const VECTOR vP0 = hit.Dim[i].Position[0];
-					const VECTOR vP1 = hit.Dim[i].Position[1];
-					const VECTOR vP2 = hit.Dim[i].Position[2];
-
-					const SegmentTriangleResult r = SegmentTriangleMinDistance(vCapBottomWS, vCapTopWS, vP0, vP1, vP2);
-
-					const float dist = (r.fSegTriMinDistSquare > 0.0f) ? std::sqrt(r.fSegTriMinDistSquare) : 0.0f;
-					const float penetration = (capsuleRadius + skin) - dist;
-					if (penetration <= 1e-6f) continue;
-
-					VECTOR vDir = VSub(r.vSegMinDistPos, r.vTriMinDistPos);
-					if (VSize(vDir) < 1e-6f) {
-						vDir = hit.Dim[i].Normal;
-					}
-					vDir = SafeNormalizeVec(vDir);
-
-					const VECTOR vPush = VScale(vDir, penetration);
-
-					if (penetration > bestPenetration) {
-						bestPenetration = penetration;
-						vBestPush = vPush;
-					}
-				}
-			}
-
-			MV1CollResultPolyDimTerminate(hit);
-		}
-
-		if (!anyHit || bestPenetration <= 0.0f) {
-			break;
-		}
-
-		// 暴れ防止
-		const float pushLen = VSize(vBestPush);
-		if (pushLen > maxPushPerIter) {
-			vBestPush = VScale(SafeNormalizeVec(vBestPush), maxPushPerIter);
-		}
-
-		// 位置 & カプセル線分（WS）を同じだけ移動
-		vCurrentPos = VAdd(vCurrentPos, vBestPush);
-		vCapBottomWS = VAdd(vCapBottomWS, vBestPush);
-		vCapTopWS = VAdd(vCapTopWS, vBestPush);
+	// 全ての判定が終わった後に、まとめて削除する
+	for (const auto& deadBullet : deadBullets) {
+		_bulletManager->RemoveBullet(deadBullet);
 	}
-
-	// 最終反映
-	chara->SetPos(vCurrentPos);
 }
 
-// 敵の視界判定
-void ModeGame::CheckEnemiesVision() {
-	auto enemies = _stage->GetEnemies();// ステージの敵リストを取得
+void ModeGame::InitializeLights()
+{
+	// ライトコンテナをクリア
+	_lights.clear();
 
-	for (auto enemy : enemies) {
-		if (!enemy) continue;
+	// ライトを追加
+	// test
+	AddPointLight(VGet(0.0f, 500.0f, 0.0f), 1000.0f, GetColorF(1.0f, 1.0f, 1.0f, 0.0f));
+}
 
-		// 距離チェック
-		auto dist = VSize(VSub(_player->GetPos(), enemy->GetPos()));// プレイヤーと敵の距離
-		if (dist > enemy->GetVisionRange()) continue;// 索敵距離外ならスキップ
+void ModeGame::ProcessLights()
+{
+	// 各ライトの更新処理
+	// キャラの位置に追従するライトなど
+}
 
-		// 視界角度チェック
-		VECTOR vToPlayer = VNorm(VSub(_player->GetPos(), enemy->GetPos()));// 敵からのプレイヤーへの単位ベクトル
-		auto dot = VDot(enemy->GetDir(), vToPlayer);// 敵の向きベクトルとの内積を計算
-		// 内積がcos以上なら視界角度内にいる
-		if (dot < enemy->GetVisionCosAngle()) {
-			continue;// 視界角度の外にいる
+void ModeGame::TerminateLights()
+{
+	// すべてのライトを削除
+	for (auto& lightInfo : _lights)
+	{
+		if (lightInfo.handle != -1)
+		{
+			DeleteLightHandle(lightInfo.handle);
+			lightInfo.handle = -1;
 		}
+	}
 
-		// 障害物チェック(実装予定)
+	// ライトコンテナをクリア
+	_lights.clear();
+}
 
-		// ここまで来たらプレイヤーを発見している
-		enemy->OnDetectPlayer(_player);// 追跡対象を設定
+int ModeGame::AddPointLight(VECTOR vPos, float fRange, COLOR_F color)
+{
+	// ポイントライトを生成
+	int lightHandle = _lightManager->CreatePointLight(vPos, fRange, color);
+
+	if (lightHandle == -1) { return -1; }// 生成失敗
+
+	// ライト情報を作成
+	LightInfo lightInfo;
+	lightInfo.handle = lightHandle;
+	lightInfo.vPos = vPos;
+	lightInfo.bisActive = true;
+
+	// コンテナに追加
+	_lights.push_back(lightInfo);
+
+	return lightHandle;
+}
+
+void ModeGame::RemoveLight(int lightHandle)
+{
+	// コンテナから該当するライトを検索
+	for (auto it = _lights.begin(); it != _lights.end(); ++it)
+	{
+		if (it->handle == lightHandle)
+		{
+			// ライトハンドルを削除
+			DeleteLightHandle(lightHandle);
+
+			// コンテナから削除
+			_lights.erase(it);
+			break;
+		}
 	}
 }
