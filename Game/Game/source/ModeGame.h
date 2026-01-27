@@ -59,16 +59,16 @@ protected:
 
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される
-	std::shared_ptr<StageBase>		_stage;			// ステージ
-	std::shared_ptr<CameraManager>	_cameraManager;	// カメラマネージャー
-	std::shared_ptr<GameCamera>		_gameCamera;	// ゲームカメラ
-	std::shared_ptr<DebugCamera>	_debugCamera;	// デバッグカメラ
-	std::shared_ptr<BulletManager>	_bulletManager;	// 弾マネージャー
-	//std::shared_ptr<DodgeSystem>	_dodgeSystem;	// 回避システム
-	std::shared_ptr<EnergyUI>		_energyUI;		// エネルギーUI
+	std::shared_ptr<StageBase>			_stage;					// ステージ
+	std::shared_ptr<CameraManager>		_cameraManager;			// カメラマネージャー
+	std::shared_ptr<GameCamera>			_gameCamera;			// ゲームカメラ
+	std::shared_ptr<DebugCamera>		_debugCamera;			// デバッグカメラ
+	std::shared_ptr<BulletManager>		_bulletManager;			// 弾マネージャー
+	//std::shared_ptr<DodgeSystem>		_dodgeSystem;			// 回避システム
+	std::shared_ptr<EnergyUI>			_energyUI;				// エネルギーUI
+	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;	// 能力選択画面
+	std::shared_ptr<LightManager>		_lightManager;			// ライトマネージャー 
 
-	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;
-	
 	// シングルトン取得
 	AttackManager* _attackManager = nullptr;
 	EnergyManager* _energyManager = nullptr;
@@ -79,10 +79,10 @@ protected:
 	bool _bUseCollision;// 当たり判定有効
 
 
+	// ベクターコンテナ
+	std::vector<LightInfo>	_lights;	// 生成されたライトを管理
+	std::vector<CharaBase>	_hitCharas;	// 当たったキャラを管理
 
-	std::shared_ptr<LightManager> _lightManager;// ライトマネージャー 
-	// 生成されたライトを管理
-	std::vector<LightInfo> _lights;
 
 	// のうりょくせんたくがめんよう
 	bool _isUseDebugScreen;

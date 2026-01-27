@@ -282,8 +282,8 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 {
 	if(chara == nullptr || attack == nullptr) { return; }
 
-	// ヒットしているならスキップ
-	if(attack->GetHitFlag()){ return; }
+	// 既にヒット済みのキャラかチェック
+	if(attack->HasHitCharas(chara)) { return; }
 
 	// 攻撃コリジョン情報を取得
 	const ATTACK_COLLISION& col = attack->GetAttackCollision();
@@ -295,23 +295,24 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		col.attackColTop, col.attackColBottom, col.attackColR
 	) != false)
 	{
+		// ヒットフラグを有効にする
+		attack->SetHitFlag(true);
+
 		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
 		auto charaType = chara->GetCharaType();							// キャラのタイプ取得
 
 		// 自分に攻撃しているかどうか
 		if(OwnerIsAttackingOwner(charaType, ownerType)){ return; }
 
-		// ヒットフラグを有効にする
-		attack->SetHitFlag(true);	
+		// ヒットしたキャラを登録
+		attack->AddHitCharas(chara);
 		
-		float damage = attack->GetDamage();	// ダメージ取得
-		auto beforeLife = chara->GetLife();	// ヒット前のライフ取得
-
-		// ターゲットにダメージを与える
-		chara->ApplyDamage(damage, ownerType);							
-
-		auto afterLife = chara->GetLife();	// ヒット後のライフ取得
-		//damage = beforeLife - afterLife;	// 実際に与えたダメージを計算
+		// ダメージ処理
+		float damage = attack->GetDamage();		// ダメージ取得
+		auto beforeLife = chara->GetLife();		// ヒット前のライフ取得
+		chara->ApplyDamage(damage, ownerType);	// ターゲットにダメージを与える
+		auto afterLife = chara->GetLife();		// ヒット後のライフ取得
+		damage = beforeLife - afterLife;		// 実際に与えたダメージを計算
 
 		// ダメージをエネルギーに変換
 		ConvertEnergy(attack, damage);									
