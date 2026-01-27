@@ -22,5 +22,7 @@ protected:
     int _iEnergyHandle2;
     int _iEnergyHandle3;
 
+    int _drawX;
+    int _drawY;
 };
 
