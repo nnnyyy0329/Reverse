@@ -298,16 +298,14 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
 		auto charaType = chara->GetCharaType();							// キャラのタイプ取得
 
-		if(charaType == CHARA_TYPE::ENEMY &&
-		   ownerType == ATTACK_OWNER_TYPE::ENEMY)
-		{
-			return;
-		}
+		// 自分に攻撃しているかどうか
+		if(OwnerIsAttackingOwner(charaType, ownerType)){ return; }
 
-		attack->SetHitFlag(true);	// ヒットフラグを有効にする
+		// ヒットフラグを有効にする
+		attack->SetHitFlag(true);	
 		
-		float damage = attack->GetDamage();								// ダメージ取得
-		auto beforeLife = chara->GetLife();								// ヒット前のライフ取得
+		float damage = attack->GetDamage();	// ダメージ取得
+		auto beforeLife = chara->GetLife();	// ヒット前のライフ取得
 
 		// ターゲットにダメージを与える
 		chara->ApplyDamage(damage, ownerType);							
@@ -317,8 +315,6 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 
 		// ダメージをエネルギーに変換
 		ConvertEnergy(attack, damage);									
-
-		//printfDx("Chara and Attack Collision Hit!\n");
 	}
 }
 
@@ -341,4 +337,37 @@ void ModeGame::ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage)
 		// 消費変換
 		_energyManager->ConvertDamageToConsumeEnergy(damage);
 	}
+}
+
+// 攻撃所有者が自分に攻撃しているかどうか
+bool ModeGame::OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType)
+{
+	// 同じキャラからの攻撃かチェック
+	switch(charaType)
+	{
+		case CHARA_TYPE::ENEMY:	// 敵キャラ
+		{
+			// 敵キャラの場合、攻撃所有者が敵であるかを確認
+			return (ownerType == ATTACK_OWNER_TYPE::ENEMY);
+		}
+
+		case CHARA_TYPE::SURFACE_PLAYER:	// 表プレイヤー
+		{
+			// 表プレイヤーの場合、攻撃所有者が表プレイヤーであるかを確認
+			return (ownerType == ATTACK_OWNER_TYPE::SURFACE_PLAYER);
+		}
+
+		case CHARA_TYPE::INTERIOR_PLAYER:	// 裏プレイヤー
+		{
+			// 裏プレイヤーの場合、攻撃所有者が裏プレイヤーであるかを確認
+			return (ownerType == ATTACK_OWNER_TYPE::INTERIOR_PLAYER);
+		}
+
+		default:	// その他のキャラタイプ
+		{
+			return false;
+		}
+	}
+
+	return false;
 }

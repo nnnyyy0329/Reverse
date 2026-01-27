@@ -7,6 +7,7 @@ namespace
 {
 	const float CROUCH_MOVE_SPEED = 3.0f;	// しゃがみ移動速度
 	const float NORMAL_MOVE_SPEED = 7.5f;	// 通常移動速度
+	const float DASH_MOVE_SPEED = 11.0f;	// ダッシュ移動速度
 }
 
 // アクション関係Process呼び出し用関数
@@ -34,7 +35,9 @@ void InteriorPlayer::CallProcess()
 // プレイヤー移動処理
 void InteriorPlayer::ProcessMovePlayer()
 {
-	_vOldPos = _vPos; // 前フレームの位置を保存
+	// 前フレームの位置を保存
+	_vOldPos = _vPos;
+
 	// 移動方向を決める
 	_vMove = { 0,0,0 };
 
@@ -45,20 +48,38 @@ void InteriorPlayer::ProcessMovePlayer()
 		if(_bIsCrouching){ _fMoveSpeed = CROUCH_MOVE_SPEED; }
 		else{ _fMoveSpeed = NORMAL_MOVE_SPEED; }
 
-		if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
-		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
-		if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
-		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
+		//if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
+		//if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
+		//if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
+		//if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
 
-		// カメラの向きに基づいて移動方向を変換
-		_vMove = TransformMoveDirection(_vMove, _cameraAngle - DX_PI_F / 2.0f);
+		//// カメラの向きに基づいて移動方向を変換
+		//_vMove = TransformMoveDirection(_vMove, _cameraAngle - DX_PI_F / 2.0f);
 
-		// 移動量を正規化
-		float len = VSize(_vMove);
-		if(len > 0.0f)
+		// アナログ入力による移動
+		if(abs(_lx) > _analogMin || abs(_ly) > _analogMin)
 		{
-			_vMove.x /= len;	// 正規化
-			_vMove.y /= len;	// 正規化
+			// カメラの向いている方向のベクトル
+			VECTOR cameraForward = VGet(cos(_cameraAngle), 0.0f, sin(_cameraAngle));
+
+			// 右方向ベクトル
+			VECTOR cameraRight = VGet(cos(_cameraAngle + DX_PI_F / 2.0f), 0.0f, sin(_cameraAngle + DX_PI_F / 2.0f));
+
+			// 移動量を計算
+			_vMove = VAdd
+			(
+				VScale(cameraForward, _ly),	// 前後移動
+				VScale(cameraRight, _lx)	// 左右移動
+			);
+
+			// 移動量を正規化
+			float len = VSize(_vMove);
+			if(len > 0.0f)
+			{
+				_vMove.x /= len;	// 正規化
+				_vMove.y /= len;	// 正規化
+				_vMove.z /= len;	// 正規化
+			}
 		}
 
 		_vPos = VAdd(_vPos, VScale(_vMove, _fMoveSpeed));	// 移動速度を掛けて移動
