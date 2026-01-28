@@ -108,16 +108,20 @@ bool SurfacePlayer::Process()
 	// 攻撃関係Process呼び出し用関数
 	CallProcessAttack();
 
+	CharaBase::Process();
+
 	return true;
 }
 
 bool SurfacePlayer::Render()
 {
+	CharaBase::Render();
+
 	// プレイヤーが死亡しているなら
 	//if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
 
-	// モデル表示
-	DrawModel();
+	//// モデル表示
+	//DrawModel();
 
 	// デバッグ用
 	CallDraw();

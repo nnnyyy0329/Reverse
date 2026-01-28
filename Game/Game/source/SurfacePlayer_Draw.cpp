@@ -5,9 +5,9 @@
 namespace color
 {
 	// 描画時の色
-	constexpr int R = 0;
-	constexpr int G = 55;
-	constexpr int B = 0;
+	constexpr int R = 220;
+	constexpr int G = 255;
+	constexpr int B = 220;
 }
 
 // デバッグ用表示

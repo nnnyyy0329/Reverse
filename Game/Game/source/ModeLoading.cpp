@@ -22,15 +22,9 @@ bool ModeLoading::Initialize()
 			rs->Register("LifeBarFrame", "res/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 
-		// プレイヤー関連
-		rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
-		rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
-		rs->Register("LifeBar", "res/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("LifeBarFrame", "res/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
-
 		// プレイヤーモデル
-		rs->Register("SurfacePlayer", "res/try3/playeranim/.mv1", RESOURCE_TYPE::Model, 1.0f);
-		rs->Register("InteriorPlayer", "res/try3/playeranim/.mv1", RESOURCE_TYPE::Model, 1.0f);
+		rs->Register("SurfacePlayer", "res/try3/playeranim/Player_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+		rs->Register("InteriorPlayer", "res/try3/playeranim/player_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 		//rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
 		//rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
 

@@ -49,7 +49,7 @@ namespace Melee
 	class Chase : public EnemyState
 	{
 		public:
-		void Enter(Enemy* owner) override;
+		//void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:Chase"; }
 		bool IsChasing() const override { return true; }// ’ÇÕó‘Ô‚Å‚ ‚é

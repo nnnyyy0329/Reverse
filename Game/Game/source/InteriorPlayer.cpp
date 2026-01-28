@@ -104,11 +104,15 @@ bool InteriorPlayer::Process()
 	// 攻撃関係Process呼び出し用関数
 	CallProcessAttack();
 
+	CharaBase::Process();
+
 	return true;
 }
 
 bool InteriorPlayer::Render()
 {
+	CharaBase::Render();
+
 	// プレイヤーが死亡しているなら
 	//if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
 

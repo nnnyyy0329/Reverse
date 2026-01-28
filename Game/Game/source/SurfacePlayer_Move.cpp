@@ -82,9 +82,7 @@ void SurfacePlayer::ProcessMovePlayer()
 			float len = VSize(_vMove);
 			if(len > 0.0f)
 			{
-				_vMove.x /= len;	// 正規化
-				_vMove.y /= len;	// 正規化
-				_vMove.z /= len;	// 正規化
+				_vMove = VScale(_vMove, 1.0f / len);
 			}
 		}
 
@@ -201,12 +199,17 @@ void SurfacePlayer::ProcessPlayAnimation()
 	switch (_ePlayerStatus)
 	{
 	case PLAYER_STATUS::WAIT:	// 待機
-		animName = "idle";
+		animName = "player_idle_00";
 		loopCnt = 0;
 		break;
 
 	case PLAYER_STATUS::WALK:	// 歩行
-		animName = "run";
+		animName = "player_walk_00";
+		loopCnt = 0;
+		break;
+
+	case PLAYER_STATUS::RUN:	// 走行
+		animName = "player_jog_00";
 		loopCnt = 0;
 		break;
 
@@ -231,33 +234,33 @@ void SurfacePlayer::ProcessPlayAnimation()
 		break;
 
 	case PLAYER_STATUS::FIRST_ATTACK:	// 攻撃1
-		animName = "attack_01";
+		animName = "absorb_attack_00";
 		loopCnt = 1;
 		break;
 
 	case PLAYER_STATUS::SECOND_ATTACK:	// 攻撃2
-		animName = "attack_02";
+		animName = "absorb_attack_01";
 		loopCnt = 1;
 		break;
 
 	case PLAYER_STATUS::THIRD_ATTACK:	// 攻撃3
-		animName = "attack_03";
+		animName = "absorb_attack_02";
 		loopCnt = 1;
 		break;
 
-	case PLAYER_STATUS::HIT:			// 被弾
-		animName = "hit";
+	case PLAYER_STATUS::HIT:	// 被弾
+		animName = "player_damage_00";
 		loopCnt = 1;
 		break;
 
-	case PLAYER_STATUS::DODGE:			// 回避
+	case PLAYER_STATUS::DODGE:	// 回避
 		animName = "dodge";
 		loopCnt = 1;
 		break;
 
-	case PLAYER_STATUS::DEATH:			// 死亡
-		animName = "death";
-		loopCnt = 1;
+	case PLAYER_STATUS::DEATH:	// 死亡
+		animName = "player_dead_00";
+		loopCnt = 0;
 		break;
 
 	default:
@@ -265,7 +268,7 @@ void SurfacePlayer::ProcessPlayAnimation()
 	}
 
 	// アニメーション切り替え
-	animManager->ChangeAnimationByName(animName, 5.0f, loopCnt);
+	animManager->ChangeAnimationByName(animName, 1.0f, loopCnt);
 }
 
 // 着地処理
@@ -391,7 +394,7 @@ void SurfacePlayer::ProcessDeath()
 	if(_ePlayerStatus == PLAYER_STATUS::DEATH)
 	{
 		// アニメーション再生処理
-		ProcessPlayAnimation();
+		//ProcessPlayAnimation();
 	}
 }
 
@@ -400,7 +403,7 @@ void SurfacePlayer::ProcessDebug()
 {
 	// 体力減少
 	{
-		//if(_trg & PAD_INPUT_8){ _fLife -= 5.0f; }
+		if(_trg & PAD_INPUT_7){ _fLife -= 5.0f; }
 	}
 
 	// エネルギーを増やす
