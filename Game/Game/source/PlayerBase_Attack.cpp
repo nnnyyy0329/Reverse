@@ -142,10 +142,20 @@ void PlayerBase::ProcessAttack()
 // コンボ攻撃開始の処理
 void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> attack)
 {
-	ProcessAttackColPos();			// コリジョン位置更新処理
-	ReceiveAttackColData();			// 攻撃判定受け取り関数
-	SetStatus(nextStatus);			// 状態更新
-	attack->ProcessStartAttack();	// 攻撃処理開始
+	// コリジョン位置更新処理
+	ProcessAttackColPos();	
+
+	// 攻撃判定受け取り関数
+	ReceiveAttackColData();		
+
+	// 状態更新
+	SetStatus(nextStatus);				
+
+	// 攻撃処理開始
+	attack->ProcessStartAttack();		
+
+	// 攻撃エフェクト処理
+	ProcessAttackEffect(comboCount - 1);	
 
 	// AttackManagerに登録
 	std::shared_ptr<AttackBase> attackPtr = attack;
@@ -156,20 +166,70 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, st
 		{
 			case CHARA_TYPE::SURFACE_PLAYER:
 			{
+				// 表プレイヤーとして登録
 				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::SURFACE_PLAYER, GetInstanceId());
 				break;
 			}
 
 			case CHARA_TYPE::INTERIOR_PLAYER:
 			{
+				// 裏プレイヤーとして登録
 				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::INTERIOR_PLAYER, GetInstanceId());
 				break;
 			}
 		}
 	}
 
-	_iComboCount = comboCount;
-	_bCanCombo = false;
+	_iComboCount = comboCount;	// コンボカウント設定
+	_bCanCombo = false;			// コンボフラグ初期化
+}
+
+// 攻撃エフェクト処理
+void PlayerBase::ProcessAttackEffect(int attackIndex)
+{
+	// 攻撃設定を取得
+	AttackConstants constants = GetAttackConstants();
+
+	// キャラタイプに応じた最大コンボ数を取得
+	int maxComboCount;
+	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
+	{
+		maxComboCount = constants.SURFACE_MAX_COMBO_COUNT;
+	}
+	else
+	{ 
+		maxComboCount = constants.INTERIOR_MAX_COMBO_COUNT;
+	}
+
+	// 攻撃設定取得
+	std::vector<AttackConfig> configs(maxComboCount);
+	GetAttackConfigs(configs.data());
+
+	// 有効な攻撃インデックスかチェック
+	if(attackIndex >= 0 && attackIndex < static_cast<int>(configs.size()))
+	{
+		AttackConfig& config = configs[attackIndex];
+
+		// エフェクト名が空でない場合のみ
+		if(!config.effectName.empty())
+		{
+			// エフェクト再生位置を計算
+			VECTOR effectPos = VAdd(_vPos, config.effectOffset);
+
+			// 攻撃方向に応じてオフセットを回転
+			VECTOR dirNorm = VNorm(_vDir);
+			VECTOR rotatedOffset = VGet
+			(
+				config.effectOffset.x * dirNorm.x - config.effectOffset.z * dirNorm.z,	// X成分
+				config.effectOffset.y,													// Y成分
+				config.effectOffset.x * dirNorm.z + config.effectOffset.z * dirNorm.x	// Z成分
+			);
+			effectPos = VAdd(_vPos, rotatedOffset);
+
+			// エフェクト再生
+			EffectServer::GetInstance()->Play(config.effectName, effectPos);
+		}
+	}
 }
 
 // 攻撃分岐処理

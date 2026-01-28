@@ -15,9 +15,9 @@ bool ModeLoading::Initialize()
 			rs->Register("Laser", "res/effect/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 			// 表プレイヤーの攻撃エフェクト
-			rs->Register("SurfacePlayerAttack1", "res/effect/Absorb_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("SurfacePlayerAttack2", "res/effect/Absorb_Attack_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("SurfacePlayerAttack3", "res/effect/Absorb_Attack_02.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("SurfacePlayerAttack1", "res/effect/Absorb_Attack_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("SurfacePlayerAttack2", "res/effect/Absorb_Attack_01.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("SurfacePlayerAttack3", "res/effect/Absorb_Attack_02.efkefc", RESOURCE_TYPE::Effect, 20.0f);
 
 			// 表プレイヤーの攻撃ヒットエフェクト
 			rs->Register("SurfacePlayerAttackHit1", "res/effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
