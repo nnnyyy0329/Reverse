@@ -54,10 +54,10 @@ void PlayerBase::InitializeAttackData()
 		(
 			configs[i].topOffset,       // 上部
 			configs[i].bottomOffset,    // 下部
-			constants.COMMON_RADIUS,    // 半径
-			constants.COMMON_DELAY,     // 発生フレーム
-			constants.COMMON_DURATION,  // 持続フレーム
-			constants.COMMON_RECOVERY,  // 硬直フレーム
+			configs[i].radius,			// 半径
+			configs[i].delay,           // 発生フレーム
+			configs[i].duration,        // 持続フレーム
+			configs[i].recovery,        // 硬直フレーム
 			configs[i].damage,          // ダメージ
 			false                       // ヒットフラグ
 		);
@@ -209,7 +209,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 			// 次の攻撃入力があれば次の攻撃へ
 			if((_trg & PAD_INPUT_1) && CanNextAttack())
 			{
-				ProcessNextAttack(attackIndex);
+				//ProcessNextAttack(attackIndex);
 			}
 			break;
 		}

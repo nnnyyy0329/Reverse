@@ -94,7 +94,7 @@ void AnimManager::Update()
 		AnimationData* anim = *it;
 
 		// Ä¶ŽžŠÔ‚ði‚ß‚é
-		anim->fPlayTime += 1.0f;
+		anim->fPlayTime += 0.75f;
 
 		// ƒ‹[ƒvˆ—
 		if (anim->fPlayTime >= anim->fTotalTime)

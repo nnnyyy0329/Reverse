@@ -16,6 +16,9 @@ void SurfacePlayer::CallProcess()
 	// プレイヤー移動処理
 	ProcessMovePlayer();
 
+	// ステータスに応じたアニメーション処理
+	ProcessStatusAnimation();
+
 	// ジャンプ処理
 	//ProcessJump();
 
@@ -26,13 +29,13 @@ void SurfacePlayer::CallProcess()
 	//ProcessCrouch();
 
 	// 被弾処理
-	ProcessHit();
+	//ProcessHit();
 
 	// 回避処理
-	ProcessDodge();
+	//ProcessDodge();
 
-	// ステータスに応じたアニメーション処理
-	ProcessStatusAnimation();
+	// コリジョン位置の更新処理
+	ProcessCollisionPos();
 
 	// デバッグ用の処理
 	ProcessDebug();
@@ -96,16 +99,37 @@ void SurfacePlayer::ProcessMovePlayer()
 		_vPos = VAdd(_vPos, VScale(_vMove, _fMoveSpeed));	
 	}
 
+	// モデルに位置を設定
+	AnimManager* animManager = GetAnimManager();
+	if(animManager != nullptr)
+	{
+		// モデルの位置を更新
+		MV1SetPosition(animManager->GetModelHandle(), _vPos);
+	}
+}
+
+// コリジョン位置の更新処理
+void SurfacePlayer::ProcessCollisionPos()
+{
+	AnimManager* animManager = GetAnimManager();
+	VECTOR modelPos = _vPos;
+
+	if(animManager != nullptr)
+	{
+		// モデルの実際の位置を取得
+		modelPos = MV1GetPosition(animManager->GetModelHandle());
+	}
+
 	// カプセルに座標を対応
 	if(!_bIsCrouching) // しゃがみ中じゃないなら
 	{
-		_vCollisionTop = VAdd(_vPos, VGet(0, 70.0f, 0));	// キャラの高さ分を足す
-		_vCollisionBottom = VAdd(_vPos, VGet(0, 10.0f, 0));	// 腰位置分を足す
+		_vCollisionTop = VAdd(modelPos, VGet(0, 70.0f, 0));	// キャラの高さ分を足す
+		_vCollisionBottom = VAdd(modelPos, VGet(0, 10.0f, 0));	// 腰位置分を足す
 	}
 	else // しゃがみ中なら
 	{
-		_vCollisionTop = VAdd(_vPos, VGet(0, 35.0f, 0));
-		_vCollisionBottom = VAdd(_vPos, VGet(0, 5.0f, 0));
+		_vCollisionTop = VAdd(modelPos, VGet(0, 35.0f, 0));
+		_vCollisionBottom = VAdd(modelPos, VGet(0, 5.0f, 0));
 	}
 }
 

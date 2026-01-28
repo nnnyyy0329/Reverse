@@ -31,7 +31,7 @@ bool ModeLoading::Initialize()
 		// 能力選択画面用
 		rs->Register("select1", "res/try3/select1.png", RESOURCE_TYPE::Graph, 1.0f);
 		rs->Register("select2", "res/try3/select2.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("select3", "res/try3/select3.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("select3", "res/try3/select4.png", RESOURCE_TYPE::Graph, 1.0f);
 
 		// エネルギーUI用
 		rs->Register("energyFrame", "res/try3/energy_frame.png", RESOURCE_TYPE::Graph, 1.0f);

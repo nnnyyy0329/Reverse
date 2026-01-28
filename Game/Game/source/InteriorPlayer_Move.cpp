@@ -256,7 +256,7 @@ void InteriorPlayer::ProcessPlayAnimation()
 			break;
 
 		case PLAYER_STATUS::FOURTH_ATTACK:	// çUåÇ4
-			animName = "Nchange_attack_03";
+			animName = "EmotionNchange_attack_03";
 			blendTime = 1.0f;
 			loopCnt = 1;
 			break;
@@ -390,6 +390,6 @@ void InteriorPlayer::ProcessDebug()
 {
 	// ëÃóÕå∏è≠
 	{
-		//if(_trg & PAD_INPUT_8){ _fLife -= 5.0f; }
+		if(_trg & PAD_INPUT_8){ _fLife -= 5.0f; }
 	}
 }

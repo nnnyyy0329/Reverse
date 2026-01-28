@@ -173,8 +173,8 @@
     <ClCompile Include="source\ModeGame_CheckHit.cpp" />
     <ClCompile Include="source\ModeLoading.cpp" />
     <ClCompile Include="source\ModeMenu.cpp" />
-    <ClCompile Include="source\PlayerAbilityBase.cpp" />
-    <ClCompile Include="source\PlayerAbilityManager.cpp" />
+    <ClCompile Include="source\AbilityBase.cpp" />
+    <ClCompile Include="source\AbilityManager.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
     <ClCompile Include="source\PlayerBase_Attack.cpp" />
     <ClCompile Include="source\PlayerManager.cpp" />
@@ -218,8 +218,8 @@
     <ClInclude Include="source\ModeGame.h" />
     <ClInclude Include="source\ModeLoading.h" />
     <ClInclude Include="source\ModeMenu.h" />
-    <ClInclude Include="source\PlayerAbilityBase.h" />
-    <ClInclude Include="source\PlayerAbilityManager.h" />
+    <ClInclude Include="source\AbilityBase.h" />
+    <ClInclude Include="source\AbilityManager.h" />
     <ClInclude Include="source\PlayerBase.h" />
     <ClInclude Include="source\PlayerManager.h" />
     <ClInclude Include="source\StageBase.h" />

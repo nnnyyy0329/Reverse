@@ -8,12 +8,6 @@
 struct AttackConstants
 {
 	float ATTACK_OFFSET_SCALE;		// 攻撃判定オフセット倍率
-	float COMMON_RADIUS;			// 半径
-	float COMMON_DELAY;				// 発生フレーム
-	float COMMON_DURATION;			// 持続フレーム
-	float COMMON_RECOVERY;			// 硬直フレーム
-	float NORMAL_DAMAGE;			// 通常ダメージ
-	float FINISHER_DAMAGE;			// フィニッシャーダメージ
 	int SURFACE_MAX_COMBO_COUNT;	// 表プレイヤー用コンボカウント
 	int INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
 };
@@ -21,9 +15,14 @@ struct AttackConstants
 // 攻撃設定データ構造体
 struct AttackConfig
 {
-	VECTOR topOffset;
-	VECTOR bottomOffset;
-	float damage;
+	VECTOR topOffset;		// コリジョン上部位置
+	VECTOR bottomOffset;	// コリジョン下部位置
+	float radius;			// 半径
+	float delay;			// 発生
+	float duration;			// 持続
+	float recovery;			// 硬直
+	float damage;			// ダメージ
+
 };
 
 // 状態列挙型

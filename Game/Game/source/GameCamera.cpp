@@ -53,11 +53,11 @@ void GameCamera::Render()
 // デバッグ用描画処理
 void GameCamera::DebugRender()
 {
-	int x = 900;
-	int y = 410;
+	int x = 400;
+	int y = 50;
 
 	// 座標系表示
-	DrawFormatString(x, y, GetColor(55, 0, 0), "GameCamera Pos: (%3.2f, %3.2f, %3.2f)", _vPos.x, _vPos.y, _vPos.z);
+	DrawFormatString(x, y, GetColor(255, 255, 255), "GameCamera Pos: (%3.2f, %3.2f, %3.2f)", _vPos.x, _vPos.y, _vPos.z);
 }
 
 // 更新処理

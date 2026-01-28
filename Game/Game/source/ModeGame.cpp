@@ -236,10 +236,10 @@ bool ModeGame::Process()
 		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
 
 		// マップ
-		//CheckCollisionCharaMap(player);
-		//for (const auto& enemy : enemies) {
-		//	CheckCollisionCharaMap(enemy);
-		//}
+		CheckCollisionCharaMap(player);
+		for (const auto& enemy : enemies) {
+			CheckCollisionCharaMap(enemy);
+		}
 	}
 
 	// ターゲット更新
@@ -325,14 +325,18 @@ bool ModeGame::Render()
 
 		_stage->DebugRender();
 		AttackManager::GetInstance()->DebugRender();
-		//EnergyManager::GetInstance()->DebugRender();
 		_debugCamera->DebugRender();
+		_gameCamera->DebugRender();
 
 		// ライト情報
 		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());
 
 		//AttackManager::GetInstance()->DebugRender();
 		EnergyManager::GetInstance()->DebugRender();
+
+		// プレイヤーデバッグ情報
+		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
+		activePlayer->DebugRender();
 
 		_cameraManager->SwitchCameraDebugRender();
 	}
@@ -342,6 +346,10 @@ bool ModeGame::Render()
 	{
 		_stage->CollisionRender();
 		AttackManager::GetInstance()->CollisionRender();
+
+		// プレイヤーコリジョン描画
+		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
+		activePlayer->CollisionRender();
 	}
 
 	_cameraManager->SwitchCameraRender();
