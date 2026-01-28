@@ -232,7 +232,7 @@ void SurfacePlayer::ProcessPlayAnimation()
 	}
 
 	// アニメーション切り替え
-	animManager->ChangeAnimationByName(animName, 10.0f, loopCnt);
+	animManager->ChangeAnimationByName(animName, 5.0f, loopCnt);
 }
 
 // 着地処理
