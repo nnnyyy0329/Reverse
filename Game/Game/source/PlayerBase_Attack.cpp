@@ -130,7 +130,8 @@ void PlayerBase::ProcessAttack()
 {
 	// 攻撃入力チェック（通常状態時）
 	if((_ePlayerStatus == PLAYER_STATUS::WAIT ||
-		_ePlayerStatus == PLAYER_STATUS::WALK)
+		_ePlayerStatus == PLAYER_STATUS::WALK ||
+		_ePlayerStatus == PLAYER_STATUS::RUN)
 		&& _trg & PAD_INPUT_1) 
 	{
 		// 1段目の攻撃開始処理
@@ -249,9 +250,17 @@ void PlayerBase::EndAttackSequence()
 	// AttackManagerから自分の攻撃を全て解除
 	AttackManager::GetInstance()->UnregisterAttackByOwner(GetInstanceId());
 
+	// 古いステータスを保持
+	PLAYER_STATUS oldStatus = _ePlayerStatus;
+
 	SetStatus(PLAYER_STATUS::WAIT);	// 状態を待機に戻す
 	_iComboCount = 0;				// コンボカウントリセット
 	_bCanCombo = false;				// コンボ不可にする
+
+	// ステータス変更後、アニメーション切り替え
+	_eOldPlayerStatus = oldStatus;		// 古いステータスを攻撃状態に設定
+	ProcessPlayAnimation();				// アニメーション切り替え実行
+	_eOldPlayerStatus = _ePlayerStatus;	// 切り替え後に更新
 }
 
 // 次の攻撃へ

@@ -6,8 +6,8 @@
 namespace
 {
 	const float CROUCH_MOVE_SPEED = 2.0f;	// しゃがみ移動速度
-	const float NORMAL_MOVE_SPEED = 15.0f;	// 通常移動速度
-	const float DASH_MOVE_SPEED = 7.5f;	// ダッシュ移動速度
+	const float NORMAL_MOVE_SPEED = 5.0f;	// 通常移動速度
+	const float DASH_MOVE_SPEED = 2.5f;	// ダッシュ移動速度
 }
 
 // アクション関係Process呼び出し用関数
@@ -82,7 +82,13 @@ void SurfacePlayer::ProcessMovePlayer()
 			float len = VSize(_vMove);
 			if(len > 0.0f)
 			{
-				_vMove = VScale(_vMove, 1.0f / len);
+				_vMove = VScale(_vMove, 1.0f / len);	// 正規化
+			}
+
+			// ダッシュ入力があるなら
+			if(_key& PAD_INPUT_5) 
+			{
+				_fMoveSpeed += DASH_MOVE_SPEED; // ダッシュ速度を加算
 			}
 		}
 
@@ -106,16 +112,20 @@ void SurfacePlayer::ProcessMovePlayer()
 // ステータスに応じたアニメーション処理
 void SurfacePlayer::ProcessStatusAnimation()
 {
-	// 処理前のステータスを保存しておく
-	_eOldPlayerStatus = _ePlayerStatus;
-
 	// 攻撃中
 	if(IsAttacking())
 	{
 		// アニメーション再生処理のみ
 		ProcessPlayAnimation();
+
+		// 処理後の攻撃中のステータスを保存
+		_eOldPlayerStatus = _ePlayerStatus;
+
 		return;
 	}
+
+	// 処理前のステータスを保存しておく
+	_eOldPlayerStatus = _ePlayerStatus;
 
 	// 空中ならジャンプステータス
 	if(!_bIsStanding)
@@ -180,87 +190,95 @@ void SurfacePlayer::ProcessStatusAnimation()
 void SurfacePlayer::ProcessPlayAnimation()
 {
 	// ステータスが変わっていないか？
-	if(_eOldPlayerStatus == _ePlayerStatus)
-	{
-		return;
-	}
+	if(_eOldPlayerStatus == _ePlayerStatus){ return; }
 
 	// AnimManagerを取得
 	AnimManager* animManager = GetAnimManager();
-	if (animManager == nullptr)
-	{
-		return;
-	}
+	if(animManager == nullptr){ return; }
 
 	// ステータスに応じたアニメーション名とループ設定
 	const char* animName = nullptr;
-	int loopCnt = 0; // 0:無限ループ 1:ループ無し 2以上:指定回数ループ
+	float blendTime = 1.0f;			// ブレンド時間
+	int loopCnt = 0;				// 0:無限ループ 1:ループ無し 2以上:指定回数ループ
 
 	switch (_ePlayerStatus)
 	{
 	case PLAYER_STATUS::WAIT:	// 待機
 		animName = "player_idle_00";
+		blendTime = 1.0f;
 		loopCnt = 0;
 		break;
 
 	case PLAYER_STATUS::WALK:	// 歩行
 		animName = "player_walk_00";
+		blendTime = 1.0f;
 		loopCnt = 0;
 		break;
 
 	case PLAYER_STATUS::RUN:	// 走行
 		animName = "player_jog_00";
+		blendTime = 1.0f;
 		loopCnt = 0;
 		break;
 
 	case PLAYER_STATUS::JUMP_UP: // ジャンプ上昇
 		animName = "jump_up";
+		blendTime = 1.0f;
 		loopCnt = 1;
 		break;
 
 	case PLAYER_STATUS::JUMP_DOWN: // ジャンプ下降
 		animName = "jump_down";
+		blendTime = 1.0f;
 		loopCnt = 1;
 		break;
 
 	case PLAYER_STATUS::CROUCH_WAIT:	// しゃがみ待機
 		animName = "crouch_idle";
+		blendTime = 1.0f;
 		loopCnt = 0;
 		break;
 
 	case PLAYER_STATUS::CROUCH_WALK:	// しゃがみ歩行
 		animName = "crouch";
+		blendTime = 1.0f;
 		loopCnt = 0;
 		break;
 
 	case PLAYER_STATUS::FIRST_ATTACK:	// 攻撃1
 		animName = "absorb_attack_00";
+		blendTime = 1.0f;
 		loopCnt = 1;
 		break;
 
 	case PLAYER_STATUS::SECOND_ATTACK:	// 攻撃2
 		animName = "absorb_attack_01";
+		blendTime = 1.0f;
 		loopCnt = 1;
 		break;
 
 	case PLAYER_STATUS::THIRD_ATTACK:	// 攻撃3
 		animName = "absorb_attack_02";
+		blendTime = 1.0f;
 		loopCnt = 1;
 		break;
 
 	case PLAYER_STATUS::HIT:	// 被弾
 		animName = "player_damage_00";
+		blendTime = 1.0f;
 		loopCnt = 1;
 		break;
 
 	case PLAYER_STATUS::DODGE:	// 回避
 		animName = "dodge";
+		blendTime = 1.0f;
 		loopCnt = 1;
 		break;
 
 	case PLAYER_STATUS::DEATH:	// 死亡
 		animName = "player_dead_00";
-		loopCnt = 0;
+		blendTime = 1.0f;
+		loopCnt = 1;
 		break;
 
 	default:
@@ -268,7 +286,7 @@ void SurfacePlayer::ProcessPlayAnimation()
 	}
 
 	// アニメーション切り替え
-	animManager->ChangeAnimationByName(animName, 1.0f, loopCnt);
+	animManager->ChangeAnimationByName(animName, blendTime, loopCnt);
 }
 
 // 着地処理
@@ -312,7 +330,7 @@ void SurfacePlayer::ProcessJump()
 		if(!_bIsJumping && _bIsStanding)
 		{
 			// ジャンプ開始
-			_fVelY = 10.f;			// ジャンプ初速を設定
+			_fVelY = 10.0f;			// ジャンプ初速を設定
 			_bIsJumping = true;		// ジャンプ中フラグを立てる
 			_bIsStanding = false;	// 着地フラグを下ろす
 		}

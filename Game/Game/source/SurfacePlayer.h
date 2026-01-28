@@ -17,18 +17,18 @@ public:
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
 
 	// SurfacePlayer_Move.cppで定義
-	void CallProcess();				// アクション関係Process呼び出し用関数
-	void ProcessMovePlayer();		// プレイヤー移動処理
-	void ProcessStatusAnimation();	// ステータスに応じたアニメーション処理
-	void ProcessPlayAnimation();	// アニメーション再生処理
-	void ProcessStanding();			// 着地処理
-	void ProcessJump();				// ジャンプ処理
-	void ProcessCrouch();			// しゃがみ処理
-	void ProcessHit();				// 被弾処理
-	void ProcessDodge();			// 回避処理
-	void ProcessDodgeMove();		// 回避移動処理
-	void ProcessDeath();			// 死亡処理
-	void ProcessDebug();			// デバッグ用関数
+	void CallProcess();						// アクション関係Process呼び出し用関数
+	void ProcessMovePlayer();				// プレイヤー移動処理
+	void ProcessStatusAnimation();			// ステータスに応じたアニメーション処理
+	void ProcessPlayAnimation()override;	// アニメーション再生処理
+	void ProcessStanding();					// 着地処理
+	void ProcessJump();						// ジャンプ処理
+	void ProcessCrouch();					// しゃがみ処理
+	void ProcessHit();						// 被弾処理
+	void ProcessDodge();					// 回避処理
+	void ProcessDodgeMove();				// 回避移動処理
+	void ProcessDeath();					// 死亡処理
+	void ProcessDebug();					// デバッグ用関数
 
 	// SurfacePlayer_Draw.cppで定義
 	void CallDraw();				// 描画関係の呼び出し用関数

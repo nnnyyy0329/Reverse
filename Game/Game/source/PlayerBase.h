@@ -59,6 +59,8 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
+	virtual void ProcessPlayAnimation() = 0;	// アニメーション再生処理の仮想関数
+
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
 
