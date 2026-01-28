@@ -46,11 +46,15 @@ bool EnergyUI::Process()
 
 bool EnergyUI::Render()
 {
+	SetUseZBuffer3D(FALSE);
+
 	// エネルギーフレーム表示関数
 	EnergyFrameRender();
 
 	// エネルギーゲージ表示関数
 	GaugeRatioCalculation();
+
+	SetUseZBuffer3D(TRUE);
 
 	return true;
 }

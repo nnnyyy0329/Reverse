@@ -61,7 +61,7 @@ bool ModeGame::Initialize()
 	}
 
 	// ステージ初期化
-	_stage = std::make_shared<StageBase>(3);// ステージ番号で切り替え
+	_stage = std::make_shared<StageBase>(1);// ステージ番号で切り替え
 
 	// カメラ初期化
 	{
@@ -299,13 +299,20 @@ bool ModeGame::Render()
 		_stage->Render();
 		_playerManager->Render();
 		_bulletManager->Render();
-		_energyUI->Render();
+
 
 		// のうりょk選択画面
 		if(_isUseDebugScreen)
 		{
 			_abilitySelectScreen->Render();
 		}
+	}
+
+	// コリジョンの描画
+	if (_bViewCollision)
+	{
+		_stage->CollisionRender();
+		AttackManager::GetInstance()->CollisionRender();
 	}
 
 	// エフェクト描画
@@ -337,13 +344,8 @@ bool ModeGame::Render()
 		_cameraManager->SwitchCameraDebugRender();
 	}
 	
-	// コリジョンの描画
-	if (_bViewCollision)
-	{
-		_stage->CollisionRender();
-		AttackManager::GetInstance()->CollisionRender();
-	}
 
+	_energyUI->Render();
 	_cameraManager->SwitchCameraRender();
 
 	return true;

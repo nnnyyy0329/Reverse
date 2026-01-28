@@ -10,7 +10,7 @@ namespace {
 
 	constexpr auto ATTACK_CONFIRM_TIME = 60.0f;// 攻撃判定が有効になるまでの時間
 
-	constexpr auto BLEND_FRAME = 10.0f;// アニメーションブレンドフレーム数
+	constexpr auto BLEND_FRAME = 1.0f;// アニメーションブレンドフレーム数
 
 	// 個別の攻撃コリジョン設定
 	EnemyAttackSettings MakeMeleeAttackSettings()
@@ -47,6 +47,8 @@ namespace Melee
 		return true;// 視界内
 	}
 
+
+
 	// 待機
 	void Idle::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
@@ -56,7 +58,7 @@ namespace Melee
 		if (animManager)
 		{
 			// 待機アニメーションに切り替え
-			animManager->ChangeAnimationByName("Idle", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, 0);// 無限ループ
 		}
 	}
 
@@ -84,6 +86,14 @@ namespace Melee
 	void Move::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
 		// ここでアニメーション設定
+		// AnimManagerを取得してアニメーション切り替え
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			// 待機アニメーションに切り替え
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, 0);// 無限ループ
+		}
+
 
 		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());// 初期位置へのベクトル
 		auto dist = VSize(vToHome);// 初期位置までの距離
@@ -167,6 +177,18 @@ namespace Melee
 
 
 	// 追跡
+	void Chase::Enter(Enemy* owner) {
+		_fTimer = 0.0f;
+		// ここでアニメーション設定
+		// AnimManagerを取得してアニメーション切り替え
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			// 待機アニメーションに切り替え
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, 0);// 無限ループ
+		}
+	}
+
 	std::shared_ptr<EnemyState> Chase::Update(Enemy* owner) {
 		auto target = owner->GetTarget();
 		// ターゲットがいない場合は待機状態へ
@@ -203,6 +225,13 @@ namespace Melee
 		_fTimer = 0.0f;
 		_bHasCollision = false;
 		// ここでアニメーション設定
+		// AnimManagerを取得してアニメーション切り替え
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			// 待機アニメーションに切り替え
+			animManager->ChangeAnimationByName("enemy_attack_01", BLEND_FRAME, 1);// ループ無し
+		}
 
 	}
 

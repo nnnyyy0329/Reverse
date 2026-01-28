@@ -11,17 +11,6 @@ namespace {
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
 {
-	// モデル読み込み
-	int modelHandle = ResourceServer::GetInstance()->GetHandle("Enemy");
-
-	// animManagerにモデルハンドルを複製して設定
-	int dupHandle = MV1DuplicateModel(modelHandle);
-
-	// 複製したモデルをanimManagerに設定
-	_animManager.SetModelHandle(dupHandle);
-
-	// 初期アニメーションの設定
-
 	_vDir = VGet(0.0f, 0.0f, 1.0f);// 前方を向いておく
 
 	// 腰位置の設定(マップモデルとの判定用)
@@ -45,6 +34,9 @@ Enemy::~Enemy()
 
 bool Enemy::Initialize() 
 {
+	// モデル読み込み
+	LoadEnemyModel();
+
 	_vOldPos = _vPos;
 	_vHomePos = _vPos;// 初期位置を保存
 	_fLife = _enemyParam.fMaxLife;// 体力に最大値をセット
@@ -505,4 +497,22 @@ std::shared_ptr<EnemyState> Enemy::GetRecoveryState() const
 	}
 
 	return nullptr;
+}
+
+void Enemy::LoadEnemyModel()
+{
+	// モデル読み込み
+	int modelHandle = ResourceServer::GetInstance()->GetHandle(_modelName.c_str());
+
+	// モデルハンドルが無効な場合はデフォルトの敵モデルを使用
+	if (modelHandle == -1)
+	{
+		modelHandle = ResourceServer::GetInstance()->GetHandle("Enemy");
+	}
+
+	// animManagerにモデルハンドルを複製して設定
+	int dupHandle = MV1DuplicateModel(modelHandle);
+
+	// 複製したモデルをanimManagerに設定
+	_animManager.SetModelHandle(dupHandle);
 }

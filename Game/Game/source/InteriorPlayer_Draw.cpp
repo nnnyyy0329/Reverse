@@ -26,7 +26,7 @@ void InteriorPlayer::CallDraw()
 	// 攻撃配列から各攻撃のコリジョン位置を更新
 	for(size_t i = 0; i < _attacks.size(); ++i)
 	{
-		_attacks[i]->DrawAttackCollision();
+		//_attacks[i]->DrawAttackCollision();
 	}
 }
 

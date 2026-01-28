@@ -43,12 +43,14 @@ public:
 		auto enemy = std::make_shared<Enemy>();
 
 		enemy->SetPos(pos);// À•W‚ğİ’è
-		enemy->Initialize();// À•W‚Ìİ’èŒã‚ÉŒÄ‚Ô
 
 		EnemyParam param;
 
 		switch (type) {
 		case EnemyType::MELEE:// ‹ßÚŒ^
+			// ƒ‚ƒfƒ‹–¼‚ğİ’è
+			enemy->SetModelName("Melee");
+
 				param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
 				param.fVisionRange = MELEE_VISION_RANGE;
 				param.fVisionAngle = MELEE_VISION_ANGLE;
@@ -76,6 +78,9 @@ public:
 				break;
 
 		case EnemyType::RANGED:// ‰“‹——£Œ^
+			// ƒ‚ƒfƒ‹–¼‚ğİ’è
+			enemy->SetModelName("Ranged");
+
 				param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
 				param.fVisionRange = RANGED_VISION_RANGE;
 				param.fAttackRange = RANGED_MOVEBACK_RANGE;
@@ -96,6 +101,9 @@ public:
 				enemy->ChangeState(std::make_shared<Ranged::Idle>());// ‰Šúó‘Ôİ’è
 				break;
 		}
+
+		// İ’èŒã‚É‰Šú‰»‚ğŒÄ‚Ño‚·
+		enemy->Initialize();
 
 		return enemy;// ì¬‚µ‚½“G‚ğ•Ô‚·
 	}
