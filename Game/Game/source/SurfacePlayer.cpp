@@ -15,14 +15,17 @@ namespace
 
 SurfacePlayer::SurfacePlayer()
 {
-	// モデル表示関係
-	_iHandle = ResourceServer::GetInstance()->GetHandle("SurfacePlayer");
-	_iAttachIndex = MV1AttachAnim(_iHandle, -1, -1, FALSE);
-	_fTotalTime = MV1GetAttachAnimTotalTime(_iHandle, _iAttachIndex);
-	_fPlayTime = 0.0f;
+	// モデル読み込み
+	int modelHandle = ResourceServer::GetInstance()->GetHandle("SurfacePlayer");
+
+	// AnimManagerにモデルハンドルを複製して設定
+	int duplicatedHandle = MV1DuplicateModel(modelHandle);
+	_animManager.SetModelHandle(duplicatedHandle);
+
+	// 初期アニメーションの設定
 
 	// 位置の初期化
-	_vPos = VGet(0, 0, 0);
+	_vPos = VGet(230.0f,100.0f, 0.0f);
 	_vDir = VGet(0, 0, -1);
 
 	// 基礎ステータスの初期化
@@ -66,7 +69,6 @@ SurfacePlayer::SurfacePlayer()
 
 SurfacePlayer::~SurfacePlayer()
 {
-	MV1DeleteModel(_iHandle);
 }
 
 bool SurfacePlayer::Initialize()

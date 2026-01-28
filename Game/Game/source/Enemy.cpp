@@ -12,10 +12,15 @@ namespace {
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
 {
 	// モデル読み込み
-	_iHandle = MV1LoadModel("res/SDChar/SDChar.mv1");
-	_iAttachIndex = MV1AttachAnim(_iHandle, 0, -1, FALSE);
-	_fTotalTime = MV1GetAttachAnimTotalTime(_iHandle, _iAttachIndex);
-	_fPlayTime = 0.0f;
+	int modelHandle = ResourceServer::GetInstance()->GetHandle("Enemy");
+
+	// animManagerにモデルハンドルを複製して設定
+	int dupHandle = MV1DuplicateModel(modelHandle);
+
+	// 複製したモデルをanimManagerに設定
+	_animManager.SetModelHandle(dupHandle);
+
+	// 初期アニメーションの設定
 
 	_vDir = VGet(0.0f, 0.0f, 1.0f);// 前方を向いておく
 
@@ -57,11 +62,8 @@ bool Enemy::Terminate()
 
 bool Enemy::Process() 
 {
-	_fPlayTime += 0.5f;// 再生時間を進める
-	// 再生時間がアニメーションの総再生時間に達したら再生時間を０に戻す
-	if (_fPlayTime >= _fTotalTime) {
-		_fPlayTime = 0.0f;
-	}
+	// アニメーション更新(基底クラスで実行)
+	CharaBase::Process();
 
 	_vOldPos = _vPos;// 前フレームの位置を保存
 
@@ -86,31 +88,8 @@ bool Enemy::Process()
 
 bool Enemy::Render() 
 {
-	// 再生時間をセットする
-	MV1SetAttachAnimTime(_iHandle, _iAttachIndex, _fPlayTime);
-
-	// モデルを描画する
-	VECTOR vRot = {0, 0, 0};
-	vRot.y = atan2(_vDir.x * -1, _vDir.z * -1);// モデル標準でどちらを向いているかで式が変わる
-	MATRIX mRotY = MGetRotY(vRot.y);// Y軸回転行列を作成
-
-	// 位置移動行列を作成
-	MATRIX mTrans = MGetTranslate(_vPos);
-
-	// スケール行列を作成
-	MATRIX mScale = MGetScale(_vScale);
-
-	// 回転 -> 移動 -> スケール の順に行列を掛け合わせる
-	MATRIX m = MGetIdent();// 単位行列を取得
-	m = MMult(m, mRotY);
-	m = MMult(m, mScale);
-	m = MMult(m, mTrans);
-
-	// モデルに行列をセット
-	MV1SetMatrix(_iHandle, m);
-
-	// モデルの描画
-	MV1DrawModel(_iHandle);
+	// 基底クラスのRenderを呼び出し
+	CharaBase::Render();
 
 	// 体力バー描画
 	DrawLifeBar();

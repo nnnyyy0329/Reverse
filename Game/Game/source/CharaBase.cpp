@@ -19,7 +19,6 @@ CharaBase::CharaBase()
 
 CharaBase::~CharaBase()
 {
-
 }
 
 bool CharaBase::Initialize()
@@ -34,11 +33,15 @@ bool CharaBase::Terminate()
 
 bool CharaBase::Process()
 {
+	GameObjectBase::Process();
+
 	return true;
 }
 
 bool CharaBase::Render()
 {
+	GameObjectBase::Render();
+
 	return true;
 }
 

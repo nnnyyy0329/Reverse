@@ -84,7 +84,7 @@ StageBase::StageBase(int stageNum)
 
 				// ÉRÉäÉWÉáÉìê›íË
 				if (modelPos.collisionFrame != -1) {
-					MV1SetupCollInfo(modelPos.modelHandle, modelPos.collisionFrame, 8, 8, 8);
+					MV1SetupCollInfo(modelPos.modelHandle, modelPos.collisionFrame, 16, 16, 16);
 					//MV1RefreshCollInfo(modelPos.modelHandle, modelPos.collisionFrame);
 				}
 			}
