@@ -306,6 +306,10 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 
 		// ヒットしたキャラを登録
 		attack->AddHitCharas(chara);
+
+
+		EffectServer::GetInstance()->Play("SurfacePlayerAttackHit1", chara->GetPos());
+
 		
 		// ダメージ処理
 		float damage = attack->GetDamage();		// ダメージ取得

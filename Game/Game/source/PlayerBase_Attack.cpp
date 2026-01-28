@@ -142,10 +142,10 @@ void PlayerBase::ProcessAttack()
 // コンボ攻撃開始の処理
 void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> attack)
 {
-	ProcessAttackColPos();							// コリジョン位置更新処理
-	ReceiveAttackColData();							// 攻撃判定受け取り関数
-	SetStatus(nextStatus);							// 状態更新
-	attack->ProcessStartAttack();					// 攻撃処理開始
+	ProcessAttackColPos();			// コリジョン位置更新処理
+	ReceiveAttackColData();			// 攻撃判定受け取り関数
+	SetStatus(nextStatus);			// 状態更新
+	attack->ProcessStartAttack();	// 攻撃処理開始
 
 	// AttackManagerに登録
 	std::shared_ptr<AttackBase> attackPtr = attack;

@@ -183,7 +183,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		{0.0f, 10.0f, 0.0f},  	// コリジョン下部位置
 		40.0f,	// 半径
 		20.0f,	// 発生フレーム
-		25.0f,	// 持続フレーム
+		15.0f,	// 持続フレーム
 		20.0f,	// 硬直フレーム
 		25.0f,	// ダメージ
 	};
