@@ -12,8 +12,12 @@ bool ModeLoading::Initialize()
 		rs->Register("Laser", "res/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 		rs->Register("LifeBar", "res/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
 		rs->Register("LifeBarFrame", "res/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
-		rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
+
+		// プレイヤーモデル
+		rs->Register("SurfacePlayer", "res/try3/playeranim/.mv1", RESOURCE_TYPE::Model, 1.0f);
+		rs->Register("InteriorPlayer", "res/try3/playeranim/.mv1", RESOURCE_TYPE::Model, 1.0f);
+		//rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
+		//rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 		// 能力選択画面用
 		rs->Register("select1", "res/try3/select1.png", RESOURCE_TYPE::Graph, 1.0f);
