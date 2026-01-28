@@ -58,7 +58,7 @@ namespace Melee
 		if (animManager)
 		{
 			// 待機アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);// 無限ループ
 		}
 	}
 
@@ -91,7 +91,7 @@ namespace Melee
 		if (animManager)
 		{
 			// 待機アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);// 無限ループ
 		}
 
 
@@ -185,7 +185,7 @@ namespace Melee
 		if (animManager)
 		{
 			// 待機アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);// 無限ループ
 		}
 	}
 
@@ -230,7 +230,7 @@ namespace Melee
 		if (animManager)
 		{
 			// 待機アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_attack_01", BLEND_FRAME, 1);// ループ無し
+			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, 1, 0.5f);// ループ無し
 		}
 
 	}
