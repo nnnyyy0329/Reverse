@@ -98,4 +98,14 @@ private:
 
 	/// のうりょくせんたくがめんよう
 	bool _isUseDebugScreen;
+
+	// --- ここからアイテム描画用メンバ ---
+	std::vector<VECTOR> _itemPositions;
+	std::vector<unsigned int> _itemColors;
+	float _itemRadius = 0.6f;
+	float _itemHeight = 1.2f;
+	VECTOR _playerStartPos = VGet(0.0f, 0.0f, 0.0f);
+
+	// 開始位置周りにアイテムを生成
+	void CreateItemsAtStart(int count = 3, float ringRadius = 2.0f);
 };

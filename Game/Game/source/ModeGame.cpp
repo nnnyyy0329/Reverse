@@ -1,4 +1,4 @@
-#include "AppFrame.h"
+ï»¿#include "AppFrame.h"
 #include "ApplicationMain.h"
 #include "ModeGame.h"
 #include "ModeMenu.h"
@@ -24,7 +24,7 @@
 
 #include "AbilitySelectScreen.h"
 
-// ƒƒjƒ…[€–Ú
+// ãƒ¡ãƒ‹ãƒ¥ãƒ¼é …ç›®
 class MenuDebugCamera : public MenuItemBase
 {
 public:
@@ -34,8 +34,8 @@ public:
 	void SetGameCameraMenu(std::shared_ptr<GameCamera> gameCamera) { __gameCamera = gameCamera; }
 	void SetDebugCameraMenu(std::shared_ptr<DebugCamera> debugCamera) { __debugCamera = debugCamera; }
 
-	// €–Ú‚ğŒˆ’è‚µ‚½‚ç‚±‚ÌŠÖ”‚ªŒÄ‚Î‚ê‚é
-	// return int : 0 = ƒƒjƒ…[Œp‘±, 1 = ƒƒjƒ…[I—¹
+	// é …ç›®ã‚’æ±ºå®šã—ãŸã‚‰ã“ã®é–¢æ•°ãŒå‘¼ã°ã‚Œã‚‹
+	// return int : 0 = ãƒ¡ãƒ‹ãƒ¥ãƒ¼ç¶™ç¶š, 1 = ãƒ¡ãƒ‹ãƒ¥ãƒ¼çµ‚äº†
 	virtual int Selected() 
 	{
 		int key = ApplicationMain::GetInstance()->GetKey();
@@ -47,9 +47,9 @@ public:
 		float ry = analog.ry;
 		float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
 
-		// ƒfƒoƒbƒOƒJƒƒ‰
+		// ãƒ‡ãƒãƒƒã‚°ã‚«ãƒ¡ãƒ©
 		{
-			__debugCamera->SetInfo(__gameCamera->GetVPos(), __gameCamera->GetVTarget());// Œ³ƒJƒƒ‰‚Ìî•ñ‚ğ“n‚·
+			__debugCamera->SetInfo(__gameCamera->GetVPos(), __gameCamera->GetVTarget());// å…ƒã‚«ãƒ¡ãƒ©ã®æƒ…å ±ã‚’æ¸¡ã™
 			__cameraManager->SetIsUseDebugCamera(true);
 
 			auto* modeMenu = dynamic_cast<ModeMenu*>(ModeServer::GetInstance()->Get("menu"));
@@ -61,9 +61,9 @@ public:
 
 protected:
 
-	std::shared_ptr<CameraManager>	__cameraManager;	// ƒJƒƒ‰ƒ}ƒl[ƒWƒƒ[
-	std::shared_ptr<DebugCamera>	__debugCamera;	// ƒfƒoƒbƒOƒJƒƒ‰
-	std::shared_ptr<GameCamera>	__gameCamera;		// ƒQ[ƒ€ƒJƒƒ‰
+	std::shared_ptr<CameraManager>	__cameraManager;	// ã‚«ãƒ¡ãƒ©ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼
+	std::shared_ptr<DebugCamera>	__debugCamera;	// ãƒ‡ãƒãƒƒã‚°ã‚«ãƒ¡ãƒ©
+	std::shared_ptr<GameCamera>	__gameCamera;		// ã‚²ãƒ¼ãƒ ã‚«ãƒ¡ãƒ©
 
 };
 
@@ -72,26 +72,26 @@ bool ModeGame::Initialize()
 {
 	if (!base::Initialize()) { return false; }
 
-	// Manager‰Šú‰»
+	// ManageråˆæœŸåŒ–
 	{
-		// PlayerManager‚Ì‰Šú‰»
+		// PlayerManagerã®åˆæœŸåŒ–
 		_playerManager = std::make_shared<PlayerManager>();
 		_playerManager->Initialize();
 
-		// BulletManager‚Ì‰Šú‰»
+		// BulletManagerã®åˆæœŸåŒ–
 		_bulletManager = std::make_shared<BulletManager>();
 		_bulletManager->Initialize();
 
-		// LightManager‚Ì‰Šú‰»
+		// LightManagerã®åˆæœŸåŒ–
 		_lightManager = std::make_shared<LightManager>();
 		_lightManager->Initialize();
 	}
 
-	// ƒVƒ“ƒOƒ‹ƒgƒ“ƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾
+	// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—
 	_attackManager = AttackManager::GetInstance();
 	_energyManager = EnergyManager::GetInstance();
 
-	// ƒvƒŒƒCƒ„[‚Ìì¬‚Æ“o˜^
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½œæˆã¨ç™»éŒ²
 	{
 		auto surfacePlayer = std::make_shared<SurfacePlayer>();
 		surfacePlayer->Initialize();
@@ -102,10 +102,10 @@ bool ModeGame::Initialize()
 		_playerManager->RegisterPlayer(PLAYER_TYPE::INTERIOR, interiorPlayer);
 	}
 
-	// ƒXƒe[ƒW‰Šú‰»
-	_stage = std::make_shared<StageBase>(3);// ƒXƒe[ƒW”Ô†‚ÅØ‚è‘Ö‚¦
+	// ã‚¹ãƒ†ãƒ¼ã‚¸åˆæœŸåŒ–
+	_stage = std::make_shared<StageBase>(3);// ã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·ã§åˆ‡ã‚Šæ›¿ãˆ
 
-	// ƒJƒƒ‰‰Šú‰»
+	// ã‚«ãƒ¡ãƒ©åˆæœŸåŒ–
 	{
 		_cameraManager = std::make_shared<CameraManager>();
 
@@ -115,30 +115,34 @@ bool ModeGame::Initialize()
 		_debugCamera = std::make_shared<DebugCamera>();
 	}
 
-	// ‰ñ”ğƒVƒXƒeƒ€‰Šú‰»
+	// å›é¿ã‚·ã‚¹ãƒ†ãƒ åˆæœŸåŒ–
 	{
 		//_dodgeSystem = std::make_shared<DodgeSystem>();
 		//_dodgeSystem->Initialize();
 	}
 
-	// “Gİ’è
+	// æ•µè¨­å®š
 	for (const auto& enemy : _stage->GetEnemies())
 	{
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
 		enemy->SetBulletManager(_bulletManager);
 	}
 
-	// ”\—Í‘I‘ğ‰æ–Ê‰Šú‰»
+	// èƒ½åŠ›é¸æŠç”»é¢åˆæœŸåŒ–
 	_abilitySelectScreen = std::make_shared<AbilitySelectScreen>();
 	_abilitySelectScreen->Initialize();
 	_isUseDebugScreen = false;
 
-	// ƒGƒlƒ‹ƒM[UI‰Šú‰»
+	// ã‚¨ãƒãƒ«ã‚®ãƒ¼UIåˆæœŸåŒ–
 	_energyUI = std::make_shared<EnergyUI>();
 	_energyUI->Initialize();
 
-	// ƒ‰ƒCƒg‚Ì‰Šú‰»
+	// ãƒ©ã‚¤ãƒˆã®åˆæœŸåŒ–
 	InitializeLights();
+
+	// ã‚¢ã‚¤ãƒ†ãƒ åˆæœŸåŒ–
+	_playerStartPos = VGet(0.0f, 0.0f, 0.0f); // å¿…è¦ãªã‚‰ã‚¹ãƒ†ãƒ¼ã‚¸ã‚„ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‹ã‚‰å–å¾—ã™ã‚‹
+	CreateItemsAtStart(3, 2.0f);
 
 	return true;
 }
@@ -147,10 +151,10 @@ bool ModeGame::Terminate()
 {
 	base::Terminate();
 
-	// ƒ‰ƒCƒg‚ÌI—¹ˆ—
+	// ãƒ©ã‚¤ãƒˆã®çµ‚äº†å‡¦ç†
 	TerminateLights();
 
-	// ƒvƒŒƒCƒ„[ŠJ•ú
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼é–‹æ”¾
 	_playerManager.reset();
 
 	return true;
@@ -169,19 +173,19 @@ bool ModeGame::Process()
 	float ry = analog.ry;
 	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
 
-	/// “ü—Íæ“¾
+	/// å…¥åŠ›å–å¾—
 	{
-		// ƒvƒŒƒCƒ„[ƒ}ƒl[ƒWƒƒ[‚É“ü—Íó‘Ô‚ğ“n‚·
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã«å…¥åŠ›çŠ¶æ…‹ã‚’æ¸¡ã™
 		if(_playerManager)
 		{
 			_playerManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
 		}
-		// ƒJƒƒ‰ƒ}ƒl[ƒWƒƒ[‚É“ü—Íó‘Ô‚ğ“n‚·
+		// ã‚«ãƒ¡ãƒ©ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã«å…¥åŠ›çŠ¶æ…‹ã‚’æ¸¡ã™
 		if(_cameraManager)
 		{
 			_cameraManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
 		}
-		// ”\—Í‘I‘ğ‰æ–Ê‚É“ü—Íó‘Ô‚ğ“n‚·
+		// èƒ½åŠ›é¸æŠç”»é¢ã«å…¥åŠ›çŠ¶æ…‹ã‚’æ¸¡ã™
 		if(_abilitySelectScreen)
 		{
 			_abilitySelectScreen->SetInput(key, trg, lx, ly, rx, ry, analogMin);
@@ -190,7 +194,7 @@ bool ModeGame::Process()
 
 
 
-	// ”\—Í‘I‘ğ‰æ–Ê‚ÌƒfƒoƒbƒOŠñŠÖ”
+	// èƒ½åŠ›é¸æŠç”»é¢ã®ãƒ‡ãƒãƒƒã‚°å¯„é–¢æ•°
 	if(trg & PAD_INPUT_8)
 	{
 		_isUseDebugScreen = !_isUseDebugScreen;
@@ -202,13 +206,13 @@ bool ModeGame::Process()
 
 
 
-	// spaceƒL[‚Åƒƒjƒ…[‚ğŠJ‚­
+	// spaceã‚­ãƒ¼ã§ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’é–‹ã
 	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10)
 	{
 		ModeMenu* modeMenu = new ModeMenu();
 		modeMenu->SetCameraManager(_cameraManager);
 
-		// ƒfƒoƒbƒOƒJƒƒ‰
+		// ãƒ‡ãƒãƒƒã‚°ã‚«ãƒ¡ãƒ©
 		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
 		debugCamera->SetCameraManagerMenu(_cameraManager);
 		debugCamera->SetDebugCameraMenu(_debugCamera);
@@ -219,13 +223,13 @@ bool ModeGame::Process()
 		modeMenu->AddMenuItem(debugCamera);
 	}
 
-	// ƒNƒ‰ƒXƒZƒbƒg
+	// ã‚¯ãƒ©ã‚¹ã‚»ãƒƒãƒˆ
 	{
 		_cameraManager->SetGameCamera(_gameCamera);
 		_cameraManager->SetDebugCamera(_debugCamera);
 	}
 
-	// ƒIƒuƒWƒFƒNƒg‚ÌXV
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ›´æ–°
 	{
 		_playerManager->Process();
 		_stage->Process();
@@ -235,53 +239,88 @@ bool ModeGame::Process()
 		_energyUI->Process();
 	}
 
-	// ƒ‰ƒCƒgXV
+	// ãƒ©ã‚¤ãƒˆæ›´æ–°
 	ProcessLights();
 
-	// “–‚½‚è”»’è
+	// å½“ãŸã‚Šåˆ¤å®š
 	{
 		auto player = _playerManager->GetActivePlayerShared();
 		auto enemies = _stage->GetEnemies();
 
-		// ’e
+		// å¼¾
 		CheckHitCharaBullet(player);
 		for (const auto& enemy : enemies) {
 			CheckHitCharaBullet(enemy);
 		}
 
-		// ƒvƒŒƒCƒ„[‚Æ“G‚Ì“–‚½‚è”»’è
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨æ•µã®å½“ãŸã‚Šåˆ¤å®š
 		for (const auto& enemy : enemies)
 		{
 			CheckHitPlayerEnemy(player, enemy);
 		}
 
-		// ƒLƒƒƒ‰‚ÆUŒ‚ƒRƒŠƒWƒ‡ƒ“‚Ì“–‚½‚è”»’è
-		CheckActiveAttack(player);										// ƒvƒŒƒCƒ„[
-		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// “G
+		// ã‚­ãƒ£ãƒ©ã¨æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³ã®å½“ãŸã‚Šåˆ¤å®š
+		CheckActiveAttack(player);										// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
+		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// æ•µ
 
-		// ƒ}ƒbƒv
+		// ãƒãƒƒãƒ—
 		CheckCollisionCharaMap(player);
 		for (const auto& enemy : enemies) {
 			CheckCollisionCharaMap(enemy);
 		}
 	}
 
-	// ƒ^[ƒQƒbƒgXV
+	auto player = _playerManager->GetActivePlayerShared();
+	if(player)
+	{
+		// æç”»ã¨åŒã˜è¨ˆç®—ã‚’ä½¿ã†ï¼ˆModeGame::Render ã¨åˆã‚ã›ã‚‹ï¼‰
+		const float itemHeight = 100.0f;
+		const float itemRadius = 30.0f;
+		const float itemZOffset = 500.0f;
+
+		for(size_t i = 0; i < _itemPositions.size(); )
+		{
+			// ã‚¢ã‚¤ãƒ†ãƒ ã®ã‚«ãƒ—ã‚»ãƒ«ä¸Šä¸‹ä¸­å¿ƒ
+			VECTOR base = _itemPositions[i];
+			VECTOR itemTop = VGet(base.x, base.y + itemHeight, base.z + itemZOffset);   // ä¸Šç«¯ä¸­å¿ƒ
+			VECTOR itemBottom = VGet(base.x, base.y, base.z + itemZOffset);             // ä¸‹ç«¯ä¸­å¿ƒ
+
+			// æ—¢å­˜ã®å½“ãŸã‚Šåˆ¤å®šé–¢æ•°ã‚’ä½¿ç”¨ï¼ˆã‚«ãƒ—ã‚»ãƒ«å¯¾ã‚«ãƒ—ã‚»ãƒ«ï¼‰
+			if(HitCheck_Capsule_Capsule(
+				player->GetCollisionTop(), player->GetCollisionBottom(), player->GetCollisionR(),
+				itemTop, itemBottom, itemRadius
+			))
+			{
+				// ãƒ’ãƒƒãƒˆã—ãŸã‚‰ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‰Šé™¤ï¼ˆè‰²é…åˆ—ã‚‚åŒæœŸã—ã¦å‰Šé™¤ï¼‰
+				_itemPositions.erase(_itemPositions.begin() + i);
+				if(i < _itemColors.size()) { _itemColors.erase(_itemColors.begin() + i); }
+
+				// å¿…è¦ãªã‚‰ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚„éŸ³ã‚’å†ç”Ÿã™ã‚‹å‡¦ç†ã‚’ã“ã“ã«è¿½åŠ 
+				// ãƒ«ãƒ¼ãƒ—ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã¯å¢—ã‚„ã•ãšæ¬¡ã®è¦ç´ ã‚’å‡¦ç†
+				continue;
+			}
+
+			++i;
+		}
+	}
+
+
+	// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆæ›´æ–°
 	{
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
-		_gameCamera->SetTarget(activePlayer);	// –ˆƒtƒŒ[ƒ€ƒvƒŒƒCƒ„[‚ÉƒJƒƒ‰‚ğ‡‚í‚¹‚é
+		_gameCamera->SetTarget(activePlayer);	// æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ã‚«ãƒ¡ãƒ©ã‚’åˆã‚ã›ã‚‹
 
-		// “G‚Éƒ^[ƒQƒbƒg‚ÌƒvƒŒƒCƒ„[‚ğİ’è
+		// æ•µã«ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è¨­å®š
 		for (const auto& enemy : _stage->GetEnemies()) 
 		{
 			enemy->SetTarget(activePlayer);
 		}
 	}
 
-	// ƒGƒtƒFƒNƒgXV
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆæ›´æ–°
 	EffectServer::GetInstance()->Update();
 
-	// ƒJƒƒ‰XV
+	// ã‚«ãƒ¡ãƒ©æ›´æ–°
 	_cameraManager->Process();
 
 	return true;
@@ -291,41 +330,41 @@ bool ModeGame::Render()
 {
 	base::Render();
 
-	// 3DŠî–{İ’è
+	// 3DåŸºæœ¬è¨­å®š
 	{
 		SetUseZBuffer3D(TRUE);
 		SetWriteZBuffer3D(TRUE);
 		SetUseBackCulling(TRUE);
 	}
 
-	// ƒ‰ƒCƒgİ’è
+	// ãƒ©ã‚¤ãƒˆè¨­å®š
 	{
-		// ƒ‰ƒCƒeƒBƒ“ƒO‚ğ—LŒø‰»
+		// ãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°ã‚’æœ‰åŠ¹åŒ–
 		_lightManager->SetLightEnable(true);
 
-		// •W€ƒ‰ƒCƒg‚ğƒfƒBƒŒƒNƒVƒ‡ƒiƒ‹ƒ‰ƒCƒg‚Æ‚µ‚Äİ’è
+		// æ¨™æº–ãƒ©ã‚¤ãƒˆã‚’ãƒ‡ã‚£ãƒ¬ã‚¯ã‚·ãƒ§ãƒŠãƒ«ãƒ©ã‚¤ãƒˆã¨ã—ã¦è¨­å®š
 		_lightManager->SetLightType(LightManager::LIGHT_TYPE::DIRECTIONAL);
 		_lightManager->SetDirectionalLightDir(VGet(-1.0f, -1.0f, -1.0f));
 
-		// ƒOƒ[ƒoƒ‹ƒAƒ“ƒrƒGƒ“ƒgƒ‰ƒCƒgİ’è
+		// ã‚°ãƒ­ãƒ¼ãƒãƒ«ã‚¢ãƒ³ãƒ“ã‚¨ãƒ³ãƒˆãƒ©ã‚¤ãƒˆè¨­å®š
 		_lightManager->SetAmbientLight(GetColorF(0.3f, 0.3f, 0.3f, 0.0f));
 	}
 
-	// ƒJƒƒ‰İ’è
+	// ã‚«ãƒ¡ãƒ©è¨­å®š
 	{
-		// ƒƒjƒ…[‚ªŠJ‚¢‚Ä‚¢‚ÄAƒfƒoƒbƒOƒJƒƒ‰‚ªg‚í‚ê‚Ä‚¢‚é‚È‚ç
+		// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãŒé–‹ã„ã¦ã„ã¦ã€ãƒ‡ãƒãƒƒã‚°ã‚«ãƒ¡ãƒ©ãŒä½¿ã‚ã‚Œã¦ã„ã‚‹ãªã‚‰
 		//auto* menu = dynamic_cast<ModeMenu*>(ModeServer::GetInstance()->Get("menu"));
 		//if(menu && menu->IsUseDebugCamera() && _debugCamera)
 		//{
-		//	_debugCamera->SetUp();// ƒfƒoƒbƒOƒJƒƒ‰İ’èXV
+		//	_debugCamera->SetUp();// ãƒ‡ãƒãƒƒã‚°ã‚«ãƒ¡ãƒ©è¨­å®šæ›´æ–°
 		//}
 		//else
 		//{
-		//	_gameCamera->SetUp();// ƒJƒƒ‰İ’èXV
+		//	_gameCamera->SetUp();// ã‚«ãƒ¡ãƒ©è¨­å®šæ›´æ–°
 		//}
 	}
 	
-	// ƒIƒuƒWƒFƒNƒg‚Ì•`‰æ
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æç”»
 	{
 		_stage->Render();
 		_playerManager->Render();
@@ -333,27 +372,50 @@ bool ModeGame::Render()
 		AttackManager::GetInstance()->Render();
 		_energyUI->Render();
 
+		// ã‚¢ã‚¤ãƒ†ãƒ æç”»
+		for(size_t i = 0; i < _itemPositions.size(); ++i)
+		{
+			// ã‚«ãƒ—ã‚»ãƒ«ã®ä¸Šä¸‹ç«¯ã‚’ä½œã‚‹ï¼ˆYè»¸æ–¹å‘ã«ä¼¸ã°ã™ï¼‰
+			// base ã‚’ã‚¢ã‚¤ãƒ†ãƒ ä½ç½®ã«ä½¿ã„ã€Zæ–¹å‘ã«ã‚ªãƒ•ã‚»ãƒƒãƒˆã‚’åŠ ãˆã‚‹
+			const float itemHeight = 100.0f;      // ã‚«ãƒ—ã‚»ãƒ«ã®é«˜ã•
+			const float itemRadius = 30.0f;       // ã‚«ãƒ—ã‚»ãƒ«ã®åŠå¾„
+			const float itemZOffset = 500.0f;     // â† ã“ã“ã‚’å¤§ããã™ã‚‹ã¨ Z è»¸æ–¹å‘ã«ã‚ˆã‚Šç§»å‹•ã—ã¾ã™
 
+			VECTOR base = _itemPositions[i];
+			VECTOR Pos1 = VGet(base.x, base.y, base.z + itemZOffset); // ä¸‹ç«¯ã®ä¸­å¿ƒ
+			VECTOR Pos2 = VGet(base.x, base.y + itemHeight, base.z + itemZOffset); // ä¸Šç«¯ã®ä¸­å¿ƒ
 
-		// ‚Ì‚¤‚è‚åk‘I‘ğ‰æ–Ê
+			unsigned int col = (i < _itemColors.size()) ? _itemColors[i] : GetColor(255, 255, 255);
+			DrawCapsule3D(
+				Pos1,                   // Pos1ï¼šã‚«ãƒ—ã‚»ãƒ«ã®ç«¯1ã®ä¸­å¿ƒåº§æ¨™
+				Pos2,                   // Pos2ï¼šã‚«ãƒ—ã‚»ãƒ«ã®ç«¯2ã®ä¸­å¿ƒåº§æ¨™
+				itemRadius,             // rï¼šåŠå¾„
+				16,                     // DivNumï¼šç´°ã‹ã•
+				GetColor(255, 0, 0),    // DifColorï¼šãƒ¡ã‚¤ãƒ³ã®è‰²ï¼ˆèµ¤ï¼‰
+				GetColor(255, 255, 255),// SpcColorï¼šå…‰ãŒåå°„ã—ãŸæ™‚ã®è‰²ï¼ˆç™½ï¼‰
+				TRUE                    // FillFlagï¼šå¡—ã‚Šã¤ã¶ã™ã‹ã©ã†ã‹ï¼ˆTRUEã§å¡—ã‚Šã¤ã¶ã—ï¼‰
+			);
+		}
+
+		// ã®ã†ã‚Šã‚‡ké¸æŠç”»é¢
 		if(_isUseDebugScreen)
 		{
 			_abilitySelectScreen->Render();
 		}
 	}
 
-	// ƒGƒtƒFƒNƒg•`‰æ
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆæç”»
 	EffectServer::GetInstance()->Render();
 
-	// ƒfƒoƒbƒOî•ñ‚Ì•`‰æ
+	// ãƒ‡ãƒãƒƒã‚°æƒ…å ±ã®æç”»
 	{
 		_stage->DebugRender();
 		_debugCamera->DebugRender();
 		//AttackManager::GetInstance()->DebugRender();
 		//EnergyManager::GetInstance()->DebugRender();
 
-		// ƒ‰ƒCƒgî•ñ
-		DrawFormatString(10, 100, GetColor(255, 255, 255), "—LŒø‚Èƒ‰ƒCƒg : %d", _lights.size());
+		// ãƒ©ã‚¤ãƒˆæƒ…å ±
+		DrawFormatString(10, 100, GetColor(255, 255, 255), "æœ‰åŠ¹ãªãƒ©ã‚¤ãƒˆ : %d", _lights.size());
 		//_debugCamera->DebugRender();
 		_cameraManager->Render();
 		//AttackManager::GetInstance()->DebugRender();
@@ -363,39 +425,39 @@ bool ModeGame::Render()
 	return true;
 }
 
-// ƒLƒƒƒ‰‚Æ’e‚Ì“–‚½‚è”»’è
+// ã‚­ãƒ£ãƒ©ã¨å¼¾ã®å½“ãŸã‚Šåˆ¤å®š
 void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara){
 	if (!chara) return;
 
-	CHARA_TYPE myType = chara->GetCharaType();// ©•ª‚ÌƒLƒƒƒ‰ƒ^ƒCƒv‚ğæ“¾
+	CHARA_TYPE myType = chara->GetCharaType();// è‡ªåˆ†ã®ã‚­ãƒ£ãƒ©ã‚¿ã‚¤ãƒ—ã‚’å–å¾—
 
-	const auto& bullets = _bulletManager->GetBullets();// ’e‚ÌƒŠƒXƒg‚ğæ“¾
+	const auto& bullets = _bulletManager->GetBullets();// å¼¾ã®ãƒªã‚¹ãƒˆã‚’å–å¾—
 
-	std::vector<std::shared_ptr<Bullet>> deadBullets;// íœ‚·‚é’e‚ğˆê•Û‘¶‚·‚éƒŠƒXƒg
+	std::vector<std::shared_ptr<Bullet>> deadBullets;// å‰Šé™¤ã™ã‚‹å¼¾ã‚’ä¸€æ™‚ä¿å­˜ã™ã‚‹ãƒªã‚¹ãƒˆ
 
-	// ‘S’eƒ‹[ƒv
+	// å…¨å¼¾ãƒ«ãƒ¼ãƒ—
 	for (const auto& bullet : bullets){
 		if (!bullet) continue;
 
-		// ƒLƒƒƒ‰‚Æ’e‚Ìƒ^ƒCƒv‚ª“¯‚¶‚È‚ç–³‹‚·‚é
+		// ã‚­ãƒ£ãƒ©ã¨å¼¾ã®ã‚¿ã‚¤ãƒ—ãŒåŒã˜ãªã‚‰ç„¡è¦–ã™ã‚‹
 		if (bullet->GetShooterType() == myType){
 			continue;
 		}
 
-		// “–‚½‚è”»’è
+		// å½“ãŸã‚Šåˆ¤å®š
 		if(HitCheck_Capsule_Sphere(
 			chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
 			bullet->GetPos(), bullet->GetCollisionR()
 		)) {
-			// “–‚½‚Á‚½
+			// å½“ãŸã£ãŸ
 
-			// ƒ_ƒ[ƒWˆ—‚Æ‚©
+			// ãƒ€ãƒ¡ãƒ¼ã‚¸å‡¦ç†ã¨ã‹
 
-			deadBullets.push_back(bullet);// íœƒŠƒXƒg‚É’Ç‰Á
+			deadBullets.push_back(bullet);// å‰Šé™¤ãƒªã‚¹ãƒˆã«è¿½åŠ 
 		}
 	}
 
-	// ‘S‚Ä‚Ì”»’è‚ªI‚í‚Á‚½Œã‚ÉA‚Ü‚Æ‚ß‚Äíœ‚·‚é
+	// å…¨ã¦ã®åˆ¤å®šãŒçµ‚ã‚ã£ãŸå¾Œã«ã€ã¾ã¨ã‚ã¦å‰Šé™¤ã™ã‚‹
 	for (const auto& deadBullet : deadBullets) {
 		_bulletManager->RemoveBullet(deadBullet);
 	}
@@ -403,23 +465,23 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara){
 
 void ModeGame::InitializeLights()
 {
-	// ƒ‰ƒCƒgƒRƒ“ƒeƒi‚ğƒNƒŠƒA
+	// ãƒ©ã‚¤ãƒˆã‚³ãƒ³ãƒ†ãƒŠã‚’ã‚¯ãƒªã‚¢
 	_lights.clear();
 
-	// ƒ‰ƒCƒg‚ğ’Ç‰Á
+	// ãƒ©ã‚¤ãƒˆã‚’è¿½åŠ 
 	// test
 	AddPointLight(VGet(0.0f, 500.0f, 0.0f), 1000.0f, GetColorF(1.0f, 1.0f, 1.0f, 0.0f));
 }
 
 void ModeGame::ProcessLights()
 {
-	// Šeƒ‰ƒCƒg‚ÌXVˆ—
-	// ƒLƒƒƒ‰‚ÌˆÊ’u‚É’Ç]‚·‚éƒ‰ƒCƒg‚È‚Ç
+	// å„ãƒ©ã‚¤ãƒˆã®æ›´æ–°å‡¦ç†
+	// ã‚­ãƒ£ãƒ©ã®ä½ç½®ã«è¿½å¾“ã™ã‚‹ãƒ©ã‚¤ãƒˆãªã©
 }
 
 void ModeGame::TerminateLights()
 {
-	// ‚·‚×‚Ä‚Ìƒ‰ƒCƒg‚ğíœ
+	// ã™ã¹ã¦ã®ãƒ©ã‚¤ãƒˆã‚’å‰Šé™¤
 	for (auto& lightInfo : _lights)
 	{
 		if (lightInfo.handle != -1)
@@ -429,24 +491,24 @@ void ModeGame::TerminateLights()
 		}
 	}
 
-	// ƒ‰ƒCƒgƒRƒ“ƒeƒi‚ğƒNƒŠƒA
+	// ãƒ©ã‚¤ãƒˆã‚³ãƒ³ãƒ†ãƒŠã‚’ã‚¯ãƒªã‚¢
 	_lights.clear();
 }
 
 int ModeGame::AddPointLight(VECTOR vPos, float fRange, COLOR_F color)
 {
-	// ƒ|ƒCƒ“ƒgƒ‰ƒCƒg‚ğ¶¬
+	// ãƒã‚¤ãƒ³ãƒˆãƒ©ã‚¤ãƒˆã‚’ç”Ÿæˆ
 	int lightHandle = _lightManager->CreatePointLight(vPos, fRange, color);
 
-	if (lightHandle == -1) { return -1; }// ¶¬¸”s
+	if (lightHandle == -1) { return -1; }// ç”Ÿæˆå¤±æ•—
 
-	// ƒ‰ƒCƒgî•ñ‚ğì¬
+	// ãƒ©ã‚¤ãƒˆæƒ…å ±ã‚’ä½œæˆ
 	LightInfo lightInfo;
 	lightInfo.handle = lightHandle;
 	lightInfo.vPos = vPos;
 	lightInfo.bisActive = true;
 
-	// ƒRƒ“ƒeƒi‚É’Ç‰Á
+	// ã‚³ãƒ³ãƒ†ãƒŠã«è¿½åŠ 
 	_lights.push_back(lightInfo);
 
 	return lightHandle;
@@ -454,17 +516,41 @@ int ModeGame::AddPointLight(VECTOR vPos, float fRange, COLOR_F color)
 
 void ModeGame::RemoveLight(int lightHandle)
 {
-	// ƒRƒ“ƒeƒi‚©‚çŠY“–‚·‚éƒ‰ƒCƒg‚ğŒŸõ
+	// ã‚³ãƒ³ãƒ†ãƒŠã‹ã‚‰è©²å½“ã™ã‚‹ãƒ©ã‚¤ãƒˆã‚’æ¤œç´¢
 	for (auto it = _lights.begin(); it != _lights.end(); ++it)
 	{
 		if (it->handle == lightHandle)
 		{
-			// ƒ‰ƒCƒgƒnƒ“ƒhƒ‹‚ğíœ
+			// ãƒ©ã‚¤ãƒˆãƒãƒ³ãƒ‰ãƒ«ã‚’å‰Šé™¤
 			DeleteLightHandle(lightHandle);
 
-			// ƒRƒ“ƒeƒi‚©‚çíœ
+			// ã‚³ãƒ³ãƒ†ãƒŠã‹ã‚‰å‰Šé™¤
 			_lights.erase(it);
 			break;
 		}
+	}
+}
+
+void ModeGame::CreateItemsAtStart(int count, float ringRadius)
+{
+	_itemPositions.clear();
+	_itemColors.clear();
+
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼é–‹å§‹ä½ç½®ã¯ _playerStartPos ã«ã‚ã‚‹æƒ³å®š
+	// ï¼ˆã‚‚ã—ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚„ã‚¹ãƒ†ãƒ¼ã‚¸ã‹ã‚‰é–‹å§‹ä½ç½®ãŒå–ã‚Œã‚‹ãªã‚‰ã“ã“ã§ä»£å…¥ã—ã¦ãã ã•ã„ï¼‰
+	// ä¾‹: if (_stage) _playerStartPos = _stage->GetPlayerStartPos();
+
+	for (int i = 0; i < count; ++i) {
+		float ang = (2.0f * 3.14159265358979323846f) * (float(i) / float(count));
+		float x = _playerStartPos.x + cosf(ang) * ringRadius;
+		float z = _playerStartPos.z + sinf(ang) * ringRadius;
+		float y = _playerStartPos.y; // åœ°é¢ã¨åŒã˜é«˜ã•ã«ç½®ãå ´åˆ
+		_itemPositions.push_back(VGet(x, y, z));
+
+		// è‰²
+		int r = 160 + (rand() % 96);
+		int g = 160 + (rand() % 96);
+		int b = 160 + (rand() % 96);
+		_itemColors.push_back(GetColor(r, g, b));
 	}
 }

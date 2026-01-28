@@ -1,5 +1,4 @@
-
-#include "ApplicationBase.h"
+ï»¿#include "ApplicationBase.h"
 
 ApplicationBase	*ApplicationBase::_lpInstance = NULL;
 
@@ -17,55 +16,57 @@ ApplicationBase::~ApplicationBase()
 bool ApplicationBase::Initialize(HINSTANCE hInstance)
 {
 
-	// DXƒ‰ƒCƒuƒ‰ƒŠ‚Ì‰Šú‰»
+	// DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®åˆæœŸåŒ–
 	if(AppWindowed())
 	{
-		ChangeWindowMode(true);							// ƒEƒBƒ“ƒhƒEƒ‚[ƒh‚Éw’è‚·‚é
+		ChangeWindowMode(true);							// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰ã«æŒ‡å®šã™ã‚‹
 	}
 	SetGraphMode(DispSizeW(), DispSizeH(), 32);
 
-	// DirectX11‚ğg—p‚·‚é‚æ‚¤‚É‚·‚éB(DirectX9‚à‰ÂAˆê•”‹@”\•s‰Â)
-	// Effekseer‚ğg—p‚·‚é‚É‚Í•K‚¸İ’è‚·‚éB
+	// DirectX11ã‚’ä½¿ç”¨ã™ã‚‹ã‚ˆã†ã«ã™ã‚‹ã€‚(DirectX9ã‚‚å¯ã€ä¸€éƒ¨æ©Ÿèƒ½ä¸å¯)
+	// Effekseerã‚’ä½¿ç”¨ã™ã‚‹ã«ã¯å¿…ãšè¨­å®šã™ã‚‹ã€‚
 	SetUseDirect3DVersion(DX_DIRECT3D_11);
 
 	if (DxLib_Init() == -1)
-	{	// ƒGƒ‰[‚ª‹N‚«‚½‚ç’¼‚¿‚ÉI—¹
+	{	// ã‚¨ãƒ©ãƒ¼ãŒèµ·ããŸã‚‰ç›´ã¡ã«çµ‚äº†
 		return false;
 	}
-	SetDrawScreen(DX_SCREEN_BACK);		// •`‰ææ‰æ–Ê‚ğ— ‰æ–Ê‚ÉƒZƒbƒg
+	SetDrawScreen(DX_SCREEN_BACK);		// æç”»å…ˆç”»é¢ã‚’è£ç”»é¢ã«ã‚»ãƒƒãƒˆ
 
-	// Effekseer‚ğ‰Šú‰»‚·‚éB
-	// ˆø”‚É‚Í‰æ–Ê‚É•\¦‚·‚éÅ‘åƒp[ƒeƒBƒNƒ‹”‚ğİ’è‚·‚éB
+	// Effekseerã‚’åˆæœŸåŒ–ã™ã‚‹ã€‚
+	// å¼•æ•°ã«ã¯ç”»é¢ã«è¡¨ç¤ºã™ã‚‹æœ€å¤§ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«æ•°ã‚’è¨­å®šã™ã‚‹ã€‚
 	if (Effekseer_Init(8000) == -1)
 	{
 		DxLib_End();
 		return -1;
 	}
 
-	// ƒtƒ‹ƒXƒNƒŠ[ƒ“ƒEƒCƒ“ƒhƒE‚ÌØ‚è‘Ö‚¦‚ÅƒŠƒ\[ƒX‚ªÁ‚¦‚é‚Ì‚ğ–h‚®B
-	// Effekseer‚ğg—p‚·‚éê‡‚Í•K‚¸İ’è‚·‚éB
+	// ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã®åˆ‡ã‚Šæ›¿ãˆã§ãƒªã‚½ãƒ¼ã‚¹ãŒæ¶ˆãˆã‚‹ã®ã‚’é˜²ãã€‚
+	// Effekseerã‚’ä½¿ç”¨ã™ã‚‹å ´åˆã¯å¿…ãšè¨­å®šã™ã‚‹ã€‚
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
 
-	// DXƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒfƒoƒCƒXƒƒXƒg‚µ‚½‚ÌƒR[ƒ‹ƒoƒbƒN‚ğİ’è‚·‚éB
-	// ƒEƒCƒ“ƒhƒE‚Æƒtƒ‹ƒXƒNƒŠ[ƒ“‚ÌØ‚è‘Ö‚¦‚ª”­¶‚·‚éê‡‚Í•K‚¸Às‚·‚éB
-	// ‚½‚¾‚µADirectX11‚ğg—p‚·‚éê‡‚ÍÀs‚·‚é•K—v‚Í‚È‚¢B
+	// DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆã—ãŸæ™‚ã®ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‚’è¨­å®šã™ã‚‹ã€‚
+	// ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã¨ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã®åˆ‡ã‚Šæ›¿ãˆãŒç™ºç”Ÿã™ã‚‹å ´åˆã¯å¿…ãšå®Ÿè¡Œã™ã‚‹ã€‚
+	// ãŸã ã—ã€DirectX11ã‚’ä½¿ç”¨ã™ã‚‹å ´åˆã¯å®Ÿè¡Œã™ã‚‹å¿…è¦ã¯ãªã„ã€‚
 	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
-	// —”‰Šú‰»
+	// ä¹±æ•°åˆæœŸåŒ–
 	srand((unsigned int)time(NULL));
 
-	// ƒ‚[ƒhƒT[ƒo‚Ì‰Šú‰»
+	// ãƒ¢ãƒ¼ãƒ‰ã‚µãƒ¼ãƒã®åˆæœŸåŒ–
 	_serverMode = new ModeServer();
+
+	
 
 	return true;
 }
 
 bool ApplicationBase::Terminate() 
 {
-	// Effekseer‚ğI—¹‚·‚éB
+	// Effekseerã‚’çµ‚äº†ã™ã‚‹ã€‚
 	Effkseer_End();
 
-	// DXƒ‰ƒCƒuƒ‰ƒŠŠJ•ú
+	// DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªé–‹æ”¾
 	DxLib_End();
 
 	return true;
@@ -74,18 +75,18 @@ bool ApplicationBase::Terminate()
 
 bool ApplicationBase::Input()
 {
-	// ƒL[‚Ì“ü—ÍAƒgƒŠƒK“ü—Í‚ğ“¾‚é
+	// ã‚­ãƒ¼ã®å…¥åŠ›ã€ãƒˆãƒªã‚¬å…¥åŠ›ã‚’å¾—ã‚‹
 	int keyold = _gKey;
 	_gKey = GetJoypadInputState(DX_INPUT_KEY_PAD1);
-	_gTrg = (_gKey ^ keyold) & _gKey;	// ƒL[‚ÌƒgƒŠƒKî•ñ¶¬i‰Ÿ‚µ‚½uŠÔ‚µ‚©”½‰‚µ‚È‚¢ƒL[î•ñj
+	_gTrg = (_gKey ^ keyold) & _gKey;	// ã‚­ãƒ¼ã®ãƒˆãƒªã‚¬æƒ…å ±ç”Ÿæˆï¼ˆæŠ¼ã—ãŸç¬é–“ã—ã‹åå¿œã—ãªã„ã‚­ãƒ¼æƒ…å ±ï¼‰
 
-	// ƒAƒiƒƒOƒXƒeƒBƒbƒN‘Î‰
+	// ã‚¢ãƒŠãƒ­ã‚°ã‚¹ãƒ†ã‚£ãƒƒã‚¯å¯¾å¿œ
 	DINPUT_JOYSTATE di;
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &di);
-	float lx, ly, rx, ry;// ¶‰EƒAƒiƒƒOƒXƒeƒBƒbƒN‚ÌÀ•W
-	// Logicoolƒpƒbƒh‚Ìê‡
-	lx = (float)di.X / 1000.f; ly = (float)di.Y / 1000.f;// ¶ƒXƒeƒBƒbƒN
-	rx = (float)di.Rx / 1000.f; ry = (float)di.Ry / 1000.f;// ‰EƒXƒeƒBƒbƒN
+	float lx, ly, rx, ry;// å·¦å³ã‚¢ãƒŠãƒ­ã‚°ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®åº§æ¨™
+	// Logicoolãƒ‘ãƒƒãƒ‰ã®å ´åˆ
+	lx = (float)di.X / 1000.f; ly = (float)di.Y / 1000.f;// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯
+	rx = (float)di.Rx / 1000.f; ry = (float)di.Ry / 1000.f;// å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯
 	_analog.lx = lx;
 	_analog.ly = ly;
 	_analog.rx = rx;
@@ -107,5 +108,9 @@ bool ApplicationBase::Render()
 	_serverMode->RenderInit();
 	_serverMode->Render();
 	_serverMode->RenderFinish();
+
+
 	return true;
 }
+
+
