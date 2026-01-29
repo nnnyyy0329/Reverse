@@ -69,7 +69,6 @@ protected:
 	std::shared_ptr<EnergyUI>			_energyUI;				// エネルギーUI
 	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;	// 能力選択画面
 	std::shared_ptr<LightManager>		_lightManager;			// ライトマネージャー 
-	std::shared_ptr<Item>               _item;                  //　アイテム
 
 	// シングルトン取得
 	AttackManager* _attackManager = nullptr;
@@ -85,6 +84,8 @@ protected:
 
 	// のうりょくせんたくがめんよう
 	bool _isUseDebugScreen;
+
+	std::shared_ptr<Item>               _item;                  //　アイテム
 
 private:
 	void CheckCollisionCharaMap	(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
@@ -110,6 +111,4 @@ private:
 
 	void RemoveLight(int lightHandle);// 指定ライトを削除
 
-
-	
 };

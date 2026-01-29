@@ -6,7 +6,6 @@
 #include "CharaBase.h"
 #include "StageBase.h"
 #include "Enemy.h"
-#include "Item.h"
 
 #include "CameraManager.h"
 #include "GameCamera.h"
@@ -16,16 +15,18 @@
 #include "AttackManager.h"
 #include "EnergyManager.h"
 #include "LightManager.h"
+
 #include "EnergyUI.h"
 #include "DodgeSystem.h"
+#include "AbilitySelectScreen.h"
 
 #include "PlayerManager.h"
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
 
-#include "AbilitySelectScreen.h"
-
 #include "MenuItemBase.h"
+
+#include "Item.h"
 
 bool ModeGame::Initialize() 
 {
@@ -242,11 +243,11 @@ bool ModeGame::Process()
 		CheckActiveAttack(player);										// プレイヤー
 		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
 
-		// マップ
-		//CheckCollisionCharaMap(player);
-		//for (const auto& enemy : enemies) {
-		//	CheckCollisionCharaMap(enemy);
-		//}
+		 //マップ
+		CheckCollisionCharaMap(player);
+		for (const auto& enemy : enemies) {
+			CheckCollisionCharaMap(enemy);
+		}
 	}
 
 	// ターゲット更新
