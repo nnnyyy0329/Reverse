@@ -6,6 +6,7 @@
 #include "CharaBase.h"
 #include "StageBase.h"
 #include "Enemy.h"
+#include "Item.h"
 
 #include "CameraManager.h"
 #include "GameCamera.h"
@@ -43,8 +44,10 @@ bool ModeGame::Initialize()
 		// LightManagerの初期化
 		_lightManager = std::make_shared<LightManager>();
 		_lightManager->Initialize();
+	}
 
 		// シングルトンインスタンスを取得
+	{
 		_attackManager = AttackManager::GetInstance();
 		_energyManager = EnergyManager::GetInstance();
 	}
@@ -59,6 +62,10 @@ bool ModeGame::Initialize()
 		interiorPlayer->Initialize();
 		_playerManager->RegisterPlayer(PLAYER_TYPE::INTERIOR, interiorPlayer);
 	}
+
+	//アイテムクラスの初期化
+	_item = std::make_shared<Item>();
+	_item->CreateItems(VGet(300.0f, 100.0f, 55.0f), 30.0, 30.0);
 
 	// ステージ初期化
 	_stage = std::make_shared<StageBase>(1);// ステージ番号で切り替え
@@ -299,6 +306,8 @@ bool ModeGame::Render()
 		_stage->Render();
 		_playerManager->Render();
 		_bulletManager->Render();
+		_energyUI->Render();
+		_item->Render();
 
 
 		// のうりょk選択画面
@@ -344,6 +353,12 @@ bool ModeGame::Render()
 		_cameraManager->SwitchCameraDebugRender();
 	}
 	
+	// コリジョンの描画
+	if (_bViewCollision)
+	{
+		_stage->CollisionRender();
+		AttackManager::GetInstance()->CollisionRender();
+	}
 
 	_energyUI->Render();
 	_cameraManager->SwitchCameraRender();
@@ -454,5 +469,16 @@ void ModeGame::RemoveLight(int lightHandle)
 			_lights.erase(it);
 			break;
 		}
+	}
+}
+
+void ModeGame::CheckHitCharaItem(std::shared_ptr<CharaBase> chara, std::shared_ptr <Item>item)
+{
+	if(HitCheck_Capsule_Capsule(
+		chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
+		item->GetCollisionTop(), item->GetCollisionBottom(), item->GetCollisionR()
+	))
+	{
+	 //アイテムを消す処理
 	}
 }
