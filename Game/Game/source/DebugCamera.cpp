@@ -30,7 +30,7 @@ void DebugCamera::Process(int key, int trg, float lx, float ly, float rx, float 
 {
 	// ÉJÉÅÉâÇÃâÒì]
 	{
-		if (abs(rx) > analogMin) _angleH += rx * ROTATE_SPEED;
+		if (abs(rx) > analogMin) _angleH -= rx * ROTATE_SPEED;
 		if (abs(ry) > analogMin) {
 			_angleV += ry * ROTATE_SPEED;
 
@@ -77,7 +77,7 @@ void DebugCamera::Process(int key, int trg, float lx, float ly, float rx, float 
 	UpdatePosFromAngle();
 }
 
-void DebugCamera::DebugRender()
+void DebugCamera::Render()
 {
 	SetUseZBuffer3D(FALSE);// ï«Ç»Ç«Ç…âBÇÍÇ»Ç¢ÇÊÇ§Ç…
 
@@ -100,6 +100,15 @@ void DebugCamera::DebugRender()
 	);
 
 	SetUseZBuffer3D(TRUE);// å≥Ç…ñﬂÇ∑
+}
+
+void DebugCamera::DebugRender()
+{
+	int x = 900;
+	int y = 410;
+
+	// ç¿ïWånï\é¶
+	DrawFormatString(x, y, GetColor(55, 0, 0), "DebugCamera Pos: (%3.2f, %3.2f, %3.2f)", _vPos.x, _vPos.y, _vPos.z);
 }
 
 void DebugCamera::SetUp()

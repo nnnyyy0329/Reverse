@@ -1,5 +1,7 @@
 #pragma once
 #include "appframe.h"
+#include "CharaBase.h"
+#include "AttackManager.h"
 
 // 前方宣言
 class CharaBase;
@@ -16,6 +18,7 @@ class EnergyManager;
 class EnergyUI;
 class DodgeSystem;
 class LightManager;
+class Item;
 
 class AbilitySelectScreen;
 
@@ -38,10 +41,18 @@ public:
 	virtual bool Render();
 
 	// デバッグ関連
+	bool GetDebugViewDebugInfo() { return _bViewDebugInfo; }
+	void SetDebugViewDebugInfo(bool bView) { _bViewDebugInfo = bView; }
 	bool GetDebugViewCollision() { return _bViewCollision; }
 	void SetDebugViewCollision(bool bView) { _bViewCollision = bView; }
-	bool GetUseCollision() { return _bUseCollision; }
-	void SetUseCollision(bool bUse) { _bUseCollision = bUse; }
+	bool GetDebugUseCollision() { return _bUseCollision; }
+	void SetDebugUseCollision(bool bUse) { _bUseCollision = bUse; }
+	// カメラマネージャー取得
+	std::shared_ptr<CameraManager> GetCameraManager() const { return _cameraManager; }
+	// ゲームカメラ取得
+	std::shared_ptr<GameCamera> GetGameCamera() const { return _gameCamera; }
+	// デバッグカメラ取得
+	std::shared_ptr<DebugCamera> GetDebugCamera() const { return _debugCamera; }
 
 protected:
 	// プレイヤー管理をPlayerManagerに委譲
@@ -49,37 +60,41 @@ protected:
 
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される
-	std::shared_ptr<StageBase>		_stage;			// ステージ
-	std::shared_ptr<CameraManager>	_cameraManager;	// カメラマネージャー
-	std::shared_ptr<GameCamera>		_gameCamera;	// ゲームカメラ
-	std::shared_ptr<DebugCamera>	_debugCamera;	// デバッグカメラ
-	std::shared_ptr<BulletManager>	_bulletManager;	// 弾マネージャー
-	//std::shared_ptr<DodgeSystem>	_dodgeSystem;	// 回避システム
-	std::shared_ptr<EnergyUI>		_energyUI;		// エネルギーUI
+	std::shared_ptr<StageBase>			_stage;					// ステージ
+	std::shared_ptr<CameraManager>		_cameraManager;			// カメラマネージャー
+	std::shared_ptr<GameCamera>			_gameCamera;			// ゲームカメラ
+	std::shared_ptr<DebugCamera>		_debugCamera;			// デバッグカメラ
+	std::shared_ptr<BulletManager>		_bulletManager;			// 弾マネージャー
+	//std::shared_ptr<DodgeSystem>		_dodgeSystem;			// 回避システム
+	std::shared_ptr<EnergyUI>			_energyUI;				// エネルギーUI
+	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;	// 能力選択画面
+	std::shared_ptr<LightManager>		_lightManager;			// ライトマネージャー 
+	std::shared_ptr<Item>               _item;                  //　アイテム
 
-	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;
-	
 	// シングルトン取得
 	AttackManager* _attackManager = nullptr;
 	EnergyManager* _energyManager = nullptr;
 
 	// デバッグ用
-	bool _bViewCollision;// 当たり判定表示
-	bool _bUseCollision;// 当たり判定有効
+	bool _bViewDebugInfo;	// デバッグ情報表示
+	bool _bViewCollision;	// 当たり判定表示
+	bool _bUseCollision;	// 当たり判定有効
 
+	// ベクターコンテナ
+	std::vector<LightInfo>	_lights;	// 生成されたライトを管理
 
-
-	std::shared_ptr<LightManager> _lightManager;// ライトマネージャー 
-	// 生成されたライトを管理
-	std::vector<LightInfo> _lights;
+	// のうりょくせんたくがめんよう
+	bool _isUseDebugScreen;
 
 private:
-	void CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
-	void CheckHitPlayerEnemy(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);		// プレイヤーと敵の当たり判定
-	void CheckHitCharaBullet(std::shared_ptr<CharaBase> chara);											// キャラと弾の当たり判定
-	void CheckActiveAttack(std::shared_ptr<CharaBase> chara);											// 有効な攻撃のチェック
-	void CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
-	void ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage);								// ダメージをエネルギーに変換する
+	void CheckCollisionCharaMap	(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
+	void CheckHitPlayerEnemy	(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);	// プレイヤーと敵の当たり判定
+	void CheckHitCharaBullet	(std::shared_ptr<CharaBase> chara);										// キャラと弾の当たり判定
+	void CheckActiveAttack		(std::shared_ptr<CharaBase> chara);										// 有効な攻撃のチェック
+	void CheckHitCharaAttackCol	(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
+	void CheckHitCharaItem(std::shared_ptr<CharaBase> chara, std::shared_ptr <Item>item);               // アイテムとプレイヤーの当たり判定
+	void ConvertEnergy			(std::shared_ptr<AttackBase> attack, float damage);						// ダメージをエネルギーに変換する
+	bool OwnerIsAttackingOwner	(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);					// 攻撃所有者が自分に攻撃しているかどうか
 
 
 
@@ -96,16 +111,5 @@ private:
 	void RemoveLight(int lightHandle);// 指定ライトを削除
 
 
-	/// のうりょくせんたくがめんよう
-	bool _isUseDebugScreen;
-
-	// --- ここからアイテム描画用メンバ ---
-	std::vector<VECTOR> _itemPositions;
-	std::vector<unsigned int> _itemColors;
-	float _itemRadius = 0.6f;
-	float _itemHeight = 1.2f;
-	VECTOR _playerStartPos = VGet(0.0f, 0.0f, 0.0f);
-
-	// 開始位置周りにアイテムを生成
-	void CreateItemsAtStart(int count = 3, float ringRadius = 2.0f);
+	
 };

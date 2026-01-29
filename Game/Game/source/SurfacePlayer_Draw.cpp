@@ -5,9 +5,9 @@
 namespace color
 {
 	// 描画時の色
-	constexpr int R = 0;
-	constexpr int G = 55;
-	constexpr int B = 0;
+	constexpr int R = 220;
+	constexpr int G = 255;
+	constexpr int B = 220;
 }
 
 // デバッグ用表示
@@ -33,21 +33,18 @@ void SurfacePlayer::CallDraw()
 // モデルの表示
 void SurfacePlayer::DrawModel()
 {
-	// 再生時間をセットする
-	MV1SetAttachAnimTime(_iHandle, _iAttachIndex, _fPlayTime);
-
 	// モデルを描画する
 	{
-		// 位置
-		MV1SetPosition(_iHandle, _vPos);
+		//// 位置
+		//MV1SetPosition(_iHandle, _vPos);
 
-		// 向きからY軸回転を算出
-		VECTOR vRot = { 0,0,0 };
-		vRot.y = atan2(_vDir.x * -1, _vDir.z * -1);	// モデルが標準でどちらを向いているかで式が変わる(これは-zを向いている場合)
-		MV1SetRotationXYZ(_iHandle, vRot);
+		//// 向きからY軸回転を算出
+		//VECTOR vRot = { 0,0,0 };
+		//vRot.y = atan2(_vDir.x * -1, _vDir.z * -1);	// モデルが標準でどちらを向いているかで式が変わる(これは-zを向いている場合)
+		//MV1SetRotationXYZ(_iHandle, vRot);
 
-		// 描画
-		MV1DrawModel(_iHandle);
+		//// 描画
+		//MV1DrawModel(_iHandle);
 
 		// コリジョン判定用ラインの描画
 		if(_bViewCollision)
@@ -76,15 +73,6 @@ void SurfacePlayer::DrawCoordinate()
 {
 	// プレイヤーの座標情報
 	{
-		// 0,0,0を中心に線を引く
-		{
-			float linelength = 1000.f;
-			VECTOR v = { 0, 0, 0 };
-			DrawLine3D(VAdd(v, VGet(-linelength, 0, 0)), VAdd(v, VGet(linelength, 0, 0)), GetColor(255, 0, 0));
-			DrawLine3D(VAdd(v, VGet(0, -linelength, 0)), VAdd(v, VGet(0, linelength, 0)), GetColor(0, 255, 0));
-			DrawLine3D(VAdd(v, VGet(0, 0, -linelength)), VAdd(v, VGet(0, 0, linelength)), GetColor(0, 0, 255));
-		}
-
 		// プレイヤー位置情報表示
 		{
 			DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(color::R, color::G, color::B), "Player:");
@@ -125,6 +113,9 @@ void SurfacePlayer::DrawStatus()
 			break;
 		case PLAYER_STATUS::WALK:			// 歩行
 			status = "WALK";
+			break;
+		case PLAYER_STATUS::RUN:			// 走行
+			status = "RUN";
 			break;
 		case PLAYER_STATUS::FIRST_ATTACK:	// 攻撃1
 			status = "FIRST_ATTACK";
@@ -184,6 +175,11 @@ void SurfacePlayer::DrawAnimationName()
 			animName = "WALK";
 			break;
 		}
+		case PLAYER_STATUS::RUN:	// 走行
+		{
+			animName = "RUN";
+			break;
+		}
 		case PLAYER_STATUS::JUMP_UP: // ジャンプ上昇
 		{
 			 animName = "JUMP_UP";
@@ -226,7 +222,7 @@ void SurfacePlayer::DrawAnimationName()
 		}
 	}
 
-	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(color::R, color::G, color::B), "Player AnimName: %d", _iAttachIndex);
+	//DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, GetColor(color::R, color::G, color::B), "Player AnimName: %d", _iAttachIndex);
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 }
 

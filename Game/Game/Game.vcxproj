@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\AbilitySelectScreen.cpp" />
+    <ClCompile Include="source\AnimManager.cpp" />
     <ClCompile Include="source\ApplicationGlobal.cpp" />
     <ClCompile Include="source\ApplicationMain.cpp" />
     <ClCompile Include="source\AttackBase.cpp" />
@@ -166,7 +167,9 @@
     <ClCompile Include="source\InteriorPlayer.cpp" />
     <ClCompile Include="source\InteriorPlayer_Draw.cpp" />
     <ClCompile Include="source\InteriorPlayer_Move.cpp" />
+    <ClCompile Include="source\Item.cpp" />
     <ClCompile Include="source\LightManager.cpp" />
+    <ClCompile Include="source\MenuItemBase.cpp" />
     <ClCompile Include="source\ModeGame.cpp" />
     <ClCompile Include="source\ModeGame_CheckHit.cpp" />
     <ClCompile Include="source\ModeLoading.cpp" />
@@ -186,6 +189,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilitySelectScreen.h" />
+    <ClInclude Include="source\AnimManager.h" />
     <ClInclude Include="source\ApplicationGlobal.h" />
     <ClInclude Include="source\ApplicationMain.h" />
     <ClInclude Include="source\AttackBase.h" />
@@ -205,6 +209,7 @@
     <ClInclude Include="source\GameCamera.h" />
     <ClInclude Include="source\GameObjectBase.h" />
     <ClInclude Include="source\InteriorPlayer.h" />
+    <ClInclude Include="source\Item.h" />
     <ClInclude Include="source\LightManager.h" />
     <ClInclude Include="source\MenuItemBase.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>

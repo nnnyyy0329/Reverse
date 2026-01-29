@@ -44,6 +44,9 @@ bool Bullet::Render() {
 void Bullet::DebugRender() {
 }
 
+void Bullet::CollisionRender() {
+}
+
 void Bullet::Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE type) {
 	_vPos = vStartPos;
 	_vOldPos = vStartPos;// 前フレームの位置も初期化

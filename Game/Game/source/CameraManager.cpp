@@ -38,14 +38,6 @@ bool CameraManager::Process()
 	return true;
 }
 
-bool CameraManager::Render()
-{
-	// カメラ描画切り替え
-	SwitchCameraRender();
-
-	return true;
-}
-
 // カメラ切り替え
 void CameraManager::SwitchCamera()
 {
@@ -103,6 +95,33 @@ void CameraManager::SwitchCameraProcess()
 	}
 }
 
+// カメラ設定切り替え
+void CameraManager::SwitchCameraSetUp()
+{
+	// カメラタイプによる処理分岐
+	switch(_eCameraType)
+	{
+		// ゲームカメラ設定
+		case CAMERA_TYPE::GAME_CAMERA:
+		{
+			if(_gameCamera)
+			{
+				_gameCamera->SetUp();	// ゲームカメラ設定更新
+			}
+			break;
+		}
+		// デバッグカメラ設定
+		case CAMERA_TYPE::DEBUG_CAMERA:
+		{
+			if(_debugCamera)
+			{
+				_debugCamera->SetUp();	// デバッグカメラ設定更新
+			}
+			break;
+		}
+	}
+}
+
 // カメラ描画切り替え
 void CameraManager::SwitchCameraRender()
 {
@@ -114,8 +133,7 @@ void CameraManager::SwitchCameraRender()
 		{
 			if(_gameCamera)
 			{
-				_gameCamera->SetUp();		// ゲームカメラ設定更新
-				_gameCamera->DebugRender();	// ゲームカメラ描画
+				_gameCamera->Render();	// ゲームカメラ描画
 			}
 			break;
 		}
@@ -124,8 +142,34 @@ void CameraManager::SwitchCameraRender()
 		{
 			if(_debugCamera)
 			{
-				_debugCamera->SetUp();			// デバッグカメラ設定更新
-				_debugCamera->DebugRender();	// デバッグカメラ描画
+				_debugCamera->Render();	// デバッグカメラ描画
+			}
+			break;
+		}
+	}
+}
+
+// カメラデバッグ描画切り替え
+void CameraManager::SwitchCameraDebugRender()
+{
+	// カメラタイプによる処理分岐
+	switch(_eCameraType)
+	{
+		// ゲームカメラデバッグ描画
+		case CAMERA_TYPE::GAME_CAMERA:
+		{
+			if(_gameCamera)
+			{
+				_gameCamera->DebugRender();	// ゲームカメラデバッグ描画
+			}
+			break;
+		}
+		// デバッグカメラデバッグ描画
+		case CAMERA_TYPE::DEBUG_CAMERA:
+		{
+			if(_debugCamera)
+			{
+				_debugCamera->DebugRender();	// デバッグカメラデバッグ描画
 			}
 			break;
 		}
@@ -133,7 +177,6 @@ void CameraManager::SwitchCameraRender()
 
 	int x = 900;
 	int y = 450;
-
 	// デバッグカメラ使用フラグ表示
 	DrawFormatString(x, y, GetColor(55, 0, 0), "Use Debug Camera: %s", _bIsUseDebugCamera ? "True" : "False");
 }

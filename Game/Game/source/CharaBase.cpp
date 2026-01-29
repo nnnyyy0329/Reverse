@@ -19,7 +19,6 @@ CharaBase::CharaBase()
 
 CharaBase::~CharaBase()
 {
-
 }
 
 bool CharaBase::Initialize()
@@ -34,12 +33,34 @@ bool CharaBase::Terminate()
 
 bool CharaBase::Process()
 {
+	GameObjectBase::Process();
+
 	return true;
 }
 
 bool CharaBase::Render()
 {
+	GameObjectBase::Render();
+
 	return true;
+}
+
+void CharaBase::DebugRender()
+{
+}
+
+void CharaBase::CollisionRender()
+{
+	// ƒJƒvƒZƒ‹“–‚½‚è”»’è
+	DrawCapsule3D(
+		_vCollisionBottom,
+		_vCollisionTop,
+		_fCollisionR,
+		8,
+		GetColor(255, 0, 0),
+		GetColor(0, 255, 0),
+		FALSE
+	);
 }
 
 void CharaBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)

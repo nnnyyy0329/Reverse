@@ -75,6 +75,8 @@ bool AttackBase::ProcessStopAttack()
 	_stcAttackCol.isActive = false;         // 攻撃判定を非アクティブに設定
 	_stcAttackCol.currentTime = 0.0f;       // 経過時間リセット
 
+    // ヒットリストクリア
+    ClearHitCharas();
     return true;
 }
 
@@ -121,6 +123,9 @@ void AttackBase::UpdateAttackState()
             {
                 _eAttackState = ATTACK_STATE::INACTIVE;
                 _stcAttackCol.currentTime = 0.0f;
+
+				// ヒットリストクリア
+				ClearHitCharas();
             }
 
             break;
@@ -267,4 +272,43 @@ void AttackBase::DrawAttackCollision()
             }
         }
     }
+}
+
+// 当たったキャラを追加
+void AttackBase::AddHitCharas(std::shared_ptr<CharaBase> chara)
+{
+    if(chara == nullptr) { return; }
+
+    // 既に当たっているキャラは追加しない
+    if(!HasHitCharas(chara))
+    {
+		// 当たったキャラリストに追加
+        _hitCharas.push_back(chara);
+    }
+}
+
+// 当たったキャラを持っているかチェック
+bool AttackBase::HasHitCharas(std::shared_ptr<CharaBase> chara)const
+{
+    if(chara == nullptr) { return false; }
+
+    // 当たったキャラリストを検索
+    for(const auto& hitChara : _hitCharas)
+    {
+		// 一致するキャラがいるかチェック
+        if(hitChara == chara)
+        {
+            // 見つかった
+            return true;    
+        }
+    }
+
+    // 見つからなかった
+    return false;  
+}
+
+// 当たったキャラリストクリア
+void AttackBase::ClearHitCharas()
+{
+    _hitCharas.clear();
 }

@@ -37,6 +37,8 @@ public:
 	bool Terminate();		// 終了
 	bool Process();			// 更新
 	bool Render();			// 描画
+	void DebugRender();	// デバッグ情報描画
+	void CollisionRender(); // コリジョン描画
 
 	// 攻撃の登録と解除
 	void RegisterAttack(std::shared_ptr<AttackBase> attack, ATTACK_OWNER_TYPE ownerType, int ownerId);	// 攻撃登録
@@ -60,9 +62,6 @@ public:
 
 	ATTACK_OWNER_TYPE GetAttackOwnerType(std::shared_ptr<AttackBase> attack) const;	// 攻撃の所有者を取得
 	int GetAttackOwnerId(std::shared_ptr<AttackBase> attack) const;					// 攻撃の所有者IDを取得
-
-	// デバッグ機能
-	void DebugRender();
 
 	// シングルトン
 	static AttackManager* GetInstance()	// インスタンス取得

@@ -21,11 +21,12 @@ class CameraManager
 	bool Initialize();
 	bool Terminate();
 	bool Process();
-	bool Render();
 
 	void SwitchCamera();		// カメラ切り替え
 	void SwitchCameraProcess();	// カメラ処理切り替え
+	void SwitchCameraSetUp();	// カメラ設定切り替え
 	void SwitchCameraRender();	// カメラ描画切り替え
+	void SwitchCameraDebugRender(); // カメラデバッグ描画切り替え
 
 	// ゲッターセッター
 	CAMERA_TYPE GetCameraType()const { return _eCameraType; }

@@ -53,9 +53,15 @@ public:
 	virtual bool Process();
 	virtual bool Render();
 
+	// 攻撃処理
 	virtual bool ProcessStartAttack();	// 攻撃開始
 	virtual bool ProcessStopAttack();	// 攻撃停止
 	void UpdateAttackState();			// 攻撃状態更新
+
+	// 当たったキャラ管理
+	void AddHitCharas(std::shared_ptr<CharaBase> chara);		// 当たったキャラを追加
+	bool HasHitCharas(std::shared_ptr<CharaBase> chara)const;	// 当たったキャラを持っているかチェック
+	void ClearHitCharas();										// 当たったキャラリストクリア
 
 	// カプセル攻撃データ設定
 	void SetCapsuleAttackData
@@ -116,5 +122,7 @@ protected:
 
 private:
 	std::shared_ptr<EnergyManager> _energyManager;	// エネルギーマネージャー
+	std::vector<std::shared_ptr<CharaBase>> _hitCharas;	// 当たったキャラを管理
+
 };
 

@@ -51,19 +51,26 @@ bool AttackManager::Process()
 	return true;
 }
 
-bool AttackManager::Render()
+void AttackManager::DebugRender()
+{
+	int registeredCount = GetRegisteredAttackCount();	// “o˜^UŒ‚”æ“¾
+	int activeCount = GetActiveAttackCount();			// ƒAƒNƒeƒBƒuUŒ‚”æ“¾
+
+	DrawFormatString(10, 210, GetColor(0, 255, 0), "Registered Attacks: %d", registeredCount);
+	DrawFormatString(10, 230, GetColor(0, 255, 0), "Active Attacks: %d", activeCount);
+}
+
+void AttackManager::CollisionRender()
 {
 	// “o˜^‚³‚ê‚Ä‚¢‚éUŒ‚‚ğ•`‰æ
 	for (auto& attackInfo : _registeredAttacks)
 	{
-		if(attackInfo.attack.expired()){ continue; }	// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
+		if (attackInfo.attack.expired()) { continue; }	// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
 		auto attack = attackInfo.attack.lock();			// UŒ‚î•ñ‚Ìæ“¾
 
-		if(attack == nullptr){ continue; }	// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
+		if (attack == nullptr) { continue; }	// –³Œø‚ÈUŒ‚‚ÍƒXƒLƒbƒv
 		attack->Render();					// UŒ‚•`‰æˆ—
 	}
-
-	return true;
 }
 
 // UŒ‚‚Ì“o˜^
@@ -361,14 +368,4 @@ void AttackManager::DestroyInstance()
 
 		delete _instance;		// ƒCƒ“ƒXƒ^ƒ“ƒX”jŠü
 	}
-}
-
-// ƒfƒoƒbƒO•`‰æ
-void AttackManager::DebugRender()
-{
-	int registeredCount = GetRegisteredAttackCount();	// “o˜^UŒ‚”æ“¾
-	int activeCount = GetActiveAttackCount();			// ƒAƒNƒeƒBƒuUŒ‚”æ“¾
-	
-	DrawFormatString(10, 210, GetColor(0, 255, 0), "Registered Attacks: %d", registeredCount);
-	DrawFormatString(10, 230, GetColor(0, 255, 0), "Active Attacks: %d", activeCount);
 }

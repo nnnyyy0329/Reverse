@@ -10,6 +10,8 @@ namespace {
 
 	constexpr auto ATTACK_CONFIRM_TIME = 60.0f;// 攻撃判定が有効になるまでの時間
 
+	constexpr auto BLEND_FRAME = 10.0f;// アニメーションブレンドフレーム数
+
 	// 個別の攻撃コリジョン設定
 	EnemyAttackSettings MakeMeleeAttackSettings()
 	{
@@ -49,6 +51,13 @@ namespace Melee
 	void Idle::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
 		// ここでアニメーション設定
+		// AnimManagerを取得してアニメーション切り替え
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			// 待機アニメーションに切り替え
+			animManager->ChangeAnimationByName("Idle", BLEND_FRAME, 0);// 無限ループ
+		}
 	}
 
 	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner) {

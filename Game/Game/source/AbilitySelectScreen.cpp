@@ -102,6 +102,33 @@ void AbilitySelectScreen::SelectionByInput()
 	_iCursorCount++;
 }
 
+// 選択されたアビリティに切り替え処理
+void AbilitySelectScreen::SwitchAbilityBySelect()
+{
+	switch(_iSelectedAbility)
+	{
+		case 0:
+		{
+			break;
+		}
+
+		case 1:
+		{
+			break;
+		}
+
+		case 2:
+		{
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+	}
+}
+
 // 選択要素の表示
 void AbilitySelectScreen::SelectRender()
 {
@@ -128,10 +155,12 @@ void AbilitySelectScreen::SelectRender()
 // 選択画面表示
 void AbilitySelectScreen::SelectFrameRender()
 {
+	// 選択し終わったか
 	if(!_bIsSelectComplete)
 	{
 		_bShowCursor = (_iCursorCount / BLINK_SPEED) % 2 == 0;
 
+		// カーソル表示
 		if(_bShowCursor)
 		{
 			// アビリティ画像の座標

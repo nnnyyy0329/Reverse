@@ -10,6 +10,7 @@ public:
 	virtual ~GameCamera() {};
 
 	void Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool isInput);
+	void Render();
 	void DebugRender();
 
 	void SetUp();												// カメラ設定
@@ -18,8 +19,9 @@ public:
 	void ControlCamera(float rx, float ry, float analogMin);	// カメラ操作処理
 
 	// ゲッター
-	VECTOR GetVPos() const { return _vPos; }
-	VECTOR GetVTarget() const { return _vTarget; }
+	VECTOR GetVPos() const { return _vPos; }			// カメラ位置を取得
+	VECTOR GetVTarget() const { return _vTarget; }		// 注視点を取得
+	float GetCameraAngleH() const { return _angleH; }	// カメラの水平角度を取得
 
 	// ターゲットを設定する関数
 	void SetTarget(std::shared_ptr<PlayerBase> target);

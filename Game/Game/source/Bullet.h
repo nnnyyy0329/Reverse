@@ -12,6 +12,7 @@ public:
 	virtual bool Process();		// 更新	
 	virtual bool Render();		// 描画
 	virtual void DebugRender();	// デバッグ描画
+	virtual void CollisionRender(); // コリジョン描画
 
 	// 弾の発射処理
 	void Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE type);

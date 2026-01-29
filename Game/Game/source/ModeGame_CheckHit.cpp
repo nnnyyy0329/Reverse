@@ -282,8 +282,8 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 {
 	if(chara == nullptr || attack == nullptr) { return; }
 
-	// ヒットしているならスキップ
-	if(attack->GetHitFlag()){ return; }
+	// 既にヒット済みのキャラかチェック
+	if(attack->HasHitCharas(chara)) { return; }
 
 	// 攻撃コリジョン情報を取得
 	const ATTACK_COLLISION& col = attack->GetAttackCollision();
@@ -295,22 +295,27 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		col.attackColTop, col.attackColBottom, col.attackColR
 	) != false)
 	{
-		attack->SetHitFlag(true);	// ヒットフラグを有効にする
-		
-		float damage = attack->GetDamage();								// ダメージ取得
-		auto beforeLife = chara->GetLife();								// ヒット前のライフ取得
+		// ヒットフラグを有効にする
+		attack->SetHitFlag(true);
+
 		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
+		auto charaType = chara->GetCharaType();							// キャラのタイプ取得
 
-		// ターゲットにダメージを与える
-		chara->ApplyDamage(damage, ownerType);							
+		// 自分に攻撃しているかどうか
+		if(OwnerIsAttackingOwner(charaType, ownerType)){ return; }
 
-		auto afterLife = chara->GetLife();	// ヒット後のライフ取得
-		damage = beforeLife - afterLife;	// 実際に与えたダメージを計算
+		// ヒットしたキャラを登録
+		attack->AddHitCharas(chara);
+		
+		// ダメージ処理
+		float damage = attack->GetDamage();		// ダメージ取得
+		auto beforeLife = chara->GetLife();		// ヒット前のライフ取得
+		chara->ApplyDamage(damage, ownerType);	// ターゲットにダメージを与える
+		auto afterLife = chara->GetLife();		// ヒット後のライフ取得
+		damage = beforeLife - afterLife;		// 実際に与えたダメージを計算
 
 		// ダメージをエネルギーに変換
 		ConvertEnergy(attack, damage);									
-
-		//printfDx("Chara and Attack Collision Hit!\n");
 	}
 }
 
@@ -333,4 +338,37 @@ void ModeGame::ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage)
 		// 消費変換
 		_energyManager->ConvertDamageToConsumeEnergy(damage);
 	}
+}
+
+// 攻撃所有者が自分に攻撃しているかどうか
+bool ModeGame::OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType)
+{
+	// 同じキャラからの攻撃かチェック
+	switch(charaType)
+	{
+		case CHARA_TYPE::ENEMY:	// 敵キャラ
+		{
+			// 敵キャラの場合、攻撃所有者が敵であるかを確認
+			return (ownerType == ATTACK_OWNER_TYPE::ENEMY);
+		}
+
+		case CHARA_TYPE::SURFACE_PLAYER:	// 表プレイヤー
+		{
+			// 表プレイヤーの場合、攻撃所有者が表プレイヤーであるかを確認
+			return (ownerType == ATTACK_OWNER_TYPE::SURFACE_PLAYER);
+		}
+
+		case CHARA_TYPE::INTERIOR_PLAYER:	// 裏プレイヤー
+		{
+			// 裏プレイヤーの場合、攻撃所有者が裏プレイヤーであるかを確認
+			return (ownerType == ATTACK_OWNER_TYPE::INTERIOR_PLAYER);
+		}
+
+		default:	// その他のキャラタイプ
+		{
+			return false;
+		}
+	}
+
+	return false;
 }

@@ -27,18 +27,6 @@ GameCamera::GameCamera()
 
 void GameCamera::Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool isInput)
 {
-	// カメラの回転
-	{
-		if(abs(rx) > analogMin) _angleH += rx * ROTATE_SPEED;
-		if(abs(ry) > analogMin) {
-			_angleV += ry * ROTATE_SPEED;
-
-			// 垂直角度制限
-			if(_angleV > ANGLE_V_LIMIT) _angleV = ANGLE_V_LIMIT;
-			if(_angleV < -ANGLE_V_LIMIT) _angleV = -ANGLE_V_LIMIT;
-		}
-	}
-
 	// カメラ更新処理
 	UpdateCamera();
 
@@ -56,6 +44,10 @@ void GameCamera::SetUp()
 
 	// カメラからどれだけ離れた距離からどこまで描画するかを設定
 	SetCameraNearFar(_nearClip, _farClip);
+}
+
+void GameCamera::Render()
+{
 }
 
 // デバッグ用描画処理
@@ -113,29 +105,9 @@ void GameCamera::UpdateCameraPos()
 // カメラ操作処理
 void GameCamera::ControlCamera(float rx, float ry, float analogMin)
 {
-	//// カメラ操作を行う（右スティック）
-	//{
-	//	float sx = _vPos.x - _vTarget.x;
-	//	float sz = _vPos.z - _vTarget.z;
-	//	float rad = atan2(sz, sx);
-	//	float length = sqrt(sz * sz + sx * sx);
-
-	//	// XZ位置
-	//	if(rx > analogMin) { rad -= 0.05f; }
-	//	if(rx < -analogMin) { rad += 0.05f; }
-
-	//	// XZ位置更新
-	//	_vPos.x = _vTarget.x + cos(rad) * length;
-	//	_vPos.z = _vTarget.z + sin(rad) * length;
-
-	//	// Y位置
-	//	if(ry > analogMin) { _vPos.y -= 5.f; }
-	//	if(ry < -analogMin) { _vPos.y += 5.f; }
-	//}
-
 	// カメラの回転
 	{
-		if(abs(rx) > analogMin) _angleH += rx * ROTATE_SPEED;
+		if(abs(rx) > analogMin) _angleH -= rx * ROTATE_SPEED;
 		if(abs(ry) > analogMin) {
 			_angleV += ry * ROTATE_SPEED;
 

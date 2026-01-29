@@ -6,7 +6,8 @@
 namespace
 {
 	const float CROUCH_MOVE_SPEED = 2.0f;	// しゃがみ移動速度
-	const float NORMAL_MOVE_SPEED = 5.0f;	// 通常移動速度
+	const float NORMAL_MOVE_SPEED = 15.0f;	// 通常移動速度
+	const float DASH_MOVE_SPEED = 7.5f;	// ダッシュ移動速度
 }
 
 // アクション関係Process呼び出し用関数
@@ -16,10 +17,10 @@ void SurfacePlayer::CallProcess()
 	ProcessMovePlayer();
 
 	// ジャンプ処理
-	ProcessJump();
+	//ProcessJump();
 
 	// 着地処理
-	//ProcessStanding();
+	// ProcessStanding();
 
 	// しゃがみ処理
 	//ProcessCrouch();
@@ -34,13 +35,15 @@ void SurfacePlayer::CallProcess()
 	ProcessStatusAnimation();
 
 	// デバッグ用の処理
-	//ProcessDebug();
+	ProcessDebug();
 }
 
 // プレイヤー移動処理
 void SurfacePlayer::ProcessMovePlayer()
 {
-	_vOldPos = _vPos; // 前フレームの位置を保存
+	// 前フレームの位置を保存
+	_vOldPos = _vPos; 
+
 	// 移動方向を決める
 	_vMove = { 0,0,0 };
 
@@ -51,20 +54,40 @@ void SurfacePlayer::ProcessMovePlayer()
 		if(_bIsCrouching){ _fMoveSpeed = CROUCH_MOVE_SPEED; }
 		else{ _fMoveSpeed = NORMAL_MOVE_SPEED; }
 
-		if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
-		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
-		if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
-		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
+		//if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
+		//if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
+		//if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
+		//if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
 
-		// 移動量を正規化
-		float len = VSize(_vMove);
-		if(len > 0.0f)
+		// カメラの向きに基づいて移動方向を変換
+		//_vMove = TransformMoveDirection(_vMove, _cameraAngle - DX_PI_F / 2.0f);
+
+		// アナログ入力による移動
+		if(abs(_lx) > _analogMin || abs(_ly) > _analogMin)
 		{
-			_vMove.x /= len;	// 正規化
-			_vMove.y /= len;	// 正規化
+			// カメラの向いている方向のベクトル
+			VECTOR cameraForward = VGet(cos(_cameraAngle), 0.0f, sin(_cameraAngle));
+
+			// 右方向ベクトル
+			VECTOR cameraRight = VGet(cos(_cameraAngle + DX_PI_F / 2.0f), 0.0f, sin(_cameraAngle + DX_PI_F / 2.0f));
+
+			// 移動量を計算
+			_vMove = VAdd
+			(
+				VScale(cameraForward, _ly),	// 前後移動
+				VScale(cameraRight, _lx)	// 左右移動
+			);
+
+			// 移動量を正規化
+			float len = VSize(_vMove);
+			if(len > 0.0f)
+			{
+				_vMove = VScale(_vMove, 1.0f / len);
+			}
 		}
 
-		_vPos = VAdd(_vPos, VScale(_vMove, _fMoveSpeed));	// 移動速度を掛けて移動
+		// 移動速度を掛けて移動
+		_vPos = VAdd(_vPos, VScale(_vMove, _fMoveSpeed));	
 	}
 
 	// カプセルに座標を対応
@@ -106,6 +129,7 @@ void SurfacePlayer::ProcessStatusAnimation()
 			_ePlayerStatus = PLAYER_STATUS::JUMP_DOWN;
 		}
 	}
+	// 地上にいる場合
 	else
 	{
 		// しゃがみ中かどうか
@@ -125,13 +149,23 @@ void SurfacePlayer::ProcessStatusAnimation()
 		// 通常移動
 		else
 		{
-			// 通常 
-			if(VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f) // 歩いているかどうか
+			bool isWalking = VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f;
+			bool isRunning = (_key & PAD_INPUT_5) != 0;
+			
+			// 走り
+			if(isWalking && isRunning)
+			{
+				_vDir = _vMove;							// 移動方向を向く
+				_ePlayerStatus = PLAYER_STATUS::RUN;	// 走行
+			}
+			// 歩き
+			else if(isWalking)
 			{
 				_vDir = _vMove;							// 移動方向を向く
 				_ePlayerStatus = PLAYER_STATUS::WALK;	// 歩行
 			}
-			else // 止まっている
+			// 待機
+			else
 			{
 				_ePlayerStatus = PLAYER_STATUS::WAIT;	// 待機
 			}
@@ -148,109 +182,93 @@ void SurfacePlayer::ProcessPlayAnimation()
 	// ステータスが変わっていないか？
 	if(_eOldPlayerStatus == _ePlayerStatus)
 	{
-		// 再生時間を進める
-		_fPlayTime += 0.5f;
+		return;
 	}
-	else
+
+	// AnimManagerを取得
+	AnimManager* animManager = GetAnimManager();
+	if (animManager == nullptr)
 	{
-		// アニメーションがアタッチされていたら、デタッチする
-		if(_iAttachIndex != -1)
-		{
-			MV1DetachAnim(_iHandle, _iAttachIndex);
-			_iAttachIndex = -1;
-		}
-
-		// ステータスに合わせてアニメーションのアタッチ
-		switch(_ePlayerStatus)
-		{
-			case PLAYER_STATUS::WAIT:	// 待機
-			{
-				_iAttachIndex = -1;
-				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "idle"), -1, FALSE);
-				break;
-			}
-			case PLAYER_STATUS::WALK:	// 歩行
-			{
-				_iAttachIndex = -1;
-				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "run"), -1, FALSE);
-				break;
-			}
-			case PLAYER_STATUS::JUMP_UP: // ジャンプ上昇
-			{
-				_iAttachIndex = -1;
-				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "jump_up"), -1, FALSE);
-				break;
-			}
-			case PLAYER_STATUS::JUMP_DOWN: // ジャンプ下降
-			{
-				_iAttachIndex = -1;
-				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "jump_down"), -1, FALSE);
-				break;
-			}
-			case PLAYER_STATUS::CROUCH_WAIT:	// しゃがみ待機
-			{
-				_iAttachIndex = -1;
-				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch_idle"), -1, FALSE);
-				break;
-			}
-			case PLAYER_STATUS::CROUCH_WALK:	// しゃがみ歩行
-			{
-				_iAttachIndex = -1;
-				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "crouch"), -1, FALSE);
-				break;
-			}
-			case PLAYER_STATUS::FIRST_ATTACK:	// 攻撃1
-			{
-				_iAttachIndex = -1;
-				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_01"), -1, FALSE);
-				break;
-			}
-			case PLAYER_STATUS::SECOND_ATTACK:	// 攻撃2
-			{
-				_iAttachIndex = -1;
-				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_02"), -1, FALSE);
-				break;
-			}
-			case PLAYER_STATUS::THIRD_ATTACK:	// 攻撃3
-			{
-				_iAttachIndex = -1;
-				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "attack_03"), -1, FALSE);
-				break;
-			}
-			case PLAYER_STATUS::HIT:			// 被弾
-			{
-				_iAttachIndex = -1;
-				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "death"), -1, FALSE);
-				break;
-			}
-			case PLAYER_STATUS::DODGE:			// 回避
-			{
-				_iAttachIndex = -1;
-				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "dodge"), -1, FALSE);
-				break;
-			}
-			case PLAYER_STATUS::DEATH:			// 死亡
-			{
-				_iAttachIndex = -1;
-				_iAttachIndex = MV1AttachAnim(_iHandle, MV1GetAnimIndex(_iHandle, "death"), -1, FALSE);
-				break;
-			}
-		}
-
-		// アタッチしたアニメーションの総再生時間を取得する
-		if(_iAttachIndex != -1)
-		{
-			_fTotalTime = MV1GetAttachAnimTotalTime(_iHandle, _iAttachIndex);
-		}		
-		
-		_fPlayTime = 0.0f;
+		return;
 	}
 
-	// 再生時間がアニメーションの総再生時間に達したら再生時間を０に戻す
-	if(_iAttachIndex != -1 && _fPlayTime >= _fTotalTime)
+	// ステータスに応じたアニメーション名とループ設定
+	const char* animName = nullptr;
+	int loopCnt = 0; // 0:無限ループ 1:ループ無し 2以上:指定回数ループ
+
+	switch (_ePlayerStatus)
 	{
-		_fPlayTime = 0.0f;
+	case PLAYER_STATUS::WAIT:	// 待機
+		animName = "player_idle_00";
+		loopCnt = 0;
+		break;
+
+	case PLAYER_STATUS::WALK:	// 歩行
+		animName = "player_walk_00";
+		loopCnt = 0;
+		break;
+
+	case PLAYER_STATUS::RUN:	// 走行
+		animName = "player_jog_00";
+		loopCnt = 0;
+		break;
+
+	case PLAYER_STATUS::JUMP_UP: // ジャンプ上昇
+		animName = "jump_up";
+		loopCnt = 1;
+		break;
+
+	case PLAYER_STATUS::JUMP_DOWN: // ジャンプ下降
+		animName = "jump_down";
+		loopCnt = 1;
+		break;
+
+	case PLAYER_STATUS::CROUCH_WAIT:	// しゃがみ待機
+		animName = "crouch_idle";
+		loopCnt = 0;
+		break;
+
+	case PLAYER_STATUS::CROUCH_WALK:	// しゃがみ歩行
+		animName = "crouch";
+		loopCnt = 0;
+		break;
+
+	case PLAYER_STATUS::FIRST_ATTACK:	// 攻撃1
+		animName = "absorb_attack_00";
+		loopCnt = 1;
+		break;
+
+	case PLAYER_STATUS::SECOND_ATTACK:	// 攻撃2
+		animName = "absorb_attack_01";
+		loopCnt = 1;
+		break;
+
+	case PLAYER_STATUS::THIRD_ATTACK:	// 攻撃3
+		animName = "absorb_attack_02";
+		loopCnt = 1;
+		break;
+
+	case PLAYER_STATUS::HIT:	// 被弾
+		animName = "player_damage_00";
+		loopCnt = 1;
+		break;
+
+	case PLAYER_STATUS::DODGE:	// 回避
+		animName = "dodge";
+		loopCnt = 1;
+		break;
+
+	case PLAYER_STATUS::DEATH:	// 死亡
+		animName = "player_dead_00";
+		loopCnt = 0;
+		break;
+
+	default:
+		return; // 不明なステータス
 	}
+
+	// アニメーション切り替え
+	animManager->ChangeAnimationByName(animName, 1.0f, loopCnt);
 }
 
 // 着地処理
@@ -288,7 +306,7 @@ void SurfacePlayer::ProcessJump()
 	if(IsAttacking()){ return; }
 
 	// ジャンプボタンが押されたら
-	if(_trg & PAD_INPUT_A && _ePlayerStatus != PLAYER_STATUS::JUMP_UP)	// Zボタン
+	if(_trg & PAD_INPUT_2 && _ePlayerStatus != PLAYER_STATUS::JUMP_UP)	// Zボタン
 	{
 		// ジャンプ中でなく、着地しているなら
 		if(!_bIsJumping && _bIsStanding)
@@ -311,7 +329,7 @@ void SurfacePlayer::ProcessCrouch()
 	if(IsAttacking()){ return; }
 
 	// しゃがみボタンが押されたら
-	if(_trg & PAD_INPUT_B)
+	if(_trg & PAD_INPUT_10)
 	{
 		// しゃがみ開始フラグが立っておらず、しゃがみステータスでなければ
 		if(!_bIsStartCrouch && _ePlayerStatus != PLAYER_STATUS::CROUCH_WAIT)
@@ -351,7 +369,7 @@ void SurfacePlayer::ProcessDodge()
 	if(IsAttacking()){ return; }
 
 	// 回避ボタンが押されたら
-	if(_trg & PAD_INPUT_C)	// Xボタン
+	if(_trg & PAD_INPUT_3)	// Xボタン
 	{
 		// 回避ステータスに変更
 		_ePlayerStatus = PLAYER_STATUS::DODGE;
@@ -376,7 +394,7 @@ void SurfacePlayer::ProcessDeath()
 	if(_ePlayerStatus == PLAYER_STATUS::DEATH)
 	{
 		// アニメーション再生処理
-		ProcessPlayAnimation();
+		//ProcessPlayAnimation();
 	}
 }
 
@@ -385,6 +403,11 @@ void SurfacePlayer::ProcessDebug()
 {
 	// 体力減少
 	{
-		if(_trg & PAD_INPUT_8){ _fLife -= 5.0f; }
+		if(_trg & PAD_INPUT_7){ _fLife -= 5.0f; }
+	}
+
+	// エネルギーを増やす
+	{
+
 	}
 }

@@ -4,23 +4,21 @@
 namespace
 {
 	// 画像表示用
-	const int DRAW_X = 10;
-	const int DRAW_Y = 10;
-	const int DRAAW_OFFSET = 20;
-
-	// 円形ゲージ用
-	const int CIRCLE_CENTER_X = 90;  // 円の中心X座標
-	const int CIRCLE_CENTER_Y = 90;  // 円の中心Y座標
-	const int CIRCLE_RADIUS = 90;    // 円の半径
+	const int DRAW_X = 0;
+	const int DRAW_Y = 0;
+	const int DRAW_OFFSET_X = 137;
+	const int DRAW_OFFSET_Y = 243;
 }
 
 EnergyUI::EnergyUI()
 {
 	_iEnergyFrameHandle = ResourceServer::GetInstance()->GetHandle("energyFrame");
-	_iEnergyHandle1 = ResourceServer::GetInstance()->GetHandle("tryEnergy1");
-	//_iEnergyHandle1 = ResourceServer::GetInstance()->GetHandle("energy1");
+	_iEnergyHandle1 = ResourceServer::GetInstance()->GetHandle("energy1");
 	_iEnergyHandle2 = ResourceServer::GetInstance()->GetHandle("energy2");
 	_iEnergyHandle3 = ResourceServer::GetInstance()->GetHandle("energy3");
+
+	_drawX = DRAW_X + DRAW_OFFSET_X;
+	_drawY = DRAW_Y + DRAW_OFFSET_Y;
 }
 
 EnergyUI::~EnergyUI()
@@ -60,7 +58,7 @@ bool EnergyUI::Render()
 // エネルギーフレーム表示関数
 void EnergyUI::EnergyFrameRender()
 {
-	//DrawGraph(DRAW_X, DRAW_Y, _iEnergyFrameHandle, TRUE);
+	DrawGraph(DRAW_X, DRAW_Y, _iEnergyFrameHandle, TRUE);
 }
 
 // ゲージ表示比率計算関数
@@ -88,31 +86,58 @@ void EnergyUI::EnergyGaugeRender(float ratio)
 
 	// 元画像のサイズを取得
 	int graphW, graphH;
-
 	GetGraphSize(_iEnergyHandle1, &graphW, &graphH);
 
-	// 円の下端からfillHeightの高さまでを描画
-	int cutY = static_cast<int>(graphH * (1.0f - ratio));	// 上部をカット
-	int cutH = static_cast<int>(graphH * ratio);			// 描画する高さ
-
-	// 下から満たされるように画面上での描画Y座標を調整
-	int fillScreenY = DRAW_Y + cutY;	// 上部がカットされた分だけY座標を下げる
-	int fillDrawH = cutH;				// 描画する高さ
-
-	// 円形ゲージを描画（下から上に満たされる）
-	if(cutH > 0)
+	// 1段目のゲージ
+	if(ratio > 0.0f && ratio <= 0.333f)
 	{
-		DrawRectExtendGraph
-		(
-			DRAW_X, fillScreenY,						// 描画開始位置
-			DRAW_X + graphW, fillScreenY + fillDrawH,	// 描画終了位置
-			0, cutY,									// 元画像の切り取り開始位置
-			graphW, cutY + cutH,						// 元画像の切り取り終了位置
-			_iEnergyHandle1,							// 画像ハンドル
-			TRUE										// 透明度有効
-		);
+		// クリッピング領域を設定
+		float segmentRatio = ratio / 0.333f;						// 0.0f～1.0fの範囲に変換
+		int clipHeight = static_cast<int>(graphH * segmentRatio);	// 描画する高さ
+		int clipY = _drawY + (graphH - clipHeight);					// 下から満たすためのY座標
+
+		// クリッピング領域を設定
+		SetDrawArea(_drawX, clipY, _drawX + graphW, _drawY + graphH);
+		DrawGraph(_drawX, _drawY, _iEnergyHandle1, TRUE);
+	}
+	// 2段目のゲージ
+	else if(ratio > 0.333f && ratio <= 0.666f)
+	{
+		// 描画領域を元に戻す
+		SetDrawAreaFull();	
+
+		// 1段階目は完全表示
+		DrawGraph(_drawX, _drawY, _iEnergyHandle1, TRUE);
+
+		// 2段目のゲージ
+		float segmentRatio = (ratio - 0.333f) / 0.333f;						// 0.0f～1.0fの範囲に変換
+		int segmentClipHeight = static_cast<int>(graphH * segmentRatio);	// 描画する高さ
+		int segmentClipY = _drawY + (graphH - segmentClipHeight);			// 下から満たすためのY座標
+
+		// クリッピング領域を設定
+		SetDrawArea(_drawX, segmentClipY, _drawX + graphW, _drawY + graphH);
+		DrawGraph(_drawX, _drawY, _iEnergyHandle2, TRUE);
+	}
+	// 3段目のゲージ
+	else if(ratio > 0.666f)
+	{
+		// 描画領域を元に戻す
+		SetDrawAreaFull();
+
+		// 1、2段階目は完全表示
+		DrawGraph(_drawX, _drawY, _iEnergyHandle1, TRUE);
+		DrawGraph(_drawX, _drawY, _iEnergyHandle2, TRUE);
+
+		// 3段目のゲージ
+		float segmentRatio = (ratio - 0.666f) / 0.334f;						// 0.0f～1.0fの範囲に変換
+		int segmentClipHeight = static_cast<int>(graphH * segmentRatio);	// 描画する高さ
+		int segmentClipY = _drawY + (graphH - segmentClipHeight);			// 下から満たすためのY座標
+
+		// クリッピング領域を設定
+		SetDrawArea(_drawX, segmentClipY, _drawX + graphW, _drawY + graphH);
+		DrawGraph(_drawX, _drawY, _iEnergyHandle3, TRUE);
 	}
 
-	//DrawGraph(DRAW_X, DRAW_Y, _iEnergyHandle1, TRUE);
-
+	// 描画領域を元に戻す
+	SetDrawAreaFull();
 }
