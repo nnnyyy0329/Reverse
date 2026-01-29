@@ -31,7 +31,7 @@ public:
 	int GetCurrentAnimIndex() { return _currentAnimIndex; }
 
 	// アニメーション名からインデックスを取得してアニメーションを切り替え
-	bool ChangeAnimationByName(const char* animName, float fBlendFrame, int loopCnt);
+	bool ChangeAnimationByName(const char* animName, float fBlendFrame, int loopCnt, float fPlaySpeed = 1.0f);
 
 	// リソースの開放
 	void Release();
@@ -46,6 +46,7 @@ private:
 		float fCloseTime;// ブレンド終了までの時間
 		float fCloseTotalTime;// ブレンド終了の総時間
 		int loopCnt;// ループ回数(0:無限ループ　1:ループ無し　2以上:指定回数ループ)
+		float fPlaySpeed;// 再生速度
 	};
 
 	// アニメーションリソース情報

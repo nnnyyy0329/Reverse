@@ -161,6 +161,7 @@
     <ClCompile Include="source\Mode\ModeServer.cpp" />
     <ClCompile Include="source\Server\EffectServer.cpp" />
     <ClCompile Include="source\Server\ResourceServer.cpp" />
+    <ClCompile Include="source\Server\SoundServer.cpp" />
     <ClCompile Include="source\Vector\Vecto3D.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +176,7 @@
     <ClInclude Include="source\Mode\ModeServer.h" />
     <ClInclude Include="source\Server\EffectServer.h" />
     <ClInclude Include="source\Server\ResourceServer.h" />
+    <ClInclude Include="source\Server\SoundServer.h" />
     <ClInclude Include="source\template\aliastemplate.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

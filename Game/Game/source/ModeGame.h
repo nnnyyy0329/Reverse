@@ -18,6 +18,7 @@ class EnergyManager;
 class EnergyUI;
 class DodgeSystem;
 class LightManager;
+class Item;
 
 class AbilitySelectScreen;
 
@@ -84,12 +85,15 @@ protected:
 	// のうりょくせんたくがめんよう
 	bool _isUseDebugScreen;
 
+	std::shared_ptr<Item>               _item;                  //　アイテム
+
 private:
 	void CheckCollisionCharaMap	(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
 	void CheckHitPlayerEnemy	(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);	// プレイヤーと敵の当たり判定
 	void CheckHitCharaBullet	(std::shared_ptr<CharaBase> chara);										// キャラと弾の当たり判定
 	void CheckActiveAttack		(std::shared_ptr<CharaBase> chara);										// 有効な攻撃のチェック
 	void CheckHitCharaAttackCol	(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
+	void CheckHitCharaItem(std::shared_ptr<CharaBase> chara, std::shared_ptr <Item>item);               // アイテムとプレイヤーの当たり判定
 	void ConvertEnergy			(std::shared_ptr<AttackBase> attack, float damage);						// ダメージをエネルギーに変換する
 	bool OwnerIsAttackingOwner	(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);					// 攻撃所有者が自分に攻撃しているかどうか
 
@@ -106,4 +110,5 @@ private:
 	int AddPointLight(VECTOR vPos, float fRange, COLOR_F color);
 
 	void RemoveLight(int lightHandle);// 指定ライトを削除
+
 };

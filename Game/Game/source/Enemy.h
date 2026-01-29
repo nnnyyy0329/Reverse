@@ -33,6 +33,10 @@ public:
 
 	int GetDamageCount() const { return _damageCnt; }// 何回ダメージを受けたか
 
+	// モデル名のゲッターセッター
+	const std::string& GetModelName() const { return _modelName; }
+	void SetModelName(const std::string name) { _modelName = name; }
+
 	// ステート変更
 	void ChangeState(std::shared_ptr<EnemyState> newState);
 
@@ -95,5 +99,10 @@ protected:
 
 	bool _bIsExist = true;// 生存フラグ
 	bool _bCanRemove = false;// delete可能フラグ
+
+	std::string _modelName = "Enemy";// モデル名
+
+private:
+	void LoadEnemyModel();// モデルを名前に応じて読み込む
 };
 

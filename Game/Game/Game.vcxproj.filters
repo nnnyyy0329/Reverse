@@ -111,6 +111,9 @@
     </ClCompile>
     <ClCompile Include="source\MenuItemBase.cpp" />
     <ClCompile Include="source\AnimManager.cpp" />
+    <ClCompile Include="source\Item.cpp">
+      <Filter>GameObject\CharaBase\Item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -216,6 +219,9 @@
       <Filter>Stage</Filter>
     </ClInclude>
     <ClInclude Include="source\AnimManager.h" />
+    <ClInclude Include="source\Item.h">
+      <Filter>GameObject\CharaBase\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -280,6 +286,9 @@
     </Filter>
     <Filter Include="Stage">
       <UniqueIdentifier>{f51f6167-8088-48fb-bc30-d4d31501d52c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Item">
+      <UniqueIdentifier>{cc558430-6e86-44d5-adb4-dee6afa34d11}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

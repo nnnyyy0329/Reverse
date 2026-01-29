@@ -187,7 +187,8 @@ void StageBase::Render()
 	// マップモデルの描画
 	{
 		for (auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) {
-			MV1DrawFrame(ite->modelHandle, ite->drawFrame);
+			MV1DrawModel(ite->modelHandle);
+			//MV1DrawFrame(ite->modelHandle, ite->drawFrame);
 			//MV1DrawFrame(ite->modelHandle, ite->collisionFrame);// コリジョンフレームの描画
 		}
 	}

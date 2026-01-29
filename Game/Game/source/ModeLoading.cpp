@@ -28,7 +28,8 @@ bool ModeLoading::Initialize()
 		// 敵関連
 		{
 			// モデル
-			rs->Register("Enemy", "res/toki_teki_ver006.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("Melee", "res/SK_enemy_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("Ranged", "res/toki_teki_ver006.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
 			rs->Register("LifeBar", "res/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);

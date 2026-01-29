@@ -34,6 +34,9 @@
     <Filter Include="Vector">
       <UniqueIdentifier>{5a6ded67-76b3-46e3-b038-62209afcda57}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Server\Sound">
+      <UniqueIdentifier>{e23f687b-19ea-4472-861b-d107208df316}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\CFile\CFile.cpp">
@@ -62,6 +65,9 @@
     </ClCompile>
     <ClCompile Include="source\Vector\Vecto3D.cpp">
       <Filter>Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Server\SoundServer.cpp">
+      <Filter>Server\Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +108,9 @@
     </ClInclude>
     <ClInclude Include="source\Vector\Vecto3D.h">
       <Filter>Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Server\SoundServer.h">
+      <Filter>Server\Sound</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -94,7 +94,7 @@ void AnimManager::Update()
 		AnimationData* anim = *it;
 
 		// Ä¶ŽžŠÔ‚ði‚ß‚é
-		anim->fPlayTime += 0.75f;
+		anim->fPlayTime += anim->fPlaySpeed;
 
 		// ƒ‹[ƒvˆ—
 		if (anim->fPlayTime >= anim->fTotalTime)
@@ -184,7 +184,7 @@ void AnimManager::Release()
 	_currentAnimIndex = -1;
 }
 
-bool AnimManager::ChangeAnimationByName(const char* animName, float fBlendFrame, int loop)
+bool AnimManager::ChangeAnimationByName(const char* animName, float fBlendFrame, int loop, float fPlaySpeed)
 {
 	if (_modelHandle == -1)
 	{
@@ -222,6 +222,7 @@ bool AnimManager::ChangeAnimationByName(const char* animName, float fBlendFrame,
 	newAnim->fCloseTime = 0.0f;
 	newAnim->fCloseTotalTime = 0.0f;
 	newAnim->loopCnt = loop;
+	newAnim->fPlaySpeed = fPlaySpeed;
 
 	_activeAnims.push_back(newAnim);
 	_currentAnimIndex = animIndex;

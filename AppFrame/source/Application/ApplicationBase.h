@@ -36,6 +36,8 @@ public:
 	virtual AnalogStickState GetAnalog() const { return _analog; }
 	virtual float GetAnalogMin() const { return _analogMin; }
 
+
+
 protected:
 	static	ApplicationBase	*_lpInstance;
 
