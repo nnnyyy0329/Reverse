@@ -173,7 +173,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		20.0f,					// 発生フレーム
 		25.0f,					// 持続フレーム
 		20.0f,					// 硬直フレーム
-		25.0f,					// ダメージ
+		1.0f,					// ダメージ
 		"SurfacePlayerAttack1",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 	};	
@@ -187,7 +187,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		20.0f,					// 発生フレーム
 		15.0f,					// 持続フレーム
 		20.0f,					// 硬直フレーム
-		25.0f,					// ダメージ
+		1.0f,					// ダメージ
 		"SurfacePlayerAttack2",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 	};
@@ -201,7 +201,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		20.0f,					// 発生フレーム
 		25.0f,					// 持続フレーム
 		20.0f,					// 硬直フレーム
-		50.0f,					// ダメージ
+		1.0f,					// ダメージ
 		"SurfacePlayerAttack3",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 	};
