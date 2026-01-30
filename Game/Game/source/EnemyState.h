@@ -3,6 +3,7 @@
 
 class Enemy;
 
+// ステート優先度
 enum class STATE_PRIORITY
 {
 	NORMAL = 0,// 通常
@@ -54,6 +55,8 @@ public:
 	virtual bool CanChangeState() { return true; }// ステート変更可能かどうか
 
 	virtual STATE_PRIORITY GetPriority() { return STATE_PRIORITY::NORMAL; }// ステートの優先度を取得(デフォルトはNORMAL)
+
+	virtual void UpdateSearch(Enemy* owner) {};// 索敵処理(各ステートでオーバーライド)
 
 	float _fTimer = 0.0f;
 };

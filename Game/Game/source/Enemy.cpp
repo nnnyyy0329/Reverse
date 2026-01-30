@@ -7,6 +7,8 @@
 namespace {
 	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
 	constexpr auto COLLISION_HEIGHT = 100.0f;// 敵の当たり判定高さ
+
+	constexpr auto SEACH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
 }
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
@@ -61,7 +63,17 @@ bool Enemy::Process()
 
 	_vMove = VGet(0.0f, 0.0f, 0.0f);// 毎フレーム移動量リセット
 
-	// 状態更新
+	// 索敵タイマー更新
+	UpdateSearchTimer();
+
+	// 索敵更新タイミングなら索敵を実行
+	if (ShouldUpdateSearch())
+	{
+		// ステートが索敵処理を持っていれば実行
+		_currentState->UpdateSearch(this);
+	}
+
+	// ステート更新
 	if (_currentState) {
 		auto nextState = _currentState->Update(this);
 		if (nextState) {
@@ -515,4 +527,14 @@ void Enemy::LoadEnemyModel()
 
 	// 複製したモデルをanimManagerに設定
 	_animManager.SetModelHandle(dupHandle);
+}
+
+// 索敵タイマーの更新
+void Enemy::UpdateSearchTimer()
+{
+	_searchTimer++;
+	if (_searchTimer >= SEACH_INTERVAL)
+	{
+		_searchTimer = 0;
+	}
 }

@@ -2,7 +2,7 @@
 #include "Enemy.h"
 
 namespace {
-	constexpr auto ATTACK_COLLISION_OFFSET_Z = 200.0f;// 攻撃コリジョン前方オフセット
+	constexpr auto ATTACK_COLLISION_OFFSET_Z = 100.0f;// 攻撃コリジョン前方オフセット
 	constexpr auto ATTACK_COLLISION_OFFSET_Y = 60.0f;// 攻撃コリジョンY位置オフセット
 	constexpr auto ATTACK_COLLISION_HEIGHT = 60.0f;// 攻撃コリジョン高さ
 	constexpr auto ATTACK_COLLISION_RADIUS = 40.0f;// 攻撃コリジョン半径
@@ -24,7 +24,7 @@ namespace {
 		settings.fDuration = 60.0f;
 		settings.fRecovery = 60.0f;
 		settings.fDamage = 10.0f;
-		settings.ownerId = 0;// 仮(どういう用途？)
+		settings.ownerId = 0;// 仮
 		return settings;
 	}
 	const EnemyAttackSettings MELEE_ATTACK_SETTINGS = MakeMeleeAttackSettings();
@@ -52,6 +52,7 @@ namespace Melee
 	// 待機
 	void Idle::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
+
 		// ここでアニメーション設定
 		// AnimManagerを取得してアニメーション切り替え
 		AnimManager* animManager = owner->GetAnimManager();
@@ -63,21 +64,30 @@ namespace Melee
 	}
 
 	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner) {
-		// 索敵チェック
-		auto target = owner->GetTarget();// ターゲット取得
-		if (IsTargetVisible(owner))// 視界内なら
+		// 索敵結果を使用
+		if (owner->IsTargetDetected())
 		{
 			return std::make_shared<Detect>();// 発見状態へ
 		}
 
 		_fTimer++;
-
-		// 時間経過で
-		if (_fTimer >= owner->GetEnemyParam().fIdleTime) {
+		if(_fTimer >= owner->GetEnemyParam().fIdleTime) {
 			return std::make_shared<Move>();// 自動移動状態へ
 		}
 
 		return nullptr;
+	}
+
+	void Idle::UpdateSearch(Enemy* owner)
+	{
+		if (Melee::IsTargetVisible(owner))
+		{
+			owner->SetTargetDetected(true);
+		}
+		else
+		{
+			owner->SetTargetDetected(false);
+		}
 	}
 
 
@@ -85,12 +95,13 @@ namespace Melee
 	// 自動移動
 	void Move::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
+
 		// ここでアニメーション設定
 		// AnimManagerを取得してアニメーション切り替え
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 待機アニメーションに切り替え
+			// 歩きアニメーションに切り替え
 			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);// 無限ループ
 		}
 
@@ -118,9 +129,8 @@ namespace Melee
 	}
 
 	std::shared_ptr<EnemyState> Move::Update(Enemy* owner) {
-		// 索敵チェック
-		auto target = owner->GetTarget();// ターゲット取得
-		if (IsTargetVisible(owner))// 視界内なら
+		// 索敵結果を使用
+		if (owner->IsTargetDetected())
 		{
 			return std::make_shared<Detect>();// 発見状態へ
 		}
@@ -148,12 +158,32 @@ namespace Melee
 		return nullptr;
 	}
 
+	void Move::UpdateSearch(Enemy* owner)
+	{
+		if (Melee::IsTargetVisible(owner))
+		{
+			owner->SetTargetDetected(true);
+		}
+		else
+		{
+			owner->SetTargetDetected(false);
+		}
+	}
+
 
 
 	// 発見
 	void Detect::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
+
 		// ここでアニメーション設定
+		// AnimManagerを取得してアニメーション切り替え
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			// 発見時の硬直(待機アニメーション)
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);// 無限ループ
+		}
 	}
 
 	std::shared_ptr<EnemyState> Detect::Update(Enemy* owner) {
@@ -176,15 +206,18 @@ namespace Melee
 
 
 
+
+
 	// 追跡
 	void Chase::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
+
 		// ここでアニメーション設定
 		// AnimManagerを取得してアニメーション切り替え
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 待機アニメーションに切り替え
+			// 歩きアニメーションに切り替え
 			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);// 無限ループ
 		}
 	}
@@ -192,13 +225,20 @@ namespace Melee
 	std::shared_ptr<EnemyState> Chase::Update(Enemy* owner) {
 		auto target = owner->GetTarget();
 		// ターゲットがいない場合は待機状態へ
-		if (!target) return std::make_shared<Idle>();
+		if (!target) 
+		{
+			// 索敵結果をクリア
+			owner->SetTargetDetected(false);
+			return std::make_shared<Idle>();// 待機状態へ
+		}
 
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
 		auto dist = VSize(vToTarget);// ターゲットまでの距離
 		
 		// 追跡限界距離を超えたか
 		if(dist > owner->GetEnemyParam().fChaseLimitRange) {
+			// 索敵結果をクリア
+			owner->SetTargetDetected(false);
 			return std::make_shared<Idle>();// 待機状態へ
 		}
 
@@ -220,19 +260,21 @@ namespace Melee
 
 
 
+
+
 	// 攻撃
 	void Attack::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
 		_bHasCollision = false;
+
 		// ここでアニメーション設定
 		// AnimManagerを取得してアニメーション切り替え
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 待機アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, 1, 0.5f);// ループ無し
+			// 攻撃前の溜め(待機アニメーション)
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);// 無限ループ
 		}
-
 	}
 
 	std::shared_ptr<EnemyState> Attack::Update(Enemy* owner) {
@@ -256,6 +298,15 @@ namespace Melee
 		// 攻撃確定:コリジョンを生成
 		else if (!_bHasCollision)
 		{
+			// ここでアニメーション設定
+			// AnimManagerを取得してアニメーション切り替え
+			AnimManager* animManager = owner->GetAnimManager();
+			if (animManager)
+			{
+				// 攻撃アニメーションに切り替え
+				animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, 1, 0.5f);// ループ無し
+			}
+
 			owner->StartAttack(MELEE_ATTACK_SETTINGS);
 			_bHasCollision = true;
 		}
@@ -289,14 +340,25 @@ namespace Melee
 	}
 
 
+
+
+
 	// 帰還
 	void ReturnHome::Enter(Enemy* owner){
+
+		// ここでアニメーション設定
+	// AnimManagerを取得してアニメーション切り替え
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			// 歩きアニメーションに切り替え
+			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);// 無限ループ
+		}
 	}
 
 	std::shared_ptr<EnemyState> ReturnHome::Update(Enemy* owner){
-		// 索敵チェック
-		auto target = owner->GetTarget();// ターゲット取得
-		if (IsTargetVisible(owner))// 視界内なら
+		// 索敵結果を使用
+		if(owner->IsTargetDetected())
 		{
 			return std::make_shared<Detect>();// 発見状態へ
 		}
@@ -318,5 +380,17 @@ namespace Melee
 		owner->SetMove(vMove);// 移動量を更新
 
 		return nullptr;
+	}
+
+	void ReturnHome::UpdateSearch(Enemy* owner)
+	{
+		if (Melee::IsTargetVisible(owner))
+		{
+			owner->SetTargetDetected(true);
+		}
+		else
+		{
+			owner->SetTargetDetected(false);
+		}
 	}
 }

@@ -161,9 +161,6 @@
     <ClInclude Include="source\EnemyFactory.h">
       <Filter>GameObject\CharaBase\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="source\EnemyState.h">
-      <Filter>GameObject\CharaBase\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="source\EnergyManager.h">
       <Filter>Energy</Filter>
     </ClInclude>
@@ -221,6 +218,9 @@
     <ClInclude Include="source\AnimManager.h" />
     <ClInclude Include="source\Item.h">
       <Filter>GameObject\CharaBase\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnemyState.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

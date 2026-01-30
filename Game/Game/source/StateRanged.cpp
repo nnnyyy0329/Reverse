@@ -39,6 +39,10 @@ namespace Ranged
 		return true;// 視界内
 	}
 
+
+
+
+
 	// 待機
 	void Idle::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
@@ -50,10 +54,8 @@ namespace Ranged
 	}
 
 	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner) {
-		// 索敵チェック
-		auto target = owner->GetTarget();// ターゲット取得
-		if (IsTargetVisible(owner))// 視界内なら
-		{
+		// 索敵結果を使用
+		if(owner->IsTargetDetected()) {
 			return std::make_shared<Detect>();// 発見状態へ
 		}
 
@@ -133,6 +135,20 @@ namespace Ranged
 		return nullptr;
 	}
 
+	void Idle::UpdateSearch(Enemy* owner)
+	{
+		if (IsTargetVisible(owner))
+		{
+			owner->SetTargetDetected(true);
+		}
+		else
+		{
+			owner->SetTargetDetected(false);
+		}
+	}
+
+
+
 
 
 	// 発見
@@ -160,6 +176,8 @@ namespace Ranged
 
 
 
+
+
 	// 攻撃
 	void Attack::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
@@ -170,7 +188,12 @@ namespace Ranged
 
 	std::shared_ptr<EnemyState> Attack::Update(Enemy* owner) {
 		auto target = owner->GetTarget();
-		if (!target) return std::make_shared<Idle>();// ターゲットがいない場合は待機状態へ
+		if (!target)
+		{
+			// 索敵結果をクリア
+			owner->SetTargetDetected(false);
+			return std::make_shared<Idle>();// ターゲットがいない場合は待機状態へ
+		}
 
 		_fTimer++;
 		_shotTimer++;
@@ -186,6 +209,27 @@ namespace Ranged
 		VECTOR vDirToTarget = VNorm(vToTarget);// ターゲット方向(正規化)
 		VECTOR vDir = owner->GetDir();
 		auto dot = VDot(vDir, vDirToTarget);// 内積
+
+		// 視界外チェック
+		{
+			// 距離が離れすぎたら待機状態へ
+			// 距離チェック
+			bool bIsOutRange = (dist > owner->GetEnemyParam().fVisionRange * 1.2f);// 少し余裕を持たせる
+
+			// 角度チェック
+			auto limitCos = owner->GetEnemyParam().fVisionCos;// 視界のcos値
+
+			// 内積がlimitCos未満なら扇の外
+			bool bIsOutAngle = (dot < limitCos);
+
+			// 離れすぎor視界外なら待機状態へ
+			if (bIsOutRange || bIsOutAngle) {
+				owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// 念のため停止
+				// 索敵結果をクリア
+				owner->SetTargetDetected(false);
+				return std::make_shared<Idle>();// 待機状態へ
+			}
+		}
 
 		// 向きの制御
 		{
@@ -248,28 +292,18 @@ namespace Ranged
 		if (_shotTimer >= interval && dot > 0.9f) {// ほぼ正面を向いているなら発射
 			Shoot(owner);// 発射
 
-			EffectServer::GetInstance()->Play("Laser", owner->GetPos());// エフェクト再生
+			 int playingHandle = EffectServer::GetInstance()->Play("Laser", owner->GetPos());// エフェクト再生
+			 if (playingHandle != -1)
+			 {
+				 // 敵の向きから角度を計算
+				 VECTOR vDir = owner->GetDir();
+				 auto yaw = atan2f(vDir.x, vDir.z) * RADIAN_TO_DEGREE;// Y軸回転角度(度)
+
+				 // エフェクトの回転を設定
+				 EffectServer::GetInstance()->SetRot(playingHandle, VGet(0.0f, yaw, 0.0f));
+			 }
 
 			_shotTimer = 0.0f;// タイマーリセット
-		}
-
-		// 視界外チェック
-		{
-			// 距離が離れすぎたら待機状態へ
-			// 距離チェック
-			bool bIsOutRange = (dist > owner->GetEnemyParam().fVisionRange * 1.2f);// 少し余裕を持たせる
-
-			// 角度チェック
-			auto limitCos = owner->GetEnemyParam().fVisionCos;// 視界のcos値
-
-			// 内積がlimitCos未満なら扇の外
-			bool bIsOutAngle = (dot < limitCos);
-
-			// 離れすぎor視界外なら待機状態へ
-			if (bIsOutRange || bIsOutAngle) {
-				owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// 念のため停止
-				return std::make_shared<Idle>();// 待機状態へ
-			}
 		}
 
 		return nullptr;

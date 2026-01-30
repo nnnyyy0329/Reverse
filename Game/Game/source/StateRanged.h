@@ -24,6 +24,7 @@ namespace Ranged
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Ranged:Idle"; }// 名前を返す(デバッグ用)
+		void UpdateSearch(Enemy* owner) override;
 
 	private:
 		float _fLookAroundTimer;// 見渡すタイマー

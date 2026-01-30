@@ -130,6 +130,7 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 			for (int loop = 0; loop < constMaxResolveLoop; ++loop)
 			{
 				bool allSeparated = true;// 全ての壁から離れたか
+				VECTOR vTotalPush = VGet(0.0f, 0.0f, 0.0f);// 今回のループでの総押し出しベクトル
 
 				// 全ての壁ポリゴンをチェック
 				for (const auto& wall : wallPolygons)
@@ -155,41 +156,85 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 					// 正規化
 					vWallNormXZ = VScale(vWallNormXZ, 1.0f / normLen);
 
-					// スライド移動の適用(初回のみ)
-					if (!hasSlided)
-					{
-						// 移動ベクトルを壁に沿ってスライドさせる
-						// 壁法線との内積を計算
-						float dotProduct = VDot(vStepMove, vWallNormXZ);
-
-						// 壁方向の成分を除去してスライドベクトルを計算
-						VECTOR vSlideVec = VSub(vStepMove, VScale(vWallNormXZ, dotProduct));
-						vSlideVec.y = 0.0f;// 水平方向のみに制限
-
-						// スライドベクトルが有効な場合のみ適用
-						const float constMinSlideThreshold = 0.001f;
-						if (VSize(vSlideVec) > constMinSlideThreshold)
-						{
-							vProcessPos = VAdd(vProcessPos, vSlideVec);
-							vCapsuleTop = VAdd(vCapsuleTop, vSlideVec);
-							vCapsuleBottom = VAdd(vCapsuleBottom, vSlideVec);
-						}
-
-						hasSlided = true;// スライド移動適用完了
-					}
-
 					// 壁からの押し出し処理
 					// 正規化された法線方向に少しずつ押し出す
 					const float constPushDistance = 1.0f;
-					VECTOR vPushVec = VScale(vWallNormXZ, constPushDistance);
+					VECTOR vPush = VScale(vWallNormXZ, constPushDistance);
 
-					vProcessPos = VAdd(vProcessPos, vPushVec);
-					vCapsuleTop = VAdd(vCapsuleTop, vPushVec);
-					vCapsuleBottom = VAdd(vCapsuleBottom, vPushVec);
+					// 総押し出しベクトルに加算
+					vTotalPush = VAdd(vTotalPush, vPush);
 				}
 
-				// 全ての壁から離脱できたらループ終了
-				if (allSeparated) { break; }
+				// 総押し出しベクトルを一度に適用
+				if (VSize(vTotalPush) > 0.0001f)
+				{
+					vProcessPos = VAdd(vProcessPos, vTotalPush);
+					vCapsuleTop = VAdd(vCapsuleTop, vTotalPush);
+					vCapsuleBottom = VAdd(vCapsuleBottom, vTotalPush);
+				}
+
+				// 全ての壁から離れたらループ終了
+				if (allSeparated)
+				{
+					break;
+				}
+			}
+
+			// スライド移動処理を押し出し処理の後に実行
+			bool bHasCollision = false;
+			VECTOR vSlideMove = VGet(0.0f, 0.0f, 0.0f);
+
+			//壁との衝突をチェック
+			for (const auto& wall : wallPolygons)
+			{
+				// カプセルと三角形ポリゴンの当たり判定
+				if (HitCheck_Capsule_Triangle(
+					vCapsuleTop, vCapsuleBottom, capsuleRadius,
+					wall.Position[0], wall.Position[1], wall.Position[2]))
+				{
+					bHasCollision = true;
+
+					// 壁の法線からXZ平面成分を抽出
+					VECTOR vWallNormXZ = VGet(wall.Normal.x, 0.0f, wall.Normal.z);
+					float normLen = VSize(vWallNormXZ);
+
+					// 法線が無効な場合はスキップ
+					const float constMinNormalLen = 0.0001f;
+					if (normLen < constMinNormalLen)
+					{
+						continue;
+					}
+
+					// 正規化
+					vWallNormXZ = VScale(vWallNormXZ, 1.0f / normLen);
+
+					// 移動ベクトルを壁に沿ってスライドさせる
+					// 壁法線との内積を計算
+					float dotProduct = VDot(vStepMove, vWallNormXZ);
+
+					// 壁に向かっている場合のみスライド処理
+					if (dotProduct < 0.0f)
+					{
+						// 壁方向の成分を除去してスライドベクトルを計算
+						VECTOR vSlide = VSub(vStepMove, VScale(vWallNormXZ, dotProduct));
+						vSlide.y = 0.0f; // 水平方向のみに制限
+
+						// スライドベクトルが有効な場合のみ保存
+						if (VSize(vSlide) > VSize(vSlideMove))
+						{
+							vSlideMove = vSlide;
+						}
+					}
+				}
+			}
+
+			// スライド移動を適用
+			const float constMinSlideThreshold = 0.0001f;
+			if (bHasCollision && VSize(vSlideMove) > constMinSlideThreshold)
+			{
+				vProcessPos = VAdd(vProcessPos, vSlideMove);
+				vCapsuleTop = VAdd(vCapsuleTop, vSlideMove);
+				vCapsuleBottom = VAdd(vCapsuleBottom, vSlideMove);
 			}
 		}
 

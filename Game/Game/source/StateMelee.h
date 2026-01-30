@@ -25,6 +25,7 @@ namespace Melee
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:Idle"; }// 名前を返す(デバッグ用)
+		void UpdateSearch(Enemy* owner) override;
 	};
 
 	// 自動移動
@@ -34,6 +35,7 @@ namespace Melee
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:Move"; }
+		void UpdateSearch(Enemy* owner) override;
 	};
 
 	// 発見:見つけた瞬間の硬直
@@ -75,6 +77,7 @@ namespace Melee
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:ReturnHome"; }
+		void UpdateSearch(Enemy* owner) override;
 	};
 }
 

@@ -66,6 +66,12 @@ public:
 	// ハンドラを実行する(ステート側から呼ばれる関数)
 	std::shared_ptr<EnemyState> GetRecoveryState() const;
 
+	// 索敵関連
+	bool ShouldUpdateSearch() { return _searchTimer == 0; }// 索敵更新タイミングかどうか
+	void UpdateSearchTimer();// 索敵タイマー更新
+	bool IsTargetDetected() { return _bIsTargetDetected; };// 索敵結果を取得
+	void SetTargetDetected(bool bDetected) { _bIsTargetDetected = bDetected; };// 索敵結果を設定
+
 
 
 	// AppFrameに移動予定
@@ -101,6 +107,10 @@ protected:
 	bool _bCanRemove = false;// delete可能フラグ
 
 	std::string _modelName = "Enemy";// モデル名
+
+	// 索敵関連
+	int _searchTimer = 0;// 索敵タイマー
+	bool _bIsTargetDetected = false;// ターゲットが見つかったか
 
 private:
 	void LoadEnemyModel();// モデルを名前に応じて読み込む
