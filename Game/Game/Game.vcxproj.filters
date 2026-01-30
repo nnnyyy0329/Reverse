@@ -114,6 +114,9 @@
     <ClCompile Include="source\Item.cpp">
       <Filter>GameObject\CharaBase\Item</Filter>
     </ClCompile>
+    <ClCompile Include="source\PlayerLifeBarUI.cpp">
+      <Filter>GameObject\CharaBase\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -221,6 +224,9 @@
     <ClInclude Include="source\AnimManager.h" />
     <ClInclude Include="source\Item.h">
       <Filter>GameObject\CharaBase\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerLifeBarUI.h">
+      <Filter>GameObject\CharaBase\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

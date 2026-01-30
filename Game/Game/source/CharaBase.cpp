@@ -11,6 +11,7 @@ CharaBase::CharaBase()
 	_fMoveSpeed = 0.0f;
 	_fDirSpeed = 0.0f;
 	_fLife = 0.0f;
+	_fMaxLife = 0.0f;
 	_fGravity = 0.0f;
 
 	// キャラタイプ

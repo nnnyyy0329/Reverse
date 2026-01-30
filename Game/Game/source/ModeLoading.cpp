@@ -36,11 +36,18 @@ bool ModeLoading::Initialize()
 			rs->Register("LifeBarFrame", "res/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 
-		// プレイヤーモデル
-		rs->Register("SurfacePlayer", "res/Player/Player_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-		rs->Register("InteriorPlayer", "res/Player/player_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-		//rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
-		//rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
+		// プレイヤー関連
+		{
+			rs->Register("SurfacePlayer", "res/Player/Player_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("InteriorPlayer", "res/Player/player_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			//rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
+			//rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
+
+			// ライフバー
+			rs->Register("PlayerLifeBar", "res/Player/UI/Player_Life_Bar_try.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("PlayerLifeBarFrame", "res/Player/UI/Player_Life_Bar_Frame_try.png", RESOURCE_TYPE::Graph, 1.0f);
+
+		}
 
 		// 能力選択画面用
 		rs->Register("select1", "res/AbilitySelect/select1.png", RESOURCE_TYPE::Graph, 1.0f);

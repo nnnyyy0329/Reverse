@@ -16,13 +16,15 @@
 #include "EnergyManager.h"
 #include "LightManager.h"
 
-#include "EnergyUI.h"
 #include "DodgeSystem.h"
 #include "AbilitySelectScreen.h"
 
 #include "PlayerManager.h"
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
+
+#include "EnergyUI.h"
+#include "PlayerLifeBarUI.h"
 
 #include "MenuItemBase.h"
 
@@ -101,10 +103,15 @@ bool ModeGame::Initialize()
 		_isUseDebugScreen = false;
 	}
 
-	// エネルギーUI初期化
+	// UI初期化
 	{
+		// エネルギーUI初期化
 		_energyUI = std::make_shared<EnergyUI>();
 		_energyUI->Initialize();
+
+		// ライフバーUI初期化
+		_playerLifeBarUI = std::make_shared<PlayerLifeBarUI>();
+		_playerLifeBarUI->Initialize();
 	}
 
 	// ライトの初期化
@@ -207,6 +214,7 @@ bool ModeGame::Process()
 	{
 		_cameraManager->SetGameCamera(_gameCamera);
 		_cameraManager->SetDebugCamera(_debugCamera);
+		_playerLifeBarUI->SetPlayerManager(_playerManager);
 	}
 
 	// オブジェクトの更新
@@ -217,6 +225,7 @@ bool ModeGame::Process()
 		AttackManager::GetInstance()->Process();
 		//_dodgeSystem->Process();
 		_energyUI->Process();
+		_playerLifeBarUI->Process();
 	}
 
 	// ライト更新
@@ -308,6 +317,7 @@ bool ModeGame::Render()
 		_playerManager->Render();
 		_bulletManager->Render();
 		_energyUI->Render();
+		_playerLifeBarUI->Render();
 		_item->Render();
 
 

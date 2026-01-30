@@ -56,6 +56,9 @@ public:
 	float GetLife() { return _fLife; }		// 体力
 	void SetLife(float f) { _fLife = f; }	// 体力
 
+	float GetMaxLife() { return _fMaxLife; }	// 最大体力
+	void SetMaxLife(float f) { _fMaxLife = f; }	// 最大体力
+
 	float GetGravity() { return _fGravity; }	// 重力
 	void SetGravity(float f) { _fGravity = f; }	// 重力
 
@@ -77,10 +80,11 @@ protected:
 	bool	_bViewCollision;
 
 	// 基礎ステータス
-	float _fMoveSpeed;			// 移動速度
-	float _fDirSpeed;			// 回転速度
-	float _fLife;				// 体力
-	float _fGravity;			// 重力	
+	float _fMoveSpeed;	// 移動速度
+	float _fDirSpeed;	// 回転速度
+	float _fLife;		// 体力
+	float _fMaxLife;	// 最大体力
+	float _fGravity;	// 重力	
 
 	// キャラタイプ
 	CHARA_TYPE _eCharaType;

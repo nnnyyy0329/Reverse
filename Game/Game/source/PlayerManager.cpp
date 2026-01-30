@@ -186,4 +186,5 @@ void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPl
 
 	// ステータスの引き継ぎ
 	newPlayer->SetLife(oldPlayer->GetLife());
+	newPlayer->SetMaxLife(oldPlayer->GetMaxLife());
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "appframe.h"
 
+// エネルギーUIクラス
 class EnergyUI
 {
 public:
@@ -17,12 +18,12 @@ public:
     void EnergyGaugeRender(float ratio);  // エネルギーゲージ表示関数
 
 protected:
-    int _iEnergyFrameHandle;
-    int _iEnergyHandle1;
-    int _iEnergyHandle2;
-    int _iEnergyHandle3;
+	int _iEnergyFrameHandle;    // エネルギーフレーム画像ハンドル
+	int _iEnergyHandle1;        // エネルギーゲージ画像ハンドル1
+	int _iEnergyHandle2;        // エネルギーゲージ画像ハンドル2
+	int _iEnergyHandle3;        // エネルギーゲージ画像ハンドル3
 
-    int _drawX;
-    int _drawY;
+	int _drawX; // 描画位置X
+	int _drawY; // 描画位置Y
 };
 

@@ -46,6 +46,7 @@ bool EnergyUI::Process()
 
 bool EnergyUI::Render()
 {
+	// Zバッファ無効化
 	SetUseZBuffer3D(FALSE);
 
 	// エネルギーフレーム表示関数
@@ -54,6 +55,7 @@ bool EnergyUI::Render()
 	// エネルギーゲージ表示関数
 	GaugeRatioCalculation();
 
+	// Zバッファ有効化
 	SetUseZBuffer3D(TRUE);
 
 	return true;

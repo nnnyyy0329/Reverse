@@ -4,8 +4,9 @@
 
 namespace
 {
-	constexpr float GRAVITY = -0.6f;		// 重力加速度
-	const float DEFAULT_LIFE = 50.0f;		// デフォルト体力
+	constexpr float GRAVITY = -0.6f;	// 重力加速度
+	const float DEFAULT_LIFE = 0.0f;	// デフォルト体力
+	const float MAX_LIFE = 100.0f;		// 最大体力
 
 	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
 	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
@@ -24,7 +25,7 @@ InteriorPlayer::InteriorPlayer()
 	// 初期アニメーションの設定
 
 	// 位置の初期化
-	_vPos = VGet(100, 0, 0);
+	_vPos = VGet(0, 0, 0);
 	_vDir = VGet(0, 0, -1);
 
 	// 基礎ステータスの初期化
@@ -32,6 +33,7 @@ InteriorPlayer::InteriorPlayer()
 	_fMoveSpeed = 0.0f;						// 移動速度
 	_fDirSpeed = 0.0f;						// 回転速度
 	_fLife = DEFAULT_LIFE;					// 体力
+	_fMaxLife = MAX_LIFE;					// 最大体力
 	_fGravity = GRAVITY;					// 重力
 
 	// アクション関係変数の初期化

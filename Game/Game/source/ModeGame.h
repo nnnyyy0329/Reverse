@@ -7,6 +7,7 @@
 class CharaBase;
 class PlayerBase;
 class PlayerManager;
+class PlayerLifeBarUI;
 class AttackBase;
 class StageBase;
 class CameraManager;
@@ -55,20 +56,23 @@ public:
 	std::shared_ptr<DebugCamera> GetDebugCamera() const { return _debugCamera; }
 
 protected:
-	// プレイヤー管理をPlayerManagerに委譲
-	std::shared_ptr<PlayerManager> _playerManager;
-
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される
 	std::shared_ptr<StageBase>			_stage;					// ステージ
-	std::shared_ptr<CameraManager>		_cameraManager;			// カメラマネージャー
 	std::shared_ptr<GameCamera>			_gameCamera;			// ゲームカメラ
 	std::shared_ptr<DebugCamera>		_debugCamera;			// デバッグカメラ
-	std::shared_ptr<BulletManager>		_bulletManager;			// 弾マネージャー
 	//std::shared_ptr<DodgeSystem>		_dodgeSystem;			// 回避システム
-	std::shared_ptr<EnergyUI>			_energyUI;				// エネルギーUI
 	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;	// 能力選択画面
+
+	// 管理関連
+	std::shared_ptr<PlayerManager>		_playerManager;			// プレイヤーマネージャー
+	std::shared_ptr<CameraManager>		_cameraManager;			// カメラマネージャー
+	std::shared_ptr<BulletManager>		_bulletManager;			// 弾マネージャー
 	std::shared_ptr<LightManager>		_lightManager;			// ライトマネージャー 
+
+	// UI関連
+	std::shared_ptr<EnergyUI>			_energyUI;				// エネルギーUI
+	std::shared_ptr<PlayerLifeBarUI>	_playerLifeBarUI;		// プレイヤーライフバーUI
 
 	// シングルトン取得
 	AttackManager* _attackManager = nullptr;

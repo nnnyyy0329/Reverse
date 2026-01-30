@@ -178,6 +178,7 @@
     <ClCompile Include="source\AbilityManager.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
     <ClCompile Include="source\PlayerBase_Attack.cpp" />
+    <ClCompile Include="source\PlayerLifeBarUI.cpp" />
     <ClCompile Include="source\PlayerManager.cpp" />
     <ClCompile Include="source\StageBase.cpp" />
     <ClCompile Include="source\StateCommon.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="source\AbilityBase.h" />
     <ClInclude Include="source\AbilityManager.h" />
     <ClInclude Include="source\PlayerBase.h" />
+    <ClInclude Include="source\PlayerLifeBarUI.h" />
     <ClInclude Include="source\PlayerManager.h" />
     <ClInclude Include="source\StageBase.h" />
     <ClInclude Include="source\StateCommon.h" />

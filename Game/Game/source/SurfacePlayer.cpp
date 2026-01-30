@@ -5,9 +5,12 @@
 
 namespace
 {
-	const float GRAVITY = -0.6f;			// 重力加速度
-	const float DEFAULT_LIFE = 50.0f;		// デフォルト体力
+	// 基礎ステータス定数
+	const float GRAVITY = -0.6f;		// 重力加速度
+	const float DEFAULT_LIFE = 100.0f;	// デフォルト体力
+	const float MAX_LIFE = 100.0f;		// 最大体力
 
+	// 表示用定数
 	const int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
 	const int DRAW_OFFSET_X = 900;		// 描画Xオフセット
 	const int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
@@ -25,7 +28,7 @@ SurfacePlayer::SurfacePlayer()
 	// 初期アニメーションの設定
 
 	// 位置の初期化
-	_vPos = VGet(230.0f,100.0f, 0.0f);
+	_vPos = VGet(230.0f,0.0f, 0.0f);
 	_vDir = VGet(0, 0, -1);
 
 	// 基礎ステータスの初期化
@@ -33,6 +36,7 @@ SurfacePlayer::SurfacePlayer()
 	_fMoveSpeed = 0.0f;						// 移動速度
 	_fDirSpeed = 0.0f;						// 回転速度
 	_fLife = DEFAULT_LIFE;					// 体力
+	_fMaxLife = MAX_LIFE;					// 最大体力
 	_fGravity = GRAVITY;					// 重力
 
 	// アクション関係変数の初期化
