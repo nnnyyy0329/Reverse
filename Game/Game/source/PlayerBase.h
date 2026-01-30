@@ -4,6 +4,55 @@
 #include "CharaBase.h"
 #include "AttackBase.h"
 
+// プレイヤー設定データ構造体
+struct PlayerConfig
+{
+	// 移動速度設定
+	float crouchMoveSpeed;	// しゃがみ移動速度
+	float normalMoveSpeed;	// 通常移動速度
+	float dashMoveSpeed;	// ダッシュ移動速度
+
+	// 基礎ステータス
+	float life;			// 体力
+	float maxLife;		// 最大体力
+	VECTOR startPos;	// 開始位置
+
+	// 表示設定
+	int drawSizeOffset;		// 描画サイズオフセット
+	int drawOffsetX;		// 描画Xオフセット
+	int drawOffsetY;		// 描画Yオフセット
+
+	// リソース名
+	std::string modelName;	// モデル名
+};
+
+// プレイヤーアニメーション構造体
+struct PlayerAnimation
+{
+	const char* wait;			// 待機
+	const char* walk;			// 歩行
+	const char* run;			// 走行
+	const char* jumpUp;			// ジャンプ（上昇）
+	const char* jumpDown;		// ジャンプ（下降）
+	const char* crouchWait;		// しゃがみ待機
+	const char* crouchWalk;		// しゃがみ歩行
+	const char* firstAttack;	// 1段目攻撃
+	const char* secondAttack;	// 2段目攻撃
+	const char* thirdAttack;	// 3段目攻撃
+	const char* fourthAttack;	// 4段目攻撃
+	const char* fifthAttack;	// 5段目攻撃
+	const char* hit;			// 被弾
+	const char* dodge;			// 回避
+	const char* death;			// 死亡
+};
+
+// 表示設定構造体
+struct RenderConfig
+{
+	const char* playerName;	// プレイヤー名
+	COLOR_U8 debugColor;	// デバッグ描画色
+};
+
 // 攻撃定数構造体
 struct AttackConstants
 {
@@ -60,8 +109,41 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
-	virtual void ProcessPlayAnimation() = 0;	// アニメーション再生処理の仮想関数
+	// 共通初期化
+	void InitializePlayerConfig(PlayerConfig& config);
 
+	// 共通処理
+	void CallProcess();				// Process呼び出し用関数
+	void ProcessMovePlayer();		// 移動処理
+	void ProcessCollisionPos();		// コリジョン位置更新処理
+	void ProcessStatusAnimation();	// 状態別アニメーション処理
+	void ProcessPlayAnimation();	// アニメーション処理
+	//void ProcessStanding();			// 着地処理
+	//void ProcessJump();				// ジャンプ処理
+	//void ProcessCrouch();			// しゃがみ処理
+	void ProcessDeath();			// 死亡処理
+	void ProcessDebug();			// デバッグ処理
+
+	// デバッグ描画共通
+	void DebugRender();				// デバッグ情報描画
+	void DrawBaseData();			// 基本データ表示
+	void DrawCoordinate();			// 座標表示
+	void DrawStatus	();				// ステータス表示
+	void DrawParameter();			// パラメーター表示
+	void DrawColPos	();				// コリジョン位置表示
+
+	// ステータス文字列変換
+	const char* GetStatusString	(PLAYER_STATUS status);	
+
+	// 各プレイヤー固有の設定を取得
+	virtual PlayerConfig GetPlayerConfig() = 0;
+	virtual PlayerAnimation GetPlayerAnimation() = 0;
+	virtual RenderConfig GetRenderConfig() = 0;
+	//virtual AttackConstants GetAttackConstants() = 0;
+	//virtual void GetAttackConfigs(AttackConfig configs[]) = 0;
+	//virtual int GetMaxComboCount() = 0;
+
+	//virtual void ProcessPlayAnimation() = 0;	// アニメーション再生処理の仮想関数
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
 
@@ -88,7 +170,7 @@ public:
 protected:	// 攻撃関係
 
 	virtual AttackConstants GetAttackConstants() = 0;			// 攻撃定数を取得
-	virtual void GetAttackConfigs(AttackConfig configs[3]) = 0;	// 攻撃設定を取得
+	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;	// 攻撃設定を取得
 
 	// PlayerBase_Attack.cppで定義
 	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数
@@ -118,7 +200,12 @@ private:	// 攻撃関係
 	int GetAttackIndexByStatus(PLAYER_STATUS status);																			// 状態から攻撃インデックスを取得
 
 protected:
+	// 共通の設定
+	PlayerConfig	_playerConfig;	// プレイヤー設定データ
+	PlayerAnimation _playerAnim;	// プレイヤーアニメーション名データ
+	RenderConfig	_renderConfig;	// 表示設定データ
 
+	// 状態
 	PLAYER_STATUS _ePlayerStatus;		// キャラの状態
 	PLAYER_STATUS _eOldPlayerStatus;	// 前フレームのキャラの状態
 
@@ -130,13 +217,6 @@ protected:
 	float _rx = 0.0f;
 	float _ry = 0.0f;
 	float _analogMin = 0.0f;
-
-
-	// 3Dモデル描画用
-	float _colSubY;	// コリジョン判定時のY補正(腰位置）
-	// デバッグ用
-	bool	_bViewCollision;
-
 
 	// アクション関係変数
 	float _fVelY;			// Y方向の速度

@@ -1,88 +1,36 @@
 // 担当 : 成田
 
 #include "InteriorPlayer.h"
+#include "ApplicationMain.h"
 
 namespace
 {
-	constexpr float GRAVITY = -0.6f;	// 重力加速度
-	const float DEFAULT_LIFE = 0.0f;	// デフォルト体力
+	// 基礎ステータス定数
+	const float GRAVITY = -0.6f;		// 重力加速度
+	const float DEFAULT_LIFE = 100.0f;	// デフォルト体力
 	const float MAX_LIFE = 100.0f;		// 最大体力
 
-	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
-	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
-	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
+	// 表示用定数
+	const int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
+	const int DRAW_OFFSET_X = 900;		// 描画Xオフセット
+	const int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
 }
 
 InteriorPlayer::InteriorPlayer()
 {
-	// モデル読み込み
-	int modelHandle = ResourceServer::GetInstance()->GetHandle("InteriorPlayer");
-
-	// AnimManagerにモデルハンドルを複製して設定
-	int duplicatedHandle = MV1DuplicateModel(modelHandle);
-	_animManager.SetModelHandle(duplicatedHandle);
-
-	// 初期アニメーションの設定
-
-	// 位置の初期化
-	_vPos = VGet(0, 0, 0);
-	_vDir = VGet(0, 0, -1);
-
-	// 基礎ステータスの初期化
-	_ePlayerStatus = PLAYER_STATUS::NONE;	// 状態
-	_fMoveSpeed = 0.0f;						// 移動速度
-	_fDirSpeed = 0.0f;						// 回転速度
-	_fLife = DEFAULT_LIFE;					// 体力
-	_fMaxLife = MAX_LIFE;					// 最大体力
-	_fGravity = GRAVITY;					// 重力
-
-	// アクション関係変数の初期化
-	_fVelY = 0.0f;				// Y方向の速度
-	_bIsJumping = false;		// ジャンプ中かどうか
-	_bIsStanding = true;		// 着地しているかどうか
-	_bIsCrouching = false;		// しゃがんでいるかどうか
-	_bIsStartCrouch = false;	// しゃがみ開始フラグ
-
-	// カプセルコリジョンの設定
-	_vCollisionTop = VGet(0.0f, 0.0f, 0.0f);	// 上端
-	_vCollisionBottom = VGet(0.0f, 0.0f, 0.0f);	// 下端
-	_fCollisionR = 20.f;						// 半径
-
-	// 腰位置の設定
-	_colSubY = 40.f;
-	_bViewCollision = false;
-
-	// 表示用オフセット
-	_iDrawSizeOffset = DRAW_SIZE_OFFSET;	// ずらす大きさ
-	_iDrawOffsetX = DRAW_OFFSET_X;			// 描画Xオフセット
-	_iDrawOffsetY = DRAW_OFFSET_Y;			// 描画Yオフセット
-
-	// 攻撃システム初期化
-	_bCanCombo = false;
-	_iComboCount = 0;
-
 	// キャラタイプ
 	SetCharaType(CHARA_TYPE::INTERIOR_PLAYER);
 }
 
 InteriorPlayer::~InteriorPlayer()
 {
+
 }
 
 bool InteriorPlayer::Initialize()
 {
-	// 基礎ステータスの初期化
-	_ePlayerStatus = PLAYER_STATUS::NONE;
-	_fMoveSpeed = 0.0f;
-	_fDirSpeed = 0.0f;
-	_fGravity = GRAVITY;
-
-	// 攻撃システム初期化
-	_bCanCombo = false;
-	_iComboCount = 0;
-
-	// 攻撃データの初期化を追加
-	InitializeAttackData();
+	// 基底クラスの初期化
+	PlayerBase::Initialize();
 
 	return true;
 }
@@ -94,26 +42,15 @@ bool InteriorPlayer::Terminate()
 
 bool InteriorPlayer::Process()
 {
-	// 死亡処理
-	ProcessDeath();
-
-	// プレイヤーが死亡しているなら
-	if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
-
-	// アクション関係Process呼び出し用関数
-	CallProcess();
-
-	// 攻撃関係Process呼び出し用関数
-	CallProcessAttack();
-
-	CharaBase::Process();
+	// 基底クラスの更新処理
+	PlayerBase::Process();
 
 	return true;
 }
 
 bool InteriorPlayer::Render()
 {
-	CharaBase::Render();
+	PlayerBase::Render();
 
 	// プレイヤーが死亡しているなら
 	//if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
@@ -124,21 +61,72 @@ bool InteriorPlayer::Render()
 // デバッグ描画
 void InteriorPlayer::DebugRender()
 {
-	// デバッグ用
-	_iDrawOffsetY = 0;	// 毎フレーム初期位置にリセット
-
-	DrawBaseData();			// 基礎情報表示
-	DrawCoordinate();		// 座標関係の表示
-	DrawStatus();			// ステータスを表示
-	DrawParameter();		// パラメーター表示
-	//DrawAnimationName();	// 再生されているアニメーション名表示
-	DrawColPos();			// コリジョン情報表示
+	// コリジョン描画
+	PlayerBase::DebugRender();
 }
 
-// コリジョン描画
-void InteriorPlayer::DebugCollisionRender()
+// 裏プレイヤーの情報設定
+PlayerConfig InteriorPlayer::GetPlayerConfig()
 {
-	DrawCapsuleCollision();	// カプセルコリジョンを表示
+	// 裏プレイヤー用の設定
+	PlayerConfig config;
+
+	// 移動速度設定
+	config.crouchMoveSpeed = 3.0f;				
+	config.normalMoveSpeed = 7.5f;				
+	config.dashMoveSpeed = 3.0f;			
+
+	// 基礎ステータス
+	config.life = 100.0f;						
+	config.maxLife = 100.0f;					
+	config.startPos = VGet(-230.0f, 0.0f, 0.0f);	
+
+	// 表示設定
+	config.drawSizeOffset = 16;					
+	config.drawOffsetX = 900;					
+	config.drawOffsetY = 0;						
+
+	// モデル名
+	config.modelName = "InteriorPlayer";			
+
+	return config;
+}
+
+// 裏プレイヤーのアニメーション設定
+PlayerAnimation InteriorPlayer::GetPlayerAnimation()
+{
+	// 裏プレイヤー用のアニメーション設定
+	PlayerAnimation animation;
+
+	animation.wait = "player_idle_01";
+	animation.walk = "player_walk_01";
+	animation.run = "player_jog_01";
+	animation.jumpUp = "jump_up";
+	animation.jumpDown = "jump_down";
+	animation.crouchWait = "crouch_idle";
+	animation.crouchWalk = "crouch";
+	animation.firstAttack = "Nchange_attack_00";
+	animation.secondAttack = "Nchange_attack_01";
+	animation.thirdAttack = "Nchange_attack_02";
+	animation.fourthAttack = "EmotionNchange_attack_03";
+	animation.fifthAttack = "Nchange_attack_04";
+	animation.hit = "player_damage_00";
+	animation.dodge = "dodge";
+	animation.death = "player_dead_00";
+
+	return animation;
+}
+
+// 表示設定
+RenderConfig InteriorPlayer::GetRenderConfig()
+{
+	// 裏プレイヤー用の表示設定
+	RenderConfig config;
+
+	config.playerName = "Interior Player";				// プレイヤー名
+	config.debugColor = COLOR_U8{ 0, 255, 255, 255 };	// デバッグ描画色
+
+	return config;
 }
 
 // 被ダメージ処理
@@ -150,7 +138,7 @@ void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 // 攻撃判定のパラメーター
 AttackConstants InteriorPlayer::GetAttackConstants()
 {
-	// SurfacePlayer専用の攻撃定数
+	// InteriorPlayer専用の攻撃定数
 	AttackConstants constants;
 
 	constants.ATTACK_OFFSET_SCALE = 80.0f;	// 攻撃判定オフセット倍率	

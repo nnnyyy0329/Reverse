@@ -128,17 +128,17 @@ void PlayerManager::SwitchPlayer(PLAYER_TYPE type)
 	PlayerBase* oldPlayer = _activePlayer;			// 古いプレイヤー
 	PlayerBase* newPlayer = player->second.get();	// 新しいプレイヤー
 
+	// プレイヤーを切り替え
+	_activePlayer = newPlayer;		// 新しいアクティブプレイヤーに設定
+	//_activePlayer->Initialize();	// 新しいプレイヤーを初期化
+	_activePlayerType = type;		// アクティブプレイヤータイプを更新
+
 	// 状態の引き継ぎ
 	if(_bEnableStateTransfer && oldPlayer && newPlayer)
 	{
 		// 位置と状態の引き継ぎ
 		TransferPlayerState(oldPlayer, newPlayer);
 	}
-
-	// プレイヤーを切り替え
-	_activePlayer = newPlayer;		// 新しいアクティブプレイヤーに設定
-	_activePlayer->Initialize();	// 新しいプレイヤーを初期化
-	_activePlayerType = type;		// アクティブプレイヤータイプを更新
 }
 
 // アクティブプレイヤー取得
@@ -186,5 +186,4 @@ void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPl
 
 	// ステータスの引き継ぎ
 	newPlayer->SetLife(oldPlayer->GetLife());
-	newPlayer->SetMaxLife(oldPlayer->GetMaxLife());
 }

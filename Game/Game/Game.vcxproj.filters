@@ -70,12 +70,6 @@
     <ClCompile Include="source\ModeLoading.cpp">
       <Filter>Mode\Load</Filter>
     </ClCompile>
-    <ClCompile Include="source\PlayerBase.cpp">
-      <Filter>GameObject\CharaBase\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PlayerBase_Attack.cpp">
-      <Filter>GameObject\CharaBase\Player</Filter>
-    </ClCompile>
     <ClCompile Include="source\PlayerManager.cpp">
       <Filter>GameObject\CharaBase\Player</Filter>
     </ClCompile>
@@ -89,22 +83,10 @@
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClCompile>
     <ClCompile Include="source\InteriorPlayer.cpp">
-      <Filter>GameObject\CharaBase\Player\Interior</Filter>
-    </ClCompile>
-    <ClCompile Include="source\InteriorPlayer_Draw.cpp">
-      <Filter>GameObject\CharaBase\Player\Interior</Filter>
-    </ClCompile>
-    <ClCompile Include="source\InteriorPlayer_Move.cpp">
-      <Filter>GameObject\CharaBase\Player\Interior</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase\Interior</Filter>
     </ClCompile>
     <ClCompile Include="source\SurfacePlayer.cpp">
-      <Filter>GameObject\CharaBase\Player\Surface</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SurfacePlayer_Draw.cpp">
-      <Filter>GameObject\CharaBase\Player\Surface</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SurfacePlayer_Move.cpp">
-      <Filter>GameObject\CharaBase\Player\Surface</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase\Surface</Filter>
     </ClCompile>
     <ClCompile Include="source\StageBase.cpp">
       <Filter>Stage</Filter>
@@ -116,6 +98,18 @@
     </ClCompile>
     <ClCompile Include="source\PlayerLifeBarUI.cpp">
       <Filter>GameObject\CharaBase\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase_Attack.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase_Draw.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase_Process.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,9 +191,6 @@
     <ClInclude Include="source\ModeLoading.h">
       <Filter>Mode\Load</Filter>
     </ClInclude>
-    <ClInclude Include="source\PlayerBase.h">
-      <Filter>GameObject\CharaBase\Player</Filter>
-    </ClInclude>
     <ClInclude Include="source\PlayerManager.h">
       <Filter>GameObject\CharaBase\Player</Filter>
     </ClInclude>
@@ -213,10 +204,10 @@
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClInclude>
     <ClInclude Include="source\InteriorPlayer.h">
-      <Filter>GameObject\CharaBase\Player\Interior</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase\Interior</Filter>
     </ClInclude>
     <ClInclude Include="source\SurfacePlayer.h">
-      <Filter>GameObject\CharaBase\Player\Surface</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase\Surface</Filter>
     </ClInclude>
     <ClInclude Include="source\StageBase.h">
       <Filter>Stage</Filter>
@@ -227,6 +218,9 @@
     </ClInclude>
     <ClInclude Include="source\PlayerLifeBarUI.h">
       <Filter>GameObject\CharaBase\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerBase.h">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -284,17 +278,23 @@
     <Filter Include="Mode\Load">
       <UniqueIdentifier>{35198714-23c1-46cf-8a55-86d69483f8d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\CharaBase\Player\Surface">
-      <UniqueIdentifier>{5b68afb6-e1f7-435d-a520-87474eae2fc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\CharaBase\Player\Interior">
-      <UniqueIdentifier>{b58c1215-8fb2-471f-9ae2-7fa0077cff40}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Stage">
       <UniqueIdentifier>{f51f6167-8088-48fb-bc30-d4d31501d52c}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameObject\CharaBase\Item">
       <UniqueIdentifier>{cc558430-6e86-44d5-adb4-dee6afa34d11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase">
+      <UniqueIdentifier>{ac63fc4d-34ba-4f2c-bfa7-d1ac08909c3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\Surface">
+      <UniqueIdentifier>{5b68afb6-e1f7-435d-a520-87474eae2fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\Interior">
+      <UniqueIdentifier>{b58c1215-8fb2-471f-9ae2-7fa0077cff40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\Bullet">
+      <UniqueIdentifier>{bf0c1bdb-2ada-440d-8231-314cd8dc3e52}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

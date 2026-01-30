@@ -357,14 +357,10 @@ bool ModeGame::OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE own
 		}
 
 		case CHARA_TYPE::SURFACE_PLAYER:	// 表プレイヤー
-		{
-			// 表プレイヤーの場合、攻撃所有者が表プレイヤーであるかを確認
-			return (ownerType == ATTACK_OWNER_TYPE::SURFACE_PLAYER);
-		}
-
 		case CHARA_TYPE::INTERIOR_PLAYER:	// 裏プレイヤー
 		{
-			// 裏プレイヤーの場合、攻撃所有者が裏プレイヤーであるかを確認
+			// プレイヤーの場合、攻撃所有者がプレイヤーであるかを確認
+			return (ownerType == ATTACK_OWNER_TYPE::SURFACE_PLAYER);
 			return (ownerType == ATTACK_OWNER_TYPE::INTERIOR_PLAYER);
 		}
 
