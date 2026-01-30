@@ -22,6 +22,7 @@
 #include "PlayerManager.h"
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
+#include "BulletPlayer.h"
 
 #include "EnergyUI.h"
 #include "PlayerLifeBarUI.h"
@@ -64,6 +65,10 @@ bool ModeGame::Initialize()
 		auto interiorPlayer = std::make_shared<InteriorPlayer>();
 		interiorPlayer->Initialize();
 		_playerManager->RegisterPlayer(PLAYER_TYPE::INTERIOR, interiorPlayer);
+
+		auto bulletPlayer = std::make_shared<BulletPlayer>();
+		bulletPlayer->Initialize();
+		_playerManager->RegisterPlayer(PLAYER_TYPE::BULLET, bulletPlayer);
 	}
 
 	//アイテムクラスの初期化

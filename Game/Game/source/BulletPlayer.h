@@ -1,19 +1,17 @@
-// 担当 : 成田
-
 #pragma once
+#include "appframe.h"
 #include "PlayerBase.h"
-#include "AttackBase.h"
 
-class InteriorPlayer : public PlayerBase
+class BulletPlayer : public PlayerBase
 {
 public:
-	InteriorPlayer();
-	virtual ~InteriorPlayer();
+	BulletPlayer();
+	virtual ~BulletPlayer();
 
-	virtual bool Initialize();
-	virtual bool Terminate();
-	virtual bool Process();	
-	virtual bool Render();	
+	virtual bool Initialize();	// 初期化
+	virtual bool Terminate();	// 終了
+	virtual bool Process();		// 更新
+	virtual bool Render();		// 描画
 
 	virtual void DebugRender()override;									// デバッグ描画
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
@@ -23,12 +21,7 @@ public:
 	virtual PlayerAnimation GetPlayerAnimation() override;	// アニメーション設定を取得
 	virtual RenderConfig GetRenderConfig() override;		// 描画設定を取得
 
-	/*****ゲッターセッター*****/
-
 protected:
-	// 攻撃システムのカスタマイズ
-	virtual AttackConstants GetAttackConstants() override;
-	virtual void GetAttackConfigs(AttackConfig configs[5]) override;
 
 };
 

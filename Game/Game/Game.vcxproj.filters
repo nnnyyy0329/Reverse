@@ -111,6 +111,9 @@
     <ClCompile Include="source\PlayerBase_Process.cpp">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClCompile>
+    <ClCompile Include="source\BulletPlayer.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -221,6 +224,9 @@
     </ClInclude>
     <ClInclude Include="source\PlayerBase.h">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClInclude>
+    <ClInclude Include="source\BulletPlayer.h">
+      <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

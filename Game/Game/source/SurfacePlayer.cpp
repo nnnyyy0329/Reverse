@@ -63,6 +63,12 @@ void SurfacePlayer::DebugRender()
 	PlayerBase::DebugRender();
 }
 
+// 被ダメージ処理
+void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+{
+	CharaBase::ApplyDamage(fDamage, eType);
+}
+
 // 表プレイヤーの情報設定
 PlayerConfig SurfacePlayer::GetPlayerConfig()
 {
@@ -96,21 +102,21 @@ PlayerAnimation SurfacePlayer::GetPlayerAnimation()
 	// 表プレイヤー用のアニメーション設定
 	PlayerAnimation animation;
 
-	animation.wait = "player_idle_00";
-	animation.walk = "player_walk_00";
-	animation.run = "player_jog_00";
-	animation.jumpUp = "jump_up";
-	animation.jumpDown = "jump_down";
-	animation.crouchWait = "crouch_idle";
-	animation.crouchWalk = "crouch";
-	animation.firstAttack = "absorb_attack_00";
-	animation.secondAttack = "absorb_attack_01";
-	animation.thirdAttack = "absorb_attack_02";
-	animation.fourthAttack = "";
-	animation.fifthAttack = "";
-	animation.hit = "player_damage_00";
-	animation.dodge = "dodge";
-	animation.death = "player_dead_00";
+	animation.wait			= "player_idle_00";
+	animation.walk			= "player_walk_00";
+	animation.run			= "player_jog_00";
+	animation.jumpUp		= "jump_up";
+	animation.jumpDown		= "jump_down";
+	animation.crouchWait	= "crouch_idle";
+	animation.crouchWalk	= "crouch";
+	animation.firstAttack	= "absorb_attack_00";
+	animation.secondAttack	= "absorb_attack_01";
+	animation.thirdAttack	= "absorb_attack_02";
+	animation.fourthAttack	= "";
+	animation.fifthAttack	= "";
+	animation.hit			= "player_damage_00";
+	animation.dodge			= "dodge";
+	animation.death			= "player_dead_00";
 
 	return animation;
 }
@@ -125,11 +131,6 @@ RenderConfig SurfacePlayer::GetRenderConfig()
 	config.debugColor = COLOR_U8{ 0, 255, 255, 255 };	// デバッグ描画色
 
 	return config;
-}
-// 被ダメージ処理
-void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
-{
-	CharaBase::ApplyDamage(fDamage, eType);
 }
 
 // 攻撃判定のパラメーター

@@ -65,6 +65,12 @@ void InteriorPlayer::DebugRender()
 	PlayerBase::DebugRender();
 }
 
+// 被ダメージ処理
+void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+{
+	CharaBase::ApplyDamage(fDamage, eType);
+}
+
 // 裏プレイヤーの情報設定
 PlayerConfig InteriorPlayer::GetPlayerConfig()
 {
@@ -98,21 +104,21 @@ PlayerAnimation InteriorPlayer::GetPlayerAnimation()
 	// 裏プレイヤー用のアニメーション設定
 	PlayerAnimation animation;
 
-	animation.wait = "player_idle_01";
-	animation.walk = "player_walk_01";
-	animation.run = "player_jog_01";
-	animation.jumpUp = "jump_up";
-	animation.jumpDown = "jump_down";
-	animation.crouchWait = "crouch_idle";
-	animation.crouchWalk = "crouch";
-	animation.firstAttack = "Nchange_attack_00";
-	animation.secondAttack = "Nchange_attack_01";
-	animation.thirdAttack = "Nchange_attack_02";
-	animation.fourthAttack = "EmotionNchange_attack_03";
-	animation.fifthAttack = "Nchange_attack_04";
-	animation.hit = "player_damage_00";
-	animation.dodge = "dodge";
-	animation.death = "player_dead_00";
+	animation.wait			= "player_idle_01";
+	animation.walk			= "player_walk_01";
+	animation.run			= "player_jog_01";
+	animation.jumpUp		= "jump_up";
+	animation.jumpDown		= "jump_down";
+	animation.crouchWait	= "crouch_idle";
+	animation.crouchWalk	= "crouch";
+	animation.firstAttack	= "Nchange_attack_00";
+	animation.secondAttack	= "Nchange_attack_01";
+	animation.thirdAttack	= "Nchange_attack_02";
+	animation.fourthAttack	= "EmotionNchange_attack_03";
+	animation.fifthAttack	= "Nchange_attack_04";
+	animation.hit			= "player_damage_00";
+	animation.dodge			= "dodge";
+	animation.death			= "player_dead_00";
 
 	return animation;
 }
@@ -127,12 +133,6 @@ RenderConfig InteriorPlayer::GetRenderConfig()
 	config.debugColor = COLOR_U8{ 0, 255, 255, 255 };	// デバッグ描画色
 
 	return config;
-}
-
-// 被ダメージ処理
-void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
-{
-	CharaBase::ApplyDamage(fDamage, eType);
 }
 
 // 攻撃判定のパラメーター

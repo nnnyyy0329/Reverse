@@ -139,9 +139,6 @@ public:
 	virtual PlayerConfig GetPlayerConfig() = 0;
 	virtual PlayerAnimation GetPlayerAnimation() = 0;
 	virtual RenderConfig GetRenderConfig() = 0;
-	//virtual AttackConstants GetAttackConstants() = 0;
-	//virtual void GetAttackConfigs(AttackConfig configs[]) = 0;
-	//virtual int GetMaxComboCount() = 0;
 
 	//virtual void ProcessPlayAnimation() = 0;	// アニメーション再生処理の仮想関数
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定

@@ -155,6 +155,7 @@
     <ClCompile Include="source\AttackManager.cpp" />
     <ClCompile Include="source\Bullet.cpp" />
     <ClCompile Include="source\BulletManager.cpp" />
+    <ClCompile Include="source\BulletPlayer.cpp" />
     <ClCompile Include="source\CameraManager.cpp" />
     <ClCompile Include="source\CharaBase.cpp" />
     <ClCompile Include="source\DebugCamera.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="source\AttackManager.h" />
     <ClInclude Include="source\Bullet.h" />
     <ClInclude Include="source\BulletManager.h" />
+    <ClInclude Include="source\BulletPlayer.h" />
     <ClInclude Include="source\CameraManager.h" />
     <ClInclude Include="source\CharaBase.h" />
     <ClInclude Include="source\DebugCamera.h" />

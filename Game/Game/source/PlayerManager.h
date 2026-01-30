@@ -10,6 +10,7 @@ enum class PLAYER_TYPE
 	NONE,
 	SURFACE,	// 表プレイヤー
 	INTERIOR,	// 裏プレイヤー
+	BULLET,		// 弾丸プレイヤー
 	_EOT_,
 };
 

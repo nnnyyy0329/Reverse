@@ -40,6 +40,7 @@ bool ModeLoading::Initialize()
 		{
 			rs->Register("SurfacePlayer", "res/Player/Player_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("InteriorPlayer", "res/Player/player_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("BulletPlayer", "res/Player/.mv1", RESOURCE_TYPE::Model, 1.0f);
 			//rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
 			//rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
 

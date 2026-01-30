@@ -14,31 +14,6 @@ PlayerBase::PlayerBase()
 	_eOldPlayerStatus = PLAYER_STATUS::NONE;
 	_vMove = VGet(0, 0, 0);
 	_vOldPos = VGet(0, 0, 0);
-
-
-
-
-	//// アクション関係変数の初期化
-	//_fVelY = 0.0f;
-	//_bIsJumping = false;
-	//_bIsStanding = true;
-	//_bIsCrouching = false;
-	//_bIsStartCrouch = false;
-
-	//// 表示用オフセット
-	//_iDrawSizeOffset = 0;
-	//_iDrawOffsetX = 0;
-	//_iDrawOffsetY = 0;
-
-	//// 攻撃システム初期化
-	//_vAttackColTop = VGet(0.0f, 0.0f, 0.0f);
-	//_vAttackColBottom = VGet(0.0f, 0.0f, 0.0f);
-	//_fAttackColR = 0.0f;
-	//_bCanCombo = false;
-	//_iComboCount = 0;
-
-	//// カメラ角度初期化
-	//_cameraAngle = 0.0f;
 }
 
 PlayerBase::~PlayerBase()

@@ -19,9 +19,9 @@ public:
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
 
 	// 純粋仮想関数のオーバーライド
-	virtual PlayerConfig GetPlayerConfig() override;
-	virtual PlayerAnimation GetPlayerAnimation() override;
-	virtual RenderConfig GetRenderConfig() override;
+	virtual PlayerConfig GetPlayerConfig() override;		// 設定を取得
+	virtual PlayerAnimation GetPlayerAnimation() override;	// アニメーション設定を取得
+	virtual RenderConfig GetRenderConfig() override;		// 描画設定を取得
 
 	/*****ゲッターセッター*****/
 
