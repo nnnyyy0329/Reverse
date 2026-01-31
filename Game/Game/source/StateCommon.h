@@ -17,6 +17,10 @@ namespace Common
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::DAMAGE; }// —Dæ“x‚‚ß
 	};
 
+
+
+
+
 	// €–S
 	class Dead : public EnemyState
 	{
@@ -28,6 +32,10 @@ namespace Common
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::TOP; }// Å—Dæ
 	};
 
+
+
+
+
 	// ƒXƒ^ƒ“
 	class Stun : public EnemyState
 	{
@@ -37,6 +45,10 @@ namespace Common
 		const char* GetName() const override { return "Common:Stun"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::TOP; }// Å—Dæ
 	};
+
+
+
+
 
 	// ƒ_ƒEƒ“
 	class Down : public EnemyState

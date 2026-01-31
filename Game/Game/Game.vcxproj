@@ -183,6 +183,7 @@
     <ClCompile Include="source\StateCommon.cpp" />
     <ClCompile Include="source\StateMelee.cpp" />
     <ClCompile Include="source\StateRanged.cpp" />
+    <ClCompile Include="source\StateTank.cpp" />
     <ClCompile Include="source\SurfacePlayer.cpp" />
     <ClCompile Include="source\SurfacePlayer_Draw.cpp" />
     <ClCompile Include="source\SurfacePlayer_Move.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="source\StateCommon.h" />
     <ClInclude Include="source\StateMelee.h" />
     <ClInclude Include="source\StateRanged.h" />
+    <ClInclude Include="source\StateTank.h" />
     <ClInclude Include="source\SurfacePlayer.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>

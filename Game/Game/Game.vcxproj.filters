@@ -118,6 +118,9 @@
     <ClCompile Include="source\MenuItemBase.cpp">
       <Filter>Mode\Menu</Filter>
     </ClCompile>
+    <ClCompile Include="source\StateTank.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -227,6 +230,9 @@
     </ClInclude>
     <ClInclude Include="source\AnimManager.h">
       <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateTank.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

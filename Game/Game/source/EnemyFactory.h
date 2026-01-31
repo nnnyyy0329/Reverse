@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "StateMelee.h"
 #include "StateRanged.h"
+#include "StateTank.h"
 #include <memory>
 
 namespace {
@@ -24,6 +25,17 @@ namespace {
 	constexpr auto RANGED_MOVEBACK_RANGE = 300.0f;// ‚±‚ê‚æ‚è‹ß‚Ã‚¢‚½‚çŒã‘Ş‚·‚é
 	constexpr auto RANGED_ATTACK_INTERVAL = 120.0f;// UŒ‚ŠÔŠu
 	constexpr auto RANGED_DETECT_TIME = 60.0f;// ”­Œ©d’¼
+
+	// Tank
+	constexpr auto TANK_VISION_RANGE = 300.0f;// õ“G‹——£
+	constexpr auto TANK_VISION_ANGLE = 180.0f;// õ“GŠp“x
+	constexpr auto TANK_ATTACK_RANGE = 150.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
+	constexpr auto TANK_CHASE_LIMIT_RANGE = 700.0f;// ‚±‚êˆÈã—£‚ê‚½‚ç’ÇÕ‚ğ‚â‚ß‚é‹——£
+	constexpr auto TANK_MOVE_RADIUS = 500.0f;// œpœj‚·‚é”ÍˆÍ‚Ì”¼Œa(‰ŠúˆÊ’u‚©‚ç‚Ì‹——£)
+	constexpr auto TANK_IDLE_TIME = 150.0f;;// ‘Ò‹@ŠÔ
+	constexpr auto TANK_MOVE_TIME = 120.0f;// ©“®ˆÚ“®ŠÔ
+	constexpr auto TANK_DETECT_TIME = 120.0f;// ”­Œ©d’¼
+	constexpr auto TANK_MOVE_SPEED = 1.5f;// ˆÚ“®‘¬“x
 }
 
 // “G‚Ìí—Ş
@@ -31,6 +43,7 @@ enum class EnemyType
 {
 	MELEE,// ‹ßÚ
 	RANGED,// ‰“‹——£
+	TANK,// ƒ^ƒ“ƒN
 	_EOT_,
 };
 
@@ -100,6 +113,35 @@ public:
 
 				enemy->ChangeState(std::make_shared<Ranged::Idle>());// ‰Šúó‘Ôİ’è
 				break;
+
+		case EnemyType::TANK:// ƒ^ƒ“ƒNŒ^
+			// ƒ‚ƒfƒ‹–¼‚ğİ’è
+			enemy->SetModelName("Melee");
+
+				param.fMoveSpeed = TANK_MOVE_SPEED;
+				param.fVisionRange = TANK_VISION_RANGE;
+				param.fVisionAngle = TANK_VISION_ANGLE;
+				param.fAttackRange = TANK_ATTACK_RANGE;
+				param.fChaseLimitRange = TANK_CHASE_LIMIT_RANGE;
+				param.fMoveRadius = TANK_MOVE_RADIUS;
+				param.fIdleTime = TANK_IDLE_TIME;
+				param.fMoveTime = TANK_MOVE_TIME;
+				param.fDetectTime = TANK_DETECT_TIME;
+				enemy->SetEnemyParam(param);
+
+				// ƒnƒ“ƒhƒ‰‚Ìİ’è
+				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> {
+					// ƒ^[ƒQƒbƒg‚ª‘¶İ‚·‚ê‚ÎUŒ‚
+					if (e->GetTarget())
+					{
+						return std::make_shared<Tank::Idle>();
+					}
+					return std::make_shared<Tank::Idle>();
+				});
+
+				enemy->ChangeState(std::make_shared<Tank::Idle>());// ‰Šúó‘Ôİ’è
+				break;
+
 		}
 
 		// İ’èŒã‚É‰Šú‰»‚ğŒÄ‚Ño‚·

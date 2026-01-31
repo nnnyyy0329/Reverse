@@ -28,6 +28,10 @@ namespace Melee
 		void UpdateSearch(Enemy* owner) override;
 	};
 
+
+
+
+
 	// ©“®ˆÚ“®
 	class Move : public EnemyState
 	{
@@ -38,6 +42,10 @@ namespace Melee
 		void UpdateSearch(Enemy* owner) override;
 	};
 
+
+
+
+
 	// ”­Œ©:Œ©‚Â‚¯‚½uŠÔ‚Ìd’¼
 	class Detect : public EnemyState
 	{
@@ -46,6 +54,10 @@ namespace Melee
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:Detect"; }
 	};
+
+
+
+
 
 	// ’ÇÕ
 	class Chase : public EnemyState
@@ -56,6 +68,10 @@ namespace Melee
 		const char* GetName() const override { return "Melee:Chase"; }
 		bool IsChasing() const override { return true; }// ’ÇÕó‘Ô‚Å‚ ‚é
 	};
+
+
+
+
 
 	// UŒ‚
 	class Attack : public EnemyState
@@ -69,6 +85,10 @@ namespace Melee
 	private:
 		bool _bHasCollision;// UŒ‚ƒRƒŠƒWƒ‡ƒ“‚ª¶¬‚³‚ê‚½‚©
 	};
+
+
+
+
 
 	// ‰ŠúˆÊ’u‚Ö‚Ì•œ‹A
 	class ReturnHome : public EnemyState

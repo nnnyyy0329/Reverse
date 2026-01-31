@@ -12,7 +12,7 @@ namespace {
 
 	constexpr auto BLEND_FRAME = 1.0f;// アニメーションブレンドフレーム数
 
-	// 個別の攻撃コリジョン設定
+	// 攻撃コリジョン設定
 	EnemyAttackSettings MakeMeleeAttackSettings()
 	{
 		EnemyAttackSettings settings;
@@ -27,11 +27,13 @@ namespace {
 		settings.ownerId = 0;// 仮
 		return settings;
 	}
+	// 定数として保存
 	const EnemyAttackSettings MELEE_ATTACK_SETTINGS = MakeMeleeAttackSettings();
 }
 
 namespace Melee
 {
+	// 視界判定
 	bool IsTargetVisible(Enemy* owner)
 	{
 		auto target = owner->GetTarget();
@@ -46,6 +48,8 @@ namespace Melee
 
 		return true;// 視界内
 	}
+
+
 
 
 

@@ -8,6 +8,7 @@ enum class STATE_PRIORITY
 {
 	NORMAL = 0,// 通常
 	DAMAGE = 50,// 被ダメージ
+	HIGH = 75,// 高優先度(中断されないアクションなど)
 	TOP = 100,// 最優先(Dead, Stun, Down)
 };
 
