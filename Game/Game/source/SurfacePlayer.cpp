@@ -1,7 +1,6 @@
 // 担当 : 成田
 
 #include "SurfacePlayer.h"
-#include "ApplicationMain.h"
 
 namespace
 {
@@ -66,7 +65,7 @@ void SurfacePlayer::DebugRender()
 // 被ダメージ処理
 void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 {
-	CharaBase::ApplyDamage(fDamage, eType);
+	PlayerBase::ApplyDamage(fDamage, eType);
 }
 
 // 表プレイヤーの情報設定

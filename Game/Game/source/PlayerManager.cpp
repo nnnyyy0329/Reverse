@@ -89,11 +89,12 @@ void PlayerManager:: SwitchPlayerByInput()
 		// 表プレイヤーで切り替え可能なら
 		if(_activePlayerType == PLAYER_TYPE::SURFACE && energyManager->CanSwitchPlayer()) 
 		{
-			// 表プレイヤーから裏プレイヤーに切り替え
-			SwitchPlayer(PLAYER_TYPE::INTERIOR);
+			// 表プレイヤー以外に切り替え
+			SwitchPlayer(PLAYER_TYPE::BULLET);
+			//SwitchPlayer(PLAYER_TYPE::INTERIOR);
 		}
 		// 裏プレイヤーなら表プレイヤーに切り替え
-		else if(_activePlayerType == PLAYER_TYPE::INTERIOR)
+		else if(_activePlayerType != PLAYER_TYPE::SURFACE)
 		{
 			// 裏プレイヤーから表プレイヤーに切り替え
 			SwitchPlayer(PLAYER_TYPE::SURFACE);
@@ -107,8 +108,8 @@ void PlayerManager:: SwitchPlayerByEenrgy()
 	// エネルギーのインスタンス取得
 	auto* energyManager = EnergyManager::GetInstance();
 
-	// 裏プレイヤーがアクティブで、エネルギー不足なら
-	if(_activePlayerType == PLAYER_TYPE::INTERIOR && !energyManager->CanKeepSwitchPlayer()) 
+	// 表プレイヤー以外がアクティブで、エネルギー不足なら
+	if(_activePlayerType != PLAYER_TYPE::SURFACE && !energyManager->CanKeepSwitchPlayer()) 
 	{
 		// 強制的に表プレイヤーに切り替え
 		SwitchPlayer(PLAYER_TYPE::SURFACE);

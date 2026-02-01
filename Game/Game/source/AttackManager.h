@@ -7,14 +7,9 @@
 enum class ATTACK_OWNER_TYPE
 {
 	NONE,
-	SURFACE_PLAYER,
-	INTERIOR_PLAYER,
-
-	PLAYER,
-	ENEMY,
-
-	// 敵もここに
-
+	SURFACE_PLAYER,		// 表プレイヤー
+	INTERIOR_PLAYER,	// 裏プレイヤー
+	ENEMY,				// 敵
 	_EOT_,
 };
 

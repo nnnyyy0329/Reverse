@@ -1,7 +1,6 @@
 // 担当 : 成田
 
 #include "InteriorPlayer.h"
-#include "ApplicationMain.h"
 
 namespace
 {
@@ -68,7 +67,7 @@ void InteriorPlayer::DebugRender()
 // 被ダメージ処理
 void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 {
-	CharaBase::ApplyDamage(fDamage, eType);
+	PlayerBase::ApplyDamage(fDamage, eType);
 }
 
 // 裏プレイヤーの情報設定
@@ -85,7 +84,7 @@ PlayerConfig InteriorPlayer::GetPlayerConfig()
 	// 基礎ステータス
 	config.life = 100.0f;						
 	config.maxLife = 100.0f;					
-	config.startPos = VGet(-230.0f, 0.0f, 0.0f);	
+	config.startPos = VGet(0.0f, 0.0f, 0.0f);	
 
 	// 表示設定
 	config.drawSizeOffset = 16;					

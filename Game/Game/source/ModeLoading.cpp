@@ -38,15 +38,14 @@ bool ModeLoading::Initialize()
 
 		// プレイヤー関連
 		{
+			// プレイヤーモデル
 			rs->Register("SurfacePlayer", "res/Player/Player_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("InteriorPlayer", "res/Player/player_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("BulletPlayer", "res/Player/.mv1", RESOURCE_TYPE::Model, 1.0f);
-			//rs->Register("SurfacePlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
-			//rs->Register("InteriorPlayer", "res/SDChar/SDChar.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
-			rs->Register("PlayerLifeBar", "res/Player/UI/Player_Life_Bar_try.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("PlayerLifeBarFrame", "res/Player/UI/Player_Life_Bar_Frame_try.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("PlayerLifeBar", "res/Player/UI/Player_Life_Bar.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("PlayerLifeBarFrame", "res/Player/UI/Player_Life_Bar_Frame.png", RESOURCE_TYPE::Graph, 1.0f);
 
 		}
 

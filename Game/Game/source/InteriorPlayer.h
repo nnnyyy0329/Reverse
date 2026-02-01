@@ -2,7 +2,6 @@
 
 #pragma once
 #include "PlayerBase.h"
-#include "AttackBase.h"
 
 class InteriorPlayer : public PlayerBase
 {
@@ -14,7 +13,6 @@ public:
 	virtual bool Terminate();
 	virtual bool Process();	
 	virtual bool Render();	
-
 	virtual void DebugRender()override;									// デバッグ描画
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
 

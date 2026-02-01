@@ -109,6 +109,8 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
+
 	// 共通初期化
 	void InitializePlayerConfig(PlayerConfig& config);
 
@@ -121,6 +123,7 @@ public:
 	//void ProcessStanding();			// 着地処理
 	//void ProcessJump();				// ジャンプ処理
 	//void ProcessCrouch();			// しゃがみ処理
+	void ProcessHit();				// 被弾処理
 	void ProcessDeath();			// 死亡処理
 	void ProcessDebug();			// デバッグ処理
 

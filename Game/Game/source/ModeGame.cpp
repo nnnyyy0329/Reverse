@@ -69,6 +69,7 @@ bool ModeGame::Initialize()
 		auto bulletPlayer = std::make_shared<BulletPlayer>();
 		bulletPlayer->Initialize();
 		_playerManager->RegisterPlayer(PLAYER_TYPE::BULLET, bulletPlayer);
+		bulletPlayer->SetBulletManager(_bulletManager);
 	}
 
 	//アイテムクラスの初期化

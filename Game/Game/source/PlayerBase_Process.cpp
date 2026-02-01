@@ -27,10 +27,10 @@ void PlayerBase::ProcessMovePlayer()
 	// 攻撃中は移動入力を受け付けない
 	if(!IsAttacking())
 	{
-		//if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
-		//if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
-		//if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
-		//if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
+		if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
+		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
+		if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
+		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
 		
 		// しゃがみ中かどうかで移動速度を変える
 		if(_bIsCrouching)
@@ -296,7 +296,7 @@ void PlayerBase::ProcessDeath()
 // デバッグ処理
 void PlayerBase::ProcessDebug()
 {
-	if(_trg & PAD_INPUT_7)
+	if(_trg & PAD_INPUT_5)
 	{
 		_fLife -= 5.0f;
 	}

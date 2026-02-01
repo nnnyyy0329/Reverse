@@ -1,8 +1,17 @@
 #include "BulletPlayer.h"
+#include "BulletManager.h"
+
+namespace bulletConfig
+{
+	const VECTOR START_POS_OFFSET = VGet(0, 70, 0);
+	const float RADIUS = 50.0f;
+	const float SPEED = 15.0f;
+	const float LIFE_TIME = 120.0f;
+}
 
 BulletPlayer::BulletPlayer()
 {
-	_eCharaType = CHARA_TYPE::BULLET;
+	_eCharaType = CHARA_TYPE::BULLET_PLAYER;
 }
 
 BulletPlayer::~BulletPlayer()
@@ -26,6 +35,9 @@ bool BulletPlayer::Process()
 {
 	PlayerBase::Process();
 
+	// 入力確認
+	ShootByInput();
+
 	return true;
 }
 
@@ -45,7 +57,7 @@ void BulletPlayer::DebugRender()
 // 被ダメージ処理
 void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 {
-	CharaBase::ApplyDamage(fDamage, eType);
+	PlayerBase::ApplyDamage(fDamage, eType);
 }
 
 // 弾プレイヤーの情報設定
@@ -62,7 +74,7 @@ PlayerConfig BulletPlayer::GetPlayerConfig()
 	// 基礎ステータス
 	config.life = 100.0f;
 	config.maxLife = 100.0f;
-	config.startPos = VGet(-230.0f, 0.0f, 0.0f);
+	config.startPos = VGet(0.0f, 0.0f, 0.0f);
 
 	// 表示設定
 	config.drawSizeOffset = 16;
@@ -105,4 +117,53 @@ RenderConfig BulletPlayer::GetRenderConfig()
 	config.debugColor = COLOR_U8{ 0, 255, 255, 255 };	// デバッグ描画色
 
 	return config;
+}
+
+// 弾プレイヤーの攻撃定数設定
+AttackConstants BulletPlayer::GetAttackConstants()
+{
+	// 弾プレイヤーは攻撃を行わない
+
+	AttackConstants constants;
+
+	constants.ATTACK_OFFSET_SCALE = 0.0f;
+	constants.SURFACE_MAX_COMBO_COUNT = 0;
+	constants.INTERIOR_MAX_COMBO_COUNT = 0;
+
+	return constants;
+}
+
+// 弾プレイヤーの攻撃設定
+void BulletPlayer::GetAttackConfigs(AttackConfig configs[])
+{
+	// 弾プレイヤーは攻撃を行わない
+}
+
+// 入力確認
+void BulletPlayer::ShootByInput()
+{
+	if(_trg & PAD_INPUT_7)
+	{
+		ShootBullet();
+	}
+}
+
+// 弾の発射
+void BulletPlayer::ShootBullet()
+{
+	// 弾管理クラスの有効確認
+	auto bulletManager = _bulletManager.lock();
+	if(bulletManager)
+	{
+		// 弾情報設定
+		bulletManager->Shoot
+		(
+			VAdd(_vPos, bulletConfig::START_POS_OFFSET),
+			_vDir, 
+			bulletConfig::RADIUS, 
+			bulletConfig::SPEED, 
+			bulletConfig::LIFE_TIME, 
+			_eCharaType
+		);
+	}
 }

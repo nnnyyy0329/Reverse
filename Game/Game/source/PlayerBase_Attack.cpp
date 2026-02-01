@@ -26,6 +26,14 @@ void PlayerBase::InitializeAttackData()
 		maxComboCount = constants.INTERIOR_MAX_COMBO_COUNT;
 	}
 
+	// コンボカウントが0ならスキップ
+	if(maxComboCount <= 0)
+	{
+		_attacks.clear();
+		_attackStatuses.clear();
+		return;
+	}
+
 	// 攻撃設定取得
 	std::vector<AttackConfig>configs(maxComboCount);	
 	GetAttackConfigs(configs.data());
@@ -134,6 +142,9 @@ void PlayerBase::ProcessAttack()
 		_ePlayerStatus == PLAYER_STATUS::RUN)
 		&& _trg & PAD_INPUT_1) 
 	{
+		// 攻撃配列が空の場合は処理をスキップ
+		if(_attacks.empty()){ return; }
+
 		// 1段目の攻撃開始処理
 		ProcessStartAttack(1, PLAYER_STATUS::FIRST_ATTACK, _attacks[0]);
 	}

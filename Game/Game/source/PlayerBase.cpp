@@ -106,8 +106,15 @@ bool PlayerBase::Render()
 {
 	// 親クラスの描画処理呼び出し
 	CharaBase::Render();
-
 	return true;
+}
+
+// 被ダメージ処理
+void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+{
+	CharaBase::ApplyDamage(fDamage, eType);
+
+  	_ePlayerStatus = PLAYER_STATUS::HIT;
 }
 
 // カメラ角度に合わせて移動方向を変換する
