@@ -2,13 +2,6 @@
 
 #include "PlayerBase.h"
 
-namespace HitConfig
-{
-	const float HIT_SPEED = 5.0f;	// 被弾時の吹き飛び速度
-	const float HIT_DECAY = 0.9f;	// 被弾時の吹き飛び減衰率
-	const float HIT_TIME = 15.0f;	// 被弾時間
-}
-
 // 共通関数呼び出し😊
 void PlayerBase::CallProcess()
 {
@@ -34,8 +27,10 @@ void PlayerBase::ProcessMovePlayer()
 	_vOldPos = _vPos;	// 前フレームの位置を保存
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
-	// 攻撃中は移動入力を受け付けない
-	if(!IsAttacking())
+	if(IsAttacking()){ return; } // 攻撃中は移動入力を受け付けない
+	if(IsHitStop()){ return; }	 // 被弾中は移動入力を受け付けない
+
+	// 移動処理
 	{
 		/*if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
 		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
@@ -102,6 +97,30 @@ void PlayerBase::ProcessStatusAnimation()
 		ProcessPlayAnimation();
 
 		// 処理後の攻撃中のステータスを保存
+		_eOldPlayerStatus = _ePlayerStatus;
+
+		return;
+	}
+
+	// 被弾中は状態変更を行わない
+	if(_ePlayerStatus == PLAYER_STATUS::HIT)
+	{
+		// アニメーション再生処理のみ
+		ProcessPlayAnimation();
+
+		// 処理後の被弾中のステータスを保存
+		_eOldPlayerStatus = _ePlayerStatus;
+
+		return;
+	}
+
+	// 死亡中は状態変更を行わない
+	if(_ePlayerStatus == PLAYER_STATUS::DEATH)
+	{
+		// アニメーション再生処理のみ
+		ProcessPlayAnimation();
+
+		// 処理後の死亡中のステータスを保存
 		_eOldPlayerStatus = _ePlayerStatus;
 
 		return;
@@ -301,9 +320,17 @@ void PlayerBase::ProcessHit()
 	// 被弾時間が終了したら通常状態に戻る
 	if(_fHitTime <= 0.0f)
 	{
-		_ePlayerStatus = PLAYER_STATUS::WAIT;
-		_fHitSpeed = 0.0f;
-		_vHitDir = VGet(0, 0, 0);
+		PLAYER_STATUS oldStatus = _ePlayerStatus; // 古いステータスを保存
+
+		_ePlayerStatus = PLAYER_STATUS::WAIT;	// ステータスを待機に変更
+		_fHitSpeed = 0.0f;						// 吹き飛び速度を0にする
+		_vHitDir = VGet(0, 0, 0);				// 吹き飛び方向をリセット
+
+		// ステータス変更後、アニメーション切り替え
+		_eOldPlayerStatus = oldStatus;		// 古いステータスを攻撃状態に設定
+		ProcessPlayAnimation();				// アニメーション切り替え実行
+		_eOldPlayerStatus = _ePlayerStatus;	// 切り替え後に更新
+
 		return;
 	}
 
@@ -314,7 +341,7 @@ void PlayerBase::ProcessHit()
 		_vPos = VAdd(_vPos, VScale(_vHitDir, _fHitSpeed));
 
 		// 吹き飛び速度減衰
-		_fHitSpeed *= HitConfig::HIT_DECAY;
+		_fHitSpeed *= _fHitSpeedDecay;
 
 		// 速度が一定以下になったら0にする
 		if(_fHitSpeed < 0.1f)
@@ -346,8 +373,20 @@ void PlayerBase::ProcessDeath()
 // デバッグ処理
 void PlayerBase::ProcessDebug()
 {
-	if(_trg & PAD_INPUT_5)
+	if(_trg & PAD_INPUT_4)
 	{
 		_fLife -= 5.0f;
 	}
+}
+
+// 被弾硬直中かチェック
+bool PlayerBase::IsHitStop()
+{
+	// 被弾硬直中かチェック
+	if(_ePlayerStatus == PLAYER_STATUS::HIT)
+	{
+		return true;
+	}
+
+	return false;
 }

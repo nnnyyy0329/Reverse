@@ -6,6 +6,7 @@
 #include "CharaBase.h"
 #include "StageBase.h"
 #include "Enemy.h"
+//#include "Item.h"
 
 #include "CameraManager.h"
 #include "GameCamera.h"
@@ -316,7 +317,7 @@ bool ModeGame::Render()
 		_bulletManager->Render();
 		_energyUI->Render();
 		_playerLifeBarUI->Render();
-		_item->Render();
+		//_item->Render();
 		_abilitySelectScreen->Render();
 	}
 

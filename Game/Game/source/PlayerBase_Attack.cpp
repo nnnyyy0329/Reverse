@@ -67,7 +67,8 @@ void PlayerBase::InitializeAttackData()
 			configs[i].duration,        // 持続フレーム
 			configs[i].recovery,        // 硬直フレーム
 			configs[i].damage,          // ダメージ
-			false                       // ヒットフラグ
+			false,						// ヒットフラグ
+			_vDir						// 攻撃方向
 		);
 
 		_attacks.push_back(attack);
@@ -99,7 +100,8 @@ void PlayerBase::UpdateAttackColPos
 		col.attackDuration,				// 持続時間
 		col.recovery, 					// 後隙
 		col.damage, 					// ダメージ
-		col.isHit						// ヒットフラグ
+		col.isHit,						// ヒットフラグ
+		_vDir							// 攻撃方向
 	);
 }
 

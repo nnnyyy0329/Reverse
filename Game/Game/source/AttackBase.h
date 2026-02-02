@@ -28,6 +28,7 @@ struct ATTACK_COLLISION
 	float currentTime;		// 現在の経過時間
 	bool isActive;			// 現在アクティブかどうか
 	bool isHit;				// ヒットしたかどうか
+	VECTOR attackDir;		// 攻撃方向
 };
 
 // 攻撃の状態を管理
@@ -66,14 +67,15 @@ public:
 	// カプセル攻撃データ設定
 	void SetCapsuleAttackData
 	(
-		VECTOR top,		// カプセル上部
-		VECTOR bottom,	// カプセル下部
-		float radius,	// 半径
-		float delay,	// 発生遅延
-		float duration, // 持続時間
-		float recovery, // 後隙
-		float damage,	// ダメージ	
-		bool hit		// ヒットフラグ
+		VECTOR top,			// カプセル上部
+		VECTOR bottom,		// カプセル下部
+		float radius,		// 半径
+		float delay,		// 発生遅延
+		float duration,		// 持続時間
+		float recovery,		// 後隙
+		float damage,		// ダメージ	
+		bool hit,			// ヒットフラグ
+		VECTOR attackDir	// 攻撃方向
 	);
 
 	// 円形攻撃データ設定

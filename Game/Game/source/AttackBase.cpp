@@ -150,7 +150,8 @@ void AttackBase::SetCapsuleAttackData
     float duration,
     float recovery,
     float damage,
-    bool hit
+    bool hit,
+	VECTOR attackDir
 )
 {
 	_stcAttackCol.attackColTop = top;          // カプセル上部
@@ -161,6 +162,7 @@ void AttackBase::SetCapsuleAttackData
 	_stcAttackCol.recovery = recovery;         // 後隙
 	_stcAttackCol.damage = damage;             // ダメージ
 	_stcAttackCol.isHit = hit;                 // ヒットフラグ
+	_stcAttackCol.attackDir = attackDir;     // 攻撃方向
 
 	_eColType = COLLISION_TYPE::CAPSULE;    // コリジョンタイプをカプセルに設定
 }

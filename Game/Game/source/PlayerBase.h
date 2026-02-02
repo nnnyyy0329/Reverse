@@ -112,7 +112,8 @@ public:
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
 
 	// 共通初期化
-	void InitializePlayerConfig(PlayerConfig& config);
+	void InitializePlayerConfig(PlayerConfig& config);	// プレイヤー設定初期化
+	void InitializeHitConfig();							// 被弾設定初期化
 
 	// 共通処理
 	void CallProcess();				// Process呼び出し用関数
@@ -126,6 +127,7 @@ public:
 	void ProcessHit();				// 被弾処理
 	void ProcessDeath();			// 死亡処理
 	void ProcessDebug();			// デバッグ処理
+	bool IsHitStop();				// 被弾硬直中かチェック
 
 	// デバッグ描画共通
 	void DebugRender();				// デバッグ情報描画

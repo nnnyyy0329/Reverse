@@ -2,8 +2,16 @@
 
 #include "PlayerBase.h"
 
+// ”í’eİ’è
+namespace HitConfig
+{
+	const float HIT_SPEED = 5.0f;	// ”í’e‚Ì‚«”ò‚Ñ‘¬“x
+	const float HIT_DECAY = 0.9f;	// ”í’e‚Ì‚«”ò‚ÑŒ¸Š—¦
+	const float HIT_TIME = 30.0f;	// ”í’eŠÔ
+}
+
 namespace
-	{
+{
 	const float GRAVITY = 0.6f;	// d—Í’è”
 }
 
@@ -15,7 +23,6 @@ PlayerBase::PlayerBase()
 	_vMove = VGet(0, 0, 0);
 	_vOldPos = VGet(0, 0, 0);
 }
-
 PlayerBase::~PlayerBase()
 {
 
@@ -73,8 +80,26 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	_bCanCombo = false;
 	_iComboCount = 0;
 
+	// ”í’eİ’è‚Ì‰Šú‰»
+	_vHitDir = VGet(0, 0, 0);	// ”í’e•ûŒü
+	_fHitSpeed = 0.0f;			// ”í’e‘¬“x
+	_fHitSpeedDecay = 0.0f;		// ”í’e‘¬“xŒ¸Š—¦
+	_fHitTime = 0.0f;			// ”í’eŠÔ
+
 	// UŒ‚ƒf[ƒ^‚Ì‰Šú‰»
 	InitializeAttackData();
+}
+
+// ”í’eİ’è‰Šú‰»
+void PlayerBase::InitializeHitConfig()
+{
+	// UŒ‚ƒRƒŠƒWƒ‡ƒ“î•ñ‚Ìæ“¾
+	ATTACK_COLLISION attackCol = GetAttackCollision();
+
+	_vHitDir = VGet(1, 0, 0);				// ”í’e•ûŒü
+	_fHitSpeed = HitConfig::HIT_SPEED;		// ”í’e‘¬“x
+	_fHitSpeedDecay = HitConfig::HIT_DECAY;	// ”í’e‘¬“xŒ¸Š—¦
+	_fHitTime = HitConfig::HIT_TIME;		// ”í’eŠÔ
 }
 
 bool PlayerBase::Terminate()
@@ -114,7 +139,11 @@ void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 {
 	CharaBase::ApplyDamage(fDamage, eType);
 
+	// ”í’eó‘Ô‚É•ÏX
   	_ePlayerStatus = PLAYER_STATUS::HIT;
+
+	// ”í’eİ’è‰Šú‰»
+	InitializeHitConfig();
 }
 
 // ƒJƒƒ‰Šp“x‚É‡‚í‚¹‚ÄˆÚ“®•ûŒü‚ğ•ÏŠ·‚·‚é
