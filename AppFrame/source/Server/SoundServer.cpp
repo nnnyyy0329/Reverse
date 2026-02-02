@@ -122,4 +122,3 @@ void SoundServer::UnloadAll()
 	}
 	_resources.clear();
 }
-//server sound

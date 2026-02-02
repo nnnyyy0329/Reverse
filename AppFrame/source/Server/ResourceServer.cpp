@@ -1,5 +1,6 @@
 #include "ResourceServer.h"
 #include "EffectServer.h"
+#include "SoundServer.h"
 
 // シングルトンインスタンスの実体
 static ResourceServer* _instance = nullptr;
@@ -48,7 +49,9 @@ void ResourceServer::StartLoadAsync()
 			SetUseASyncLoadFlag(TRUE);
 			break;
 		case RESOURCE_TYPE::Sound:// サウンド
-			// SoundServer実装予定
+			// SoundServer経由で読み込む（SoundServerが内部でハンドル管理）
+			SoundServer::GetInstance()->Load(res.name, res.path.c_str());
+			handle = 0; // SoundServer側で管理するためここでは 0 をセット
 			break;
 		}
 
