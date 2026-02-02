@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="source\PlayerAbilityBase.cpp">
+    <ClCompile Include="source\AbilityBase.cpp">
       <Filter>Ability</Filter>
     </ClCompile>
-    <ClCompile Include="source\PlayerAbilityManager.cpp">
+    <ClCompile Include="source\AbilityManager.cpp">
       <Filter>Ability</Filter>
     </ClCompile>
     <ClCompile Include="source\AbilitySelectScreen.cpp">
@@ -116,10 +116,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\PlayerAbilityBase.h">
+    <ClInclude Include="source\AbilityBase.h">
       <Filter>Ability</Filter>
     </ClInclude>
-    <ClInclude Include="source\PlayerAbilityManager.h">
+    <ClInclude Include="source\AbilityManager.h">
       <Filter>Ability</Filter>
     </ClInclude>
     <ClInclude Include="source\AbilitySelectScreen.h">

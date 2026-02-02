@@ -8,12 +8,6 @@
 struct AttackConstants
 {
 	float ATTACK_OFFSET_SCALE;		// 攻撃判定オフセット倍率
-	float COMMON_RADIUS;			// 半径
-	float COMMON_DELAY;				// 発生フレーム
-	float COMMON_DURATION;			// 持続フレーム
-	float COMMON_RECOVERY;			// 硬直フレーム
-	float NORMAL_DAMAGE;			// 通常ダメージ
-	float FINISHER_DAMAGE;			// フィニッシャーダメージ
 	int SURFACE_MAX_COMBO_COUNT;	// 表プレイヤー用コンボカウント
 	int INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
 };
@@ -21,9 +15,16 @@ struct AttackConstants
 // 攻撃設定データ構造体
 struct AttackConfig
 {
-	VECTOR topOffset;
-	VECTOR bottomOffset;
-	float damage;
+	VECTOR topOffset;		// コリジョン上部位置
+	VECTOR bottomOffset;	// コリジョン下部位置
+	float radius;			// 半径
+	float delay;			// 発生
+	float duration;			// 持続
+	float recovery;			// 硬直
+	float damage;			// ダメージ
+	std::string effectName;	// エフェクト名
+	VECTOR effectOffset;	// エフェクト位置オフセット
+
 };
 
 // 状態列挙型
@@ -90,7 +91,7 @@ protected:	// 攻撃関係
 	virtual void GetAttackConfigs(AttackConfig configs[3]) = 0;	// 攻撃設定を取得
 
 	// PlayerBase_Attack.cppで定義
-	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数																				// 攻撃関係Process呼び出し用関数
+	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数
 	void ProcessAttackColPos();		// コリジョン位置の更新処理
 	void ProcessAttack();			// 攻撃処理
 	void ProcessBranchAttack();		// 攻撃分岐処理
@@ -107,13 +108,14 @@ private:	// 攻撃関係
 
 	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
 	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> attack);						// 攻撃開始処理
+	void ProcessAttackEffect(int attackIndex);																					// 攻撃エフェクト処理
 	void ProcessComboAttack(int attackIndex);																					// コンボ攻撃処理
 	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);																// 攻撃終了処理
 	void EndAttackSequence();																									// 攻撃課程修了
 	void ProcessNextAttack(int currentIndex);																					// 次の攻撃処理
 	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_STATUS status);														// 状態に対応する攻撃を取得
 	int GetInstanceId();																										// ID取得関数
-	int GetAttackIndexByStatus(PLAYER_STATUS status);
+	int GetAttackIndexByStatus(PLAYER_STATUS status);																			// 状態から攻撃インデックスを取得
 
 protected:
 

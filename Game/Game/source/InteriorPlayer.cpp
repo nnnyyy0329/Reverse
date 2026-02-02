@@ -116,13 +116,27 @@ bool InteriorPlayer::Render()
 	// プレイヤーが死亡しているなら
 	//if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
 
-	// モデル表示
-	DrawModel();
-
-	// デバッグ用
-	CallDraw();
-
 	return true;
+}
+
+// デバッグ描画
+void InteriorPlayer::DebugRender()
+{
+	// デバッグ用
+	_iDrawOffsetY = 0;	// 毎フレーム初期位置にリセット
+
+	DrawBaseData();			// 基礎情報表示
+	DrawCoordinate();		// 座標関係の表示
+	DrawStatus();			// ステータスを表示
+	DrawParameter();		// パラメーター表示
+	//DrawAnimationName();	// 再生されているアニメーション名表示
+	DrawColPos();			// コリジョン情報表示
+}
+
+// コリジョン描画
+void InteriorPlayer::DebugCollisionRender()
+{
+	DrawCapsuleCollision();	// カプセルコリジョンを表示
 }
 
 // 被ダメージ処理
@@ -137,25 +151,83 @@ AttackConstants InteriorPlayer::GetAttackConstants()
 	// SurfacePlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.ATTACK_OFFSET_SCALE = 60.0f;	// 攻撃判定オフセット倍率	
-	constants.COMMON_RADIUS = 25.0f;		// 半径
-	constants.COMMON_DELAY = 8.0f;			// 発生フレーム
-	constants.COMMON_DURATION = 12.0f;		// 持続フレーム
-	constants.COMMON_RECOVERY = 18.0f;		// 硬直フレーム
-	constants.NORMAL_DAMAGE = 4.0f;			// 通常ダメージ
-	constants.FINISHER_DAMAGE = 15.0f;		// フィニッシャーダメージ
+	constants.ATTACK_OFFSET_SCALE = 80.0f;	// 攻撃判定オフセット倍率	
 	constants.INTERIOR_MAX_COMBO_COUNT = 5;	// 裏プレイヤー用コンボカウント
 
 	return constants;
 }
 
-// 攻撃判定の大きさ設定
+// 攻撃判定の情報設定
 void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 {
-	// SurfacePlayer専用の攻撃設定
-	configs[0] = { {0.0f, 80.0f, 0.0f}, {0.0f, 120.0f, 0.0f}, 4.0f };	// 第1攻撃
-	configs[1] = { {0.0f, 20.0f, 0.0f}, {0.0f, 100.0f, 0.0f}, 4.0f };	// 第2攻撃
-	configs[2] = { {0.0f, 150.0f, 0.0f}, {0.0f, 80.0f, 0.0f}, 4.0f };	// 第3攻撃
-	configs[3] = { {0.0f, 100.0f, 0.0f}, {0.0f, 50.0f, 0.0f}, 4.0f };	// 第4攻撃
-	configs[4] = { {0.0f, 150.0f, 0.0f}, {0.0f, 80.0f, 0.0f}, 15.0f };	// 第5攻撃
+	// 第1攻撃
+	configs[0] = 
+	{
+		{0.0f, 80.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 120.0f, 0.0f}, 	// コリジョン下部位置
+		25.0f,					// 半径
+		8.0f,					// 発生フレーム
+		12.0f,					// 持続フレーム
+		18.0f,					// 硬直フレーム
+		100.0f,					// ダメージ
+		"",						// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+
+	};
+
+	// 第2攻撃
+	configs[1] = 
+	{
+		{0.0f, 20.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 100.0f, 0.0f},	// コリジョン下部位置
+		25.0f,					// 半径
+		8.0f,					// 発生フレーム
+		12.0f,					// 持続フレーム
+		18.0f,					// 硬直フレーム
+		100.0f,					// ダメージ
+		"",						// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+	};
+
+	// 第3攻撃
+	configs[2] = 
+	{ 
+		{0.0f, 150.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 80.0f, 0.0f},	// コリジョン下部位置
+		25.0f,					// 半径
+		8.0f,					// 発生フレーム
+		12.0f,					// 持続フレーム
+		18.0f,					// 硬直フレーム
+		100.0f,					// ダメージ
+		"",						// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+	};
+
+	// 第4攻撃
+	configs[3] = 
+	{
+		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 50.0f, 0.0f},	// コリジョン下部位置
+		25.0f,					// 半径
+		8.0f,					// 発生フレーム
+		12.0f,					// 持続フレーム
+		18.0f,					// 硬直フレーム
+		100.0f,					// ダメージ
+		"",						// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+	};
+
+	// 第5攻撃
+	configs[4] = 
+	{
+		{0.0f, 150.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 80.0f, 0.0f},	// コリジョン下部位置
+		25.0f,					// 半径
+		8.0f,					// 発生フレーム
+		12.0f,					// 持続フレーム
+		18.0f,					// 硬直フレーム
+		100.0f,					// ダメージ
+		"",						// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+	};
 }

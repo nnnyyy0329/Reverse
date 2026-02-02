@@ -10,10 +10,13 @@ public:
 	InteriorPlayer();
 	virtual ~InteriorPlayer();
 
-	virtual bool	Initialize();
-	virtual bool	Terminate();
-	virtual bool	Process();	
-	virtual bool	Render();	
+	virtual bool Initialize();
+	virtual bool Terminate();
+	virtual bool Process();	
+	virtual bool Render();	
+
+	virtual void DebugRender();											// デバッグ描画
+	virtual void DebugCollisionRender();								// コリジョン描画
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
 
 	// InteriorPlayer_Move.cppで定義
@@ -28,8 +31,6 @@ public:
 	void ProcessDebug();					// デバッグ用関数
 
 	// InteriorPlayer_Draw.cppで定義
-	void CallDraw();				// 描画関係の呼び出し用関数
-	void DrawModel();				// モデル表示
 	void DrawBaseData();			// 基礎情報表示
 	void DrawCoordinate();			// 座標の表示
 	void DrawCapsuleCollision();	// カプセルコリジョン表示

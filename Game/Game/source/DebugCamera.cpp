@@ -104,11 +104,11 @@ void DebugCamera::Render()
 
 void DebugCamera::DebugRender()
 {
-	int x = 900;
-	int y = 410;
+	int x = 400;
+	int y = 70;
 
 	// ç¿ïWånï\é¶
-	DrawFormatString(x, y, GetColor(55, 0, 0), "DebugCamera Pos: (%3.2f, %3.2f, %3.2f)", _vPos.x, _vPos.y, _vPos.z);
+	DrawFormatString(x, y, GetColor(255, 255, 255), "DebugCamera Pos: (%3.2f, %3.2f, %3.2f)", _vPos.x, _vPos.y, _vPos.z);
 }
 
 void DebugCamera::SetUp()

@@ -5,53 +5,9 @@
 namespace color
 {
 	// 描画時の色
-	constexpr int R = 0;
-	constexpr int G = 55;
-	constexpr int B = 0;
-}
-
-// デバッグ用表示
-void InteriorPlayer::CallDraw()
-{
-	_iDrawOffsetY = 0;	// 毎フレーム初期位置にリセット
-
-	DrawBaseData();							// 基礎情報表示
-	DrawCoordinate();						// 座標関係の表示
-	DrawCapsuleCollision();					// カプセルコリジョンを表示
-	DrawStatus();							// ステータスを表示
-	DrawParameter();						// パラメーター表示
-	//DrawAnimationName();					// 再生されているアニメーション名表示
-	DrawColPos();							// コリジョン情報表示
-
-	// 攻撃配列から各攻撃のコリジョン位置を更新
-	for(size_t i = 0; i < _attacks.size(); ++i)
-	{
-		//_attacks[i]->DrawAttackCollision();
-	}
-}
-
-// モデルの表示
-void InteriorPlayer::DrawModel()
-{
-	// モデルを描画する
-	{
-		//// 位置
-		//MV1SetPosition(_iHandle, _vPos);
-
-		//// 向きからY軸回転を算出
-		//VECTOR vRot = { 0,0,0 };
-		//vRot.y = atan2(_vDir.x * -1, _vDir.z * -1);	// モデルが標準でどちらを向いているかで式が変わる(これは-zを向いている場合)
-		//MV1SetRotationXYZ(_iHandle, vRot);
-
-		//// 描画
-		//MV1DrawModel(_iHandle);
-
-		// コリジョン判定用ラインの描画
-		if(_bViewCollision)
-		{
-			DrawLine3D(VAdd(_vPos, VGet(0, _colSubY, 0)), VAdd(_vPos, VGet(0, -99999.f, 0)), GetColor(255, 0, 0));
-		}
-	}
+	constexpr int R = 255;
+	constexpr int G = 255;
+	constexpr int B = 255;
 }
 
 // 基礎情報表示

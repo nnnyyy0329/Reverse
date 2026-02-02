@@ -120,13 +120,27 @@ bool SurfacePlayer::Render()
 	// プレイヤーが死亡しているなら
 	//if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
 
-	//// モデル表示
-	//DrawModel();
-
-	// デバッグ用
-	CallDraw();
-
 	return true;
+}
+
+// デバッグ描画
+void SurfacePlayer::DebugRender()
+{
+	// デバッグ用
+	_iDrawOffsetY = 0;	// 毎フレーム初期位置にリセット
+
+	DrawBaseData();			// 基礎情報表示
+	DrawCoordinate();		// 座標関係の表示
+	DrawStatus();			// ステータスを表示
+	DrawParameter();		// パラメーター表示
+	//DrawAnimationName();	// 再生されているアニメーション名表示
+	DrawColPos();			// コリジョン情報表示
+}
+
+// コリジョン描画
+void SurfacePlayer::DebugCollisionRender()
+{
+	DrawCapsuleCollision();	// カプセルコリジョンを表示
 }
 
 // 被ダメージ処理
@@ -141,23 +155,54 @@ AttackConstants SurfacePlayer::GetAttackConstants()
 	// SurfacePlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.ATTACK_OFFSET_SCALE = 75.0f;	// 攻撃判定オフセット倍率	
-	constants.COMMON_RADIUS = 30.0f;		// 半径	
-	constants.COMMON_DELAY = 10.0f;			// 発生フレーム
-	constants.COMMON_DURATION = 15.0f;		// 持続フレーム	
-	constants.COMMON_RECOVERY = 20.0f;		// 硬直フレーム
-	constants.NORMAL_DAMAGE = 5.0f;			// 通常ダメージ
-	constants.FINISHER_DAMAGE = 20.0f;		// フィニッシャーダメージ
+	constants.ATTACK_OFFSET_SCALE = 85.0f;	// 攻撃判定オフセット倍率	
 	constants.SURFACE_MAX_COMBO_COUNT = 3;	// 表プレイヤー用コンボカウント
 
 	return constants;
 }
 
-// 攻撃判定の大きさ設定
+// 攻撃判定の情報設定
 void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 {
-	// SurfacePlayer専用の攻撃設定
-	configs[0] = { {0.0f, 100.0f, 0.0f}, {0.0f, 50.0f, 0.0f}, 5.0f };	// 第1攻撃
-	configs[1] = { {0.0f, 250.0f, 0.0f}, {0.0f, 150.0f, 0.0f}, 5.0f };	// 第2攻撃
-	configs[2] = { {0.0f, 200.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 20.0f };	// 第3攻撃
+	// 第1攻撃
+	configs[0] = 
+	{ 
+		{0.0f, 90.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 50.0f, 0.0f},	// コリジョン下部位置
+		30.0f,					// 半径
+		20.0f,					// 発生フレーム
+		25.0f,					// 持続フレーム
+		20.0f,					// 硬直フレーム
+		25.0f,					// ダメージ
+		"SurfacePlayerAttack1",	// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+	};	
+
+	// 第2攻撃
+	configs[1] = 
+	{ 
+		{0.0f, 80.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 10.0f, 0.0f},  	// コリジョン下部位置
+		40.0f,					// 半径
+		20.0f,					// 発生フレーム
+		15.0f,					// 持続フレーム
+		20.0f,					// 硬直フレーム
+		25.0f,					// ダメージ
+		"SurfacePlayerAttack2",	// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{ 
+		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 0.0f, 0.0f},		// コリジョン下部位置
+		25.0f,					// 半径
+		20.0f,					// 発生フレーム
+		25.0f,					// 持続フレーム
+		20.0f,					// 硬直フレーム
+		50.0f,					// ダメージ
+		"SurfacePlayerAttack3",	// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+	};
 }
