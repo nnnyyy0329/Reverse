@@ -96,6 +96,8 @@ namespace Melee
 
 
 
+
+
 	// 自動移動
 	void Move::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
@@ -176,6 +178,8 @@ namespace Melee
 
 
 
+
+
 	// 発見
 	void Detect::Enter(Enemy* owner) {
 		_fTimer = 0.0f;
@@ -251,10 +255,11 @@ namespace Melee
 			return std::make_shared<Attack>();// 攻撃状態へ
 		}
 
-		// 移動処理
+		// 即座に向きを変更
 		VECTOR vDir = VNorm(vToTarget);
-		owner->SetDir(vDir);// ターゲットの方向を向く
+		owner->SetDir(vDir);
 
+		// 移動処理
 		auto speed = owner->GetEnemyParam().fMoveSpeed;
 		VECTOR vMove = VScale(vDir, speed);
 		owner->SetMove(vMove);// 移動量を更新
@@ -375,10 +380,11 @@ namespace Melee
 			return std::make_shared<Idle>();// 待機状態へ
 		}
 
-		// 初期位置に向かって移動
-		VECTOR vDir = VNorm(vToHome);// 初期位置への方向ベクトル
+		// 即座に向きを変更
+		VECTOR vDir = VNorm(vToHome);
 		owner->SetDir(vDir);
 
+		// 初期位置に向かって移動
 		auto speed = owner->GetEnemyParam().fMoveSpeed;
 		VECTOR vMove = VScale(vDir, speed);
 		owner->SetMove(vMove);// 移動量を更新

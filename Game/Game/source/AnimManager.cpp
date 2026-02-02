@@ -96,6 +96,8 @@ void AnimManager::Update()
 		// 再生時間を進める
 		anim->fPlayTime += anim->fPlaySpeed;
 
+		anim->bIsFinished = false;
+
 		// ループ処理
 		if (anim->fPlayTime >= anim->fTotalTime)
 		{
@@ -114,6 +116,7 @@ void AnimManager::Update()
 			{
 				// ループ終了
 				anim->fPlayTime = anim->fTotalTime;
+				anim->bIsFinished = true;
 			}
 		}
 
@@ -238,4 +241,17 @@ void AnimManager::DetachAnimation(AnimationData* anim)
 	}
 
 	MV1DetachAnim(_modelHandle, anim->attachIndex);
+}
+
+bool AnimManager::IsAnimationFinished()
+{
+	// アクティブなアニメーションがない場合はtrueを返す
+	if (_activeAnims.empty())
+	{
+		return true;
+	}
+
+	// 最新のアニメーションの終了状態を確認
+	const AnimationData* currentAnim = _activeAnims.back();
+	return currentAnim->bIsFinished;
 }

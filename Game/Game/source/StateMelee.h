@@ -90,7 +90,7 @@ namespace Melee
 
 
 
-	// ‰ŠúˆÊ’u‚Ö‚Ì•œ‹A
+	// ‹AŠÒ
 	class ReturnHome : public EnemyState
 	{
 	public:

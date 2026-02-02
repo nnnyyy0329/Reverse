@@ -10,6 +10,7 @@ namespace Tank
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Tank:Idle"; }// 名前を返す(デバッグ用)
+		void UpdateSearch(Enemy* owner) override;
 	};
 
 
@@ -23,6 +24,7 @@ namespace Tank
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Tank:Move"; }
+		void UpdateSearch(Enemy* owner) override;
 	};
 
 
@@ -36,6 +38,20 @@ namespace Tank
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Tank:Detect"; }
+	};
+
+
+
+
+
+	// 追跡
+	class Chase : public EnemyState
+	{
+		public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() const override { return "Tank:Chase"; }
+		bool IsChasing() const override { return true; }// 追跡状態である
 	};
 
 
@@ -83,9 +99,13 @@ namespace Tank
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		void Exit(Enemy* owner) override;
 		const char* GetName() const override { return "Tank:FirstAttackRecovery"; }
-		bool CanChangeState() override { return false; }
+		bool CanChangeState() override { return _bIsCompleted; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
+
+	private:
+		bool _bIsCompleted = false;// 後隙完了フラグ
 	};
 
 
@@ -133,9 +153,13 @@ namespace Tank
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		void Exit(Enemy* owner) override;
 		const char* GetName() const override { return "Tank:SecondAttackRecovery"; }
-		bool CanChangeState() override { return false; }
+		bool CanChangeState() override { return _bIsCompleted; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
+
+	private:
+		bool _bIsCompleted = false;// 後隙完了フラグ
 	};
 
 
@@ -151,5 +175,19 @@ namespace Tank
 		void Exit(Enemy* owner) override;
 		const char* GetName() const override { return "Tank:Attack"; }
 		bool CanChangeState() override;
+	};
+
+
+
+
+
+	// 帰還
+	class ReturnHome : public EnemyState
+	{
+		public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() const override { return "Tank:ReturnHome"; }
+		void UpdateSearch(Enemy* owner) override;
 	};
 }

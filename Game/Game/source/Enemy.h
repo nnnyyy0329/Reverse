@@ -83,6 +83,19 @@ public:
 	// vCenter:中心座標, vDir:基準の向きベクトル, fRadius:半径, fHalfAngleDeg:半角(度), color:色, segments:分割数
 	void DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAngleDeg, unsigned int color, int segments);
 
+	// 滑らかな向き変更
+	// 目標角度に向かって滑らかに回転する
+	// 目標角度(ラジアン)、旋回速度(度/フレーム)
+	bool SmoothTurnToAngle(float fTargetAngle, float fTurnSpeedDeg);
+
+	// 目標方向ベクトルに向かって滑らかに回転する
+	// 目標方向ベクトル、旋回速度(度/フレーム)
+	bool SmoothTurnToDirection(VECTOR vTargetDir, float fTurnSpeedDeg);
+
+	// 目標位置に向かって滑らかに回転する
+	// 目標位置、旋回速度(度/フレーム)
+	bool SmoothTurnToPosition(VECTOR vTargetPos, float fTurnSpeedDeg);
+
 protected:
 
 	VECTOR _vHomePos;// 敵の初期位置
@@ -114,5 +127,7 @@ protected:
 
 private:
 	void LoadEnemyModel();// モデルを名前に応じて読み込む
+
+	static float NormalizeAngleDiff(float fAngleDiff);// 角度差を-PI~+PIの範囲に正規化する
 };
 

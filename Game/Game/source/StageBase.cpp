@@ -146,10 +146,10 @@ StageBase::StageBase(int stageNum)
 		);
 		_totalEnemyCnt++;// 敵を追加したらカウントアップ
 
-		//_stageEnemies.push_back(
-		//	EnemyFactory::CreateEnemy(EnemyType::RANGED, VGet(1800.0f, 0.0f, -180.0f))// テストで調整
-		//);
-		//_totalEnemyCnt++;// 敵を追加したらカウントアップ
+		_stageEnemies.push_back(
+			EnemyFactory::CreateEnemy(EnemyType::TANK, VGet(80.0f, 0.0f, -300.0f))// テストで調整
+		);
+		_totalEnemyCnt++;// 敵を追加したらカウントアップ
 	}
 }
 

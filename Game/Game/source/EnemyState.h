@@ -28,7 +28,7 @@ struct EnemyParam
 
 	float fAttackInterval = 0.0f;// 攻撃間隔
 
-	float fTurnSpeed = 1.0f;// 旋回速度(度 / フレーム)
+	float fTurnSpeed = 60.0f;// 旋回速度(度 / フレーム)
 
 	float fIdleTime = 0.0f;// 待機時間
 	float fMoveTime = 0.0f;// 自動移動時間

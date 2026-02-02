@@ -27,6 +27,9 @@ public:
 	// モデルハンドルの設定
 	void SetModelHandle(int handle) { _modelHandle = handle; }
 
+	// アニメーションが終了したか
+	bool IsAnimationFinished();
+
 	// 現在のアニメーション番号
 	int GetCurrentAnimIndex() { return _currentAnimIndex; }
 
@@ -47,6 +50,7 @@ private:
 		float fCloseTotalTime;// ブレンド終了の総時間
 		int loopCnt;// ループ回数(0:無限ループ　1:ループ無し　2以上:指定回数ループ)
 		float fPlaySpeed;// 再生速度
+		bool bIsFinished;// アニメーションが終わったか
 	};
 
 	// アニメーションリソース情報
