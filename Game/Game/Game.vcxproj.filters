@@ -91,10 +91,17 @@
     <ClCompile Include="source\StageBase.cpp">
       <Filter>Mode\Load\Stage</Filter>
     </ClCompile>
-    <ClCompile Include="source\MenuItemBase.cpp" />
-    <ClCompile Include="source\AnimManager.cpp" />
     <ClCompile Include="source\Item.cpp">
       <Filter>GameObject\CharaBase\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AnimManager.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MenuItemBase.cpp">
+      <Filter>Mode\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StateTank.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerLifeBarUI.cpp">
       <Filter>GameObject\CharaBase\Player</Filter>
@@ -161,9 +168,6 @@
     <ClInclude Include="source\EnemyFactory.h">
       <Filter>GameObject\CharaBase\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="source\EnemyState.h">
-      <Filter>GameObject\CharaBase\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="source\EnergyManager.h">
       <Filter>Energy</Filter>
     </ClInclude>
@@ -215,7 +219,6 @@
     <ClInclude Include="source\StageBase.h">
       <Filter>Mode\Load\Stage</Filter>
     </ClInclude>
-    <ClInclude Include="source\AnimManager.h" />
     <ClInclude Include="source\Item.h">
       <Filter>GameObject\CharaBase\Item</Filter>
     </ClInclude>
@@ -227,6 +230,15 @@
     </ClInclude>
     <ClInclude Include="source\BulletPlayer.h">
       <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnemyState.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AnimManager.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateTank.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -301,6 +313,12 @@
     </Filter>
     <Filter Include="Mode\Load\Stage">
       <UniqueIdentifier>{f51f6167-8088-48fb-bc30-d4d31501d52c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Item">
+      <UniqueIdentifier>{cc558430-6e86-44d5-adb4-dee6afa34d11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{8a4cbfe7-fc06-4c1c-94bf-2ce3a31c6539}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

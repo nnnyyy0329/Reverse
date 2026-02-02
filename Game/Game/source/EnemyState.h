@@ -3,10 +3,12 @@
 
 class Enemy;
 
+// ステート優先度
 enum class STATE_PRIORITY
 {
 	NORMAL = 0,// 通常
 	DAMAGE = 50,// 被ダメージ
+	HIGH = 75,// 高優先度(中断されないアクションなど)
 	TOP = 100,// 最優先(Dead, Stun, Down)
 };
 
@@ -26,7 +28,7 @@ struct EnemyParam
 
 	float fAttackInterval = 0.0f;// 攻撃間隔
 
-	float fTurnSpeed = 1.0f;// 旋回速度(度 / フレーム)
+	float fTurnSpeed = 60.0f;// 旋回速度(度 / フレーム)
 
 	float fIdleTime = 0.0f;// 待機時間
 	float fMoveTime = 0.0f;// 自動移動時間
@@ -54,6 +56,8 @@ public:
 	virtual bool CanChangeState() { return true; }// ステート変更可能かどうか
 
 	virtual STATE_PRIORITY GetPriority() { return STATE_PRIORITY::NORMAL; }// ステートの優先度を取得(デフォルトはNORMAL)
+
+	virtual void UpdateSearch(Enemy* owner) {};// 索敵処理(各ステートでオーバーライド)
 
 	float _fTimer = 0.0f;
 };

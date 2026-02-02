@@ -25,7 +25,12 @@ namespace Melee
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:Idle"; }// 名前を返す(デバッグ用)
+		void UpdateSearch(Enemy* owner) override;
 	};
+
+
+
+
 
 	// 自動移動
 	class Move : public EnemyState
@@ -34,7 +39,12 @@ namespace Melee
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:Move"; }
+		void UpdateSearch(Enemy* owner) override;
 	};
+
+
+
+
 
 	// 発見:見つけた瞬間の硬直
 	class Detect : public EnemyState
@@ -45,6 +55,10 @@ namespace Melee
 		const char* GetName() const override { return "Melee:Detect"; }
 	};
 
+
+
+
+
 	// 追跡
 	class Chase : public EnemyState
 	{
@@ -54,6 +68,10 @@ namespace Melee
 		const char* GetName() const override { return "Melee:Chase"; }
 		bool IsChasing() const override { return true; }// 追跡状態である
 	};
+
+
+
+
 
 	// 攻撃
 	class Attack : public EnemyState
@@ -68,13 +86,18 @@ namespace Melee
 		bool _bHasCollision;// 攻撃コリジョンが生成されたか
 	};
 
-	// 初期位置への復帰
+
+
+
+
+	// 帰還
 	class ReturnHome : public EnemyState
 	{
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:ReturnHome"; }
+		void UpdateSearch(Enemy* owner) override;
 	};
 }
 

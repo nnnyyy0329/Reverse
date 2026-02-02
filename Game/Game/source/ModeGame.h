@@ -1,10 +1,8 @@
 #pragma once
 #include "appframe.h"
 #include "CharaBase.h"
-#include "AttackManager.h"
 
 // 前方宣言
-class CharaBase;
 class PlayerBase;
 class PlayerManager;
 class PlayerLifeBarUI;
@@ -19,7 +17,6 @@ class EnergyManager;
 class EnergyUI;
 class DodgeSystem;
 class LightManager;
-class Item;
 
 class AbilitySelectScreen;
 
@@ -93,7 +90,6 @@ private:
 	void CheckHitCharaBullet	(std::shared_ptr<CharaBase> chara);										// キャラと弾の当たり判定
 	void CheckActiveAttack		(std::shared_ptr<CharaBase> chara);										// 有効な攻撃のチェック
 	void CheckHitCharaAttackCol	(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
-	void CheckHitCharaItem(std::shared_ptr<CharaBase> chara, std::shared_ptr <Item>item);               // アイテムとプレイヤーの当たり判定
 	void ConvertEnergy			(std::shared_ptr<AttackBase> attack, float damage);						// ダメージをエネルギーに変換する
 	bool OwnerIsAttackingOwner	(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);					// 攻撃所有者が自分に攻撃しているかどうか
 

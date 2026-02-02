@@ -7,6 +7,8 @@
 namespace {
 	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
 	constexpr auto COLLISION_HEIGHT = 100.0f;// 敵の当たり判定高さ
+
+	constexpr auto SEACH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
 }
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
@@ -61,7 +63,17 @@ bool Enemy::Process()
 
 	_vMove = VGet(0.0f, 0.0f, 0.0f);// 毎フレーム移動量リセット
 
-	// 状態更新
+	// 索敵タイマー更新
+	UpdateSearchTimer();
+
+	// 索敵更新タイミングなら索敵を実行
+	if (ShouldUpdateSearch())
+	{
+		// ステートが索敵処理を持っていれば実行
+		_currentState->UpdateSearch(this);
+	}
+
+	// ステート更新
 	if (_currentState) {
 		auto nextState = _currentState->Update(this);
 		if (nextState) {
@@ -515,4 +527,105 @@ void Enemy::LoadEnemyModel()
 
 	// 複製したモデルをanimManagerに設定
 	_animManager.SetModelHandle(dupHandle);
+}
+
+// 索敵タイマーの更新
+void Enemy::UpdateSearchTimer()
+{
+	_searchTimer++;
+	if (_searchTimer >= SEACH_INTERVAL)
+	{
+		_searchTimer = 0;
+	}
+}
+
+
+
+
+// 角度差を-PI~+PIの範囲に正規化
+float Enemy::NormalizeAngleDiff(float fAngleDiff)
+{
+	while (fAngleDiff <= DX_PI_F)
+	{
+		fAngleDiff += DX_TWO_PI_F;
+	}
+	while (fAngleDiff > -DX_PI_F)
+	{
+		fAngleDiff -= DX_TWO_PI_F;
+	}
+	return fAngleDiff;
+}
+
+// 目標角度に向かって滑らかに回転
+bool Enemy::SmoothTurnToAngle(float fTargetAngle, float fTurnSpeedDig)
+{
+	// 現在の角度を計算
+	VECTOR vCurrentDir = GetDir();
+	float currentAngle = atan2f(vCurrentDir.x, vCurrentDir.z);
+
+	// 角度差を計算(-PI ~ +PI の範囲に収める)
+	float diffAngle = NormalizeAngleDiff(fTargetAngle - currentAngle);
+
+	// 旋回速度の制限(ラジアン変換)
+	float fTurnSpeedRad = fTurnSpeedDig * DEGREE_TO_RADIAN;
+
+	// 目標角度に到達したかチェック
+	constexpr float ANGLE_THRESHOLD = 0.01f; // 到達判定の閾値(ラジアン)
+	if (fabs(diffAngle) < ANGLE_THRESHOLD)
+	{
+		// 目標角度に正確に合わせる
+		VECTOR vNewDir = VGet(sinf(fTargetAngle), 0.0f, cosf(fTargetAngle));
+		SetDir(vNewDir);
+		return true;// 到達
+	}
+
+	// まだ目標角度に到達していないので回転を続ける
+	// 差が速度制限を超えていたら、速度分だけ回転
+	if(diffAngle > fTurnSpeedRad)
+	{
+		diffAngle = fTurnSpeedRad;
+	}
+	else if(diffAngle < -fTurnSpeedRad)
+	{
+		diffAngle = -fTurnSpeedRad;
+	}
+
+	// 新しい向きベクトルを計算して設定
+	float newAngle = currentAngle + diffAngle;
+	VECTOR vNewDir = VGet(sinf(newAngle), 0.0f, cosf(newAngle));
+	SetDir(vNewDir);
+
+	return false;// 未到達
+}
+
+// 目標ベクトルに向かって滑らかに回転
+bool Enemy::SmoothTurnToDirection(VECTOR vTargetDir, float fTurnSpeedDeg)
+{
+	// Y成分を無視してXZ平面で正規化
+	VECTOR vTargetDirXZ = vTargetDir;
+	vTargetDirXZ.y = 0.0f;
+
+	float length = VSize(vTargetDirXZ);
+	if (length < 0.001f)
+	{
+		return true;// ほぼ0ベクトルなら処理しない
+	}
+
+	vTargetDirXZ = VNorm(vTargetDirXZ);
+
+	// 目標角度を計算
+	float targetAngle = atan2f(vTargetDirXZ.x, vTargetDirXZ.z);
+
+	// 角度回転処理を呼び出し
+	return SmoothTurnToAngle(targetAngle, fTurnSpeedDeg);
+}
+
+// 目標位置に向かって滑らかに回転
+bool Enemy::SmoothTurnToPosition(VECTOR vTargetPos, float fTurnSpeedDeg)
+{
+	// 現在位置から目標位置へのベクトルを計算
+	VECTOR vToTarget = VSub(vTargetPos, GetPos());
+
+	// 方向ベクトルに変換して回転
+	return SmoothTurnToDirection(vToTarget, fTurnSpeedDeg);
 }

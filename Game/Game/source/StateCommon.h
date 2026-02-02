@@ -17,6 +17,10 @@ namespace Common
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::DAMAGE; }// 優先度高め
 	};
 
+
+
+
+
 	// 死亡
 	class Dead : public EnemyState
 	{
@@ -28,6 +32,10 @@ namespace Common
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::TOP; }// 最優先
 	};
 
+
+
+
+
 	// スタン
 	class Stun : public EnemyState
 	{
@@ -38,6 +46,10 @@ namespace Common
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::TOP; }// 最優先
 	};
 
+
+
+
+
 	// ダウン
 	class Down : public EnemyState
 	{
@@ -46,6 +58,10 @@ namespace Common
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Common:Down"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::TOP; }// 最優先
+
+	private:
+		VECTOR _vKnockbackDir;// ノックバック方向
+		float _fKnockbackSpeed;// ノックバック速度
 	};
 }
 
