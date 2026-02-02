@@ -1,5 +1,6 @@
 #pragma once
 #include "appframe.h"
+#include "AbilityBase.h"  
 
 class AbilitySelectScreen
 {
@@ -13,10 +14,20 @@ public:
 	bool Render();
 
 	// 選択関係関数
+	void SelectScreenByInput();		// 入力による画面表示
 	void SelectionByInput();		// 入力による選択処理
 	void SwitchAbilityBySelect();	// 選択されたアビリティに切り替え処理
 	void SelectRender();			// 選択要素の表示
 	void SelectFrameRender();		// 選択画面表示
+	void ResetSelection();			// 選択をリセットする関数を追加
+
+	// ゲッターセッター
+	ABILITY_TYPE GetSelectedAbility()const	// 選択されたアビリティ取得
+	{
+		return ConvertSelectionToAbility(_iSelectedAbility);
+	}
+	int GetSelectedAbilityIndex()const { return _iSelectedAbility; }	// 選択されたアビリティ番号取得
+	bool GetIsSelectComplete()const{ return _bIsSelectComplete; }		// 選択完了フラグ取得
 
 	// 入力状態を設定する
 	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
@@ -40,6 +51,7 @@ protected:
 	int _iCurrentSelection;		// 現在選択中のアビリティ
 	int _iSelectedAbility;		// 決定されたアビリティ
 	bool _bIsSelectComplete;	// 選択完了フラグ
+	bool _bIsScreenActive;		// 選択画面表示フラグ
 
 	// 選択カーソル用
 	int _iCursorCount;

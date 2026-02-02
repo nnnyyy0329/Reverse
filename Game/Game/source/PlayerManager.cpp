@@ -34,7 +34,7 @@ bool PlayerManager::Terminate()
 bool PlayerManager::Process()
 {
 	// 入力によるプレイヤー切り替え
-	SwitchPlayerByInput();
+	//SwitchPlayerByInput();
 
 	// エネルギーによるプレイヤー切り替え
 	SwitchPlayerByEenrgy();
@@ -102,6 +102,45 @@ void PlayerManager:: SwitchPlayerByInput()
 	}
 }
 
+// アビリティによるプレイヤー切り替え
+void PlayerManager:: SwitchPlayerByAbility(ABILITY_TYPE ability)
+{
+	// 切り替え対象プレイヤータイプ
+	PLAYER_TYPE targetType = PLAYER_TYPE::NONE;
+
+	// アビリティに応じてプレイヤー切り替え
+	switch(ability)
+	{
+		case ABILITY_TYPE::SURFACE_PLAYER: // 表プレイヤー
+		{
+			targetType = PLAYER_TYPE::SURFACE;
+			break;
+		}
+
+		case ABILITY_TYPE::INTERIOR_PLAYER: // 裏プレイヤー
+		{
+			targetType = PLAYER_TYPE::INTERIOR;
+			break;
+		}
+
+		case ABILITY_TYPE::BULLET_PLAYER: // 弾プレイヤー
+		{
+			targetType = PLAYER_TYPE::BULLET;
+			break;
+		}
+
+		default:
+			break;
+	}
+
+	// 切り替え対象があるなら
+	if(targetType != PLAYER_TYPE::NONE)
+	{
+		// プレイヤー切り替え
+		SwitchPlayer(targetType);
+	}
+}
+
 // エネルギーによるプレイヤー切り替え
 void PlayerManager:: SwitchPlayerByEenrgy()
 {
@@ -131,7 +170,6 @@ void PlayerManager::SwitchPlayer(PLAYER_TYPE type)
 
 	// プレイヤーを切り替え
 	_activePlayer = newPlayer;		// 新しいアクティブプレイヤーに設定
-	//_activePlayer->Initialize();	// 新しいプレイヤーを初期化
 	_activePlayerType = type;		// アクティブプレイヤータイプを更新
 
 	// 状態の引き継ぎ

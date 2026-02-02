@@ -3,6 +3,7 @@
 #pragma once
 #include "appframe.h"
 #include "PlayerBase.h"
+#include "AbilitySelectScreen.h"
 
 // プレイヤータイプ列挙型
 enum class PLAYER_TYPE
@@ -28,6 +29,7 @@ public:
 	// プレイヤー管理
 	bool RegisterPlayer(PLAYER_TYPE type, std::shared_ptr<PlayerBase> player);	// プレイヤーの登録関数
 	void SwitchPlayerByInput();													// 入力によるプレイヤー切り替え
+	void SwitchPlayerByAbility(ABILITY_TYPE ability);							// アビリティによるプレイヤー切り替え
 	void SwitchPlayerByEenrgy();												// エネルギーによるプレイヤー切り替え
 	void SwitchPlayer(PLAYER_TYPE type);										// プレイヤー切り替え関数
 	void EnableStateTransfer(bool enable) { _bEnableStateTransfer = enable; }	// 状態の引き継ぎ設定

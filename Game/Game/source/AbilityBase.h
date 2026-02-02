@@ -3,12 +3,27 @@
 #pragma once
 #include "appframe.h"
 
-// 能力の種類
+// 能力タイプの定義
 enum class ABILITY_TYPE
 {
 	NONE,
-	_EOT_,
+	SURFACE_PLAYER,    // 表プレイヤー
+	INTERIOR_PLAYER,   // 裏プレイヤー
+	BULLET_PLAYER,     // 弾プレイヤー
+	_EOT_
 };
+
+// 能力選択から実際の能力タイプへの変換
+inline ABILITY_TYPE ConvertSelectionToAbility(int selection)
+{
+	switch(selection)
+	{
+		case 0: return ABILITY_TYPE::SURFACE_PLAYER;
+		case 1: return ABILITY_TYPE::INTERIOR_PLAYER;
+		case 2: return ABILITY_TYPE::BULLET_PLAYER;
+		default: return ABILITY_TYPE::NONE;
+	}
+}
 
 class AbilityBase
 {
@@ -22,7 +37,7 @@ public:
 	virtual bool	Render();		// 描画
 
 	// ゲッターセッター
-	ABILITY_TYPE GetAbilityType() const { return _eAbilityType; }
+
 
 protected:
 	ABILITY_TYPE _eAbilityType;

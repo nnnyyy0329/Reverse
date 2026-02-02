@@ -63,6 +63,7 @@ protected:
 	std::shared_ptr<DebugCamera>		_debugCamera;			// デバッグカメラ
 	//std::shared_ptr<DodgeSystem>		_dodgeSystem;			// 回避システム
 	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;	// 能力選択画面
+	std::shared_ptr<Item>               _item;                  //　アイテム
 
 	// 管理関連
 	std::shared_ptr<PlayerManager>		_playerManager;			// プレイヤーマネージャー
@@ -85,11 +86,6 @@ protected:
 
 	// ベクターコンテナ
 	std::vector<LightInfo>	_lights;	// 生成されたライトを管理
-
-	// のうりょくせんたくがめんよう
-	bool _isUseDebugScreen;
-
-	std::shared_ptr<Item>               _item;                  //　アイテム
 
 private:
 	void CheckCollisionCharaMap	(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定

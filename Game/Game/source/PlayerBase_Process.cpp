@@ -2,11 +2,21 @@
 
 #include "PlayerBase.h"
 
+namespace HitConfig
+{
+	const float HIT_SPEED = 5.0f;	// 被弾時の吹き飛び速度
+	const float HIT_DECAY = 0.9f;	// 被弾時の吹き飛び減衰率
+	const float HIT_TIME = 15.0f;	// 被弾時間
+}
+
 // 共通関数呼び出し😊
 void PlayerBase::CallProcess()
 {
 	// プレイヤー移動処理
 	ProcessMovePlayer();
+
+	// 被弾処理
+	ProcessHit();
 
 	// ステータスに応じたアニメーション処理
 	ProcessStatusAnimation();
@@ -27,10 +37,10 @@ void PlayerBase::ProcessMovePlayer()
 	// 攻撃中は移動入力を受け付けない
 	if(!IsAttacking())
 	{
-		if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
+		/*if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
 		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
 		if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
-		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
+		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }*/
 		
 		// しゃがみ中かどうかで移動速度を変える
 		if(_bIsCrouching)
@@ -278,6 +288,46 @@ void PlayerBase::ProcessCollisionPos()
 	{
 		_vCollisionTop = VAdd(modelPos, VGet(0, 35.0f, 0));
 		_vCollisionBottom = VAdd(modelPos, VGet(0, 5.0f, 0));
+	}
+}
+
+// 被弾処理
+void PlayerBase::ProcessHit()
+{
+	if(_ePlayerStatus != PLAYER_STATUS::HIT){ return; }	// 被弾状態でない場合は処理しない
+
+	_fHitTime -= 1.0f;	// 被弾時間を減らす
+
+	// 被弾時間が終了したら通常状態に戻る
+	if(_fHitTime <= 0.0f)
+	{
+		_ePlayerStatus = PLAYER_STATUS::WAIT;
+		_fHitSpeed = 0.0f;
+		_vHitDir = VGet(0, 0, 0);
+		return;
+	}
+
+	// 吹き飛び処理
+	if(_fHitSpeed > 0.0f)
+	{
+		// のけぞり方向に移動
+		_vPos = VAdd(_vPos, VScale(_vHitDir, _fHitSpeed));
+
+		// 吹き飛び速度減衰
+		_fHitSpeed *= HitConfig::HIT_DECAY;
+
+		// 速度が一定以下になったら0にする
+		if(_fHitSpeed < 0.1f)
+		{
+			_fHitSpeed = 0.0f;
+		}
+	}
+
+	// モデル位置更新
+	AnimManager* animManager = GetAnimManager();
+	if(animManager != nullptr)
+	{
+		MV1SetPosition(animManager->GetModelHandle(), _vPos);
 	}
 }
 

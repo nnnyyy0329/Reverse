@@ -2,9 +2,9 @@
 
 namespace
 {
-	const int MIN_SELECT = 0;
-	const int MAX_SELECT = 2;
-	const int BLINK_SPEED = 15;
+	const int MIN_SELECT = 0;	// 最小選択肢
+	const int MAX_SELECT = 2;	// 最大選択肢
+	const int BLINK_SPEED = 15;	// 点滅速度
 }
 
 AbilitySelectScreen::AbilitySelectScreen()
@@ -17,6 +17,7 @@ AbilitySelectScreen::AbilitySelectScreen()
 	_iCurrentSelection = 1;		// 現在選択中のアビリティ
 	_iSelectedAbility = -1;		// 決定されたアビリティ
 	_bIsSelectComplete = false;	// 選択完了フラグ
+	_bIsScreenActive = false;	// 選択画面表示フラグ
 
 	// カーソル選択用
 	_iCursorCount = 0;		// 点滅用カウンター
@@ -43,6 +44,9 @@ bool AbilitySelectScreen::Process()
 	// このモードより下のレイヤーはProcess()を呼ばない
 	//ModeServer::GetInstance()->SkipProcessUnderLayer();
 
+	// 入力による画面表示
+	SelectScreenByInput();
+
 	// 入力による選択処理
 	SelectionByInput();
 
@@ -51,6 +55,8 @@ bool AbilitySelectScreen::Process()
 
 bool AbilitySelectScreen::Render()
 {
+	if(!_bIsScreenActive){ return false; }
+
 	// 選択要素の表示
 	SelectRender();
 
@@ -60,10 +66,20 @@ bool AbilitySelectScreen::Render()
 	return true;
 }
 
+// 入力による画面表示
+void AbilitySelectScreen::SelectScreenByInput()
+{
+	if(_trg & PAD_INPUT_8)
+	{
+		_bIsScreenActive = !_bIsScreenActive;
+	}
+}
+
 // 入力による選択処理
 void AbilitySelectScreen::SelectionByInput()
 {
-	if(_bIsSelectComplete){ return; }
+	if(_bIsSelectComplete){ return; }	// 選択完了していたら処理しない
+	if(!_bIsScreenActive){ return; }	// 選択画面が表示されていなかったら処理しない
 
 	// 左キーが押されたら
 	if(_trg & PAD_INPUT_LEFT)
@@ -94,8 +110,9 @@ void AbilitySelectScreen::SelectionByInput()
 	// Zキーで決定
 	if(_trg & PAD_INPUT_1)
 	{
-		_iSelectedAbility = _iCurrentSelection;
+		_iSelectedAbility = _iCurrentSelection;	// 選択されたアビリティを保存
 		_bIsSelectComplete = true;				// 選択完了
+		_bIsScreenActive = false;				// 選択画面非表示
 	}
 
 	// 点滅カウンターを進める
@@ -188,4 +205,11 @@ void AbilitySelectScreen::SelectFrameRender()
 		// 選択完了時の表示
 		DrawString(100, 100, "アビリティが選択されました！", GetColor(0, 55, 0));
 	}
+}
+
+// 選択をリセットする関数
+void AbilitySelectScreen::ResetSelection()
+{
+	_bIsSelectComplete = false;
+	_iSelectedAbility = -1;
 }

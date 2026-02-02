@@ -89,7 +89,7 @@
       <Filter>GameObject\CharaBase\PlayerBase\Surface</Filter>
     </ClCompile>
     <ClCompile Include="source\StageBase.cpp">
-      <Filter>Stage</Filter>
+      <Filter>Mode\Load\Stage</Filter>
     </ClCompile>
     <ClCompile Include="source\MenuItemBase.cpp" />
     <ClCompile Include="source\AnimManager.cpp" />
@@ -213,7 +213,7 @@
       <Filter>GameObject\CharaBase\PlayerBase\Surface</Filter>
     </ClInclude>
     <ClInclude Include="source\StageBase.h">
-      <Filter>Stage</Filter>
+      <Filter>Mode\Load\Stage</Filter>
     </ClInclude>
     <ClInclude Include="source\AnimManager.h" />
     <ClInclude Include="source\Item.h">
@@ -284,9 +284,6 @@
     <Filter Include="Mode\Load">
       <UniqueIdentifier>{35198714-23c1-46cf-8a55-86d69483f8d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Stage">
-      <UniqueIdentifier>{f51f6167-8088-48fb-bc30-d4d31501d52c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObject\CharaBase\Item">
       <UniqueIdentifier>{cc558430-6e86-44d5-adb4-dee6afa34d11}</UniqueIdentifier>
     </Filter>
@@ -301,6 +298,9 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\PlayerBase\Bullet">
       <UniqueIdentifier>{bf0c1bdb-2ada-440d-8231-314cd8dc3e52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Load\Stage">
+      <UniqueIdentifier>{f51f6167-8088-48fb-bc30-d4d31501d52c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

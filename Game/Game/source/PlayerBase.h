@@ -237,6 +237,12 @@ protected:
 	bool _bCanCombo;	// コンボ可能フラグ
 	int _iComboCount;	// コンボカウント
 
+	// 被弾情報
+	VECTOR _vHitDir;		// 被弾方向
+	float _fHitSpeed;		// 被弾速度
+	float _fHitSpeedDecay;	// 被弾速度減衰
+	float _fHitTime;		// 被弾時間
+
 	// カメラ角度
 	float _cameraAngle;
 };

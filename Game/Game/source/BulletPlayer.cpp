@@ -93,16 +93,16 @@ PlayerAnimation BulletPlayer::GetPlayerAnimation()
 	// 裏プレイヤー用のアニメーション設定
 	PlayerAnimation animation;
 
-	animation.wait			= "";
-	animation.walk			= "";
-	animation.run			= "";
-	animation.jumpUp		= "jump_up";
-	animation.jumpDown		= "jump_down";
-	animation.crouchWait	= "crouch_idle";
-	animation.crouchWalk	= "crouch";
-	animation.hit			= "";
-	animation.dodge			= "dodge";
-	animation.death			= "";
+	animation.wait = "player_idle_01";
+	animation.walk = "player_walk_01";
+	animation.run = "player_jog_01";
+	animation.jumpUp = "jump_up";
+	animation.jumpDown = "jump_down";
+	animation.crouchWait = "crouch_idle";
+	animation.crouchWalk = "crouch";
+	animation.hit = "player_damage_00";
+	animation.dodge = "dodge";
+	animation.death = "player_dead_00";
 
 	return animation;
 }

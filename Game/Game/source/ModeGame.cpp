@@ -106,7 +106,6 @@ bool ModeGame::Initialize()
 	{
 		_abilitySelectScreen = std::make_shared<AbilitySelectScreen>();
 		_abilitySelectScreen->Initialize();
-		_isUseDebugScreen = false;
 	}
 
 	// UI初期化
@@ -181,13 +180,11 @@ bool ModeGame::Process()
 
 
 	// 能力選択画面のデバッグ関数
-	if(trg & PAD_INPUT_8)
+	if(_abilitySelectScreen && _abilitySelectScreen->GetIsSelectComplete())
 	{
-		_isUseDebugScreen = !_isUseDebugScreen;
-	}
-	if(_isUseDebugScreen)
-	{
-		_abilitySelectScreen->Process();
+		ABILITY_TYPE selectedAbility = _abilitySelectScreen->GetSelectedAbility();
+		_playerManager->SwitchPlayerByAbility(selectedAbility);
+		_abilitySelectScreen->ResetSelection(); // 選択状態をリセット
 	}
 
 
@@ -232,6 +229,7 @@ bool ModeGame::Process()
 		//_dodgeSystem->Process();
 		_energyUI->Process();
 		_playerLifeBarUI->Process();
+		_abilitySelectScreen->Process();
 	}
 
 	// ライト更新
@@ -325,13 +323,7 @@ bool ModeGame::Render()
 		_energyUI->Render();
 		_playerLifeBarUI->Render();
 		_item->Render();
-
-
-		// のうりょk選択画面
-		if(_isUseDebugScreen)
-		{
-			_abilitySelectScreen->Render();
-		}
+		_abilitySelectScreen->Render();
 	}
 
 	// コリジョンの描画
