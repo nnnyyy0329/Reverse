@@ -316,7 +316,6 @@ bool ModeGame::Render()
 		_bulletManager->Render();
 		_energyUI->Render();
 		_playerLifeBarUI->Render();
-		_item->Render();
 		_abilitySelectScreen->Render();
 	}
 
