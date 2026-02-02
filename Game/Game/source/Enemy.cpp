@@ -148,6 +148,7 @@ void Enemy::DebugRender()
 			SetFontSize(size);
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  life   = %5.2f / %5.2f", _fLife, _enemyParam.fMaxLife); y += size;
+			DrawFormatString(x, y, GetColor(255, 255, 0), "  _damageCnt  = %d", _damageCnt); y += size;
 
 			// 状態名
 			// ステートから名前を取得
@@ -493,6 +494,21 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 
 	// 生存時:通常ダメージ
 	_damageCnt++;// ダメージ回数をカウントアップ
+
+	// Down回数に達したら直接Downステートへ遷移
+	if (_damageCnt >= _enemyParam.damageToDown)
+	{
+		ChangeState(std::make_shared<Common::Down>());
+		return;
+	}
+
+	// 中断されないアクション中はDamageステートへ遷移しない
+	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::HIGH)
+	{
+		// カウントだけ増やす
+		return;
+	}
+
 	// ダメージステートへ遷移
 	ChangeState(std::make_shared<Common::Damage>());
 }

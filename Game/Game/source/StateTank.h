@@ -174,7 +174,6 @@ namespace Tank
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		void Exit(Enemy* owner) override;
 		const char* GetName() const override { return "Tank:Attack"; }
-		bool CanChangeState() override;
 	};
 
 

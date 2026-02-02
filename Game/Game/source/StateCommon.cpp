@@ -2,7 +2,7 @@
 #include "Enemy.h"
 
 namespace {
-	constexpr auto DOWN_TIME = 60.0f;// 攻撃を受けた後のダウン時間
+	constexpr auto DOWN_TIME = 180.0f;// 攻撃を受けた後のダウン時間
 	constexpr auto STUN_TIME = 180.0f;// スタン時間
 	constexpr auto DEAD_TIME = 60.0f;// 死亡アニメーション時間
 

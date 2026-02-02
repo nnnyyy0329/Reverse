@@ -7,7 +7,7 @@
 
 namespace {
 	constexpr auto DEFAULT_ENEMY_SPEED = 2.0f;// “G‚ÌˆÚ“®‘¬“x
-	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 100.0f;// “G‚ÌÅ‘å‘Ì—Í
+	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 10000.0f;// “G‚ÌÅ‘å‘Ì—Í
 
 	// Melee
 	constexpr auto MELEE_VISION_RANGE = 250.0f;// õ“G‹——£
@@ -127,6 +127,7 @@ public:
 				param.fIdleTime = TANK_IDLE_TIME;
 				param.fMoveTime = TANK_MOVE_TIME;
 				param.fDetectTime = TANK_DETECT_TIME;
+				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 				enemy->SetEnemyParam(param);
 
 				// ƒnƒ“ƒhƒ‰‚Ìİ’è
