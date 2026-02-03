@@ -109,11 +109,12 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
+	virtual  void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo);	// 被ダメージ処理
+	//void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
 
 	// 共通初期化
 	void InitializePlayerConfig(PlayerConfig& config);	// プレイヤー設定初期化
-	void InitializeHitConfig();							// 被弾設定初期化
+	void InitializeHitConfig(const VECTOR& attackDirection);	// 被弾設定初期化
 
 	// 共通処理
 	void CallProcess();				// Process呼び出し用関数

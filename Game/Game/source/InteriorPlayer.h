@@ -14,7 +14,7 @@ public:
 	virtual bool Process();	
 	virtual bool Render();	
 	virtual void DebugRender()override;									// デバッグ描画
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo) override;	// 被ダメージ処理
 
 	// 純粋仮想関数のオーバーライド
 	virtual PlayerConfig GetPlayerConfig() override;		// 設定を取得

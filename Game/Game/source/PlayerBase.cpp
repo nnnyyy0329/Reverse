@@ -91,12 +91,9 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 }
 
 // 被弾設定初期化
-void PlayerBase::InitializeHitConfig()
+void PlayerBase::InitializeHitConfig(const VECTOR& attackDirection)
 {
-	// 攻撃コリジョン情報の取得
-	ATTACK_COLLISION attackCol = GetAttackCollision();
-
-	_vHitDir = VGet(1, 0, 0);				// 被弾方向
+	_vHitDir = VNorm(attackDirection);		// 被弾方向
 	_fHitSpeed = HitConfig::HIT_SPEED;		// 被弾速度
 	_fHitSpeedDecay = HitConfig::HIT_DECAY;	// 被弾速度減衰率
 	_fHitTime = HitConfig::HIT_TIME;		// 被弾時間
@@ -135,16 +132,28 @@ bool PlayerBase::Render()
 }
 
 // 被ダメージ処理
-void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
 {
-	CharaBase::ApplyDamage(fDamage, eType);
+	CharaBase::ApplyDamage(fDamage, eType, attackInfo);
 
 	// 被弾状態に変更
-  	_ePlayerStatus = PLAYER_STATUS::HIT;
+	_ePlayerStatus = PLAYER_STATUS::HIT;
 
-	// 被弾設定初期化
-	InitializeHitConfig();
+	// 攻撃方向を使って被弾設定初期化
+	InitializeHitConfig(attackInfo.attackDir);
 }
+
+//// 被ダメージ処理
+//void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+//{
+//	CharaBase::ApplyDamage(fDamage, eType);
+//
+//	// 被弾状態に変更
+//  	_ePlayerStatus = PLAYER_STATUS::HIT;
+//
+//	// 被弾設定初期化
+//	InitializeHitConfig();
+//}
 
 // カメラ角度に合わせて移動方向を変換する
 VECTOR PlayerBase::TransformMoveDirection(VECTOR move, float cameraAngle)

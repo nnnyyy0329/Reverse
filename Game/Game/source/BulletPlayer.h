@@ -14,7 +14,7 @@ public:
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
 	virtual void DebugRender()override;									// デバッグ描画
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo) override;	// 被ダメージ処理
 
 	void ShootByInput();	// 入力確認
 	void ShootBullet();		// 弾の発射

@@ -55,9 +55,9 @@ void BulletPlayer::DebugRender()
 }
 
 // 被ダメージ処理
-void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
 {
-	PlayerBase::ApplyDamage(fDamage, eType);
+	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
 }
 
 // 弾プレイヤーの情報設定

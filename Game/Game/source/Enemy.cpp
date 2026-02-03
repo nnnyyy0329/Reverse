@@ -446,7 +446,7 @@ void Enemy::StopAttack()
 	_attackCollision->ProcessStopAttack();
 }
 
-void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
 { 
 	if(_fLife <= 0.0f) return;
 

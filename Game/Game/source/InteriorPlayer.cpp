@@ -65,9 +65,9 @@ void InteriorPlayer::DebugRender()
 }
 
 // 被ダメージ処理
-void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
 {
-	PlayerBase::ApplyDamage(fDamage, eType);
+	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
 }
 
 // 裏プレイヤーの情報設定

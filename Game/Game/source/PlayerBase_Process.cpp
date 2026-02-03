@@ -32,10 +32,10 @@ void PlayerBase::ProcessMovePlayer()
 
 	// 移動処理
 	{
-		/*if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
+		if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
 		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
 		if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
-		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }*/
+		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
 		
 		// しゃがみ中かどうかで移動速度を変える
 		if(_bIsCrouching)

@@ -357,11 +357,11 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 
 		
 		// ダメージ処理
-		float damage = attack->GetDamage();		// ダメージ取得
-		auto beforeLife = chara->GetLife();		// ヒット前のライフ取得
-		chara->ApplyDamage(damage, ownerType);	// ターゲットにダメージを与える
-		auto afterLife = chara->GetLife();		// ヒット後のライフ取得
-		damage = beforeLife - afterLife;		// 実際に与えたダメージを計算
+		float damage = attack->GetDamage();			// ダメージ取得
+		auto beforeLife = chara->GetLife();			// ヒット前のライフ取得
+		chara->ApplyDamage(damage, ownerType, col);	// ターゲットにダメージを与える
+		auto afterLife = chara->GetLife();			// ヒット後のライフ取得
+		damage = beforeLife - afterLife;			// 実際に与えたダメージを計算
 
 		// ダメージをエネルギーに変換
 		ConvertEnergy(attack, damage);									

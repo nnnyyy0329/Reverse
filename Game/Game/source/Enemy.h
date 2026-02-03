@@ -50,7 +50,7 @@ public:
 	void StopAttack();// 攻撃の停止
 
 	// 被ダメージ処理
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo) override;
 	void ResetDamageCount() { _damageCnt = 0; }// ダメージカウントリセット
 
 	// 死亡判定

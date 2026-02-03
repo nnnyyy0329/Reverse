@@ -64,7 +64,7 @@ void CharaBase::CollisionRender()
 	);
 }
 
-void CharaBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+void CharaBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
 {
 	if (_fLife <= 0.0f) return;	// 体力が0なら無効
 
@@ -72,3 +72,11 @@ void CharaBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
 
 	if (_fLife < 0.0f) _fLife = 0.0f;	// 体力がマイナスにならないようにする
 }
+//void CharaBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+//{
+//	if (_fLife <= 0.0f) return;	// 体力が0なら無効
+//
+//	_fLife -= fDamage;
+//
+//	if (_fLife < 0.0f) _fLife = 0.0f;	// 体力がマイナスにならないようにする
+//}

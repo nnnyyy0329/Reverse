@@ -63,9 +63,9 @@ void SurfacePlayer::DebugRender()
 }
 
 // 被ダメージ処理
-void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
 {
-	PlayerBase::ApplyDamage(fDamage, eType);
+	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
 }
 
 // 表プレイヤーの情報設定
