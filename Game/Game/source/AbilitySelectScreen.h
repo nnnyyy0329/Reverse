@@ -16,7 +16,6 @@ public:
 	// 選択関係関数
 	void SelectScreenByInput();		// 入力による画面表示
 	void SelectionByInput();		// 入力による選択処理
-	void SwitchAbilityBySelect();	// 選択されたアビリティに切り替え処理
 	void SelectRender();			// 選択要素の表示
 	void SelectFrameRender();		// 選択画面表示
 	void ResetSelection();			// 選択をリセットする関数を追加

@@ -90,7 +90,7 @@ void EnergyUI::EnergyGaugeRender(float ratio)
 {
 	if(ratio <= 0.0f){ return; }	// エネルギーが0以下の場合は描画しない
 
-	// 元画像のサイズを取得
+	// 画像のサイズを取得
 	int graphW, graphH;
 	GetGraphSize(_iEnergyHandle1, &graphW, &graphH);
 

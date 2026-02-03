@@ -1,5 +1,13 @@
 #include "AbilitySelectScreen.h"
 
+namespace Render
+{
+	const int SELECT_DRAW_X = 256;
+	const int SELECT_DRAW_Y = 850;
+	const int DRAW_OFFSET_X = 10;
+	const int DRAW_OFFSET_Y = 0;
+}
+
 namespace
 {
 	const int MIN_SELECT = 0;	// 最小選択肢
@@ -41,9 +49,6 @@ bool AbilitySelectScreen::Terminate()
 
 bool AbilitySelectScreen::Process()
 {
-	// このモードより下のレイヤーはProcess()を呼ばない
-	//ModeServer::GetInstance()->SkipProcessUnderLayer();
-
 	// 入力による画面表示
 	SelectScreenByInput();
 
@@ -119,33 +124,6 @@ void AbilitySelectScreen::SelectionByInput()
 	_iCursorCount++;
 }
 
-// 選択されたアビリティに切り替え処理
-void AbilitySelectScreen::SwitchAbilityBySelect()
-{
-	switch(_iSelectedAbility)
-	{
-		case 0:
-		{
-			break;
-		}
-
-		case 1:
-		{
-			break;
-		}
-
-		case 2:
-		{
-			break;
-		}
-
-		default:
-		{
-			break;
-		}
-	}
-}
-
 // 選択要素の表示
 void AbilitySelectScreen::SelectRender()
 {
@@ -159,9 +137,17 @@ void AbilitySelectScreen::SelectRender()
 	//DrawBox(x, y, x + w, y + h, GetColor(255, 255, 255), TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	// アビリティ画像の座標
-	int selectX[3] = { 0, 640, 1280 };
-	int selectY = 0;
+	// 画像のサイズを取得
+	int graphW, graphH;
+	GetGraphSize(_iHandle1, &graphW, &graphH);
+
+	int selectX[3] = // 表示するX座標
+	{ 
+		Render::SELECT_DRAW_X,
+		Render::SELECT_DRAW_X + graphW + Render::DRAW_OFFSET_X,
+		Render::SELECT_DRAW_X + graphW * 2 + Render::DRAW_OFFSET_X * 2
+	};
+	int selectY = Render::SELECT_DRAW_Y; // 表示するY座標
 
 	// アビリティ画像を描画
 	DrawGraph(selectX[0], selectY, _iHandle1, TRUE);
@@ -180,17 +166,25 @@ void AbilitySelectScreen::SelectFrameRender()
 		// カーソル表示
 		if(_bShowCursor)
 		{
-			// アビリティ画像の座標
-			int selectX[3] = { 0, 640, 1280 };
-			int selectY = 0;
+			// 画像のサイズを取得
+			int graphW, graphH;
+			GetGraphSize(_iHandle1, &graphW, &graphH);
+
+			int selectX[3] = // 表示するX座標
+			{
+				Render::SELECT_DRAW_X,
+				Render::SELECT_DRAW_X + graphW + Render::DRAW_OFFSET_X,
+				Render::SELECT_DRAW_X + graphW * 2 + Render::DRAW_OFFSET_X * 2
+			};			
+			int selectY = Render::SELECT_DRAW_Y;
 
 			// 選択中のアビリティの周りに枠を描画
 			int frameX = selectX[_iCurrentSelection];
 			int frameY = selectY;
 
 			// 枠のサイズ（仮 640x1080）
-			int frameW = 640;
-			int frameH = 1080;
+			int frameW = 128;
+			int frameH = 128;
 
 			// 選択フレームを描画
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
@@ -199,11 +193,6 @@ void AbilitySelectScreen::SelectFrameRender()
 			DrawBox(frameX - 1, frameY - 1, frameX + frameW + 1, frameY + frameH + 1, GetColor(255, 0, 0), TRUE);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
-	}
-	else
-	{
-		// 選択完了時の表示
-		DrawString(100, 100, "アビリティが選択されました！", GetColor(0, 55, 0));
 	}
 }
 

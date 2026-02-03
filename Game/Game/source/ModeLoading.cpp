@@ -50,9 +50,12 @@ bool ModeLoading::Initialize()
 		}
 
 		// 能力選択画面用
-		rs->Register("select1", "res/AbilitySelect/select1.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("select2", "res/AbilitySelect/select2.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("select3", "res/AbilitySelect/select4.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("select1", "res/SelectItem/PowerUpNoneAbility,png.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("select2", "res/SelectItem/MeleeAbility.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("select3", "res/SelectItem/BulletAbility.png", RESOURCE_TYPE::Graph, 1.0f);
+		//rs->Register("select1", "res/AbilitySelect/select1.png", RESOURCE_TYPE::Graph, 1.0f);
+		//rs->Register("select2", "res/AbilitySelect/select2.png", RESOURCE_TYPE::Graph, 1.0f);
+		//rs->Register("select3", "res/AbilitySelect/select4.png", RESOURCE_TYPE::Graph, 1.0f);
 
 		// エネルギーUI用
 		rs->Register("energyFrame", "res/Energy/energy_frame_2.png", RESOURCE_TYPE::Graph, 1.0f);

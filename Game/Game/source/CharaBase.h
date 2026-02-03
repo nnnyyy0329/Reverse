@@ -68,7 +68,6 @@ public:
 
 	// 被ダメージ処理
 	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo);// ここではライフを減らすだけ
-	//virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType);// ここではライフを減らすだけ
 
 protected:
 	// キャラカプセルの当たり判定用
