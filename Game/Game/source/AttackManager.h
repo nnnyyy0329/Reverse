@@ -32,7 +32,7 @@ public:
 	bool Terminate();		// 終了
 	bool Process();			// 更新
 	bool Render();			// 描画
-	void DebugRender();	// デバッグ情報描画
+	void DebugRender();		// デバッグ情報描画
 	void CollisionRender(); // コリジョン描画
 
 	// 攻撃の登録と解除
@@ -40,10 +40,14 @@ public:
 	void UnregisterAttack(std::shared_ptr<AttackBase> attack);											// 攻撃解除
 	void UnregisterAttackByOwner(int ownerId);															// 所有者による攻撃解除
 	void ClearAllAttacks();																				// 全ての攻撃解除
+	void CleanupInvalidAttacks();																		// 無効な攻撃のクリーンアップ
+	bool IsAttackRegistered(std::shared_ptr<AttackBase> attack)const;									// 攻撃が登録されているかチェック
 
-	// 内部処理
-	void CleanupInvalidAttacks();										// 無効な攻撃のクリーンアップ
-	bool IsAttackRegistered(std::shared_ptr<AttackBase> attack)const;	// 攻撃が登録されているかチェック
+	// 回避にヒットした攻撃の登録と解除
+	void RegisterDodgeHitAttack(std::shared_ptr<AttackBase> attack);	// 回避にヒットした攻撃を登録
+	bool IsDodgeHitAttack(std::shared_ptr<AttackBase> attack) const;	// 回避にヒットした攻撃かチェック
+	void ClearDodgeHitAttacks();										// 回避にヒットした攻撃をクリア
+	bool CleanupDodgeHitAttacks();										// 回避にヒットした攻撃のクリーンアップ
 
 	// 攻撃の取得
 	std::vector<std::shared_ptr<AttackBase>>GetAllActiveAttacks()const;									// 全てのアクティブな攻撃を取得
@@ -70,8 +74,10 @@ public:
 	static void DestroyInstance();	// インスタンス破棄
 
 protected:
-	std::vector<ATTACK_INFO> _registeredAttacks;	// 登録された攻撃リスト
-	int _frameCounter;								// フレームカウンタ
+	std::vector<std::weak_ptr<AttackBase>> _dodgeHitAttacks;	// 回避にヒットした攻撃リスト
+	std::vector<ATTACK_INFO> _registeredAttacks;				// 登録された攻撃リスト
+
+	int _frameCounter;	// フレームカウンタ
 
 	// シングルトン用メンバ
 	static AttackManager* _instance;

@@ -215,6 +215,82 @@ bool AttackManager::IsAttackRegistered(std::shared_ptr<AttackBase> attack)const
 	return false;
 }
 
+// 回避にヒットした攻撃を登録
+void AttackManager::RegisterDodgeHitAttack(std::shared_ptr<AttackBase> attack)
+{
+	if(attack == nullptr){ return; }
+
+	// 登録済みなら何もしない
+	if(IsDodgeHitAttack(attack)) { return; }	
+
+	// 回避にヒットした攻撃リストに追加
+	_dodgeHitAttacks.push_back(attack);
+}
+
+// 回避にヒットした攻撃かチェック
+bool AttackManager::IsDodgeHitAttack(std::shared_ptr<AttackBase> attack) const
+{
+	if(attack == nullptr){ return false; }
+
+	// 回避にヒットした攻撃リストを走査
+	for(auto& registeredAttack : _dodgeHitAttacks)
+	{
+		if(!registeredAttack.expired() && registeredAttack.lock() == attack)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// 回避にヒットした攻撃をクリア
+void AttackManager::ClearDodgeHitAttacks()
+{
+	// リストクリア
+	_dodgeHitAttacks.clear();
+}
+
+// 回避にヒットした攻撃のクリーンアップ
+bool AttackManager::CleanupDodgeHitAttacks()
+{
+	// 通常のforループで無効な攻撃を削除
+	for(auto attacks = _dodgeHitAttacks.begin(); attacks != _dodgeHitAttacks.end();)
+	{
+		// 削除フラグ
+		bool shouldRemove = false;	
+
+		// weak_ptrが無効になっているかチェック
+		if(attacks->expired())
+		{
+			shouldRemove = true;
+		}
+		else // 有効な場合
+		{
+			// 攻撃状態をチェック
+			auto attack = attacks->lock();
+
+			// 攻撃状態がINACTIVEなら削除フラグを立てる
+			if(attack->GetAttackState() == ATTACK_STATE::INACTIVE)
+			{
+				shouldRemove = true;
+			}
+		}
+
+		// 削除が必要な場合
+		if(shouldRemove)
+		{
+			// 攻撃を削除
+			attacks = _dodgeHitAttacks.erase(attacks);
+		}
+		else // 削除が不要な場合
+		{
+			// 次の要素へ
+			++attacks;
+		}
+	}
+}
+
 // 全てのアクティブな攻撃を取得
 std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAllActiveAttacks()const
 {
