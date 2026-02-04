@@ -180,6 +180,7 @@
     <ClCompile Include="source\ModeMenu.cpp" />
     <ClCompile Include="source\AbilityBase.cpp" />
     <ClCompile Include="source\AbilityManager.cpp" />
+    <ClCompile Include="source\ModeStageChange.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
     <ClCompile Include="source\PlayerBase_Attack.cpp" />
     <ClCompile Include="source\PlayerBase_Dodge.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="source\ModeMenu.h" />
     <ClInclude Include="source\AbilityBase.h" />
     <ClInclude Include="source\AbilityManager.h" />
+    <ClInclude Include="source\ModeStageChange.h" />
     <ClInclude Include="source\PlayerBase.h" />
     <ClInclude Include="source\PlayerLifeBarUI.h" />
     <ClInclude Include="source\PlayerManager.h" />

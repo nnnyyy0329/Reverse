@@ -14,7 +14,7 @@ namespace Common
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Common:Damage"; }
-		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::DAMAGE; }// 優先度高め
+		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::DAMAGE; }// ダメージ用
 	};
 
 

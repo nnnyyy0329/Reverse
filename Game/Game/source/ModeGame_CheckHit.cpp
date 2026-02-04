@@ -28,18 +28,18 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 
 	// キャラのカプセル半径と高さを取得
 	float capsuleRadius = chara->GetCollisionR();
-	const float constDefaultRadius = 1.0f;
-	if (capsuleRadius <= 0.0f) { capsuleRadius = constDefaultRadius; }
+	//const float constDefaultRadius = 1.0f;
+	//if (capsuleRadius <= 0.0f) { capsuleRadius = constDefaultRadius; }
 
 	float capsuleHeight = chara->GetCollisionHeight();
-	const float constDefaultHeight = 100.0f;
-	if (capsuleHeight <= 0.0f) { capsuleHeight = constDefaultHeight; }
+	//const float constDefaultHeight = 100.0f;
+	//if (capsuleHeight <= 0.0f) { capsuleHeight = constDefaultHeight; }
 
 	// ステップ移動(すり抜け防止)
 	// カプセル半径*2の距離ごとに移動を分割して判定を行う
 	const float stepLength = capsuleRadius * 2.0f;
 
-	// _vPosはキャラの足元座標と定義
+	// _vPosはキャラの足元座標
 	VECTOR vProcessPos = vOldPos;
 
 	// カプセル位置を足元基準で計算
@@ -80,8 +80,8 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 		std::vector<MV1_COLL_RESULT_POLY> floorPolygons;// 床ポリゴンリスト
 
 		// 検出範囲の中心をカプセルの中心に設定
-		const float constDetectionMargin = 50.0f;
-		const float detectionRadius = capsuleRadius + constDetectionMargin;
+		const float constDetectionMargin = 50.0f;// 少し広めに
+		const float detectionRadius = capsuleRadius + constDetectionMargin;// 半径に加算する
 		VECTOR vDetectionCenter = VAdd(vProcessPos, VGet(0.0f, capsuleHeight * 0.5f, 0.0f));
 
 		// 全マップモデルを走査
@@ -423,4 +423,86 @@ bool ModeGame::OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE own
 	}
 
 	return false;
+}
+
+void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
+{
+	if (!player || !_stage) { return; }
+
+	const auto& triggerList = _stage->GetTriggerList();
+	if (triggerList.empty()) { return; }
+
+	// プレイヤーの現在位置を取得
+	VECTOR vCurrentPos = player->GetPos();
+
+	// プレイヤーのカプセル情報を取得
+	float capsuleR = player->GetCollisionR();
+	float capsuleH = player->GetCollisionHeight();
+
+	// カプセル位置を足元基準で計算
+	VECTOR vCapsuleBottom = player->GetCollisionBottom();
+	VECTOR vCapsuleTop = player->GetCollisionTop();
+
+	// カプセルの中心位置を計算
+	VECTOR vCapsuleCenter = VAdd(vCapsuleBottom, VScale(VSub(vCapsuleTop, vCapsuleBottom), 0.5f));
+
+	// 検出範囲の中心をカプセルの中心に設定
+	const float constDetectionMargin = 50.0f;
+	const float detectionRadius = capsuleR + constDetectionMargin;
+
+	// 全てのトリガーを走査
+	for (const auto& trigger : triggerList)
+	{
+		if (trigger.modelHandle <= 0 || trigger.collisionFrame == -1) { continue; }
+
+		// 球範囲内にあるモデルのポリゴンを取得
+		MV1_COLL_RESULT_POLY_DIM polyResult = MV1CollCheck_Sphere(
+			trigger.modelHandle,
+			trigger.collisionFrame,
+			vCapsuleCenter,
+			detectionRadius
+		);
+
+		// ポリゴンが検出された
+		if (polyResult.HitNum > 0)
+		{
+			bool hasHit = false;
+
+			// 全てのポリゴンとカプセルの当たり判定
+			for (int i = 0; i < polyResult.HitNum; ++i)
+			{
+				const MV1_COLL_RESULT_POLY& poly = polyResult.Dim[i];
+
+				// カプセルと三角形ポリゴンの当たり判定
+				if (HitCheck_Capsule_Triangle(
+					vCapsuleTop, vCapsuleBottom, capsuleR,
+					poly.Position[0], poly.Position[1], poly.Position[2]))
+				{
+					hasHit = true;
+					break; // 一つでもヒットしたループを抜ける
+				}
+			}
+
+			// ポリゴン情報のメモリ解放
+			MV1CollResultPolyDimTerminate(polyResult);
+
+			// トリガーに当たった場合の処理
+			if (hasHit)
+			{
+				// 次のステージ番号を取得
+				int nextStageNum = _stage->GetNextStageNumFromTrigger(trigger.name);
+
+				// ステージ切り替えリクエスト
+				RequestStageChange(nextStageNum);
+
+				return;// 一つのトリガーに当たったら処理を終了
+			}
+		}
+		else
+		{
+			// ポリゴン情報のメモリ解放
+			MV1CollResultPolyDimTerminate(polyResult);
+		}
+	}
+
 }

@@ -34,6 +34,10 @@ namespace Ranged
 		VECTOR _vInitialDir;//Œ©“n‚µŠJn‚ÌŒü‚«
 	};
 
+
+
+
+
 	// ”­Œ©
 	class Detect : public EnemyState
 	{
@@ -42,6 +46,10 @@ namespace Ranged
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Ranged:Detect"; }
 	};
+
+
+
+
 
 	// UŒ‚
 	class Attack : public EnemyState

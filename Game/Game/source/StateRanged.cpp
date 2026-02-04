@@ -121,10 +121,25 @@ namespace Ranged
 	std::shared_ptr<EnemyState> Detect::Update(Enemy* owner) {
 		_fTimer++;
 
-		// 時間経過で
+		// ターゲットが存在するかチェック
+		auto target = owner->GetTarget();
+		if (!target)
+		{
+			// ターゲットがいない場合は待機状態へ
+			owner->SetTargetDetected(false);
+			return std::make_shared<Idle>();
+		}
+
+		// Detect状態中は検出フラグを維持
+		// (UpdateSearchは呼ばれても、ここで強制的にtrueにする)
+		owner->SetTargetDetected(true);
+
+		// 時間経過で攻撃状態へ
 		if (_fTimer >= owner->GetEnemyParam().fDetectTime) {
 			return std::make_shared<Attack>();// 攻撃状態へ
 		}
+
+		return nullptr;
 	}
 
 

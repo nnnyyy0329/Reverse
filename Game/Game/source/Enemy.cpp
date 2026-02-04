@@ -148,6 +148,7 @@ void Enemy::DebugRender()
 			SetFontSize(size);
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  life   = %5.2f / %5.2f", _fLife, _enemyParam.fMaxLife); y += size;
+			DrawFormatString(x, y, GetColor(255, 255, 0), "  _damageCnt  = %d", _damageCnt); y += size;
 
 			// 状態名
 			// ステートから名前を取得
@@ -495,6 +496,21 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 
 	// 生存時:通常ダメージ
 	_damageCnt++;// ダメージ回数をカウントアップ
+
+	// Down回数に達したら直接Downステートへ遷移
+	if (_damageCnt >= _enemyParam.damageToDown)
+	{
+		ChangeState(std::make_shared<Common::Down>());
+		return;
+	}
+
+	// 中断されないアクション中はDamageステートへ遷移しない
+	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::HIGH)
+	{
+		// カウントだけ増やす
+		return;
+	}
+
 	// ダメージステートへ遷移
 	ChangeState(std::make_shared<Common::Damage>());
 }
@@ -556,78 +572,4 @@ float Enemy::NormalizeAngleDiff(float fAngleDiff)
 		fAngleDiff -= DX_TWO_PI_F;
 	}
 	return fAngleDiff;
-}
-
-// 目標角度に向かって滑らかに回転
-bool Enemy::SmoothTurnToAngle(float fTargetAngle, float fTurnSpeedDig)
-{
-	// 現在の角度を計算
-	VECTOR vCurrentDir = GetDir();
-	float currentAngle = atan2f(vCurrentDir.x, vCurrentDir.z);
-
-	// 角度差を計算(-PI ~ +PI の範囲に収める)
-	float diffAngle = NormalizeAngleDiff(fTargetAngle - currentAngle);
-
-	// 旋回速度の制限(ラジアン変換)
-	float fTurnSpeedRad = fTurnSpeedDig * DEGREE_TO_RADIAN;
-
-	// 目標角度に到達したかチェック
-	constexpr float ANGLE_THRESHOLD = 0.01f; // 到達判定の閾値(ラジアン)
-	if (fabs(diffAngle) < ANGLE_THRESHOLD)
-	{
-		// 目標角度に正確に合わせる
-		VECTOR vNewDir = VGet(sinf(fTargetAngle), 0.0f, cosf(fTargetAngle));
-		SetDir(vNewDir);
-		return true;// 到達
-	}
-
-	// まだ目標角度に到達していないので回転を続ける
-	// 差が速度制限を超えていたら、速度分だけ回転
-	if(diffAngle > fTurnSpeedRad)
-	{
-		diffAngle = fTurnSpeedRad;
-	}
-	else if(diffAngle < -fTurnSpeedRad)
-	{
-		diffAngle = -fTurnSpeedRad;
-	}
-
-	// 新しい向きベクトルを計算して設定
-	float newAngle = currentAngle + diffAngle;
-	VECTOR vNewDir = VGet(sinf(newAngle), 0.0f, cosf(newAngle));
-	SetDir(vNewDir);
-
-	return false;// 未到達
-}
-
-// 目標ベクトルに向かって滑らかに回転
-bool Enemy::SmoothTurnToDirection(VECTOR vTargetDir, float fTurnSpeedDeg)
-{
-	// Y成分を無視してXZ平面で正規化
-	VECTOR vTargetDirXZ = vTargetDir;
-	vTargetDirXZ.y = 0.0f;
-
-	float length = VSize(vTargetDirXZ);
-	if (length < 0.001f)
-	{
-		return true;// ほぼ0ベクトルなら処理しない
-	}
-
-	vTargetDirXZ = VNorm(vTargetDirXZ);
-
-	// 目標角度を計算
-	float targetAngle = atan2f(vTargetDirXZ.x, vTargetDirXZ.z);
-
-	// 角度回転処理を呼び出し
-	return SmoothTurnToAngle(targetAngle, fTurnSpeedDeg);
-}
-
-// 目標位置に向かって滑らかに回転
-bool Enemy::SmoothTurnToPosition(VECTOR vTargetPos, float fTurnSpeedDeg)
-{
-	// 現在位置から目標位置へのベクトルを計算
-	VECTOR vToTarget = VSub(vTargetPos, GetPos());
-
-	// 方向ベクトルに変換して回転
-	return SmoothTurnToDirection(vToTarget, fTurnSpeedDeg);
 }

@@ -73,6 +73,7 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	_vCollisionTop = VGet(0.0f, 0.0f, 0.0f);	// 上端
 	_vCollisionBottom = VGet(0.0f, 0.0f, 0.0f);	// 下端
 	_fCollisionR = 20.0f;						// 半径
+	_fCollisionHeight = 60.0f;					// 高さ
 
 	// 表示用オフセット
 	_iDrawSizeOffset = config.drawSizeOffset;	// ずらす大きさ

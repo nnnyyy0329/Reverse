@@ -7,7 +7,7 @@
 
 namespace {
 	constexpr auto DEFAULT_ENEMY_SPEED = 2.0f;// “G‚ÌˆÚ“®‘¬“x
-	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 100.0f;// “G‚ÌÅ‘å‘Ì—Í
+	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 10000.0f;// “G‚ÌÅ‘å‘Ì—Í
 
 	// Melee
 	constexpr auto MELEE_VISION_RANGE = 250.0f;// õ“G‹——£
@@ -36,6 +36,7 @@ namespace {
 	constexpr auto TANK_MOVE_TIME = 120.0f;// Ž©“®ˆÚ“®ŽžŠÔ
 	constexpr auto TANK_DETECT_TIME = 120.0f;// ”­Œ©d’¼
 	constexpr auto TANK_MOVE_SPEED = 1.5f;// ˆÚ“®‘¬“x
+	constexpr auto TANK_DAMAGE_TO_DOWN = 5;// ƒ_ƒEƒ“‚Ü‚Å‚Ì”íƒ_ƒ[ƒW‰ñ”
 }
 
 // “G‚ÌŽí—Þ
@@ -127,15 +128,18 @@ public:
 				param.fIdleTime = TANK_IDLE_TIME;
 				param.fMoveTime = TANK_MOVE_TIME;
 				param.fDetectTime = TANK_DETECT_TIME;
+				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+				param.damageToDown = TANK_DAMAGE_TO_DOWN;
 				enemy->SetEnemyParam(param);
 
 				// ƒnƒ“ƒhƒ‰‚ÌÝ’è
 				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> {
-					// ƒ^[ƒQƒbƒg‚ª‘¶Ý‚·‚ê‚ÎUŒ‚
+					// ƒ^[ƒQƒbƒg‚ª‘¶Ý‚·‚ê‚Î’ÇÕ
 					if (e->GetTarget())
 					{
-						return std::make_shared<Tank::Idle>();
+						return std::make_shared<Tank::Chase>();
 					}
+					// Œ©‚¦‚Ä‚¢‚È‚¯‚ê‚Î‘Ò‹@
 					return std::make_shared<Tank::Idle>();
 				});
 

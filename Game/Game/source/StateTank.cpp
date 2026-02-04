@@ -19,7 +19,7 @@ namespace
 	constexpr auto SECOND_ATTACK_DELAY = 8.0f;// UŒ‚”­¶ƒtƒŒ[ƒ€
 	constexpr auto SECOND_ATTACK_DURATION = 25.0f;// UŒ‚‘±ƒtƒŒ[ƒ€
 	constexpr auto SECOND_ATTACK_RECOVERY = 15.0f;// ŒãŒ„ƒtƒŒ[ƒ€
-	constexpr auto SECOND_RECOVERY_TIME = 45.0f;// UŒ‚Œã‚Ìd’¼ŠÔ	
+	constexpr auto SECOND_RECOVERY_TIME = 120.0f;// UŒ‚Œã‚Ìd’¼ŠÔ	
 	constexpr auto SECOND_ATTACK_DAMAGE = 1.0f;// ƒ_ƒ[ƒW
 	constexpr auto SECOND_APPROACH_SPEED = 5.0f;// Ú‹ß‘¬“x
 
@@ -674,11 +674,6 @@ namespace Tank
 	void Tank::Attack::Exit(Enemy* owner)
 	{
 		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// ’â~
-	}
-
-	bool Tank::Attack::CanChangeState()
-	{
-		return true;
 	}
 
 

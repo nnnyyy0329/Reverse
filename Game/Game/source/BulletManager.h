@@ -18,6 +18,8 @@ public:
 
 	void RemoveBullet(std::shared_ptr<Bullet> bullet);// “–‚½‚Á‚½’e‚ğíœ
 
+	void ClearAllBullets() { _bullets.clear(); } // ‚·‚×‚Ä‚Ì’e‚ğíœ
+
 private:
 	std::list<std::shared_ptr<Bullet>> _bullets; // ’e‚ÌƒŠƒXƒg
 };
