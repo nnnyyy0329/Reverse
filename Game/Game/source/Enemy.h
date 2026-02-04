@@ -115,6 +115,5 @@ protected:
 private:
 	void LoadEnemyModel();// ƒ‚ƒfƒ‹‚ğ–¼‘O‚É‰‚¶‚Ä“Ç‚İ‚Ş
 
-	static float NormalizeAngleDiff(float fAngleDiff);// Šp“x·‚ğ-PI~+PI‚Ì”ÍˆÍ‚É³‹K‰»‚·‚é
 };
 

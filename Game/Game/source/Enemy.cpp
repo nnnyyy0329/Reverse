@@ -8,7 +8,7 @@ namespace {
 	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
 	constexpr auto COLLISION_HEIGHT = 100.0f;// 敵の当たり判定高さ
 
-	constexpr auto SEACH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
+	constexpr auto SEARCH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
 }
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
@@ -56,12 +56,12 @@ bool Enemy::Terminate()
 
 bool Enemy::Process() 
 {
-	// アニメーション更新(基底クラスで実行)
-	CharaBase::Process();
-
 	_vOldPos = _vPos;// 前フレームの位置を保存
 
 	_vMove = VGet(0.0f, 0.0f, 0.0f);// 毎フレーム移動量リセット
+
+	// アニメーション更新(基底クラスで実行)
+	CharaBase::Process();
 
 	// 索敵タイマー更新
 	UpdateSearchTimer();
@@ -551,25 +551,8 @@ void Enemy::LoadEnemyModel()
 void Enemy::UpdateSearchTimer()
 {
 	_searchTimer++;
-	if (_searchTimer >= SEACH_INTERVAL)
+	if (_searchTimer >= SEARCH_INTERVAL)
 	{
 		_searchTimer = 0;
 	}
-}
-
-
-
-
-// 角度差を-PI~+PIの範囲に正規化
-float Enemy::NormalizeAngleDiff(float fAngleDiff)
-{
-	while (fAngleDiff <= DX_PI_F)
-	{
-		fAngleDiff += DX_TWO_PI_F;
-	}
-	while (fAngleDiff > -DX_PI_F)
-	{
-		fAngleDiff -= DX_TWO_PI_F;
-	}
-	return fAngleDiff;
 }

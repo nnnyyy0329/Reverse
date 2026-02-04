@@ -55,33 +55,80 @@ namespace Ranged
 
 	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner) {
 		// 索敵結果を使用
-		if(owner->IsTargetDetected()) {
+		if (owner->IsTargetDetected()) {
 			return std::make_shared<Detect>();// 発見状態へ
 		}
 
 		_fTimer++;
 		_fLookAroundTimer++;
 
-		// 見渡す処理
-		if (_fLookAroundTimer >= LOOK_AROUND_INTERVAL && !_bisRotating)
+		// 見渡す:一定間隔で左右を向く
+		// 旋回速度制限を適用して滑らかに回転させる
 		{
-			// 初期方向を基準に次の目標角度を計算
-			auto baseAngle = atan2f(_vInitialDir.x, _vInitialDir.z);
-			auto lookAngleRad = LOOK_AROUND_ANGLE * DEGREE_TO_RADIAN;
-
-			_fTargetAngle = _bLookingLeft ? (baseAngle + lookAngleRad) : (baseAngle - lookAngleRad);
-
-			_bisRotating = true;// 回転中フラグを立てる
-			_bLookingLeft = !_bLookingLeft;// 次は反対方向を向くようにする
-			_fLookAroundTimer = 0.0f;// タイマーリセット
-		}
-
-		if (_bisRotating)
-		{
-			// 目標角度に到達したら回転終了
-			if (owner->SmoothTurnToAngle(_fTargetAngle, LOOK_AROUND_SPEED))
+			// 次の目標を設定するタイミング
+			if (_fLookAroundTimer >= LOOK_AROUND_INTERVAL && !_bisRotating)
 			{
-				_bisRotating = false;
+				// 初期方向を基準に次の目標角度を計算
+				auto baseAngle = atan2f(_vInitialDir.x, _vInitialDir.z);// 初期方向の角度
+				auto lookAngleRad = LOOK_AROUND_ANGLE * DEGREE_TO_RADIAN;
+
+				if (_bLookingLeft)
+				{
+					// 左を向く(+方向)
+					_fTargetAngle = baseAngle + lookAngleRad;
+				}
+				else
+				{
+					// 右を向く(-方向)
+					_fTargetAngle = baseAngle - lookAngleRad;
+				}
+
+				// 回転開始フラグを立てる
+				_bisRotating = true;
+
+				// 次は反対方向を向く
+				_bLookingLeft = !_bLookingLeft;
+
+				_fLookAroundTimer = 0.0f;// タイマーリセット
+			}
+
+			// 滑らかな回転処理
+			if (_bisRotating)
+			{
+				// 現在の角度を計算
+				VECTOR vCurrentDir = owner->GetDir();
+				auto currentAngle = atan2f(vCurrentDir.x, vCurrentDir.z);
+
+				// 角度差を計算(-PI ~ +PI の範囲に収める)
+				auto diffAngle = _fTargetAngle - currentAngle;
+				// 180度を超えないように補正
+				while (diffAngle <= -DX_PI_F) diffAngle += DX_TWO_PI_F;
+				while (diffAngle > DX_PI_F) diffAngle -= DX_TWO_PI_F;
+
+				// 旋回速度の制限
+				auto turnSpeedRad = LOOK_AROUND_SPEED * DEGREE_TO_RADIAN;
+
+				// 目標角度に到達したかチェック
+				if (fabs(diffAngle) < 0.01f)
+				{
+					// 目標角度に到達したので回転終了
+					_bisRotating = false;
+					// 目標角度に正確に合わせる
+					VECTOR vNewDir = VGet(sinf(_fTargetAngle), 0.0f, cosf(_fTargetAngle));
+					owner->SetDir(vNewDir);
+				}
+				else
+				{
+					// まだ目標角度に到達していないので回転を続ける
+					// 差が速度制限を超えていたら、速度分だけ回す
+					if (diffAngle > turnSpeedRad) { diffAngle = turnSpeedRad; }
+					else if (diffAngle < -turnSpeedRad) { diffAngle = -turnSpeedRad; }
+
+					// 新しい向きベクトルを計算して設定
+					auto newAngle = currentAngle + diffAngle;
+					VECTOR vNewDir = VGet(sinf(newAngle), 0.0f, cosf(newAngle));
+					owner->SetDir(vNewDir);
+				}
 			}
 		}
 
@@ -121,25 +168,10 @@ namespace Ranged
 	std::shared_ptr<EnemyState> Detect::Update(Enemy* owner) {
 		_fTimer++;
 
-		// ターゲットが存在するかチェック
-		auto target = owner->GetTarget();
-		if (!target)
-		{
-			// ターゲットがいない場合は待機状態へ
-			owner->SetTargetDetected(false);
-			return std::make_shared<Idle>();
-		}
-
-		// Detect状態中は検出フラグを維持
-		// (UpdateSearchは呼ばれても、ここで強制的にtrueにする)
-		owner->SetTargetDetected(true);
-
-		// 時間経過で攻撃状態へ
+		// 時間経過で
 		if (_fTimer >= owner->GetEnemyParam().fDetectTime) {
 			return std::make_shared<Attack>();// 攻撃状態へ
 		}
-
-		return nullptr;
 	}
 
 
@@ -180,8 +212,15 @@ namespace Ranged
 
 		// 視界外チェック
 		{
-			bool bIsOutRange = (dist > owner->GetEnemyParam().fChaseLimitRange * 1.2f);// 少し余裕を持たせる
-			bool bIsOutAngle = (dot < owner->GetEnemyParam().fVisionCos);
+			// 距離が離れすぎたら待機状態へ
+			// 距離チェック
+			bool bIsOutRange = (dist > owner->GetEnemyParam().fVisionRange * 1.2f);// 少し余裕を持たせる
+
+			// 角度チェック
+			auto limitCos = owner->GetEnemyParam().fVisionCos;// 視界のcos値
+
+			// 内積がlimitCos未満なら扇の外
+			bool bIsOutAngle = (dot < limitCos);
 
 			// 離れすぎor視界外なら待機状態へ
 			if (bIsOutRange || bIsOutAngle) {
@@ -194,18 +233,43 @@ namespace Ranged
 
 		// 向きの制御
 		{
-			if(_shotTimer < interval - lockTime)
-			{
-				// ターゲット方向に滑らかに回転
-				owner->SmoothTurnToPosition(target->GetPos(), owner->GetEnemyParam().fTurnSpeed);
+			// 発射直前でなければターゲットの方向を向く
+			// 滑らかに旋回させる
+			if (_shotTimer < interval - lockTime) {
+				// ターゲットの角度を計算
+				auto targetAngle = atan2f(vToTarget.x, vToTarget.z);
+
+				// 現在の角度を計算
+				VECTOR vCurrentDir = owner->GetDir();
+				auto currentAngle = atan2f(vCurrentDir.x, vCurrentDir.z);
+
+				// 角度差を計算(-PI ~ +PI の範囲に収める)
+				auto diffAngle = targetAngle - currentAngle;
+				// 180度を超えないように補正
+				while (diffAngle <= -DX_PI_F) diffAngle += DX_TWO_PI_F;
+				while (diffAngle > DX_PI_F) diffAngle -= DX_TWO_PI_F;
+
+				// 旋回速度の制限
+				auto turnSpeedRad = owner->GetEnemyParam().fTurnSpeed * DEGREE_TO_RADIAN;// ラジアンに変換
+				// 差が速度制限を超えていたら、速度分だけ回す
+				if (diffAngle > turnSpeedRad) diffAngle = turnSpeedRad;
+				else if (diffAngle < -turnSpeedRad) diffAngle = -turnSpeedRad;
+
+				// 新しい向きベクトルを計算して設定
+				auto newAngle = currentAngle + diffAngle;
+				VECTOR vNewDir = VGet(sinf(newAngle), 0.0f, cosf(newAngle));
+				owner->SetDir(vNewDir);
 			}
+			//else {
+			//	// 発射直前は向きを固定する
+			//}
 		}
 
 		// 移動の制御
 		{
 			VECTOR vMove = VGet(0.0f, 0.0f, 0.0f);
 
-			// 距離が近い　かつ　プレイヤーの正面を向いている
+			// 距離が近い　かつ　プレイヤーの正面を向いている(45度)
 			if (dist < moveBackRange && dot > 0.7f) {
 				// 移動用にY成分を抜いたベクトルを作る
 				VECTOR vToTargetXZ = vToTarget;
@@ -228,16 +292,16 @@ namespace Ranged
 		if (_shotTimer >= interval && dot > 0.9f) {// ほぼ正面を向いているなら発射
 			Shoot(owner);// 発射
 
-			 int playingHandle = EffectServer::GetInstance()->Play("Laser", owner->GetPos());// エフェクト再生
-			 if (playingHandle != -1)
-			 {
-				 // 敵の向きから角度を計算
-				 VECTOR vDir = owner->GetDir();
-				 auto yaw = atan2f(vDir.x, vDir.z) * RADIAN_TO_DEGREE;// Y軸回転角度(度)
+			int playingHandle = EffectServer::GetInstance()->Play("Laser", owner->GetPos());// エフェクト再生
+			if (playingHandle != -1)
+			{
+				// 敵の向きから角度を計算
+				VECTOR vDir = owner->GetDir();
+				auto yaw = atan2f(vDir.x, vDir.z) * RADIAN_TO_DEGREE;// Y軸回転角度(度)
 
-				 // エフェクトの回転を設定
-				 EffectServer::GetInstance()->SetRot(playingHandle, VGet(0.0f, yaw, 0.0f));
-			 }
+				// エフェクトの回転を設定
+				EffectServer::GetInstance()->SetRot(playingHandle, VGet(0.0f, yaw, 0.0f));
+			}
 
 			_shotTimer = 0.0f;// タイマーリセット
 		}
