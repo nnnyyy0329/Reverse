@@ -241,10 +241,10 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 		// ステップ3:床との接地判定
 		if (!floorPolygons.empty())
 		{
-			// 線分の始点と終点を設定(足元から頭上まで)
-			const float constLineMargin = 50.0f;
-			VECTOR vLineStart = VAdd(vCapsuleBottom, VGet(0.0f, -constLineMargin, 0.0f));// 足元より少し下
-			VECTOR vLineEnd = VAdd(vCapsuleTop, VGet(0.0f, constLineMargin, 0.0f));// 頭上より少し上
+			// 足元から少し下の範囲をチェック
+			const float constCheckRange = capsuleRadius * 2.0f;
+			VECTOR vLineStart = VAdd(vCapsuleBottom, VGet(0.0f, -constCheckRange, 0.0f));// 足元から下方向へ
+			VECTOR vLineEnd = vCapsuleBottom;// 足元の球の中心
 
 			// 全ての床ポリゴンをチェック
 			for (const auto& floor : floorPolygons)
@@ -279,9 +279,11 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 	// 接地状態に応じた座標補正
 	if (isGrounded)
 	{
-		// 床に接地している場合
-		// vProcessPos.yは足元の座標なので、床の高さに設定
-		vProcessPos.y = highestGroundY;
+		// 現在の高さよりも高い床があればY座標を補正
+		if (highestGroundY > vProcessPos.y)
+		{
+			vProcessPos.y = highestGroundY;
+		}
 	}
 
 	// 座標のみを反映(カプセル位置は各クラスで更新)

@@ -50,7 +50,6 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	_fDirSpeed = 0.0f;			// 回転速度
 	_fLife = config.life;		// 体力
 	_fMaxLife = config.maxLife;	// 最大体力
-	_fGravity = GRAVITY;		// 重力
 
 	// アクション関係変数の初期化
 	_fVelY = 0.0f;				// Y方向の速度

@@ -254,9 +254,12 @@ bool ModeGame::Process()
 		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
 
 		// マップ
-		//CheckCollisionCharaMap(player);
-		for (const auto& enemy : enemies) {
-			CheckCollisionCharaMap(enemy);
+		if (_bUseCollision)
+		{
+			CheckCollisionCharaMap(player);
+			for (const auto& enemy : enemies) {
+				CheckCollisionCharaMap(enemy);
+			}
 		}
 
 		// トリガー
