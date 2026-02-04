@@ -89,7 +89,7 @@
       <Filter>GameObject\CharaBase\PlayerBase\Surface</Filter>
     </ClCompile>
     <ClCompile Include="source\StageBase.cpp">
-      <Filter>Mode\Load\Stage</Filter>
+      <Filter>Stage</Filter>
     </ClCompile>
     <ClCompile Include="source\Item.cpp">
       <Filter>GameObject\CharaBase\Item</Filter>
@@ -119,7 +119,10 @@
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClCompile>
     <ClCompile Include="source\BulletPlayer.cpp">
-      <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
+      <Filter>GameObject\CharaBase\Player\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModeStageChange.cpp">
+      <Filter>Mode\StageChange</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -217,7 +220,7 @@
       <Filter>GameObject\CharaBase\PlayerBase\Surface</Filter>
     </ClInclude>
     <ClInclude Include="source\StageBase.h">
-      <Filter>Mode\Load\Stage</Filter>
+      <Filter>Stage</Filter>
     </ClInclude>
     <ClInclude Include="source\Item.h">
       <Filter>GameObject\CharaBase\Item</Filter>
@@ -229,7 +232,7 @@
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClInclude>
     <ClInclude Include="source\BulletPlayer.h">
-      <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
+      <Filter>GameObject\CharaBase\Player\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="source\EnemyState.h">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
@@ -239,6 +242,9 @@
     </ClInclude>
     <ClInclude Include="source\StateTank.h">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeStageChange.h">
+      <Filter>Mode\StageChange</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -308,17 +314,20 @@
     <Filter Include="GameObject\CharaBase\PlayerBase\Interior">
       <UniqueIdentifier>{b58c1215-8fb2-471f-9ae2-7fa0077cff40}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\CharaBase\PlayerBase\Bullet">
-      <UniqueIdentifier>{bf0c1bdb-2ada-440d-8231-314cd8dc3e52}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Mode\Load\Stage">
-      <UniqueIdentifier>{f51f6167-8088-48fb-bc30-d4d31501d52c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObject\CharaBase\Item">
       <UniqueIdentifier>{cc558430-6e86-44d5-adb4-dee6afa34d11}</UniqueIdentifier>
     </Filter>
     <Filter Include="Animation">
       <UniqueIdentifier>{8a4cbfe7-fc06-4c1c-94bf-2ce3a31c6539}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Stage">
+      <UniqueIdentifier>{f51f6167-8088-48fb-bc30-d4d31501d52c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\StageChange">
+      <UniqueIdentifier>{07a76089-1612-4fa7-ac07-4704b5d4c7af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player\Bullet">
+      <UniqueIdentifier>{bf0c1bdb-2ada-440d-8231-314cd8dc3e52}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

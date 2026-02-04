@@ -52,6 +52,11 @@ public:
 	// デバッグカメラ取得
 	std::shared_ptr<DebugCamera> GetDebugCamera() const { return _debugCamera; }
 
+	// ステージ切り替え関連
+	void RequestStageChange(int nextStageNum);// ステージ切り替えリクエスト
+	void ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum);// ステージ切り替え実行
+	int GetCurrentStageNum() { return _currentStageNum; }
+
 protected:
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される
@@ -83,6 +88,9 @@ protected:
 	// ベクターコンテナ
 	std::vector<LightInfo>	_lights;	// 生成されたライトを管理
 
+	bool _bIsStageChanging;// ステージ切り替え中フラグ
+	int _currentStageNum;// 現在のステージ番号
+
 private:
 	void CheckCollisionCharaMap	(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
 	void CheckHitPlayerEnemy	(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);	// プレイヤーと敵の当たり判定
@@ -91,8 +99,7 @@ private:
 	void CheckHitCharaAttackCol	(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
 	void ConvertEnergy			(std::shared_ptr<AttackBase> attack, float damage);						// ダメージをエネルギーに変換する
 	bool OwnerIsAttackingOwner	(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);					// 攻撃所有者が自分に攻撃しているかどうか
-
-
+	void CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player);// プレイヤーとトリガーの当たり判定
 
 	// ライト関連
 	void InitializeLights();// ライト初期化

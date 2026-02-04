@@ -25,6 +25,18 @@ public:
 		VECTOR vRot;// 回転
 	};
 
+	// トリガーの設定情報
+	struct TRIGGERPOS
+	{
+		std::string name;// トリガー名
+		VECTOR vPos;// 位置
+		VECTOR vRot;// 回転
+		VECTOR vScale;// スケール
+		int modelHandle;// モデルハンドル
+		int drawFrame;// 描画フレーム
+		int collisionFrame;// コリジョンフレーム
+	};
+
 	StageBase(int stageNum);
 	virtual ~StageBase();
 
@@ -33,10 +45,19 @@ public:
 	virtual void DebugRender();
 	virtual void CollisionRender();
 
-	const std::vector<std::shared_ptr<Enemy>>& GetEnemies() const { return _stageEnemies; }// ステージ内の敵リストを取得
+	const std::vector<std::shared_ptr<Enemy>>& GetEnemies() const { return _stageEnemies; }
 	const std::vector<MODELPOS>& GetMapModelPosList() const { return _mapModelPosList; }
-	//int GetHandleMap() const { return _handleMap; }// マップモデルのハンドルを取得
-	//int GetFrameMapCollision() const { return _frameMapCollision; }// マップのコリジョンフレームを取得
+	const std::vector<TRIGGERPOS>& GetTriggerList() const { return _triggerList; }
+
+	// ステージ切り替え
+	int GetNextStageNumFromTrigger(const std::string& triggerName)const;// トリガー名から次のステージ番号を取得
+
+	// jsonファイルからステージデータを読み込む
+	void LoadStageDataFromJson(
+		const std::string& filePath,
+		const std::string& objName,
+		std::function<void(const std::string& name, const VECTOR& pos, const VECTOR& rot, const VECTOR& scale)> onLoadItem
+	);
 
 	// 敵の残数管理
 	int GetTotalEnemyCnt() { return _totalEnemyCnt; }// ステージ内の敵の総数を取得
@@ -51,11 +72,8 @@ protected:
 
 	int _stageNum;// ステージ番号
 
-	// テスト用マップ
-	//int _handleMap;
-	//int _handleSkySphere;
-	//int _frameMapCollision;
-
 	int _totalEnemyCnt;// ステージ内の敵の総数
+
+	std::vector<TRIGGERPOS> _triggerList;// トリガーリスト
 };
 

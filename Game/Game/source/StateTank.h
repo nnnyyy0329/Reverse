@@ -38,6 +38,7 @@ namespace Tank
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Tank:Detect"; }
+		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
 	};
 
 

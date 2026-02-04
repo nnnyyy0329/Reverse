@@ -36,6 +36,7 @@ namespace {
 	constexpr auto TANK_MOVE_TIME = 120.0f;// 自動移動時間
 	constexpr auto TANK_DETECT_TIME = 120.0f;// 発見硬直
 	constexpr auto TANK_MOVE_SPEED = 1.5f;// 移動速度
+	constexpr auto TANK_DAMAGE_TO_DOWN = 5;// ダウンまでの被ダメージ回数
 }
 
 // 敵の種類
@@ -128,15 +129,17 @@ public:
 				param.fMoveTime = TANK_MOVE_TIME;
 				param.fDetectTime = TANK_DETECT_TIME;
 				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+				param.damageToDown = TANK_DAMAGE_TO_DOWN;
 				enemy->SetEnemyParam(param);
 
 				// ハンドラの設定
 				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> {
-					// ターゲットが存在すれば攻撃
+					// ターゲットが存在すれば追跡
 					if (e->GetTarget())
 					{
-						return std::make_shared<Tank::Idle>();
+						return std::make_shared<Tank::Chase>();
 					}
+					// 見えていなければ待機
 					return std::make_shared<Tank::Idle>();
 				});
 

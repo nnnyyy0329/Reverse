@@ -2,6 +2,7 @@
 #include "ApplicationMain.h"
 #include "ModeGame.h"
 #include "ModeMenu.h"
+#include "ModeStageChange.h"
 
 #include "CharaBase.h"
 #include "StageBase.h"
@@ -71,7 +72,8 @@ bool ModeGame::Initialize()
 	}
 
 	// ステージ初期化
-	_stage = std::make_shared<StageBase>(1);// ステージ番号で切り替え
+	_currentStageNum = 1;
+	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
 
 	// カメラ初期化
 	{
@@ -187,6 +189,8 @@ bool ModeGame::Process()
 	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10)
 	{
 		ModeMenu* modeMenu = new ModeMenu();
+		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+
 		modeMenu->SetCameraManager(_cameraManager);
 
 		// メニュー項目を作成
@@ -200,7 +204,6 @@ bool ModeGame::Process()
 		debugCamera->SetDebugCameraMenu(_debugCamera);
 		debugCamera->SetGameCameraMenu(_gameCamera);
 
-		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 		modeMenu->AddMenuItem(viewDebugInfo);
 		modeMenu->AddMenuItem(viewCollision);
 		modeMenu->AddMenuItem(useCollision);
@@ -251,10 +254,13 @@ bool ModeGame::Process()
 		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
 
 		// マップ
-		CheckCollisionCharaMap(player);
+		//CheckCollisionCharaMap(player);
 		for (const auto& enemy : enemies) {
 			CheckCollisionCharaMap(enemy);
 		}
+
+		// トリガー
+		CheckHitPlayerTrigger(player);
 	}
 
 	// ターゲット更新
@@ -480,4 +486,51 @@ void ModeGame::RemoveLight(int lightHandle)
 			break;
 		}
 	}
+}
+
+void ModeGame::RequestStageChange(int nextStageNum)
+{
+	if (_bIsStageChanging) { return; }// すでに切り替え中
+
+	_bIsStageChanging = true;
+
+	// ModeStageChangeを追加
+	auto modeStageChange = new ModeStageChange(this, nextStageNum);
+	ModeServer::GetInstance()->Add(modeStageChange, 50, "stageChange");
+}
+
+void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
+{
+	if (!newStage) { return; }
+
+	// 現在のステージ番号を更新
+	_currentStageNum = stageNum;
+
+	// 古いステージを削除
+	_stage.reset();
+
+	// 新しいステージを設定
+	_stage = newStage;
+
+	// プレイヤーの位置をリセット
+	VECTOR vStartPos = VGet(0.0f, 0.0f, 0.0f);
+
+	auto activePlayer = _playerManager->GetActivePlayerShared();
+	activePlayer->SetPos(vStartPos);
+
+	// 敵の再設定
+	for (const auto& enemy : _stage->GetEnemies())
+	{
+		enemy->SetTarget(_playerManager->GetActivePlayerShared());
+		enemy->SetBulletManager(_bulletManager);
+	}
+
+	// オブジェクトの削除
+	{
+		_bulletManager->ClearAllBullets();
+		AttackManager::GetInstance()->ClearAllAttacks();
+	}
+
+	// 切り替え完了
+	_bIsStageChanging = false;
 }
