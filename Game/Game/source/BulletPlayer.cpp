@@ -126,9 +126,9 @@ AttackConstants BulletPlayer::GetAttackConstants()
 
 	AttackConstants constants;
 
-	constants.ATTACK_OFFSET_SCALE = 0.0f;
-	constants.SURFACE_MAX_COMBO_COUNT = 0;
-	constants.INTERIOR_MAX_COMBO_COUNT = 0;
+	constants.attackOffsetScale = 0.0f;
+	constants.surfaceMaxComboCount = 0;
+	constants.interiorMaxComboCount = 0;
 
 	return constants;
 }
@@ -166,4 +166,20 @@ void BulletPlayer::ShootBullet()
 			_eCharaType
 		);
 	}
+}
+
+// 回避設定データ構造体
+DodgeConfig BulletPlayer::GetDodgeConfig()
+{
+	// 弾プレイヤー用の回避設定
+	DodgeConfig config;
+
+	config.charaType = DODGE_CHARA::BULLET_PLAYER;
+	config.invincibleDuration = 20.0f;  // 無敵時間（短め）
+	config.startTime = 3.0f;            // 開始時間（早め）
+	config.activeTime = 15.0f;          // アクティブ時間（短め）
+	config.recoveryTime = 8.0f;         // 硬直時間（短め）
+	config.dodgeMoveSpeed = 12.0f;      // 移動速度（高速）
+
+	return config;
 }

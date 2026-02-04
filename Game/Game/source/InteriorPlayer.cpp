@@ -140,8 +140,8 @@ AttackConstants InteriorPlayer::GetAttackConstants()
 	// InteriorPlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.ATTACK_OFFSET_SCALE = 80.0f;	// 攻撃判定オフセット倍率	
-	constants.INTERIOR_MAX_COMBO_COUNT = 5;	// 裏プレイヤー用コンボカウント
+	constants.attackOffsetScale = 80.0f;	// 攻撃判定オフセット倍率	
+	constants.interiorMaxComboCount = 5;	// 裏プレイヤー用コンボカウント
 
 	return constants;
 }
@@ -219,4 +219,20 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		"",						// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 	};
+}
+
+// 回避設定データ構造体
+DodgeConfig InteriorPlayer::GetDodgeConfig()
+{
+	// 裏プレイヤー用の回避設定
+	DodgeConfig config;
+
+	config.charaType = DODGE_CHARA::INTERIOR_PLAYER;
+	config.invincibleDuration = 25.0f;  // 無敵時間（標準的）
+	config.startTime = 4.0f;            // 開始時間（少し早め）
+	config.activeTime = 18.0f;          // アクティブ時間
+	config.recoveryTime = 12.0f;        // 硬直時間
+	config.dodgeMoveSpeed = 9.0f;       // 移動速度（やや早め）
+
+	return config;
 }

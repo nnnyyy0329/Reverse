@@ -18,7 +18,9 @@ enum class CHARA_TYPE
 	_EOT_,
 };
 
-class CharaBase : public GameObjectBase
+// キャラクターベースクラス
+// 自分自身のshared_ptrを取得するためにenable_shared_from_thisを継承
+class CharaBase : public GameObjectBase, public std::enable_shared_from_this<CharaBase>
 {
 public:
 	CharaBase();
@@ -32,7 +34,6 @@ public:
 	virtual void CollisionRender(); // コリジョン描画
 
 	/*****ゲッターセッター*****/
-	// 当たり判定用
 	VECTOR GetCollisionTop() { return _vCollisionTop; }		// 当たり判定の上端
 	void SetCollisionTop(VECTOR v) { _vCollisionTop = v; }	// 当たり判定の上端
 
@@ -47,7 +48,6 @@ public:
 
 	float GetColSubY() { return _colSubY; }		// コリジョン判定時のY補正(腰位置）
 
-	// 基礎ステータス
 	float GetMoveSpeed() { return _fMoveSpeed; }	// 移動速度
 	void SetMoveSpeed(float f) { _fMoveSpeed = f; }	// 移動速度
 

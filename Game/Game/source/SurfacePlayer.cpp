@@ -138,8 +138,8 @@ AttackConstants SurfacePlayer::GetAttackConstants()
 	// SurfacePlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.ATTACK_OFFSET_SCALE = 85.0f;	// 攻撃判定オフセット倍率	
-	constants.SURFACE_MAX_COMBO_COUNT = 3;	// 表プレイヤー用コンボカウント
+	constants.attackOffsetScale = 85.0f;	// 攻撃判定オフセット倍率	
+	constants.surfaceMaxComboCount = 3;	// 表プレイヤー用コンボカウント
 
 	return constants;
 }
@@ -188,4 +188,20 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		"SurfacePlayerAttack3",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 	};
+}
+
+// 回避設定データ構造体
+DodgeConfig SurfacePlayer::GetDodgeConfig()
+{
+	// 表プレイヤー用の回避設定
+	DodgeConfig config;
+
+	config.charaType = DODGE_CHARA::SURFACE_PLAYER;
+	config.invincibleDuration = 30.0f;	// 無敵時間（長め）
+	config.startTime = 5.0f;			// 開始時間
+	config.activeTime = 20.0f;			// アクティブ時間
+	config.recoveryTime = 10.0f;		// 硬直時間
+	config.dodgeMoveSpeed = 12.0f;		// 移動速度（標準）
+
+	return config;
 }

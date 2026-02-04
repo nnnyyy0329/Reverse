@@ -3,6 +3,7 @@
 #pragma once
 #include "CharaBase.h"
 #include "AttackBase.h"
+#include "DodgeSystem.h"
 
 // プレイヤー設定データ構造体
 struct PlayerConfig
@@ -56,9 +57,9 @@ struct RenderConfig
 // 攻撃定数構造体
 struct AttackConstants
 {
-	float ATTACK_OFFSET_SCALE;		// 攻撃判定オフセット倍率
-	int SURFACE_MAX_COMBO_COUNT;	// 表プレイヤー用コンボカウント
-	int INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
+	float attackOffsetScale;	// 攻撃判定オフセット倍率
+	int surfaceMaxComboCount;	// 表プレイヤー用コンボカウント
+	int interiorMaxComboCount;	// 裏プレイヤー用コンボカウント
 };
 
 // 攻撃設定データ構造体
@@ -73,7 +74,6 @@ struct AttackConfig
 	float damage;			// ダメージ
 	std::string effectName;	// エフェクト名
 	VECTOR effectOffset;	// エフェクト位置オフセット
-
 };
 
 // 状態列挙型
@@ -110,11 +110,12 @@ public:
 	virtual bool	Render();		// 描画
 
 	virtual  void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo);	// 被ダメージ処理
-	//void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
 
 	// 共通初期化
-	void InitializePlayerConfig(PlayerConfig& config);	// プレイヤー設定初期化
+	void InitializePlayerConfig(PlayerConfig& config);			// プレイヤー設定初期化
 	void InitializeHitConfig(const VECTOR& attackDirection);	// 被弾設定初期化
+	void InitializeAttackData();								// 攻撃データ初期化
+	void InitializeDodgeData();									// 回避データ初期化
 
 	// 共通処理
 	void CallProcess();				// Process呼び出し用関数
@@ -170,26 +171,27 @@ public:
 	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }	// 攻撃コリジョン下部
 	float GetAttackColR(){ return _fAttackColR; }				// 攻撃コリジョン半径
 
+	// 回避システム設定
+	void SetDodgeSystem(std::shared_ptr<DodgeSystem> dodgeSystem) { _dodgeSystem = dodgeSystem; }
+
+	
 protected:	// 攻撃関係
 
 	virtual AttackConstants GetAttackConstants() = 0;			// 攻撃定数を取得
 	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;	// 攻撃設定を取得
+
+	// 攻撃システム
+	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
+	std::vector<PLAYER_STATUS> _attackStatuses;			// 攻撃状態配列
 
 	// PlayerBase_Attack.cppで定義
 	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数
 	void ProcessAttackColPos();		// コリジョン位置の更新処理
 	void ProcessAttack();			// 攻撃処理
 	void ProcessBranchAttack();		// 攻撃分岐処理
-	void InitializeAttackData();	// 攻撃データ初期化
 	void ReceiveAttackColData();	// 攻撃コリジョンの情報受け取り関数
 	bool CanNextAttack();			// 次の攻撃が可能かチェック
 	bool IsAttacking();				// 攻撃中かチェック
-
-	// 攻撃システム
-	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
-	std::vector<PLAYER_STATUS> _attackStatuses;			// 攻撃状態配列
-
-private:	// 攻撃関係
 
 	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
 	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> attack);						// 攻撃開始処理
@@ -201,6 +203,21 @@ private:	// 攻撃関係
 	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_STATUS status);														// 状態に対応する攻撃を取得
 	int GetInstanceId();																										// ID取得関数
 	int GetAttackIndexByStatus(PLAYER_STATUS status);																			// 状態から攻撃インデックスを取得
+
+protected:	// 回避関係
+
+	std::shared_ptr<DodgeSystem> _dodgeSystem;		// 回避システム
+
+	// PlayerBase_Dodge.cppで定義
+	void CallProcessDodge();		// 回避関係Process呼び出し用関数
+	void ProcessDodge();			// 回避処理
+	void ProcessStartDodge();		// 回避開始処理
+	void ProcessEndDodge();			// 回避終了処理
+	bool IsDodging();				// 回避中かチェック
+	bool IsInvincible();			// 無敵状態かチェック
+
+	// 各プレイヤー固有の回避設定を取得
+	virtual DodgeConfig GetDodgeConfig() = 0;
 
 protected:
 	// 共通の設定

@@ -121,6 +121,9 @@
     <ClCompile Include="source\BulletPlayer.cpp">
       <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
     </ClCompile>
+    <ClCompile Include="source\PlayerBase_Dodge.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">

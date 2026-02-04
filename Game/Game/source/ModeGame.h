@@ -59,7 +59,7 @@ protected:
 	std::shared_ptr<StageBase>			_stage;					// ステージ
 	std::shared_ptr<GameCamera>			_gameCamera;			// ゲームカメラ
 	std::shared_ptr<DebugCamera>		_debugCamera;			// デバッグカメラ
-	//std::shared_ptr<DodgeSystem>		_dodgeSystem;			// 回避システム
+	std::shared_ptr<DodgeSystem>		_dodgeSystem;			// 回避システム
 	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;	// 能力選択画面
 	//std::shared_ptr<Item>               _item;                  //　アイテム
 

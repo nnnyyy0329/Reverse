@@ -3,6 +3,7 @@
 #include "StageBase.h"
 #include "AttackBase.h"
 #include "AttackManager.h"
+#include "DodgeSystem.h"
 
 // キャラとマップの当たり判定
 void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
@@ -329,6 +330,12 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 
 	// 既にヒット済みのキャラかチェック
 	if(attack->HasHitCharas(chara)) { return; }
+
+	// 無敵状態かチェック
+	if(_dodgeSystem && _dodgeSystem->IsCharacterInvincible(chara))
+	{
+		return;
+	}
 
 	// 攻撃コリジョン情報を取得
 	const ATTACK_COLLISION& col = attack->GetAttackCollision();

@@ -49,23 +49,32 @@ bool ModeGame::Initialize()
 		_lightManager->Initialize();
 	}
 
-		// シングルトンインスタンスを取得
+	// シングルトンインスタンスを取得
 	{
 		_attackManager = AttackManager::GetInstance();
 		_energyManager = EnergyManager::GetInstance();
 	}
 
+	// 回避システム初期化
+	{
+		_dodgeSystem = std::make_shared<DodgeSystem>();
+		_dodgeSystem->Initialize();
+	}
+
 	// プレイヤーの作成と登録
 	{
 		auto surfacePlayer = std::make_shared<SurfacePlayer>();
+		surfacePlayer->SetDodgeSystem(_dodgeSystem);
 		surfacePlayer->Initialize();
 		_playerManager->RegisterPlayer(PLAYER_TYPE::SURFACE, surfacePlayer);
 
 		auto interiorPlayer = std::make_shared<InteriorPlayer>();
+		interiorPlayer->SetDodgeSystem(_dodgeSystem);
 		interiorPlayer->Initialize();
 		_playerManager->RegisterPlayer(PLAYER_TYPE::INTERIOR, interiorPlayer);
 
 		auto bulletPlayer = std::make_shared<BulletPlayer>();
+		bulletPlayer->SetDodgeSystem(_dodgeSystem);
 		bulletPlayer->Initialize();
 		_playerManager->RegisterPlayer(PLAYER_TYPE::BULLET, bulletPlayer);
 		bulletPlayer->SetBulletManager(_bulletManager);
@@ -82,12 +91,6 @@ bool ModeGame::Initialize()
 		_gameCamera->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
 
 		_debugCamera = std::make_shared<DebugCamera>();
-	}
-
-	// 回避システム初期化
-	{
-		//_dodgeSystem = std::make_shared<DodgeSystem>();
-		//_dodgeSystem->Initialize();
 	}
 
 	// 敵設定
@@ -221,7 +224,7 @@ bool ModeGame::Process()
 		_stage->Process();
 		_bulletManager->Process();
 		AttackManager::GetInstance()->Process();
-		//_dodgeSystem->Process();
+		_dodgeSystem->Process();
 		_energyUI->Process();
 		_playerLifeBarUI->Process();
 		_abilitySelectScreen->Process();
@@ -345,6 +348,7 @@ bool ModeGame::Render()
 
 		_stage->DebugRender();
 		AttackManager::GetInstance()->DebugRender();
+		_dodgeSystem->DebugRender();
 		_debugCamera->DebugRender();
 		_gameCamera->DebugRender();
 

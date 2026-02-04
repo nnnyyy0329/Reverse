@@ -37,6 +37,9 @@ bool PlayerBase::Initialize()
 	// 共通初期化
 	InitializePlayerConfig(_playerConfig);
 
+	// 回避データの初期化
+	InitializeDodgeData();
+
 	return true;
 }
 
@@ -118,6 +121,9 @@ bool PlayerBase::Process()
 	// 攻撃関係Process呼び出し用関数
 	CallProcessAttack();
 
+	// 回避関係Process呼び出し用関数
+	CallProcessDodge();
+
 	// 親クラスの更新処理呼び出し
 	CharaBase::Process();
 
@@ -134,6 +140,7 @@ bool PlayerBase::Render()
 // 被ダメージ処理
 void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
 {
+	// 親クラスの被ダメージ処理呼び出し
 	CharaBase::ApplyDamage(fDamage, eType, attackInfo);
 
 	// 被弾状態に変更

@@ -27,15 +27,16 @@ void PlayerBase::ProcessMovePlayer()
 	_vOldPos = _vPos;	// 前フレームの位置を保存
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
-	if(IsAttacking()){ return; } // 攻撃中は移動入力を受け付けない
-	if(IsHitStop()){ return; }	 // 被弾中は移動入力を受け付けない
+	if(IsAttacking()){ return; }	// 攻撃中は移動入力を受け付けない
+	if(IsDodging()){ return; }		// 回避中は移動入力を受け付けない
+	if(IsHitStop()){ return; }		// 被弾中は移動入力を受け付けない
 
 	// 移動処理
 	{
-		if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
-		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
-		if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
-		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
+		//if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
+		//if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
+		//if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
+		//if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
 		
 		// しゃがみ中かどうかで移動速度を変える
 		if(_bIsCrouching)
@@ -90,37 +91,16 @@ void PlayerBase::ProcessMovePlayer()
 // 状態変化アニメーション処理
 void PlayerBase::ProcessStatusAnimation()
 {
-	// 攻撃中
-	if(IsAttacking())
+	// 攻撃中、被弾時、回避中、死亡時
+	if(IsAttacking() ||
+		_ePlayerStatus == PLAYER_STATUS::HIT ||
+		_ePlayerStatus == PLAYER_STATUS::DODGE ||
+		_ePlayerStatus == PLAYER_STATUS::DEATH)
 	{
 		// アニメーション再生処理のみ
 		ProcessPlayAnimation();
 
 		// 処理後の攻撃中のステータスを保存
-		_eOldPlayerStatus = _ePlayerStatus;
-
-		return;
-	}
-
-	// 被弾中は状態変更を行わない
-	if(_ePlayerStatus == PLAYER_STATUS::HIT)
-	{
-		// アニメーション再生処理のみ
-		ProcessPlayAnimation();
-
-		// 処理後の被弾中のステータスを保存
-		_eOldPlayerStatus = _ePlayerStatus;
-
-		return;
-	}
-
-	// 死亡中は状態変更を行わない
-	if(_ePlayerStatus == PLAYER_STATUS::DEATH)
-	{
-		// アニメーション再生処理のみ
-		ProcessPlayAnimation();
-
-		// 処理後の死亡中のステータスを保存
 		_eOldPlayerStatus = _ePlayerStatus;
 
 		return;

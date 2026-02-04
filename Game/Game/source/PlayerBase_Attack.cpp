@@ -19,11 +19,11 @@ void PlayerBase::InitializeAttackData()
 	int maxComboCount;
 	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
 	{
-		maxComboCount = constants.SURFACE_MAX_COMBO_COUNT;
+		maxComboCount = constants.surfaceMaxComboCount;
 	}
 	else
 	{
-		maxComboCount = constants.INTERIOR_MAX_COMBO_COUNT;
+		maxComboCount = constants.interiorMaxComboCount;
 	}
 
 	// コンボカウントが0ならスキップ
@@ -76,6 +76,16 @@ void PlayerBase::InitializeAttackData()
 	}
 }
 
+// 攻撃Process呼び出し用関数
+void PlayerBase::CallProcessAttack()
+{
+	// 攻撃処理
+	ProcessAttack();
+
+	// 攻撃分岐処理
+	ProcessBranchAttack();
+}
+
 // 攻撃のコリジョン位置更新
 void PlayerBase::UpdateAttackColPos
 (
@@ -115,7 +125,7 @@ void PlayerBase::ProcessAttackColPos()
 
 	// 判定を前方にずらす
 	VECTOR dirNorm = VNorm(_vDir);
-	VECTOR attackOffset = VScale(dirNorm, constants.ATTACK_OFFSET_SCALE);
+	VECTOR attackOffset = VScale(dirNorm, constants.attackOffsetScale);
 	VECTOR colOffset = VAdd(_vPos, attackOffset);
 
 	// 攻撃配列から各攻撃のコリジョン位置を更新
@@ -123,16 +133,6 @@ void PlayerBase::ProcessAttackColPos()
 	{
 		UpdateAttackColPos(_attacks[i], configs[i].topOffset, configs[i].bottomOffset, colOffset);
 	}
-}
-
-// 攻撃Process呼び出し用関数
-void PlayerBase::CallProcessAttack()
-{
-	// 攻撃処理
-	ProcessAttack();
-
-	// 攻撃分岐処理
-	ProcessBranchAttack();
 }
 
 // 攻撃処理
@@ -207,11 +207,11 @@ void PlayerBase::ProcessAttackEffect(int attackIndex)
 	int maxComboCount;
 	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
 	{
-		maxComboCount = constants.SURFACE_MAX_COMBO_COUNT;
+		maxComboCount = constants.surfaceMaxComboCount;
 	}
 	else
 	{ 
-		maxComboCount = constants.INTERIOR_MAX_COMBO_COUNT;
+		maxComboCount = constants.interiorMaxComboCount;
 	}
 
 	// 攻撃設定取得
@@ -387,11 +387,11 @@ bool PlayerBase::CanNextAttack()
 	// キャラタイプに応じた最大コンボ数を取得
 	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
 	{
-		maxComboCount = constants.SURFACE_MAX_COMBO_COUNT;
+		maxComboCount = constants.surfaceMaxComboCount;
 	}
 	else
 	{
-		maxComboCount = constants.INTERIOR_MAX_COMBO_COUNT;
+		maxComboCount = constants.interiorMaxComboCount;
 	}
 
 

@@ -50,9 +50,9 @@ bool ModeLoading::Initialize()
 		}
 
 		// ”\—Í‘I‘ð‰æ–Ê—p
-		rs->Register("select1", "res/SelectItem/PowerUpNoneAbility,png.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("select2", "res/SelectItem/MeleeAbility.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("select3", "res/SelectItem/BulletAbility.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("select1", "res/SelectItem/normal.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("select2", "res/SelectItem/melee.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("select3", "res/SelectItem/bullet.png", RESOURCE_TYPE::Graph, 1.0f);
 		//rs->Register("select1", "res/AbilitySelect/select1.png", RESOURCE_TYPE::Graph, 1.0f);
 		//rs->Register("select2", "res/AbilitySelect/select2.png", RESOURCE_TYPE::Graph, 1.0f);
 		//rs->Register("select3", "res/AbilitySelect/select4.png", RESOURCE_TYPE::Graph, 1.0f);

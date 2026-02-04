@@ -182,6 +182,7 @@
     <ClCompile Include="source\AbilityManager.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
     <ClCompile Include="source\PlayerBase_Attack.cpp" />
+    <ClCompile Include="source\PlayerBase_Dodge.cpp" />
     <ClCompile Include="source\PlayerBase_Draw.cpp" />
     <ClCompile Include="source\PlayerBase_Process.cpp" />
     <ClCompile Include="source\PlayerLifeBarUI.cpp" />

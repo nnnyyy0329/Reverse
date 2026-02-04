@@ -6,6 +6,7 @@ CharaBase::CharaBase()
 	_vCollisionTop = VGet(0.0f, 0.0f, 0.0f);
 	_vCollisionBottom = VGet(0.0f, 0.0f, 0.0f);
 	_fCollisionR = 0.0f;
+	_fCollisionHeight = 0.0f;
 
 	// 基礎ステータス初期化
 	_fMoveSpeed = 0.0f;
