@@ -188,6 +188,8 @@
     <ClCompile Include="source\PlayerBase_Process.cpp" />
     <ClCompile Include="source\PlayerLifeBarUI.cpp" />
     <ClCompile Include="source\PlayerManager.cpp" />
+    <ClCompile Include="source\ShieldBase.cpp" />
+    <ClCompile Include="source\ShieldManager.cpp" />
     <ClCompile Include="source\StageBase.cpp" />
     <ClCompile Include="source\StateCommon.cpp" />
     <ClCompile Include="source\StateMelee.cpp" />
@@ -245,6 +247,8 @@
     <ClInclude Include="source\PlayerBase.h" />
     <ClInclude Include="source\PlayerLifeBarUI.h" />
     <ClInclude Include="source\PlayerManager.h" />
+    <ClInclude Include="source\ShieldBase.h" />
+    <ClInclude Include="source\ShieldManager.h" />
     <ClInclude Include="source\StageBase.h" />
     <ClInclude Include="source\StateCommon.h" />
     <ClInclude Include="source\StateMelee.h" />

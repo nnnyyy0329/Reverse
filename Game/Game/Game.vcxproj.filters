@@ -127,6 +127,12 @@
     <ClCompile Include="source\PlayerBase_Dodge.cpp">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClCompile>
+    <ClCompile Include="source\ShieldBase.cpp">
+      <Filter>Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ShieldManager.cpp">
+      <Filter>Shield</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -249,6 +255,12 @@
     <ClInclude Include="source\ModeStageChange.h">
       <Filter>Mode\StageChange</Filter>
     </ClInclude>
+    <ClInclude Include="source\ShieldBase.h">
+      <Filter>Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ShieldManager.h">
+      <Filter>Shield</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -331,6 +343,9 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\Player\Bullet">
       <UniqueIdentifier>{bf0c1bdb-2ada-440d-8231-314cd8dc3e52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shield">
+      <UniqueIdentifier>{b0027806-d42b-4e7e-beca-b04f3c795a5e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -19,9 +19,9 @@ struct PlayerConfig
 	VECTOR startPos;	// 開始位置
 
 	// 表示設定
-	int drawSizeOffset;		// 描画サイズオフセット
-	int drawOffsetX;		// 描画Xオフセット
-	int drawOffsetY;		// 描画Yオフセット
+	int drawSizeOffset;	// 描画サイズオフセット
+	int drawOffsetX;	// 描画Xオフセット
+	int drawOffsetY;	// 描画Yオフセット
 
 	// リソース名
 	std::string modelName;	// モデル名
@@ -109,7 +109,19 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
-	virtual  void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo);	// 被ダメージ処理
+	// 被ダメージ処理
+	virtual  void ApplyDamage
+	(
+		float fDamage,
+		ATTACK_OWNER_TYPE eType,
+		const ATTACK_COLLISION& attackInfo
+	);	
+
+	// 前方判定処理
+	bool IsFacing(const VECTOR& targetPos, float dotThreshold = 0.0f) const;			// 対象が前方にあるかチェック
+	bool IsAttackFromFront(const VECTOR& attackDir, float dotThreshold = 0.0f) const;	// 攻撃が前方からかチェック
+	float GetDotToTarget(const VECTOR& targetPos) const;								// 対象の内積の値を取得
+	float GetDotFromAttack(const VECTOR& attackDir) const;								// 攻撃方向からの内積の値を取得
 
 	// 共通初期化
 	void InitializePlayerConfig(PlayerConfig& config);			// プレイヤー設定初期化
@@ -328,4 +340,9 @@ class PlayerAnimator
 //{
 //
 //};
+
+class PlayerShieldSystem
+{
+
+};
 

@@ -168,3 +168,102 @@ VECTOR PlayerBase::TransformMoveDirection(VECTOR move, float cameraAngle)
 
 	return transformMove;
 }
+
+// 対象が前方にあるかチェック
+bool PlayerBase::IsFacing(const VECTOR& targetPos, float dotThreshold) const
+{
+	// プレイヤーから対象への方向ベクトルを取得
+	VECTOR toTarget = VSub(targetPos, _vPos);
+	toTarget.y = 0.0f;
+
+	// ベクトルの長さがほぼ0の場合は判定不可
+	if(VSize(toTarget) < 0.001f){ return false; }
+
+	// 正規化
+	toTarget = VNorm(toTarget);
+
+	// プレイヤーの前方ベクトル
+	VECTOR forwardDir = _vDir;
+	forwardDir.y = 0.0f;
+	forwardDir = VNorm(forwardDir);
+
+	// 内積を計算
+	float dot = VDot(forwardDir, toTarget);
+
+	// 閾値と比較して前方か判定
+	return dot > dotThreshold;
+}
+
+// 攻撃が前方からかチェック
+bool PlayerBase::IsAttackFromFront(const VECTOR& attackDir, float dotThreshold) const
+{
+	// 攻撃方向ベクトルを正規化
+	VECTOR normAttackDir = attackDir;
+	normAttackDir.y = 0.0f;
+
+	// ベクトルの長さがほぼ0の場合は判定不可
+	if(VSize(normAttackDir) < 0.001f){ return false; }
+
+	// 正規化
+	normAttackDir = VNorm(normAttackDir);
+
+	// プレイヤーの前方ベクトル
+	VECTOR forwardDir = _vDir;
+	forwardDir.y = 0.0f;
+	forwardDir = VNorm(forwardDir);
+
+	// 攻撃方向とプレイヤーの前方ベクトルの内積を計算
+	// 攻撃方向を反転させてプレイヤー方向への攻撃として計算
+	VECTOR attackToPlayer = VScale(normAttackDir, -1.0f);
+	float dot = VDot(forwardDir, attackToPlayer);
+
+	// 閾値と比較して前方からの攻撃か判定	
+	return dot > dotThreshold;
+}
+
+// 対象の内積の値を取得
+float PlayerBase::GetDotToTarget(const VECTOR& targetPos) const
+{
+	// プレイヤーから対象への方向ベクトルを取得
+	VECTOR toTarget = VSub(targetPos, _vPos);
+	toTarget.y = 0.0f;
+
+	// ベクトルの長さがほぼ0の場合は0を返す
+	if(VSize(toTarget) < 0.001f){ return 0.0f; }
+
+	// 正規化
+	toTarget = VNorm(toTarget);
+
+	// プレイヤーの前方ベクトル
+	VECTOR forwardDir = _vDir;
+	forwardDir.y = 0.0f;
+	forwardDir = VNorm(forwardDir);
+
+	// 内積を計算して返す
+	return VDot(forwardDir, toTarget);
+}
+
+// 攻撃方向からの内積の値を取得
+float PlayerBase::GetDotFromAttack(const VECTOR& attackDir) const
+{
+	// 攻撃方向ベクトルを正規化
+	VECTOR normAttackDir = attackDir;
+	normAttackDir.y = 0.0f;
+
+	// ベクトルの長さがほぼ0の場合は0を返す
+	if(VSize(normAttackDir) < 0.001f){ return 0.0f; }
+
+	// 正規化
+	normAttackDir = VNorm(normAttackDir);
+
+	// プレイヤーの前方ベクトル
+	VECTOR forwardDir = _vDir;
+	forwardDir.y = 0.0f;
+	forwardDir = VNorm(forwardDir);
+
+	// 攻撃方向を反転させてプレイヤー方向への攻撃として計算
+	VECTOR attackToPlayer = VScale(normAttackDir, -1.0f);
+
+	// プレイヤーの前方ベクトルと攻撃方向の内積を計算して返す
+	return VDot(forwardDir, attackToPlayer);
+}
