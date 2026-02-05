@@ -48,6 +48,9 @@ bool AttackManager::Process()
 	// 無効な攻撃のクリーンアップ
 	CleanupInvalidAttacks();
 
+	// 回避にヒットした攻撃のクリーンアップ
+	CleanupDodgeHitAttacks();
+
 	return true;
 }
 
@@ -252,7 +255,7 @@ void AttackManager::ClearDodgeHitAttacks()
 }
 
 // 回避にヒットした攻撃のクリーンアップ
-bool AttackManager::CleanupDodgeHitAttacks()
+void AttackManager::CleanupDodgeHitAttacks()
 {
 	// 通常のforループで無効な攻撃を削除
 	for(auto attacks = _dodgeHitAttacks.begin(); attacks != _dodgeHitAttacks.end();)

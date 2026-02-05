@@ -334,7 +334,14 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 	if(attack->HasHitCharas(chara)) { return; }
 
 	// 無敵状態かチェック
+	bool isInvincible = false;
 	if(_dodgeSystem && _dodgeSystem->IsCharacterInvincible(chara))
+	{
+		isInvincible = true;
+	}
+
+	// 回避済みの攻撃かチェック
+	if(_attackManager->IsDodgeHitAttack(attack))
 	{
 		return;
 	}
@@ -352,11 +359,13 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		// ヒットフラグを有効にする
 		attack->SetHitFlag(true);
 
-		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
-		auto charaType = chara->GetCharaType();							// キャラのタイプ取得
-
-		// 自分に攻撃しているかどうか
-		if(OwnerIsAttackingOwner(charaType, ownerType)){ return; }
+		// 無敵状態の場合は回避ヒット扱いにして登録
+		if(isInvincible)
+		{
+			_attackManager->RegisterDodgeHitAttack(attack);
+			isInvincible = false;
+			return;
+		}
 
 		// ヒットしたキャラを登録
 		attack->AddHitCharas(chara);
@@ -364,6 +373,11 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 
 		EffectServer::GetInstance()->Play("SurfacePlayerAttackHit1", chara->GetPos());
 
+		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
+		auto charaType = chara->GetCharaType();							// キャラのタイプ取得
+
+		// 自分に攻撃しているかどうか
+		if(OwnerIsAttackingOwner(charaType, ownerType)){ return; }
 		
 		// ダメージ処理
 		float damage = attack->GetDamage();			// ダメージ取得

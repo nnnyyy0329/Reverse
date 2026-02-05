@@ -123,9 +123,6 @@ public:
 	void ProcessCollisionPos();		// コリジョン位置更新処理
 	void ProcessStatusAnimation();	// 状態別アニメーション処理
 	void ProcessPlayAnimation();	// アニメーション処理
-	//void ProcessStanding();			// 着地処理
-	//void ProcessJump();				// ジャンプ処理
-	//void ProcessCrouch();			// しゃがみ処理
 	void ProcessHit();				// 被弾処理
 	void ProcessDeath();			// 死亡処理
 	void ProcessDebug();			// デバッグ処理
@@ -266,4 +263,69 @@ protected:
 	// カメラ角度
 	float _cameraAngle;
 };
+
+
+
+class PlayerInput
+{
+public:
+
+	// 入力状態の取得
+	bool IsMoving() const;
+	bool IsDashing() const;
+	bool IsAttackPressed() const;
+	bool IsDodgePressed() const;
+
+	// 入力状態を設定する
+	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
+	{
+		_key = key;
+		_trg = trg;
+		_lx = lx;
+		_ly = ly;
+		_rx = rx;
+		_ry = ry;
+		_analogMin = analogMin;
+	}
+
+protected:
+	// 入力関係
+	int _key = 0;
+	int _trg = 0;
+	float _lx = 0.0f;
+	float _ly = 0.0f;
+	float _rx = 0.0f;
+	float _ry = 0.0f;
+	float _analogMin = 0.0f;
+};
+
+class PlayerMove
+{
+public:
+	void InitializePlayerConfig(PlayerConfig& config);	// プレイヤー設定初期化
+	void ProcessMovement(const PlayerInput& input, float cameraAngle);
+
+protected:
+	PlayerConfig _config;
+};
+
+class PlayerAnimator
+{
+
+};
+
+//class PlayerDraw
+//{
+//
+//};
+//
+//class PlayerAttackSystem
+//{
+//
+//};
+//
+//class PlayerDodgeSystem
+//{
+//
+//};
 

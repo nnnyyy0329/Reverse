@@ -100,8 +100,8 @@ private:
 	void CheckActiveAttack		(std::shared_ptr<CharaBase> chara);										// 有効な攻撃のチェック
 	void CheckHitCharaAttackCol	(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
 	void ConvertEnergy			(std::shared_ptr<AttackBase> attack, float damage);						// ダメージをエネルギーに変換する
-	bool OwnerIsAttackingOwner	(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);					// 攻撃所有者が自分に攻撃しているかどうか
 	void CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player);// プレイヤーとトリガーの当たり判定
+	bool OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);					// 攻撃所有者が自分に攻撃しているかどうか
 
 	// ライト関連
 	void InitializeLights();// ライト初期化
@@ -112,7 +112,6 @@ private:
 	// ライトを生成して、コンテナに追加
 	// ライトの位置、影響範囲、ライトの色
 	int AddPointLight(VECTOR vPos, float fRange, COLOR_F color);
-
 	void RemoveLight(int lightHandle);// 指定ライトを削除
 
 };

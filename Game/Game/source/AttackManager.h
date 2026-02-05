@@ -45,9 +45,9 @@ public:
 
 	// 回避にヒットした攻撃の登録と解除
 	void RegisterDodgeHitAttack(std::shared_ptr<AttackBase> attack);	// 回避にヒットした攻撃を登録
-	bool IsDodgeHitAttack(std::shared_ptr<AttackBase> attack) const;	// 回避にヒットした攻撃かチェック
 	void ClearDodgeHitAttacks();										// 回避にヒットした攻撃をクリア
-	bool CleanupDodgeHitAttacks();										// 回避にヒットした攻撃のクリーンアップ
+	void CleanupDodgeHitAttacks();										// 回避にヒットした攻撃のクリーンアップ
+	bool IsDodgeHitAttack(std::shared_ptr<AttackBase> attack) const;	// 回避にヒットした攻撃かチェック
 
 	// 攻撃の取得
 	std::vector<std::shared_ptr<AttackBase>>GetAllActiveAttacks()const;									// 全てのアクティブな攻撃を取得
