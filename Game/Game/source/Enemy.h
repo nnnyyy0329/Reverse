@@ -72,10 +72,14 @@ public:
 	bool IsTargetDetected() { return _bIsTargetDetected; };// 索敵結果を取得
 	void SetTargetDetected(bool bDetected) { _bIsTargetDetected = bDetected; };// 索敵結果を設定
 
-
 	// 敵ごとに動きにばらつきを持たせるため
 	void ApplyRandomOffset();// ステート時間にランダムなオフセットを適用
 	float GetStateTimerOffset() { return _fStateTimerOffset; }
+
+
+	// 徐々に回転させる
+	void SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg);// 目標方向へ指定速度で回転
+
 
 
 	// AppFrameに移動予定

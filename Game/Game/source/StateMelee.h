@@ -99,5 +99,21 @@ namespace Melee
 		const char* GetName() const override { return "Melee:ReturnHome"; }
 		void UpdateSearch(Enemy* owner) override;
 	};
+
+
+
+
+	// ‰ñ‚è‚İ
+	class Strafe : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() const override { return "Melee:Strafe"; }
+
+	private:
+		float _fDuration;// ‰ñ‚è‚ŞŠÔ
+		int _direction;// 1:‰E‰ñ‚è, -1:¶‰ñ‚è
+	};
 }
 

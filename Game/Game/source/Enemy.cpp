@@ -587,3 +587,36 @@ void Enemy::ApplyRandomOffset()
 {
 	_fStateTimerOffset = static_cast<float>(GetRand(static_cast<int>(MAX_STATE_OFFSET)));
 }
+
+void Enemy::SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg)
+{
+	// 現在の角度
+	float currentY = atan2f(_vDir.x, _vDir.z);
+	// 目標の角度
+	float targetY = atan2f(vTargetDir.x, vTargetDir.z);
+
+	// 角度差を計算
+	float diff = targetY - currentY;
+	while (diff <= -DX_PI_F) { diff += DX_TWO_PI_F; }
+	while (diff > DX_PI_F) { diff -= DX_TWO_PI_F; }
+
+	// 1フレームあたりの回転量(ラジアン)
+	float step = turnSpeedDeg * DEGREE_TO_RADIAN;
+
+	// 差が回転量より小さければ目標角度へ、大きければstep分だけ回転
+	if (fabs(diff) < step)
+	{
+		currentY = targetY;
+	}
+	else
+	{
+		if (diff > 0) { currentY += step; }
+		else { currentY -= step; }
+	}
+
+	// 新しい向きベクトルを計算して設定
+	_vDir.x = sinf(currentY);
+	_vDir.y = 0.0f;
+	_vDir.z = cosf(currentY);
+	_vDir = VNorm(_vDir);
+}

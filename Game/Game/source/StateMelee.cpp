@@ -218,6 +218,7 @@ namespace Melee
 		{
 			VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
 			VECTOR vDir = VNorm(vToTarget);
+			// 即座に向きを変更
 			owner->SetDir(vDir);
 		}
 
@@ -276,9 +277,9 @@ namespace Melee
 			return std::make_shared<Attack>();// 攻撃状態へ
 		}
 
-		// 即座に向きを変更
+		// 向きを変更
 		VECTOR vDir = VNorm(vToTarget);
-		owner->SetDir(vDir);
+		owner->SmoothRotateTo(vDir, 5.0f);
 
 		// 移動処理
 		auto speed = owner->GetEnemyParam().fMoveSpeed;
@@ -323,7 +324,7 @@ namespace Melee
 			{
 				VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
 				VECTOR vDir = VNorm(vToTarget);
-				owner->SetDir(vDir);
+				owner->SmoothRotateTo(vDir, 5.0f);
 			
 			}
 		}
@@ -408,9 +409,9 @@ namespace Melee
 			return std::make_shared<Idle>();// 待機状態へ
 		}
 
-		// 即座に向きを変更
+		// 向きを変更
 		VECTOR vDir = VNorm(vToHome);
-		owner->SetDir(vDir);
+		owner->SmoothRotateTo(vDir, 5.0f);
 
 		// 初期位置に向かって移動
 		auto speed = owner->GetEnemyParam().fMoveSpeed;
@@ -430,5 +431,23 @@ namespace Melee
 		{
 			owner->SetTargetDetected(false);
 		}
+	}
+
+
+
+
+
+	// 回り込み
+	void Strafe::Enter(Enemy* owner)
+	{
+		_fTimer = 0.0f;
+		_fDuration = 60.0f + GetRand(60);// 1～2秒間
+		_direction = (GetRand(1) == 0) ? 1 : -1;// ランダムに方向を決める
+
+		// ここでアニメーション設定
+	}
+
+	std::shared_ptr<EnemyState> Strafe::Update(Enemy* owner)
+	{
 	}
 }
