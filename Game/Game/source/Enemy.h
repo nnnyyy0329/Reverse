@@ -73,6 +73,10 @@ public:
 	void SetTargetDetected(bool bDetected) { _bIsTargetDetected = bDetected; };// 索敵結果を設定
 
 
+	// 敵ごとに動きにばらつきを持たせるため
+	void ApplyRandomOffset();// ステート時間にランダムなオフセットを適用
+	float GetStateTimerOffset() { return _fStateTimerOffset; }
+
 
 	// AppFrameに移動予定
 	// DrawLine3Dを組み合わせて3D空間に円を描画する関数
@@ -111,6 +115,9 @@ protected:
 	// 索敵関連
 	int _searchTimer = 0;// 索敵タイマー
 	bool _bIsTargetDetected = false;// ターゲットが見つかったか
+
+	// 動きにばらつきを持たせるため
+	float _fStateTimerOffset = 0.0f;// ステート時間にばらつきを
 
 private:
 	void LoadEnemyModel();// モデルを名前に応じて読み込む

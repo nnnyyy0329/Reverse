@@ -4,11 +4,14 @@
 #include "AttackManager.h"
 #include "StateCommon.h"
 
-namespace {
+namespace 
+{
 	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
 	constexpr auto COLLISION_HEIGHT = 100.0f;// 敵の当たり判定高さ
 
 	constexpr auto SEARCH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
+	
+	constexpr auto MAX_STATE_OFFSET = 60.0f;// ステート時間をずらす範囲(フレーム)
 }
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
@@ -28,6 +31,9 @@ Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
 	_lifeBarFrameHandle = ResourceServer::GetInstance()->GetHandle("LifeBarFrame");
 
 	SetCharaType(CHARA_TYPE::ENEMY);// キャラタイプを設定
+
+	_searchTimer = 0;
+	_fStateTimerOffset = 0.0f;
 }
 
 Enemy::~Enemy() 
@@ -45,6 +51,9 @@ bool Enemy::Initialize()
 	_damageCnt = 0;
 	_bIsExist = true;
 	_bCanRemove = false;
+
+	// ランダムなオフセットを適用して動きをずらす
+	ApplyRandomOffset();
 
 	return true;
 }
@@ -74,9 +83,11 @@ bool Enemy::Process()
 	}
 
 	// ステート更新
-	if (_currentState) {
+	if (_currentState) 
+	{
 		auto nextState = _currentState->Update(this);
-		if (nextState) {
+		if (nextState) 
+		{
 			ChangeState(nextState);
 		}
 	}
@@ -121,7 +132,8 @@ void Enemy::DebugRender()
 
 	// 追跡中の各範囲の描画
 	{
-		if (_currentState && _currentState->IsChasing()) {
+		if (_currentState && _currentState->IsChasing()) 
+		{
 			// 攻撃可能範囲を描画
 			unsigned int attackColor = GetColor(255, 0, 0);// 赤
 			DrawCircle3D(_vPos, _enemyParam.fAttackRange, attackColor, 16);
@@ -140,7 +152,8 @@ void Enemy::DebugRender()
 		VECTOR vMax = VAdd(_vPos, VGet(_fCollisionR, _fCollisionHeight, _fCollisionR));
 
 		// CheckCameraViewClip_Box：カメラの視界外ならTRUEを返す
-		if (CheckCameraViewClip_Box(vMin, vMax) == FALSE) {// 映っている時だけ
+		if (CheckCameraViewClip_Box(vMin, vMax) == FALSE) 
+		{// 映っている時だけ
 			VECTOR vScreenPos = ConvWorldPosToScreenPos(VAdd(_vPos, VGet(0, 150.0f, 0)));// 画面座標に変換(少し上に調整)
 			int x = static_cast<int>(vScreenPos.x);
 			int y = static_cast<int>(vScreenPos.y);
@@ -153,7 +166,8 @@ void Enemy::DebugRender()
 			// 状態名
 			// ステートから名前を取得
 			const char* stateName = "None";
-			if (_currentState) {
+			if (_currentState)
+			{
 				stateName = _currentState->GetName();
 			}
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  state  = %s", stateName); y += size;
@@ -168,7 +182,7 @@ void Enemy::CollisionRender()
 
 void Enemy::DrawLifeBar()
 {
-	if (_lifeBarHandle == -1 || _lifeBarFrameHandle == -1) return;
+	if (_lifeBarHandle == -1 || _lifeBarFrameHandle == -1) { return; }
 
 	// 座標と距離の変換
 	// 敵の頭上の座標
@@ -184,7 +198,7 @@ void Enemy::DrawLifeBar()
 	VECTOR vPos2D = ConvWorldPosToScreenPos(vHeadPos);
 
 	// カメラ範囲外チェック
-	if (vPos2D.z < 0.0f || vPos2D.z > 1.0f) return;
+	if (vPos2D.z < 0.0f || vPos2D.z > 1.0f) { return; }
 
 	// 遠近感のスケール計算
 	// ライフバーを3D空間上でどれくらいの幅にするか
@@ -225,8 +239,8 @@ void Enemy::DrawLifeBar()
 	// 描画
 	// ライフの割合
 	auto lifeRatio = _fLife / _enemyParam.fMaxLife;
-	if (lifeRatio < 0.0f) lifeRatio = 0.0f;
-	if (lifeRatio > 1.0f) lifeRatio = 1.0f;
+	if (lifeRatio < 0.0f) { lifeRatio = 0.0f; }
+	if (lifeRatio > 1.0f) { lifeRatio = 1.0f; }
 
 	// 枠
 	DrawExtendGraph(
@@ -237,7 +251,8 @@ void Enemy::DrawLifeBar()
 	);
 
 	// 中身
-	if (lifeRatio > 0.0f) {// ライフがあるとき
+	if (lifeRatio > 0.0f) 
+	{// ライフがあるとき
 		// 画面上で表示する幅
 		int currentDrawW = static_cast<int>(drawW * lifeRatio);
 		// 元画像から切り取る幅
@@ -269,7 +284,8 @@ void Enemy::DrawCircle3D(VECTOR vCenter, float fRadius, unsigned int color, int 
 	vPrevPos.z = vCenter.z + cosf(0.0f) * fRadius;
 
 	// 分割数分ループして点を計算し、線を描画していく
-	for (int i = 0; i <= segments; i++) {
+	for (int i = 0; i <= segments; i++) 
+	{
 		auto angle = step * static_cast<float>(i);// 現在の角度を計算
 
 		// 次の点を計算
@@ -312,7 +328,8 @@ void Enemy::DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAng
 
 	// 扇形の弧(外周)を描画
 	VECTOR vPrevPoint = vLeftEdge;// 左端から開始
-	for (int i = 1; i <= segments; ++i) {
+	for (int i = 1; i <= segments; ++i) 
+	{
 		// 現在の割合(0.0 ~ 1.0)
 		auto ratio = static_cast<float>(i) / static_cast<float>(segments);
 
@@ -351,11 +368,15 @@ void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 		if (!canChange) { return; }// 変更不可
 	}
 
-	if (_currentState) {
+	if (_currentState) 
+	{
 		_currentState->Exit(this);
 	}
+
 	_currentState = newState;
-	if (_currentState) {
+
+	if (_currentState) 
+	{
 		_currentState->Enter(this);
 	}
 }
@@ -369,9 +390,11 @@ void Enemy::SetEnemyParam(const EnemyParam& param)
 	_enemyParam.fVisionCos = cosf(rad);
 }
 
-void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime) {
+void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime) 
+{
 	auto bulletManager = _bulletManager.lock();// マネージャーが有効か確認
-	if (bulletManager) {
+	if (bulletManager)
+	{
 		// タイプを設定して、発射リクエストをする
 		bulletManager->Shoot(vStartPos, vDir, fRadius, fSpeed, lifeTime, _eCharaType);
 	}
@@ -380,7 +403,8 @@ void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpe
 void Enemy::StartAttack(const EnemyAttackSettings& settings)
 {
 
-	if (!_attackCollision) {// 攻撃コリジョンがなければ作成
+	if (!_attackCollision) 
+	{// 攻撃コリジョンがなければ作成
 		_attackCollision = std::make_shared<AttackBase>();
 		_attackCollision->Initialize();
 	}
@@ -410,7 +434,7 @@ void Enemy::StartAttack(const EnemyAttackSettings& settings)
 
 void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings) 
 {
-	if (!_attackCollision) return;
+	if (!_attackCollision) { return; }
 
 	// 敵の向きベクトルをラジアンに変換
 	auto yaw = atan2f(_vDir.x, _vDir.z);
@@ -442,14 +466,14 @@ void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings)
 
 void Enemy::StopAttack() 
 {
-	if (!_attackCollision) return;
+	if (!_attackCollision) { return; }
 	// 攻撃停止
 	_attackCollision->ProcessStopAttack();
 }
 
 void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
 { 
-	if(_fLife <= 0.0f) return;
+	if (_fLife <= 0.0f) { return; }
 
 	// 変身前プレイヤーからの攻撃なら最低1は残す
 	if (eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER)
@@ -522,7 +546,8 @@ bool Enemy::IsDead() const
 
 std::shared_ptr<EnemyState> Enemy::GetRecoveryState() const
 {
-	if (_recoveryHandler) {// ハンドラが設定されていれば実行
+	if (_recoveryHandler) 
+	{// ハンドラが設定されていれば実行
 		return _recoveryHandler(const_cast<Enemy*>(this));
 	}
 
@@ -555,4 +580,10 @@ void Enemy::UpdateSearchTimer()
 	{
 		_searchTimer = 0;
 	}
+}
+
+// ステート時間にランダムなオフセットを適用
+void Enemy::ApplyRandomOffset()
+{
+	_fStateTimerOffset = static_cast<float>(GetRand(static_cast<int>(MAX_STATE_OFFSET)));
 }

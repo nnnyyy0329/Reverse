@@ -88,6 +88,9 @@ namespace Tank
 	{
 		_fTimer = 0.0f;
 
+		// 時間にばらつきを持たせる
+		_fTargetTimer = CalcOffsetTime(owner, owner->GetEnemyParam().fIdleTime);
+
 		// ここでアニメーション設定
 		// AnimManagerを取得してアニメーション切り替え
 		AnimManager* animManager = owner->GetAnimManager();
@@ -108,7 +111,7 @@ namespace Tank
 
 		_fTimer++;
 
-		if (_fTimer >= owner->GetEnemyParam().fIdleTime)
+		if (_fTimer >= _fTargetTimer)
 		{
 			return std::make_shared<Tank::Move>();// 自動移動状態へ
 		}

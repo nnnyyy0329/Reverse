@@ -1,7 +1,8 @@
 #include "StateRanged.h"
 #include "Enemy.h"
 
-namespace {
+namespace 
+{
 	constexpr auto SHOOT_OFFSET_Z = 20.0f;// 発射位置前方オフセット
 	constexpr auto SHOOT_OFFSET_Y = 40.0f;// 発射位置高さオフセット
 
@@ -21,7 +22,7 @@ namespace Ranged
 	bool IsTargetVisible(Enemy* owner)
 	{
 		auto target = owner->GetTarget();
-		if (!target) return false;
+		if (!target) { return false; }
 
 		// 距離チェック
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());// ターゲットへのベクトル
@@ -44,7 +45,8 @@ namespace Ranged
 
 
 	// 待機
-	void Idle::Enter(Enemy* owner) {
+	void Idle::Enter(Enemy* owner) 
+	{
 		_fTimer = 0.0f;
 		_fLookAroundTimer = 0.0f;
 		_bLookingLeft = true;// 最初は左を向く
@@ -53,9 +55,11 @@ namespace Ranged
 		// ここでアニメーション設定
 	}
 
-	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner) {
+	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner) 
+	{
 		// 索敵結果を使用
-		if (owner->IsTargetDetected()) {
+		if (owner->IsTargetDetected()) 
+		{
 			return std::make_shared<Detect>();// 発見状態へ
 		}
 
@@ -102,8 +106,8 @@ namespace Ranged
 				// 角度差を計算(-PI ~ +PI の範囲に収める)
 				auto diffAngle = _fTargetAngle - currentAngle;
 				// 180度を超えないように補正
-				while (diffAngle <= -DX_PI_F) diffAngle += DX_TWO_PI_F;
-				while (diffAngle > DX_PI_F) diffAngle -= DX_TWO_PI_F;
+				while (diffAngle <= -DX_PI_F) { diffAngle += DX_TWO_PI_F; }
+				while (diffAngle > DX_PI_F) { diffAngle -= DX_TWO_PI_F; }
 
 				// 旋回速度の制限
 				auto turnSpeedRad = LOOK_AROUND_SPEED * DEGREE_TO_RADIAN;
@@ -152,24 +156,28 @@ namespace Ranged
 
 
 	// 発見
-	void Detect::Enter(Enemy* owner) {
+	void Detect::Enter(Enemy* owner) 
+	{
 		_fTimer = 0.0f;
 		// ここでアニメーション設定
 
 		// 発見時にプレイヤーの方向を向く
 		auto target = owner->GetTarget();
-		if (target) {
+		if (target) 
+		{
 			VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());// ターゲットへのベクトル
 			VECTOR vDir = VNorm(vToTarget);
 			owner->SetDir(vDir);
 		}
 	}
 
-	std::shared_ptr<EnemyState> Detect::Update(Enemy* owner) {
+	std::shared_ptr<EnemyState> Detect::Update(Enemy* owner) 
+	{
 		_fTimer++;
 
 		// 時間経過で
-		if (_fTimer >= owner->GetEnemyParam().fDetectTime) {
+		if (_fTimer >= owner->GetEnemyParam().fDetectTime) 
+		{
 			return std::make_shared<Attack>();// 攻撃状態へ
 		}
 	}
@@ -179,14 +187,16 @@ namespace Ranged
 
 
 	// 攻撃
-	void Attack::Enter(Enemy* owner) {
+	void Attack::Enter(Enemy* owner) 
+	{
 		_fTimer = 0.0f;
 		_shotTimer = 0.0f;
 		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 		// ここでアニメーション設定
 	}
 
-	std::shared_ptr<EnemyState> Attack::Update(Enemy* owner) {
+	std::shared_ptr<EnemyState> Attack::Update(Enemy* owner) 
+	{
 		auto target = owner->GetTarget();
 		if (!target)
 		{
@@ -223,7 +233,8 @@ namespace Ranged
 			bool bIsOutAngle = (dot < limitCos);
 
 			// 離れすぎor視界外なら待機状態へ
-			if (bIsOutRange || bIsOutAngle) {
+			if (bIsOutRange || bIsOutAngle) 
+			{
 				owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// 念のため停止
 				// 索敵結果をクリア
 				owner->SetTargetDetected(false);
@@ -235,7 +246,8 @@ namespace Ranged
 		{
 			// 発射直前でなければターゲットの方向を向く
 			// 滑らかに旋回させる
-			if (_shotTimer < interval - lockTime) {
+			if (_shotTimer < interval - lockTime) 
+			{
 				// ターゲットの角度を計算
 				auto targetAngle = atan2f(vToTarget.x, vToTarget.z);
 
@@ -246,21 +258,22 @@ namespace Ranged
 				// 角度差を計算(-PI ~ +PI の範囲に収める)
 				auto diffAngle = targetAngle - currentAngle;
 				// 180度を超えないように補正
-				while (diffAngle <= -DX_PI_F) diffAngle += DX_TWO_PI_F;
-				while (diffAngle > DX_PI_F) diffAngle -= DX_TWO_PI_F;
+				while (diffAngle <= -DX_PI_F) { diffAngle += DX_TWO_PI_F; }
+				while (diffAngle > DX_PI_F) { diffAngle -= DX_TWO_PI_F; }
 
 				// 旋回速度の制限
 				auto turnSpeedRad = owner->GetEnemyParam().fTurnSpeed * DEGREE_TO_RADIAN;// ラジアンに変換
 				// 差が速度制限を超えていたら、速度分だけ回す
-				if (diffAngle > turnSpeedRad) diffAngle = turnSpeedRad;
-				else if (diffAngle < -turnSpeedRad) diffAngle = -turnSpeedRad;
+				if (diffAngle > turnSpeedRad) { diffAngle = turnSpeedRad; }
+				else if (diffAngle < -turnSpeedRad) { diffAngle = -turnSpeedRad; }
 
 				// 新しい向きベクトルを計算して設定
 				auto newAngle = currentAngle + diffAngle;
 				VECTOR vNewDir = VGet(sinf(newAngle), 0.0f, cosf(newAngle));
 				owner->SetDir(vNewDir);
 			}
-			//else {
+			//else 
+			// {
 			//	// 発射直前は向きを固定する
 			//}
 		}
@@ -270,7 +283,8 @@ namespace Ranged
 			VECTOR vMove = VGet(0.0f, 0.0f, 0.0f);
 
 			// 距離が近い　かつ　プレイヤーの正面を向いている(45度)
-			if (dist < moveBackRange && dot > 0.7f) {
+			if (dist < moveBackRange && dot > 0.7f)
+			{
 				// 移動用にY成分を抜いたベクトルを作る
 				VECTOR vToTargetXZ = vToTarget;
 				vToTargetXZ.y = 0.0f;// 高さは無視する
@@ -289,7 +303,8 @@ namespace Ranged
 		}
 
 		// 発射判定
-		if (_shotTimer >= interval && dot > 0.9f) {// ほぼ正面を向いているなら発射
+		if (_shotTimer >= interval && dot > 0.9f) 
+		{// ほぼ正面を向いているなら発射
 			Shoot(owner);// 発射
 
 			int playingHandle = EffectServer::GetInstance()->Play("Laser", owner->GetPos());// エフェクト再生
@@ -309,7 +324,8 @@ namespace Ranged
 		return nullptr;
 	}
 
-	void Attack::Shoot(Enemy* owner) {
+	void Attack::Shoot(Enemy* owner)
+	{
 		// 発射位置の計算
 		VECTOR vMuzzlePos = VAdd(
 			owner->GetPos(),

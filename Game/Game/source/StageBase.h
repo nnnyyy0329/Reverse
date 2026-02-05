@@ -7,7 +7,8 @@ class StageBase
 {
 public:
 	// マップモデルの設定情報
-	struct MODELPOS {
+	struct MODELPOS 
+	{
 		std::string name;// 名前
 		VECTOR pos;// 位置
 		VECTOR rot;// 回転

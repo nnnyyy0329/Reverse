@@ -59,5 +59,10 @@ public:
 
 	virtual void UpdateSearch(Enemy* owner) {};// 索敵処理(各ステートでオーバーライド)
 
+protected:
+	float CalcOffsetTime(Enemy* owner, float baseTime);// ステート時間に敵ごとのオフセットを適用
+
 	float _fTimer = 0.0f;
+	float _fTargetTimer = 0.0f;
+
 };

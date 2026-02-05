@@ -10,7 +10,8 @@ StageBase::StageBase(int stageNum)
 	, _totalEnemyCnt(0)
 {
 	std::string path, jsonFile, jsonObjName;
-	switch (_stageNum) {
+	switch (_stageNum) 
+	{
 	case 1:
 		path = "res/stage/"; jsonFile = "try_stage_0.json"; jsonObjName = "res";
 		break;

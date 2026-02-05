@@ -5,7 +5,8 @@
 #include "StateTank.h"
 #include <memory>
 
-namespace {
+namespace 
+{
 	constexpr auto DEFAULT_ENEMY_SPEED = 2.0f;// 敵の移動速度
 	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 10000.0f;// 敵の最大体力
 
@@ -60,7 +61,8 @@ public:
 
 		EnemyParam param;
 
-		switch (type) {
+		switch (type) 
+		{
 		case EnemyType::MELEE:// 近接型
 			// モデル名を設定
 			enemy->SetModelName("Melee");
@@ -79,16 +81,16 @@ public:
 				enemy->SetEnemyParam(param);// パラメータ設定
 
 				// ハンドラの中身を設定
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> {
+				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> 
+					{
 					// ターゲットが存在すれば追跡
-					if (e->GetTarget()) {
+					if (e->GetTarget()) 
+					{
 						return std::make_shared<Melee::Chase>();
 					}
 					// 見えていなければ待機
 					return std::make_shared<Melee::Idle>();
 				});
-
-				enemy->ChangeState(std::make_shared<Melee::Idle>());// 初期状態設定
 				break;
 
 		case EnemyType::RANGED:// 遠距離型
@@ -103,16 +105,16 @@ public:
 				enemy->SetEnemyParam(param);// パラメータ設定
 
 				// ハンドラの中身を設定
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> {
+				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState>
+					{
 					// ターゲットが存在すれば攻撃
-					if (e->GetTarget()) {
+					if (e->GetTarget()) 
+					{
 						return std::make_shared<Ranged::Attack>();
 					}
 					// 見えていなければ待機
 					return std::make_shared<Ranged::Idle>();
-					});
-
-				enemy->ChangeState(std::make_shared<Ranged::Idle>());// 初期状態設定
+				});
 				break;
 
 		case EnemyType::TANK:// タンク型
@@ -133,7 +135,8 @@ public:
 				enemy->SetEnemyParam(param);
 
 				// ハンドラの設定
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> {
+				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> 
+					{
 					// ターゲットが存在すれば追跡
 					if (e->GetTarget())
 					{
@@ -142,14 +145,25 @@ public:
 					// 見えていなければ待機
 					return std::make_shared<Tank::Idle>();
 				});
-
-				enemy->ChangeState(std::make_shared<Tank::Idle>());// 初期状態設定
 				break;
-
 		}
 
 		// 設定後に初期化を呼び出す
 		enemy->Initialize();
+
+		// 初期化後に初期状態を設定
+		switch (type) 
+		{
+		case EnemyType::MELEE:
+			enemy->ChangeState(std::make_shared<Melee::Idle>());
+			break;
+		case EnemyType::RANGED:
+			enemy->ChangeState(std::make_shared<Ranged::Idle>());
+			break;
+		case EnemyType::TANK:
+			enemy->ChangeState(std::make_shared<Tank::Idle>());
+			break;
+		}
 
 		return enemy;// 作成した敵を返す
 	}
