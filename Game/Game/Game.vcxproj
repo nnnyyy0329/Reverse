@@ -165,6 +165,7 @@
     <ClCompile Include="source\EnergyUI.cpp" />
     <ClCompile Include="source\GameCamera.cpp" />
     <ClCompile Include="source\GameObjectBase.cpp" />
+    <ClCompile Include="source\GeometryUtility.cpp" />
     <ClCompile Include="source\InteriorPlayer.cpp" />
     <ClCompile Include="source\Item.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -224,6 +225,7 @@
     <ClInclude Include="source\EnergyUI.h" />
     <ClInclude Include="source\GameCamera.h" />
     <ClInclude Include="source\GameObjectBase.h" />
+    <ClInclude Include="source\GeometryUtility.h" />
     <ClInclude Include="source\InteriorPlayer.h" />
     <ClInclude Include="source\Item.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

@@ -324,7 +324,7 @@ bool ModeGame::Render()
 	
 	// オブジェクトの描画
 	{
-		_stage->Render();
+		//_stage->Render();
 		_playerManager->Render();
 		_bulletManager->Render();
 		_energyUI->Render();

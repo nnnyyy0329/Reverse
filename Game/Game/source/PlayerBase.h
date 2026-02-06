@@ -110,7 +110,7 @@ public:
 	virtual bool	Render();		// •`‰æ
 
 	// ”íƒ_ƒ[ƒWˆ—
-	virtual  void ApplyDamage
+	virtual void ApplyDamage
 	(
 		float fDamage,
 		ATTACK_OWNER_TYPE eType,

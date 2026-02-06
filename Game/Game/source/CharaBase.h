@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObjectBase.h"
-
 #include "AttackManager.h"
 
 enum class CHARA_TYPE
@@ -19,7 +18,7 @@ enum class CHARA_TYPE
 };
 
 // キャラクターベースクラス
-// 自分自身のshared_ptrを取得するためにenable_shared_from_thisを継承
+// 自分自身のshared_ptrをほかで取得するためにenable_shared_from_thisを継承
 class CharaBase : public GameObjectBase, public std::enable_shared_from_this<CharaBase>
 {
 public:

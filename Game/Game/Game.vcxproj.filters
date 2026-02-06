@@ -133,6 +133,9 @@
     <ClCompile Include="source\ShieldManager.cpp">
       <Filter>Shield</Filter>
     </ClCompile>
+    <ClCompile Include="source\GeometryUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -261,6 +264,9 @@
     <ClInclude Include="source\ShieldManager.h">
       <Filter>Shield</Filter>
     </ClInclude>
+    <ClInclude Include="source\GeometryUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -346,6 +352,9 @@
     </Filter>
     <Filter Include="Shield">
       <UniqueIdentifier>{b0027806-d42b-4e7e-beca-b04f3c795a5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{8672d866-e05c-4c31-a16a-c411684426f0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
