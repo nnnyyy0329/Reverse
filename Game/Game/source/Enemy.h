@@ -18,7 +18,7 @@ public:
 	virtual bool Render();		// 描画
 	virtual void DebugRender();	// デバッグ描画
 	virtual void CollisionRender(); // コリジョン描画
-	void DrawLifeBar();// 体力バー描画
+	void DrawLifeBar();// ライフバー描画
 
 	VECTOR GetHomePos() const { return _vHomePos; }
 	void SetHomePos(VECTOR pos) { _vHomePos = pos; }
@@ -106,8 +106,8 @@ protected:
 
 	RecoveryHandler _recoveryHandler;// 関数を保存する変数
 
-	int _lifeBarHandle = -1;// 体力バー用
-	int _lifeBarFrameHandle = -1;// 体力バー枠用
+	int _lifeBarHandle = -1;// ライフバー用
+	int _lifeBarFrameHandle = -1;// ライフバー枠用
 
 	int _damageCnt = 0;// 何回ダメージを受けたか(スタン用)
 

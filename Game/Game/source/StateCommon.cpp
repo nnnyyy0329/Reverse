@@ -3,13 +3,18 @@
 
 namespace 
 {
-	constexpr auto DOWN_TIME = 180.0f;// 攻撃を受けた後のダウン時間
+	// 状態時間
+	constexpr auto DOWN_TIME = 180.0f;// ダウン時間
 	constexpr auto STUN_TIME = 180.0f;// スタン時間
 	constexpr auto DEAD_TIME = 60.0f;// 死亡アニメーション時間
 
+	// ノックバック制御
 	constexpr auto KNOCKBACK_SPEED = 5.0f;// ノックバック速度
 	constexpr auto KNOCKBACK_TIME = 15.0f;// ノックバック時間
 	constexpr auto KNOCKBACK_DECELERATION = 0.9f;// ノックバック減速率
+
+	// 判定閾値
+	constexpr auto KNOCKBACK_MIN_DISTANCE = 0.001f;// ノックバック方向計算の最小距離
 }
 
 namespace Common
@@ -17,24 +22,25 @@ namespace Common
 	// 被ダメージ
 	void Damage::Enter(Enemy* owner) 
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
+
 		// ここでアニメーション設定
 	}
 
 	std::shared_ptr<EnemyState> Damage::Update(Enemy* owner) 
 	{
+		// タイマー更新
 		_fTimer++;
 
-		// 被ダメージ回数によってステートを変える
-		if(owner->GetDamageCount() >= owner->GetEnemyParam().damageToDown)
+		// ダウン判定チェック
+		if (owner->GetDamageCount() >= owner->GetEnemyParam().damageToDown)
 		{
-			// ダウン状態へ移行
-			return std::make_shared<Down>();
+			return std::make_shared<Down>();// ダウン状態へ
 		}
-		// 次のステートはオーナーに任せる
-		return owner->GetRecoveryState();
 
-		return nullptr;
+		// 回復状態へ
+		return owner->GetRecoveryState();
 	}
 
 
@@ -44,20 +50,24 @@ namespace Common
 	// 死亡
 	void Dead::Enter(Enemy* owner)
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// 死亡時は移動しないようにする
+
+		// 移動停止
+		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+
 		// ここでアニメーション設定
 	}
 
 	std::shared_ptr<EnemyState> Dead::Update(Enemy* owner)
 	{
+		// タイマー更新
 		_fTimer++;
 
-		// 時間経過で
+		// 死亡時間経過チェック
 		if (_fTimer >= DEAD_TIME) 
 		{
-			// オブジェクト削除可能にする
-			owner->EnableRemove();
+			owner->EnableRemove();// オブジェクト削除可能設定
 		}
 
 		return nullptr;
@@ -70,21 +80,26 @@ namespace Common
 	// スタン
 	void Stun::Enter(Enemy* owner) 
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// スタン中は移動しないようにする
+
+		// 移動停止
+		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 
 		// ここでアニメーション設定
 	}
 
 	std::shared_ptr<EnemyState> Stun::Update(Enemy* owner)
 	{
+		// タイマー更新
 		_fTimer++;
-		// 時間経過で
+
+		// スタン時間経過チェック
 		if (_fTimer >= STUN_TIME) 
 		{
-			// 次のステートはオーナーに任せる
-			return owner->GetRecoveryState();
+			return owner->GetRecoveryState();// 回復状態へ
 		}
+
 		return nullptr;
 	}
 
@@ -95,33 +110,38 @@ namespace Common
 	// ダウン
 	void Down::Enter(Enemy* owner) 
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 		_fKnockbackSpeed = KNOCKBACK_SPEED;
-		owner->ResetDamageCount();// 被ダメージ回数リセット
 
-		// ノックバック方向を計算
+		// 被ダメージ回数リセット
+		owner->ResetDamageCount();
+
+		// ノックバック方向計算
 		auto target = owner->GetTarget();
 		if (target)
 		{
-			// ターゲットから敵への方向ベクトル(XZ平面のみ)
+			// ターゲットから敵へのベクトル計算
 			VECTOR vToEnemy = VSub(owner->GetPos(), target->GetPos());
-			vToEnemy.y = 0.0f;// Y成分は無視
+			vToEnemy.y = 0.0f;
 
-			// 正規化してノックバック方向とする
-			float distance = VSize(vToEnemy);
-			if (distance > 0.001f)
+			// 距離計算
+			float dist = VSize(vToEnemy);
+
+			if (dist > KNOCKBACK_MIN_DISTANCE)
 			{
-				_vKnockbackDir = VScale(vToEnemy, 1.0f / distance);
+				// 正規化してノックバック方向設定
+				_vKnockbackDir = VScale(vToEnemy, 1.0f / dist);
 			}
 			else 
 			{
-				// ターゲットと完全にかっさなっている場合は敵の向きの逆方向
+				// 重なっている場合は敵の向きの逆方向
 				_vKnockbackDir = VScale(owner->GetDir(), -1.0f);
 			}
 		}
 		else
 		{
-			// ターゲットがいない場合は敵の向きの逆方向
+			// ターゲット不在時は敵の向きの逆方向
 			_vKnockbackDir = VScale(owner->GetDir(), -1.0f);
 		}
 
@@ -130,28 +150,29 @@ namespace Common
 
 	std::shared_ptr<EnemyState> Down::Update(Enemy* owner)
 	{
+		// タイマー更新
 		_fTimer++;
 
 		// ノックバック処理
 		if (_fTimer < KNOCKBACK_TIME)
 		{
-			// ノックバック速度を徐々に適用
+			// 速度減衰処理
 			_fKnockbackSpeed *= KNOCKBACK_DECELERATION;
 
-			// ノックバック方向に移動
+			// 移動処理
 			VECTOR vMove = VScale(_vKnockbackDir, _fKnockbackSpeed);
 			owner->SetMove(vMove);
 		}
 		else
 		{
-			// ノックバック終了後は停止
+			// ノックバック終了後停止
 			owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 		}
 
-		// 時間経過で
-		if (_fTimer >= DOWN_TIME) {
-			// 次のステートはオーナーに任せる
-			return owner->GetRecoveryState();
+		// ダウン時間経過チェック
+		if (_fTimer >= DOWN_TIME)
+		{
+			return owner->GetRecoveryState();// 回復状態へ
 		}
 
 		return nullptr;

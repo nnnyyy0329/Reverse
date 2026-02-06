@@ -6,12 +6,28 @@
 
 namespace 
 {
+	// コリジョン設定
 	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
 	constexpr auto COLLISION_HEIGHT = 100.0f;// 敵の当たり判定高さ
+	constexpr auto COLLLISION_SUB_Y = 40.0f;// 腰位置オフセット
 
+	// 索敵制御
 	constexpr auto SEARCH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
 	
+	// ステート制御
 	constexpr auto MAX_STATE_OFFSET = 60.0f;// ステート時間をずらす範囲(フレーム)
+
+	// ライフバー表示設定
+	constexpr auto LIFEBAR_HEAD_OFFSET_Y = 100.0f;// ライフバーの表示位置オフセット
+	constexpr auto LIFEBAR_WORLD_WIDTH = 80.0f;// ライフバーのワールド上の幅
+
+	// デバッグ表示設定
+	constexpr auto DEBUG_TEXT_OFFSET_Y = 150.0f;// デバッグテキスト表示位置オフセット
+	constexpr auto DEBUG_FONT_SIZE = 16;// デバッグテキストフォントサイズ
+
+	// 画面外判定
+	constexpr auto CAMERA_DEPTH_MIN = 0.0f;// カメラ深度最小値
+	constexpr auto CAMERA_DEPTH_MAX = 1.0f;// カメラ深度最大値
 }
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
@@ -19,7 +35,7 @@ Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
 	_vDir = VGet(0.0f, 0.0f, 1.0f);// 前方を向いておく
 
 	// 腰位置の設定(マップモデルとの判定用)
-	_colSubY = 40.0f;
+	_colSubY = COLLLISION_SUB_Y;
 
 	// 当たり判定用(カプセル)
 	_fCollisionR = COLLISION_RADIUS;
@@ -47,7 +63,7 @@ bool Enemy::Initialize()
 
 	_vOldPos = _vPos;
 	_vHomePos = _vPos;// 初期位置を保存
-	_fLife = _enemyParam.fMaxLife;// 体力に最大値をセット
+	_fLife = _enemyParam.fMaxLife;// ライフに最大値をセット
 	_damageCnt = 0;
 	_bIsExist = true;
 	_bCanRemove = false;
@@ -106,7 +122,7 @@ bool Enemy::Render()
 	// 基底クラスのRenderを呼び出し
 	CharaBase::Render();
 
-	// 体力バー描画
+	// ライフバー描画
 	DrawLifeBar();
 
 	return true;
@@ -154,16 +170,16 @@ void Enemy::DebugRender()
 		// CheckCameraViewClip_Box：カメラの視界外ならTRUEを返す
 		if (CheckCameraViewClip_Box(vMin, vMax) == FALSE) 
 		{// 映っている時だけ
-			VECTOR vScreenPos = ConvWorldPosToScreenPos(VAdd(_vPos, VGet(0, 150.0f, 0)));// 画面座標に変換(少し上に調整)
+			VECTOR vScreenPos = ConvWorldPosToScreenPos(VAdd(_vPos, VGet(0.0f, DEBUG_TEXT_OFFSET_Y, 0.0f)));// 画面座標に変換(少し上に調整)
 			int x = static_cast<int>(vScreenPos.x);
 			int y = static_cast<int>(vScreenPos.y);
-			int size = 16;// 改行用
+			int size = DEBUG_FONT_SIZE;// 改行用
+
 			SetFontSize(size);
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  life   = %5.2f / %5.2f", _fLife, _enemyParam.fMaxLife); y += size;
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  _damageCnt  = %d", _damageCnt); y += size;
 
-			// 状態名
 			// ステートから名前を取得
 			const char* stateName = "None";
 			if (_currentState)
@@ -186,7 +202,7 @@ void Enemy::DrawLifeBar()
 
 	// 座標と距離の変換
 	// 敵の頭上の座標
-	VECTOR vHeadPos = VAdd(_vPos, VGet(0.0f, 100.0f, 0.0f));
+	VECTOR vHeadPos = VAdd(_vPos, VGet(0.0f, LIFEBAR_HEAD_OFFSET_Y, 0.0f));
 
 	// カメラ座標を取得
 	VECTOR vCamPos = GetCameraPosition();
@@ -198,11 +214,11 @@ void Enemy::DrawLifeBar()
 	VECTOR vPos2D = ConvWorldPosToScreenPos(vHeadPos);
 
 	// カメラ範囲外チェック
-	if (vPos2D.z < 0.0f || vPos2D.z > 1.0f) { return; }
+	if (vPos2D.z < CAMERA_DEPTH_MIN || vPos2D.z > CAMERA_DEPTH_MAX) { return; }
 
 	// 遠近感のスケール計算
 	// ライフバーを3D空間上でどれくらいの幅にするか
-	auto worldBarWidth = 80.0f;
+	auto worldBarWidth = LIFEBAR_WORLD_WIDTH;
 
 	// カメラの右方向ベクトルを取得
 	MATRIX mViewMat = GetCameraViewMatrix();// ビュー行列を取得
@@ -541,7 +557,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 
 bool Enemy::IsDead() const
 {
-	return _fLife <= 0.0f;// 体力が0以下なら死亡
+	return _fLife <= 0.0f;// ライフが0以下なら死亡
 }
 
 std::shared_ptr<EnemyState> Enemy::GetRecoveryState() const
