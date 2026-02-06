@@ -3,17 +3,33 @@
 
 namespace 
 {
-	constexpr auto ATTACK_COLLISION_OFFSET_Z = 100.0f;// 攻撃コリジョン前方オフセット
-	constexpr auto ATTACK_COLLISION_OFFSET_Y = 60.0f;// 攻撃コリジョンY位置オフセット
-	constexpr auto ATTACK_COLLISION_HEIGHT = 60.0f;// 攻撃コリジョン高さ
-	constexpr auto ATTACK_COLLISION_RADIUS = 40.0f;// 攻撃コリジョン半径
-	constexpr auto NEARBY_HOME = 10.0f;// 初期位置とみなす距離
+	// 攻撃コリジョン設定用定数
+	constexpr auto ATTACK_COLLISION_OFFSET_Z = 100.0f;	// 攻撃コリジョン前方オフセット
+	constexpr auto ATTACK_COLLISION_OFFSET_Y = 60.0f;	// 攻撃コリジョンY位置オフセット
+	constexpr auto ATTACK_COLLISION_HEIGHT = 60.0f;		// 攻撃コリジョン高さ
+	constexpr auto ATTACK_COLLISION_RADIUS = 40.0f;		// 攻撃コリジョン半径
+	
+	// 距離判定用定数
+	constexpr auto NEARBY_HOME = 10.0f;					// 初期位置到達判定距離
+	constexpr auto WANDER_HOME_RETURN_RATIO = 0.8f;		// 徘徊時の帰還判定比率
+	constexpr auto CONFRONT_DISTANCE_RATIO = 1.5f;		// 対峙時の接近判定比率
+	
+	// 時間制御用定数
+	constexpr auto ATTACK_CONFIRM_TIME = 60.0f;			// 攻撃判定が有効になるまでの時間
+	constexpr auto BLEND_FRAME = 1.0f;					// アニメーションブレンドフレーム数
+	constexpr auto CONFRONT_MIN_DURATION = 60.0f;		// 対峙最小時間
+	constexpr auto CONFRONT_RANDOM_DURATION = 60.0f;	// 対峙ランダム追加時間
+	
+	// 確率制御用定数
+	constexpr auto CONFRONT_PROBABILITY = 30;			// 対峙状態への遷移確率(%)
+	constexpr auto WANDER_ANGLE_RANDOM_RANGE = 90;		// 徘徊時の角度ランダム範囲(度)
+	constexpr auto WANDER_ANGLE_RANDOM_OFFSET = 45;		// 徘徊時の角度ランダムオフセット(度)
+	constexpr auto WANDER_FULL_ANGLE = 359;				// 徘徊時の全角度範囲(度)
+	
+	// 回転速度用定数
+	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;			// スムーズ回転速度
 
-	constexpr auto ATTACK_CONFIRM_TIME = 60.0f;// 攻撃判定が有効になるまでの時間
-
-	constexpr auto BLEND_FRAME = 1.0f;// アニメーションブレンドフレーム数
-
-	// 攻撃コリジョン設定
+	// 攻撃コリジョン設定生成
 	EnemyAttackSettings MakeMeleeAttackSettings()
 	{
 		EnemyAttackSettings settings;
@@ -25,9 +41,10 @@ namespace
 		settings.fDuration = 60.0f;
 		settings.fRecovery = 60.0f;
 		settings.fDamage = 10.0f;
-		settings.ownerId = 0;// 仮
+		settings.ownerId = 0;
 		return settings;
 	}
+
 	// 定数として保存
 	const EnemyAttackSettings MELEE_ATTACK_SETTINGS = MakeMeleeAttackSettings();
 }
@@ -37,17 +54,20 @@ namespace Melee
 	// 視界判定
 	bool IsTargetVisible(Enemy* owner)
 	{
+		// ターゲット存在チェック
 		auto target = owner->GetTarget();
 		if (!target) { return false; }
 
+		// ベクトル計算
+		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
+		
 		// 距離チェック
-		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());// ターゲットへのベクトル
-		auto dist = VSize(vToTarget);// ターゲットまでの距離
-		if (dist > owner->GetEnemyParam().fVisionRange) { return false; }// 索敵距離外
+		auto dist = VSize(vToTarget);
+		if (dist > owner->GetEnemyParam().fVisionRange) { return false; }
 
-		// 障害物チェック
+		// 障害物チェック(未実装)
 
-		return true;// 視界内
+		return true;
 	}
 
 
@@ -57,33 +77,35 @@ namespace Melee
 	// 待機
 	void Idle::Enter(Enemy* owner) 
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 
 		// 時間にばらつきを持たせる
 		_fTargetTimer = CalcOffsetTime(owner, owner->GetEnemyParam().fIdleTime);
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 待機アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);
 		}
 	}
 
 	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner) 
 	{
-		// 索敵結果を使用
+		// 索敵結果チェック
 		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Detect>();// 発見状態へ
+			return std::make_shared<Notice>();
 		}
 
+		// タイマー更新
 		_fTimer++;
+
+		// 時間経過チェック
 		if(_fTimer >= _fTargetTimer)
 		{
-			return std::make_shared<Move>();// 自動移動状態へ
+			return std::make_shared<Wander>();
 		}
 
 		return nullptr;
@@ -91,102 +113,93 @@ namespace Melee
 
 	void Idle::UpdateSearch(Enemy* owner)
 	{
-		if (Melee::IsTargetVisible(owner))
-		{
-			owner->SetTargetDetected(true);
-		}
-		else
-		{
-			owner->SetTargetDetected(false);
-		}
+		// 視界判定結果を設定
+		owner->SetTargetDetected(Melee::IsTargetVisible(owner));
 	}
 
 
 
 
 
-	// 自動移動
-	void Move::Enter(Enemy* owner) 
+	// 徘徊
+	void Wander::Enter(Enemy* owner) 
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 歩きアニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);
 		}
 
-
-		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());// 初期位置へのベクトル
-		auto dist = VSize(vToHome);// 初期位置までの距離
+		// 移動方向計算
+		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
+		auto dist = VSize(vToHome);
 		auto limitRange = owner->GetEnemyParam().fMoveRadius;
 
-		auto targetAngle = 0.0f;
+		float targetAngle = 0.0f;
 
-		// 初期位置からの距離によって方向を変える
-		if (dist > limitRange * 0.8f)
-		{// 80%以上離れていたなら、初期位置を向く
-			auto toHomeAngle = atan2f(vToHome.z, vToHome.x);// 初期位置への角度
-			// ランダムな角度を足して少しばらつかせる
-			auto randOffset = static_cast<float>(GetRand(90) - 45) * DEGREE_TO_RADIAN;
+		// 初期位置からの距離に応じて方向決定
+		if (dist > limitRange * WANDER_HOME_RETURN_RATIO)
+		{
+			// 初期位置方向へ向かう
+			auto toHomeAngle = atan2f(vToHome.z, vToHome.x);
+			auto randOffset = static_cast<float>(GetRand(WANDER_ANGLE_RANDOM_RANGE) - WANDER_ANGLE_RANDOM_OFFSET) * DEGREE_TO_RADIAN;
 			targetAngle = toHomeAngle + randOffset;
 		}
 		else 
 		{
-			// ランダムな方向に向く
-			targetAngle = static_cast<float>(GetRand(359)) * DEGREE_TO_RADIAN;
+			// ランダム方向へ向かう
+			targetAngle = static_cast<float>(GetRand(WANDER_FULL_ANGLE)) * DEGREE_TO_RADIAN;
 		}
 
-		VECTOR vDir = VGet(cosf(targetAngle), 0.0f, sinf(targetAngle));// XZ平面の角度の方向にある点のベクトルを計算
+		// 方向ベクトル設定
+		VECTOR vDir = VGet(cosf(targetAngle), 0.0f, sinf(targetAngle));
 		owner->SetDir(vDir);
 	}
 
-	std::shared_ptr<EnemyState> Move::Update(Enemy* owner)
+	std::shared_ptr<EnemyState> Wander::Update(Enemy* owner)
 	{
-		// 索敵結果を使用
+		// 索敵結果チェック
 		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Detect>();// 発見状態へ
+			return std::make_shared<Notice>();
 		}
 
+		// タイマー更新
 		_fTimer++;
 
-		// 移動範囲のチェック
-		VECTOR vFromHome = VSub(owner->GetPos(), owner->GetHomePos());// 初期位置からのベクトル
-		auto distSq = VSquareSize(vFromHome);// 平方根を使わない距離の2乗で
+		// 移動範囲チェック
+		VECTOR vFromHome = VSub(owner->GetPos(), owner->GetHomePos());
+		auto distSq = VSquareSize(vFromHome);
 		auto limitRange = owner->GetEnemyParam().fMoveRadius;
+		
 		if (distSq > limitRange * limitRange) 
-		{// 範囲外なら
-			return std::make_shared<ReturnHome>();// 帰還状態へ
+		{
+			return std::make_shared<ReturnHome>();
 		}
 
 		// 移動処理
 		VECTOR vDir = owner->GetDir();
 		auto speed = owner->GetEnemyParam().fMoveSpeed;
 		VECTOR vMove = VScale(vDir, speed);
-		owner->SetMove(vMove);// 移動量を更新
+		owner->SetMove(vMove);
 
-		// 時間経過で
+		// 時間経過チェック
 		if (_fTimer >= owner->GetEnemyParam().fMoveTime) 
 		{
-			return std::make_shared<Idle>();// 待機状態へ
+			return std::make_shared<Idle>();
 		}
+
 		return nullptr;
 	}
 
-	void Move::UpdateSearch(Enemy* owner)
+	void Wander::UpdateSearch(Enemy* owner)
 	{
-		if (Melee::IsTargetVisible(owner))
-		{
-			owner->SetTargetDetected(true);
-		}
-		else
-		{
-			owner->SetTargetDetected(false);
-		}
+		// 視界判定結果を設定
+		owner->SetTargetDetected(Melee::IsTargetVisible(owner));
 	}
 
 
@@ -194,39 +207,39 @@ namespace Melee
 
 
 	// 発見
-	void Detect::Enter(Enemy* owner) 
+	void Notice::Enter(Enemy* owner) 
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 発見時の硬直(待機アニメーション)
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);
 		}
 	}
 
-	std::shared_ptr<EnemyState> Detect::Update(Enemy* owner) 
+	std::shared_ptr<EnemyState> Notice::Update(Enemy* owner) 
 	{
+		// タイマー更新
 		_fTimer++;
 
-		// ターゲットの方向を向く
+		// ターゲット方向へ回転
 		auto target = owner->GetTarget();
 		if (target) 
 		{
 			VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
 			VECTOR vDir = VNorm(vToTarget);
-			// 即座に向きを変更
 			owner->SetDir(vDir);
 		}
 
-		// 時間経過で
+		// 時間経過チェック
 		if (_fTimer >= owner->GetEnemyParam().fDetectTime)
 		{
-			return std::make_shared<Chase>();// 追跡状態へ
+			return std::make_shared<Approach>();
 		}
+
 		return nullptr;
 	}
 
@@ -234,57 +247,63 @@ namespace Melee
 
 
 
-	// 追跡
-	void Chase::Enter(Enemy* owner) 
+	// 接近
+	void Approach::Enter(Enemy* owner) 
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 歩きアニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);
 		}
 	}
 
-	std::shared_ptr<EnemyState> Chase::Update(Enemy* owner) 
+	std::shared_ptr<EnemyState> Approach::Update(Enemy* owner) 
 	{
+		// ターゲット存在チェック
 		auto target = owner->GetTarget();
-		// ターゲットがいない場合は待機状態へ
 		if (!target) 
 		{
-			// 索敵結果をクリア
 			owner->SetTargetDetected(false);
-			return std::make_shared<Idle>();// 待機状態へ
+			return std::make_shared<Idle>();
 		}
 
+		// 距離計算
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
-		auto dist = VSize(vToTarget);// ターゲットまでの距離
+		auto dist = VSize(vToTarget);
 		
-		// 追跡限界距離を超えたか
+		// 追跡限界距離チェック
 		if(dist > owner->GetEnemyParam().fChaseLimitRange) 
 		{
-			// 索敵結果をクリア
 			owner->SetTargetDetected(false);
-			return std::make_shared<Idle>();// 待機状態へ
+			return std::make_shared<Idle>();
 		}
 
-		// 攻撃射程内か
+		// 攻撃射程チェック
 		if (dist <= owner->GetEnemyParam().fAttackRange) 
 		{
-			return std::make_shared<Attack>();// 攻撃状態へ
+			// 対峙か攻撃かランダム決定
+			if( GetRand(100) < CONFRONT_PROBABILITY ) 
+			{
+				return std::make_shared<Confront>();
+			}
+			else 
+			{
+				return std::make_shared<Attack>();
+			}
 		}
 
-		// 向きを変更
+		// ターゲット方向へ回転
 		VECTOR vDir = VNorm(vToTarget);
-		owner->SmoothRotateTo(vDir, 5.0f);
+		owner->SmoothRotateTo(vDir, SMOOTH_ROTATE_SPEED);
 
 		// 移動処理
 		auto speed = owner->GetEnemyParam().fMoveSpeed;
 		VECTOR vMove = VScale(vDir, speed);
-		owner->SetMove(vMove);// 移動量を更新
+		owner->SetMove(vMove);
 
 		return nullptr;
 	}
@@ -296,64 +315,63 @@ namespace Melee
 	// 攻撃
 	void Attack::Enter(Enemy* owner) 
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 		_bHasCollision = false;
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 攻撃前の溜め(待機アニメーション)
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);
 		}
 	}
 
 	std::shared_ptr<EnemyState> Attack::Update(Enemy* owner) 
 	{
+		// タイマー更新
 		_fTimer++;
 
-		// 攻撃中は移動しない
+		// 移動停止
 		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 
-		// 溜め時間:ターゲットの方向を追従
+		// 溜め時間中の処理
 		if (_fTimer < ATTACK_CONFIRM_TIME)
 		{
+			// ターゲット方向へ追従
 			auto target = owner->GetTarget();
 			if (target)
 			{
 				VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
 				VECTOR vDir = VNorm(vToTarget);
-				owner->SmoothRotateTo(vDir, 5.0f);
-			
+				owner->SmoothRotateTo(vDir, SMOOTH_ROTATE_SPEED);
 			}
 		}
-		// 攻撃確定:コリジョンを生成
+		// 攻撃確定処理
 		else if (!_bHasCollision)
 		{
-			// ここでアニメーション設定
-			// AnimManagerを取得してアニメーション切り替え
+			// アニメーション切り替え
 			AnimManager* animManager = owner->GetAnimManager();
 			if (animManager)
 			{
-				// 攻撃アニメーションに切り替え
-				animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, 1, 0.5f);// ループ無し
+				animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, 1, 0.5f);
 			}
 
+			// 攻撃コリジョン生成
 			owner->StartAttack(MELEE_ATTACK_SETTINGS);
 			_bHasCollision = true;
 		}
 
-		// 攻撃持続中:コリジョン位置更新
+		// 攻撃コリジョン更新
 		if (_bHasCollision)
 		{
 			owner->UpdateAttackTransform(MELEE_ATTACK_SETTINGS);
 		}
 
-		// 攻撃終了
+		// 攻撃終了チェック
 		if (_fTimer >= owner->GetEnemyParam().fAttackTime)
 		{
-			return std::make_shared<Chase>();// 追跡状態に戻ることで再度距離判定を行う
+			return std::make_shared<Approach>();
 		}
 
 		return nullptr;
@@ -361,16 +379,17 @@ namespace Melee
 
 	void Attack::Exit(Enemy* owner) 
 	{
+		// 攻撃コリジョン停止
 		if (_bHasCollision)
 		{
-			owner->StopAttack();// 攻撃コリジョン停止
+			owner->StopAttack();
 			_bHasCollision = false;
 		}
 	}
 
 	bool Attack::CanChangeState() 
 	{
-		// 攻撃中は通常のステート変更は許可しない
+		// 攻撃中はステート変更不可
 		return false;
 	}
 
@@ -381,73 +400,116 @@ namespace Melee
 	// 帰還
 	void ReturnHome::Enter(Enemy* owner)
 	{
-
-		// ここでアニメーション設定
-	// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 歩きアニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);
 		}
 	}
 
 	std::shared_ptr<EnemyState> ReturnHome::Update(Enemy* owner)
 	{
-		// 索敵結果を使用
+		// 索敵結果チェック
 		if(owner->IsTargetDetected())
 		{
-			return std::make_shared<Detect>();// 発見状態へ
+			return std::make_shared<Notice>();
 		}
 
-		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());// 初期位置へのベクトル
-		auto dist = VSize(vToHome);// 初期位置までの距離
+		// 初期位置への距離計算
+		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
+		auto dist = VSize(vToHome);
 
-		// 初期位置に到達したか
+		// 到達判定
 		if (dist <= NEARBY_HOME) 
 		{
-			return std::make_shared<Idle>();// 待機状態へ
+			return std::make_shared<Idle>();
 		}
 
-		// 向きを変更
+		// 初期位置方向へ回転
 		VECTOR vDir = VNorm(vToHome);
-		owner->SmoothRotateTo(vDir, 5.0f);
+		owner->SmoothRotateTo(vDir, SMOOTH_ROTATE_SPEED);
 
-		// 初期位置に向かって移動
+		// 移動処理
 		auto speed = owner->GetEnemyParam().fMoveSpeed;
 		VECTOR vMove = VScale(vDir, speed);
-		owner->SetMove(vMove);// 移動量を更新
+		owner->SetMove(vMove);
 
 		return nullptr;
 	}
 
 	void ReturnHome::UpdateSearch(Enemy* owner)
 	{
-		if (Melee::IsTargetVisible(owner))
+		// 視界判定結果を設定
+		owner->SetTargetDetected(Melee::IsTargetVisible(owner));
+	}
+
+
+
+
+
+	// 対峙
+	void Confront::Enter(Enemy* owner)
+	{
+		// タイマー初期化
+		_fTimer = 0.0f;
+		_fDuration = CONFRONT_MIN_DURATION + GetRand(static_cast<int>(CONFRONT_RANDOM_DURATION));
+		
+		// 移動方向決定
+		_direction = (GetRand(1) == 0) ? 1 : -1;
+
+		// アニメーション設定
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
 		{
-			owner->SetTargetDetected(true);
+			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);
 		}
-		else
+	}
+
+	std::shared_ptr<EnemyState> Confront::Update(Enemy* owner)
+	{
+		// ターゲット存在チェック
+		auto target = owner->GetTarget();
+		if (!target)
 		{
 			owner->SetTargetDetected(false);
+			return std::make_shared<Idle>();
 		}
-	}
 
+		// ターゲットへのベクトル計算
+		VECTOR vTargetPos = target->GetPos();
+		VECTOR vOwnerPos = owner->GetPos();
+		VECTOR vToTarget = VSub(vTargetPos, vOwnerPos);
+		vToTarget.y = 0.0f;
 
+		// 距離計算
+		float dist = VSize(vToTarget);
+		const auto& param = owner->GetEnemyParam();
 
+		// 距離チェック
+		if (dist < param.fAttackRange * CONFRONT_DISTANCE_RATIO)
+		{
+			return std::make_shared<Approach>();
+		}
 
+		// 移動ベクトル計算
+		VECTOR vToTargetNorm = VNorm(vToTarget);
+		VECTOR vUp = VGet(0.0f, 1.0f, 0.0f);
+		VECTOR vRight = VCross(vUp, vToTargetNorm);
+		VECTOR vMove = VScale(vRight, _direction * param.fMoveSpeed);
 
-	// 回り込み
-	void Strafe::Enter(Enemy* owner)
-	{
-		_fTimer = 0.0f;
-		_fDuration = 60.0f + GetRand(60);// 1～2秒間
-		_direction = (GetRand(1) == 0) ? 1 : -1;// ランダムに方向を決める
+		// 回転と座標更新
+		owner->SetDir(vToTargetNorm);
+		VECTOR vNewPos = VAdd(vOwnerPos, vMove);
+		owner->SetPos(vNewPos);
 
-		// ここでアニメーション設定
-	}
+		// 時間経過チェック
+		_fTimer++;
+		if (_fTimer >= _fDuration)
+		{
+			return std::make_shared<Attack>();
+		}
 
-	std::shared_ptr<EnemyState> Strafe::Update(Enemy* owner)
-	{
+		return nullptr;
 	}
 }

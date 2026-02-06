@@ -95,7 +95,7 @@ protected:
 
 	VECTOR _vHomePos;// “G‚Ì‰ŠúˆÊ’u
 
-	std::shared_ptr<CharaBase> _targetPlayer;// ’ÇÕ—p
+	std::shared_ptr<CharaBase> _targetPlayer;// Ú‹ß—p
 
 	std::shared_ptr<EnemyState> _currentState;
 	EnemyParam _enemyParam;

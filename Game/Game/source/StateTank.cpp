@@ -106,14 +106,14 @@ namespace Tank
 		// õ“GŒ‹‰Ê‚ğg—p
 		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Tank::Detect>();// ”­Œ©ó‘Ô‚Ö
+			return std::make_shared<Tank::Notice>();// ”­Œ©ó‘Ô‚Ö
 		}
 
 		_fTimer++;
 
 		if (_fTimer >= _fTargetTimer)
 		{
-			return std::make_shared<Tank::Move>();// ©“®ˆÚ“®ó‘Ô‚Ö
+			return std::make_shared<Tank::Wander>();// œpœjó‘Ô‚Ö
 		}
 
 		return nullptr;
@@ -135,8 +135,8 @@ namespace Tank
 
 
 
-	// ©“®ˆÚ“®
-	void Tank::Move::Enter(Enemy* owner)
+	// œpœjˆÚ“®
+	void Tank::Wander::Enter(Enemy* owner)
 	{
 		_fTimer = 0.0f;
 
@@ -174,12 +174,12 @@ namespace Tank
 		owner->SetDir(vDir);
 	}
 
-	std::shared_ptr<EnemyState> Tank::Move::Update(Enemy* owner)
+	std::shared_ptr<EnemyState> Tank::Wander::Update(Enemy* owner)
 	{
 		// õ“GŒ‹‰Ê‚ğg—p
 		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Tank::Detect>();// ”­Œ©ó‘Ô‚Ö
+			return std::make_shared<Tank::Notice>();// ”­Œ©ó‘Ô‚Ö
 		}
 
 		_fTimer++;
@@ -207,7 +207,7 @@ namespace Tank
 		return nullptr;
 	}
 
-	void Tank::Move::UpdateSearch(Enemy* owner)
+	void Tank::Wander::UpdateSearch(Enemy* owner)
 	{
 		if (Tank::IsTargetVisible(owner))
 		{
@@ -224,7 +224,7 @@ namespace Tank
 
 
 	// ”­Œ©
-	void Tank::Detect::Enter(Enemy* owner)
+	void Tank::Notice::Enter(Enemy* owner)
 	{
 		_fTimer = 0.0f;
 
@@ -238,7 +238,7 @@ namespace Tank
 		}
 	}
 
-	std::shared_ptr<EnemyState> Tank::Detect::Update(Enemy* owner)
+	std::shared_ptr<EnemyState> Tank::Notice::Update(Enemy* owner)
 	{
 		_fTimer++;
 
@@ -253,15 +253,15 @@ namespace Tank
 
 		if (_fTimer >= owner->GetEnemyParam().fDetectTime)
 		{
-			return std::make_shared<Tank::Chase>();// UŒ‚”»’è‚Ö
+			return std::make_shared<Tank::Approach>();// UŒ‚”»’è‚Ö
 		}
 
 		return nullptr;
 	}
 
 
-	// ’ÇÕ
-	void Tank::Chase::Enter(Enemy* owner)
+	// Ú‹ß
+	void Tank::Approach::Enter(Enemy* owner)
 	{
 		_fTimer = 0.0f;
 
@@ -275,7 +275,7 @@ namespace Tank
 		}
 	}
 
-	std::shared_ptr<EnemyState> Tank::Chase::Update(Enemy* owner)
+	std::shared_ptr<EnemyState> Tank::Approach::Update(Enemy* owner)
 	{
 		auto target = owner->GetTarget();
 		// ƒ^[ƒQƒbƒg‚ª‚¢‚È‚¢ê‡‚Í‘Ò‹@ó‘Ô‚Ö
@@ -289,7 +289,7 @@ namespace Tank
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
 		auto dist = VSize(vToTarget);// ƒ^[ƒQƒbƒg‚Ü‚Å‚Ì‹——£
 
-		// ’ÇÕŒÀŠE‹——£‚ğ’´‚¦‚½‚©
+		// Ú‹ßŒÀŠE‹——£‚ğ’´‚¦‚½‚©
 		if (dist > owner->GetEnemyParam().fChaseLimitRange) {
 			// õ“GŒ‹‰Ê‚ğƒNƒŠƒA
 			owner->SetTargetDetected(false);
@@ -621,7 +621,7 @@ namespace Tank
 		if (_fTimer >= SECOND_RECOVERY_TIME)
 		{
 			_bIsCompleted = true;// ŒãŒ„Š®—¹ƒtƒ‰ƒO‚ğ—§‚Ä‚é
-			return std::make_shared<Tank::Chase>();
+			return std::make_shared<Tank::Approach>();
 		}
 
 		return nullptr;

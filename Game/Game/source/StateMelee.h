@@ -3,18 +3,6 @@
 
 namespace Melee
 {
-	/*
-	* Idle:待機
-	* ↑↓時間経過
-	* Move:自動移動
-	* ↓プレイヤー索敵(TryDetectPlayer)
-	* Detect:発見
-	* ↓時間経過
-	* Chase:追跡(距離が離れすぎたらIdleへ)
-	* ↑↓プレイヤーが攻撃射程内に入ったら
-	* Attack:攻撃(Chaseに戻り距離を再確認)
-	*/
-
 	// 円形視界判定(距離のみチェック)
 	bool IsTargetVisible(Enemy* owner);
 
@@ -32,13 +20,13 @@ namespace Melee
 
 
 
-	// 自動移動
-	class Move : public EnemyState
+	// 徘徊
+	class Wander : public EnemyState
 	{
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Move"; }
+		const char* GetName() const override { return "Melee:Wander"; }
 		void UpdateSearch(Enemy* owner) override;
 	};
 
@@ -47,26 +35,26 @@ namespace Melee
 
 
 	// 発見:見つけた瞬間の硬直
-	class Detect : public EnemyState
+	class Notice : public EnemyState
 	{
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Detect"; }
+		const char* GetName() const override { return "Melee:Notice"; }
 	};
 
 
 
 
 
-	// 追跡
-	class Chase : public EnemyState
+	// 接近
+	class Approach : public EnemyState
 	{
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Chase"; }
-		bool IsChasing() const override { return true; }// 追跡状態である
+		const char* GetName() const override { return "Melee:Approach"; }
+		bool IsChasing() const override { return true; }// 接近状態である
 	};
 
 
@@ -103,16 +91,16 @@ namespace Melee
 
 
 
-	// 回り込み
-	class Strafe : public EnemyState
+	// 対峙
+	class Confront : public EnemyState
 	{
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Strafe"; }
+		const char* GetName() const override { return "Melee:Confront"; }
 
 	private:
-		float _fDuration;// 回り込む時間
+		float _fDuration;// 対峙時間
 		int _direction;// 1:右回り, -1:左回り
 	};
 }

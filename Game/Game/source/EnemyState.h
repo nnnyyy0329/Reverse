@@ -22,7 +22,7 @@ struct EnemyParam
 	float fVisionCos = 0.0f;// 判定で使うcos値
 
 	float fAttackRange = 0.0f;// これ以内なら攻撃する距離
-	float fChaseLimitRange = 0.0f;// これ以上離れたら追跡をやめる距離
+	float fChaseLimitRange = 0.0f;// これ以上離れたら接近をやめる距離
 
 	float fMoveRadius = 0.0f;// 徘徊する範囲の半径(初期位置からの距離)
 
@@ -31,7 +31,7 @@ struct EnemyParam
 	float fTurnSpeed = 60.0f;// 旋回速度(度 / フレーム)
 
 	float fIdleTime = 0.0f;// 待機時間
-	float fMoveTime = 0.0f;// 自動移動時間
+	float fMoveTime = 0.0f;// 徘徊時間
 	float fDetectTime = 0.0f;// 発見硬直
 	float fAttackTime = 0.0f;// 攻撃時間
 
@@ -51,7 +51,7 @@ public:
 
 	virtual const char* GetName() const { return "None"; }// デバッグ用に状態名を取得
 
-	virtual bool IsChasing() const { return false; }// 追跡状態かどうか
+	virtual bool IsChasing() const { return false; }// 接近状態かどうか
 
 	virtual bool CanChangeState() { return true; }// ステート変更可能かどうか
 

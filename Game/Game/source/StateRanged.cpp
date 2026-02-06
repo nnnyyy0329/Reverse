@@ -60,7 +60,7 @@ namespace Ranged
 		// 索敵結果を使用
 		if (owner->IsTargetDetected()) 
 		{
-			return std::make_shared<Detect>();// 発見状態へ
+			return std::make_shared<Notice>();// 発見状態へ
 		}
 
 		_fTimer++;
@@ -156,7 +156,7 @@ namespace Ranged
 
 
 	// 発見
-	void Detect::Enter(Enemy* owner) 
+	void Notice::Enter(Enemy* owner) 
 	{
 		_fTimer = 0.0f;
 		// ここでアニメーション設定
@@ -171,7 +171,7 @@ namespace Ranged
 		}
 	}
 
-	std::shared_ptr<EnemyState> Detect::Update(Enemy* owner) 
+	std::shared_ptr<EnemyState> Notice::Update(Enemy* owner) 
 	{
 		_fTimer++;
 

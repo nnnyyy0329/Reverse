@@ -130,7 +130,7 @@ void Enemy::DebugRender()
 		DrawFan3D(_vPos, _vDir, fVisionRange, fVisionAngle, color, segments);
 	}
 
-	// ’ÇÕ’†‚ÌŠe”ÍˆÍ‚Ì•`‰æ
+	// Ú‹ß’†‚ÌŠe”ÍˆÍ‚Ì•`‰æ
 	{
 		if (_currentState && _currentState->IsChasing()) 
 		{
@@ -138,7 +138,7 @@ void Enemy::DebugRender()
 			unsigned int attackColor = GetColor(255, 0, 0);// Ô
 			DrawCircle3D(_vPos, _enemyParam.fAttackRange, attackColor, 16);
 
-			// ’ÇÕŒÀŠE”ÍˆÍ‚ğ•`‰æ
+			// Ú‹ßŒÀŠE”ÍˆÍ‚ğ•`‰æ
 			unsigned int chaseColor = GetColor(255, 255, 0);// ‰©
 			DrawCircle3D(_vPos, _enemyParam.fChaseLimitRange, chaseColor, 16);
 		}
