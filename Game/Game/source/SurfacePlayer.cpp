@@ -197,10 +197,10 @@ DodgeConfig SurfacePlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType = DODGE_CHARA::SURFACE_PLAYER;
-	config.invincibleDuration = 30.0f;	// 無敵時間（長め）
+	config.invincibleDuration = 20.0f;	// 無敵時間（長め）
 	config.startTime = 5.0f;			// 開始時間
 	config.activeTime = 20.0f;			// アクティブ時間
-	config.recoveryTime = 10.0f;		// 硬直時間
+	config.recoveryTime = 1.0f;			// 硬直時間
 	config.dodgeMoveSpeed = 12.0f;		// 移動速度（標準）
 
 	return config;

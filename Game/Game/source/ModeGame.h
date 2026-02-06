@@ -15,6 +15,8 @@ class BulletManager;
 class AttackManager;
 class EnergyManager;
 class EnergyUI;
+class StaminaManager;
+class StaminaUI;
 class DodgeSystem;
 class LightManager;
 //class Item;
@@ -76,6 +78,7 @@ protected:
 
 	// UI関連
 	std::shared_ptr<EnergyUI>			_energyUI;				// エネルギーUI
+	std::shared_ptr<StaminaUI>			_staminaUI;				// スタミナUI
 	std::shared_ptr<PlayerLifeBarUI>	_playerLifeBarUI;		// プレイヤーライフバーUI
 
 	// シングルトン取得

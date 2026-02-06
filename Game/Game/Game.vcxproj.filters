@@ -119,7 +119,7 @@
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClCompile>
     <ClCompile Include="source\BulletPlayer.cpp">
-      <Filter>GameObject\CharaBase\Player\Bullet</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="source\ModeStageChange.cpp">
       <Filter>Mode\StageChange</Filter>
@@ -135,6 +135,12 @@
     </ClCompile>
     <ClCompile Include="source\GeometryUtility.cpp">
       <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StaminaManager.cpp">
+      <Filter>Stamina</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StaminaUI.cpp">
+      <Filter>Stamina</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -244,7 +250,7 @@
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClInclude>
     <ClInclude Include="source\BulletPlayer.h">
-      <Filter>GameObject\CharaBase\Player\Bullet</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="source\EnemyState.h">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
@@ -266,6 +272,12 @@
     </ClInclude>
     <ClInclude Include="source\GeometryUtility.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StaminaManager.h">
+      <Filter>Stamina</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StaminaUI.h">
+      <Filter>Stamina</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -347,14 +359,17 @@
     <Filter Include="Mode\StageChange">
       <UniqueIdentifier>{07a76089-1612-4fa7-ac07-4704b5d4c7af}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\CharaBase\Player\Bullet">
-      <UniqueIdentifier>{bf0c1bdb-2ada-440d-8231-314cd8dc3e52}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shield">
       <UniqueIdentifier>{b0027806-d42b-4e7e-beca-b04f3c795a5e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utility">
       <UniqueIdentifier>{8672d866-e05c-4c31-a16a-c411684426f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Stamina">
+      <UniqueIdentifier>{9cbc9db6-546d-4b91-9379-313f022978ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\Bullet">
+      <UniqueIdentifier>{bf0c1bdb-2ada-440d-8231-314cd8dc3e52}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

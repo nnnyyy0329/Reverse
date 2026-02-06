@@ -16,6 +16,7 @@
 #include "BulletManager.h"
 #include "AttackManager.h"
 #include "EnergyManager.h"
+#include "StaminaManager.h"
 #include "LightManager.h"
 
 #include "DodgeSystem.h"
@@ -28,6 +29,7 @@
 
 #include "EnergyUI.h"
 #include "PlayerLifeBarUI.h"
+#include "StaminaUI.h"
 
 #include "MenuItemBase.h"
 
@@ -117,6 +119,10 @@ bool ModeGame::Initialize()
 		// ライフバーUI初期化
 		_playerLifeBarUI = std::make_shared<PlayerLifeBarUI>();
 		_playerLifeBarUI->Initialize();
+
+		// スタミナUI初期化
+		_staminaUI = std::make_shared<StaminaUI>();
+		_staminaUI->Initialize();
 	}
 
 	// ライトの初期化
@@ -226,11 +232,14 @@ bool ModeGame::Process()
 		_playerManager->Process();
 		_stage->Process();
 		_bulletManager->Process();
-		AttackManager::GetInstance()->Process();
 		_dodgeSystem->Process();
 		_energyUI->Process();
 		_playerLifeBarUI->Process();
+		_staminaUI->Process();
 		_abilitySelectScreen->Process();
+
+		AttackManager::GetInstance()->Process();
+		StaminaManager::GetInstance()->Process();
 	}
 
 	// ライト更新
@@ -324,11 +333,12 @@ bool ModeGame::Render()
 	
 	// オブジェクトの描画
 	{
-		//_stage->Render();
+		_stage->Render();
 		_playerManager->Render();
 		_bulletManager->Render();
 		_energyUI->Render();
 		_playerLifeBarUI->Render();
+		_staminaUI->Render();
 		//_item->Render();
 		_abilitySelectScreen->Render();
 	}

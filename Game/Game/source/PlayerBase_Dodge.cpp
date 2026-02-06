@@ -1,10 +1,11 @@
 // 担当 : 成田
 
 #include "PlayerBase.h"
+#include "StaminaManager.h"
 
 namespace
 {
-	
+	const float DODGE_STAMINA_COST = 10.0f;	// 回避時のスタミナ消費量
 }
 
 // 回避情報初期化
@@ -66,10 +67,14 @@ void PlayerBase::ProcessDodge()
 	if((_ePlayerStatus == PLAYER_STATUS::WAIT ||
 		_ePlayerStatus == PLAYER_STATUS::WALK ||
 		_ePlayerStatus == PLAYER_STATUS::RUN)
+		&& StaminaManager::GetInstance()->CanDodge()
 		&& _trg & PAD_INPUT_3)
 	{
 		// 回避開始
 		ProcessStartDodge();
+
+		// 回避開始時にスタミナを消費
+		StaminaManager::GetInstance()->ConsumeStamina(DODGE_STAMINA_COST);
 	}
 }
 

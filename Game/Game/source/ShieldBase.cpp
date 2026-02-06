@@ -10,7 +10,9 @@ ShieldBase::ShieldBase()
 	_fActiveTimer = 0.0f;	// アクティブタイマー
 	_fRecoveryTimer = 0.0f;	// 硬直タイマー
 
-	_bIsBlocking = false;	// ブロック中フラ
+	_bIsBlocking = false;		// ブロック中フラ
+	_bIsGuardPressed = false;	// ガードボタンが押されているかフラグ
+	_bWasGuardPressed = false;	// 前フレームガードボタンが押されていたかフラグ
 }
 
 ShieldBase::~ShieldBase()
@@ -48,7 +50,7 @@ bool ShieldBase::Render()
 }
 
 // デバッグ描画
-void ShieldBase::DebugRender() const
+void ShieldBase::DebugRender()
 {
 
 }
@@ -58,8 +60,8 @@ bool ShieldBase::ActivateShield()
 {
 	if(!CanActivateShield()) { return false; }
 
-	_eShieldState = SHIELD_STATE::STARTUP;	// シールド状態を発生前に設定
-	_fStartupTimer = _config.startTime;		// 発生タイマー初期化
+	_eShieldState = SHIELD_STATE::STARTUP;		// シールド状態を発生前に設定
+	_fStartupTimer = _config.guardStartupTime;	// 発生タイマー初期化
 
 	return true;
 }
@@ -183,8 +185,8 @@ void ShieldBase::UpdateShieldState()
 		{
 			if(_fStartupTimer <= 0.0f)
 			{
-				_eShieldState = SHIELD_STATE::ACTIVE;	// シールド状態をアクティブに設定
-				_fActiveTimer = _config.activeTime;	// アクティブタイマー初期化
+				_eShieldState = SHIELD_STATE::ACTIVE;		// シールド状態をアクティブに設定
+				_fActiveTimer = _config.guardActiveTime;	// アクティブタイマー初期化
 			}
 			break;
 		}

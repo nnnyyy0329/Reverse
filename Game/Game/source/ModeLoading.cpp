@@ -58,14 +58,14 @@ bool ModeLoading::Initialize()
 		//rs->Register("select3", "res/AbilitySelect/select4.png", RESOURCE_TYPE::Graph, 1.0f);
 
 		// エネルギーUI用
-		rs->Register("energyFrame", "res/Energy/energy_frame_2.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("energy1", "res/Energy/energy_1_2.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("energy2", "res/Energy/energy_2_2.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("energy3", "res/Energy/energy_3_2.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("EnergyFrame", "res/Energy/energy_frame_2.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("Energy1", "res/Energy/energy_1_2.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("Energy2", "res/Energy/energy_2_2.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("Energy3", "res/Energy/energy_3_2.png", RESOURCE_TYPE::Graph, 1.0f);
 
-		//rs->Register("energy1", "res/try3/energy_1.png", RESOURCE_TYPE::Graph, 1.0f);
-		//rs->Register("energy2", "res/try3/energy_2.png", RESOURCE_TYPE::Graph, 1.0f);
-		//rs->Register("energy3", "res/try3/energy_3.png", RESOURCE_TYPE::Graph, 1.0f);
+		// スタミナUI用
+		rs->Register("StaminaFrame", "res/StaminaUI/staminaFrame.png", RESOURCE_TYPE::Graph, 1.0f);
+		rs->Register("Stamina", "res/StaminaUI/Stamina.png", RESOURCE_TYPE::Graph, 1.0f);
 	}
 
 	// リソースのロード開始

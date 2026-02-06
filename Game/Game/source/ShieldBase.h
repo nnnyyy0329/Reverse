@@ -30,9 +30,9 @@ struct ShieldConfig
 	float dotThreshold;				// シールド有効内積閾値
 	float blockAngleRange;			// ブロック可能角度範囲
 	float blockDistance;			// ブロック可能距離
-	float startTime;				// 発生時間
-	float activeTime;				// アクティブ時間
-	float recoveryTime;				// 硬直時間
+	float guardStartupTime;         // ガード開始時間
+	float guardEndTime;             // ガード終了時間
+	float staminaCost;              // スタミナコスト（毎フレーム）
 	std::string blockEffectName;	// ブロックエフェクト名
 	float effectOffset;				// エフェクトオフセット
 };
@@ -51,8 +51,7 @@ public:
 	virtual bool Terminate();	// 終了	
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
-	
-	void DebugRender() const;	// デバッグ描画
+	void DebugRender();			// デバッグ描画
 
 	// シールド操作
 	virtual bool ActivateShield();			// シールド発動
@@ -64,17 +63,24 @@ public:
 	bool IsInShieldRange(const VECTOR& targetPos)const;							// 対象がシールド有効範囲内かチェック
 	bool IsAttackFromValidDirection(const VECTOR& attackDir) const;				// 攻撃が有効な方向からかチェック
 	bool IsActive()const { return _eShieldState == SHIELD_STATE::ACTIVE; }		// シールドがアクティブかチェック
-
-	// ブロック処理
-	void SuccessBlock(const VECTOR& attackDir);	// ブロック成功処理
-
+	void SuccessBlock(const VECTOR& attackDir);									// ブロック成功処理
 
 	// シールド内部の処理
-	void UpdateTimers();	// タイマー更新
+	void UpdateTimers();		// タイマー更新
 	void UpdateShieldState();	// シールド状態更新
-
 	VECTOR GetOwnerPos()const;	// 所有者位置取得
 	VECTOR GetOwnerDir()const;	// 所有者前方取得
+
+	// ガード入力処理
+	void StartGuardByInput();	// ガード入力開始
+	void  StartGuard();			// ガード開始
+	void  StopGuard();			// ガード停止
+	void UpdateGuardDuration();	// ガード継続時間更新
+
+	// ガード状態チェック
+	bool IsGuarding() const { return _eShieldState == SHIELD_STATE::ACTIVE; }
+	bool CanStartGuard() const;	// ガード開始可能かチェック
+	bool HasStamina() const;	// スタミナが足りているかチェック
 
 	// ゲッターセッター
 	SHIELD_CHARA GetShieldChara() const { return _eShieldChara; }		// シールド発生キャラ取得
@@ -100,6 +106,9 @@ protected:
 	float _fStartupTimer;	// 発生タイマー
 	float _fActiveTimer;	// アクティブタイマー
 	float _fRecoveryTimer;	// 硬直タイマー
+
+	bool _bIsGuardPressed;          // ガードボタンが押されているかフラグ
+	bool _bWasGuardPressed;         // 前フレームガードボタンが押されていたかフラグ
 
 	bool _bIsBlocking;		// ブロック中フラグ
 };

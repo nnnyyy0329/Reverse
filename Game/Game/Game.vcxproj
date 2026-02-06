@@ -189,9 +189,16 @@
     <ClCompile Include="source\PlayerBase_Process.cpp" />
     <ClCompile Include="source\PlayerLifeBarUI.cpp" />
     <ClCompile Include="source\PlayerManager.cpp" />
-    <ClCompile Include="source\ShieldBase.cpp" />
+    <ClCompile Include="source\ShieldBase.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="source\ShieldManager.cpp" />
     <ClCompile Include="source\StageBase.cpp" />
+    <ClCompile Include="source\StaminaManager.cpp" />
+    <ClCompile Include="source\StaminaUI.cpp" />
     <ClCompile Include="source\StateCommon.cpp" />
     <ClCompile Include="source\StateMelee.cpp" />
     <ClCompile Include="source\StateRanged.cpp" />
@@ -249,9 +256,16 @@
     <ClInclude Include="source\PlayerBase.h" />
     <ClInclude Include="source\PlayerLifeBarUI.h" />
     <ClInclude Include="source\PlayerManager.h" />
-    <ClInclude Include="source\ShieldBase.h" />
+    <ClInclude Include="source\ShieldBase.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="source\ShieldManager.h" />
     <ClInclude Include="source\StageBase.h" />
+    <ClInclude Include="source\StaminaManager.h" />
+    <ClInclude Include="source\StaminaUI.h" />
     <ClInclude Include="source\StateCommon.h" />
     <ClInclude Include="source\StateMelee.h" />
     <ClInclude Include="source\StateRanged.h" />

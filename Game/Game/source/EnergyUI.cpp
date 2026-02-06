@@ -12,10 +12,10 @@ namespace
 
 EnergyUI::EnergyUI()
 {
-	_iEnergyFrameHandle = ResourceServer::GetInstance()->GetHandle("energyFrame");
-	_iEnergyHandle1 = ResourceServer::GetInstance()->GetHandle("energy1");
-	_iEnergyHandle2 = ResourceServer::GetInstance()->GetHandle("energy2");
-	_iEnergyHandle3 = ResourceServer::GetInstance()->GetHandle("energy3");
+	_iEnergyFrameHandle = ResourceServer::GetInstance()->GetHandle("EnergyFrame");
+	_iEnergyHandle1 = ResourceServer::GetInstance()->GetHandle("Energy1");
+	_iEnergyHandle2 = ResourceServer::GetInstance()->GetHandle("Energy2");
+	_iEnergyHandle3 = ResourceServer::GetInstance()->GetHandle("Energy3");
 
 	_drawX = DRAW_X + DRAW_OFFSET_X;
 	_drawY = DRAW_Y + DRAW_OFFSET_Y;
