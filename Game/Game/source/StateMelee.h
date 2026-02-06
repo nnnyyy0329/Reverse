@@ -55,6 +55,9 @@ namespace Melee
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:Approach"; }
 		bool IsChasing() const override { return true; }// 接近状態である
+
+	private:
+		bool _bHasChecked;// 対峙チェックをしたか
 	};
 
 

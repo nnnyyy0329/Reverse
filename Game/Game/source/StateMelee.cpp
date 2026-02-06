@@ -12,7 +12,7 @@ namespace
 	// 距離判定用定数
 	constexpr auto NEARBY_HOME = 10.0f;					// 初期位置到達判定距離
 	constexpr auto WANDER_HOME_RETURN_RATIO = 0.8f;		// 徘徊時の帰還判定比率
-	constexpr auto CONFRONT_DISTANCE_RATIO = 1.5f;		// 対峙時の接近判定比率
+	constexpr auto CONFRONT_DISTANCE_RATIO = 2.0f;		// 対峙時の接近判定比率
 	
 	// 時間制御用定数
 	constexpr auto ATTACK_CONFIRM_TIME = 60.0f;			// 攻撃判定が有効になるまでの時間
@@ -28,6 +28,9 @@ namespace
 	
 	// 回転速度用定数
 	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;			// スムーズ回転速度
+
+	constexpr auto CONFRONT_FORWARD_SPEED = 1.0f;// 対峙の前進速度
+	constexpr auto COMFRONT_CIRCLE_SPEED = 1.5f;// 対峙の回り込み速度
 
 	// 攻撃コリジョン設定生成
 	EnemyAttackSettings MakeMeleeAttackSettings()
@@ -253,6 +256,8 @@ namespace Melee
 		// タイマー初期化
 		_fTimer = 0.0f;
 
+		_bHasChecked = false;
+
 		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
@@ -274,26 +279,33 @@ namespace Melee
 		// 距離計算
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
 		auto dist = VSize(vToTarget);
+		const auto& param = owner->GetEnemyParam();
 		
 		// 追跡限界距離チェック
-		if(dist > owner->GetEnemyParam().fChaseLimitRange) 
+		if(dist > param.fChaseLimitRange)
 		{
 			owner->SetTargetDetected(false);
 			return std::make_shared<Idle>();
 		}
 
-		// 攻撃射程チェック
-		if (dist <= owner->GetEnemyParam().fAttackRange) 
+		// 対峙ステートになるかチェック
+		if(dist <= param.fAttackRange * CONFRONT_DISTANCE_RATIO)
 		{
-			// 対峙か攻撃かランダム決定
-			if( GetRand(100) < CONFRONT_PROBABILITY ) 
+			if (!_bHasChecked)// 一度のみ判定
 			{
-				return std::make_shared<Confront>();
+				// 確率で対峙か接近継続かを判定
+				if (GetRand(100) < CONFRONT_PROBABILITY)
+				{
+					return std::make_shared<Confront>();
+				}
+				_bHasChecked = true;
 			}
-			else 
-			{
-				return std::make_shared<Attack>();
-			}
+		}
+
+		// 攻撃射程チェック
+		if (dist <= param.fAttackRange)
+		{
+			return std::make_shared<Attack>();
 		}
 
 		// ターゲット方向へ回転
@@ -301,7 +313,7 @@ namespace Melee
 		owner->SmoothRotateTo(vDir, SMOOTH_ROTATE_SPEED);
 
 		// 移動処理
-		auto speed = owner->GetEnemyParam().fMoveSpeed;
+		auto speed = param.fMoveSpeed;
 		VECTOR vMove = VScale(vDir, speed);
 		owner->SetMove(vMove);
 
@@ -487,21 +499,34 @@ namespace Melee
 		const auto& param = owner->GetEnemyParam();
 
 		// 距離チェック
-		if (dist < param.fAttackRange * CONFRONT_DISTANCE_RATIO)
+		if (dist > param.fChaseLimitRange)
 		{
 			return std::make_shared<Approach>();
 		}
 
-		// 移動ベクトル計算
+		// ターゲット方向の正規化ベクトル
 		VECTOR vToTargetNorm = VNorm(vToTarget);
-		VECTOR vUp = VGet(0.0f, 1.0f, 0.0f);
-		VECTOR vRight = VCross(vUp, vToTargetNorm);
-		VECTOR vMove = VScale(vRight, _direction * param.fMoveSpeed);
 
-		// 回転と座標更新
+		// 上方向ベクトル
+		VECTOR vUp = VGet(0.0f, 1.0f, 0.0f);
+
+		// 横方向ベクトル(ターゲット方向に対して垂直)
+		VECTOR vRight = VCross(vToTargetNorm, vUp);
+
+		// 前進ベクトル(ゆっくり近づく)
+		VECTOR vForward = VScale(vToTargetNorm, CONFRONT_FORWARD_SPEED);
+
+		// 回り込みベクトル
+		VECTOR vCircle = VScale(vRight, _direction * COMFRONT_CIRCLE_SPEED);
+
+		// 合成移動ベクトル
+		VECTOR vMove = VAdd(vForward, vCircle);
+
+		// ターゲット方向を向く
 		owner->SetDir(vToTargetNorm);
-		VECTOR vNewPos = VAdd(vOwnerPos, vMove);
-		owner->SetPos(vNewPos);
+
+		// 移動を適用
+		owner->SetMove(vMove);
 
 		// 時間経過チェック
 		_fTimer++;
