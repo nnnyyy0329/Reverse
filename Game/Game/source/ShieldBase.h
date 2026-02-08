@@ -32,7 +32,8 @@ struct ShieldConfig
 	float blockDistance;			// ブロック可能距離
 	float guardStartupTime;         // ガード開始時間
 	float guardEndTime;             // ガード終了時間
-	float staminaCost;              // スタミナコスト（毎フレーム）
+	float recoveryTime;				// 硬直時間
+	float staminaCost;              // スタミナコスト
 	std::string blockEffectName;	// ブロックエフェクト名
 	float effectOffset;				// エフェクトオフセット
 };
@@ -72,15 +73,14 @@ public:
 	VECTOR GetOwnerDir()const;	// 所有者前方取得
 
 	// ガード入力処理
-	void StartGuardByInput();	// ガード入力開始
-	void  StartGuard();			// ガード開始
-	void  StopGuard();			// ガード停止
-	void UpdateGuardDuration();	// ガード継続時間更新
+	void UpdateGuardInput(int key);		// ガード入力更新
+	void StartGuard();					// ガード開始
+	void StopGuard();					// ガード停止
 
 	// ガード状態チェック
-	bool IsGuarding() const { return _eShieldState == SHIELD_STATE::ACTIVE; }
 	bool CanStartGuard() const;	// ガード開始可能かチェック
 	bool HasStamina() const;	// スタミナが足りているかチェック
+	bool IsGuarding() const { return _eShieldState == SHIELD_STATE::ACTIVE; }
 
 	// ゲッターセッター
 	SHIELD_CHARA GetShieldChara() const { return _eShieldChara; }		// シールド発生キャラ取得
@@ -107,8 +107,8 @@ protected:
 	float _fActiveTimer;	// アクティブタイマー
 	float _fRecoveryTimer;	// 硬直タイマー
 
-	bool _bIsGuardPressed;          // ガードボタンが押されているかフラグ
-	bool _bWasGuardPressed;         // 前フレームガードボタンが押されていたかフラグ
+	bool _bIsGuardPressed;	// ガードボタンが押されているかフラグ
+	bool _bWasGuardPressed;	// 前フレームガードボタンが押されていたかフラグ
 
 	bool _bIsBlocking;		// ブロック中フラグ
 };

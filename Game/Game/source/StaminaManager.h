@@ -58,5 +58,6 @@ protected:
 
 	// スタミナ消費アクション用変数
 	float _dodgeCostStamina;	// 回避に必要なスタミナ量
+	float _shieldCostStamina;	// シールドに必要なスタミナ量
 };
 

@@ -4,6 +4,7 @@
 #include "CharaBase.h"
 #include "AttackBase.h"
 #include "DodgeSystem.h"
+#include "PlayerShieldSystem.h"
 
 // プレイヤー設定データ構造体
 struct PlayerConfig
@@ -92,6 +93,7 @@ enum class PLAYER_STATUS
 	JUMP_DOWN,		// ジャンプ（下降）
 	CROUCH_WAIT,	// しゃがみ待機
 	CROUCH_WALK,	// しゃがみ歩行
+	GUARD,			// ガード
 	HIT,			// 被弾
 	DODGE,			// 回避
 	DEATH,			// 死亡
@@ -117,17 +119,12 @@ public:
 		const ATTACK_COLLISION& attackInfo
 	);	
 
-	// 前方判定処理
-	bool IsFacing(const VECTOR& targetPos, float dotThreshold = 0.0f) const;			// 対象が前方にあるかチェック
-	bool IsAttackFromFront(const VECTOR& attackDir, float dotThreshold = 0.0f) const;	// 攻撃が前方からかチェック
-	float GetDotToTarget(const VECTOR& targetPos) const;								// 対象の内積の値を取得
-	float GetDotFromAttack(const VECTOR& attackDir) const;								// 攻撃方向からの内積の値を取得
-
 	// 共通初期化
 	void InitializePlayerConfig(PlayerConfig& config);			// プレイヤー設定初期化
 	void InitializeHitConfig(const VECTOR& attackDirection);	// 被弾設定初期化
 	void InitializeAttackData();								// 攻撃データ初期化
 	void InitializeDodgeData();									// 回避データ初期化
+	void InitializeShieldData();								// シールドデータ初期化
 
 	// 共通処理
 	void CallProcess();				// Process呼び出し用関数
@@ -155,8 +152,8 @@ public:
 	virtual PlayerConfig GetPlayerConfig() = 0;
 	virtual PlayerAnimation GetPlayerAnimation() = 0;
 	virtual RenderConfig GetRenderConfig() = 0;
+	virtual ShieldConfig GetShieldConfig() = 0;
 
-	//virtual void ProcessPlayAnimation() = 0;	// アニメーション再生処理の仮想関数
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
 
@@ -171,6 +168,7 @@ public:
 		_ry = ry;
 		_analogMin = analogMin;
 	}
+	int GetInput()const{ return _key; }
 
 	/*****ゲッターセッター*****/
 	PLAYER_STATUS GetStatus() { return _ePlayerStatus; }	// 現在の状態を取得
@@ -180,9 +178,9 @@ public:
 	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }	// 攻撃コリジョン下部
 	float GetAttackColR(){ return _fAttackColR; }				// 攻撃コリジョン半径
 
-	// 回避システム設定
+	// システム設定
 	void SetDodgeSystem(std::shared_ptr<DodgeSystem> dodgeSystem) { _dodgeSystem = dodgeSystem; }
-
+	void SetShieldSystem(std::shared_ptr<PlayerShieldSystem> shieldSystem) { _shieldSystem = shieldSystem; }
 	
 protected:	// 攻撃関係
 
@@ -229,6 +227,9 @@ protected:	// 回避関係
 	virtual DodgeConfig GetDodgeConfig() = 0;
 
 protected:
+	// プレイヤーシステム
+	std::shared_ptr<PlayerShieldSystem> _shieldSystem;
+
 	// 共通の設定
 	PlayerConfig	_playerConfig;	// プレイヤー設定データ
 	PlayerAnimation _playerAnim;	// プレイヤーアニメーション名データ
@@ -340,9 +341,4 @@ class PlayerAnimator
 //{
 //
 //};
-
-class PlayerShieldSystem
-{
-
-};
 

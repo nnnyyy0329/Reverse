@@ -14,6 +14,8 @@ namespace
 	const float AUTO_RECOVER_DELAY = 150.0f;	// 自動回復開始までの待機時間
 
 	const float DODGE_COST_STAMINA = 10.0f;	// 回避に必要なスタミナ量
+	const float SHIELD_COST_STAMINA = 0.1f;	// シールドに必要なスタミナ量
+
 }
 
 // シングルトン用メンバ初期化
@@ -33,7 +35,8 @@ StaminaManager::StaminaManager()
 	_autoRecoverDelay = AUTO_RECOVER_DELAY;	// 自動回復開始までの待機時間初期化
 
 	// スタミナ消費アクション用変数初期化
-	_dodgeCostStamina = DODGE_COST_STAMINA;	// 回避に必要なスタミナ量初期化
+	_dodgeCostStamina = DODGE_COST_STAMINA;		// 回避に必要なスタミナ量初期化
+	_shieldCostStamina = SHIELD_COST_STAMINA;	// シールドに必要なスタミナ量の初期化
 }
 
 StaminaManager::~StaminaManager()
@@ -128,6 +131,12 @@ void StaminaManager::ConsumeStamina(float stamina)
 bool StaminaManager::CanDodge()
 {
 	return (_currentStamina >= _dodgeCostStamina);
+}
+
+// シールド可能かチェック
+bool StaminaManager::CanShield()
+{
+	return (_currentStamina >= _shieldCostStamina);
 }
 
 // インスタンス作成

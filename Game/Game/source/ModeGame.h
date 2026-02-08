@@ -5,20 +5,26 @@
 // 前方宣言
 class PlayerBase;
 class PlayerManager;
-class PlayerLifeBarUI;
+
 class AttackBase;
+class ShieldBase;
 class StageBase;
+class DodgeSystem;
+
 class CameraManager;
 class GameCamera;
 class DebugCamera;
+
 class BulletManager;
 class AttackManager;
 class EnergyManager;
-class EnergyUI;
 class StaminaManager;
-class StaminaUI;
-class DodgeSystem;
 class LightManager;
+
+class PlayerLifeBarUI;
+class EnergyUI;
+class StaminaUI;
+
 //class Item;
 
 class AbilitySelectScreen;
@@ -66,6 +72,7 @@ protected:
 	std::shared_ptr<StageBase>			_stage;					// ステージ
 	std::shared_ptr<GameCamera>			_gameCamera;			// ゲームカメラ
 	std::shared_ptr<DebugCamera>		_debugCamera;			// デバッグカメラ
+	std::shared_ptr<ShieldBase>			_shieldBase;			// 
 	std::shared_ptr<DodgeSystem>		_dodgeSystem;			// 回避システム
 	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;	// 能力選択画面
 	//std::shared_ptr<Item>               _item;                  //　アイテム

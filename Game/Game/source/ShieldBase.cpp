@@ -1,5 +1,12 @@
 #include "ShieldBase.h"
 #include"CharaBase.h"
+#include "StaminaManager.h"
+
+namespace
+{
+	const float DECREMENT_COUNT = 1.0f;
+	const float SHIELD_COST_STAMINA = 0.5f;
+}
 
 ShieldBase::ShieldBase()
 {
@@ -47,12 +54,6 @@ bool ShieldBase::Process()
 bool ShieldBase::Render()
 {
 	return true;
-}
-
-// デバッグ描画
-void ShieldBase::DebugRender()
-{
-
 }
 
 // シールド発動
@@ -151,6 +152,58 @@ void ShieldBase::SuccessBlock(const VECTOR& attackDir)
 	_bIsBlocking = true;	// ブロック中
 }
 
+// ガード入力処理
+void ShieldBase::UpdateGuardInput(int key)
+{
+	// 押されたら
+	if(key & PAD_INPUT_5)
+	{
+		// ガード開始
+		StartGuard();
+	}
+	// 離されたら
+	else
+	{
+		// ガード終了
+		StopGuard();
+	}
+}
+
+// ガード開始
+void ShieldBase::StartGuard()
+{
+	if(!CanStartGuard()) { return; }
+
+	if(!HasStamina()) { return; }	// スタミナチェック
+
+	// シールド発動
+	ActivateShield();
+}
+
+// ガード停止
+void ShieldBase::StopGuard()
+{
+	// アクティブ状態の場合のみ硬直状態に移行
+	if(_eShieldState == SHIELD_STATE::ACTIVE)
+	{
+		_eShieldState = SHIELD_STATE::RECOVERY;
+		_fRecoveryTimer = _config.recoveryTime;
+	}
+}
+
+// ガード開始可能かチェック
+bool ShieldBase::CanStartGuard() const
+{
+	// 非アクティブまたはスタートアップ中の場合のみガード開始可能
+	return (_eShieldState == SHIELD_STATE::INACTIVE || _eShieldState == SHIELD_STATE::STARTUP);
+}
+
+// スタミナが足りているかチェック
+bool ShieldBase::HasStamina() const
+{
+	return StaminaManager::GetInstance()->CanShield();
+}
+
 // タイマー更新
 void ShieldBase::UpdateTimers()
 {
@@ -158,19 +211,22 @@ void ShieldBase::UpdateTimers()
 	{
 		case SHIELD_STATE::STARTUP: // 発生前
 		{
-			_fStartupTimer -= 1.0f;
+			_fStartupTimer -= DECREMENT_COUNT;
 			break;
 		}
 
 		case SHIELD_STATE::ACTIVE: // アクティブ中
 		{
-			_fActiveTimer -= 1.0f;
+			//_fActiveTimer -= DECREMENT_COUNTf;
+
+			StaminaManager::GetInstance()->ConsumeStamina(SHIELD_COST_STAMINA);
+
 			break;
 		}
 
 		case SHIELD_STATE::RECOVERY: // 硬直中
 		{
-			_fRecoveryTimer -= 1.0f;
+			_fRecoveryTimer -= DECREMENT_COUNT;
 			break;
 		}
 	}
@@ -186,19 +242,23 @@ void ShieldBase::UpdateShieldState()
 			if(_fStartupTimer <= 0.0f)
 			{
 				_eShieldState = SHIELD_STATE::ACTIVE;		// シールド状態をアクティブに設定
-				_fActiveTimer = _config.guardActiveTime;	// アクティブタイマー初期化
+				//_fActiveTimer = _config.guardActiveTime;	// アクティブタイマー初期化
 			}
 			break;
 		}
+
 		case SHIELD_STATE::ACTIVE: // アクティブ中
 		{
-			if(_fActiveTimer <= 0.0f)
-			{
-				_eShieldState = SHIELD_STATE::RECOVERY;	// シールド状態を硬直中に設定
-				_fRecoveryTimer = _config.recoveryTime;	// 硬直タイマー初期化
-			}
+			// ボタンが離されるまで継続
+
+			//if(_fActiveTimer <= 0.0f)
+			//{
+			//	_eShieldState = SHIELD_STATE::RECOVERY;	// シールド状態を硬直中に設定
+			//	_fRecoveryTimer = _config.recoveryTime;	// 硬直タイマー初期化
+			//}
 			break;
 		}
+
 		case SHIELD_STATE::RECOVERY: // 硬直中
 		{
 			if(_fRecoveryTimer <= 0.0f)
@@ -238,7 +298,7 @@ VECTOR ShieldBase::GetOwnerDir() const
 }
 
 // デバッグ表示
-void ShieldBase::DebugRender() const
+void ShieldBase::DebugRender()
 {
 
 }
