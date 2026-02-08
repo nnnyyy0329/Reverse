@@ -64,17 +64,96 @@ namespace Melee
 
 
 
-	// UŒ‚
-	class Attack : public EnemyState
+	// UŒ‚ƒXƒe[ƒgŠJn(‚±‚±‚Å‚Ç‚ÌUŒ‚‚ğ‚·‚é‚©Œˆ’è)
+	class AttackStart : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() const override { return "Melee:AttackStart"; }
+		bool IsChasing() const override { return true; }
+
+	private:
+		enum class AttackType
+		{
+			NORMAL,
+			RUSH
+		};
+		AttackType _eAttackType;
+	};
+
+	// UŒ‚—­‚ß(‚»‚Ìê‚ÅŒü‚«‚ğ’Ç])
+	class AttackCharge : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() const override { return "Melee:AttackCharge"; }
+		bool CanChangeState() override { return false; }
+	};
+
+	// UŒ‚Às(‚±‚±‚ÅUŒ‚”»’è‚ğo‚·)
+	class AttackExecute : public EnemyState
 	{
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		void Exit(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Attack"; }
-		bool CanChangeState() override;
+		const char* GetName() const override { return "Melee:AttackExecute"; }
+		bool CanChangeState() override { return false; }
+
 	private:
-		bool _bHasCollision;// UŒ‚ƒRƒŠƒWƒ‡ƒ“‚ª¶¬‚³‚ê‚½‚©
+		bool _bHasCollision;// UŒ‚ƒRƒŠƒWƒ‡ƒ“‚ğo‚µ‚½‚©
+	};
+
+	// UŒ‚ŒãŒ„
+	class AttackRecovery : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() const override { return "Melee:AttackRecovery"; }
+		bool CanChangeState() override { return false; }
+	};
+
+	// “ËiUŒ‚—­‚ß
+	class RushCharge : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() const override { return "RushCharge"; }
+		bool CanChangeState() override { return false; }
+
+	private:
+		VECTOR _vRushDir;
+	};
+
+	// “ËiUŒ‚Às
+	class RushExecute : public EnemyState
+	{
+	public:
+		RushExecute(VECTOR vRushDirection) : _vRushDir(vRushDirection), _bHasCollision(false), _fCurrentSpeed(0.0f) {}
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		void Exit(Enemy* owner) override;
+		const char* GetName() const override { return "RushExecute"; }
+		bool CanChangeState() override { return false; }
+
+	private:
+		VECTOR _vRushDir;
+		bool _bHasCollision;
+		float _fCurrentSpeed;
+	};
+
+	// “ËiUŒ‚ŒãŒ„
+	class RushRecovery : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() const override { return "RushRecovery"; }
+		bool CanChangeState() override { return false; }
 	};
 
 
