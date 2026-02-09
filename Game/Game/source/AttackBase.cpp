@@ -8,6 +8,7 @@ AttackBase::AttackBase()
     _stcAttackCol.attackColTop = VGet(0.0f, 0.0f, 0.0f);
     _stcAttackCol.attackColBottom = VGet(0.0f, 0.0f, 0.0f);
     _stcAttackCol.attackColR = 0.0f;
+	_stcAttackCol.attackDir = VGet(0.0f, 0.0f, 0.0f);
     _stcAttackCol.attackDelay = 0.0f;
     _stcAttackCol.attackDuration = 0.0f;
     _stcAttackCol.recovery = 0.0f;
@@ -15,6 +16,8 @@ AttackBase::AttackBase()
     _stcAttackCol.currentTime = 0.0f;
     _stcAttackCol.isActive = false;
     _stcAttackCol.isHit = false;
+	_stcAttackCol.attackState = ATTACK_STATE::INACTIVE;
+	_stcAttackCol.attackMoveSpeed = 0.0f;
 
     // コリジョンタイプ
     _eColType = COLLISION_TYPE::NONE;
@@ -146,23 +149,27 @@ void AttackBase::SetCapsuleAttackData
     VECTOR top,
     VECTOR bottom, 
     float radius, 
+    VECTOR attackDir,
     float delay,
     float duration,
     float recovery,
     float damage,
     bool hit,
-	VECTOR attackDir
+    ATTACK_STATE attackState,
+    float attackMoveSpeed	
 )
 {
-	_stcAttackCol.attackColTop = top;          // カプセル上部
-	_stcAttackCol.attackColBottom = bottom;    // カプセル下部
-	_stcAttackCol.attackColR = radius;         // 半径
-	_stcAttackCol.attackDelay = delay;         // 発生遅延
-	_stcAttackCol.attackDuration = duration;   // 持続時間
-	_stcAttackCol.recovery = recovery;         // 後隙
-	_stcAttackCol.damage = damage;             // ダメージ
-	_stcAttackCol.isHit = hit;                 // ヒットフラグ
-	_stcAttackCol.attackDir = attackDir;     // 攻撃方向
+	_stcAttackCol.attackColTop = top;                   // カプセル上部
+	_stcAttackCol.attackColBottom = bottom;             // カプセル下部
+	_stcAttackCol.attackColR = radius;                  // 半径
+    _stcAttackCol.attackDir = attackDir;                 // 攻撃方向
+	_stcAttackCol.attackDelay = delay;                  // 発生遅延
+	_stcAttackCol.attackDuration = duration;            // 持続時間
+	_stcAttackCol.recovery = recovery;                  // 後隙
+	_stcAttackCol.damage = damage;                      // ダメージ
+	_stcAttackCol.isHit = hit;                          // ヒットフラグ
+	_stcAttackCol.attackState = attackState;            // 攻撃状態
+	_stcAttackCol.attackMoveSpeed = attackMoveSpeed;    // 攻撃中の移動速度
 
 	_eColType = COLLISION_TYPE::CAPSULE;    // コリジョンタイプをカプセルに設定
 }

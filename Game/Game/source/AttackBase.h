@@ -15,22 +15,6 @@ enum class COLLISION_TYPE
 	_EOT_,		// 終端
 };
 
-// 攻撃コリジョン情報
-struct ATTACK_COLLISION
-{
-	VECTOR attackColTop;	// カプセル攻撃コリジョンの上部
-	VECTOR attackColBottom;	// カプセル攻撃コリジョンの下部
-	float attackColR;		// カプセル攻撃コリジョンの半径
-	float attackDelay;		// 攻撃発生までの遅延時間
-	float attackDuration;	// 攻撃の持続時間
-	float recovery;			// 攻撃後の後隙
-	float damage;			// ダメージ量
-	float currentTime;		// 現在の経過時間
-	bool isActive;			// 現在アクティブかどうか
-	bool isHit;				// ヒットしたかどうか
-	VECTOR attackDir;		// 攻撃方向
-};
-
 // 攻撃の状態を管理
 enum class ATTACK_STATE
 {
@@ -39,6 +23,24 @@ enum class ATTACK_STATE
 	ACTIVE,		// 攻撃判定中
 	RECOVERY,	// 硬直中
 	_EOT_,
+};
+
+// 攻撃コリジョン情報
+struct ATTACK_COLLISION
+{
+	VECTOR attackColTop;		// カプセル攻撃コリジョンの上部
+	VECTOR attackColBottom;		// カプセル攻撃コリジョンの下部
+	float attackColR;			// カプセル攻撃コリジョンの半径
+	VECTOR attackDir;			// 攻撃方向
+	float attackDelay;			// 攻撃発生までの遅延時間
+	float attackDuration;		// 攻撃の持続時間
+	float recovery;				// 攻撃後の後隙
+	float damage;				// ダメージ量
+	float currentTime;			// 現在の経過時間
+	bool isActive;				// 現在アクティブかどうか
+	bool isHit;					// ヒットしたかどうか
+	ATTACK_STATE attackState;	// 攻撃状態
+	float attackMoveSpeed;		// 攻撃中の移動速度
 };
 
 class CharaBase;  // 前方宣言
@@ -67,15 +69,17 @@ public:
 	// カプセル攻撃データ設定
 	void SetCapsuleAttackData
 	(
-		VECTOR top,			// カプセル上部
-		VECTOR bottom,		// カプセル下部
-		float radius,		// 半径
-		float delay,		// 発生遅延
-		float duration,		// 持続時間
-		float recovery,		// 後隙
-		float damage,		// ダメージ	
-		bool hit,			// ヒットフラグ
-		VECTOR attackDir	// 攻撃方向
+		VECTOR top,					// カプセル上部
+		VECTOR bottom,				// カプセル下部
+		float radius,				// 半径
+		VECTOR attackDir,			// 攻撃方向
+		float delay,				// 発生遅延
+		float duration,				// 持続時間
+		float recovery,				// 後隙
+		float damage,				// ダメージ	
+		bool hit,					// ヒットフラグ
+		ATTACK_STATE attackState,	// 攻撃状態
+		float attackMoveSpeed		// 攻撃中の移動速度
 	);
 
 	// 円形攻撃データ設定

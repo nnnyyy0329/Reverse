@@ -393,12 +393,15 @@ void Enemy::StartAttack(const EnemyAttackSettings& settings)
 		settings.vTopOffset,// top
 		settings.vBottomOffset,// bottom
 		settings.fRadius,// 半径
+		_vDir,
 		settings.fDelay,// 発生遅延
 		settings.fDuration,// 持続時間
 		settings.fRecovery,// 後隙
 		settings.fDamage,// ダメージ
 		false,// ヒットフラグ
-		_vDir
+		ATTACK_STATE::INACTIVE,
+		0.0f
+
 	);
 
 	// 攻撃開始
@@ -431,12 +434,14 @@ void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings)
 		vTopPos,// ワールド座標
 		vBottomPos,
 		col.attackColR,
+		_vDir,
 		col.attackDelay,
 		col.attackDuration,
 		col.recovery,
 		col.damage,
 		col.isHit,
-		_vDir
+		ATTACK_STATE::INACTIVE,
+		0.0f
 	);
 }
 
