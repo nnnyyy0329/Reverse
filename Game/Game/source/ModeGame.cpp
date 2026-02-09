@@ -260,7 +260,8 @@ bool ModeGame::Process()
 
 		// 弾
 		CheckHitCharaBullet(player);
-		for (const auto& enemy : enemies) {
+		for (const auto& enemy : enemies) 
+		{
 			CheckHitCharaBullet(enemy);
 		}
 
@@ -278,7 +279,8 @@ bool ModeGame::Process()
 		if (_bUseCollision)
 		{
 			CheckCollisionCharaMap(player);
-			for (const auto& enemy : enemies) {
+			for (const auto& enemy : enemies) 
+			{
 				CheckCollisionCharaMap(enemy);
 			}
 		}
@@ -410,8 +412,9 @@ bool ModeGame::Render()
 }
 
 // キャラと弾の当たり判定
-void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara){
-	if (!chara) return;
+void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
+{
+	if (!chara) { return; }
 
 	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
 
@@ -420,19 +423,19 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara){
 	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
 
 	// 全弾ループ
-	for (const auto& bullet : bullets){
-		if (!bullet) continue;
+	for (const auto& bullet : bullets)
+	{
+		if (!bullet) { continue; }
 
 		// キャラと弾のタイプが同じなら無視する
-		if (bullet->GetShooterType() == myType){
-			continue;
-		}
+		if (bullet->GetShooterType() == myType) { continue; }
 
 		// 当たり判定
 		if(HitCheck_Capsule_Sphere(
 			chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
 			bullet->GetPos(), bullet->GetCollisionR()
-		)) {
+		)) 
+		{
 			// 当たった
 
 			// ダメージ処理とか
@@ -442,7 +445,8 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara){
 	}
 
 	// 全ての判定が終わった後に、まとめて削除する
-	for (const auto& deadBullet : deadBullets) {
+	for (const auto& deadBullet : deadBullets)
+	{
 		_bulletManager->RemoveBullet(deadBullet);
 	}
 }

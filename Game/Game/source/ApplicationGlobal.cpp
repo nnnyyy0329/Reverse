@@ -9,7 +9,7 @@ ApplicationGlobal::~ApplicationGlobal() {
 }
 
 bool ApplicationGlobal::Init() {
-	_cgCursor = LoadGraph("res/base/cursor.png");
+	_cgCursor = LoadGraph("res/cursor.png");
 
 	return true;
 }

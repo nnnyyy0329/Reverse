@@ -3,17 +3,6 @@
 
 namespace Ranged
 {
-	/*
-	* Idle:待機
-	* ↓プレイヤー索敵(TryDetectPlayer)
-	* Detect:発見
-	* ↓時間経過
-	* Attack:攻撃
-	* プレイヤーの方向を常に向く
-	* 一定間隔で弾を発射し続ける
-	* プレイヤーが範囲外にでたらIdleへ戻る
-	*/
-
 	// 扇形視界判定(距離と角度をチェック)
 	bool IsTargetVisible(Enemy* owner);
 
@@ -39,12 +28,12 @@ namespace Ranged
 
 
 	// 発見
-	class Detect : public EnemyState
+	class Notice : public EnemyState
 	{
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:Detect"; }
+		const char* GetName() const override { return "Ranged:Notice"; }
 	};
 
 
@@ -58,7 +47,7 @@ namespace Ranged
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Ranged:Attack"; }
-		bool IsChasing() const override { return true; }// 攻撃状態を追跡状態とみなす
+		bool IsChasing() const override { return true; }// 攻撃状態を接近状態とみなす
 
 	private:
 		float _shotTimer;// 発射間隔タイマー

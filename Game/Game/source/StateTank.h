@@ -17,13 +17,13 @@ namespace Tank
 
 
 
-	// ©“®ˆÚ“®
-	class Move : public EnemyState
+	// œpœj
+	class Wander : public EnemyState
 	{
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Tank:Move"; }
+		const char* GetName() const override { return "Tank:Wander"; }
 		void UpdateSearch(Enemy* owner) override;
 	};
 
@@ -32,12 +32,12 @@ namespace Tank
 
 
 	// ”­Œ©
-	class Detect : public EnemyState
+	class Notice : public EnemyState
 	{
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Tank:Detect"; }
+		const char* GetName() const override { return "Tank:Notice"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
 	};
 
@@ -45,14 +45,14 @@ namespace Tank
 
 
 
-	// ’ÇÕ
-	class Chase : public EnemyState
+	// Ú‹ß
+	class Approach : public EnemyState
 	{
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Tank:Chase"; }
-		bool IsChasing() const override { return true; }// ’ÇÕó‘Ô‚Å‚ ‚é
+		const char* GetName() const override { return "Tank:Approach"; }
+		bool IsChasing() const override { return true; }// Ú‹ßó‘Ô‚Å‚ ‚é
 	};
 
 

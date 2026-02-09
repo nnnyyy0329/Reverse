@@ -22,7 +22,7 @@ struct EnemyParam
 	float fVisionCos = 0.0f;// 判定で使うcos値
 
 	float fAttackRange = 0.0f;// これ以内なら攻撃する距離
-	float fChaseLimitRange = 0.0f;// これ以上離れたら追跡をやめる距離
+	float fChaseLimitRange = 0.0f;// これ以上離れたら接近をやめる距離
 
 	float fMoveRadius = 0.0f;// 徘徊する範囲の半径(初期位置からの距離)
 
@@ -31,12 +31,18 @@ struct EnemyParam
 	float fTurnSpeed = 60.0f;// 旋回速度(度 / フレーム)
 
 	float fIdleTime = 0.0f;// 待機時間
-	float fMoveTime = 0.0f;// 自動移動時間
+	float fMoveTime = 0.0f;// 徘徊時間
 	float fDetectTime = 0.0f;// 発見硬直
 	float fAttackTime = 0.0f;// 攻撃時間
 
 	float fMaxLife = 100.0f;// 最大体力
 	int damageToDown = 3;// ダウンまでの被ダメージ回数
+
+	// 共通ステートのアニメーション名
+	const char* animDamage = "Damage";
+	const char* animDead = "Dead";
+	const char* animStun = "Stun";
+	const char* animDown = "Down";
 };
 
 // 敵ステート基底クラス
@@ -51,7 +57,7 @@ public:
 
 	virtual const char* GetName() const { return "None"; }// デバッグ用に状態名を取得
 
-	virtual bool IsChasing() const { return false; }// 追跡状態かどうか
+	virtual bool IsChasing() const { return false; }// 接近状態かどうか
 
 	virtual bool CanChangeState() { return true; }// ステート変更可能かどうか
 
@@ -59,5 +65,10 @@ public:
 
 	virtual void UpdateSearch(Enemy* owner) {};// 索敵処理(各ステートでオーバーライド)
 
+protected:
+	float CalcOffsetTime(Enemy* owner, float baseTime);// ステート時間に敵ごとのオフセットを適用
+
 	float _fTimer = 0.0f;
+	float _fTargetTimer = 0.0f;
+
 };

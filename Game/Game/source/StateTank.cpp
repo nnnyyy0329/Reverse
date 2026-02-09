@@ -5,7 +5,7 @@
 
 namespace 
 {
-	// 一段目攻撃
+	// 一段目攻撃タイミング
 	constexpr auto FIRST_PREPARE_TIME = 40.0f;// 予備動作時間
 	constexpr auto FIRST_ATTACK_DELAY = 5.0f;// 攻撃発生フレーム
 	constexpr auto FIRST_ATTACK_DURATION = 20.0f;// 攻撃持続フレーム
@@ -14,7 +14,7 @@ namespace
 	constexpr auto FIRST_ATTACK_DAMAGE = 1.0f;// ダメージ
 	constexpr auto FIRST_APPROACH_SPEED = 4.0f;// 接近速度
 
-	// 二段目攻撃
+	// 二段目攻撃タイミング
 	constexpr auto SECOND_PREPARE_TIME = 35.0f;// 予備動作時間	
 	constexpr auto SECOND_ATTACK_DELAY = 8.0f;// 攻撃発生フレーム
 	constexpr auto SECOND_ATTACK_DURATION = 25.0f;// 攻撃持続フレーム
@@ -23,7 +23,16 @@ namespace
 	constexpr auto SECOND_ATTACK_DAMAGE = 1.0f;// ダメージ
 	constexpr auto SECOND_APPROACH_SPEED = 5.0f;// 接近速度
 
+	// アニメーション設定
 	constexpr auto BLEND_FRAME = 1.0f;// アニメーションブレンドフレーム数
+
+	// 徘徊制御
+	constexpr auto WANDER_HOME_RETURN_RATIO = 0.8f;// 初期位置へ戻る判定距離係数
+	constexpr auto WANDER_RANDOM_ANGLE_RANGE = 90;// 徘徊時のランダム角度範囲(度)
+	constexpr auto WANDER_RANDOM_ANGLE_OFFSET = 45;// 徘徊時のランダム角度オフセット(度)
+	constexpr auto WANDER_RANDOM_ANGLE_MAX = 359;// 徘徊時の完全ランダム角度最大値(度)
+
+	// 帰還制御
 	constexpr auto NEARBY_HOME = 10.0f;// 初期位置とみなす距離
 
 	// 攻撃コリジョン設定
@@ -56,6 +65,7 @@ namespace
 		settings.ownerId = 0;
 		return settings;
 	}
+
 	// 定数として保存
 	const EnemyAttackSettings FIRST_ATTACK_SETTINGS = MakeFirstAttackSettings();
 	const EnemyAttackSettings SECOND_ATTACK_SETTINGS = MakeSecondAttackSettings();
@@ -69,10 +79,12 @@ namespace Tank
 		auto target = owner->GetTarget();
 		if (!target) { return false; }	
 
+		// ターゲットへのベクトル計算
+		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
+		float dist = VSize(vToTarget);
+
 		// 距離チェック
-		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());// ターゲットへのベクトル
-		auto dist = VSize(vToTarget);// ターゲットまでの距離
-		if (dist > owner->GetEnemyParam().fVisionRange) { return false; }// 索敵距離外
+		if (dist > owner->GetEnemyParam().fVisionRange) { return false; }
 
 		// 障害物チェック
 
@@ -86,31 +98,33 @@ namespace Tank
 	// 待機
 	void Tank::Idle::Enter(Enemy* owner)
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
+		_fTargetTimer = CalcOffsetTime(owner, owner->GetEnemyParam().fIdleTime);
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 待機アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);
 		}
 	}
 
 	std::shared_ptr<EnemyState> Tank::Idle::Update(Enemy* owner)
 	{
-		// 索敵結果を使用
+		// ターゲット発見チェック
 		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Tank::Detect>();// 発見状態へ
+			return std::make_shared<Tank::Notice>();// 発見状態へ
 		}
 
+		// タイマー更新
 		_fTimer++;
 
-		if (_fTimer >= owner->GetEnemyParam().fIdleTime)
+		// 待機時間経過チェック
+		if (_fTimer >= _fTargetTimer)
 		{
-			return std::make_shared<Tank::Move>();// 自動移動状態へ
+			return std::make_shared<Tank::Wander>();// 徘徊状態へ
 		}
 
 		return nullptr;
@@ -118,6 +132,7 @@ namespace Tank
 
 	void Tank::Idle::UpdateSearch(Enemy* owner)
 	{
+		// ターゲット視界チェック
 		if (Tank::IsTargetVisible(owner))
 		{
 			owner->SetTargetDetected(true);
@@ -132,59 +147,63 @@ namespace Tank
 
 
 
-	// 自動移動
-	void Tank::Move::Enter(Enemy* owner)
+	// 徘徊
+	void Tank::Wander::Enter(Enemy* owner)
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 歩きアニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);
 		}
 
-		// 移動方向をランダムに決定
-		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());// 初期位置へのベクトル
-		auto dist = VSize(vToHome);// 初期位置までの距離
-		auto limitRange = owner->GetEnemyParam().fMoveRadius;
+		// 移動方向計算
+		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
+		float dist = VSize(vToHome);
+		float limitRange = owner->GetEnemyParam().fMoveRadius;
 
-		auto targetAngle = 0.0f;
+		float targetAngle = 0.0f;
 
-		if (dist > limitRange * 0.8f)
+		if (dist > limitRange * WANDER_HOME_RETURN_RATIO)
 		{
-			// 80%以上離れていたなら、初期位置を向く
-			auto toHomeAngle = atan2f(vToHome.z, vToHome.x);// 初期位置への角度
-			// ランダムな角度を足して少しばらつかせる	
-			auto randOffset = static_cast<float>(GetRand(90) - 45) * DEGREE_TO_RADIAN;
+			// 初期位置方向計算
+			float toHomeAngle = atan2f(vToHome.z, vToHome.x);
+			float randOffset = static_cast<float>(GetRand(WANDER_RANDOM_ANGLE_RANGE) - WANDER_RANDOM_ANGLE_OFFSET) * DEGREE_TO_RADIAN;
 			targetAngle = toHomeAngle + randOffset;
 		}
 		else
 		{
-			// ランダムな方向に向く
-			targetAngle = static_cast<float>(GetRand(359)) * DEGREE_TO_RADIAN;
+			// ランダム方向計算
+			targetAngle = static_cast<float>(GetRand(WANDER_RANDOM_ANGLE_MAX)) * DEGREE_TO_RADIAN;
 		}
 
+		// 方向ベクトル設定
 		VECTOR vDir = VGet(cosf(targetAngle), 0.0f, sinf(targetAngle));	
 		owner->SetDir(vDir);
 	}
 
-	std::shared_ptr<EnemyState> Tank::Move::Update(Enemy* owner)
+	std::shared_ptr<EnemyState> Tank::Wander::Update(Enemy* owner)
 	{
-		// 索敵結果を使用
+		// ターゲット発見チェック
 		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Tank::Detect>();// 発見状態へ
+			return std::make_shared<Tank::Notice>();// 発見状態へ
 		}
 
+		// タイマー更新
 		_fTimer++;
 
+		// パラメータ取得
+		const auto& param = owner->GetEnemyParam();
+
 		// 移動範囲チェック
-		VECTOR vFromHome = VSub(owner->GetPos(), owner->GetHomePos());// 初期位置からのベクトル
-		auto distSq = VSquareSize(vFromHome);// 平方根を使わない距離の2乗で	
-		auto limitRange = owner->GetEnemyParam().fMoveRadius;
+		VECTOR vFromHome = VSub(owner->GetPos(), owner->GetHomePos());
+		float distSq = VSquareSize(vFromHome);
+		float limitRange = param.fMoveRadius;
+
 		if (distSq > limitRange * limitRange)
 		{
 			return std::make_shared<Tank::ReturnHome>();// 帰還状態へ
@@ -192,11 +211,12 @@ namespace Tank
 
 		// 移動処理
 		VECTOR vDir = owner->GetDir();
-		auto speed = owner->GetEnemyParam().fMoveSpeed;
+		float speed = param.fMoveSpeed;
 		VECTOR vMove = VScale(vDir, speed);	
 		owner->SetMove(vMove);
 
-		if (_fTimer >= owner->GetEnemyParam().fMoveTime)
+		// 移動時間経過チェック
+		if (_fTimer >= param.fMoveTime)
 		{
 			return std::make_shared<Tank::Idle>();// 待機状態へ
 		}
@@ -204,8 +224,9 @@ namespace Tank
 		return nullptr;
 	}
 
-	void Tank::Move::UpdateSearch(Enemy* owner)
+	void Tank::Wander::UpdateSearch(Enemy* owner)
 	{
+		// ターゲット視界チェック
 		if (Tank::IsTargetVisible(owner))
 		{
 			owner->SetTargetDetected(true);
@@ -221,91 +242,98 @@ namespace Tank
 
 
 	// 発見
-	void Tank::Detect::Enter(Enemy* owner)
+	void Tank::Notice::Enter(Enemy* owner)
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 発見時の硬直(待機アニメーション)
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);
 		}
 	}
 
-	std::shared_ptr<EnemyState> Tank::Detect::Update(Enemy* owner)
+	std::shared_ptr<EnemyState> Tank::Notice::Update(Enemy* owner)
 	{
+		// タイマー更新
 		_fTimer++;
 
-		// ターゲットの方向を向く
+		// ターゲット方向計算
 		auto target = owner->GetTarget();	
 		if (target)
 		{
 			VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
-			VECTOR vDir = VNorm(vToTarget);
-			owner->SetDir(vDir);
+			VECTOR vToTargetNorm = VNorm(vToTarget);
+			owner->SetDir(vToTargetNorm);
 		}
 
+		// 発見時間経過チェック
 		if (_fTimer >= owner->GetEnemyParam().fDetectTime)
 		{
-			return std::make_shared<Tank::Chase>();// 攻撃判定へ
+			return std::make_shared<Tank::Approach>();// 接近状態へ
 		}
 
 		return nullptr;
 	}
 
 
-	// 追跡
-	void Tank::Chase::Enter(Enemy* owner)
+
+
+
+	// 接近
+	void Tank::Approach::Enter(Enemy* owner)
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 歩きアニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);
 		}
 	}
 
-	std::shared_ptr<EnemyState> Tank::Chase::Update(Enemy* owner)
+	std::shared_ptr<EnemyState> Tank::Approach::Update(Enemy* owner)
 	{
+		// ターゲット存在チェック
 		auto target = owner->GetTarget();
-		// ターゲットがいない場合は待機状態へ
 		if (!target)
 		{
-			// 索敵結果をクリア
 			owner->SetTargetDetected(false);
 			return std::make_shared<Idle>();// 待機状態へ
 		}
 
+		// パラメータ取得
+		const auto& param = owner->GetEnemyParam();
+
+		// ターゲットへのベクトル計算
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
-		auto dist = VSize(vToTarget);// ターゲットまでの距離
+		float dist = VSize(vToTarget);
 
-		// 追跡限界距離を超えたか
-		if (dist > owner->GetEnemyParam().fChaseLimitRange) {
-			// 索敵結果をクリア
+		// 追跡範囲チェック
+		if (dist > param.fChaseLimitRange)
+		{
 			owner->SetTargetDetected(false);
 			return std::make_shared<Idle>();// 待機状態へ
 		}
 
-		// 攻撃射程内か
-		if (dist <= owner->GetEnemyParam().fAttackRange) {
+		// 攻撃範囲チェック
+		if (dist <= param.fAttackRange)
+		{
 			return std::make_shared<Attack>();// 攻撃状態へ
 		}
 
-		// 即座に回転
-		VECTOR vDir = VNorm(vToTarget);
-		owner->SetDir(vDir);
+		// 回転処理
+		VECTOR vToTargetNorm = VNorm(vToTarget);
+		owner->SetDir(vToTargetNorm);
 
 		// 移動処理
-		auto speed = owner->GetEnemyParam().fMoveSpeed;
-		VECTOR vMove = VScale(vDir, speed);
-		owner->SetMove(vMove);// 移動量を更新
+		float speed = param.fMoveSpeed;
+		VECTOR vMove = VScale(vToTargetNorm, speed);
+		owner->SetMove(vMove);
 
 		return nullptr;
 	}
@@ -317,38 +345,43 @@ namespace Tank
 	// 一段目攻撃前の予備動作
 	void Tank::FirstAttackPrepare::Enter(Enemy* owner)
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// 移動しない
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// 移動停止
+		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 待機アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);
 		}
 	}
 
 	std::shared_ptr<EnemyState> Tank::FirstAttackPrepare::Update(Enemy* owner)
 	{
-		_fTimer++;
-
+		// ターゲット存在チェック
 		auto target = owner->GetTarget();
 		if (!target)
 		{
-			return std::make_shared<Tank::Idle>();
+			return std::make_shared<Tank::Idle>();// 待機状態へ
 		}
 
-		// ターゲットの方向を向き続ける
-		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
-		VECTOR vDir = VNorm(vToTarget);
-		owner->SetDir(vDir);
+		// タイマー更新
+		_fTimer++;
 
-		// 予備動作時間経過で一段目攻撃実行へ
+		// ターゲット方向計算
+		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
+		VECTOR vToTargetNorm = VNorm(vToTarget);
+
+		// 回転処理
+		owner->SetDir(vToTargetNorm);
+
+		// 予備動作時間経過チェック
 		if (_fTimer >= FIRST_PREPARE_TIME)
 		{
-			return std::make_shared<Tank::FirstAttackExecute>();
+			return std::make_shared<Tank::FirstAttackExecute>();// 一段目攻撃実行へ
 		}
 
 		return nullptr;
@@ -361,64 +394,65 @@ namespace Tank
 	// 一段目攻撃の実行
 	void Tank::FirstAttackExecute::Enter(Enemy* owner)
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 		_bAttackStarted = false;
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 攻撃アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, 1, 0.5f);// ループ無し
+			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, 1, 0.5f);
 		}
 
-		// 攻撃コリジョン設定
+		// 攻撃開始処理
 		owner->StartAttack(FIRST_ATTACK_SETTINGS);	
 		_bAttackStarted = true;
 	}
 
 	std::shared_ptr<EnemyState> Tank::FirstAttackExecute::Update(Enemy* owner)
 	{
-		_fTimer++;
-
+		// ターゲット存在チェック
 		auto target = owner->GetTarget();
 		if (!target)
 		{
-			return std::make_shared<Tank::Idle>();
+			return std::make_shared<Tank::Idle>();// 待機状態へ
 		}
 
-		// ターゲットへ接近しながら攻撃
+		// タイマー更新
+		_fTimer++;
+
+		// ターゲットへのベクトル計算
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
 		vToTarget.y = 0.0f;
-		auto dist = VSize(vToTarget);
+		float dist = VSize(vToTarget);
 
 		if (dist > 0.0f)
 		{
-			// 攻撃発生前までは方向を追従
+			// 回転処理
 			if (_fTimer < FIRST_ATTACK_DELAY)
 			{
-				VECTOR vDir = VNorm(vToTarget);
-				owner->SetDir(vDir);
+				VECTOR vToTargetNorm = VNorm(vToTarget);
+				owner->SetDir(vToTargetNorm);
 			}
 
-			// 接近移動
+			// 移動処理
 			VECTOR vDir = owner->GetDir();
 			VECTOR vMove = VScale(vDir, FIRST_APPROACH_SPEED);
 			owner->SetMove(vMove);
 		}
 
-		// 攻撃判定の位置更新
+		// 攻撃判定更新処理
 		if (_bAttackStarted)
 		{
 			owner->UpdateAttackTransform(FIRST_ATTACK_SETTINGS);
 		}
 
-		// 攻撃時間経過で後隙へ
-		auto totalTime = FIRST_ATTACK_DELAY + FIRST_ATTACK_DURATION + FIRST_ATTACK_RECOVERY;
+		// 攻撃時間経過チェック
+		float totalTime = FIRST_ATTACK_DELAY + FIRST_ATTACK_DURATION + FIRST_ATTACK_RECOVERY;
 		if (_fTimer >= totalTime)
 		{
-			return std::make_shared<Tank::FirstAttackRecovery>();
+			return std::make_shared<Tank::FirstAttackRecovery>();// 一段目後隙へ
 		}
 
 		return nullptr;
@@ -426,8 +460,9 @@ namespace Tank
 
 	void Tank::FirstAttackExecute::Exit(Enemy* owner)
 	{
+		// 攻撃終了処理
 		owner->StopAttack();
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// 攻撃後は停止
+		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 	}
 
 
@@ -437,29 +472,31 @@ namespace Tank
 	// 一段目攻撃後隙
 	void Tank::FirstAttackRecovery::Enter(Enemy* owner)
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 		_bIsCompleted = false;
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// 移動しない
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// 移動停止
+		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 待機アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);
 		}
 	}
 
 	std::shared_ptr<EnemyState> Tank::FirstAttackRecovery::Update(Enemy* owner)
 	{
+		// タイマー更新
 		_fTimer++;
 
-		// 硬直時間経過で攻撃予備動作へ
+		// 硬直時間経過チェック
 		if (_fTimer >= FIRST_RECOVERY_TIME)
 		{
-			_bIsCompleted = true;// 後隙完了フラグを立てる
-			return std::make_shared<Tank::SecondAttackPrepare>();
+			_bIsCompleted = true;
+			return std::make_shared<Tank::SecondAttackPrepare>();// 二段目予備動作へ
 		}
 
 		return nullptr;
@@ -467,6 +504,7 @@ namespace Tank
 
 	void Tank::FirstAttackRecovery::Exit(Enemy* owner)
 	{
+		// 移動停止
 		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 	}
 
@@ -475,39 +513,45 @@ namespace Tank
 
 
 	// 二段目攻撃前の予備動作
-	void Tank::SecondAttackPrepare::Enter(Enemy* owner) {
+	void Tank::SecondAttackPrepare::Enter(Enemy* owner)
+	{
+		// タイマー初期化
 		_fTimer = 0.0f;
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// 移動しない
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// 移動停止
+		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 待機アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);
 		}
 	}
 
 	std::shared_ptr<EnemyState> Tank::SecondAttackPrepare::Update(Enemy* owner)
 	{
-		_fTimer++;
-
+		// ターゲット存在チェック
 		auto target = owner->GetTarget();
 		if (!target)
 		{
-			return std::make_shared<Tank::Idle>();
+			return std::make_shared<Tank::Idle>();// 待機状態へ
 		}
 
-		// ターゲットの方向を向き続ける
-		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
-		VECTOR vDir = VNorm(vToTarget);
-		owner->SetDir(vDir);
+		// タイマー更新
+		_fTimer++;
 
-		// 予備動作時間経過で二段目攻撃実行へ
+		// ターゲット方向計算
+		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
+		VECTOR vToTargetNorm = VNorm(vToTarget);
+
+		// 回転処理
+		owner->SetDir(vToTargetNorm);
+
+		// 予備動作時間経過チェック
 		if (_fTimer >= SECOND_PREPARE_TIME)
 		{
-			return std::make_shared<Tank::SecondAttackExecute>();
+			return std::make_shared<Tank::SecondAttackExecute>();// 二段目攻撃実行へ
 		}
 
 		return nullptr;
@@ -520,64 +564,65 @@ namespace Tank
 	// 二段目攻撃の実行
 	void Tank::SecondAttackExecute::Enter(Enemy* owner)
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 		_bAttackStarted = false;
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 攻撃アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, 1, 0.5f);// ループ無し
+			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, 1, 0.5f);
 		}
 
-		// 攻撃コリジョン設定
+		// 攻撃開始処理
 		owner->StartAttack(SECOND_ATTACK_SETTINGS);
 		_bAttackStarted = true;
 	}
 
 	std::shared_ptr<EnemyState> Tank::SecondAttackExecute::Update(Enemy* owner)
 	{
-		_fTimer++;
-
+		// ターゲット存在チェック
 		auto target = owner->GetTarget();
 		if (!target)
 		{
-			return std::make_shared<Tank::Idle>();
+			return std::make_shared<Tank::Idle>();// 待機状態へ
 		}
 
-		// ターゲットへ接近しながら攻撃
+		// タイマー更新
+		_fTimer++;
+
+		// ターゲットへのベクトル計算
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
 		vToTarget.y = 0.0f;
-		auto dist = VSize(vToTarget);
+		float dist = VSize(vToTarget);
 
 		if (dist > 0.0f)
 		{
-			// 攻撃発生前までは方向を追従
+			// 回転処理
 			if (_fTimer < SECOND_ATTACK_DELAY)
 			{
-				VECTOR vDir = VNorm(vToTarget);
-				owner->SetDir(vDir);
+				VECTOR vToTargetNorm = VNorm(vToTarget);
+				owner->SetDir(vToTargetNorm);
 			}
 
-			// 接近移動
+			// 移動処理
 			VECTOR vDir = owner->GetDir();
 			VECTOR vMove = VScale(vDir, SECOND_APPROACH_SPEED);
 			owner->SetMove(vMove);
 		}
 
-		// 攻撃判定の位置更新
+		// 攻撃判定更新処理
 		if (_bAttackStarted)
 		{
 			owner->UpdateAttackTransform(SECOND_ATTACK_SETTINGS);
 		}
 
-		// 攻撃時間経過で後隙へ
-		auto totalTime = SECOND_ATTACK_DELAY + SECOND_ATTACK_DURATION + SECOND_ATTACK_RECOVERY;
+		// 攻撃時間経過チェック
+		float totalTime = SECOND_ATTACK_DELAY + SECOND_ATTACK_DURATION + SECOND_ATTACK_RECOVERY;
 		if (_fTimer >= totalTime)
 		{
-			return std::make_shared<Tank::SecondAttackRecovery>();
+			return std::make_shared<Tank::SecondAttackRecovery>();// 二段目後隙へ
 		}
 
 		return nullptr;
@@ -585,8 +630,9 @@ namespace Tank
 
 	void Tank::SecondAttackExecute::Exit(Enemy* owner)
 	{
+		// 攻撃終了処理
 		owner->StopAttack();
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// 攻撃後は停止
+		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 	}
 
 
@@ -596,29 +642,31 @@ namespace Tank
 	// 二段目攻撃後隙
 	void Tank::SecondAttackRecovery::Enter(Enemy* owner)
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 		_bIsCompleted = false;
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// 移動しない
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// 移動停止
+		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 待機アニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, 0);
 		}
 	}
 
 	std::shared_ptr<EnemyState> Tank::SecondAttackRecovery::Update(Enemy* owner)
 	{
+		// タイマー更新
 		_fTimer++;
 
-		// 硬直時間経過で回復状態へ
+		// 硬直時間経過チェック
 		if (_fTimer >= SECOND_RECOVERY_TIME)
 		{
-			_bIsCompleted = true;// 後隙完了フラグを立てる
-			return std::make_shared<Tank::Chase>();
+			_bIsCompleted = true;
+			return std::make_shared<Tank::Approach>();// 接近状態へ
 		}
 
 		return nullptr;
@@ -626,6 +674,7 @@ namespace Tank
 
 	void Tank::SecondAttackRecovery::Exit(Enemy* owner)
 	{
+		// 移動停止
 		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 	}
 
@@ -636,35 +685,42 @@ namespace Tank
 	// 攻撃判定ステート
 	void Tank::Attack::Enter(Enemy* owner)
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 	}
 
 	std::shared_ptr<EnemyState> Tank::Attack::Update(Enemy* owner)
 	{
+		// ターゲット存在チェック
 		auto target = owner->GetTarget();
 		if (!target)
 		{
-			return std::make_shared<Tank::Idle>();
+			return std::make_shared<Tank::Idle>();// 待機状態へ
 		}
 
-		// 攻撃範囲内なら一段目予備動作へ
+		// パラメータ取得
+		const auto& param = owner->GetEnemyParam();
+
+		// ターゲットへのベクトル計算
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
 		vToTarget.y = 0.0f;
-		auto dist = VSize(vToTarget);
+		float dist = VSize(vToTarget);
 
-		const auto& param = owner->GetEnemyParam();
+		// 攻撃範囲チェック
 		if (dist <= param.fAttackRange)
 		{
-			return std::make_shared<Tank::FirstAttackPrepare>();
+			return std::make_shared<Tank::FirstAttackPrepare>();// 一段目予備動作へ
 		}
 
-		// 範囲外なら接近
+		// 接近処理
 		if (dist > 0.0f)
 		{
-			VECTOR vDir = VNorm(vToTarget);
-			owner->SetDir(vDir);
+			// 回転処理
+			VECTOR vToTargetNorm = VNorm(vToTarget);
+			owner->SetDir(vToTargetNorm);
 
-			VECTOR vMove = VScale(vDir, param.fMoveSpeed);
+			// 移動処理
+			VECTOR vMove = VScale(vToTargetNorm, param.fMoveSpeed);
 			owner->SetMove(vMove);
 		}
 
@@ -673,7 +729,8 @@ namespace Tank
 
 	void Tank::Attack::Exit(Enemy* owner)
 	{
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));// 停止
+		// 移動停止
+		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 	}
 
 
@@ -683,44 +740,49 @@ namespace Tank
 	// 帰還
 	void Tank::ReturnHome::Enter(Enemy* owner)
 	{
+		// タイマー初期化
 		_fTimer = 0.0f;
 
-		// ここでアニメーション設定
-		// AnimManagerを取得してアニメーション切り替え
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			// 歩きアニメーションに切り替え
-			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);// 無限ループ
+			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);
 		}
 	}
 
 	std::shared_ptr<EnemyState> Tank::ReturnHome::Update(Enemy* owner)
 	{
+		// タイマー更新
 		_fTimer++;
-		// 初期位置方向を向く
-		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());// 初期位置へのベクトル
-		auto dist = VSize(vToHome);// 初期位置までの距離
-		if (dist > 0.0f)
-		{
-			// 即座に方向を変更
-			VECTOR vDir = VNorm(vToHome);
-			owner->SetDir(vDir);
 
-			// 接近移動
-			VECTOR vMove = VScale(vDir, owner->GetEnemyParam().fMoveSpeed);
-			owner->SetMove(vMove);
-		}
-		// 初期位置付近に到達したら待機状態へ
+		// 初期位置へのベクトル計算
+		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
+		float dist = VSize(vToHome);
+
+		// 帰還到達チェック
 		if (dist <= NEARBY_HOME)
 		{
-			return std::make_shared<Tank::Idle>();
+			return std::make_shared<Tank::Idle>();// 待機状態へ
 		}
+
+		// 回転処理
+		if (dist > 0.0f)
+		{
+			VECTOR vToHomeNorm = VNorm(vToHome);
+			owner->SetDir(vToHomeNorm);
+
+			// 移動処理
+			VECTOR vMove = VScale(vToHomeNorm, owner->GetEnemyParam().fMoveSpeed);
+			owner->SetMove(vMove);
+		}
+
 		return nullptr;
 	}
 
 	void Tank::ReturnHome::UpdateSearch(Enemy* owner)
 	{
+		// ターゲット視界チェック
 		if (Tank::IsTargetVisible(owner))
 		{
 			owner->SetTargetDetected(true);

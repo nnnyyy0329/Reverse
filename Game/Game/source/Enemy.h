@@ -5,6 +5,7 @@
 
 class BulletManager;
 class AttackBase;
+class StageBase;
 
 class Enemy : public CharaBase
 {
@@ -18,7 +19,7 @@ public:
 	virtual bool Render();		// 描画
 	virtual void DebugRender();	// デバッグ描画
 	virtual void CollisionRender(); // コリジョン描画
-	void DrawLifeBar();// 体力バー描画
+	void DrawLifeBar();// ライフバー描画
 
 	VECTOR GetHomePos() const { return _vHomePos; }
 	void SetHomePos(VECTOR pos) { _vHomePos = pos; }
@@ -72,6 +73,16 @@ public:
 	bool IsTargetDetected() { return _bIsTargetDetected; };// 索敵結果を取得
 	void SetTargetDetected(bool bDetected) { _bIsTargetDetected = bDetected; };// 索敵結果を設定
 
+	// 敵ごとに動きにばらつきを持たせるため
+	void ApplyRandomOffset();// ステート時間にランダムなオフセットを適用
+	float GetStateTimerOffset() { return _fStateTimerOffset; }
+
+	// 索敵の障害物チェック
+	void SetStage(std::shared_ptr<StageBase> stage) { _stage = stage; }// ステージ参照をセット
+	bool CheckLineOfSight(VECTOR vStart, VECTOR vEnd);// 視線が通っているか(障害物チェック)
+
+
+
 
 
 	// AppFrameに移動予定
@@ -83,11 +94,14 @@ public:
 	// vCenter:中心座標, vDir:基準の向きベクトル, fRadius:半径, fHalfAngleDeg:半角(度), color:色, segments:分割数
 	void DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAngleDeg, unsigned int color, int segments);
 
+	// 徐々に回転させる
+	void SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg);// 目標方向へ指定速度で回転
+
 protected:
 
 	VECTOR _vHomePos;// 敵の初期位置
 
-	std::shared_ptr<CharaBase> _targetPlayer;// 追跡用
+	std::shared_ptr<CharaBase> _targetPlayer;// 接近用
 
 	std::shared_ptr<EnemyState> _currentState;
 	EnemyParam _enemyParam;
@@ -98,8 +112,8 @@ protected:
 
 	RecoveryHandler _recoveryHandler;// 関数を保存する変数
 
-	int _lifeBarHandle = -1;// 体力バー用
-	int _lifeBarFrameHandle = -1;// 体力バー枠用
+	int _lifeBarHandle = -1;// ライフバー用
+	int _lifeBarFrameHandle = -1;// ライフバー枠用
 
 	int _damageCnt = 0;// 何回ダメージを受けたか(スタン用)
 
@@ -111,6 +125,11 @@ protected:
 	// 索敵関連
 	int _searchTimer = 0;// 索敵タイマー
 	bool _bIsTargetDetected = false;// ターゲットが見つかったか
+
+	// 動きにばらつきを持たせるため
+	float _fStateTimerOffset = 0.0f;// ステート時間にばらつきを
+
+	std::weak_ptr<StageBase> _stage;// ステージ参照(障害物チェック用)
 
 private:
 	void LoadEnemyModel();// モデルを名前に応じて読み込む

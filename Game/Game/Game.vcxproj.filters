@@ -148,6 +148,9 @@
     <ClCompile Include="source\PlayerBase_Shield.cpp">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClCompile>
+    <ClCompile Include="source\EnemyState.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
