@@ -4,6 +4,8 @@
 #include "CharaBase.h"
 #include "AttackBase.h"
 #include "DodgeSystem.h"
+//#include "ShieldBase.h"
+#include "PlayerShieldSystem.h"
 
 // プレイヤー設定データ構造体
 struct PlayerConfig
@@ -148,9 +150,9 @@ public:
 	const char* GetStatusString	(PLAYER_STATUS status);	
 
 	// 各プレイヤー固有の設定を取得
-	virtual PlayerConfig GetPlayerConfig() = 0;
-	virtual PlayerAnimation GetPlayerAnimation() = 0;
-	virtual RenderConfig GetRenderConfig() = 0;
+	virtual PlayerConfig GetPlayerConfig() = 0;			// プレイヤー設定を取得	
+	virtual PlayerAnimation GetPlayerAnimation() = 0;	// プレイヤーアニメーション名データを取得
+	virtual RenderConfig GetRenderConfig() = 0;			// 表示設定データを取得
 
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
@@ -222,6 +224,18 @@ protected:	// 回避関係
 
 	// 各プレイヤー固有の回避設定を取得
 	virtual DodgeConfig GetDodgeConfig() = 0;
+
+protected: 	// シールド関係
+	std::shared_ptr<PlayerShieldSystem> _shieldSystem;	// シールドシステム
+
+	// PlayerBase_Shield.cpp で定義
+	void CallProcessShield();      // シールド関係Process呼び出し用関数
+	void ProcessShield();          // シールド処理
+	void ProcessShieldInput();     // シールド入力処理
+	bool IsShielding();            // シールド中かチェック
+
+	// 各プレイヤー固有のシールド設定取得（純粋仮想関数）
+	virtual ShieldConfig GetShieldConfig() = 0;
 
 protected:
 

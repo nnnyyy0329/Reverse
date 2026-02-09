@@ -1,6 +1,7 @@
 // 担当 : 成田
 
 #include "PlayerBase.h"
+#include "PlayerShieldSystem.h"
 
 // 被弾設定
 namespace HitConfig
@@ -23,9 +24,15 @@ PlayerBase::PlayerBase()
 	_vMove = VGet(0, 0, 0);
 	_vOldPos = VGet(0, 0, 0);
 }
+
 PlayerBase::~PlayerBase()
 {
-
+	// シールドシステムの終了処理
+	if(_shieldSystem)
+	{
+		_shieldSystem->Terminate();
+		_shieldSystem.reset();
+	}
 }
 
 bool PlayerBase::Initialize()
@@ -41,7 +48,7 @@ bool PlayerBase::Initialize()
 	InitializeDodgeData();
 
 	// シールドシステム初期化
-	InitializeShieldData();
+	//InitializeShieldData();
 
 	return true;
 }
@@ -108,14 +115,18 @@ void PlayerBase::InitializeHitConfig(const VECTOR& attackDirection)
 // シールドデータ初期化
 void PlayerBase::InitializeShieldData()
 {
-	//// シールドシステム作成
-	//_shieldSystem = std::make_shared<PlayerShieldSystem>();
+	// シールドシステム作成
+	_shieldSystem = std::make_shared<PlayerShieldSystem>();
 
-	//// プレイヤーを設定
-	//_shieldSystem->SetPlayer(this);
+	// シールド所有者設定
+	_shieldSystem->SetOwner(shared_from_this());
+	
+	// プレイヤー固有の設定を取得してシールドシステムに設定
+	ShieldConfig config = GetShieldConfig();
+	_shieldSystem->SetShieldConfig(config);
 
-	//// 初期化
-	//_shieldSystem->Initialize();
+	// 初期化
+	_shieldSystem->Initialize();
 }
 
 bool PlayerBase::Terminate()
@@ -140,6 +151,9 @@ bool PlayerBase::Process()
 	// 回避関係Process呼び出し用関数
 	CallProcessDodge();
 
+	// シールド関係Process呼び出し用関数
+	//CallProcessShield();
+
 	// 親クラスの更新処理呼び出し
 	CharaBase::Process();
 
@@ -150,6 +164,7 @@ bool PlayerBase::Render()
 {
 	// 親クラスの描画処理呼び出し
 	CharaBase::Render();
+
 	return true;
 }
 

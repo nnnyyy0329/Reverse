@@ -20,6 +20,7 @@
 #include "LightManager.h"
 
 #include "DodgeSystem.h"
+//#include "ShieldBase.h"
 #include "AbilitySelectScreen.h"
 
 #include "PlayerManager.h"
@@ -62,6 +63,12 @@ bool ModeGame::Initialize()
 	{
 		_dodgeSystem = std::make_shared<DodgeSystem>();
 		_dodgeSystem->Initialize();
+	}
+
+	// シールドベース初期化
+	{
+		//_shieldBase = std::make_shared<ShieldBase>();
+		//_shieldBase->Initialize();
 	}
 
 	// プレイヤーの作成と登録
@@ -237,6 +244,7 @@ bool ModeGame::Process()
 		_playerLifeBarUI->Process();
 		_staminaUI->Process();
 		_abilitySelectScreen->Process();
+		//_shieldBase->Process();
 
 		AttackManager::GetInstance()->Process();
 		StaminaManager::GetInstance()->Process();

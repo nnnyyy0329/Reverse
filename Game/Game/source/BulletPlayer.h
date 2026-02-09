@@ -24,7 +24,7 @@ public:
 	virtual PlayerAnimation GetPlayerAnimation() override;	// アニメーション設定を取得
 	virtual RenderConfig GetRenderConfig() override;		// 描画設定を取得
 	virtual DodgeConfig GetDodgeConfig() override;			// 回避設定を取得
-	//virtual ShieldConfig GetShieldConfig() override;		// シールド設定を取得
+	virtual ShieldConfig GetShieldConfig() override;		// シールド設定を取得
 
 	// クラス設定
 	void SetBulletManager(std::shared_ptr<BulletManager>bulletManager){ _bulletManager = bulletManager; }	// マネージャーをセット

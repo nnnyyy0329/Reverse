@@ -78,6 +78,9 @@ public:
 	bool HasStamina() const;	// スタミナが足りているかチェック
 	bool IsGuarding() const { return _eShieldState == SHIELD_STATE::ACTIVE; }
 
+	// デバック関数
+	void DrawShieldRangeDebug();	// シールド有効範囲デバッグ描画
+
 	// ゲッターセッター
 	SHIELD_CHARA GetShieldChara() const { return _eShieldChara; }		// シールド発生キャラ取得
 	void SetShieldChara(SHIELD_CHARA chara) { _eShieldChara = chara; }	// シールド発生キャラ設定

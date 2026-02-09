@@ -187,6 +187,7 @@
     <ClCompile Include="source\PlayerBase_Dodge.cpp" />
     <ClCompile Include="source\PlayerBase_Draw.cpp" />
     <ClCompile Include="source\PlayerBase_Process.cpp" />
+    <ClCompile Include="source\PlayerBase_Shield.cpp" />
     <ClCompile Include="source\PlayerLifeBarUI.cpp" />
     <ClCompile Include="source\PlayerManager.cpp" />
     <ClCompile Include="source\PlayerShieldSystem.cpp" />

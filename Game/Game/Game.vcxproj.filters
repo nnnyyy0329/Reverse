@@ -145,6 +145,9 @@
     <ClCompile Include="source\PlayerShieldSystem.cpp">
       <Filter>GameObject\CharaBase\PlayerBase\System\Shield</Filter>
     </ClCompile>
+    <ClCompile Include="source\PlayerBase_Shield.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">

@@ -148,7 +148,7 @@ void ShieldBase::SuccessBlock(const VECTOR& attackDir)
 void ShieldBase::UpdateGuardInput(int key)
 {
 	// 押されたら
-	if(key & PAD_INPUT_5)
+	if(key & PAD_INPUT_2)
 	{
 		// ガード開始
 		StartGuard();
@@ -255,6 +255,23 @@ VECTOR ShieldBase::GetOwnerDir() const
 // デバッグ表示
 void ShieldBase::DebugRender()
 {
+	// シールド有効範囲デバッグ描画
+	DrawShieldRangeDebug();
+}
+
+// シールド有効範囲デバッグ描画
+void ShieldBase::DrawShieldRangeDebug()
+{
+	if(_eShieldState != SHIELD_STATE::ACTIVE){ return; }
+
+	auto owner = GetOwner();
+	if(!owner) { return; } 
+
+	// 所有者位置と前方ベクトル取得
+	VECTOR ownerPos = GetOwnerPos();
+	VECTOR ownerDir = GetOwnerDir();
+
+	// シールド有効範囲描画
 
 }
 
