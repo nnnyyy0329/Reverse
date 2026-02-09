@@ -100,7 +100,7 @@ namespace Melee
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		void Exit(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:AttackExecute"; }
-		bool CanChangeState() override { return false; }
+		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
 
 	private:
 		bool _bHasCollision;// 攻撃コリジョンを出したか
@@ -113,7 +113,6 @@ namespace Melee
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Melee:AttackRecovery"; }
-		bool CanChangeState() override { return false; }
 	};
 
 	// 突進攻撃溜め
@@ -138,12 +137,16 @@ namespace Melee
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		void Exit(Enemy* owner) override;
 		const char* GetName() const override { return "RushExecute"; }
-		bool CanChangeState() override { return false; }
+		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
 
 	private:
-		VECTOR _vRushDir;
-		bool _bHasCollision;
-		float _fCurrentSpeed;
+		VECTOR _vRushDir;// 突進方向
+		VECTOR _vStartPos;// 突進開始位置
+		VECTOR _vTargetPos;// 突進目標位置
+		bool _bHasCollision;// 突進攻撃コリジョンを出したか
+		bool _bReachedTarget;// 目標位置に到達したか
+		float _fCurrentSpeed;// 現在の突進速度
+		float _fReachTimer;// 目標到達後のタイマー
 	};
 
 	// 突進攻撃後隙
@@ -153,7 +156,6 @@ namespace Melee
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "RushRecovery"; }
-		bool CanChangeState() override { return false; }
 	};
 
 

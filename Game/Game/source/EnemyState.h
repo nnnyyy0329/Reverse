@@ -37,6 +37,12 @@ struct EnemyParam
 
 	float fMaxLife = 100.0f;// 最大体力
 	int damageToDown = 3;// ダウンまでの被ダメージ回数
+
+	// 共通ステートのアニメーション名
+	const char* animDamage = "Damage";
+	const char* animDead = "Dead";
+	const char* animStun = "Stun";
+	const char* animDown = "Down";
 };
 
 // 敵ステート基底クラス

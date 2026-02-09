@@ -17,48 +17,63 @@ namespace
 
 	// 距離判定用定数
 	constexpr auto NEARBY_HOME = 10.0f;					// 初期位置到達判定距離
+
 	constexpr auto WANDER_HOME_RETURN_RATIO = 0.8f;		// 徘徊時の帰還判定比率
+
 	constexpr auto CONFRONT_ENTER_DISTANCE = 300.0f;	// 対峙状態への遷移距離
 	constexpr auto CONFRONT_KEEP_DISTANCE = 250.0f;		// 対峙時の維持距離
 	constexpr auto CONFRONT_DISTANCE_TOLERANCE = 30.0f;	// 対峙時の距離許容範囲
+
 	constexpr auto ATTACK_START_DISTANCE = 200.0f;		// 攻撃開始距離
 	constexpr auto ATTACK_EXECUTE_DISTANCE = 150.0f;	// 攻撃実行可能距離
+
+	constexpr auto RUSH_TARGET_REACHED_DISTANCE = 5.0f;	// 突進攻撃ターゲット到達判定距離
 	
 	// 時間制御用定数
-	constexpr auto ATTACK_CHARGE_TIME = 30.0f;			// 攻撃溜め時間
-	constexpr auto ATTACK_EXECUTE_TIME = 30.0f;			// 攻撃実行時間
-	constexpr auto ATTACK_RECOVERY_TIME = 30.0f;		// 攻撃後隙時間
-	constexpr auto RUSH_CHARGE_TIME = 20.0f;			// 突進攻撃溜め時間
-	constexpr auto RUSH_EXECUTE_TIME = 120.0f;			// 突進攻撃実行時間
-	constexpr auto RUSH_RECOVERY_TIME = 40.0f;			// 突進攻撃後隙時間
-	constexpr auto BLEND_FRAME = 1.0f;					// アニメーションブレンドフレーム数
-	constexpr auto CONFRONT_MIN_DURATION = 60.0f;		// 対峙最小時間
-	constexpr auto CONFRONT_RANDOM_DURATION = 60.0f;	// 対峙ランダム追加時間
+	constexpr auto ATTACK_CHARGE_TIME = 120.0f;			// 攻撃溜め時間
+	constexpr auto ATTACK_EXECUTE_TIME = 90.0f;			// 攻撃実行時間
+	constexpr auto ATTACK_RECOVERY_TIME = 180.0f;		// 攻撃後隙時間
+
+	constexpr auto RUSH_CHARGE_TIME = 30.0f;			// 突進攻撃溜め時間
+	constexpr auto RUSH_EXECUTE_MAX_TIME = 120.0f;		// 突進攻撃最大実行時間
+	constexpr auto RUSH_WAIT_AFTER_REACH = 30.0f;		// 突進攻撃到達後の待機時間
+	constexpr auto RUSH_RECOVERY_TIME = 90.0f;			// 突進攻撃後隙時間
+
+	constexpr auto CONFRONT_MIN_DURATION = 90.0f;		// 対峙最小時間
+	constexpr auto CONFRONT_RANDOM_DURATION = 90.0f;	// 対峙ランダム追加時間
+
 	constexpr auto ATTACK_DURATION = 60.0f;				// 攻撃持続時間
 	constexpr auto ATTACK_RECOVERY = 60.0f;				// 攻撃後隙時間
-	constexpr auto ATTACK_DAMAGE = 10.0f;				// 攻撃ダメージ量
-	constexpr auto RUSH_DAMAGE = 15.0f;					// 突進攻撃ダメージ量
+	constexpr auto ATTACK_DAMAGE = 1.0f;				// 攻撃ダメージ量
+	constexpr auto RUSH_DAMAGE = 1.0f;					// 突進攻撃ダメージ量
+
+	constexpr auto BLEND_FRAME = 1.0f;					// アニメーションブレンドフレーム数
 	
 	// 確率制御用定数
-	constexpr auto CONFRONT_PROBABILITY = 40;			// 対峙状態への遷移確率(%)
-	constexpr auto RUSH_PROBABILITY = 40;				// 突進攻撃選択確率(%)
+	constexpr auto CONFRONT_PROBABILITY = 0;			// 対峙状態への遷移確率(%)
+	constexpr auto RUSH_PROBABILITY = 0;				// 突進攻撃選択確率(%)
+
 	constexpr auto WANDER_ANGLE_RANDOM_RANGE = 90;		// 徘徊時の角度ランダム範囲(度)
 	constexpr auto WANDER_ANGLE_RANDOM_OFFSET = 45;		// 徘徊時の角度ランダムオフセット(度)
 	constexpr auto WANDER_FULL_ANGLE = 359;				// 徘徊時の全角度範囲(度)
 	
 	// 速度制御用定数
 	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;			// スムーズ回転速度
+
 	constexpr auto CONFRONT_CIRCLE_SPEED = 1.5f;		// 対峙の回り込み速度
 	constexpr auto CONFRONT_APPROACH_SPEED = 0.5f;		// 対峙時の接近速度
 	constexpr auto CONFRONT_RETREAT_SPEED = 1.0f;		// 対峙時の後退速度
+
 	constexpr auto ATTACK_APPROACH_SPEED = 2.0f;		// 攻撃開始時の接近速度
-	constexpr auto RUSH_SPEED = 10.0f;					// 突進攻撃速度
+
+	constexpr auto RUSH_INITIAL_SPEED = 10.0f;			// 突進攻撃初速
 	constexpr auto RUSH_DECELERATION_RATE = 0.95f;		// 突進攻撃減速率
+	constexpr auto RUSH_MIN_SPEED_THRESHOLD = 0.1f;		// 突進攻撃最小速度閾値(これ以下で到達とみなす)
 	
 	// アニメーション制御用定数
 	constexpr auto ANIM_LOOP_COUNT = 0;					// アニメーションループ回数(0=無限)
 	constexpr auto ANIM_PLAY_COUNT = 1;					// アニメーション再生回数
-	constexpr auto ANIM_SPEED_NORMAL = 0.5f;			// アニメーション再生速度(通常)
+	constexpr auto ANIM_SPEED_NORMAL = 1.0f;			// アニメーション再生速度(通常)
 	
 	// コリジョン初期値用定数
 	constexpr auto COLLISION_DELAY_ZERO = 0.0f;			// コリジョン発生遅延なし
@@ -628,12 +643,40 @@ namespace Melee
 	{
 		// タイマー初期化
 		_fTimer = 0.0f;
+		_fReachTimer = 0.0f;
 		_bHasCollision = false;
-		_fCurrentSpeed = RUSH_SPEED;
+		_fCurrentSpeed = RUSH_INITIAL_SPEED;
+		_bReachedTarget = false;
 
 		// 水平方向のみの移動にする
 		_vRushDir.y = 0.0f;
 		_vRushDir = VNorm(_vRushDir);
+
+		// 突進開始位置を保存
+		_vStartPos = owner->GetPos();
+
+		// ターゲット位置を保存
+		auto target = owner->GetTarget();
+		if (target)
+		{
+			_vTargetPos = target->GetPos();
+			_vTargetPos.y = owner->GetPos().y;// Y座標は合わせる
+
+			// 突進方向を再計算
+			VECTOR vToTarget = VSub(_vTargetPos, owner->GetPos());
+			vToTarget.y = 0.0f;
+			float dist = VSize(vToTarget);
+
+			if (dist > 0.01f)
+			{
+				_vRushDir = VNorm(vToTarget);
+			}
+		}
+		else
+		{
+			// ターゲットがいない場合は現在の向き + 適当な距離
+			_vTargetPos = VAdd(owner->GetPos(), VScale(_vRushDir, 300.0f));
+		}
 
 		// 方向設定
 		owner->SetDir(_vRushDir);
@@ -655,11 +698,56 @@ namespace Melee
 		// タイマー更新
 		_fTimer++;
 
+		// 現在位置取得
+		VECTOR vCurrentPos = owner->GetPos();
+
+		// ターゲット位置までの距離計算
+		VECTOR vToTarget = VSub(_vTargetPos, vCurrentPos);
+		vToTarget.y = 0.0f;
+		float distToTarget = VSize(vToTarget);
+
+		// ターゲット位置に到達したかチェック
+		if (distToTarget <= RUSH_TARGET_REACHED_DISTANCE || _bReachedTarget || _fCurrentSpeed < RUSH_MIN_SPEED_THRESHOLD)
+		{
+			if (!_bReachedTarget)
+			{
+				_bReachedTarget = true;
+				_fReachTimer = 0.0f;
+			}
+
+			// 到達後タイマー更新
+			_fReachTimer++;
+
+			// 到達後は停止
+			owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+
+			// 突進攻撃コリジョン更新
+			if (_bHasCollision)
+			{
+				owner->UpdateAttackTransform(RUSH_SETTINGS);
+			}
+
+			// 到達後一定時間経過で後隙へ
+			if (_fReachTimer >= RUSH_WAIT_AFTER_REACH)
+			{
+				return std::make_shared<RushRecovery>();
+			}
+
+			return nullptr;
+		}
+
 		// 速度減衰処理
 		_fCurrentSpeed *= RUSH_DECELERATION_RATE;
 
+		// 残り距離が速度より小さいなら距離分だけ移動
+		float moveDistance = _fCurrentSpeed;
+		if (distToTarget < moveDistance)
+		{
+			moveDistance = distToTarget;
+		}
+
 		// 突進移動処理
-		VECTOR vMove = VScale(_vRushDir, _fCurrentSpeed);
+		VECTOR vMove = VScale(_vRushDir, moveDistance);
 		owner->SetMove(vMove);
 
 		// 突進攻撃コリジョン更新
@@ -668,8 +756,8 @@ namespace Melee
 			owner->UpdateAttackTransform(RUSH_SETTINGS);
 		}
 
-		// 攻撃実行時間終了チェック
-		if (_fTimer >= RUSH_EXECUTE_TIME)
+		// 最大時間経過チェック
+		if (_fTimer >= RUSH_EXECUTE_MAX_TIME)
 		{
 			return std::make_shared<RushRecovery>();
 		}

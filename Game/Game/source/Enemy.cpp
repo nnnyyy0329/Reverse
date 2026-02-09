@@ -3,6 +3,7 @@
 #include "AttackBase.h"
 #include "AttackManager.h"
 #include "StateCommon.h"
+#include "StageBase.h"
 
 namespace 
 {
@@ -28,6 +29,13 @@ namespace
 	// 画面外判定
 	constexpr auto CAMERA_DEPTH_MIN = 0.0f;// カメラ深度最小値
 	constexpr auto CAMERA_DEPTH_MAX = 1.0f;// カメラ深度最大値
+
+	// 視界チェック用
+	constexpr auto SIGHT_CHECK_RADIUS = 10.0f;// 視線チェック用の球の半径
+	constexpr auto SIGHT_CHECK_STEP = 50.0f;// 視線チェックのステップ距離
+	constexpr auto SIGHT_CHECK_MAX_STEPS = 100;// 視線チェックの最大ステップ数
+	constexpr auto SIGHT_CHECK_MIN_THRESHOLD = 0.001f;// 視線チェックの最小閾値
+	constexpr auto WALL_NORMAL_THRESHOLD = 0.2f;// 壁判定の法線Y成分閾値
 }
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
@@ -635,4 +643,90 @@ void Enemy::SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg)
 	_vDir.y = 0.0f;
 	_vDir.z = cosf(currentY);
 	_vDir = VNorm(_vDir);
+}
+
+bool Enemy::CheckLineOfSight(VECTOR vStart, VECTOR vEnd)
+{
+	auto stage = _stage.lock();
+	if (!stage) { return false; }
+
+	const auto& mapObjList = stage->GetMapModelPosList();
+	if (mapObjList.empty()) { return true; }
+
+	// 視線ベクトル計算
+	VECTOR vSightDir = VSub(vEnd, vStart);
+	float fTotalDist = VSize(vSightDir);
+
+	// 距離が短すぎる場合は視線が通っているとみなす
+	if (fTotalDist < SIGHT_CHECK_MIN_THRESHOLD) { return true; }
+
+	vSightDir = VNorm(vSightDir);
+
+	// ステップ移動で障害物チェック
+	float fMoveDist = 0.0f;
+	int stepCnt = 0;
+
+	while (fMoveDist < fTotalDist && stepCnt < SIGHT_CHECK_MAX_STEPS)
+	{
+		// 残り距離を計算
+		float fRemainingDist = fTotalDist - fMoveDist;
+		if (fRemainingDist <= 0.0f) { break; }
+
+		// 今回のステップ距離を決定
+		float fCurrentStepDist = (fRemainingDist < SIGHT_CHECK_STEP) ? fRemainingDist : SIGHT_CHECK_STEP;
+
+		// チェック位置を計算
+		VECTOR vCheckPos = VAdd(vStart, VScale(vSightDir, fMoveDist + fCurrentStepDist * 0.5f));
+
+		// 全マップモデルを走査
+		for (const auto& obj : mapObjList)
+		{
+			if (obj.collisionFrame == -1 || obj.modelHandle <= 0) { continue; }
+
+			// 球範囲内にあるモデルのポリゴンを取得
+			MV1_COLL_RESULT_POLY_DIM polyResult = MV1CollCheck_Sphere(
+				obj.modelHandle,
+				obj.collisionFrame,
+				vCheckPos,
+				SIGHT_CHECK_RADIUS
+			);
+
+			// ポリゴンが検出された場合
+			if (polyResult.HitNum > 0)
+			{
+				// 壁ポリゴンがあるかチェック
+				for(int i = 0; i < polyResult.HitNum; ++i)
+				{
+					const MV1_COLL_RESULT_POLY& poly = polyResult.Dim[i];
+
+					// 法線のY成分で壁判定
+					if (poly.Normal.y < WALL_NORMAL_THRESHOLD)
+					{
+						// 視線が壁と交差しているかチェック
+						HITRESULT_LINE hitResult = HitCheck_Line_Triangle(
+							vStart,
+							vEnd,
+							poly.Position[0],
+							poly.Position[1],
+							poly.Position[2]
+						);
+
+						if (hitResult.HitFlag != 0)
+						{
+							MV1CollResultPolyDimTerminate(polyResult);
+							return false;// 壁に遮られている
+						}
+					}
+				}
+
+				MV1CollResultPolyDimTerminate(polyResult);
+			}
+		}
+
+		// 進行状況を更新
+		fMoveDist += fCurrentStepDist;
+		++stepCnt;
+	}
+
+	return true;// 視線が通っている
 }

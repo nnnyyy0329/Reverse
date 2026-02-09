@@ -357,6 +357,11 @@ void PlayerBase::ProcessDebug()
 	{
 		_fLife -= 5.0f;
 	}
+
+	if (_trg & PAD_INPUT_5)
+	{
+		EnergyManager::GetInstance()->AddEnergy(100.0f);
+	}
 }
 
 // 被弾硬直中かチェック

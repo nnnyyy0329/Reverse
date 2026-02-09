@@ -368,7 +368,9 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		// ダメージ処理
 		float damage = attack->GetDamage();			// ダメージ取得
 		auto beforeLife = chara->GetLife();			// ヒット前のライフ取得
+
 		chara->ApplyDamage(damage, ownerType, col);	// ターゲットにダメージを与える
+
 		auto afterLife = chara->GetLife();			// ヒット後のライフ取得
 		damage = beforeLife - afterLife;			// 実際に与えたダメージを計算
 
@@ -427,6 +429,7 @@ bool ModeGame::OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE own
 	return false;
 }
 
+// プレイヤーとトリガーの当たり判定
 void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 {
 	if (!player || !_stage) { return; }

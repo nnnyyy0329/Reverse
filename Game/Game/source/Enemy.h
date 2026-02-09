@@ -5,6 +5,7 @@
 
 class BulletManager;
 class AttackBase;
+class StageBase;
 
 class Enemy : public CharaBase
 {
@@ -76,9 +77,11 @@ public:
 	void ApplyRandomOffset();// ステート時間にランダムなオフセットを適用
 	float GetStateTimerOffset() { return _fStateTimerOffset; }
 
+	// 索敵の障害物チェック
+	void SetStage(std::shared_ptr<StageBase> stage) { _stage = stage; }// ステージ参照をセット
+	bool CheckLineOfSight(VECTOR vStart, VECTOR vEnd);// 視線が通っているか(障害物チェック)
 
-	// 徐々に回転させる
-	void SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg);// 目標方向へ指定速度で回転
+
 
 
 
@@ -90,6 +93,9 @@ public:
 	// DrawLine3Dを組み合わせて3D空間に扇形を描画する関数
 	// vCenter:中心座標, vDir:基準の向きベクトル, fRadius:半径, fHalfAngleDeg:半角(度), color:色, segments:分割数
 	void DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAngleDeg, unsigned int color, int segments);
+
+	// 徐々に回転させる
+	void SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg);// 目標方向へ指定速度で回転
 
 protected:
 
@@ -122,6 +128,8 @@ protected:
 
 	// 動きにばらつきを持たせるため
 	float _fStateTimerOffset = 0.0f;// ステート時間にばらつきを
+
+	std::weak_ptr<StageBase> _stage;// ステージ参照(障害物チェック用)
 
 private:
 	void LoadEnemyModel();// モデルを名前に応じて読み込む

@@ -4,9 +4,10 @@
 namespace 
 {
 	// 状態時間
-	constexpr auto DOWN_TIME = 180.0f;// ダウン時間
+	constexpr auto DAMAGE_TIME = 50.0f;// 被ダメージ時間
 	constexpr auto STUN_TIME = 180.0f;// スタン時間
-	constexpr auto DEAD_TIME = 60.0f;// 死亡アニメーション時間
+	constexpr auto DEAD_TIME = 60.0f;// 死亡時間
+	constexpr auto DOWN_TIME = 90.0f;// ダウン時間
 
 	// ノックバック制御
 	constexpr auto KNOCKBACK_SPEED = 5.0f;// ノックバック速度
@@ -26,6 +27,9 @@ namespace Common
 		_fTimer = 0.0f;
 
 		// ここでアニメーション設定
+		// 敵の種類ごとのアニメーション名を取得
+		const auto& param = owner->GetEnemyParam();
+		owner->GetAnimManager()->ChangeAnimationByName(param.animDamage, 1.0f, 1);
 	}
 
 	std::shared_ptr<EnemyState> Damage::Update(Enemy* owner) 
@@ -39,8 +43,13 @@ namespace Common
 			return std::make_shared<Down>();// ダウン状態へ
 		}
 
-		// 回復状態へ
-		return owner->GetRecoveryState();
+		// 被ダメージ時間経過チェック
+		if (_fTimer >= DAMAGE_TIME) 
+		{
+			return owner->GetRecoveryState();// 回復状態へ
+		}
+
+		return nullptr;
 	}
 
 
@@ -57,6 +66,8 @@ namespace Common
 		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 
 		// ここでアニメーション設定
+		const auto& param = owner->GetEnemyParam();
+		owner->GetAnimManager()->ChangeAnimationByName(param.animDead, 1.0f, 1);
 	}
 
 	std::shared_ptr<EnemyState> Dead::Update(Enemy* owner)
@@ -146,6 +157,8 @@ namespace Common
 		}
 
 		// ここでアニメーション設定
+		const auto& param = owner->GetEnemyParam();
+		owner->GetAnimManager()->ChangeAnimationByName(param.animDown, 1.0f, 1);
 	}
 
 	std::shared_ptr<EnemyState> Down::Update(Enemy* owner)

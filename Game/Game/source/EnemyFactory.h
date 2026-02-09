@@ -8,7 +8,7 @@
 namespace 
 {
 	constexpr auto DEFAULT_ENEMY_SPEED = 2.0f;// 敵の移動速度
-	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 10000.0f;// 敵の最大体力
+	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 10.0f;// 敵の最大体力
 
 	// Melee
 	constexpr auto MELEE_VISION_RANGE = 250.0f;// 索敵距離
@@ -78,6 +78,13 @@ public:
 				param.fDetectTime = MELEE_DETECT_TIME;
 				param.fAttackTime = MELEE_ATTACK_TIME;
 				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+
+				// 共通ステートのアニメーション名を設定
+				param.animDamage = "enemy_damage00_00";
+				param.animDead = "enemy_dead_00";
+				param.animStun = "Melee_Stun";
+				param.animDown = "enemy_damage01_00";
+
 				enemy->SetEnemyParam(param);// パラメータ設定
 
 				// ハンドラの中身を設定
