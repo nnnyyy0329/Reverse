@@ -184,11 +184,11 @@ DodgeConfig BulletPlayer::GetDodgeConfig()
 	return config;
 }
 
-// シールド設定を取得
-ShieldConfig PlayerBase::GetShieldConfig()
-{
-	// デフォルトの設定を返す
-	ShieldConfig config = {};
-
-	return config;
-}
+//// シールド設定を取得
+//ShieldConfig BulletPlayer::GetShieldConfig()
+//{
+//	// デフォルトの設定を返す
+//	ShieldConfig config = {};
+//
+//	return config;
+//}

@@ -206,21 +206,22 @@ DodgeConfig SurfacePlayer::GetDodgeConfig()
 	return config;
 }
 
-// シールド設定を取得（デフォルト実装）
-ShieldConfig PlayerBase::GetShieldConfig()
-{
-	// デフォルトの設定を返す
-	ShieldConfig config = {};
-	config.charaType = SHIELD_CHARA::SURFACE_PLAYER;
-	config.dotThreshold = 0.5f;
-	config.blockAngleRange = 90.0f;
-	config.blockDistance = 100.0f;
-	config.guardStartupTime = 5.0f;
-	config.guardEndTime = 5.0f;
-	config.recoveryTime = 15.0f;
-	config.staminaCost = 10.0f;
-	config.blockEffectName = "";
-	config.effectOffset = 0.0f;
-
-	return config;
-}
+//// シールド設定を取得
+//ShieldConfig SurfacePlayer::GetShieldConfig()
+//{
+//	// デフォルトの設定を返す
+//	ShieldConfig config;
+//
+//	config.charaType = SHIELD_CHARA::SURFACE_PLAYER;
+//	config.dotThreshold = 0.5f;
+//	config.blockAngleRange = 90.0f;
+//	config.blockDistance = 100.0f;
+//	config.guardStartupTime = 5.0f;
+//	config.guardEndTime = 5.0f;
+//	config.recoveryTime = 15.0f;
+//	config.staminaCost = 10.0f;
+//	config.blockEffectName = "";
+//	config.effectOffset = 0.0f;
+//
+//	return config;
+//}

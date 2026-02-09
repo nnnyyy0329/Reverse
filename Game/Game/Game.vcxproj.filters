@@ -143,7 +143,7 @@
       <Filter>Stamina</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerShieldSystem.cpp">
-      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Shield</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase\System\Shield</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -283,7 +283,7 @@
       <Filter>Stamina</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerShieldSystem.h">
-      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Shield</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase\System\Shield</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -377,10 +377,10 @@
     <Filter Include="GameObject\CharaBase\PlayerBase\Bullet">
       <UniqueIdentifier>{bf0c1bdb-2ada-440d-8231-314cd8dc3e52}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem">
+    <Filter Include="GameObject\CharaBase\PlayerBase\System">
       <UniqueIdentifier>{27cd3688-c122-4b8c-b9b2-9785d6f20b30}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem\Shield">
+    <Filter Include="GameObject\CharaBase\PlayerBase\System\Shield">
       <UniqueIdentifier>{aef1ea0b-20af-423a-b0c3-8551883a0b05}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

@@ -108,14 +108,14 @@ void PlayerBase::InitializeHitConfig(const VECTOR& attackDirection)
 // シールドデータ初期化
 void PlayerBase::InitializeShieldData()
 {
-	// シールドシステム作成
-	_shieldSystem = std::make_shared<PlayerShieldSystem>();
+	//// シールドシステム作成
+	//_shieldSystem = std::make_shared<PlayerShieldSystem>();
 
-	// プレイヤーを設定
-	_shieldSystem->SetPlayer(this);
+	//// プレイヤーを設定
+	//_shieldSystem->SetPlayer(this);
 
-	// 初期化
-	_shieldSystem->Initialize();
+	//// 初期化
+	//_shieldSystem->Initialize();
 }
 
 bool PlayerBase::Terminate()

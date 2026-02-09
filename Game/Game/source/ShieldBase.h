@@ -30,8 +30,7 @@ struct ShieldConfig
 	float dotThreshold;				// シールド有効内積閾値
 	float blockAngleRange;			// ブロック可能角度範囲
 	float blockDistance;			// ブロック可能距離
-	float guardStartupTime;         // ガード開始時間
-	float guardEndTime;             // ガード終了時間
+	float startTime;				// 発生前時間
 	float recoveryTime;				// 硬直時間
 	float staminaCost;              // スタミナコスト
 	std::string blockEffectName;	// ブロックエフェクト名
@@ -55,9 +54,8 @@ public:
 	void DebugRender();			// デバッグ描画
 
 	// シールド操作
-	virtual bool ActivateShield();			// シールド発動
-	virtual void DeactivateShield();		// シールド解除
-	virtual bool CanActivateShield()const;	// シールド発動可能かチェック
+	virtual void ActivateShield();		// シールド発動
+	virtual void DeactivateShield();	// シールド解除
 
 	// ブロック判定
 	bool CanBlockAttack(const VECTOR& attackPos, const VECTOR& attackDir)const;	// 攻撃をブロック可能かチェック
@@ -67,7 +65,6 @@ public:
 	void SuccessBlock(const VECTOR& attackDir);									// ブロック成功処理
 
 	// シールド内部の処理
-	void UpdateTimers();		// タイマー更新
 	void UpdateShieldState();	// シールド状態更新
 	VECTOR GetOwnerPos()const;	// 所有者位置取得
 	VECTOR GetOwnerDir()const;	// 所有者前方取得
@@ -78,7 +75,6 @@ public:
 	void StopGuard();					// ガード停止
 
 	// ガード状態チェック
-	bool CanStartGuard() const;	// ガード開始可能かチェック
 	bool HasStamina() const;	// スタミナが足りているかチェック
 	bool IsGuarding() const { return _eShieldState == SHIELD_STATE::ACTIVE; }
 
@@ -92,8 +88,8 @@ public:
 	std::shared_ptr<CharaBase> GetOwner() const { return _owner.lock(); }	// 所有者取得
 	void SetOwner(std::shared_ptr<CharaBase> owner) { _owner = owner; }		// 所有者設定
 
-	// 設定取得（継承先で実装）
-	virtual ShieldConfig GetShieldConfig() = 0;
+	// シールド設定
+	virtual void SetShieldConfig(const ShieldConfig& config) { _stcShieldConfig = config; }	// シールド設定登録
 
 protected:
 	// シールド状態
@@ -102,14 +98,10 @@ protected:
 	std::weak_ptr<CharaBase> _owner;	// 所有者
 
 	// シールド設定
-	ShieldConfig _config;	// シールド設定
-	float _fStartupTimer;	// 発生タイマー
-	float _fActiveTimer;	// アクティブタイマー
-	float _fRecoveryTimer;	// 硬直タイマー
+	ShieldConfig _stcShieldConfig;	// シールド設定
+	float _fStartupTimer;			// 発生前タイマー
+	float _fRecoveryTimer;			// 硬直タイマー
 
-	bool _bIsGuardPressed;	// ガードボタンが押されているかフラグ
-	bool _bWasGuardPressed;	// 前フレームガードボタンが押されていたかフラグ
-
-	bool _bIsBlocking;		// ブロック中フラグ
+	bool _bIsBlocking;				// ブロック中フラグ
 };
 

@@ -4,7 +4,6 @@
 #include "CharaBase.h"
 #include "AttackBase.h"
 #include "DodgeSystem.h"
-#include "PlayerShieldSystem.h"
 
 // プレイヤー設定データ構造体
 struct PlayerConfig
@@ -152,7 +151,6 @@ public:
 	virtual PlayerConfig GetPlayerConfig() = 0;
 	virtual PlayerAnimation GetPlayerAnimation() = 0;
 	virtual RenderConfig GetRenderConfig() = 0;
-	virtual ShieldConfig GetShieldConfig() = 0;
 
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
@@ -180,7 +178,6 @@ public:
 
 	// システム設定
 	void SetDodgeSystem(std::shared_ptr<DodgeSystem> dodgeSystem) { _dodgeSystem = dodgeSystem; }
-	void SetShieldSystem(std::shared_ptr<PlayerShieldSystem> shieldSystem) { _shieldSystem = shieldSystem; }
 	
 protected:	// 攻撃関係
 
@@ -227,8 +224,6 @@ protected:	// 回避関係
 	virtual DodgeConfig GetDodgeConfig() = 0;
 
 protected:
-	// プレイヤーシステム
-	std::shared_ptr<PlayerShieldSystem> _shieldSystem;
 
 	// 共通の設定
 	PlayerConfig	_playerConfig;	// プレイヤー設定データ
