@@ -25,6 +25,35 @@ namespace Common
 	{
 		// タイマー初期化
 		_fTimer = 0.0f;
+		_fKnockbackSpeed = KNOCKBACK_SPEED;
+
+		// ノックバック方向計算
+		auto target = owner->GetTarget();
+		if (target)
+		{
+			// ターゲットから敵へのベクトル計算
+			VECTOR vToEnemy = VSub(owner->GetPos(), target->GetPos());
+			vToEnemy.y = 0.0f;
+
+			// 距離計算
+			float dist = VSize(vToEnemy);
+
+			if (dist > KNOCKBACK_MIN_DISTANCE)
+			{
+				// 正規化してノックバック方向設定
+				_vKnockbackDir = VScale(vToEnemy, 1.0f / dist);
+			}
+			else
+			{
+				// 重なっている場合は敵の向きの逆方向
+				_vKnockbackDir = VScale(owner->GetDir(), -1.0f);
+			}
+		}
+		else
+		{
+			// ターゲット不在時は敵の向きの逆方向
+			_vKnockbackDir = VScale(owner->GetDir(), -1.0f);
+		}
 
 		// ここでアニメーション設定
 		// 敵の種類ごとのアニメーション名を取得
@@ -41,6 +70,22 @@ namespace Common
 		if (owner->GetDamageCount() >= owner->GetEnemyParam().damageToDown)
 		{
 			return std::make_shared<Down>();// ダウン状態へ
+		}
+
+		// ノックバック処理
+		if (_fTimer < KNOCKBACK_TIME)
+		{
+			// 速度減衰処理
+			_fKnockbackSpeed *= KNOCKBACK_DECELERATION;
+
+			// 移動処理
+			VECTOR vMove = VScale(_vKnockbackDir, _fKnockbackSpeed);
+			owner->SetMove(vMove);
+		}
+		else
+		{
+			// ノックバック終了後停止
+			owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 		}
 
 		// 被ダメージ時間経過チェック

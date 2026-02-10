@@ -3,30 +3,42 @@
 
 namespace 
 {
-	// 発射位置オフセット
-	constexpr auto SHOOT_OFFSET_Z = 20.0f;// 発射位置前方オフセット
-	constexpr auto SHOOT_OFFSET_Y = 40.0f;// 発射位置高さオフセット
+	// 距離判定用定数
+	constexpr auto NEARBY_HOME = 10.0f;					// 初期位置到達判定距離
+	constexpr auto WANDER_HOME_RETURN_RATIO = 0.8f;		// 徘徊時の帰還判定比率
+	constexpr auto SHOT_RANGE_MIN = 300.0f;				// 射撃最小距離
+	constexpr auto SHOT_RANGE_MAX = 600.0f;				// 射撃最大距離
+	constexpr auto RETREAT_TRIGGER_DISTANCE = 250.0f;	// 後退開始距離
+	constexpr auto APPROACH_STOP_DISTANCE = 400.0f;		// 接近停止距離
 
-	// 発射制御
-	constexpr auto TURN_LOCK_TIME = 10.0f;// 発射の何フレーム前になったら向きを固定するか
+	// 時間制御用定数
+	constexpr auto SHOT_CHARGE_TIME = 60.0f;			// 射撃溜め時間
+	constexpr auto SHOT_EXECUTE_TIME = 30.0f;			// 射撃実行時間
+	constexpr auto SHOT_RECOVERY_TIME = 60.0f;			// 射撃後隙時間
+	constexpr auto SHOT_INTERVAL_TIME = 90.0f;			// 射撃間隔時間
+	constexpr auto BLEND_FRAME = 1.0f;					// アニメーションブレンドフレーム数
 
-	// 弾パラメータ
-	constexpr auto BULLET_RADIUS = 10.0f;// 弾の当たり判定半径
-	constexpr auto BULLET_SPEED = 15.0f;// 弾の速度
-	constexpr auto BULLET_LIFETIME = 120.0f;// 弾の寿命(フレーム数)
+	// 速度制御用定数
+	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;			// スムーズ回転速度
+	constexpr auto APPROACH_SPEED = 1.0f;				// 接近速度(ゆっくり)
+	constexpr auto RETREAT_SPEED = 1.5f;				// 後退速度
 
-	// 見渡し動作
-	constexpr auto LOOK_AROUND_INTERVAL = 120.0f;// 見渡す間隔(フレーム数)
-	constexpr auto LOOK_AROUND_ANGLE = 45.0f;// 左右を向く角度(度)
-	constexpr auto LOOK_AROUND_SPEED = 0.1f;// 見渡しの回転速度(度/フレーム)
+	// 確率制御用定数
+	constexpr auto WANDER_ANGLE_RANDOM_RANGE = 90;		// 徘徊時の角度ランダム範囲(度)
+	constexpr auto WANDER_ANGLE_RANDOM_OFFSET = 45;		// 徘徊時の角度ランダムオフセット(度)
+	constexpr auto WANDER_FULL_ANGLE = 359;				// 徘徊時の全角度範囲(度)
 
-	// 攻撃時の判定係数
-	constexpr auto ATTACK_AIM_DOT_THRESHOLD = 0.9f;// 発射可能な内積閾値(ほぼ正面)
-	constexpr auto ATTACK_MOVE_BACK_DOT_THRESHOLD = 0.7f;// 後退する内積閾値(45度以内)
-	constexpr auto ATTACK_VISION_RANGE_RATIO = 1.2f;// 視界喪失距離の係数
+	// アニメーション制御用定数
+	constexpr auto ANIM_LOOP_COUNT = 0;					// アニメーションループ回数(0=無限)
+	constexpr auto ANIM_PLAY_COUNT = 1;					// アニメーション再生回数
+	constexpr auto ANIM_SPEED_NORMAL = 1.0f;			// アニメーション再生速度(通常)
 
-	// 角度補正
-	constexpr auto ANGLE_EPSILON = 0.01f;// 角度到達判定の閾値
+	// 弾設定用定数
+	constexpr auto BULLET_SPEED = 15.0f;				// 弾速度
+	constexpr auto BULLET_RADIUS = 10.0f;				// 弾半径
+	constexpr auto BULLET_LIFETIME = 180;				// 弾生存時間(フレーム)
+	constexpr auto BULLET_SPAWN_OFFSET_Y = 100.0f;		// 弾発射Y座標オフセット
+	constexpr auto BULLET_SPAWN_OFFSET_Z = 50.0f;		// 弾発射前方オフセット
 }
 
 namespace Ranged
@@ -36,17 +48,12 @@ namespace Ranged
 		auto target = owner->GetTarget();
 		if (!target) { return false; }
 
-		// ターゲットへのベクトル計算
+		// ベクトル計算
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
-		float dist = VSize(vToTarget);
 
 		// 距離チェック
+		float dist = VSize(vToTarget);
 		if (dist > owner->GetEnemyParam().fVisionRange) { return false; }
-
-		// 角度チェック
-		VECTOR vToTargetNorm = VNorm(vToTarget);
-		float dot = VDot(owner->GetDir(), vToTargetNorm);
-		if (dot < owner->GetEnemyParam().fVisionCos) { return false; }
 
 		// 障害物チェック
 
@@ -58,90 +65,32 @@ namespace Ranged
 
 
 	// 待機
-	void Idle::Enter(Enemy* owner) 
+	void Idle::Enter(Enemy* owner)
 	{
 		// タイマー初期化
 		_fTimer = 0.0f;
-		_fLookAroundTimer = 0.0f;
 
-		// 見渡し状態初期化
-		_bLookingLeft = true;// 最初は左を向く
-		_bisRotating = false;
-		_vInitialDir = owner->GetDir();
+		// 時間にばらつきを持たせる
+		_fTargetTimer = CalcOffsetTime(owner, owner->GetEnemyParam().fIdleTime);
 
 		// ここでアニメーション設定
 	}
 
-	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner) 
+	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner)
 	{
-		// ターゲット発見チェック
-		if (owner->IsTargetDetected()) 
+		// 索敵結果チェック
+		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Notice>();// 発見状態へ
+			return std::make_shared<Notice>();
 		}
 
 		// タイマー更新
 		_fTimer++;
-		_fLookAroundTimer++;
 
-		// 見渡し処理
+		// 時間経過チェック
+		if (_fTimer >= _fTargetTimer)
 		{
-			// 次の目標設定タイミングチェック
-			if (_fLookAroundTimer >= LOOK_AROUND_INTERVAL && !_bisRotating)
-			{
-				// 目標角度計算
-				float baseAngle = atan2f(_vInitialDir.x, _vInitialDir.z);
-				float lookAngleRad = LOOK_AROUND_ANGLE * DEGREE_TO_RADIAN;
-
-				if (_bLookingLeft)
-				{
-					_fTargetAngle = baseAngle + lookAngleRad;// 左を向く
-				}
-				else
-				{
-					_fTargetAngle = baseAngle - lookAngleRad;// 右を向く
-				}
-
-				// 回転開始設定
-				_bisRotating = true;
-				_bLookingLeft = !_bLookingLeft;
-				_fLookAroundTimer = 0.0f;
-			}
-
-			// 滑らか回転処理
-			if (_bisRotating)
-			{
-				// 現在角度計算
-				VECTOR vCurrentDir = owner->GetDir();
-				float currentAngle = atan2f(vCurrentDir.x, vCurrentDir.z);
-
-				// 角度差計算
-				float diffAngle = _fTargetAngle - currentAngle;
-				while (diffAngle <= -DX_PI_F) { diffAngle += DX_TWO_PI_F; }
-				while (diffAngle > DX_PI_F) { diffAngle -= DX_TWO_PI_F; }
-
-				// 旋回速度制限計算
-				float turnSpeedRad = LOOK_AROUND_SPEED * DEGREE_TO_RADIAN;
-
-				// 到達判定
-				if (fabs(diffAngle) < ANGLE_EPSILON)
-				{
-					// 回転終了処理
-					_bisRotating = false;
-					VECTOR vNewDir = VGet(sinf(_fTargetAngle), 0.0f, cosf(_fTargetAngle));
-					owner->SetDir(vNewDir);
-				}
-				else
-				{
-					// 回転継続処理
-					if (diffAngle > turnSpeedRad) { diffAngle = turnSpeedRad; }
-					else if (diffAngle < -turnSpeedRad) { diffAngle = -turnSpeedRad; }
-
-					float newAngle = currentAngle + diffAngle;
-					VECTOR vNewDir = VGet(sinf(newAngle), 0.0f, cosf(newAngle));
-					owner->SetDir(vNewDir);
-				}
-			}
+			return std::make_shared<Wander>();
 		}
 
 		return nullptr;
@@ -149,15 +98,88 @@ namespace Ranged
 
 	void Idle::UpdateSearch(Enemy* owner)
 	{
-		// ターゲット視界チェック
-		if (IsTargetVisible(owner))
+		// 視界判定結果を設定
+		owner->SetTargetDetected(Ranged::IsTargetVisible(owner));
+	}
+
+
+
+
+
+	// 徘徊
+	void Wander::Enter(Enemy* owner)
+	{
+		// タイマー初期化
+		_fTimer = 0.0f;
+
+		// ここでアニメーション設定
+
+		// 移動方向決定
+		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
+		float dist = VSize(vToHome);
+		float fLimitRange = owner->GetEnemyParam().fMoveRadius;
+
+		float fTargetAngle = 0.0f;
+
+		// 初期位置からの距離に応じて方向決定
+		if (dist > fLimitRange * WANDER_HOME_RETURN_RATIO)
 		{
-			owner->SetTargetDetected(true);
+			// 初期位置方向へ向かう
+			float fToHomeAngle = atan2f(vToHome.z, vToHome.x);
+			float fRandOffset = static_cast<float>(GetRand(WANDER_ANGLE_RANDOM_RANGE) - WANDER_ANGLE_RANDOM_OFFSET) * DEGREE_TO_RADIAN;
+			fTargetAngle = fToHomeAngle + fRandOffset;
 		}
 		else
 		{
-			owner->SetTargetDetected(false);
+			// ランダム方向へ向かう
+			fTargetAngle = static_cast<float>(GetRand(WANDER_FULL_ANGLE)) * DEGREE_TO_RADIAN;
 		}
+
+		// 方向ベクトル設定
+		VECTOR vDir = VGet(cosf(fTargetAngle), 0.0f, sinf(fTargetAngle));
+		owner->SetDir(vDir);
+	}
+
+	std::shared_ptr<EnemyState> Wander::Update(Enemy* owner)
+	{
+		// 索敵結果チェック
+		if (owner->IsTargetDetected())
+		{
+			return std::make_shared<Notice>();
+		}
+
+		// タイマー更新
+		_fTimer++;
+
+		// 移動範囲チェック
+		VECTOR vFromHome = VSub(owner->GetPos(), owner->GetHomePos());
+		float distSq = VSquareSize(vFromHome);
+		float fLimitRange = owner->GetEnemyParam().fMoveRadius;
+
+		if (distSq > fLimitRange * fLimitRange)
+		{
+			return std::make_shared<ReturnHome>();
+		}
+
+		// 移動処理
+		VECTOR vDir = owner->GetDir();
+		float fSpeed = owner->GetEnemyParam().fMoveSpeed;
+		VECTOR vMove = VScale(vDir, fSpeed);
+		owner->SetMove(vMove);
+
+		// 時間経過チェック
+		if (_fTimer >= owner->GetEnemyParam().fMoveTime)
+		{
+			return std::make_shared<Idle>();
+		}
+
+		return nullptr;
+	}
+
+	void Wander::UpdateSearch(Enemy* owner)
+	{
+		// 視界判定結果を設定
+		owner->SetTargetDetected(Ranged::IsTargetVisible(owner));
 	}
 
 
@@ -165,32 +187,32 @@ namespace Ranged
 
 
 	// 発見
-	void Notice::Enter(Enemy* owner) 
+	void Notice::Enter(Enemy* owner)
 	{
 		// タイマー初期化
 		_fTimer = 0.0f;
 
 		// ここでアニメーション設定
-
-		// ターゲット方向設定
-		auto target = owner->GetTarget();
-		if (target) 
-		{
-			VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
-			VECTOR vToTargetNorm = VNorm(vToTarget);
-			owner->SetDir(vToTargetNorm);
-		}
 	}
 
-	std::shared_ptr<EnemyState> Notice::Update(Enemy* owner) 
+	std::shared_ptr<EnemyState> Notice::Update(Enemy* owner)
 	{
 		// タイマー更新
 		_fTimer++;
 
-		// 発見時間経過チェック
-		if (_fTimer >= owner->GetEnemyParam().fDetectTime) 
+		// ターゲット方向へ回転処理
+		auto target = owner->GetTarget();
+		if (target)
 		{
-			return std::make_shared<Attack>();// 攻撃状態へ
+			VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
+			VECTOR vDir = VNorm(vToTarget);
+			owner->SetDir(vDir);
+		}
+
+		// 時間経過チェック
+		if (_fTimer >= owner->GetEnemyParam().fDetectTime)
+		{
+			return std::make_shared<Approach>();
 		}
 
 		return nullptr;
@@ -201,19 +223,15 @@ namespace Ranged
 
 
 	// 攻撃
-	void Attack::Enter(Enemy* owner) 
+	void Approach::Enter(Enemy* owner)
 	{
 		// タイマー初期化
 		_fTimer = 0.0f;
-		_shotTimer = 0.0f;
-
-		// 移動停止
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 
 		// ここでアニメーション設定
 	}
 
-	std::shared_ptr<EnemyState> Attack::Update(Enemy* owner) 
+	std::shared_ptr<EnemyState> Approach::Update(Enemy* owner)
 	{
 		// ターゲット存在チェック
 		auto target = owner->GetTarget();
@@ -223,122 +241,381 @@ namespace Ranged
 			return std::make_shared<Idle>();// 待機状態へ
 		}
 
-		// タイマー更新
-		_fTimer++;
-		_shotTimer++;
-
-		// パラメータ取得
-		const auto& param = owner->GetEnemyParam();
-		float interval = param.fAttackInterval;
-		float moveBackRange = param.fAttackRange;
-		float moveSpeed = param.fMoveSpeed;
-
-		// ターゲットへのベクトル計算
+		// 距離計算
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
 		float dist = VSize(vToTarget);
-		VECTOR vToTargetNorm = VNorm(vToTarget);
-		VECTOR vDir = owner->GetDir();
-		float dot = VDot(vDir, vToTargetNorm);
+		const auto& param = owner->GetEnemyParam();
 
-		// 視界喪失チェック
+		// 追跡限界チェック
+		if (dist > param.fChaseLimitRange)
 		{
-			// 距離チェック
-			bool bIsOutRange = (dist > param.fVisionRange * ATTACK_VISION_RANGE_RATIO);
-
-			// 角度チェック
-			bool bIsOutAngle = (dot < param.fVisionCos);
-
-			// 視界喪失判定
-			if (bIsOutRange || bIsOutAngle) 
-			{
-				owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
-				owner->SetTargetDetected(false);
-				return std::make_shared<Idle>();// 待機状態へ
-			}
+			owner->SetTargetDetected(false);
+			return std::make_shared<Idle>();
 		}
 
-		// 回転処理
+		// 射撃射程内チェック
+		if (dist <= APPROACH_STOP_DISTANCE)
 		{
-			// 発射直前以外は追尾
-			if (_shotTimer < interval - TURN_LOCK_TIME) 
-			{
-				// 目標角度計算
-				float targetAngle = atan2f(vToTarget.x, vToTarget.z);
-
-				// 現在角度計算
-				VECTOR vCurrentDir = owner->GetDir();
-				float currentAngle = atan2f(vCurrentDir.x, vCurrentDir.z);
-
-				// 角度差計算
-				float diffAngle = targetAngle - currentAngle;
-				while (diffAngle <= -DX_PI_F) { diffAngle += DX_TWO_PI_F; }
-				while (diffAngle > DX_PI_F) { diffAngle -= DX_TWO_PI_F; }
-
-				// 旋回速度制限適用
-				float turnSpeedRad = param.fTurnSpeed * DEGREE_TO_RADIAN;
-				if (diffAngle > turnSpeedRad) { diffAngle = turnSpeedRad; }
-				else if (diffAngle < -turnSpeedRad) { diffAngle = -turnSpeedRad; }
-
-				// 方向ベクトル設定
-				float newAngle = currentAngle + diffAngle;
-				VECTOR vNewDir = VGet(sinf(newAngle), 0.0f, cosf(newAngle));
-				owner->SetDir(vNewDir);
-			}
+			return std::make_shared<ShotStart>();
 		}
 
-		// 移動処理
+		// ターゲット方向へ回転処理
+		VECTOR vDir = VNorm(vToTarget);
+		owner->SmoothRotateTo(vDir, SMOOTH_ROTATE_SPEED);
+
+		// 移動処理(ゆっくり接近)
+		VECTOR vMove = VScale(vDir, APPROACH_SPEED);
+		owner->SetMove(vMove);
+
+		return nullptr;
+	}
+
+
+
+
+
+	// 射撃ステート開始
+	void ShotStart::Enter(Enemy* owner)
+	{
+		// タイマー初期化
+		_fTimer = 0.0f;
+
+		// ここでアニメーション設定
+	}
+
+	std::shared_ptr<EnemyState> ShotStart::Update(Enemy* owner)
+	{
+		// ターゲット存在チェック
+		auto target = owner->GetTarget();
+		if (!target)
 		{
-			VECTOR vMove = VGet(0.0f, 0.0f, 0.0f);
+			owner->SetTargetDetected(false);
+			return std::make_shared<Idle>();
+		}
 
-			// 後退判定
-			if (dist < moveBackRange && dot > ATTACK_MOVE_BACK_DOT_THRESHOLD)
-			{
-				// XZ平面ベクトル計算
-				VECTOR vToTargetXZ = vToTarget;
-				vToTargetXZ.y = 0.0f;
-				VECTOR vToTargetXZNorm = VNorm(vToTargetXZ);
+		// タイマー更新
+		_fTimer++;
 
-				// 後退ベクトル計算
-				VECTOR vBack = VScale(vToTargetXZNorm, -1.0f);
-				vMove = VScale(vBack, moveSpeed);
-			}
+		// 距離計算
+		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
+		float dist = VSize(vToTarget);
+		const auto& param = owner->GetEnemyParam();
 
+		// 追跡限界距離チェック
+		if (dist > param.fChaseLimitRange)
+		{
+			owner->SetTargetDetected(false);
+			return std::make_shared<Idle>();
+		}
+
+		// 射撃射程内に入った場合
+		if (dist >= SHOT_RANGE_MIN && dist <= SHOT_RANGE_MAX)
+		{
+			return std::make_shared<ShotCharge>();
+		}
+
+		// 射程外の場合、距離に応じて接近か後退か
+		VECTOR vDir = VNorm(vToTarget);
+		owner->SmoothRotateTo(vDir, SMOOTH_ROTATE_SPEED);
+
+		if (dist > SHOT_RANGE_MAX)
+		{
+			// 接近
+			VECTOR vMove = VScale(vDir, APPROACH_SPEED);
 			owner->SetMove(vMove);
 		}
-
-		// 発射処理
-		if (_shotTimer >= interval && dot > ATTACK_AIM_DOT_THRESHOLD) 
+		else if (dist < SHOT_RANGE_MIN)
 		{
-			Shoot(owner);
-
-			// エフェクト再生処理
-			int playingHandle = EffectServer::GetInstance()->Play("Laser", owner->GetPos());
-			if (playingHandle != -1)
-			{
-				// エフェクト角度計算
-				VECTOR vDir = owner->GetDir();
-				float yaw = atan2f(vDir.x, vDir.z) * RADIAN_TO_DEGREE;
-
-				// エフェクト回転設定
-				EffectServer::GetInstance()->SetRot(playingHandle, VGet(0.0f, yaw, 0.0f));
-			}
-
-			_shotTimer = 0.0f;
+			// 後退
+			VECTOR vMove = VScale(vDir, -RETREAT_SPEED);
+			owner->SetMove(vMove);
+		}
+		else
+		{
+			// 射程内なら停止
+			owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
 		}
 
 		return nullptr;
 	}
 
-	void Attack::Shoot(Enemy* owner)
+	// 射撃溜め
+	void ShotCharge::Enter(Enemy* owner)
 	{
-		// 発射位置計算
-		VECTOR vMuzzlePos = VAdd(
-			owner->GetPos(),
-			VScale(owner->GetDir(), SHOOT_OFFSET_Z)
-		);
-		vMuzzlePos.y += SHOOT_OFFSET_Y;
+		// タイマー初期化
+		_fTimer = 0.0f;
+		// ここでアニメーション設定
+	}
 
-		// 弾生成
-		owner->SpawnBullet(vMuzzlePos, owner->GetDir(), BULLET_RADIUS, BULLET_SPEED, BULLET_LIFETIME);
+	std::shared_ptr<EnemyState> ShotCharge::Update(Enemy* owner)
+	{
+		// タイマー更新
+		_fTimer++;
+
+		// 移動停止処理
+		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+
+		// ターゲット方向へ追従処理
+		auto target = owner->GetTarget();
+		if (target)
+		{
+			VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
+			VECTOR vDir = VNorm(vToTarget);
+			owner->SmoothRotateTo(vDir, SMOOTH_ROTATE_SPEED);
+		}
+
+		// 溜め時間終了チェック
+		if (_fTimer >= SHOT_CHARGE_TIME)
+		{
+			return std::make_shared<ShotExecute>();
+		}
+
+		return nullptr;
+	}
+
+	// 射撃実行
+	void ShotExecute::Enter(Enemy* owner)
+	{
+		// タイマー初期化
+		_fTimer = 0.0f;
+		_bHasShot = false;
+
+		// ここでアニメーション設定
+	}
+
+	std::shared_ptr<EnemyState> ShotExecute::Update(Enemy* owner)
+	{
+		// タイマー更新
+		_fTimer++;
+
+		// 弾発射処理(一回のみ)
+		if (!_bHasShot)
+		{
+			auto target = owner->GetTarget();
+			if (target)
+			{
+				// 弾発射位置計算
+				VECTOR vOwnerPos = owner->GetPos();
+				VECTOR vDir = owner->GetDir();
+
+				// 前方と高さの調整
+				VECTOR vSpawnPos = VAdd(vOwnerPos, VGet(0.0f, BULLET_SPAWN_OFFSET_Y, 0.0f));
+				vSpawnPos = VAdd(vSpawnPos, VScale(vDir, BULLET_SPAWN_OFFSET_Z));
+
+				// ターゲットへの方向計算
+				VECTOR vToTarget = VSub(target->GetPos(), vSpawnPos);
+				VECTOR vBulletDir = VNorm(vToTarget);
+
+				// 弾発射
+				owner->SpawnBullet(
+					vSpawnPos,
+					vBulletDir,
+					BULLET_RADIUS,
+					BULLET_SPEED,
+					BULLET_LIFETIME
+				);
+
+				_bHasShot = true;
+			}
+		}
+
+		// ターゲット存在チェック
+		auto target = owner->GetTarget();
+		if (target)
+		{
+			// 距離計算
+			VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
+			float dist = VSize(vToTarget);
+
+			// ターゲット方向へ追従処理
+			VECTOR vDir = VNorm(vToTarget);
+			owner->SmoothRotateTo(vDir, SMOOTH_ROTATE_SPEED);
+
+			// ターゲットが近い場合は後退
+			if (dist < RETREAT_TRIGGER_DISTANCE)
+			{
+				VECTOR vMove = VScale(vDir, -RETREAT_SPEED);
+				owner->SetMove(vMove);
+			}
+			else
+			{
+				// それ以外はその場で
+				owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+			}
+		}
+		else
+		{
+			// ターゲット不在時は停止
+			owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+		}
+
+		// 射撃実行時間終了チェック
+		if (_fTimer >= SHOT_EXECUTE_TIME)
+		{
+			return std::make_shared<ShotRecovery>();
+		}
+
+		return nullptr;
+	}
+
+	// 射撃後隙
+	void ShotRecovery::Enter(Enemy* owner)
+	{
+		// タイマー初期化
+		_fTimer = 0.0f;
+
+		// ここでアニメーション設定
+	}
+
+	std::shared_ptr<EnemyState> ShotRecovery::Update(Enemy* owner)
+	{
+		// タイマー更新
+		_fTimer++;
+
+		// ターゲット存在チェック
+		auto target = owner->GetTarget();
+		if (target)
+		{
+			// 距離計算
+			VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
+			float dist = VSize(vToTarget);
+
+			// ターゲット方向へ追従処理
+			VECTOR vDir = VNorm(vToTarget);
+			owner->SmoothRotateTo(vDir, SMOOTH_ROTATE_SPEED);
+
+			// ターゲットが近い場合は後退
+			if (dist < RETREAT_TRIGGER_DISTANCE)
+			{
+				VECTOR vMove = VScale(vDir, -RETREAT_SPEED);
+				owner->SetMove(vMove);
+			}
+			else
+			{
+				// それ以外はその場で
+				owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+			}
+		}
+		else
+		{
+			// ターゲット不在時は停止
+			owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+		}
+
+		// 後隙時間終了チェック
+		if (_fTimer >= SHOT_RECOVERY_TIME)
+		{
+			return std::make_shared<ShotInterval>();
+		}
+
+		return nullptr;
+	}
+
+	// 射撃間隔
+	void ShotInterval::Enter(Enemy* owner)
+	{
+		// タイマー初期化
+		_fTimer = 0.0f;
+
+		// ここでアニメーション設定
+	}
+
+	std::shared_ptr<EnemyState> ShotInterval::Update(Enemy* owner)
+	{
+		// ターゲット存在チェック
+		auto target = owner->GetTarget();
+		if (!target)
+		{
+			owner->SetTargetDetected(false);
+			return std::make_shared<Idle>();
+		}
+
+		// タイマー更新
+		_fTimer++;
+		
+		// 距離計算
+		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
+		float dist = VSize(vToTarget);
+		const auto& param = owner->GetEnemyParam();
+
+		// 追跡距離限界チェック
+		if (dist > param.fChaseLimitRange)
+		{
+			owner->SetTargetDetected(false);
+			return std::make_shared<Idle>();
+		}
+
+		// ターゲット方向へ追従処理
+		VECTOR vDir = VNorm(vToTarget);
+		owner->SmoothRotateTo(vDir, SMOOTH_ROTATE_SPEED);
+
+		// ターゲットが近づいてきた場合は後退
+		if(dist < RETREAT_TRIGGER_DISTANCE)
+		{
+			VECTOR vMove = VScale(vDir, -RETREAT_SPEED);
+			owner->SetMove(vMove);
+		}
+		else
+		{
+			// それ以外はその場で
+			owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+		}
+
+		// 射撃間隔時間終了チェック
+		if (_fTimer >= SHOT_INTERVAL_TIME)
+		{
+			return std::make_shared<ShotStart>();
+		}
+
+		return nullptr;
+	}
+
+
+
+
+
+	// 帰還
+	void ReturnHome::Enter(Enemy* owner)
+	{
+		// タイマー初期化
+		_fTimer = 0.0f;
+
+		// ここでアニメーション設定
+	}
+
+	std::shared_ptr<EnemyState> ReturnHome::Update(Enemy* owner)
+	{
+		// 索敵結果チェック
+		if(owner->IsTargetDetected() )
+		{
+			return std::make_shared<Notice>();
+		}
+
+		// 初期位置への距離計算
+		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
+		float dist = VSize(vToHome);
+
+		// 到達判定チェック
+		if(dist <= NEARBY_HOME) 
+		{
+			return std::make_shared<Idle>();
+		}
+
+		// 初期位置方向へ回転処理
+		VECTOR vDir = VNorm(vToHome);
+		owner->SmoothRotateTo(vDir, SMOOTH_ROTATE_SPEED);
+
+		// 移動処理
+		float fSpeed = owner->GetEnemyParam().fMoveSpeed;
+		VECTOR vMove = VScale(vDir, fSpeed);
+		owner->SetMove(vMove);
+
+		return nullptr;
+	}
+
+	void ReturnHome::UpdateSearch(Enemy* owner)
+	{
+		// 視界判定結果を設定
+		owner->SetTargetDetected(Ranged::IsTargetVisible(owner));
 	}
 }

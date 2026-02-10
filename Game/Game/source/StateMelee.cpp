@@ -50,8 +50,8 @@ namespace
 	constexpr auto BLEND_FRAME = 1.0f;					// アニメーションブレンドフレーム数
 	
 	// 確率制御用定数
-	constexpr auto CONFRONT_PROBABILITY = 0;			// 対峙状態への遷移確率(%)
-	constexpr auto RUSH_PROBABILITY = 0;				// 突進攻撃選択確率(%)
+	constexpr auto CONFRONT_PROBABILITY = 40;			// 対峙状態への遷移確率(%)
+	constexpr auto RUSH_PROBABILITY = 40;				// 突進攻撃選択確率(%)
 
 	constexpr auto WANDER_ANGLE_RANDOM_RANGE = 90;		// 徘徊時の角度ランダム範囲(度)
 	constexpr auto WANDER_ANGLE_RANDOM_OFFSET = 45;		// 徘徊時の角度ランダムオフセット(度)

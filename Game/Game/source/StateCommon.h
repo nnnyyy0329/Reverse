@@ -15,6 +15,10 @@ namespace Common
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Common:Damage"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::DAMAGE; }// ダメージ用
+
+	private:
+		VECTOR _vKnockbackDir;// ノックバック方向
+		float _fKnockbackSpeed;// ノックバック速度
 	};
 
 
