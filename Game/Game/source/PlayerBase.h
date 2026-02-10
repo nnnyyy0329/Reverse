@@ -29,26 +29,6 @@ struct PlayerConfig
 	std::string modelName;	// モデル名
 };
 
-// プレイヤーアニメーション構造体
-struct PlayerAnimation
-{
-	const char* wait;			// 待機
-	const char* walk;			// 歩行
-	const char* run;			// 走行
-	const char* jumpUp;			// ジャンプ（上昇）
-	const char* jumpDown;		// ジャンプ（下降）
-	const char* crouchWait;		// しゃがみ待機
-	const char* crouchWalk;		// しゃがみ歩行
-	const char* firstAttack;	// 1段目攻撃
-	const char* secondAttack;	// 2段目攻撃
-	const char* thirdAttack;	// 3段目攻撃
-	const char* fourthAttack;	// 4段目攻撃
-	const char* fifthAttack;	// 5段目攻撃
-	const char* hit;			// 被弾
-	const char* dodge;			// 回避
-	const char* death;			// 死亡
-};
-
 // 表示設定構造体
 struct RenderConfig
 {
@@ -78,27 +58,113 @@ struct AttackConfig
 	VECTOR effectOffset;	// エフェクト位置オフセット
 };
 
-// 状態列挙型
-enum class PLAYER_STATUS
+// 基本移動アニメーション構造体
+struct PlayerMovementAnimations
+{
+	const char* wait;        // 待機
+	const char* walk;        // 歩行
+	const char* run;         // 走行
+	const char* jumpUp;      // ジャンプ（上昇）
+	const char* jumpDown;    // ジャンプ（下降）
+	const char* crouchWait;  // しゃがみ待機
+	const char* crouchWalk;  // しゃがみ歩行
+};
+
+// 攻撃アニメーション構造体
+struct PlayerAttackAnimations
+{
+	const char* firstAttack;   // 1段目攻撃
+	const char* secondAttack;  // 2段目攻撃
+	const char* thirdAttack;   // 3段目攻撃
+	const char* fourthAttack;  // 4段目攻撃
+	const char* fifthAttack;   // 5段目攻撃
+};
+
+// 発射アニメーション構造体
+struct PlayerShootAnimations
+{
+	const char* rightArmShoot;  // 右腕発射
+	const char* leftArmShoot;   // 左腕発射
+	const char* shootMove;      // 発射移動
+};
+
+// 戦闘アニメーション構造体
+struct PlayerCombatAnimations
+{
+	const char* guard;    // ガード
+	const char* hit;      // 被弾
+	const char* dodge;    // 回避
+	const char* death;    // 死亡
+};
+
+// 統合アニメーション構造体
+struct PlayerAnimations
+{
+	PlayerMovementAnimations movement;
+	PlayerAttackAnimations attack;
+	PlayerCombatAnimations combat;
+	PlayerShootAnimations shoot;
+};
+
+// 基本移動状態
+enum class PLAYER_MOVEMENT_STATE
 {
 	NONE,
 	WAIT,			// 待機
 	WALK,			// 歩行
 	RUN,			// 走行
+	JUMP_UP,		// ジャンプ（上昇）
+	JUMP_DOWN,		// ジャンプ（下降）
+	CROUCH_WAIT,	// しゃがみ待機
+	CROUCH_WALK,	// しゃがみ歩行
+	_EOT_,
+};
+
+// 攻撃状態
+enum class PLAYER_ATTACK_STATE
+{
+	NONE,
 	FIRST_ATTACK,	// 1段目攻撃
 	SECOND_ATTACK,	// 2段目攻撃
 	THIRD_ATTACK,	// 3段目攻撃
 	FOURTH_ATTACK,	// 4段目攻撃
 	FIFTH_ATTACK,	// 5段目攻撃
-	JUMP_UP,		// ジャンプ（上昇）
-	JUMP_DOWN,		// ジャンプ（下降）
-	CROUCH_WAIT,	// しゃがみ待機
-	CROUCH_WALK,	// しゃがみ歩行
+	_EOT_,
+};
+
+// 弾の発射状態
+enum class PLAYER_SHOOT_STATE
+{
+	NONE,
+	RIGHT_ARM_SHOOT,	// 右腕発射
+	LEFT_ARM_SHOOT,		// 左腕発射
+	SHOOT_MOVE,			// 発射移動
+	_EOT_,
+};
+
+// 特殊状態
+enum class PLAYER_COMBAT_STATE
+{
+	NONE,
 	GUARD,			// ガード
 	HIT,			// 被弾
 	DODGE,			// 回避
 	DEATH,			// 死亡
 	_EOT_,
+};
+
+// 統合状態管理構造体
+struct PlayerState
+{
+	PLAYER_MOVEMENT_STATE movementState;	// 基本移動状態
+	PLAYER_ATTACK_STATE attackState;		// 攻撃状態
+	PLAYER_SHOOT_STATE shootState;			// 弾発射状態
+	PLAYER_COMBAT_STATE combatState;		// 特殊状態
+
+	bool IsAttacking() const { return attackState != PLAYER_ATTACK_STATE::NONE; }
+	bool IsMoving() const { return movementState == PLAYER_MOVEMENT_STATE::WALK || movementState == PLAYER_MOVEMENT_STATE::RUN; }
+	bool IsShooting() const { return shootState != PLAYER_SHOOT_STATE::NONE; }
+	bool IsCombat() const { return combatState != PLAYER_COMBAT_STATE::NONE; }
 };
 
 class PlayerBase : public CharaBase
@@ -147,11 +213,24 @@ public:
 	void DrawColPos	();				// コリジョン位置表示
 
 	// ステータス文字列変換
-	const char* GetStatusString	(PLAYER_STATUS status);	
+	std::string GetCurrentStateString() const;								// 現在の状態文字列取得
+	std::string GetMovementStateString(PLAYER_MOVEMENT_STATE state) const;	// 基本移動状態文字列取得
+	std::string GetAttackStateString(PLAYER_ATTACK_STATE state) const;		// 攻撃状態文字列取得
+	std::string GetShootStateString(PLAYER_SHOOT_STATE state) const;		// 弾発射状態文字列取得
+	std::string GetCombatStateString(PLAYER_COMBAT_STATE state) const;		// 特殊状態文字列取得
+
+	// 現在のアニメーション名取得
+	const char* GetCurrentAnimationName() const;
+
+	// ループカウント取得関数
+	int GetLoopCount() const;
+
+	// 状態変化チェック
+	bool HasStateChanged()const;
 
 	// 各プレイヤー固有の設定を取得
 	virtual PlayerConfig GetPlayerConfig() = 0;			// プレイヤー設定を取得	
-	virtual PlayerAnimation GetPlayerAnimation() = 0;	// プレイヤーアニメーション名データを取得
+	virtual PlayerAnimations GetPlayerAnimation() = 0;	// プレイヤーアニメーション名データを取得
 	virtual RenderConfig GetRenderConfig() = 0;			// 表示設定データを取得
 
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
@@ -171,9 +250,6 @@ public:
 	int GetInput()const{ return _key; }
 
 	/*****ゲッターセッター*****/
-	PLAYER_STATUS GetStatus() { return _ePlayerStatus; }	// 現在の状態を取得
-	void SetStatus(PLAYER_STATUS e) { _ePlayerStatus = e; }	// 現在の状態を設定
-
 	VECTOR GetAttackColTop(){ return _vAttackColTop; }			// 攻撃コリジョン上部
 	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }	// 攻撃コリジョン下部
 	float GetAttackColR(){ return _fAttackColR; }				// 攻撃コリジョン半径
@@ -188,7 +264,7 @@ protected:	// 攻撃関係
 
 	// 攻撃システム
 	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
-	std::vector<PLAYER_STATUS> _attackStatuses;			// 攻撃状態配列
+	std::vector<PLAYER_ATTACK_STATE> _attackStatuses;	// 攻撃状態配列
 
 	// PlayerBase_Attack.cppで定義
 	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数
@@ -200,15 +276,15 @@ protected:	// 攻撃関係
 	bool IsAttacking();				// 攻撃中かチェック
 
 	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
-	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> attack);						// 攻撃開始処理
+	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);						// 攻撃開始処理
 	void ProcessAttackEffect(int attackIndex);																					// 攻撃エフェクト処理
 	void ProcessComboAttack(int attackIndex);																					// コンボ攻撃処理
 	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);																// 攻撃終了処理
 	void EndAttackSequence();																									// 攻撃課程修了
 	void ProcessNextAttack(int currentIndex);																					// 次の攻撃処理
-	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_STATUS status);														// 状態に対応する攻撃を取得
+	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_ATTACK_STATE status);														// 状態に対応する攻撃を取得
 	int GetInstanceId();																										// ID取得関数
-	int GetAttackIndexByStatus(PLAYER_STATUS status);																			// 状態から攻撃インデックスを取得
+	int GetAttackIndexByStatus(PLAYER_ATTACK_STATE status);																			// 状態から攻撃インデックスを取得
 
 protected:	// 回避関係
 
@@ -219,6 +295,7 @@ protected:	// 回避関係
 	void ProcessDodge();			// 回避処理
 	void ProcessStartDodge();		// 回避開始処理
 	void ProcessEndDodge();			// 回避終了処理
+	bool CanDodge();				// 回避可能かチェック
 	bool IsDodging();				// 回避中かチェック
 	bool IsInvincible();			// 無敵状態かチェック
 
@@ -240,13 +317,13 @@ protected: 	// シールド関係
 protected:
 
 	// 共通の設定
-	PlayerConfig	_playerConfig;	// プレイヤー設定データ
-	PlayerAnimation _playerAnim;	// プレイヤーアニメーション名データ
-	RenderConfig	_renderConfig;	// 表示設定データ
+	PlayerConfig		_playerConfig;	// プレイヤー設定データ
+	PlayerAnimations	_playerAnim;	// プレイヤーアニメーション名データ
+	RenderConfig		_renderConfig;	// 表示設定データ
 
 	// 状態
-	PLAYER_STATUS _ePlayerStatus;		// キャラの状態
-	PLAYER_STATUS _eOldPlayerStatus;	// 前フレームのキャラの状態
+	PlayerState _playerState;		// 現在の状態
+	PlayerState _oldPlayerState;	// 前フレームの状態
 
 	// 入力関係
 	int _key = 0;

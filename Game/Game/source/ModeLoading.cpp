@@ -39,9 +39,9 @@ bool ModeLoading::Initialize()
 		// プレイヤー関連
 		{
 			// プレイヤーモデル
-			rs->Register("SurfacePlayer", "res/Player/Player_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("InteriorPlayer", "res/Player/player_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("BulletPlayer", "res/Player/player_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SurfacePlayer", "res/Player/SK_player_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("InteriorPlayer", "res/Player/SK_player_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("BulletPlayer", "res/Player/SK_player_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
 			rs->Register("PlayerLifeBar", "res/Player/UI/Player_Life_Bar.png", RESOURCE_TYPE::Graph, 1.0f);
@@ -66,6 +66,11 @@ bool ModeLoading::Initialize()
 		// スタミナUI用
 		rs->Register("StaminaFrame", "res/StaminaUI/staminaFrame.png", RESOURCE_TYPE::Graph, 1.0f);
 		rs->Register("Stamina", "res/StaminaUI/Stamina.png", RESOURCE_TYPE::Graph, 1.0f);
+
+		// 音関連
+		{
+			rs->Register("renshuuVoice", "res/sound/7_01.mp3", RESOURCE_TYPE::Sound, 1.0f);
+		}
 	}
 
 	// リソースのロード開始

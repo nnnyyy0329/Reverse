@@ -98,26 +98,30 @@ PlayerConfig InteriorPlayer::GetPlayerConfig()
 }
 
 // 裏プレイヤーのアニメーション設定
-PlayerAnimation InteriorPlayer::GetPlayerAnimation()
+PlayerAnimations InteriorPlayer::GetPlayerAnimation()
 {
 	// 裏プレイヤー用のアニメーション設定
-	PlayerAnimation animation;
+	PlayerAnimations animation;
 
-	animation.wait			= "player_idle_01";
-	animation.walk			= "player_walk_01";
-	animation.run			= "player_jog_01";
-	animation.jumpUp		= "jump_up";
-	animation.jumpDown		= "jump_down";
-	animation.crouchWait	= "crouch_idle";
-	animation.crouchWalk	= "crouch";
-	animation.firstAttack	= "Nchange_attack_00";
-	animation.secondAttack	= "Nchange_attack_01";
-	animation.thirdAttack	= "Nchange_attack_02";
-	animation.fourthAttack	= "EmotionNchange_attack_03";
-	animation.fifthAttack	= "Nchange_attack_04";
-	animation.hit			= "player_damage_00";
-	animation.dodge			= "dodge";
-	animation.death			= "player_dead_00";
+	animation.movement.wait			= "player_idle_01";
+	animation.movement.walk			= "player_walk_01";
+	animation.movement.run			= "player_jog_01";
+	animation.movement.jumpUp		= "";
+	animation.movement.jumpDown		= "";
+	animation.movement.crouchWait	= "";
+	animation.movement.crouchWalk	= "";
+	animation.attack.firstAttack	= "Nchange_attack_00";
+	animation.attack.secondAttack	= "Nchange_attack_01";
+	animation.attack.thirdAttack	= "Nchange_attack_02";
+	animation.attack.fourthAttack	= "EmotionNchange_attack_03";
+	animation.attack.fifthAttack	= "Nchange_attack_04";
+	animation.shoot.rightArmShoot	= "";
+	animation.shoot.leftArmShoot	= "";
+	animation.shoot.shootMove		= "";
+	animation.combat.guard			= "";
+	animation.combat.hit			= "player_damage_00";
+	animation.combat.dodge			= "dodge";
+	animation.combat.death			= "player_dead_00";
 
 	return animation;
 }

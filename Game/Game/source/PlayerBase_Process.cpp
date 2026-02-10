@@ -93,31 +93,31 @@ void PlayerBase::ProcessStatusAnimation()
 {
 	// 攻撃中、被弾時、回避中、死亡時
 	if(IsAttacking() ||
-		_ePlayerStatus == PLAYER_STATUS::HIT ||
-		_ePlayerStatus == PLAYER_STATUS::DODGE ||
-		_ePlayerStatus == PLAYER_STATUS::DEATH)
+		_playerState.combatState == PLAYER_COMBAT_STATE::HIT ||
+		_playerState.combatState == PLAYER_COMBAT_STATE::DODGE ||
+		_playerState.combatState == PLAYER_COMBAT_STATE::DEATH)
 	{
 		// アニメーション再生処理のみ
 		ProcessPlayAnimation();
 
 		// 処理後の攻撃中のステータスを保存
-		_eOldPlayerStatus = _ePlayerStatus;
+		_oldPlayerState = _playerState;
 
 		return;
 	}
 
-	_eOldPlayerStatus = _ePlayerStatus;	// 処理前のステータスを保存しておく
+	_oldPlayerState = _playerState;	// 処理前のステータスを保存しておく
 
 	// 空中ならジャンプステータス
 	if(!_bIsStanding)
 	{
 		if(_fVelY > 0.0f) // 上昇中
 		{
-			_ePlayerStatus = PLAYER_STATUS::JUMP_UP;
+			_playerState.movementState = PLAYER_MOVEMENT_STATE::JUMP_UP;
 		}
 		else // 下降中
 		{
-			_ePlayerStatus = PLAYER_STATUS::JUMP_DOWN;
+			_playerState.movementState = PLAYER_MOVEMENT_STATE::JUMP_DOWN;
 		}
 	}
 	// 地上にいる場合
@@ -128,17 +128,17 @@ void PlayerBase::ProcessStatusAnimation()
 
 		if(isWalking && isRunning) // 走っているなら
 		{
-			_vDir = _vMove;							// 移動方向を向く
-			_ePlayerStatus = PLAYER_STATUS::RUN;	// 走行
+			_vDir = _vMove;												// 移動方向を向く
+			_playerState.movementState = PLAYER_MOVEMENT_STATE::RUN;	// 走行
 		}
 		else if(isWalking) // 歩いているなら
 		{
-			_vDir = _vMove;							// 移動方向を向く
-			_ePlayerStatus = PLAYER_STATUS::WALK;	// 歩行
+			_vDir = _vMove;												// 移動方向を向く
+			_playerState.movementState = PLAYER_MOVEMENT_STATE::WALK;	// 歩行
 		}
 		else // 止まっているなら
 		{
-			_ePlayerStatus = PLAYER_STATUS::WAIT;	// 待機
+			_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 待機
 		}
 	}
 
@@ -150,120 +150,20 @@ void PlayerBase::ProcessStatusAnimation()
 void PlayerBase::ProcessPlayAnimation()
 {
 	// ステータスが変化していなければ処理しない
-	if(_eOldPlayerStatus == _ePlayerStatus){ return; }
+	if(HasStateChanged()){ return; }
 
 	// アニメーションマネージャーの取得
 	AnimManager* animManager = GetAnimManager();
 	if(animManager == nullptr){ return; }
 
-	const char* animName = nullptr;
-	float blendTime = 1.0f;
-	int loopCnt = 0;
-
-	// ステータスに応じた設定
-	switch(_ePlayerStatus)
+	const char* animName = GetCurrentAnimationName();	// 現在のステータスに応じたアニメーション名を取得
+	float blendTime = 1.0f;								// ブレンド時間
+	int loopCnt = GetLoopCount();						// ループカウント
+	if(animName != nullptr)
 	{
-		case PLAYER_STATUS::WAIT:		
-			animName = _playerAnim.wait;
-			blendTime = 1.0f;
-			loopCnt = 0;
-			break;
-
-		case PLAYER_STATUS::WALK:		
-			animName = _playerAnim.walk;
-			blendTime = 1.0f;
-			loopCnt = 0;
-			break;
-
-		case PLAYER_STATUS::RUN:		
-			animName = _playerAnim.run;
-			blendTime = 1.0f;
-			loopCnt = 0;
-			break;
-
-		case PLAYER_STATUS::JUMP_UP:	
-			animName = _playerAnim.jumpUp;
-			blendTime = 1.0f;
-			loopCnt = 1;
-			break;
-
-		case PLAYER_STATUS::JUMP_DOWN:		
-			animName = _playerAnim.jumpDown;
-			blendTime = 1.0f;
-			loopCnt = 1;
-			break;
-
-		case PLAYER_STATUS::CROUCH_WAIT:	
-			animName = _playerAnim.crouchWait;
-			blendTime = 1.0f;
-			loopCnt = 0;
-			break;
-
-		case PLAYER_STATUS::CROUCH_WALK:	
-			animName = _playerAnim.crouchWalk;
-			blendTime = 1.0f;
-			loopCnt = 0;
-			break;
-
-		case PLAYER_STATUS::FIRST_ATTACK:	
-			animName = _playerAnim.firstAttack;
-			blendTime = 1.0f;
-			loopCnt = 1;
-			break;
-
-		case PLAYER_STATUS::SECOND_ATTACK:
-			animName = _playerAnim.secondAttack;
-			blendTime = 1.0f;
-			loopCnt = 1;
-			break;
-
-		case PLAYER_STATUS::THIRD_ATTACK:	
-			animName = _playerAnim.thirdAttack;
-			blendTime = 1.0f;
-			loopCnt = 1;
-			break;
-
-		case PLAYER_STATUS::FOURTH_ATTACK:
-			animName = _playerAnim.fourthAttack;
-			blendTime = 1.0f;
-			loopCnt = 1;
-			break;
-
-		case PLAYER_STATUS::FIFTH_ATTACK:
-			animName = _playerAnim.fifthAttack;
-			blendTime = 1.0f;
-			loopCnt = 1;
-			break;
-
-		case PLAYER_STATUS::HIT:			
-			animName = _playerAnim.hit;
-			blendTime = 1.0f;
-			loopCnt = 1;
-			break;
-
-		case PLAYER_STATUS::DODGE:			
-			animName = _playerAnim.dodge;
-			blendTime = 1.0f;
-			loopCnt = 1;
-			break;
-
-		case PLAYER_STATUS::DEATH:			
-			animName = _playerAnim.death;
-			blendTime = 1.0f;
-			loopCnt = 1;
-			break;
-
-		default:
-			return;
+		// アニメーションの切り替え
+		animManager->ChangeAnimationByName(animName, blendTime, loopCnt);
 	}
-
-	if(animName == nullptr || strlen(animName) == 0)
-	{
-		return; // アニメーション名が無効な場合は処理しない
-	}
-
-	// アニメーション切り替え
-	animManager->ChangeAnimationByName(animName, blendTime, loopCnt);
 }
 
 // コリジョン位置更新処理
@@ -293,23 +193,25 @@ void PlayerBase::ProcessCollisionPos()
 // 被弾処理
 void PlayerBase::ProcessHit()
 {
-	if(_ePlayerStatus != PLAYER_STATUS::HIT){ return; }	// 被弾状態でない場合は処理しない
+	if(_playerState.combatState != PLAYER_COMBAT_STATE::HIT){ return; }	// 被弾状態でない場合は処理しない
 
 	_fHitTime -= 1.0f;	// 被弾時間を減らす
 
 	// 被弾時間が終了したら通常状態に戻る
 	if(_fHitTime <= 0.0f)
 	{
-		PLAYER_STATUS oldStatus = _ePlayerStatus; // 古いステータスを保存
+		PlayerState oldStatus = _playerState; // 古いステータスを保存
 
-		_ePlayerStatus = PLAYER_STATUS::WAIT;	// ステータスを待機に変更
-		_fHitSpeed = 0.0f;						// 吹き飛び速度を0にする
-		_vHitDir = VGet(0, 0, 0);				// 吹き飛び方向をリセット
+		_playerState.combatState = PLAYER_COMBAT_STATE::NONE;		// 戦闘状態を通常に変更
+		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// ステータスを待機に変更
+
+		_fHitSpeed = 0.0f;											// 吹き飛び速度を0にする
+		_vHitDir = VGet(0, 0, 0);									// 吹き飛び方向をリセット
 
 		// ステータス変更後、アニメーション切り替え
-		_eOldPlayerStatus = oldStatus;		// 古いステータスを攻撃状態に設定
-		ProcessPlayAnimation();				// アニメーション切り替え実行
-		_eOldPlayerStatus = _ePlayerStatus;	// 切り替え後に更新
+		_oldPlayerState = oldStatus;	// 古いステータスを攻撃状態に設定
+		ProcessPlayAnimation();			// アニメーション切り替え実行
+		_oldPlayerState = _playerState;	// 切り替え後に更新
 
 		return;
 	}
@@ -342,11 +244,9 @@ void PlayerBase::ProcessHit()
 void PlayerBase::ProcessDeath()
 {
 	// 体力が0以下なら死亡処理
-	if(_fLife <= 0.0f && _ePlayerStatus != PLAYER_STATUS::DEATH)
+	if(_fLife <= 0.0f && _playerState.combatState != PLAYER_COMBAT_STATE::DEATH)
 	{
-		_ePlayerStatus = PLAYER_STATUS::DEATH;
-
-
+		_playerState.combatState = PLAYER_COMBAT_STATE::DEATH;	// 状態を死亡に変更
 	}
 }
 
@@ -368,10 +268,92 @@ void PlayerBase::ProcessDebug()
 bool PlayerBase::IsHitStop()
 {
 	// 被弾硬直中かチェック
-	if(_ePlayerStatus == PLAYER_STATUS::HIT)
+	if(_oldPlayerState.combatState == PLAYER_COMBAT_STATE::HIT)
 	{
 		return true;
 	}
 
 	return false;
+}
+
+const char* PlayerBase::GetCurrentAnimationName() const
+{
+	/* 優先度: 戦闘状態 > 攻撃状態 > 発射状態 > 移動状態 */ 
+
+	if(_playerState.combatState != PLAYER_COMBAT_STATE::NONE)
+	{
+		switch(_playerState.combatState)
+		{
+			case PLAYER_COMBAT_STATE::GUARD:	return _playerAnim.combat.guard;
+			case PLAYER_COMBAT_STATE::HIT:		return _playerAnim.combat.hit;
+			case PLAYER_COMBAT_STATE::DODGE:	return _playerAnim.combat.dodge;
+			case PLAYER_COMBAT_STATE::DEATH:	return _playerAnim.combat.death;
+		}
+	}
+
+	if(_playerState.attackState != PLAYER_ATTACK_STATE::NONE)
+	{
+		switch(_playerState.attackState)
+		{
+			case PLAYER_ATTACK_STATE::FIRST_ATTACK:		return _playerAnim.attack.firstAttack;
+			case PLAYER_ATTACK_STATE::SECOND_ATTACK:	return _playerAnim.attack.secondAttack;
+			case PLAYER_ATTACK_STATE::THIRD_ATTACK:		return _playerAnim.attack.thirdAttack;
+			case PLAYER_ATTACK_STATE::FOURTH_ATTACK:	return _playerAnim.attack.fourthAttack;
+			case PLAYER_ATTACK_STATE::FIFTH_ATTACK:		return _playerAnim.attack.fifthAttack;
+		}
+	}
+
+	if(_playerState.shootState != PLAYER_SHOOT_STATE::NONE)
+	{
+		switch(_playerState.shootState)
+		{
+			case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT:	return _playerAnim.shoot.rightArmShoot;
+			case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:	return _playerAnim.shoot.leftArmShoot;
+			case PLAYER_SHOOT_STATE::SHOOT_MOVE:		return _playerAnim.shoot.shootMove;
+		}
+	}
+
+	switch(_playerState.movementState)
+	{
+		case PLAYER_MOVEMENT_STATE::WAIT:			return _playerAnim.movement.wait;
+		case PLAYER_MOVEMENT_STATE::WALK:			return _playerAnim.movement.walk;
+		case PLAYER_MOVEMENT_STATE::RUN:			return _playerAnim.movement.run;
+		case PLAYER_MOVEMENT_STATE::JUMP_UP:		return _playerAnim.movement.jumpUp;
+		case PLAYER_MOVEMENT_STATE::JUMP_DOWN:		return _playerAnim.movement.jumpDown;
+		case PLAYER_MOVEMENT_STATE::CROUCH_WAIT:	return _playerAnim.movement.crouchWait;
+		case PLAYER_MOVEMENT_STATE::CROUCH_WALK:	return _playerAnim.movement.crouchWalk;
+	}
+
+	return nullptr;
+}
+
+// ループカウント取得関数
+int PlayerBase::GetLoopCount() const
+{
+	// 1: 1回再生 、 0: ループ再生
+	
+	// 戦闘状態と
+	// 攻撃状態と
+	// 発射状態と
+	// 発射状態の場合1回再生
+	if(_playerState.combatState	 != PLAYER_COMBAT_STATE::NONE ||
+		_playerState.attackState != PLAYER_ATTACK_STATE::NONE ||
+		_playerState.shootState	 != PLAYER_SHOOT_STATE::NONE  ||
+		_playerState.shootState  != PLAYER_SHOOT_STATE::NONE)
+	{
+		return 1;
+	}
+	
+	// そのほかはループ再生
+	return 0;
+}
+
+// 状態変化チェック
+bool PlayerBase::HasStateChanged()const
+{
+	// ステートが変化しているかチェック
+	return (_oldPlayerState.movementState != _playerState.movementState ||	// 移動状態
+			_oldPlayerState.attackState   != _playerState.attackState	||	// 攻撃状態
+			_oldPlayerState.shootState    != _playerState.shootState	||	// 発射状態
+			_oldPlayerState.combatState   != _playerState.combatState);		// 戦闘状態
 }

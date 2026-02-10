@@ -43,13 +43,13 @@ void PlayerBase::InitializeAttackData()
 	_attackStatuses.clear();
 
 	// 攻撃状態の定義
-	std::vector<PLAYER_STATUS> statuses =
+	std::vector<PLAYER_ATTACK_STATE> statuses =
 	{
-		PLAYER_STATUS::FIRST_ATTACK,
-		PLAYER_STATUS::SECOND_ATTACK,
-		PLAYER_STATUS::THIRD_ATTACK,
-		PLAYER_STATUS::FOURTH_ATTACK,
-		PLAYER_STATUS::FIFTH_ATTACK
+		PLAYER_ATTACK_STATE::FIRST_ATTACK,
+		PLAYER_ATTACK_STATE::SECOND_ATTACK,
+		PLAYER_ATTACK_STATE::THIRD_ATTACK,
+		PLAYER_ATTACK_STATE::FOURTH_ATTACK,
+		PLAYER_ATTACK_STATE::FIFTH_ATTACK
 	};
 
 	// 動的に攻撃データを作成
@@ -144,21 +144,21 @@ void PlayerBase::ProcessAttackColPos()
 void PlayerBase::ProcessAttack()
 {
 	// 攻撃入力チェック（通常状態時）
-	if((_ePlayerStatus == PLAYER_STATUS::WAIT ||
-		_ePlayerStatus == PLAYER_STATUS::WALK ||
-		_ePlayerStatus == PLAYER_STATUS::RUN)
+	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||
+		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||
+		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN)
 		&& _trg & PAD_INPUT_1) 
 	{
 		// 攻撃配列が空の場合は処理をスキップ
 		if(_attacks.empty()){ return; }
 
 		// 1段目の攻撃開始処理
-		ProcessStartAttack(1, PLAYER_STATUS::FIRST_ATTACK, _attacks[0]);
+		ProcessStartAttack(1, PLAYER_ATTACK_STATE::FIRST_ATTACK, _attacks[0]);
 	}
 }
 
 // コンボ攻撃開始の処理
-void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, std::shared_ptr<AttackBase> attack)
+void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack)
 {
 	// コリジョン位置更新処理
 	ProcessAttackColPos();	
@@ -167,7 +167,7 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, st
 	ReceiveAttackColData();		
 
 	// 状態更新
-	SetStatus(nextStatus);				
+	_playerState.attackState = nextStatus;
 
 	// 攻撃処理開始
 	attack->ProcessStartAttack();		
@@ -254,7 +254,7 @@ void PlayerBase::ProcessAttackEffect(int attackIndex)
 void PlayerBase::ProcessBranchAttack()
 {
 	// 現在の状態に応じて攻撃処理を分岐
-	int currentAttackIndex = GetAttackIndexByStatus(_ePlayerStatus);
+	int currentAttackIndex = GetAttackIndexByStatus(_playerState.attackState);
 
 	if(currentAttackIndex >= 0 && currentAttackIndex < static_cast<int>(_attacks.size()))
 	{
@@ -329,16 +329,19 @@ void PlayerBase::EndAttackSequence()
 	AttackManager::GetInstance()->UnregisterAttackByOwner(GetInstanceId());
 
 	// 古いステータスを保持
-	PLAYER_STATUS oldStatus = _ePlayerStatus;
+	//PlayerState oldState = _playerState;
 
-	SetStatus(PLAYER_STATUS::WAIT);	// 状態を待機に戻す
+	// 状態リセット
+	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
+	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;
+
 	_iComboCount = 0;				// コンボカウントリセット
 	_bCanCombo = false;				// コンボ不可にする
 
 	// ステータス変更後、アニメーション切り替え
-	_eOldPlayerStatus = oldStatus;		// 古いステータスを攻撃状態に設定
-	ProcessPlayAnimation();				// アニメーション切り替え実行
-	_eOldPlayerStatus = _ePlayerStatus;	// 切り替え後に更新
+	//_oldPlayerState = oldState;		// 古いステータスを攻撃状態に設定
+	ProcessPlayAnimation();			// アニメーション切り替え実行
+	//_oldPlayerState = _playerState;	// 切り替え後に更新
 }
 
 // 次の攻撃へ
@@ -350,7 +353,7 @@ void PlayerBase::ProcessNextAttack(int currentIndex)
 	// 次の攻撃が存在する場合
 	if(nextIndex < static_cast<int>(_attacks.size()))
 	{
-		PLAYER_STATUS nextStatus = _attackStatuses[nextIndex];								// 次の状態取得
+		PLAYER_ATTACK_STATE nextStatus = _attackStatuses[nextIndex];						// 次の状態取得
 		ProcessStartAttack(nextIndex + 1, _attackStatuses[nextIndex], _attacks[nextIndex]);	// 次の攻撃へ
 	}
 }
@@ -359,7 +362,7 @@ void PlayerBase::ProcessNextAttack(int currentIndex)
 void PlayerBase::ReceiveAttackColData()
 {
 	// 現在の攻撃インデックスを取得
-	int attackIndex = GetAttackIndexByStatus(_ePlayerStatus);
+	int attackIndex = GetAttackIndexByStatus(_playerState.attackState);
 
 	if(attackIndex >= 0 && attackIndex < static_cast<int>(_attacks.size()))
 	{
@@ -407,11 +410,11 @@ bool PlayerBase::CanNextAttack()
 bool PlayerBase::IsAttacking()
 {
 	// 攻撃状態中かチェック
-	if(_ePlayerStatus == PLAYER_STATUS::FIRST_ATTACK ||
-		_ePlayerStatus == PLAYER_STATUS::SECOND_ATTACK ||
-		_ePlayerStatus == PLAYER_STATUS::THIRD_ATTACK ||
-		_ePlayerStatus == PLAYER_STATUS::FOURTH_ATTACK ||
-		_ePlayerStatus == PLAYER_STATUS::FIFTH_ATTACK)
+	if(_playerState.attackState == PLAYER_ATTACK_STATE::FIRST_ATTACK ||
+		_playerState.attackState == PLAYER_ATTACK_STATE::SECOND_ATTACK ||
+		_playerState.attackState == PLAYER_ATTACK_STATE::THIRD_ATTACK ||
+		_playerState.attackState == PLAYER_ATTACK_STATE::FOURTH_ATTACK ||
+		_playerState.attackState == PLAYER_ATTACK_STATE::FIFTH_ATTACK)
 	{
 		_vMove = VGet(0, 0, 0);	// 攻撃中は移動不可
 		return true;
@@ -421,7 +424,7 @@ bool PlayerBase::IsAttacking()
 }
 
 // ヘルパー関数
-std::shared_ptr<AttackBase> PlayerBase::GetAttackByStatus(PLAYER_STATUS status)
+std::shared_ptr<AttackBase> PlayerBase::GetAttackByStatus(PLAYER_ATTACK_STATE status)
 {
 	int index = GetAttackIndexByStatus(status);	// 攻撃インデックス取得
 
@@ -459,7 +462,7 @@ int PlayerBase::GetInstanceId()
 }
 
 // 状態から攻撃インデックスを取得
-int PlayerBase::GetAttackIndexByStatus(PLAYER_STATUS status)
+int PlayerBase::GetAttackIndexByStatus(PLAYER_ATTACK_STATE status)
 {
 	// 攻撃状態配列からインデックスを検索
 	for(size_t i = 0; i < _attackStatuses.size(); ++i)

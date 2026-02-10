@@ -9,6 +9,7 @@
 #include "Manager/ComponentManager.h"
 //#include "template/aliastemplate.h"
 #include "Server/EffectServer.h"
+#include "Server/SoundServer.h"
 #include "Server/ResourceServer.h"
 
 #include <stdio.h>

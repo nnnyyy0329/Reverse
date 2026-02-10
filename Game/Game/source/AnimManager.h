@@ -39,6 +39,9 @@ public:
 	// リソースの開放
 	void Release();
 
+	// アニメーションの総再生時間を取得
+	float GetCurrentAnimTotalTime();
+
 private:
 	// アニメーション情報
 	struct AnimationData

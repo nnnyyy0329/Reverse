@@ -19,8 +19,13 @@ namespace
 PlayerBase::PlayerBase()
 {
 	// キャラの状態初期化
-	_ePlayerStatus = PLAYER_STATUS::NONE;
-	_eOldPlayerStatus = PLAYER_STATUS::NONE;
+	_playerState.movementState = PLAYER_MOVEMENT_STATE::NONE;
+	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
+	_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
+	_playerState.combatState = PLAYER_COMBAT_STATE::NONE;
+	_oldPlayerState = _playerState;
+
+	// 位置関連初期化
 	_vMove = VGet(0, 0, 0);
 	_vOldPos = VGet(0, 0, 0);
 }
@@ -65,7 +70,11 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	_vDir = VGet(0, 0, -1);
 
 	// 基礎ステータスの初期化
-	_ePlayerStatus = PLAYER_STATUS::NONE;
+	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 待機状態
+	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
+	_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
+	_playerState.combatState = PLAYER_COMBAT_STATE::NONE;
+
 	_fMoveSpeed = 0.0f;			// 移動速度
 	_fDirSpeed = 0.0f;			// 回転速度
 	_fLife = config.life;		// 体力
@@ -140,7 +149,7 @@ bool PlayerBase::Process()
 	ProcessDeath();
 
 	// プレイヤーが死亡していたら処理終了
-	if(_ePlayerStatus == PLAYER_STATUS::DEATH){ return true; }
+	if(_playerState.combatState == PLAYER_COMBAT_STATE::DEATH) { return true; }
 
 	// 共通処理呼び出し
 	CallProcess();
@@ -175,7 +184,7 @@ void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTAC
 	CharaBase::ApplyDamage(fDamage, eType, attackInfo);
 
 	// 被弾状態に変更
-	_ePlayerStatus = PLAYER_STATUS::HIT;
+	_playerState.combatState = PLAYER_COMBAT_STATE::HIT;
 
 	// 攻撃方向を使って被弾設定初期化
 	InitializeHitConfig(attackInfo.attackDir);

@@ -3,8 +3,9 @@
 
 namespace bulletConfig
 {
-	const VECTOR START_POS_OFFSET = VGet(0, 70, 0);
-	const float RADIUS = 50.0f;
+	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(15, 70, 0);
+	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 70, 0);
+	const float RADIUS = 10.0f;
 	const float SPEED = 15.0f;
 	const float LIFE_TIME = 120.0f;
 }
@@ -12,6 +13,9 @@ namespace bulletConfig
 BulletPlayer::BulletPlayer()
 {
 	_eCharaType = CHARA_TYPE::BULLET_PLAYER;
+
+	_shootIntervalTimer = 0.0f;
+	_bIsShootFromRightArm = false;
 }
 
 BulletPlayer::~BulletPlayer()
@@ -60,6 +64,79 @@ void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATT
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
 }
 
+// 入力確認
+void BulletPlayer::ShootByInput()
+{
+	bool putKey = (_key & PAD_INPUT_6) != 0;
+	
+	// 発射間隔更新
+	ShootIntervalUpdate(putKey);
+}
+
+// 発射間隔更新
+void BulletPlayer::ShootIntervalUpdate(bool key)
+{
+	if(key)
+	{
+		// 発射可能か
+		if(_shootIntervalTimer <= 0.0f)
+		{
+			// 弾の発射
+			ShootBullet();
+
+			// アニメーションマネージャーの取得
+			AnimManager* animManager = GetAnimManager();
+
+			// 現在のアニメーションの総再生時間を取得
+			float animTotalTime = animManager->GetCurrentAnimTotalTime();	
+
+			// 発射間隔タイマーをリセット
+			_shootIntervalTimer = animTotalTime;
+		}
+	}
+	else
+	{
+		if(_shootIntervalTimer >= 0.0f){ return; }	// カウントが残っているなら処理しない
+
+		_shootIntervalTimer = 0.0f;
+	}
+
+	// 弾発射カウントを減らす
+	if(_shootIntervalTimer > 0.0f)
+	{
+		_shootIntervalTimer--; // カウントを減らす
+	}
+}
+
+// 弾の発射
+void BulletPlayer::ShootBullet()
+{
+	_bIsShootFromRightArm = !_bIsShootFromRightArm; // 右腕と左腕の切り替え
+
+	// 弾管理クラスの有効確認
+	auto bulletManager = _bulletManager.lock();
+	if(bulletManager)
+	{
+		// 発射位置オフセット設定
+		VECTOR startPosOffset;
+
+		// 右腕か左腕かでオフセットを変更
+		if(_bIsShootFromRightArm){ startPosOffset = bulletConfig::RIGHT_ARM_SHOT_OFFSET; }	// 右腕
+		else{ startPosOffset = bulletConfig::LEFT_ARM_SHOT_OFFSET; }						// 左腕
+
+		// 弾情報設定
+		bulletManager->Shoot
+		(
+			VAdd(_vPos, startPosOffset),
+			_vDir,
+			bulletConfig::RADIUS,
+			bulletConfig::SPEED,
+			bulletConfig::LIFE_TIME,
+			_eCharaType
+		);
+	}
+}
+
 // 弾プレイヤーの情報設定
 PlayerConfig BulletPlayer::GetPlayerConfig()
 {
@@ -88,21 +165,25 @@ PlayerConfig BulletPlayer::GetPlayerConfig()
 }
 
 // 弾プレイヤーのアニメーション設定
-PlayerAnimation BulletPlayer::GetPlayerAnimation()
+PlayerAnimations BulletPlayer::GetPlayerAnimation()
 {
 	// 裏プレイヤー用のアニメーション設定
-	PlayerAnimation animation;
+	PlayerAnimations animation;
 
-	animation.wait = "player_idle_01";
-	animation.walk = "player_walk_01";
-	animation.run = "player_jog_01";
-	animation.jumpUp = "jump_up";
-	animation.jumpDown = "jump_down";
-	animation.crouchWait = "crouch_idle";
-	animation.crouchWalk = "crouch";
-	animation.hit = "player_damage_00";
-	animation.dodge = "dodge";
-	animation.death = "player_dead_00";
+	animation.movement.wait			= "player_idle_01";
+	animation.movement.walk			= "player_walk_01";
+	animation.movement.run			= "player_jog_01";
+	animation.movement.jumpUp		= "";
+	animation.movement.jumpDown		= "";
+	animation.movement.crouchWait	= "";
+	animation.movement.crouchWalk	= "";
+	animation.shoot.rightArmShoot	= "shoot_right";
+	animation.shoot.leftArmShoot	= "shoot_left";
+	animation.shoot.shootMove		= "shoot_move";
+	animation.combat.guard			= "";
+	animation.combat.hit			= "player_damage_00";
+	animation.combat.dodge			= "dodge";
+	animation.combat.death			= "player_dead_00";
 
 	return animation;
 }
@@ -137,35 +218,6 @@ AttackConstants BulletPlayer::GetAttackConstants()
 void BulletPlayer::GetAttackConfigs(AttackConfig configs[])
 {
 	// 弾プレイヤーは攻撃を行わない
-}
-
-// 入力確認
-void BulletPlayer::ShootByInput()
-{
-	if(_trg & PAD_INPUT_7)
-	{
-		ShootBullet();
-	}
-}
-
-// 弾の発射
-void BulletPlayer::ShootBullet()
-{
-	// 弾管理クラスの有効確認
-	auto bulletManager = _bulletManager.lock();
-	if(bulletManager)
-	{
-		// 弾情報設定
-		bulletManager->Shoot
-		(
-			VAdd(_vPos, bulletConfig::START_POS_OFFSET),
-			_vDir, 
-			bulletConfig::RADIUS, 
-			bulletConfig::SPEED, 
-			bulletConfig::LIFE_TIME, 
-			_eCharaType
-		);
-	}
 }
 
 // 回避設定データ構造体

@@ -96,26 +96,30 @@ PlayerConfig SurfacePlayer::GetPlayerConfig()
 }
 
 // 表プレイヤーのアニメーション設定
-PlayerAnimation SurfacePlayer::GetPlayerAnimation()
+PlayerAnimations SurfacePlayer::GetPlayerAnimation()
 {
 	// 表プレイヤー用のアニメーション設定
-	PlayerAnimation animation;
+	PlayerAnimations animation;
 
-	animation.wait			= "player_idle_00";
-	animation.walk			= "player_walk_00";
-	animation.run			= "player_jog_00";
-	animation.jumpUp		= "jump_up";
-	animation.jumpDown		= "jump_down";
-	animation.crouchWait	= "crouch_idle";
-	animation.crouchWalk	= "crouch";
-	animation.firstAttack	= "absorb_attack_00";
-	animation.secondAttack	= "absorb_attack_01";
-	animation.thirdAttack	= "absorb_attack_02";
-	animation.fourthAttack	= "";
-	animation.fifthAttack	= "";
-	animation.hit			= "player_damage_00";
-	animation.dodge			= "dodge";
-	animation.death			= "player_dead_00";
+	animation.movement.wait			= "player_idle_00";
+	animation.movement.walk			= "player_walk_00";
+	animation.movement.run			= "player_jog_00";
+	animation.movement.jumpUp		= "";
+	animation.movement.jumpDown		= "";
+	animation.movement.crouchWait	= "";
+	animation.movement.crouchWalk	= "";
+	animation.attack.firstAttack	= "absorb_attack_00";
+	animation.attack.secondAttack	= "absorb_attack_01";
+	animation.attack.thirdAttack	= "absorb_attack_02";
+	animation.attack.fourthAttack	= "";
+	animation.attack.fifthAttack	= "";
+	animation.shoot.rightArmShoot	= "";
+	animation.shoot.leftArmShoot	= "";
+	animation.shoot.shootMove		= "";
+	animation.combat.guard			= "";
+	animation.combat.hit			= "player_damage_00";
+	animation.combat.dodge			= "dodge";
+	animation.combat.death			= "player_dead_00";
 
 	return animation;
 }

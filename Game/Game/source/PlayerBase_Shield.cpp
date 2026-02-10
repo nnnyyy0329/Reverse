@@ -18,6 +18,8 @@ void PlayerBase::CallProcessShield()
 // シールド入力処理
 void PlayerBase::ProcessShieldInput()
 {
+    if(!_shieldSystem) { return; }
+
     // 攻撃中や回避中、被弾中はシールド入力を受け付けない
     if(IsAttacking() || IsDodging() || IsHitStop()) { return; }
 
@@ -28,18 +30,26 @@ void PlayerBase::ProcessShieldInput()
 // シールド処理
 void PlayerBase::ProcessShield()
 {
+    if(!_shieldSystem) { return; }
+
     // シールド状態による移動制限
     if(IsShielding())
     {
-        // シールド中は移動速度を下げる
-        _fMoveSpeed *= 0.3f;
-
         // シールド中のアニメーション処理
-        if(_ePlayerStatus != PLAYER_STATUS::GUARD)
+        if(_playerState.combatState != PLAYER_COMBAT_STATE::GUARD)
         {
-            _eOldPlayerStatus = _ePlayerStatus;
-            _ePlayerStatus = PLAYER_STATUS::GUARD;
-
+            _oldPlayerState = _playerState;
+            _playerState.combatState = PLAYER_COMBAT_STATE::GUARD;
+            ProcessPlayAnimation();
+        }
+    }
+    else
+    {
+        // シールドが非アクティブになったらガード状態を解除
+        if(_playerState.combatState == PLAYER_COMBAT_STATE::GUARD)
+        {
+            _oldPlayerState = _playerState;
+            _playerState.combatState = PLAYER_COMBAT_STATE::NONE;
             ProcessPlayAnimation();
         }
     }
@@ -51,5 +61,5 @@ bool PlayerBase::IsShielding()
     if(!_shieldSystem){ return false; }
 
 	// シールドがアクティブかチェック
-    return _shieldSystem && _shieldSystem->IsActive();
+    return _shieldSystem->IsActive();
 }

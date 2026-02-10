@@ -64,9 +64,9 @@ void PlayerBase::CallProcessDodge()
 void PlayerBase::ProcessDodge()
 {
 	// 回避入力があったら回避を呼び出す
-	if((_ePlayerStatus == PLAYER_STATUS::WAIT ||
-		_ePlayerStatus == PLAYER_STATUS::WALK ||
-		_ePlayerStatus == PLAYER_STATUS::RUN)
+	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||
+		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||
+		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN)
 		&& StaminaManager::GetInstance()->CanDodge()
 		&& _trg & PAD_INPUT_3)
 	{
@@ -82,14 +82,7 @@ void PlayerBase::ProcessDodge()
 void PlayerBase::ProcessStartDodge()
 {
 	// 回避可能かチェック
-	if(_dodgeSystem == nullptr					||	// 回避システムが無効か
-		!_dodgeSystem->CanDodge()				||	// 回避可能でないか
-		IsAttacking()							||	// 攻撃中か
-		_ePlayerStatus == PLAYER_STATUS::HIT	||	// 被弾中か
-		_ePlayerStatus == PLAYER_STATUS::DEATH)		// 死亡中の場合
-	{ 
-		return;	// 回避処理を行わない
-	}
+	if(!CanDodge()){ return; }	// 回避不可能なら処理しない
 
 	// キャラタイプに応じた回避キャラタイプを決定
 	DODGE_CHARA dodgeCharaType = DODGE_CHARA::NONE;
@@ -121,27 +114,43 @@ void PlayerBase::ProcessStartDodge()
 
 	// 回避呼び出し
 	_dodgeSystem->CallDodge(shared_from_this(), dodgeCharaType);
-	_ePlayerStatus = PLAYER_STATUS::DODGE;
+	_playerState.combatState = PLAYER_COMBAT_STATE::DODGE;
 }
 
 // 回避終了処理
 void PlayerBase::ProcessEndDodge()
 {
-	if(_ePlayerStatus != PLAYER_STATUS::DODGE){ return; }	// 回避中でなければ処理しない
+	if(_playerState.combatState != PLAYER_COMBAT_STATE::DODGE){ return; }	// 回避中でなければ処理しない
 
 	// 回避が終了した場合
 	if(!_dodgeSystem->IsDodging() && _dodgeSystem->GetDodgeState() == DODGE_STATE::INACTIVE)
 	{
 		// 古いステータスを保持
-		PLAYER_STATUS oldStatus = _ePlayerStatus;
+		PLAYER_COMBAT_STATE oldStatus = _playerState.combatState;
+
 		// ステータス変更後、アニメーション切り替え
+		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT; // 通常状態に戻る
 
-		_ePlayerStatus = PLAYER_STATUS::WAIT; // 通常状態に戻る
-
-		_eOldPlayerStatus = oldStatus;		// 古いステータスを攻撃状態に設定
-		ProcessPlayAnimation();				// アニメーション切り替え実行
-		_eOldPlayerStatus = _ePlayerStatus;	// 切り替え後に更新
+		_oldPlayerState.combatState = oldStatus;	// 古いステータスを攻撃状態に設定
+		ProcessPlayAnimation();						// アニメーション切り替え実行
+		_oldPlayerState = _playerState;				// 切り替え後に更新
 	}
+}
+
+// 回避可能かチェック
+bool PlayerBase::CanDodge()
+{
+	if(_dodgeSystem != nullptr									||	// 回避システムが有効で
+		_dodgeSystem->CanDodge()								||	// 回避中でなく
+		!IsAttacking()											||	// 攻撃中でなく
+		_playerState.combatState != PLAYER_COMBAT_STATE::HIT	||	// 被弾中でなく
+		_playerState.combatState != PLAYER_COMBAT_STATE::DEATH)		// 死亡中じゃないなら
+	{
+		return true;
+	}
+
+	// 回避不可能
+	return false;
 }
 
 // 回避中かチェック
@@ -150,7 +159,7 @@ bool PlayerBase::IsDodging()
 	if(_dodgeSystem == nullptr) { return false; }
 
 	// 回避中かチェック
-	if(_ePlayerStatus == PLAYER_STATUS::DODGE ||
+	if(_playerState.combatState == PLAYER_COMBAT_STATE::DODGE ||
 		_dodgeSystem->IsDodging())
 	{
 		return true;
