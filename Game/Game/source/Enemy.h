@@ -1,4 +1,5 @@
 #pragma once
+
 #include "CharaBase.h"
 #include "EnemyState.h"
 #include "EnemyAttackSettings.h"

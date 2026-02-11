@@ -20,7 +20,7 @@ namespace Ranged
 
 
 
-	// œpœj
+	// œpœj(‚»‚Ìê‚ÅüˆÍ‚ğŒ©“n‚·)
 	class Wander : public EnemyState
 	{
 	public:
@@ -28,6 +28,10 @@ namespace Ranged
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() const override { return "Ranged:Wander"; }
 		void UpdateSearch(Enemy* owner) override;
+
+	private:
+		VECTOR _vTargetDir;// –Ú•W•ûŒüƒxƒNƒgƒ‹
+		float _fLookDuration;// ‹ü’â~ŠÔ
 	};
 	
 

@@ -231,6 +231,7 @@
     <ClInclude Include="source\EnemyAttackSettings.h" />
     <ClInclude Include="source\EnemyFactory.h" />
     <ClInclude Include="source\EnemyState.h" />
+    <ClInclude Include="source\EnemyState_impl.h" />
     <ClInclude Include="source\EnergyManager.h" />
     <ClInclude Include="source\EnergyUI.h" />
     <ClInclude Include="source\GameCamera.h" />

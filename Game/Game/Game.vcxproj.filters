@@ -291,6 +291,9 @@
     <ClInclude Include="source\PlayerShieldSystem.h">
       <Filter>GameObject\CharaBase\PlayerBase\System\Shield</Filter>
     </ClInclude>
+    <ClInclude Include="source\EnemyState_impl.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">

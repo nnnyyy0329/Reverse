@@ -22,9 +22,12 @@ namespace
 	constexpr auto MELEE_ATTACK_TIME = 180.0f;// UŒ‚ŠÔ
 
 	// Ranged
-	constexpr auto RANGED_VISION_RANGE = 800.0f;// õ“G‹——£
-	constexpr auto RANGED_MOVEBACK_RANGE = 300.0f;// ‚±‚ê‚æ‚è‹ß‚Ã‚¢‚½‚çŒã‘Ş‚·‚é
-	constexpr auto RANGED_ATTACK_INTERVAL = 120.0f;// UŒ‚ŠÔŠu
+	constexpr auto RANGED_VISION_RANGE = 800.0f;// õ“G‹——£(L‚ß)
+	constexpr auto RANGED_VISION_ANGLE = 180.0f;// õ“GŠp“x(‰~Œ`)
+	constexpr auto RANGED_CHASE_LIMIT_RANGE = 1000.0f;// ‚±‚êˆÈã—£‚ê‚½‚ç’ÇÕ‚ğ‚â‚ß‚é‹——£
+	constexpr auto RANGED_MOVE_RADIUS = 0.0f;// œpœj”ÍˆÍ(ˆÚ“®‚µ‚È‚¢‚½‚ß0)
+	constexpr auto RANGED_IDLE_TIME = 120.0f;// ‘Ò‹@ŠÔ
+	constexpr auto RANGED_MOVE_TIME = 0.0f;// œpœjŠÔ(g—p‚µ‚È‚¢)
 	constexpr auto RANGED_DETECT_TIME = 60.0f;// ”­Œ©d’¼
 
 	// Tank
@@ -104,25 +107,36 @@ public:
 
 			enemy->SetModelName("Ranged");
 
-				param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
-				param.fVisionRange = RANGED_VISION_RANGE;
-				param.fAttackRange = RANGED_MOVEBACK_RANGE;
-				param.fAttackInterval = RANGED_ATTACK_INTERVAL;
-				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
-				enemy->SetEnemyParam(param);
+			param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
+			param.fVisionRange = RANGED_VISION_RANGE;
+			param.fVisionAngle = RANGED_VISION_ANGLE;
+			param.fChaseLimitRange = RANGED_CHASE_LIMIT_RANGE;
+			param.fMoveRadius = RANGED_MOVE_RADIUS;
+			param.fIdleTime = RANGED_IDLE_TIME;
+			param.fMoveTime = RANGED_MOVE_TIME;
+			param.fDetectTime = RANGED_DETECT_TIME;
+			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 
+			// ‹¤’ÊƒXƒe[ƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ğİ’è
+			param.animDamage = "enemy_damage00_00";
+			param.animDead = "enemy_dead_00";
+			param.animStun = "Ranged_Stun";
+			param.animDown = "enemy_damage01_00";
 
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState>
+			enemy->SetEnemyParam(param);
+
+			// ƒnƒ“ƒhƒ‰‚Ì’†g‚ğİ’è
+			enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState>
+				{
+					// ƒ^[ƒQƒbƒg‚ª‘¶İ‚·‚ê‚ÎÚ‹ß
+					if (e->GetTarget())
 					{
-					// ƒ^[ƒQƒbƒg‚ª‘¶İ‚·‚ê‚ÎUŒ‚
-					if (e->GetTarget()) 
-					{
-						return std::make_shared<Ranged::Attack>();
+						return std::make_shared<Ranged::Approach>();
 					}
 					// Œ©‚¦‚Ä‚¢‚È‚¯‚ê‚Î‘Ò‹@
 					return std::make_shared<Ranged::Idle>();
 				});
-				break;
+			break;
 
 		case EnemyType::TANK:// ƒ^ƒ“ƒNŒ^
 

@@ -27,31 +27,28 @@ namespace Common
 		_fTimer = 0.0f;
 		_fKnockbackSpeed = KNOCKBACK_SPEED;
 
-		// ノックバック方向計算
-		auto target = owner->GetTarget();
-		if (target)
+		// ターゲット情報取得
+		auto targetInfo = GetTargetInfo(owner);
+
+		if (targetInfo.bExist)
 		{
 			// ターゲットから敵へのベクトル計算
-			VECTOR vToEnemy = VSub(owner->GetPos(), target->GetPos());
+			VECTOR vToEnemy = VScale(targetInfo.vToTarget, -1.0f);
 			vToEnemy.y = 0.0f;
 
-			// 距離計算
 			float dist = VSize(vToEnemy);
 
 			if (dist > KNOCKBACK_MIN_DISTANCE)
 			{
-				// 正規化してノックバック方向設定
 				_vKnockbackDir = VScale(vToEnemy, 1.0f / dist);
 			}
 			else
 			{
-				// 重なっている場合は敵の向きの逆方向
 				_vKnockbackDir = VScale(owner->GetDir(), -1.0f);
 			}
 		}
 		else
 		{
-			// ターゲット不在時は敵の向きの逆方向
 			_vKnockbackDir = VScale(owner->GetDir(), -1.0f);
 		}
 
@@ -78,14 +75,12 @@ namespace Common
 			// 速度減衰処理
 			_fKnockbackSpeed *= KNOCKBACK_DECELERATION;
 
-			// 移動処理
-			VECTOR vMove = VScale(_vKnockbackDir, _fKnockbackSpeed);
-			owner->SetMove(vMove);
+			MoveToTarget(owner, _vKnockbackDir, _fKnockbackSpeed);
 		}
 		else
 		{
 			// ノックバック終了後停止
-			owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+			StopMove(owner);
 		}
 
 		// 被ダメージ時間経過チェック
@@ -108,7 +103,7 @@ namespace Common
 		_fTimer = 0.0f;
 
 		// 移動停止
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+		StopMove(owner);
 
 		// ここでアニメーション設定
 		const auto& param = owner->GetEnemyParam();
@@ -140,7 +135,7 @@ namespace Common
 		_fTimer = 0.0f;
 
 		// 移動停止
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+		StopMove(owner);
 
 		// ここでアニメーション設定
 	}
@@ -173,31 +168,28 @@ namespace Common
 		// 被ダメージ回数リセット
 		owner->ResetDamageCount();
 
-		// ノックバック方向計算
-		auto target = owner->GetTarget();
-		if (target)
+		// ターゲット情報取得
+		auto targetInfo = GetTargetInfo(owner);
+
+		if (targetInfo.bExist)
 		{
 			// ターゲットから敵へのベクトル計算
-			VECTOR vToEnemy = VSub(owner->GetPos(), target->GetPos());
+			VECTOR vToEnemy = VScale(targetInfo.vToTarget, -1.0f);
 			vToEnemy.y = 0.0f;
 
-			// 距離計算
 			float dist = VSize(vToEnemy);
 
 			if (dist > KNOCKBACK_MIN_DISTANCE)
 			{
-				// 正規化してノックバック方向設定
 				_vKnockbackDir = VScale(vToEnemy, 1.0f / dist);
 			}
-			else 
+			else
 			{
-				// 重なっている場合は敵の向きの逆方向
 				_vKnockbackDir = VScale(owner->GetDir(), -1.0f);
 			}
 		}
 		else
 		{
-			// ターゲット不在時は敵の向きの逆方向
 			_vKnockbackDir = VScale(owner->GetDir(), -1.0f);
 		}
 
@@ -217,9 +209,7 @@ namespace Common
 			// 速度減衰処理
 			_fKnockbackSpeed *= KNOCKBACK_DECELERATION;
 
-			// 移動処理
-			VECTOR vMove = VScale(_vKnockbackDir, _fKnockbackSpeed);
-			owner->SetMove(vMove);
+			MoveToTarget(owner, _vKnockbackDir, _fKnockbackSpeed);
 		}
 		else
 		{

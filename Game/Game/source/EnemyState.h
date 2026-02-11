@@ -2,6 +2,7 @@
 #include "appframe.h"
 
 class Enemy;
+class CharaBase;
 
 // ステート優先度
 enum class STATE_PRIORITY
@@ -45,6 +46,16 @@ struct EnemyParam
 	const char* animDown = "Down";
 };
 
+// ターゲット情報構造体
+struct TargetInfo
+{
+	std::shared_ptr<CharaBase> target;// ターゲットへのポインタ
+	VECTOR vToTarget;// ターゲットへのベクトル
+	VECTOR vDir;// ターゲットへの方向ベクトル(正規化)
+	float fDist;// ターゲットまでの距離
+	bool bExist;// ターゲットが存在するか
+};
+
 // 敵ステート基底クラス
 class EnemyState
 {
@@ -67,6 +78,26 @@ public:
 
 protected:
 	float CalcOffsetTime(Enemy* owner, float baseTime);// ステート時間に敵ごとのオフセットを適用
+
+	// ターゲット情報を取得(ターゲットへのベクトル、距離を計算)
+	TargetInfo GetTargetInfo(Enemy* owner);
+
+	// ターゲットが存在しない場合の処理(Idleへ遷移)
+	template<typename IdleState>
+	std::shared_ptr<EnemyState> HandleNoTarget(Enemy* owner);
+
+	// 追跡限界距離チェック(これ以上離れたらIdleへ遷移)
+	template<typename IdleState>
+	std::shared_ptr<EnemyState> CheckChaseLimitAndHandle(Enemy* owner, float fDist);
+
+	// ターゲット方向へ回転
+	void RotateToTarget(Enemy* onwer, const VECTOR& vDir, float fRotSpeed);
+
+	// ターゲット方向へ移動
+	void MoveToTarget(Enemy* onwer, const VECTOR& vDir, float fMoveSpeed);
+
+	// 移動停止
+	void StopMove(Enemy* owner);
 
 	float _fTimer = 0.0f;
 	float _fTargetTimer = 0.0f;
