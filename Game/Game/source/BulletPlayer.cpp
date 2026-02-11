@@ -40,7 +40,7 @@ bool BulletPlayer::Process()
 	PlayerBase::Process();
 
 	// 入力確認
-	//ShootByInput();
+	ShootByInput();
 
 	return true;
 }
@@ -56,6 +56,9 @@ bool BulletPlayer::Render()
 void BulletPlayer::DebugRender()
 {
 	PlayerBase::DebugRender();
+
+	// 弾発射時間のデバッグ表示
+	DrawShootIntervalTime();
 }
 
 // 被ダメージ処理
@@ -78,9 +81,10 @@ void BulletPlayer::ProcessShoot()
 {
 	bool putKey = (_key & PAD_INPUT_6) != 0;
 
+	// キーが押された
 	if(putKey)
 	{
-		// 発射可能か
+		// 発射カウントが残っているなら
 		if(_shootIntervalTimer <= 0.0f)
 		{
 			// 発射状態を設定
@@ -98,18 +102,23 @@ void BulletPlayer::ProcessShoot()
 
 			// 発射間隔の設定
 			AnimManager* animManager = GetAnimManager();
-			float animTotalTime = animManager->GetCurrentAnimTotalTime();	
+			float animTotalTime = animManager->GetCurrentAnimTotalTime();
 			_shootIntervalTimer = animTotalTime;
 		}
 	}
+	// キーが離された
 	else
 	{
-		if(_shootIntervalTimer >= 0.0f){ return; }	// カウントが残っているなら処理しない
-
-		// キーが離されたら発射状態をリセット
-		if(_playerState.shootState != PLAYER_SHOOT_STATE::NONE)
+		// 発射カウントが0になったら
+		if(_shootIntervalTimer <= 0.0f)
 		{
-			_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
+			// キーが離されたら発射状態をリセット
+			if(_playerState.shootState != PLAYER_SHOOT_STATE::NONE)
+			{
+				// 状態リセット
+				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
+				_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;
+			}
 		}
 	}
 
@@ -119,7 +128,9 @@ void BulletPlayer::ProcessShoot()
 		_shootIntervalTimer--; // カウントを減らす
 		if(_shootIntervalTimer <= 0.0f)
 		{
+			// 状態リセット
 			_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
+			_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;
 		}
 	}
 }
@@ -259,4 +270,12 @@ ShieldConfig BulletPlayer::GetShieldConfig()
 	ShieldConfig config = {};
 
 	return config;
+}
+
+// 弾発射カウント表示関数
+void BulletPlayer::DrawShootIntervalTime()
+{
+	if(_shootIntervalTimer <= 0.0f){ return; }
+
+	DrawFormatString(1100, 310, GetColor(255, 255, 255), "%3.2f", _shootIntervalTimer);
 }

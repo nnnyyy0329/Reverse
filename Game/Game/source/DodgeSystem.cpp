@@ -306,15 +306,15 @@ void DodgeSystem::DebugRender()
 	if(_invincibleTime > ZERO)
 	{
 		char buffer[256];
-		sprintf_s(buffer, "Invincible Time: %.2f / %.2f", _invincibleTime, _stcDodgeConfig.invincibleDuration);
+		sprintf_s(buffer, "Invincible Time: %3.2f / %3.2f", _invincibleTime, _stcDodgeConfig.invincibleDuration);
 		DrawString(1100, 290, buffer, GetColor(255, 255, 255));
 	}
 
-	// 無敵時間デバッグ描画
+	// 無敵中の当たり判定デバッグ描画
 	InvincibleDebugRender();
 }
 
-// 無敵時間デバッグ描画
+// 無敵中の当たり判定デバッグ描画
 void DodgeSystem::InvincibleDebugRender()
 {
 	if(!_bIsInvincible){ return; }

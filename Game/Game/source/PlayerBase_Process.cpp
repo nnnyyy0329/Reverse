@@ -28,15 +28,16 @@ void PlayerBase::ProcessMovePlayer()
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
 	if(IsAttacking()){ return; }	// 攻撃中は移動入力を受け付けない
+	if(IsShooting()){ return; }		// 発射中は移動入力を受け付けない
 	if(IsDodging()){ return; }		// 回避中は移動入力を受け付けない
 	if(IsHitStop()){ return; }		// 被弾中は移動入力を受け付けない
 
 	// 移動処理
 	{
-		if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
-		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
-		if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
-		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
+		//if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
+		//if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
+		//if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
+		//if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
 
 		
 		// しゃがみ中かどうかで移動速度を変える
@@ -92,10 +93,11 @@ void PlayerBase::ProcessMovePlayer()
 // 状態変化アニメーション処理
 void PlayerBase::ProcessStatusAnimation()
 {
-	// 攻撃中、被弾時、回避中、死亡時
-	if(IsAttacking() ||
-		_playerState.combatState == PLAYER_COMBAT_STATE::HIT ||
-		_playerState.combatState == PLAYER_COMBAT_STATE::DODGE ||
+	// 攻撃中、弾発射中、被弾時、回避中、死亡時はここで再生処理
+	if(IsAttacking()											|| 
+		IsShooting()											||
+		_playerState.combatState == PLAYER_COMBAT_STATE::HIT	||
+		_playerState.combatState == PLAYER_COMBAT_STATE::DODGE	||
 		_playerState.combatState == PLAYER_COMBAT_STATE::DEATH)
 	{
 		// アニメーション再生処理のみ
