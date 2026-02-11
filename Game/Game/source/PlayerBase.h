@@ -272,6 +272,7 @@ protected:	// 攻撃関係
 	void ProcessAttack();			// 攻撃処理
 	void ProcessBranchAttack();		// 攻撃分岐処理
 	void ReceiveAttackColData();	// 攻撃コリジョンの情報受け取り関数
+	bool IsStartAttack();			// 攻撃を開始できるかチェック
 	bool CanNextAttack();			// 次の攻撃が可能かチェック
 	bool IsAttacking();				// 攻撃中かチェック
 

@@ -113,7 +113,7 @@ PlayerAnimations InteriorPlayer::GetPlayerAnimation()
 	animation.attack.firstAttack	= "Nchange_attack_00";
 	animation.attack.secondAttack	= "Nchange_attack_01";
 	animation.attack.thirdAttack	= "Nchange_attack_02";
-	animation.attack.fourthAttack	= "EmotionNchange_attack_03";
+	animation.attack.fourthAttack	= "Nchange_attack_03";
 	animation.attack.fifthAttack	= "Nchange_attack_04";
 	animation.shoot.rightArmShoot	= "";
 	animation.shoot.leftArmShoot	= "";

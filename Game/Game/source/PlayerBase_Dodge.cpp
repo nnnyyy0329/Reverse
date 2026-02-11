@@ -126,14 +126,15 @@ void PlayerBase::ProcessEndDodge()
 	if(!_dodgeSystem->IsDodging() && _dodgeSystem->GetDodgeState() == DODGE_STATE::INACTIVE)
 	{
 		// 古いステータスを保持
-		PLAYER_COMBAT_STATE oldStatus = _playerState.combatState;
+		PlayerState oldStatus = _playerState;
 
 		// ステータス変更後、アニメーション切り替え
-		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT; // 通常状態に戻る
+		_playerState.combatState = PLAYER_COMBAT_STATE::NONE;		// 通常に戻す
+		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 待機状態に戻る
 
-		_oldPlayerState.combatState = oldStatus;	// 古いステータスを攻撃状態に設定
-		ProcessPlayAnimation();						// アニメーション切り替え実行
-		_oldPlayerState = _playerState;				// 切り替え後に更新
+		_oldPlayerState = oldStatus;	// 古いステータスを攻撃状態に設定
+		ProcessPlayAnimation();			// アニメーション切り替え実行
+		_oldPlayerState = _playerState;	// 切り替え後に更新
 	}
 }
 

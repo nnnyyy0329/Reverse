@@ -143,11 +143,8 @@ void PlayerBase::ProcessAttackColPos()
 // 攻撃処理
 void PlayerBase::ProcessAttack()
 {
-	// 攻撃入力チェック（通常状態時）
-	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||
-		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||
-		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN)
-		&& _trg & PAD_INPUT_1) 
+	// 攻撃開始チェック
+	if(IsStartAttack())
 	{
 		// 攻撃配列が空の場合は処理をスキップ
 		if(_attacks.empty()){ return; }
@@ -329,7 +326,7 @@ void PlayerBase::EndAttackSequence()
 	AttackManager::GetInstance()->UnregisterAttackByOwner(GetInstanceId());
 
 	// 古いステータスを保持
-	//PlayerState oldState = _playerState;
+	PlayerState oldState = _playerState;
 
 	// 状態リセット
 	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
@@ -339,9 +336,9 @@ void PlayerBase::EndAttackSequence()
 	_bCanCombo = false;				// コンボ不可にする
 
 	// ステータス変更後、アニメーション切り替え
-	//_oldPlayerState = oldState;		// 古いステータスを攻撃状態に設定
+	_oldPlayerState = oldState;		// 古いステータスを攻撃状態に設定
 	ProcessPlayAnimation();			// アニメーション切り替え実行
-	//_oldPlayerState = _playerState;	// 切り替え後に更新
+	_oldPlayerState = _playerState;	// 切り替え後に更新
 }
 
 // 次の攻撃へ
@@ -353,7 +350,7 @@ void PlayerBase::ProcessNextAttack(int currentIndex)
 	// 次の攻撃が存在する場合
 	if(nextIndex < static_cast<int>(_attacks.size()))
 	{
-		PLAYER_ATTACK_STATE nextStatus = _attackStatuses[nextIndex];						// 次の状態取得
+ 		PLAYER_ATTACK_STATE nextStatus = _attackStatuses[nextIndex];						// 次の状態取得
 		ProcessStartAttack(nextIndex + 1, _attackStatuses[nextIndex], _attacks[nextIndex]);	// 次の攻撃へ
 	}
 }
@@ -381,6 +378,22 @@ void PlayerBase::ReceiveAttackColData()
 		_vAttackColBottom = VGet(0.0f, 0.0f, 0.0f);
 		_fAttackColR = 0.0f;
 	}
+}
+
+// 攻撃を開始できるかチェック
+bool PlayerBase::IsStartAttack()
+{
+	// 攻撃入力チェック
+	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||	// 待機か
+		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||	// 歩きか
+		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN) &&	// 走りで
+		_playerState.attackState   == PLAYER_ATTACK_STATE::NONE	  &&	// 攻撃状態ではなく
+		_trg & PAD_INPUT_1)												// 入力があるなら
+	{
+		return true;
+	}
+
+	return false;
 }
 
 // 次の攻撃が可能かチェック

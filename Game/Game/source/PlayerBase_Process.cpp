@@ -33,10 +33,10 @@ void PlayerBase::ProcessMovePlayer()
 
 	// 移動処理
 	{
-		//if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
-		//if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
-		//if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
-		//if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
+		if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
+		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
+		if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
+		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
 		
 		// しゃがみ中かどうかで移動速度を変える
 		if(_bIsCrouching)
@@ -150,7 +150,7 @@ void PlayerBase::ProcessStatusAnimation()
 void PlayerBase::ProcessPlayAnimation()
 {
 	// ステータスが変化していなければ処理しない
-	if(HasStateChanged()){ return; }
+	if(!HasStateChanged()){ return; }
 
 	// アニメーションマネージャーの取得
 	AnimManager* animManager = GetAnimManager();
@@ -334,12 +334,10 @@ int PlayerBase::GetLoopCount() const
 	
 	// 戦闘状態と
 	// 攻撃状態と
-	// 発射状態と
 	// 発射状態の場合1回再生
 	if(_playerState.combatState	 != PLAYER_COMBAT_STATE::NONE ||
 		_playerState.attackState != PLAYER_ATTACK_STATE::NONE ||
-		_playerState.shootState	 != PLAYER_SHOOT_STATE::NONE  ||
-		_playerState.shootState  != PLAYER_SHOOT_STATE::NONE)
+		_playerState.shootState	 != PLAYER_SHOOT_STATE::NONE)
 	{
 		return 1;
 	}
@@ -351,7 +349,7 @@ int PlayerBase::GetLoopCount() const
 // 状態変化チェック
 bool PlayerBase::HasStateChanged()const
 {
-	// ステートが変化しているかチェック
+	// ステートが変化しているならtrue
 	return (_oldPlayerState.movementState != _playerState.movementState ||	// 移動状態
 			_oldPlayerState.attackState   != _playerState.attackState	||	// 攻撃状態
 			_oldPlayerState.shootState    != _playerState.shootState	||	// 発射状態
