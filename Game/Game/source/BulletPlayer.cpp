@@ -40,7 +40,7 @@ bool BulletPlayer::Process()
 	PlayerBase::Process();
 
 	// 入力確認
-	ShootByInput();
+	//ShootByInput();
 
 	return true;
 }
@@ -70,27 +70,35 @@ void BulletPlayer::ShootByInput()
 	bool putKey = (_key & PAD_INPUT_6) != 0;
 	
 	// 発射間隔更新
-	ShootIntervalUpdate(putKey);
+	//ShootIntervalUpdate(putKey);
 }
 
 // 発射間隔更新
-void BulletPlayer::ShootIntervalUpdate(bool key)
+void BulletPlayer::ProcessShoot()
 {
-	if(key)
+	bool putKey = (_key & PAD_INPUT_6) != 0;
+
+	if(putKey)
 	{
 		// 発射可能か
 		if(_shootIntervalTimer <= 0.0f)
 		{
+			// 発射状態を設定
+			if(_bIsShootFromRightArm)
+			{
+				_playerState.shootState = PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT;
+			}
+			else
+			{
+				_playerState.shootState = PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT;
+			}
+
 			// 弾の発射
 			ShootBullet();
 
-			// アニメーションマネージャーの取得
+			// 発射間隔の設定
 			AnimManager* animManager = GetAnimManager();
-
-			// 現在のアニメーションの総再生時間を取得
 			float animTotalTime = animManager->GetCurrentAnimTotalTime();	
-
-			// 発射間隔タイマーをリセット
 			_shootIntervalTimer = animTotalTime;
 		}
 	}
@@ -98,13 +106,21 @@ void BulletPlayer::ShootIntervalUpdate(bool key)
 	{
 		if(_shootIntervalTimer >= 0.0f){ return; }	// カウントが残っているなら処理しない
 
-		_shootIntervalTimer = 0.0f;
+		// キーが離されたら発射状態をリセット
+		if(_playerState.shootState != PLAYER_SHOOT_STATE::NONE)
+		{
+			_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
+		}
 	}
 
 	// 弾発射カウントを減らす
 	if(_shootIntervalTimer > 0.0f)
 	{
 		_shootIntervalTimer--; // カウントを減らす
+		if(_shootIntervalTimer <= 0.0f)
+		{
+			_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
+		}
 	}
 }
 
@@ -170,9 +186,9 @@ PlayerAnimations BulletPlayer::GetPlayerAnimation()
 	// 裏プレイヤー用のアニメーション設定
 	PlayerAnimations animation;
 
-	animation.movement.wait			= "player_idle_01";
-	animation.movement.walk			= "player_walk_01";
-	animation.movement.run			= "player_jog_01";
+	animation.movement.wait			= "player_idle_00";
+	animation.movement.walk			= "player_walk_00";
+	animation.movement.run			= "player_jog_00";
 	animation.movement.jumpUp		= "";
 	animation.movement.jumpDown		= "";
 	animation.movement.crouchWait	= "";

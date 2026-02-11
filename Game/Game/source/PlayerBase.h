@@ -277,15 +277,22 @@ protected:	// 攻撃関係
 	bool IsAttacking();				// 攻撃中かチェック
 
 	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
-	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);						// 攻撃開始処理
+	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);				// 攻撃開始処理
 	void ProcessAttackEffect(int attackIndex);																					// 攻撃エフェクト処理
 	void ProcessComboAttack(int attackIndex);																					// コンボ攻撃処理
 	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);																// 攻撃終了処理
 	void EndAttackSequence();																									// 攻撃課程修了
 	void ProcessNextAttack(int currentIndex);																					// 次の攻撃処理
-	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_ATTACK_STATE status);														// 状態に対応する攻撃を取得
+	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_ATTACK_STATE status);													// 状態に対応する攻撃を取得
 	int GetInstanceId();																										// ID取得関数
-	int GetAttackIndexByStatus(PLAYER_ATTACK_STATE status);																			// 状態から攻撃インデックスを取得
+	int GetAttackIndexByStatus(PLAYER_ATTACK_STATE status);																		// 状態から攻撃インデックスを取得
+
+protected:	// 弾発射関係
+	
+	virtual void ProcessShoot(){};	// 発射処理の仮想関数
+
+	virtual bool IsShooting()const{ return _playerState.shootState != PLAYER_SHOOT_STATE::NONE; }
+
 
 protected:	// 回避関係
 
@@ -304,6 +311,7 @@ protected:	// 回避関係
 	virtual DodgeConfig GetDodgeConfig() = 0;
 
 protected: 	// シールド関係
+
 	std::shared_ptr<PlayerShieldSystem> _shieldSystem;	// シールドシステム
 
 	// PlayerBase_Shield.cpp で定義

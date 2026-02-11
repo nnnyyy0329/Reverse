@@ -77,7 +77,7 @@ PlayerConfig SurfacePlayer::GetPlayerConfig()
 	// 移動速度設定
 	config.crouchMoveSpeed = 2.0f;				
 	config.normalMoveSpeed = 5.0f;				
-	config.dashMoveSpeed = 2.5f;			
+	config.dashMoveSpeed = 52.5f;			
 
 	// 基礎ステータス
 	config.life = 100.0f;						
