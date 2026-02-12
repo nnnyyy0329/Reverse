@@ -12,7 +12,7 @@ namespace Ranged
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:Idle"; }// 名前を返す(デバッグ用)
+		const char* GetName() override { return "Ranged:Idle"; }// 名前を返す(デバッグ用)
 		void UpdateSearch(Enemy* owner) override;
 	};
 
@@ -26,7 +26,7 @@ namespace Ranged
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:Wander"; }
+		const char* GetName() override { return "Ranged:Wander"; }
 		void UpdateSearch(Enemy* owner) override;
 
 	private:
@@ -45,7 +45,7 @@ namespace Ranged
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:Notice"; }
+		const char* GetName() override { return "Ranged:Notice"; }
 	};
 
 
@@ -58,8 +58,8 @@ namespace Ranged
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:Approach"; }
-		bool IsChasing() const override { return true; }
+		const char* GetName() override { return "Ranged:Approach"; }
+		bool IsChasing() override { return true; }
 	};
 
 
@@ -72,8 +72,8 @@ namespace Ranged
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:ShotStart"; }
-		bool IsChasing() const override { return true; }
+		const char* GetName() override { return "Ranged:ShotStart"; }
+		bool IsChasing() override { return true; }
 	};
 
 	// 射撃溜め
@@ -82,7 +82,7 @@ namespace Ranged
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:ShotCharge"; }
+		const char* GetName() override { return "Ranged:ShotCharge"; }
 		bool CanChangeState() override { return false; }
 	};
 
@@ -92,7 +92,7 @@ namespace Ranged
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:ShotExecute"; }
+		const char* GetName() override { return "Ranged:ShotExecute"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
 
 	private:
@@ -105,7 +105,7 @@ namespace Ranged
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:ShotRecovery"; }
+		const char* GetName() override { return "Ranged:ShotRecovery"; }
 	};
 
 	// 射撃間隔
@@ -114,7 +114,7 @@ namespace Ranged
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:ShotInterval"; }
+		const char* GetName() override { return "Ranged:ShotInterval"; }
 	};
 
 
@@ -127,7 +127,7 @@ namespace Ranged
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:ReturnHome"; }
+		const char* GetName() override { return "Ranged:ReturnHome"; }
 		void UpdateSearch(Enemy* owner) override;
 	};
 }

@@ -377,7 +377,7 @@ void Enemy::DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAng
 
 
 
-void Enemy::ChangeState(std::shared_ptr<EnemyState> newState) 
+void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 {
 	if (!newState) { return; }
 
@@ -514,7 +514,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 		{
 			_fLife = 1.0f;// 最低1は残す
 			// スタンステートへ遷移
-			ChangeState(std::make_shared<Common::Stun>());
+			ChangeState(std::make_unique<Common::Stun>());
 			return;
 		}
 	}
@@ -529,7 +529,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 		{
 			_fLife = 0.0f;// マイナス防止
 			// 死亡ステートへ遷移
-			ChangeState(std::make_shared<Common::Dead>());
+			ChangeState(std::make_unique<Common::Dead>());
 		}
 
 		return;
@@ -543,7 +543,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	{
 		_fLife = 0.0f;// マイナス防止
 		// 死亡ステートへ遷移
-		ChangeState(std::make_shared<Common::Dead>());
+		ChangeState(std::make_unique<Common::Dead>());
 		return;
 	}
 
@@ -553,7 +553,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	// Down回数に達したら直接Downステートへ遷移
 	if (_damageCnt >= _enemyParam.damageToDown)
 	{
-		ChangeState(std::make_shared<Common::Down>());
+		ChangeState(std::make_unique<Common::Down>());
 		return;
 	}
 
@@ -565,19 +565,19 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	}
 
 	// ダメージステートへ遷移
-	ChangeState(std::make_shared<Common::Damage>());
+	ChangeState(std::make_unique<Common::Damage>());
 }
 
-bool Enemy::IsDead() const
+bool Enemy::IsDead()
 {
 	return _fLife <= 0.0f;// ライフが0以下なら死亡
 }
 
-std::shared_ptr<EnemyState> Enemy::GetRecoveryState() const
+std::unique_ptr<EnemyState> Enemy::GetRecoveryState()
 {
 	if (_recoveryHandler) 
 	{// ハンドラが設定されていれば実行
-		return _recoveryHandler(const_cast<Enemy*>(this));
+		return _recoveryHandler(this);
 	}
 
 	return nullptr;

@@ -22,18 +22,18 @@ public:
 	virtual void CollisionRender(); // コリジョン描画
 	void DrawLifeBar();// ライフバー描画
 
-	VECTOR GetHomePos() const { return _vHomePos; }
+	VECTOR GetHomePos() { return _vHomePos; }
 	void SetHomePos(VECTOR pos) { _vHomePos = pos; }
 
-	bool CanRemove() const { return _bCanRemove; }// delete可能か
+	bool CanRemove() { return _bCanRemove; }// delete可能か
 
 	const EnemyParam& GetEnemyParam() const { return _enemyParam; }
 	void SetEnemyParam(const EnemyParam& param);// パラメータを設定したときに視界のcos値を計算
 
-	std::shared_ptr<CharaBase> GetTarget() const { return _targetPlayer; }
+	std::shared_ptr<CharaBase> GetTarget() { return _targetPlayer; }
 	void SetTarget(std::shared_ptr<CharaBase> target) { _targetPlayer = target; }
 
-	int GetDamageCount() const { return _damageCnt; }// 何回ダメージを受けたか
+	int GetDamageCount() { return _damageCnt; }// 何回ダメージを受けたか
 
 	// モデル名のゲッターセッター
 	const std::string& GetModelName() const { return _modelName; }
@@ -56,17 +56,16 @@ public:
 	void ResetDamageCount() { _damageCnt = 0; }// ダメージカウントリセット
 
 	// 死亡判定
-	bool IsDead() const;
+	bool IsDead();
 	void EnableRemove() { _bCanRemove = true; }// delete可能にする
 
-	// Enemyポインタを受け取ってEnemyStateのshared_ptrを返す関数
-	// ↑をRecoveryHandlerとして定義
-	// ハンドラ:何かが起きた時にどう対処するかの関数
-	using RecoveryHandler = std::function<std::shared_ptr<EnemyState>(Enemy*)>;
+
+	// 被ダメなどのリアクションステートから復帰するステートを取得
+	using RecoveryHandler = std::function<std::unique_ptr<EnemyState>(Enemy*)>;
 	// ハンドラをセットする関数(Factoryで設定)
 	void SetRecoveryHandler(RecoveryHandler handler) { _recoveryHandler = handler; }
 	// ハンドラを実行する(ステート側から呼ばれる関数)
-	std::shared_ptr<EnemyState> GetRecoveryState() const;
+	std::unique_ptr<EnemyState> GetRecoveryState();
 
 	// 索敵関連
 	bool ShouldUpdateSearch() { return _searchTimer == 0; }// 索敵更新タイミングかどうか

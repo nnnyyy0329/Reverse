@@ -66,9 +66,9 @@ public:
 	virtual std::shared_ptr<EnemyState> Update(Enemy* owner) = 0;// 毎フレーム呼ばれる。状態遷移する場合は新しい状態を返す。継続する場合はnullptrを返す
 	virtual void Exit(Enemy* owner) {}// 別の状態に切り替わる直前に一度だけ呼ばれる。後始末はここで
 
-	virtual const char* GetName() const { return "None"; }// デバッグ用に状態名を取得
+	virtual const char* GetName() { return "None"; }// デバッグ用に状態名を取得
 
-	virtual bool IsChasing() const { return false; }// 接近状態かどうか
+	virtual bool IsChasing() { return false; }// 接近状態かどうか
 
 	virtual bool CanChangeState() { return true; }// ステート変更可能かどうか
 

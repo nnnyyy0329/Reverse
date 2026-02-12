@@ -91,15 +91,15 @@ public:
 				enemy->SetEnemyParam(param);// パラメータ設定
 
 				// ハンドラの中身を設定
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> 
+				enemy->SetRecoveryHandler([](Enemy* e) -> std::unique_ptr<EnemyState> 
 					{
 					// ターゲットが存在すれば接近
 					if (e->GetTarget()) 
 					{
-						return std::make_shared<Melee::Approach>();
+						return std::make_unique<Melee::Approach>();
 					}
 					// 見えていなければ待機
-					return std::make_shared<Melee::Idle>();
+					return std::make_unique<Melee::Idle>();
 				});
 				break;
 
@@ -126,15 +126,15 @@ public:
 			enemy->SetEnemyParam(param);
 
 			// ハンドラの中身を設定
-			enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState>
+			enemy->SetRecoveryHandler([](Enemy* e) -> std::unique_ptr<EnemyState>
 				{
 					// ターゲットが存在すれば接近
 					if (e->GetTarget())
 					{
-						return std::make_shared<Ranged::Approach>();
+						return std::make_unique<Ranged::Approach>();
 					}
 					// 見えていなければ待機
-					return std::make_shared<Ranged::Idle>();
+					return std::make_unique<Ranged::Idle>();
 				});
 			break;
 
@@ -156,15 +156,15 @@ public:
 				enemy->SetEnemyParam(param);
 
 
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> 
+				enemy->SetRecoveryHandler([](Enemy* e) -> std::unique_ptr<EnemyState>
 					{
 					// ターゲットが存在すれば接近
 					if (e->GetTarget())
 					{
-						return std::make_shared<Tank::Approach>();
+						return std::make_unique<Tank::Approach>();
 					}
 					// 見えていなければ待機
-					return std::make_shared<Tank::Idle>();
+					return std::make_unique<Tank::Idle>();
 				});
 				break;
 		}
@@ -176,13 +176,13 @@ public:
 		switch (type) 
 		{
 		case EnemyType::MELEE:
-			enemy->ChangeState(std::make_shared<Melee::Idle>());
+			enemy->ChangeState(std::make_unique<Melee::Idle>());
 			break;
 		case EnemyType::RANGED:
-			enemy->ChangeState(std::make_shared<Ranged::Idle>());
+			enemy->ChangeState(std::make_unique<Ranged::Idle>());
 			break;
 		case EnemyType::TANK:
-			enemy->ChangeState(std::make_shared<Tank::Idle>());
+			enemy->ChangeState(std::make_unique<Tank::Idle>());
 			break;
 		}
 
