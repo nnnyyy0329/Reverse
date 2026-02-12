@@ -11,6 +11,7 @@ public:
 	virtual bool Render();
 
 private:
-	bool _bIsAddGame = false;// ƒ‚[ƒhƒQ[ƒ€‚ğ’Ç‰Á‚µ‚½‚©
+	bool _bIsAddGame = false;
+	int _frameCount = 0;
 };
 

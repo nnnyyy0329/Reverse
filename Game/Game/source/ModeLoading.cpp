@@ -5,6 +5,7 @@ bool ModeLoading::Initialize()
 {
 	if (!base::Initialize()) { return false; }
 	_bIsAddGame = false;
+	_frameCount = 0;
 
 	// リソースの登録
 	{
@@ -84,24 +85,23 @@ bool ModeLoading::Terminate()
 
 bool ModeLoading::Process()
 {
-	// ロード進捗の確認
-	auto progress = ResourceServer::GetInstance()->GetLoadProgress();
+	_frameCount++;
 
-	// ロードが完了した後の処理をここに追加
-	if (!_bIsAddGame && ResourceServer::GetInstance()->IsLoadComplete()) {
+	// ロードが完了かつ120フレーム経過後にゲームモードを追加
+	if (!_bIsAddGame && ResourceServer::GetInstance()->IsLoadComplete() && _frameCount >= 120) {
 		_bIsAddGame = true;
-		// モードゲームの登録
 		ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
 	}
-
 	return true;
 }
 
 bool ModeLoading::Render()
 {
-	auto progress = ResourceServer::GetInstance()->GetLoadProgress();
+	if (_bIsAddGame) { return true; }
 
-	// 進捗率を描画
+	auto progress = ResourceServer::GetInstance()->GetLoadProgress();
+	DrawFormatString(640, 340, GetColor(255, 255, 255), "Now Loading...");
+	DrawFormatString(640, 380, GetColor(255, 255, 255), "Progress: %.2f%%", progress * 100.0f);
 
 	return true;
 }

@@ -203,7 +203,7 @@ bool ModeGame::Process()
 
 
 	// spaceキーでメニューを開く
-	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10)
+	if (trg & PAD_INPUT_10)
 	{
 		ModeMenu* modeMenu = new ModeMenu();
 		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");

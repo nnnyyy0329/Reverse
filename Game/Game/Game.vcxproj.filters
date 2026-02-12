@@ -151,6 +151,7 @@
     <ClCompile Include="source\EnemyState.cpp">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeTitle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -294,6 +295,7 @@
     <ClInclude Include="source\EnemyState_impl.h">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClInclude>
+    <ClInclude Include="source\ModeTitle.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
