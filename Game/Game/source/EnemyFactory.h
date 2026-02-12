@@ -8,7 +8,7 @@
 namespace 
 {
 	constexpr auto DEFAULT_ENEMY_SPEED = 2.0f;// “G‚ÌˆÚ“®‘¬“x
-	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 100.0f;// “G‚ÌÅ‘å‘Ì—Í
+	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 1000.0f;// “G‚ÌÅ‘å‘Ì—Í
 
 	// Melee
 	constexpr auto MELEE_VISION_RANGE = 250.0f;// õ“G‹——£
@@ -22,9 +22,12 @@ namespace
 	constexpr auto MELEE_ATTACK_TIME = 180.0f;// UŒ‚ŽžŠÔ
 
 	// Ranged
-	constexpr auto RANGED_VISION_RANGE = 800.0f;// õ“G‹——£
-	constexpr auto RANGED_MOVEBACK_RANGE = 300.0f;// ‚±‚ê‚æ‚è‹ß‚Ã‚¢‚½‚çŒã‘Þ‚·‚é
-	constexpr auto RANGED_ATTACK_INTERVAL = 120.0f;// UŒ‚ŠÔŠu
+	constexpr auto RANGED_VISION_RANGE = 800.0f;// õ“G‹——£(L‚ß)
+	constexpr auto RANGED_VISION_ANGLE = 180.0f;// õ“GŠp“x(‰~Œ`)
+	constexpr auto RANGED_CHASE_LIMIT_RANGE = 1000.0f;// ‚±‚êˆÈã—£‚ê‚½‚ç’ÇÕ‚ð‚â‚ß‚é‹——£
+	constexpr auto RANGED_MOVE_RADIUS = 0.0f;// œpœj”ÍˆÍ(ˆÚ“®‚µ‚È‚¢‚½‚ß0)
+	constexpr auto RANGED_IDLE_TIME = 120.0f;// ‘Ò‹@ŽžŠÔ
+	constexpr auto RANGED_MOVE_TIME = 0.0f;// œpœjŽžŠÔ(Žg—p‚µ‚È‚¢)
 	constexpr auto RANGED_DETECT_TIME = 60.0f;// ”­Œ©d’¼
 
 	// Tank
@@ -88,15 +91,15 @@ public:
 				enemy->SetEnemyParam(param);// ƒpƒ‰ƒ[ƒ^Ý’è
 
 				// ƒnƒ“ƒhƒ‰‚Ì’†g‚ðÝ’è
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> 
+				enemy->SetRecoveryHandler([](Enemy* e) -> std::unique_ptr<EnemyState> 
 					{
 					// ƒ^[ƒQƒbƒg‚ª‘¶Ý‚·‚ê‚ÎÚ‹ß
 					if (e->GetTarget()) 
 					{
-						return std::make_shared<Melee::Approach>();
+						return std::make_unique<Melee::Approach>();
 					}
 					// Œ©‚¦‚Ä‚¢‚È‚¯‚ê‚Î‘Ò‹@
-					return std::make_shared<Melee::Idle>();
+					return std::make_unique<Melee::Idle>();
 				});
 				break;
 
@@ -104,25 +107,36 @@ public:
 
 			enemy->SetModelName("Ranged");
 
-				param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
-				param.fVisionRange = RANGED_VISION_RANGE;
-				param.fAttackRange = RANGED_MOVEBACK_RANGE;
-				param.fAttackInterval = RANGED_ATTACK_INTERVAL;
-				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
-				enemy->SetEnemyParam(param);
+			param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
+			param.fVisionRange = RANGED_VISION_RANGE;
+			param.fVisionAngle = RANGED_VISION_ANGLE;
+			param.fChaseLimitRange = RANGED_CHASE_LIMIT_RANGE;
+			param.fMoveRadius = RANGED_MOVE_RADIUS;
+			param.fIdleTime = RANGED_IDLE_TIME;
+			param.fMoveTime = RANGED_MOVE_TIME;
+			param.fDetectTime = RANGED_DETECT_TIME;
+			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 
+			// ‹¤’ÊƒXƒe[ƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ðÝ’è
+			param.animDamage = "enemy_damage00_00";
+			param.animDead = "enemy_dead_00";
+			param.animStun = "Ranged_Stun";
+			param.animDown = "enemy_damage01_00";
 
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState>
+			enemy->SetEnemyParam(param);
+
+			// ƒnƒ“ƒhƒ‰‚Ì’†g‚ðÝ’è
+			enemy->SetRecoveryHandler([](Enemy* e) -> std::unique_ptr<EnemyState>
+				{
+					// ƒ^[ƒQƒbƒg‚ª‘¶Ý‚·‚ê‚ÎÚ‹ß
+					if (e->GetTarget())
 					{
-					// ƒ^[ƒQƒbƒg‚ª‘¶Ý‚·‚ê‚ÎUŒ‚
-					if (e->GetTarget()) 
-					{
-						return std::make_shared<Ranged::Attack>();
+						return std::make_unique<Ranged::Approach>();
 					}
 					// Œ©‚¦‚Ä‚¢‚È‚¯‚ê‚Î‘Ò‹@
-					return std::make_shared<Ranged::Idle>();
+					return std::make_unique<Ranged::Idle>();
 				});
-				break;
+			break;
 
 		case EnemyType::TANK:// ƒ^ƒ“ƒNŒ^
 
@@ -142,15 +156,15 @@ public:
 				enemy->SetEnemyParam(param);
 
 
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::shared_ptr<EnemyState> 
+				enemy->SetRecoveryHandler([](Enemy* e) -> std::unique_ptr<EnemyState>
 					{
 					// ƒ^[ƒQƒbƒg‚ª‘¶Ý‚·‚ê‚ÎÚ‹ß
 					if (e->GetTarget())
 					{
-						return std::make_shared<Tank::Approach>();
+						return std::make_unique<Tank::Approach>();
 					}
 					// Œ©‚¦‚Ä‚¢‚È‚¯‚ê‚Î‘Ò‹@
-					return std::make_shared<Tank::Idle>();
+					return std::make_unique<Tank::Idle>();
 				});
 				break;
 		}
@@ -162,13 +176,13 @@ public:
 		switch (type) 
 		{
 		case EnemyType::MELEE:
-			enemy->ChangeState(std::make_shared<Melee::Idle>());
+			enemy->ChangeState(std::make_unique<Melee::Idle>());
 			break;
 		case EnemyType::RANGED:
-			enemy->ChangeState(std::make_shared<Ranged::Idle>());
+			enemy->ChangeState(std::make_unique<Ranged::Idle>());
 			break;
 		case EnemyType::TANK:
-			enemy->ChangeState(std::make_shared<Tank::Idle>());
+			enemy->ChangeState(std::make_unique<Tank::Idle>());
 			break;
 		}
 

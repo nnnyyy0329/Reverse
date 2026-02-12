@@ -3,7 +3,7 @@
 
 namespace Ranged
 {
-	// 扇形視界判定(距離と角度をチェック)
+	// 円形視界判定(距離のみチェック)
 	bool IsTargetVisible(Enemy* owner);
 
 	// 待機
@@ -12,16 +12,28 @@ namespace Ranged
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:Idle"; }// 名前を返す(デバッグ用)
+		const char* GetName() override { return "Ranged:Idle"; }// 名前を返す(デバッグ用)
+		void UpdateSearch(Enemy* owner) override;
+	};
+
+
+
+
+
+	// 徘徊(その場で周囲を見渡す)
+	class Wander : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:Wander"; }
 		void UpdateSearch(Enemy* owner) override;
 
 	private:
-		float _fLookAroundTimer;// 見渡すタイマー
-		float _fTargetAngle;// 目標とする角度(ラジアン)
-		bool _bLookingLeft;// 左を向いているか(true:左, false:右)
-		bool _bisRotating;// 回転中かどうか
-		VECTOR _vInitialDir;//見渡し開始時の向き
+		VECTOR _vTargetDir;// 目標方向ベクトル
+		float _fLookDuration;// 視線停止時間
 	};
+	
 
 
 
@@ -33,25 +45,89 @@ namespace Ranged
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:Notice"; }
+		const char* GetName() override { return "Ranged:Notice"; }
 	};
 
 
 
 
 
-	// 攻撃
-	class Attack : public EnemyState
+	// 接近
+	class Approach : public EnemyState
 	{
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:Attack"; }
-		bool IsChasing() const override { return true; }// 攻撃状態を接近状態とみなす
+		const char* GetName() override { return "Ranged:Approach"; }
+		bool IsChasing() override { return true; }
+	};
+
+
+
+
+
+	// 射撃ステート開始
+	class ShotStart : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:ShotStart"; }
+		bool IsChasing() override { return true; }
+	};
+
+	// 射撃溜め
+	class ShotCharge : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:ShotCharge"; }
+		bool CanChangeState() override { return false; }
+	};
+
+	// 射撃実行
+	class ShotExecute : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:ShotExecute"; }
+		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
 
 	private:
-		float _shotTimer;// 発射間隔タイマー
-		// 弾の発射処理などをここに追加
-		void Shoot(Enemy* owner);// 発射
+		bool _bHasShot;
+	};
+
+	// 射撃後隙
+	class ShotRecovery : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:ShotRecovery"; }
+	};
+
+	// 射撃間隔
+	class ShotInterval : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:ShotInterval"; }
+	};
+
+
+
+
+
+	// 帰還
+	class ReturnHome : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:ReturnHome"; }
+		void UpdateSearch(Enemy* owner) override;
 	};
 }

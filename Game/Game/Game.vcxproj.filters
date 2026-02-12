@@ -151,6 +151,9 @@
     <ClCompile Include="source\EnemyState.cpp">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeTitle.cpp">
+      <Filter>Mode\Title</Filter>
+    </ClCompile>
     <ClCompile Include="source\AimCamera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
@@ -294,6 +297,12 @@
     <ClInclude Include="source\PlayerShieldSystem.h">
       <Filter>GameObject\CharaBase\PlayerBase\System\Shield</Filter>
     </ClInclude>
+    <ClInclude Include="source\EnemyState_impl.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeTitle.h">
+      <Filter>Mode\Title</Filter>
+    </ClInclude>
     <ClInclude Include="source\AimCamera.h">
       <Filter>Camera</Filter>
     </ClInclude>
@@ -394,6 +403,9 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\PlayerBase\System\Shield">
       <UniqueIdentifier>{aef1ea0b-20af-423a-b0c3-8551883a0b05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Title">
+      <UniqueIdentifier>{553e3701-3d5b-4024-95d2-f0d7bf4115bd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

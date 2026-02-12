@@ -291,19 +291,73 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 	chara->SetPos(vProcessPos);
 }
 
-// プレイヤーと敵の当たり判定
-void ModeGame::CheckHitPlayerEnemy(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2)
+// キャラ同士の当たり判定
+void ModeGame::CheckCollisionCharaChara(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2)
 {
-	if(chara1 == nullptr || chara2 == nullptr) { return; }
+	if (!chara1 || !chara2) { return; }
 
-	if(HitCheck_Capsule_Capsule
-	(
-		chara1->GetCollisionTop(), chara1->GetCollisionBottom(), chara1->GetCollisionR(),
-		chara2->GetCollisionTop(), chara2->GetCollisionBottom(), chara2->GetCollisionR()
-	) != false)
+	if (chara1 == chara2) { return; }
+
+	VECTOR vChara1Top = chara1->GetCollisionTop();// キャラ1のカプセル上端
+	VECTOR vChara1Bottom = chara1->GetCollisionBottom();// キャラ1のカプセル下端
+	float fChara1Rad = chara1->GetCollisionR();// キャラ1のカプセル半径
+
+	VECTOR vChara2Top = chara2->GetCollisionTop();// キャラ2のカプセル上端
+	VECTOR vChara2Bottom = chara2->GetCollisionBottom();// キャラ2のカプセル下端
+	float fChara2Rad = chara2->GetCollisionR();// キャラ2のカプセル半径
+
+	// カプセル同士の当たり判定
+	if (!HitCheck_Capsule_Capsule(
+		vChara1Top, vChara1Bottom, fChara1Rad,
+		vChara2Top, vChara2Bottom, fChara2Rad))
 	{
-		//printfDx("Player and Enemy Hit!\n");
+		return;// 衝突していない
 	}
+
+	// 押し出し処理
+	// 各キャラの中心位置を計算
+	VECTOR vChara1Center = VAdd(vChara1Bottom, VScale(VSub(vChara1Top, vChara1Bottom), 0.5f));
+	VECTOR vChara2Center = VAdd(vChara2Bottom, VScale(VSub(vChara2Top, vChara2Bottom), 0.5f));
+
+	// キャラ1からキャラ2への方向ベクトルを計算(XZ平面のみ)
+	VECTOR vDir = VSub(vChara2Center, vChara1Center);
+	vDir.y = 0.0f; // Y軸は無視
+
+	// 方向ベクトルの長さを計算
+	float fDist = VSize(vDir);
+
+	// 距離がほぼ0の場合はラムダムな方向に押し出す
+	const float constMinDistance = 0.001f;
+	if (fDist < constMinDistance)
+	{
+		// ランダムな角度を生成
+		float fRandAngle = static_cast<float>(GetRand(359)) * DX_PI_F / 180.0f;
+		vDir = VGet(sinf(fRandAngle), 0.0f, cosf(fRandAngle));
+		fDist = 1.0f;// 正規化のために1に
+	}
+
+	// 方向ベクトルを正規化
+	VECTOR vDirNorm = VScale(vDir, 1.0f / fDist);
+
+	// 必要な押し出し距離を計算
+	// 両方のカプセル半径の合計から現在の距離を引く
+	float fRequiredDist = (fChara1Rad + fChara2Rad) - fDist;
+
+	// 押し出しが必要ない場合は終了
+	if (fRequiredDist <= 0.0f) { return; }
+
+	// 各キャラを半分ずつ押し出す
+	float fPushDist = fRequiredDist * 0.5f;
+
+	// キャラ1を逆方向に押し出す
+	VECTOR vPush1 = VScale(vDirNorm, -fPushDist);
+	VECTOR vNewPos1 = VAdd(chara1->GetPos(), vPush1);
+	chara1->SetPos(vNewPos1);
+
+	// キャラ2を正方向に押し出す
+	VECTOR vPush2 = VScale(vDirNorm, fPushDist);
+	VECTOR vNewPos2 = VAdd(chara2->GetPos(), vPush2);
+	chara2->SetPos(vNewPos2);
 }
 
 // キャラと攻撃コリジョンの当たり判定

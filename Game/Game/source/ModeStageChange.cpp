@@ -92,7 +92,7 @@ bool ModeStageChange::Process()
 
 		case  LOADING_PHASE::COMPLETE:
 			// ロード完了後、少し待ってから削除
-			if (_loadingTimer > 10)
+			if (_loadingTimer > 120)
 			{
 				ModeServer::GetInstance()->Del(this);
 			}
@@ -109,12 +109,8 @@ bool ModeStageChange::Render()
 	// これより下のモードの描画をスキップ
 	ModeServer::GetInstance()->SkipRenderUnderLayer();
 
-	// ローーディング中の表示
-	if (_loadingPhase == LOADING_PHASE::LOADING)
-	{
-		// 背景を黒で塗りつぶす
-		DrawBox(0, 0, 1920, 1080, GetColor(0, 0, 0), TRUE);
-	}
+	DrawBox(0, 0, 1920, 1080, GetColor(0, 0, 0), TRUE);// 背景を黒で塗りつぶす
+	DrawFormatString(900, 540, GetColor(255, 255, 255), "StageChange %d%%", _loadingProgress);
 
 	return true;
 }

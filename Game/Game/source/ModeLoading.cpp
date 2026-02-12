@@ -5,6 +5,7 @@ bool ModeLoading::Initialize()
 {
 	if (!base::Initialize()) { return false; }
 	_bIsAddGame = false;
+	_frameCount = 0;
 
 	// リソースの登録
 	{
@@ -28,12 +29,12 @@ bool ModeLoading::Initialize()
 		// 敵関連
 		{
 			// モデル
-			rs->Register("Melee", "res/SK_enemy_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("Ranged", "res/toki_teki_ver006.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("Melee", "res/Enemy/SK_enemy_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("Ranged", "res/Enemy/toki_teki_ver006.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
-			rs->Register("LifeBar", "res/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("LifeBarFrame", "res/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("LifeBar", "res/GameUI/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("LifeBarFrame", "res/GameUI/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// プレイヤー関連
@@ -89,24 +90,23 @@ bool ModeLoading::Terminate()
 
 bool ModeLoading::Process()
 {
-	// ロード進捗の確認
-	auto progress = ResourceServer::GetInstance()->GetLoadProgress();
+	_frameCount++;
 
-	// ロードが完了した後の処理をここに追加
-	if (!_bIsAddGame && ResourceServer::GetInstance()->IsLoadComplete()) {
+	// ロードが完了かつ120フレーム経過後にゲームモードを追加
+	if (!_bIsAddGame && ResourceServer::GetInstance()->IsLoadComplete() && _frameCount >= 120) {
 		_bIsAddGame = true;
-		// モードゲームの登録
 		ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
 	}
-
 	return true;
 }
 
 bool ModeLoading::Render()
 {
-	auto progress = ResourceServer::GetInstance()->GetLoadProgress();
+	if (_bIsAddGame) { return true; }
 
-	// 進捗率を描画
+	auto progress = ResourceServer::GetInstance()->GetLoadProgress();
+	DrawFormatString(640, 340, GetColor(255, 255, 255), "Now Loading...");
+	DrawFormatString(640, 380, GetColor(255, 255, 255), "Progress: %.2f%%", progress * 100.0f);
 
 	return true;
 }

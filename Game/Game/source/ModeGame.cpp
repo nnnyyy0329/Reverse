@@ -209,7 +209,7 @@ bool ModeGame::Process()
 
 
 	// spaceキーでメニューを開く
-	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10)
+	if (trg & PAD_INPUT_10)
 	{
 		ModeMenu* modeMenu = new ModeMenu();
 		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
@@ -278,15 +278,27 @@ bool ModeGame::Process()
 			CheckHitCharaBullet(enemy);
 		}
 
-		// プレイヤーと敵の当たり判定
-		for (const auto& enemy : enemies)
-		{
-			CheckHitPlayerEnemy(player, enemy);
-		}
-
 		// キャラと攻撃コリジョンの当たり判定
 		CheckActiveAttack(player);										// プレイヤー
 		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
+
+		// キャラ同士
+		{
+			// プレイヤーと敵
+			for (const auto& enemy : enemies)
+			{
+				CheckCollisionCharaChara(player, enemy);
+			}
+
+			// 敵同士
+			for (size_t i = 0; i < enemies.size(); ++i)
+			{
+				for (size_t j = i + 1; j < enemies.size(); ++j)
+				{
+					CheckCollisionCharaChara(enemies[i], enemies[j]);
+				}
+			}
+		}
 
 		// マップ
 		if (_bUseCollision)

@@ -13,8 +13,12 @@ namespace Common
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Common:Damage"; }
+		const char* GetName() override { return "Common:Damage"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::DAMAGE; }// ダメージ用
+
+	private:
+		VECTOR _vKnockbackDir;// ノックバック方向
+		float _fKnockbackSpeed;// ノックバック速度
 	};
 
 
@@ -27,7 +31,7 @@ namespace Common
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Common:Dead"; }
+		const char* GetName() override { return "Common:Dead"; }
 		bool CanChangeState() override { return false; }// 死亡中はステート変更不可
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::TOP; }// 最優先
 	};
@@ -42,7 +46,7 @@ namespace Common
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Common:Stun"; }
+		const char* GetName() override { return "Common:Stun"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::TOP; }// 最優先
 	};
 
@@ -56,7 +60,7 @@ namespace Common
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Common:Down"; }
+		const char* GetName() override { return "Common:Down"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::TOP; }// 最優先
 
 	private:

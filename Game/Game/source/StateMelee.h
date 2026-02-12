@@ -12,7 +12,7 @@ namespace Melee
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Idle"; }// 名前を返す(デバッグ用)
+		const char* GetName() override { return "Melee:Idle"; }// 名前を返す(デバッグ用)
 		void UpdateSearch(Enemy* owner) override;
 	};
 
@@ -26,7 +26,7 @@ namespace Melee
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Wander"; }
+		const char* GetName() override { return "Melee:Wander"; }
 		void UpdateSearch(Enemy* owner) override;
 	};
 
@@ -40,7 +40,7 @@ namespace Melee
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Notice"; }
+		const char* GetName() override { return "Melee:Notice"; }
 	};
 
 
@@ -53,8 +53,8 @@ namespace Melee
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Approach"; }
-		bool IsChasing() const override { return true; }// 接近状態である
+		const char* GetName() override { return "Melee:Approach"; }
+		bool IsChasing() override { return true; }// 接近状態である
 
 	private:
 		bool _bHasChecked;// 対峙チェックをしたか
@@ -70,8 +70,8 @@ namespace Melee
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:AttackStart"; }
-		bool IsChasing() const override { return true; }
+		const char* GetName() override { return "Melee:AttackStart"; }
+		bool IsChasing() override { return true; }
 
 	private:
 		enum class AttackType
@@ -88,7 +88,7 @@ namespace Melee
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:AttackCharge"; }
+		const char* GetName() override { return "Melee:AttackCharge"; }
 		bool CanChangeState() override { return false; }
 	};
 
@@ -99,7 +99,7 @@ namespace Melee
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		void Exit(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:AttackExecute"; }
+		const char* GetName() override { return "Melee:AttackExecute"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
 
 	private:
@@ -112,7 +112,7 @@ namespace Melee
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:AttackRecovery"; }
+		const char* GetName() override { return "Melee:AttackRecovery"; }
 	};
 
 	// 突進攻撃溜め
@@ -121,7 +121,7 @@ namespace Melee
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "RushCharge"; }
+		const char* GetName() override { return "RushCharge"; }
 		bool CanChangeState() override { return false; }
 
 	private:
@@ -136,7 +136,7 @@ namespace Melee
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		void Exit(Enemy* owner) override;
-		const char* GetName() const override { return "RushExecute"; }
+		const char* GetName() override { return "RushExecute"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
 
 	private:
@@ -155,7 +155,7 @@ namespace Melee
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "RushRecovery"; }
+		const char* GetName() override { return "RushRecovery"; }
 	};
 
 
@@ -168,7 +168,7 @@ namespace Melee
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:ReturnHome"; }
+		const char* GetName() override { return "Melee:ReturnHome"; }
 		void UpdateSearch(Enemy* owner) override;
 	};
 
@@ -181,7 +181,7 @@ namespace Melee
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Confront"; }
+		const char* GetName() override { return "Melee:Confront"; }
 
 	private:
 		float _fDuration;// 対峙時間

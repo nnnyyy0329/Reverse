@@ -302,7 +302,7 @@ void StageBase::LoadStageDataFromJson(
 	}
 }
 
-int StageBase::GetNextStageNumFromTrigger(const std::string& triggerName)const
+int StageBase::GetNextStageNumFromTrigger(const std::string& triggerName)
 {
 	// トリガー名に応じて次のステージ番号を判定
 	if (triggerName.find("portal_1") != std::string::npos)
