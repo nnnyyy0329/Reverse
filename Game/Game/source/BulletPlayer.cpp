@@ -1,5 +1,6 @@
 #include "BulletPlayer.h"
 #include "BulletManager.h"
+#include "CameraManager.h"
 
 namespace bulletConfig
 {
@@ -67,7 +68,11 @@ void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATT
 // 発射間隔更新
 void BulletPlayer::ProcessShoot()
 {
-	bool putKey = (_key & PAD_INPUT_6) != 0;
+	bool putKey = (_key & PAD_INPUT_6) != 0;	// 発射キー
+	bool aimKey = (_key & PAD_INPUT_5) != 0;	// エイムキー
+
+	// エイムモードの制御
+	ProcessAimMode(aimKey);
 
 	// キーが押された
 	if(putKey)
@@ -147,8 +152,17 @@ void BulletPlayer::ShootBullet()
 		if(_bIsShootFromRightArm){ startPosOffset = bulletConfig::RIGHT_ARM_SHOT_OFFSET; }	// 右腕
 		else{ startPosOffset = bulletConfig::LEFT_ARM_SHOT_OFFSET; }						// 左腕
 
+		// エイム中かどうかで発射方向を決定
+		VECTOR shootDirection = _vDir;
+
+		if(_cameraManager && _cameraManager->IsAimMode())
+		{
+			// エイム中はカメラの向いている方向に発射
+			shootDirection = _cameraManager->GetAimDirection();
+		}
+
 		// 発射位置をワールド座標に変換
-		VECTOR worldOffset = TransOffsetToWorld(startPosOffset, _vDir);
+		VECTOR worldOffset = TransOffsetToWorld(startPosOffset, shootDirection);
 
 		// 弾情報設定
 		bulletManager->Shoot
@@ -160,6 +174,31 @@ void BulletPlayer::ShootBullet()
 			bulletConfig::LIFE_TIME,
 			_eCharaType
 		);
+	}
+}
+
+// エイムモードの処理
+void BulletPlayer::ProcessAimMode(bool aimKey)
+{
+	// エイムキーが押されているなら
+	if(aimKey)
+	{
+		// エイムキーが押されたら
+		if(_cameraManager && !_cameraManager->IsAimMode())
+		{
+			// エイムモード開始
+			_cameraManager->StartAimMode();
+		}
+	}
+	// エイムキーが押されていないなら
+	else
+	{
+		// エイムキーが離されたら
+		if(_cameraManager && _cameraManager->IsAimMode())
+		{
+			// エイムモード終了
+			_cameraManager->EndAimMode();
+		}
 	}
 }
 
@@ -228,8 +267,10 @@ PlayerAnimations BulletPlayer::GetPlayerAnimation()
 	// 裏プレイヤー用のアニメーション設定
 	PlayerAnimations animation;
 
-	animation.movement.wait			= "player_idle_00";
-	animation.movement.walk			= "player_walk_00";
+	animation.movement.wait			= "player_damage_00";
+	animation.movement.walk			= "player_damage_00";
+	//animation.movement.wait			= "player_idle_00";
+	//animation.movement.walk			= "player_walk_00";
 	animation.movement.run			= "player_jog_00";
 	animation.movement.jumpUp		= "";
 	animation.movement.jumpDown		= "";

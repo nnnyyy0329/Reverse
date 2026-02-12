@@ -37,15 +37,6 @@ protected:
 	// ターゲットとなるゲームオブジェクト
 	std::shared_ptr<PlayerBase> _targetObject;
 
-	// 入力状態
-	int _key = 0;
-	int _trg = 0;
-	float _lx = 0.0f;
-	float _ly = 0.0f;
-	float _rx = 0.0f;
-	float _ry = 0.0f;
-	float _analogMin = 0.0f;
-
 	float _distance;	// 注視点からカメラまでの距離
 	float _angleH;		// 水平方向の角度(ラジアン)
 	float _angleV;		// 垂直方向の角度(ラジアン)

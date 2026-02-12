@@ -12,6 +12,7 @@
 #include "CameraManager.h"
 #include "GameCamera.h"
 #include "DebugCamera.h"
+#include "AimCamera.h"
 
 #include "BulletManager.h"
 #include "AttackManager.h"
@@ -102,6 +103,9 @@ bool ModeGame::Initialize()
 		_gameCamera->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
 
 		_debugCamera = std::make_shared<DebugCamera>();
+
+		_aimCamera = std::make_shared<AimCamera>();
+		_aimCamera->SetTarget(_playerManager->GetActivePlayerShared());
 	}
 
 	// 敵設定
@@ -167,8 +171,10 @@ bool ModeGame::Process()
 	auto analog = ApplicationMain::GetInstance()->GetAnalog();
 	float lx = analog.lx;
 	float ly = analog.ly;
+	float lz = analog.lz;
 	float rx = analog.rx;
 	float ry = analog.ry;
+	float rz = analog.rz;
 	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
 
 	/// 入力取得
@@ -229,9 +235,16 @@ bool ModeGame::Process()
 
 	// クラスセット
 	{
+		_cameraManager->SetPlayer(_playerManager->GetActivePlayerShared());	// アクティブプレイヤーを設定
 		_cameraManager->SetGameCamera(_gameCamera);
 		_cameraManager->SetDebugCamera(_debugCamera);
+		_cameraManager->SetAimCamera(_aimCamera);
+		_playerManager->SetCameraManager(_cameraManager);	// プレイヤーマネージャーにカメラマネージャーを設定
 		_playerLifeBarUI->SetPlayerManager(_playerManager);
+
+		// 弾丸プレイヤーにカメラマネージャーを設定
+		auto bulletPlayer = std::dynamic_pointer_cast<BulletPlayer>(_playerManager->GetPlayerByType(PLAYER_TYPE::BULLET));
+		if(bulletPlayer){ bulletPlayer->SetCameraManager(_cameraManager); }
 	}
 
 	// オブジェクトの更新
@@ -294,6 +307,7 @@ bool ModeGame::Process()
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
 
 		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
+		_aimCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
 		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
 
 		// 敵にターゲットのプレイヤーを設定

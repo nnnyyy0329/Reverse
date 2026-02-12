@@ -14,6 +14,7 @@ class DodgeSystem;
 class CameraManager;
 class GameCamera;
 class DebugCamera;
+class AimCamera;
 
 class BulletManager;
 class AttackManager;
@@ -72,6 +73,7 @@ protected:
 	std::shared_ptr<StageBase>			_stage;					// ステージ
 	std::shared_ptr<GameCamera>			_gameCamera;			// ゲームカメラ
 	std::shared_ptr<DebugCamera>		_debugCamera;			// デバッグカメラ
+	std::shared_ptr<AimCamera>			_aimCamera;				// エイムカメラ
 	///std::shared_ptr<ShieldBase>			_shieldBase;			// シールドベース
 	std::shared_ptr<DodgeSystem>		_dodgeSystem;			// 回避システム
 	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;	// 能力選択画面
@@ -88,6 +90,9 @@ protected:
 	std::shared_ptr<StaminaUI>			_staminaUI;				// スタミナUI
 	std::shared_ptr<PlayerLifeBarUI>	_playerLifeBarUI;		// プレイヤーライフバーUI
 
+	// ベクターコンテナ
+	std::vector<LightInfo>	_lights;	// 生成されたライトを管理
+
 	// シングルトン取得
 	AttackManager* _attackManager = nullptr;
 	EnergyManager* _energyManager = nullptr;
@@ -96,9 +101,6 @@ protected:
 	bool _bViewDebugInfo;	// デバッグ情報表示
 	bool _bViewCollision;	// 当たり判定表示
 	bool _bUseCollision;	// 当たり判定有効
-
-	// ベクターコンテナ
-	std::vector<LightInfo>	_lights;	// 生成されたライトを管理
 
 	bool _bIsStageChanging;// ステージ切り替え中フラグ
 	int _currentStageNum;// 現在のステージ番号

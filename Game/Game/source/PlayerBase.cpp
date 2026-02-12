@@ -18,6 +18,8 @@ namespace
 
 PlayerBase::PlayerBase()
 {
+	_cameraManager = nullptr;	// カメラマネージャー
+
 	// キャラの状態初期化
 	_playerState.movementState = PLAYER_MOVEMENT_STATE::NONE;
 	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;

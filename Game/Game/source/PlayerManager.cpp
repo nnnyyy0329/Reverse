@@ -4,9 +4,12 @@
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
 #include "EnergyManager.h"
+#include "CameraManager.h"
 
 PlayerManager::PlayerManager()
 {
+	_cameraManager = nullptr;	// カメラマネージャー
+
 	_activePlayer = nullptr;
 	_activePlayerType = PLAYER_TYPE::SURFACE;
 
@@ -42,7 +45,8 @@ bool PlayerManager::Process()
 	// アクティブプレイヤーの処理
 	if(_activePlayer)
 	{
-		_activePlayer->SetInput(_key, _trg, _lx, _ly, _rx, _ry, _analogMin);
+		_activePlayer->SetInput(_key, _trg, _lx, _ly, _rx, _ry, _analogMin);	// 入力状態設定
+		_activePlayer->SetCameraManager(_cameraManager);						// カメラマネージャー設定
 		_activePlayer->Process();
 	}
 

@@ -1,6 +1,7 @@
 ﻿// 担当 : 成田
 
 #include "PlayerBase.h"
+#include "CameraManager.h" 
 
 // 共通関数呼び出し
 void PlayerBase::CallProcess()
@@ -28,7 +29,7 @@ void PlayerBase::ProcessMovePlayer()
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
 	if(IsAttacking()){ return; }	// 攻撃中は移動入力を受け付けない
-	if(IsShooting()){ return; }		// 発射中は移動入力を受け付けない
+	//if(IsShooting()){ return; }		// 発射中は移動入力を受け付けない
 	if(IsDodging()){ return; }		// 回避中は移動入力を受け付けない
 	if(IsHitStop()){ return; }		// 被弾中は移動入力を受け付けない
 
@@ -50,33 +51,8 @@ void PlayerBase::ProcessMovePlayer()
 			_fMoveSpeed = _playerConfig.normalMoveSpeed;
 		}
 
-		// アナログ入力による移動
-		if(abs(_lx) > _analogMin || abs(_ly) > _analogMin)
-		{
-			// カメラの向いている方向のベクトル
-			VECTOR cameraForward = VGet(cos(_cameraAngle), 0.0f, sin(_cameraAngle));
-			VECTOR cameraRight = VGet(cos(_cameraAngle + DX_PI_F / 2.0f), 0.0f, sin(_cameraAngle + DX_PI_F / 2.0f));
-
-			// 移動量を計算
-			_vMove = VAdd
-			(
-				VScale(cameraForward, _ly),	// 前後移動
-				VScale(cameraRight, _lx)	// 左右移動
-			);
-
-			// 正規化
-			float len = VSize(_vMove);
-			if(len > 0.0f)
-			{
-				_vMove = VScale(_vMove, 1.0f / len);
-			}
-
-			// ダッシュ入力
-			if(_key & PAD_INPUT_5)
-			{
-				_fMoveSpeed += _playerConfig.dashMoveSpeed;
-			}
-		}
+		// 入力に応じた移動処理
+		ProcessInputMove();
 
 		// 位置更新
 		_vPos = VAdd(_vPos, VScale(_vMove, _fMoveSpeed));
@@ -87,6 +63,74 @@ void PlayerBase::ProcessMovePlayer()
 	if(animManager != nullptr)
 	{
 		MV1SetPosition(animManager->GetModelHandle(), _vPos);
+	}
+}
+
+// 入力に応じた移動処理
+void PlayerBase::ProcessInputMove()
+{
+	// アナログ入力による移動
+	if(abs(_lx) > _analogMin || abs(_ly) > _analogMin)
+	{
+		// カメラの水平角度を取得
+		float currentCameraAngle;
+
+		// カメラマネージャーがあれば
+		if(_cameraManager)
+		{
+			// 現在のカメラの水平角度を取得して移動方向を変換する
+			currentCameraAngle = _cameraManager->GetCurrentCameraAngleH();
+		}
+		// なければプレイヤーのカメラ角度を使用する
+		else
+		{
+			currentCameraAngle = _cameraAngle;
+		}
+
+		VECTOR cameraForward;	// カメラの向いている方向のベクトル
+		VECTOR cameraRight;		// カメラの右方向のベクトル
+
+		// カメラタイプによってベクトルを変える
+		switch(_cameraManager->GetCameraType())
+		{
+			case CAMERA_TYPE::GAME_CAMERA: // ゲームカメラ
+			{
+				// カメラの向いている方向のベクトル
+				cameraForward = VGet(cos(currentCameraAngle), 0.0f, sin(currentCameraAngle));
+				cameraRight = VGet(cos(currentCameraAngle + DX_PI_F / 2.0f), 0.0f, sin(currentCameraAngle + DX_PI_F / 2.0f));
+
+				break;
+			}
+
+			case CAMERA_TYPE::AIM_CAMERA: // エイムカメラ
+			{
+				// カメラの向いている方向のベクトル
+				cameraForward = VGet(-sin(currentCameraAngle), 0.0f, -cos(currentCameraAngle));
+				cameraRight = VGet(cos(currentCameraAngle), 0.0f, -sin(currentCameraAngle));
+
+				break;
+			}
+		}
+
+		// 移動量を計算
+		_vMove = VAdd
+		(
+			VScale(cameraForward, _ly),	// 前後移動
+			VScale(cameraRight, _lx)	// 左右移動
+		);
+
+		// 正規化
+		float len = VSize(_vMove);
+		if(len > 0.0f)
+		{
+			_vMove = VScale(_vMove, 1.0f / len);
+		}
+
+		// ダッシュ入力
+		if(_key & PAD_INPUT_9)
+		{
+			_fMoveSpeed += _playerConfig.dashMoveSpeed;
+		}
 	}
 }
 
@@ -126,17 +170,29 @@ void PlayerBase::ProcessStatusAnimation()
 	// 地上にいる場合
 	else
 	{
-		bool isWalking = VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f;
-		bool isRunning = (_key & PAD_INPUT_5) != 0;
+		bool isWalking = VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f;	// 移動入力があるかどうかをチェック
+		bool isRunning = (_key & PAD_INPUT_9) != 0;						// ダッシュ入力があるかどうかをチェック
+		bool isAiming = _cameraManager && _cameraManager->IsAimMode();	// エイム中かどうかをチェック
 
-		if(isWalking && isRunning) // 走っているなら
+		// 走っているなら
+		if(isWalking && isRunning) 
 		{
-			_vDir = _vMove;												// 移動方向を向く
+			// エイム中でなければ移動方向を向く
+			if(!isAiming)
+			{
+				_vDir = _vMove;	// 移動方向を向く
+			}
+
 			_playerState.movementState = PLAYER_MOVEMENT_STATE::RUN;	// 走行
 		}
 		else if(isWalking) // 歩いているなら
 		{
-			_vDir = _vMove;												// 移動方向を向く
+			// エイム中でなければ移動方向を向く
+			if(!isAiming)
+			{
+				_vDir = _vMove;	// 移動方向を向く
+			}
+
 			_playerState.movementState = PLAYER_MOVEMENT_STATE::WALK;	// 歩行
 		}
 		else // 止まっているなら

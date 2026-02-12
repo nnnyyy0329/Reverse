@@ -1,12 +1,8 @@
 #pragma once
 #include "PlayerBase.h"
 
-struct BulletConfig
-{
-
-};
-
 class BulletManager;
+class CameraManager;
 
 class BulletPlayer : public PlayerBase
 {
@@ -23,7 +19,9 @@ public:
 
 	void ProcessShoot()override;												// 基底クラスの弾発射関数のオーバーライド
 	void ShootBullet();															// 弾の発射
+	void ProcessAimMode(bool aimKey);											// エイムモードの処理
 	VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir);	// オフセット位置をワールド座標に変換
+
 	void DrawShootIntervalTime();												// 弾発射時間のデバッグ表示
 
 	// 純粋仮想関数のオーバーライド
@@ -37,9 +35,11 @@ public:
 
 	// クラス設定
 	void SetBulletManager(std::shared_ptr<BulletManager>bulletManager){ _bulletManager = bulletManager; }	// マネージャーをセット
+	void SetCameraManager(std::shared_ptr<CameraManager>cameraManager){ _cameraManager = cameraManager; }	// カメラマネージャーをセット
 
 protected:
 	std::weak_ptr<BulletManager>_bulletManager;
+	std::shared_ptr<CameraManager>_cameraManager;
 
 	float _shootIntervalTimer;	// 発射間隔タイマー
 	bool _bIsShootFromRightArm;	// 右腕から発射したかどうか

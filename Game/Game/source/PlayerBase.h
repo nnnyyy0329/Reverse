@@ -7,6 +7,9 @@
 //#include "ShieldBase.h"
 #include "PlayerShieldSystem.h"
 
+// 前方宣言
+class CameraManager;
+
 // プレイヤー設定データ構造体
 struct PlayerConfig
 {
@@ -198,6 +201,7 @@ public:
 	// 共通処理
 	void CallProcess();				// Process呼び出し用関数
 	void ProcessMovePlayer();		// 移動処理
+	void ProcessInputMove();		// 移動入力処理
 	void ProcessCollisionPos();		// コリジョン位置更新処理
 	void ProcessStatusAnimation();	// 状態別アニメーション処理
 	void ProcessPlayAnimation();	// アニメーション処理
@@ -258,6 +262,7 @@ public:
 
 	// システム設定
 	void SetDodgeSystem(std::shared_ptr<DodgeSystem> dodgeSystem) { _dodgeSystem = dodgeSystem; }
+	void SetCameraManager(std::shared_ptr<CameraManager> cameraManager) { _cameraManager = cameraManager; }
 	
 protected:	// 攻撃関係
 
@@ -326,6 +331,8 @@ protected: 	// シールド関係
 	virtual ShieldConfig GetShieldConfig() = 0;
 
 protected:
+
+	std::shared_ptr<CameraManager> _cameraManager;	// カメラマネージャー
 
 	// 共通の設定
 	PlayerConfig		_playerConfig;	// プレイヤー設定データ

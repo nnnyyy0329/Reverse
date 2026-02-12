@@ -5,6 +5,9 @@
 #include "PlayerBase.h"
 #include "AbilitySelectScreen.h"
 
+// 前方宣言
+class CameraManager;
+
 // プレイヤータイプ列挙型
 enum class PLAYER_TYPE
 {
@@ -53,7 +56,12 @@ public:
 		_analogMin = analogMin;
 	}
 
+	// クラスセット
+	void SetCameraManager(std::shared_ptr<CameraManager> cameraManager) { _cameraManager = cameraManager; }
+
 protected:
+	std::shared_ptr<CameraManager> _cameraManager;
+
 	PlayerBase* _activePlayer;
 	PLAYER_TYPE _activePlayerType;
 	std::unordered_map<PLAYER_TYPE, std::shared_ptr<PlayerBase>> _players;
