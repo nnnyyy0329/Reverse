@@ -5,7 +5,7 @@
 
 namespace
 {
-	const float DODGE_STAMINA_COST = 10.0f;	// 回避時のスタミナ消費量
+	constexpr float DODGE_STAMINA_COST = 10.0f;	// 回避時のスタミナ消費量
 }
 
 // 回避情報初期化

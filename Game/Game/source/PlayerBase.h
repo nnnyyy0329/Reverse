@@ -192,6 +192,8 @@ public:
 	void InitializeAttackData();								// 攻撃データ初期化
 	void InitializeDodgeData();									// 回避データ初期化
 	void InitializeShieldData();								// シールドデータ初期化
+	void InitializeState();										// 状態初期化
+	void InitializeAnimation();									// アニメーション初期化
 
 	// 共通処理
 	void CallProcess();				// Process呼び出し用関数

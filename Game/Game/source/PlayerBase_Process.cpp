@@ -2,7 +2,7 @@
 
 #include "PlayerBase.h"
 
-// 共通関数呼び出し😊
+// 共通関数呼び出し
 void PlayerBase::CallProcess()
 {
 	// プレイヤー移動処理

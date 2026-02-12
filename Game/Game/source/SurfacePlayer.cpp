@@ -5,14 +5,14 @@
 namespace
 {
 	// 基礎ステータス定数
-	const float GRAVITY = -0.6f;		// 重力加速度
-	const float DEFAULT_LIFE = 100.0f;	// デフォルト体力
-	const float MAX_LIFE = 100.0f;		// 最大体力
+	constexpr float GRAVITY = -0.6f;		// 重力加速度
+	constexpr float DEFAULT_LIFE = 100.0f;	// デフォルト体力
+	constexpr float MAX_LIFE = 100.0f;		// 最大体力
 
 	// 表示用定数
-	const int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
-	const int DRAW_OFFSET_X = 900;		// 描画Xオフセット
-	const int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
+	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
+	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
+	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
 }
 
 SurfacePlayer::SurfacePlayer()
@@ -77,7 +77,7 @@ PlayerConfig SurfacePlayer::GetPlayerConfig()
 	// 移動速度設定
 	config.crouchMoveSpeed = 2.0f;				
 	config.normalMoveSpeed = 5.0f;				
-	config.dashMoveSpeed = 52.5f;			
+	config.dashMoveSpeed = 2.5f;			
 
 	// 基礎ステータス
 	config.life = 100.0f;						

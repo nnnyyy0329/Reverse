@@ -151,6 +151,9 @@
     <ClCompile Include="source\EnemyState.cpp">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClCompile>
+    <ClCompile Include="source\AimCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -290,6 +293,9 @@
     </ClInclude>
     <ClInclude Include="source\PlayerShieldSystem.h">
       <Filter>GameObject\CharaBase\PlayerBase\System\Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AimCamera.h">
+      <Filter>Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

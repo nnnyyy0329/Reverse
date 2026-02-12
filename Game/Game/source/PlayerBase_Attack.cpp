@@ -5,8 +5,8 @@
 
 namespace
 {
-	const int INTERIOR_PLAYER_ID = 1;	// 裏プレイヤーID
-	const int SURFACE_PLAYER_ID = 2;	// 表プレイヤーID
+	constexpr int INTERIOR_PLAYER_ID = 1;	// 裏プレイヤーID
+	constexpr int SURFACE_PLAYER_ID = 2;	// 表プレイヤーID
 }
 
 // 攻撃コリジョンの設定

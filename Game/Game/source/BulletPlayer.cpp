@@ -5,9 +5,9 @@ namespace bulletConfig
 {
 	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(15, 70, 0);
 	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 70, 0);
-	const float RADIUS = 10.0f;
-	const float SPEED = 15.0f;
-	const float LIFE_TIME = 120.0f;
+	constexpr float RADIUS = 10.0f;
+	constexpr float SPEED = 15.0f;
+	constexpr float LIFE_TIME = 120.0f;
 }
 
 BulletPlayer::BulletPlayer()
@@ -39,9 +39,6 @@ bool BulletPlayer::Process()
 {
 	PlayerBase::Process();
 
-	// 入力確認
-	ShootByInput();
-
 	return true;
 }
 
@@ -65,15 +62,6 @@ void BulletPlayer::DebugRender()
 void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
 {
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
-}
-
-// 入力確認
-void BulletPlayer::ShootByInput()
-{
-	bool putKey = (_key & PAD_INPUT_6) != 0;
-	
-	// 発射間隔更新
-	//ShootIntervalUpdate(putKey);
 }
 
 // 発射間隔更新
@@ -128,9 +116,17 @@ void BulletPlayer::ProcessShoot()
 		_shootIntervalTimer--; // カウントを減らす
 		if(_shootIntervalTimer <= 0.0f)
 		{
+			// 古いステートを保存
+			PlayerState oldState = _playerState;
+
 			// 状態リセット
 			_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
 			_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;
+
+			// アニメーション更新
+			_oldPlayerState = oldState;		// 変更前の状態を設定
+			ProcessPlayAnimation();			// アニメーション更新
+			_oldPlayerState = _playerState; // 更新後の状態に同期
 		}
 	}
 }
@@ -151,10 +147,13 @@ void BulletPlayer::ShootBullet()
 		if(_bIsShootFromRightArm){ startPosOffset = bulletConfig::RIGHT_ARM_SHOT_OFFSET; }	// 右腕
 		else{ startPosOffset = bulletConfig::LEFT_ARM_SHOT_OFFSET; }						// 左腕
 
+		// 発射位置をワールド座標に変換
+		VECTOR worldOffset = TransOffsetToWorld(startPosOffset, _vDir);
+
 		// 弾情報設定
 		bulletManager->Shoot
 		(
-			VAdd(_vPos, startPosOffset),
+			VAdd(_vPos, worldOffset),
 			_vDir,
 			bulletConfig::RADIUS,
 			bulletConfig::SPEED,
@@ -162,6 +161,38 @@ void BulletPlayer::ShootBullet()
 			_eCharaType
 		);
 	}
+}
+
+// オフセット位置をワールド座標に変換
+VECTOR BulletPlayer::TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir)
+{
+	// プレイヤーの向きベクトルの正規化
+	VECTOR dirNorm = VNorm(playerDir);
+
+	// 上ベクトル設定
+	VECTOR upVec = VGet(0.0f, 1.0f, 0.0f);
+
+	// 外積で右ベクトルを計算
+	VECTOR rightVec = VCross(upVec, dirNorm);	
+
+	// 右ベクトルの正規化
+	rightVec = VNorm(rightVec);
+
+	// ワールド座標に変換
+	VECTOR worldPos = VAdd
+	(
+		// 右ベクトルと上ベクトルの合成位置
+		VAdd
+		(
+			VScale(rightVec, offset.x),
+			VScale(upVec, offset.y)
+		),
+
+		// 前方向ベクトルのスケーリング位置
+		VScale(dirNorm, offset.z)
+	);
+
+	return worldPos;
 }
 
 // 弾プレイヤーの情報設定
@@ -254,11 +285,11 @@ DodgeConfig BulletPlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType = DODGE_CHARA::BULLET_PLAYER;
-	config.invincibleDuration = 20.0f;  // 無敵時間（短め）
-	config.startTime = 3.0f;            // 開始時間（早め）
-	config.activeTime = 15.0f;          // アクティブ時間（短め）
-	config.recoveryTime = 8.0f;         // 硬直時間（短め）
-	config.dodgeMoveSpeed = 12.0f;      // 移動速度（高速）
+	config.invincibleDuration = 20.0f;  // 無敵時間
+	config.startTime = 3.0f;            // 開始時間
+	config.activeTime = 15.0f;          // アクティブ時間
+	config.recoveryTime = 8.0f;         // 硬直時間
+	config.dodgeMoveSpeed = 12.0f;      // 移動速度
 
 	return config;
 }
@@ -277,5 +308,5 @@ void BulletPlayer::DrawShootIntervalTime()
 {
 	if(_shootIntervalTimer <= 0.0f){ return; }
 
-	DrawFormatString(1100, 310, GetColor(255, 255, 255), "%3.2f", _shootIntervalTimer);
+	DrawFormatString(10, 510, GetColor(255, 255, 255), "弾発射カウント: %3.2f", _shootIntervalTimer);
 }

@@ -2,17 +2,17 @@
 
 namespace Render
 {
-	const int SELECT_DRAW_X = 256;
-	const int SELECT_DRAW_Y = 850;
-	const int DRAW_OFFSET_X = 10;
-	const int DRAW_OFFSET_Y = 0;
+	constexpr int SELECT_DRAW_X = 256;
+	constexpr int SELECT_DRAW_Y = 850;
+	constexpr int DRAW_OFFSET_X = 10;
+	constexpr int DRAW_OFFSET_Y = 0;
 }
 
 namespace
 {
-	const int MIN_SELECT = 0;	// 最小選択肢
-	const int MAX_SELECT = 2;	// 最大選択肢
-	const int BLINK_SPEED = 15;	// 点滅速度
+	constexpr int MIN_SELECT = 0;	// 最小選択肢
+	constexpr int MAX_SELECT = 2;	// 最大選択肢
+	constexpr int BLINK_SPEED = 15;	// 点滅速度
 }
 
 AbilitySelectScreen::AbilitySelectScreen()

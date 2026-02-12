@@ -6,9 +6,9 @@
 // 被弾設定
 namespace HitConfig
 {
-	const float HIT_SPEED = 5.0f;	// 被弾時の吹き飛び速度
-	const float HIT_DECAY = 0.9f;	// 被弾時の吹き飛び減衰率
-	const float HIT_TIME = 30.0f;	// 被弾時間
+	constexpr float HIT_SPEED = 5.0f;	// 被弾時の吹き飛び速度
+	constexpr float HIT_DECAY = 0.9f;	// 被弾時の吹き飛び減衰率
+	constexpr float HIT_TIME = 30.0f;	// 被弾時間
 }
 
 namespace
@@ -42,18 +42,27 @@ PlayerBase::~PlayerBase()
 
 bool PlayerBase::Initialize()
 {
-	_playerConfig = GetPlayerConfig();
-	_playerAnim = GetPlayerAnimation();
-	_renderConfig = GetRenderConfig();     
+	_playerConfig = GetPlayerConfig();	// プレイヤー設定取得
+	_playerAnim = GetPlayerAnimation();	// プレイヤーアニメーション名データ取得
+	_renderConfig = GetRenderConfig();	// 表示設定データ取得
 
 	// 共通初期化
 	InitializePlayerConfig(_playerConfig);
+
+	// 攻撃データの初期化
+	InitializeAttackData();
 
 	// 回避データの初期化
 	InitializeDodgeData();
 
 	// シールドシステム初期化
 	//InitializeShieldData();
+
+	// 状態初期化
+	InitializeState();
+
+	// アニメーション初期化
+	InitializeAnimation();
 
 	return true;
 }
@@ -68,12 +77,6 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	// 位置の初期化
 	_vPos = config.startPos;
 	_vDir = VGet(0, 0, -1);
-
-	// 基礎ステータスの初期化
-	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 待機状態
-	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
-	_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
-	_playerState.combatState = PLAYER_COMBAT_STATE::NONE;
 
 	_fMoveSpeed = 0.0f;			// 移動速度
 	_fDirSpeed = 0.0f;			// 回転速度
@@ -107,9 +110,6 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	_fHitSpeed = 0.0f;			// 被弾速度
 	_fHitSpeedDecay = 0.0f;		// 被弾速度減衰率
 	_fHitTime = 0.0f;			// 被弾時間
-
-	// 攻撃データの初期化
-	InitializeAttackData();
 }
 
 // 被弾設定初期化
@@ -136,6 +136,35 @@ void PlayerBase::InitializeShieldData()
 
 	// 初期化
 	_shieldSystem->Initialize();
+}
+
+// 状態初期化
+void PlayerBase::InitializeState()
+{
+	// 基礎ステータスの初期化
+	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 待機状態
+	_playerState.attackState   = PLAYER_ATTACK_STATE::NONE;
+	_playerState.shootState	   = PLAYER_SHOOT_STATE::NONE;
+	_playerState.combatState   = PLAYER_COMBAT_STATE::NONE;
+
+	// 古いステートを異なる値に設定して状態変化を認識させる
+	_oldPlayerState.movementState = PLAYER_MOVEMENT_STATE::NONE;
+	_oldPlayerState.attackState   = PLAYER_ATTACK_STATE::NONE;
+	_oldPlayerState.shootState	  = PLAYER_SHOOT_STATE::NONE;
+	_oldPlayerState.combatState   = PLAYER_COMBAT_STATE::NONE;
+}
+
+// アニメーション初期化
+void PlayerBase::InitializeAnimation()
+{
+	AnimManager* animManager = GetAnimManager();
+
+	const char* waitAnimName = _playerAnim.movement.wait;
+	if(waitAnimName != nullptr)
+	{
+		// 待機アニメーションを設定
+		animManager->ChangeAnimationByName(waitAnimName, 0.0f, 0);
+	}
 }
 
 bool PlayerBase::Terminate()

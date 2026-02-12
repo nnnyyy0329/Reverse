@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\AbilitySelectScreen.cpp" />
+    <ClCompile Include="source\AimCamera.cpp" />
     <ClCompile Include="source\AnimManager.cpp" />
     <ClCompile Include="source\ApplicationGlobal.cpp" />
     <ClCompile Include="source\ApplicationMain.cpp" />
@@ -215,6 +216,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilitySelectScreen.h" />
+    <ClInclude Include="source\AimCamera.h" />
     <ClInclude Include="source\AnimManager.h" />
     <ClInclude Include="source\ApplicationGlobal.h" />
     <ClInclude Include="source\ApplicationMain.h" />

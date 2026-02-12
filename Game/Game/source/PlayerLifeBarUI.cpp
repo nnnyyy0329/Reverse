@@ -4,10 +4,10 @@
 namespace
 {
 	// ‰æ‘œ•\Ž¦—p
-	const int DRAW_BAR_FRAME_X = 216;
-	const int DRAW_BAR_FRAME_Y = 1000;
-	const int DRAW_OFFSET_X = 6;
-	const int DRAW_OFFSET_Y = 6;
+	constexpr int DRAW_BAR_FRAME_X = 216;
+	constexpr int DRAW_BAR_FRAME_Y = 1000;
+	constexpr int DRAW_OFFSET_X = 6;
+	constexpr int DRAW_OFFSET_Y = 6;
 }
 
 PlayerLifeBarUI::PlayerLifeBarUI()

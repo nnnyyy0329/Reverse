@@ -2,8 +2,8 @@
 
 namespace
 {
-	const float ZERO = 0.0f;		// ゼロ
-	const float TIME_STEP = 1.0f;	// タイムステップ
+	constexpr float ZERO = 0.0f;		// ゼロ
+	constexpr float TIME_STEP = 1.0f;	// タイムステップ
 }
 
 DodgeSystem::DodgeSystem()
