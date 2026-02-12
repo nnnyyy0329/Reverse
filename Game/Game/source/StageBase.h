@@ -51,7 +51,7 @@ public:
 	const std::vector<TRIGGERPOS>& GetTriggerList() const { return _triggerList; }
 
 	// ステージ切り替え
-	int GetNextStageNumFromTrigger(const std::string& triggerName)const;// トリガー名から次のステージ番号を取得
+	int GetNextStageNumFromTrigger(const std::string& triggerName);// トリガー名から次のステージ番号を取得
 
 	// jsonファイルからステージデータを読み込む
 	void LoadStageDataFromJson(
