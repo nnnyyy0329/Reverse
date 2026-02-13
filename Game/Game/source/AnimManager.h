@@ -51,6 +51,8 @@ private:
 		float fPlayTime;// 現在の再生時間
 		float fCloseTime;// ブレンド終了までの時間
 		float fCloseTotalTime;// ブレンド終了の総時間
+		float fFadeInTime;// フェードイン時間
+		float fFadeInTotalTime;// フェードインの総時間
 		int loopCnt;// ループ回数(0:無限ループ　1:ループ無し　2以上:指定回数ループ)
 		float fPlaySpeed;// 再生速度
 		bool bIsFinished;// アニメーションが終わったか

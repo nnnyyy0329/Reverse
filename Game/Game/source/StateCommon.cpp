@@ -16,6 +16,8 @@ namespace
 
 	// 判定閾値
 	constexpr auto KNOCKBACK_MIN_DISTANCE = 0.001f;// ノックバック方向計算の最小距離
+
+	constexpr auto BLEND_FRAME = 10.0f;// アニメーションブレンドフレーム数
 }
 
 namespace Common
@@ -55,7 +57,7 @@ namespace Common
 		// ここでアニメーション設定
 		// 敵の種類ごとのアニメーション名を取得
 		const auto& param = owner->GetEnemyParam();
-		owner->GetAnimManager()->ChangeAnimationByName(param.animDamage, 1.0f, 1);
+		owner->GetAnimManager()->ChangeAnimationByName(param.animDamage, BLEND_FRAME, 1);
 	}
 
 	std::shared_ptr<EnemyState> Damage::Update(Enemy* owner) 
@@ -107,7 +109,7 @@ namespace Common
 
 		// ここでアニメーション設定
 		const auto& param = owner->GetEnemyParam();
-		owner->GetAnimManager()->ChangeAnimationByName(param.animDead, 1.0f, 1);
+		owner->GetAnimManager()->ChangeAnimationByName(param.animDead, BLEND_FRAME, 1);
 	}
 
 	std::shared_ptr<EnemyState> Dead::Update(Enemy* owner)
@@ -195,7 +197,7 @@ namespace Common
 
 		// ここでアニメーション設定
 		const auto& param = owner->GetEnemyParam();
-		owner->GetAnimManager()->ChangeAnimationByName(param.animDown, 1.0f, 1);
+		owner->GetAnimManager()->ChangeAnimationByName(param.animDown, BLEND_FRAME, 1);
 	}
 
 	std::shared_ptr<EnemyState> Down::Update(Enemy* owner)

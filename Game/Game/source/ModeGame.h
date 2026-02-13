@@ -106,14 +106,18 @@ protected:
 	int _currentStageNum;// 現在のステージ番号
 
 private:
-	void CheckCollisionCharaMap	(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
+	void CheckCollisionCharaMap	(std::shared_ptr<CharaBase> chara);// キャラとマップの当たり判定
 	void CheckCollisionCharaChara(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);// キャラ同士の当たり判定
-	void CheckHitCharaBullet	(std::shared_ptr<CharaBase> chara);										// キャラと弾の当たり判定
+	void CheckCollisionCameraMap();// カメラとマップの当たり判定
+	void CheckHitCharaBullet	(std::shared_ptr<CharaBase> chara);// キャラと弾の当たり判定
+	void CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player);// プレイヤーとトリガーの当たり判定
+
+
+
 	void CheckActiveAttack		(std::shared_ptr<CharaBase> chara);										// 有効な攻撃のチェック
 	void CheckHitCharaAttackCol	(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
 	void ConvertEnergy			(std::shared_ptr<AttackBase> attack, float damage);						// ダメージをエネルギーに変換する
-	void CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player);// プレイヤーとトリガーの当たり判定
-	bool OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);					// 攻撃所有者が自分に攻撃しているかどうか
+	bool OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);						// 攻撃所有者が自分に攻撃しているかどうか
 
 	// ライト関連
 	void InitializeLights();// ライト初期化

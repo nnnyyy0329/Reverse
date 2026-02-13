@@ -335,6 +335,8 @@ bool ModeGame::Process()
 	// ƒJƒƒ‰XV
 	_cameraManager->Process();
 
+	CheckCollisionCameraMap();
+
 	return true;
 }
 

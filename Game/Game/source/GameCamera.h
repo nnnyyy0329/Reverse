@@ -23,6 +23,8 @@ public:
 	VECTOR GetVTarget() const { return _vTarget; }		// 注視点を取得
 	float GetCameraAngleH() const { return _angleH; }	// カメラの水平角度を取得
 
+	void SetVPos(const VECTOR& pos) { _vPos = pos; }// カメラ位置を設定
+
 	// ターゲットを設定する関数
 	void SetTarget(std::shared_ptr<PlayerBase> target);
 
