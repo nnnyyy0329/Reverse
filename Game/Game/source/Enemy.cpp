@@ -76,6 +76,8 @@ bool Enemy::Initialize()
 	_bIsExist = true;
 	_bCanRemove = false;
 
+	_defaultColor = MV1GetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0);
+
 	// ランダムなオフセットを適用して動きをずらす
 	ApplyRandomOffset();
 
@@ -104,6 +106,11 @@ bool Enemy::Process()
 	{
 		// ステートが索敵処理を持っていれば実行
 		_currentState->UpdateSearch(this);
+	}
+
+	if (_bIsColorChanged)
+	{
+		UpdateColorChange();
 	}
 
 	// ステート更新
@@ -550,6 +557,11 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	// 生存時:通常ダメージ
 	_damageCnt++;// ダメージ回数をカウントアップ
 
+	// リアクションとしてマテリアルカラーを赤くする
+	COLOR_F red = GetColorF(1.0f, 0.0f, 0.0f, 1.0f);
+	MV1SetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0, red);
+	_bIsColorChanged = true;
+
 	// Down回数に達したら直接Downステートへ遷移
 	if (_damageCnt >= _enemyParam.damageToDown)
 	{
@@ -734,4 +746,16 @@ bool Enemy::CheckLineOfSight(VECTOR vStart, VECTOR vEnd)
 	}
 
 	return true;// 視線が通っている
+}
+
+void Enemy::UpdateColorChange()
+{
+	static int changeTimer = 0;
+	changeTimer++;
+	if (changeTimer > 10)
+	{
+		MV1SetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0, _defaultColor);
+		_bIsColorChanged = false;
+		changeTimer = 0;
+	}
 }

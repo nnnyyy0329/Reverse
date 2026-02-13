@@ -48,7 +48,7 @@ namespace
 	constexpr auto ATTACK_DAMAGE = 1.0f;				// 攻撃ダメージ量
 	constexpr auto RUSH_DAMAGE = 1.0f;					// 突進攻撃ダメージ量
 
-	constexpr auto BLEND_FRAME = 1.0f;					// アニメーションブレンドフレーム数
+	constexpr auto BLEND_FRAME = 10.0f;					// アニメーションブレンドフレーム数
 	
 	// 確率制御用定数
 	constexpr auto CONFRONT_PROBABILITY = 40;			// 対峙状態への遷移確率(%)
@@ -387,11 +387,6 @@ namespace Melee
 		}
 
 		// アニメーション設定
-		AnimManager* animManager = owner->GetAnimManager();
-		if (animManager)
-		{
-			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, ANIM_LOOP_COUNT);
-		}
 	}
 
 	std::shared_ptr<EnemyState> AttackStart::Update(Enemy* owner)
@@ -439,11 +434,6 @@ namespace Melee
 		_fTimer = 0.0f;
 
 		// アニメーション設定
-		AnimManager* animManager = owner->GetAnimManager();
-		if (animManager)
-		{
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, ANIM_LOOP_COUNT);
-		}
 	}
 
 	std::shared_ptr<EnemyState> AttackCharge::Update(Enemy* owner)
@@ -570,11 +560,6 @@ namespace Melee
 		}
 
 		// アニメーション設定
-		AnimManager* animManager = owner->GetAnimManager();
-		if (animManager)
-		{
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, ANIM_LOOP_COUNT);
-		}
 	}
 
 	std::shared_ptr<EnemyState> RushCharge::Update(Enemy* owner)

@@ -163,7 +163,16 @@
     <ClCompile Include="source\Mode\ModeServer.cpp" />
     <ClCompile Include="source\Server\EffectServer.cpp" />
     <ClCompile Include="source\Server\ResourceServer.cpp" />
+    <ClCompile Include="source\Server\SoundBase.cpp" />
+    <ClCompile Include="source\Server\SoundBgm.cpp" />
+    <ClCompile Include="source\Server\SoundOneshot.cpp" />
+    <ClCompile Include="source\Server\SoundSe.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="source\Server\SoundServer.cpp" />
+    <ClCompile Include="source\Server\SoundStatic.cpp" />
+    <ClCompile Include="source\Server\SoundStream.cpp" />
+    <ClCompile Include="source\Server\SoundVoice.cpp" />
     <ClCompile Include="source\Vector\Vecto3D.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -184,7 +193,16 @@
     <ClInclude Include="source\Mode\ModeServer.h" />
     <ClInclude Include="source\Server\EffectServer.h" />
     <ClInclude Include="source\Server\ResourceServer.h" />
+    <ClInclude Include="source\Server\SoundBase.h" />
+    <ClInclude Include="source\Server\SoundBgm.h" />
+    <ClInclude Include="source\Server\SoundOneshot.h" />
+    <ClInclude Include="source\Server\SoundSe.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="source\Server\SoundServer.h" />
+    <ClInclude Include="source\Server\SoundStatic.h" />
+    <ClInclude Include="source\Server\SoundStream.h" />
+    <ClInclude Include="source\Server\SoundVoice.h" />
     <ClInclude Include="source\template\aliastemplate.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

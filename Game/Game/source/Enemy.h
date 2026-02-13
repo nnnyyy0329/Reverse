@@ -131,8 +131,13 @@ protected:
 
 	std::weak_ptr<StageBase> _stage;// ステージ参照(障害物チェック用)
 
+	COLOR_F _defaultColor;// 元のマテリアルカラーを保存
+	bool _bIsColorChanged = false;// カラー変更中かどうか
+
 private:
 	void LoadEnemyModel();// モデルを名前に応じて読み込む
+
+	void UpdateColorChange();// カラー変更中
 
 };
 

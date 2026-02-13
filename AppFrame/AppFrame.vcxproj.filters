@@ -69,6 +69,27 @@
     <ClCompile Include="source\Server\SoundServer.cpp">
       <Filter>Server\Sound</Filter>
     </ClCompile>
+    <ClCompile Include="source\Server\SoundBase.cpp">
+      <Filter>Server\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Server\SoundBgm.cpp">
+      <Filter>Server\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Server\SoundOneshot.cpp">
+      <Filter>Server\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Server\SoundSe.cpp">
+      <Filter>Server\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Server\SoundStatic.cpp">
+      <Filter>Server\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Server\SoundStream.cpp">
+      <Filter>Server\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Server\SoundVoice.cpp">
+      <Filter>Server\Sound</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\CFile\CFile.h">
@@ -110,6 +131,27 @@
       <Filter>Vector</Filter>
     </ClInclude>
     <ClInclude Include="source\Server\SoundServer.h">
+      <Filter>Server\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Server\SoundBase.h">
+      <Filter>Server\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Server\SoundBgm.h">
+      <Filter>Server\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Server\SoundOneshot.h">
+      <Filter>Server\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Server\SoundSe.h">
+      <Filter>Server\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Server\SoundStatic.h">
+      <Filter>Server\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Server\SoundStream.h">
+      <Filter>Server\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Server\SoundVoice.h">
       <Filter>Server\Sound</Filter>
     </ClInclude>
   </ItemGroup>

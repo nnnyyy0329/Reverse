@@ -4,6 +4,7 @@
 #include "AttackBase.h"
 #include "AttackManager.h"
 #include "DodgeSystem.h"
+#include "GameCamera.h"
 
 // キャラとマップの当たり判定
 void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
@@ -358,6 +359,92 @@ void ModeGame::CheckCollisionCharaChara(std::shared_ptr<CharaBase> chara1, std::
 	VECTOR vPush2 = VScale(vDirNorm, fPushDist);
 	VECTOR vNewPos2 = VAdd(chara2->GetPos(), vPush2);
 	chara2->SetPos(vNewPos2);
+}
+
+// カメラとマップの当たり判定
+void ModeGame::CheckCollisionCameraMap()
+{
+	if (!_gameCamera || !_stage) { return; }
+
+	// ステージの全マップモデルを取得
+	const auto& mapObjList = _stage->GetMapModelPosList();
+	if (mapObjList.empty()) { return; }
+
+	// 元のカメラ情報を取得
+	VECTOR vCamPos = _gameCamera->GetVPos();
+	VECTOR vCamTarget = _gameCamera->GetVTarget();
+
+	// 注視点からカメラへのベクトル
+	VECTOR vToCam = VSub(vCamPos, vCamTarget);
+	float fCamDist = VSize(vToCam);
+	const float conMinCamDist = 0.001f;
+	if (fCamDist < conMinCamDist) { return; }// 距離が近すぎる場合は処理しない
+
+	VECTOR vDir = VScale(vToCam, 1.0f / fCamDist);
+
+	// 球を使った当たり判定
+	const float fCamRad = 10.0f;// 半径
+	// 検出範囲の中心点と半径
+	VECTOR vMid = VAdd(vCamTarget, VScale(vDir, fCamDist * 0.5f));
+	const float fSphereMargin = 5.0f;
+	float fDetectRad = fCamDist * 0.5f + fCamRad + fSphereMargin;
+
+	bool bHasHit = false;
+	float fNearestDist = fCamDist;// 最も近い衝突距離
+
+	// 全マップモデルを走査
+	for (const auto& obj : mapObjList)
+	{
+		// コリジョンフレームがない、またはハンドルが無効
+		if (obj.collisionFrame == -1 || obj.modelHandle <= 0) { continue; }
+
+		MV1_COLL_RESULT_POLY_DIM hitPolys = MV1CollCheck_Sphere(
+			obj.modelHandle,
+			obj.collisionFrame,
+			vMid,
+			fDetectRad
+		);
+
+		// プレイヤーとカメラを結ぶ線分の間にぶつかるポリゴンがるかチェック
+		for (int i = 0; i < hitPolys.HitNum; ++i)
+		{
+			const MV1_COLL_RESULT_POLY& poly = hitPolys.Dim[i];
+
+			// 注視点からカメラへの線分とポリゴンの当たり判定
+			HITRESULT_LINE hitResult = HitCheck_Line_Triangle(
+				vCamTarget,
+				vCamPos,
+				poly.Position[0],
+				poly.Position[1],
+				poly.Position[2]
+			);
+
+			if (hitResult.HitFlag == 0) { continue; }
+
+			// 衝突点までの距離を計算
+			float fHitDist = VSize(VSub(hitResult.Position, vCamTarget));
+			if (fHitDist < fNearestDist)
+			{
+				fNearestDist = fHitDist;
+				bHasHit = true;
+			}
+		}
+
+		// ポリゴン情報のメモリ解放
+		MV1CollResultPolyDimTerminate(hitPolys);
+	}
+
+	// 当たっていたら手前に補正
+	if (bHasHit)
+	{
+		// 当たった位置からカメラ半径分だけ手前に移動
+		float fNewDist = fNearestDist - fCamRad;
+		if (fNewDist < 0.0f) { fNewDist = 0.0f; }
+
+		// 注視点から新しいカメラ位置を計算
+		vCamPos = VAdd(vCamTarget, VScale(vDir, fNewDist));
+		_gameCamera->SetVPos(vCamPos);
+	}
 }
 
 // キャラと攻撃コリジョンの当たり判定
