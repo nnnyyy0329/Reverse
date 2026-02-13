@@ -50,15 +50,17 @@ struct AttackConstants
 // 攻撃設定データ構造体
 struct AttackConfig
 {
-	VECTOR topOffset;		// コリジョン上部位置
-	VECTOR bottomOffset;	// コリジョン下部位置
-	float radius;			// 半径
-	float delay;			// 発生
-	float duration;			// 持続
-	float recovery;			// 硬直
-	float damage;			// ダメージ
-	std::string effectName;	// エフェクト名
-	VECTOR effectOffset;	// エフェクト位置オフセット
+	VECTOR topOffset;			// コリジョン上部位置
+	VECTOR bottomOffset;		// コリジョン下部位置
+	float radius;				// 半径
+	float delay;				// 発生
+	float duration;				// 持続
+	float recovery;				// 硬直
+	float damage;				// ダメージ
+	std::string effectName;		// エフェクト名
+	VECTOR effectOffset;		// エフェクト位置オフセット
+	ATTACK_STATE attackState;	// 攻撃状態
+	float attackMoveSpeed;		// 攻撃中の移動速度
 };
 
 // 基本移動アニメーション構造体

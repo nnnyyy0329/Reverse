@@ -1,6 +1,7 @@
 // 担当 : 成田
 
 #include "AttackBase.h"
+#include "CharaBase.h"
 
 AttackBase::AttackBase()
 {    
@@ -18,6 +19,13 @@ AttackBase::AttackBase()
     _stcAttackCol.isHit = false;
 	_stcAttackCol.attackState = ATTACK_STATE::INACTIVE;
 	_stcAttackCol.attackMoveSpeed = 0.0f;
+
+	// 攻撃移動情報の初期化
+	_stcAttackMovement.moveDir = VGet(0.0f, 0.0f, 0.0f);
+	_stcAttackMovement.moveDistance = 0.0f;
+	_stcAttackMovement.moveSpeed = 0.0f;
+	_stcAttackMovement.decayRate = 0.0f;
+	_stcAttackMovement.canMove = false;
 
     // コリジョンタイプ
     _eColType = COLLISION_TYPE::NONE;
@@ -41,7 +49,11 @@ bool AttackBase::Terminate()
 
 bool AttackBase::Process()
 {
-	UpdateAttackState();    // 攻撃状態更新処理
+    // 攻撃状態更新処理
+	UpdateAttackState();  
+
+	// 攻撃中の移動更新処理
+	UpdateAttackMove();
 
     return true;
 }
@@ -141,6 +153,27 @@ void AttackBase::UpdateAttackState()
             break;
         }
     }
+}
+
+// 攻撃中の移動更新
+void AttackBase::UpdateAttackMove()
+{
+    switch(_stcAttackCol.attackState)
+    {
+        case ATTACK_STATE::STARTUP:
+        case ATTACK_STATE::ACTIVE:
+        case ATTACK_STATE::RECOVERY:
+        {
+            
+
+            break;
+        }
+
+        default:
+        {
+            break;
+        }
+	}
 }
 
 // カプセル攻撃データ設定
@@ -320,4 +353,49 @@ bool AttackBase::HasHitCharas(std::shared_ptr<CharaBase> chara)const
 void AttackBase::ClearHitCharas()
 {
     _hitCharas.clear();
+}
+
+// 攻撃中の移動更新
+void AttackBase::UpdateAttackMove()
+{
+	// 所有者キャラを取得
+	auto owner = GetOwner();
+	if(!owner){ return; }
+
+    // 派生クラスの移動計算を取得する
+    AttackMovement movement = CalculateMovement(_eAttackState, owner);
+
+	// 移動できるか
+    if(movement.canMove)
+    {
+		// 移動適用
+        ApplyMovement(movement, owner);
+    }
+}
+
+// 移動適用
+void AttackBase::ApplyMovement(const AttackMovement& movement, std::shared_ptr<CharaBase> owner)
+{
+	if(!movement.canMove || !owner) { return; }
+
+    // 移動方向
+	VECTOR moveDir;
+	moveDir = owner->GetDir();
+
+    // 正規化
+    if(VSize(moveDir) > 0.0f)
+    {
+        VECTOR dirNorm = VNorm(moveDir);
+	}
+
+    // 移動量計算
+	VECTOR vMove = VScale(movement.moveDir, movement.moveDistance);
+
+	// 減衰処理
+	vMove = VScale(vMove, movement.decayRate);
+
+    // キャラの位置を加算
+    VECTOR newPos = VAdd(owner->GetPos(), vMove);
+	owner->SetPos(newPos);
+
 }

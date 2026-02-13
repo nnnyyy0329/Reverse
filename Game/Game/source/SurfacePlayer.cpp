@@ -163,6 +163,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		25.0f,					// ダメージ
 		"SurfacePlayerAttack1",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		10.0f,					// 攻撃中の移動速度
 	};	
 
 	// 第2攻撃
@@ -177,6 +179,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		25.0f,					// ダメージ
 		"SurfacePlayerAttack2",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		10.0f,					// 攻撃中の移動速度
 	};
 
 	// 第3攻撃
@@ -191,6 +195,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		50.0f,					// ダメージ
 		"SurfacePlayerAttack3",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		10.0f,					// 攻撃中の移動速度
 	};
 }
 

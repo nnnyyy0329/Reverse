@@ -157,6 +157,9 @@
     <ClCompile Include="source\AimCamera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
+    <ClCompile Include="source\PlayerAttackSystem.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase\System\Attack</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -306,6 +309,9 @@
     <ClInclude Include="source\AimCamera.h">
       <Filter>Camera</Filter>
     </ClInclude>
+    <ClInclude Include="source\PlayerAttackSystem.h">
+      <Filter>GameObject\CharaBase\PlayerBase\System\Attack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -406,6 +412,9 @@
     </Filter>
     <Filter Include="Mode\Title">
       <UniqueIdentifier>{553e3701-3d5b-4024-95d2-f0d7bf4115bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\System\Attack">
+      <UniqueIdentifier>{ab26c467-12ae-4435-b758-3cd3da027bb8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
