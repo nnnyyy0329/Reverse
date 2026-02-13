@@ -3,6 +3,11 @@
 #include "AttackBase.h"
 #include "CharaBase.h"
 
+namespace
+{
+	constexpr float ATTACK_MOVE_DECAY_RATE = 0.9f; // 攻撃中の移動減衰率
+}
+
 AttackBase::AttackBase()
 {    
     // 攻撃コリジョンの初期化
@@ -52,8 +57,8 @@ bool AttackBase::Process()
     // 攻撃状態更新処理
 	UpdateAttackState();  
 
-	// 攻撃中の移動更新処理
-	UpdateAttackMove();
+    // 攻撃中の移動更新
+    UpdateAttackMove();
 
     return true;
 }
@@ -104,7 +109,7 @@ void AttackBase::UpdateAttackState()
 		case ATTACK_STATE::STARTUP: // 発生前
         {
 			_stcAttackCol.currentTime += 1.0f;  // 経過時間を進める
-            
+
 			// 発生遅延時間を超えたら攻撃判定をアクティブにする
             if(_stcAttackCol.currentTime >= _stcAttackCol.attackDelay)
             {
@@ -153,27 +158,6 @@ void AttackBase::UpdateAttackState()
             break;
         }
     }
-}
-
-// 攻撃中の移動更新
-void AttackBase::UpdateAttackMove()
-{
-    switch(_stcAttackCol.attackState)
-    {
-        case ATTACK_STATE::STARTUP:
-        case ATTACK_STATE::ACTIVE:
-        case ATTACK_STATE::RECOVERY:
-        {
-            
-
-            break;
-        }
-
-        default:
-        {
-            break;
-        }
-	}
 }
 
 // カプセル攻撃データ設定
@@ -355,47 +339,59 @@ void AttackBase::ClearHitCharas()
     _hitCharas.clear();
 }
 
+
 // 攻撃中の移動更新
 void AttackBase::UpdateAttackMove()
 {
-	// 所有者キャラを取得
-	auto owner = GetOwner();
-	if(!owner){ return; }
+    // 所有者キャラを取得
+    auto owner = GetOwner();
+    if(!owner){ return; }
 
-    // 派生クラスの移動計算を取得する
-    AttackMovement movement = CalculateMovement(_eAttackState, owner);
-
-	// 移動できるか
-    if(movement.canMove)
+    // 移動速度が設定されており、現在の状態が指定された攻撃状態と一致するなら
+    if(_stcAttackCol.attackMoveSpeed > 0.0f && _eAttackState == _stcAttackCol.attackState)
     {
-		// 移動適用
-        ApplyMovement(movement, owner);
+        // 攻撃中の移動処理
+        ProcessAttackMovement();
     }
 }
 
 // 移動適用
-void AttackBase::ApplyMovement(const AttackMovement& movement, std::shared_ptr<CharaBase> owner)
+void AttackBase::ProcessAttackMovement()
 {
-	if(!movement.canMove || !owner) { return; }
+    auto owner = GetOwner();
+    if(!owner) return;
 
-    // 移動方向
-	VECTOR moveDir;
-	moveDir = owner->GetDir();
+    // 所有者キャラから現在の向きを取得
+    VECTOR currentDir = owner->GetDir();
 
-    // 正規化
-    if(VSize(moveDir) > 0.0f)
+    VECTOR moveDir;
+
+	// 攻撃方向が設定されている方を優先
+    if(VSize(_stcAttackCol.attackDir) > 0.0f)
     {
-        VECTOR dirNorm = VNorm(moveDir);
-	}
+        moveDir = VNorm(_stcAttackCol.attackDir);
+    }
+    else
+    {
+        moveDir = VNorm(currentDir);
+    }
 
     // 移動量計算
-	VECTOR vMove = VScale(movement.moveDir, movement.moveDistance);
+	VECTOR vMove = VScale(moveDir, _stcAttackCol.attackMoveSpeed);
 
 	// 減衰処理
-	vMove = VScale(vMove, movement.decayRate);
+	//vMove = VScale(vMove, ATTACK_MOVE_DECAY_RATE);
 
     // キャラの位置を加算
-    VECTOR newPos = VAdd(owner->GetPos(), vMove);
+    VECTOR currentPos = owner->GetPos();
+    VECTOR newPos = VAdd(currentPos, vMove);
 	owner->SetPos(newPos);
 
+	// モデルの位置も更新
+	AnimManager* animManager = owner->GetAnimManager();
+    if(animManager != nullptr)
+    {
+		// モデルの位置を更新
+        MV1SetPosition(animManager->GetModelHandle(), newPos);
+    }
 }

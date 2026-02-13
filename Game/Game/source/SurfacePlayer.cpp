@@ -143,7 +143,7 @@ AttackConstants SurfacePlayer::GetAttackConstants()
 	AttackConstants constants;
 
 	constants.attackOffsetScale = 85.0f;	// 攻撃判定オフセット倍率	
-	constants.surfaceMaxComboCount = 3;	// 表プレイヤー用コンボカウント
+	constants.surfaceMaxComboCount = 3;		// 表プレイヤー用コンボカウント
 
 	return constants;
 }
@@ -163,8 +163,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		25.0f,					// ダメージ
 		"SurfacePlayerAttack1",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		ATTACK_STATE::ACTIVE,	// 攻撃状態
-		10.0f,					// 攻撃中の移動速度
+		ATTACK_STATE::STARTUP,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};	
 
 	// 第2攻撃
@@ -179,8 +179,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		25.0f,					// ダメージ
 		"SurfacePlayerAttack2",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		ATTACK_STATE::ACTIVE,	// 攻撃状態
-		10.0f,					// 攻撃中の移動速度
+		ATTACK_STATE::STARTUP,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};
 
 	// 第3攻撃
@@ -195,8 +195,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		50.0f,					// ダメージ
 		"SurfacePlayerAttack3",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		ATTACK_STATE::ACTIVE,	// 攻撃状態
-		10.0f,					// 攻撃中の移動速度
+		ATTACK_STATE::STARTUP,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};
 }
 

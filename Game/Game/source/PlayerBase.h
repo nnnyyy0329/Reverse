@@ -88,6 +88,7 @@ struct PlayerAttackAnimations
 // 発射アニメーション構造体
 struct PlayerShootAnimations
 {
+	const char* shootReady;     // 発射構え
 	const char* rightArmShoot;  // 右腕発射
 	const char* leftArmShoot;   // 左腕発射
 	const char* shootMove;      // 発射移動
@@ -141,6 +142,7 @@ enum class PLAYER_ATTACK_STATE
 enum class PLAYER_SHOOT_STATE
 {
 	NONE,
+	SHOOT_READY,		// 発射構え
 	RIGHT_ARM_SHOOT,	// 右腕発射
 	LEFT_ARM_SHOOT,		// 左腕発射
 	SHOOT_MOVE,			// 発射移動

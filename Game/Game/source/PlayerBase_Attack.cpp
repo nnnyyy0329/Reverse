@@ -63,7 +63,7 @@ void PlayerBase::InitializeAttackData()
 			configs[i].topOffset,       // 上部
 			configs[i].bottomOffset,    // 下部
 			configs[i].radius,			// 半径
-			_vDir,						// 攻撃方向
+			_vMove,						// 攻撃方向
 			configs[i].delay,           // 発生フレーム
 			configs[i].duration,        // 持続フレーム
 			configs[i].recovery,        // 硬直フレーム
@@ -156,6 +156,9 @@ void PlayerBase::ProcessAttack()
 // コンボ攻撃開始の処理
 void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack)
 {
+	// 攻撃オブジェクト設定
+	attack->SetOwner(shared_from_this());
+
 	// コリジョン位置更新処理
 	ProcessAttackColPos();	
 

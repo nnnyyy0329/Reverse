@@ -76,10 +76,9 @@ public:
 	bool HasHitCharas(std::shared_ptr<CharaBase> chara)const;	// 当たったキャラを持っているかチェック
 	void ClearHitCharas();										// 当たったキャラリストクリア
 
-	// 攻撃中の移動計算
-	void UpdateAttackMove();																			// 攻撃中の移動更新
-	virtual void ApplyMovement(const AttackMovement& movement, std::shared_ptr<CharaBase> owner);		// 移動適用
-	virtual AttackMovement CalculateMovement(ATTACK_STATE state, std::shared_ptr<CharaBase> owner) = 0;	// 純粋仮想関数
+	// 攻撃中の移動処理
+	void UpdateAttackMove();				// 移動更新
+	virtual void ProcessAttackMovement();	// 移動処理
 
 	// デバッグ表示
 	void DrawAttackCollision();

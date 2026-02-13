@@ -366,6 +366,7 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.shootState)
 		{
+			case PLAYER_SHOOT_STATE::SHOOT_READY:		return _playerAnim.shoot.shootReady;
 			case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT:	return _playerAnim.shoot.rightArmShoot;
 			case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:	return _playerAnim.shoot.leftArmShoot;
 			case PLAYER_SHOOT_STATE::SHOOT_MOVE:		return _playerAnim.shoot.shootMove;

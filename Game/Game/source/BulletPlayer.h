@@ -43,6 +43,7 @@ protected:
 
 	float _shootIntervalTimer;	// 発射間隔タイマー
 	bool _bIsShootFromRightArm;	// 右腕から発射したかどうか
-
+	bool _bIsReadyCompleted;	// 構えアニメーション完了フラグ
+	bool _bWasShootKeyPressed;	// 前フレームで発射キーが押されていたか
 };
 
