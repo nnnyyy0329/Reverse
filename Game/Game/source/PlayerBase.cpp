@@ -6,7 +6,7 @@
 // ”í’eİ’è
 namespace HitConfig
 {
-	constexpr float HIT_SPEED = 5.0f;	// ”í’e‚Ì‚«”ò‚Ñ‘¬“x
+	constexpr float HIT_SPEED = 15.0f;	// ”í’e‚Ì‚«”ò‚Ñ‘¬“x
 	constexpr float HIT_DECAY = 0.9f;	// ”í’e‚Ì‚«”ò‚ÑŒ¸Š—¦
 	constexpr float HIT_TIME = 30.0f;	// ”í’eŠÔ
 }

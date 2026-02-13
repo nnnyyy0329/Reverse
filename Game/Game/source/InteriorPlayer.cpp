@@ -232,11 +232,11 @@ DodgeConfig InteriorPlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType = DODGE_CHARA::INTERIOR_PLAYER;
-	config.invincibleDuration = 25.0f;  // 無敵時間（標準的）
-	config.startTime = 4.0f;            // 開始時間（少し早め）
+	config.invincibleDuration = 25.0f;  // 無敵時間
+	config.startTime = 4.0f;            // 開始時間
 	config.activeTime = 18.0f;          // アクティブ時間
 	config.recoveryTime = 12.0f;        // 硬直時間
-	config.dodgeMoveSpeed = 9.0f;       // 移動速度（やや早め）
+	config.dodgeMoveSpeed = 9.0f;       // 移動速度
 
 	return config;
 }

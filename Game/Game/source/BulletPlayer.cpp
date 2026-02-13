@@ -267,10 +267,8 @@ PlayerAnimations BulletPlayer::GetPlayerAnimation()
 	// 裏プレイヤー用のアニメーション設定
 	PlayerAnimations animation;
 
-	animation.movement.wait			= "player_damage_00";
-	animation.movement.walk			= "player_damage_00";
-	//animation.movement.wait			= "player_idle_00";
-	//animation.movement.walk			= "player_walk_00";
+	animation.movement.wait			= "player_idle_00";
+	animation.movement.walk			= "player_walk_00";
 	animation.movement.run			= "player_jog_00";
 	animation.movement.jumpUp		= "";
 	animation.movement.jumpDown		= "";
@@ -330,7 +328,7 @@ DodgeConfig BulletPlayer::GetDodgeConfig()
 	config.startTime = 3.0f;            // 開始時間
 	config.activeTime = 15.0f;          // アクティブ時間
 	config.recoveryTime = 8.0f;         // 硬直時間
-	config.dodgeMoveSpeed = 12.0f;      // 移動速度
+	config.dodgeMoveSpeed = 19.0f;      // 移動速度
 
 	return config;
 }
