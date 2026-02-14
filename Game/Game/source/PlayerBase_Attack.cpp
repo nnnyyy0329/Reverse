@@ -431,7 +431,7 @@ bool PlayerBase::IsAttacking()
 		_playerState.attackState == PLAYER_ATTACK_STATE::FOURTH_ATTACK ||
 		_playerState.attackState == PLAYER_ATTACK_STATE::FIFTH_ATTACK)
 	{
-		_vMove = VGet(0, 0, 0);	// UŒ‚’†‚ÍˆÚ“®•s‰Â
+		//_vMove = VGet(0, 0, 0);	// UŒ‚’†‚ÍˆÚ“®•s‰Â
 		return true;
 	}
 

@@ -188,6 +188,7 @@
     <ClCompile Include="source\PlayerAttackSystem.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
     <ClCompile Include="source\PlayerBase_Attack.cpp" />
+    <ClCompile Include="source\PlayerBase_Death.cpp" />
     <ClCompile Include="source\PlayerBase_Dodge.cpp" />
     <ClCompile Include="source\PlayerBase_Draw.cpp" />
     <ClCompile Include="source\PlayerBase_Process.cpp" />

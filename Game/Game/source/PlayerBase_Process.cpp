@@ -32,6 +32,7 @@ void PlayerBase::ProcessMovePlayer()
 	//if(IsShooting()){ return; }		// 発射中は移動入力を受け付けない
 	if(IsDodging()){ return; }		// 回避中は移動入力を受け付けない
 	if(IsHitStop()){ return; }		// 被弾中は移動入力を受け付けない
+	if(IsDeath()){ return; }		// 死亡中は移動入力を受け付けない
 
 	// 移動処理
 	{
@@ -137,12 +138,9 @@ void PlayerBase::ProcessInputMove()
 // 状態変化アニメーション処理
 void PlayerBase::ProcessStatusAnimation()
 {
-	// 攻撃中、弾発射中、被弾時、回避中、死亡時はここで再生処理
-	if(IsAttacking()											|| 
-		IsShooting()											||
-		_playerState.combatState == PLAYER_COMBAT_STATE::HIT	||
-		_playerState.combatState == PLAYER_COMBAT_STATE::DODGE	||
-		_playerState.combatState == PLAYER_COMBAT_STATE::DEATH)
+	// 攻撃ステート、先頭ステート時はここで再生処理
+	if((_playerState.IsStateAttacking() ||
+		_playerState.IsStateCombat()))
 	{
 		// アニメーション再生処理のみ
 		ProcessPlayAnimation();
@@ -296,16 +294,6 @@ void PlayerBase::ProcessHit()
 	if(animManager != nullptr)
 	{
 		MV1SetPosition(animManager->GetModelHandle(), _vPos);
-	}
-}
-
-// 死亡処理
-void PlayerBase::ProcessDeath()
-{
-	// 体力が0以下なら死亡処理
-	if(_fLife <= 0.0f && _playerState.combatState != PLAYER_COMBAT_STATE::DEATH)
-	{
-		_playerState.combatState = PLAYER_COMBAT_STATE::DEATH;	// 状態を死亡に変更
 	}
 }
 

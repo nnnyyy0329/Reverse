@@ -118,7 +118,7 @@ PlayerAnimations SurfacePlayer::GetPlayerAnimation()
 	animation.shoot.shootMove		= "";
 	animation.combat.guard			= "";
 	animation.combat.hit			= "player_damage_00";
-	animation.combat.dodge			= "dodge";
+	animation.combat.dodge			= "player_dodge_00";
 	animation.combat.death			= "player_dead_00";
 
 	return animation;
@@ -163,7 +163,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		25.0f,					// ダメージ
 		"SurfacePlayerAttack1",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		ATTACK_STATE::STARTUP,	// 攻撃状態
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
 	};	
 
@@ -179,7 +179,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		25.0f,					// ダメージ
 		"SurfacePlayerAttack2",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		ATTACK_STATE::STARTUP,	// 攻撃状態
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
 	};
 
@@ -195,7 +195,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		50.0f,					// ダメージ
 		"SurfacePlayerAttack3",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		ATTACK_STATE::STARTUP,	// 攻撃状態
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
 	};
 }

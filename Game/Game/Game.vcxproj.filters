@@ -160,6 +160,9 @@
     <ClCompile Include="source\PlayerAttackSystem.cpp">
       <Filter>GameObject\CharaBase\PlayerBase\System\Attack</Filter>
     </ClCompile>
+    <ClCompile Include="source\PlayerBase_Death.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">

@@ -168,10 +168,10 @@ struct PlayerState
 	PLAYER_SHOOT_STATE shootState;			// 弾発射状態
 	PLAYER_COMBAT_STATE combatState;		// 特殊状態
 
-	bool IsAttacking() const { return attackState != PLAYER_ATTACK_STATE::NONE; }
-	bool IsMoving() const { return movementState == PLAYER_MOVEMENT_STATE::WALK || movementState == PLAYER_MOVEMENT_STATE::RUN; }
-	bool IsShooting() const { return shootState != PLAYER_SHOOT_STATE::NONE; }
-	bool IsCombat() const { return combatState != PLAYER_COMBAT_STATE::NONE; }
+	bool IsStateAttacking() const { return attackState   != PLAYER_ATTACK_STATE::NONE; }
+	bool IsStateMoving()	const { return movementState != PLAYER_MOVEMENT_STATE::NONE; }
+	bool IsStateShooting()	const { return shootState	 != PLAYER_SHOOT_STATE::NONE; }
+	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }
 };
 
 class PlayerBase : public CharaBase
@@ -210,7 +210,6 @@ public:
 	void ProcessStatusAnimation();	// 状態別アニメーション処理
 	void ProcessPlayAnimation();	// アニメーション処理
 	void ProcessHit();				// 被弾処理
-	void ProcessDeath();			// 死亡処理
 	void ProcessDebug();			// デバッグ処理
 	bool IsHitStop();				// 被弾硬直中かチェック
 
@@ -334,6 +333,16 @@ protected: 	// シールド関係
 	// 各プレイヤー固有のシールド設定取得（純粋仮想関数）
 	virtual ShieldConfig GetShieldConfig() = 0;
 
+protected:	// 死亡関係
+	void CallDeath();				// 死亡関係関係関数呼び出し
+	void ProcessDeath();			// 死亡処理
+	void CheckDeathAnimFinished();	// 死亡アニメーションが再生し終わったか
+	void CheckDeath();				// 死亡したか
+
+	bool IsDeath()const;			// 死亡したか
+	bool IsAlive()const;			// プレイヤーが死亡したか
+	bool IsStateDeath()const;		// 死亡ステートになったか
+
 protected:
 
 	std::shared_ptr<CameraManager> _cameraManager;	// カメラマネージャー
@@ -383,6 +392,11 @@ protected:
 
 	// カメラ角度
 	float _cameraAngle;
+
+	// 死亡関係変数
+	bool _bIsAlive;				// 生きているか
+	bool _bIsDeath;				// 死亡したか
+	bool _bIsDeathAnimComplete;	// 死亡アニメーションが再生し終わったか
 };
 
 
