@@ -3,6 +3,7 @@
 #include "ModeGame.h"
 #include "ModeMenu.h"
 #include "ModeStageChange.h"
+#include "ModeGameOver.h"
 
 #include "CharaBase.h"
 #include "StageBase.h"
@@ -196,7 +197,15 @@ bool ModeGame::Process()
 		}
 	}
 
+	// ゲームオーバーチェック
+	{
+		// ModeGameOverを追加
+		//ModeGameOver* modeGameOver = new ModeGameOver(this);
+		//ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
+		// この後の処理をスキップ
+		//return true;
 
+	}
 
 	// 能力選択画面のデバッグ関数
 	if(_abilitySelectScreen && _abilitySelectScreen->GetIsSelectComplete())
@@ -205,8 +214,6 @@ bool ModeGame::Process()
 		_playerManager->SwitchPlayerByAbility(selectedAbility);
 		_abilitySelectScreen->ResetSelection(); // 選択状態をリセット
 	}
-
-
 
 	// spaceキーでメニューを開く
 	if (trg & PAD_INPUT_10)
