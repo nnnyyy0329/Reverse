@@ -178,6 +178,7 @@
     <ClCompile Include="source\LightManager.cpp" />
     <ClCompile Include="source\MenuItemBase.cpp" />
     <ClCompile Include="source\ModeGame.cpp" />
+    <ClCompile Include="source\ModeGameOver.cpp" />
     <ClCompile Include="source\ModeGame_CheckHit.cpp" />
     <ClCompile Include="source\ModeLoading.cpp" />
     <ClCompile Include="source\ModeMenu.cpp" />
@@ -255,6 +256,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="source\ModeGame.h" />
+    <ClInclude Include="source\ModeGameOver.h" />
     <ClInclude Include="source\ModeLoading.h" />
     <ClInclude Include="source\ModeMenu.h" />
     <ClInclude Include="source\AbilityBase.h" />

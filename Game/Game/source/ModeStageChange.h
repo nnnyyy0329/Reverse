@@ -9,7 +9,6 @@ class ModeStageChange : public ModeBase
 {
 	typedef ModeBase base;
 
-
 public:
 	ModeStageChange(ModeGame* modegGame, int nextStgeNum);
 	virtual ~ModeStageChange();

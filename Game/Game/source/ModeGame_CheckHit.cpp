@@ -655,6 +655,8 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 				// ステージ切り替えリクエスト
 				RequestStageChange(nextStageNum);
 
+				_currentStageNum = nextStageNum;// 現在のステージ番号を更新
+
 				return;// 一つのトリガーに当たったら処理を終了
 			}
 		}
