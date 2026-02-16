@@ -36,10 +36,10 @@ void PlayerBase::ProcessMovePlayer()
 
 	// 移動処理
 	{
-		if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
-		if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
-		if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
-		if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
+		//if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
+		//if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
+		//if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
+		//if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
 
 		
 		// しゃがみ中かどうかで移動速度を変える
@@ -305,6 +305,11 @@ void PlayerBase::ProcessDebug()
 		_fLife -= 5.0f;
 	}
 
+	if(_trg & PAD_INPUT_2)
+	{
+		EnergyManager::GetInstance()->ConsumeEnergy(10.0f);
+	}
+
 	if (_trg & PAD_INPUT_5)
 	{
 		EnergyManager::GetInstance()->AddEnergy(100.0f);
@@ -331,10 +336,12 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.combatState)
 		{
-			case PLAYER_COMBAT_STATE::GUARD:	return _playerAnim.combat.guard;
-			case PLAYER_COMBAT_STATE::HIT:		return _playerAnim.combat.hit;
-			case PLAYER_COMBAT_STATE::DODGE:	return _playerAnim.combat.dodge;
-			case PLAYER_COMBAT_STATE::DEATH:	return _playerAnim.combat.death;
+			case PLAYER_COMBAT_STATE::TRANSFORM:	return _playerAnim.combat.transform;
+			case PLAYER_COMBAT_STATE::TRANS_CANCEL:	return _playerAnim.combat.transCancel;
+			case PLAYER_COMBAT_STATE::GUARD:		return _playerAnim.combat.guard;
+			case PLAYER_COMBAT_STATE::HIT:			return _playerAnim.combat.hit;
+			case PLAYER_COMBAT_STATE::DODGE:		return _playerAnim.combat.dodge;
+			case PLAYER_COMBAT_STATE::DEATH:		return _playerAnim.combat.death;
 		}
 	}
 

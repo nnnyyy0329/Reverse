@@ -97,10 +97,12 @@ struct PlayerShootAnimations
 // 戦闘アニメーション構造体
 struct PlayerCombatAnimations
 {
-	const char* guard;    // ガード
-	const char* hit;      // 被弾
-	const char* dodge;    // 回避
-	const char* death;    // 死亡
+	const char* transform;		// 変身
+	const char* transCancel;	// 変身解除
+	const char* guard;			// ガード
+	const char* hit;			// 被弾
+	const char* dodge;			// 回避
+	const char* death;			// 死亡
 };
 
 // 統合アニメーション構造体
@@ -108,8 +110,8 @@ struct PlayerAnimations
 {
 	PlayerMovementAnimations movement;
 	PlayerAttackAnimations attack;
-	PlayerCombatAnimations combat;
 	PlayerShootAnimations shoot;
+	PlayerCombatAnimations combat;
 };
 
 // 基本移動状態
@@ -153,6 +155,8 @@ enum class PLAYER_SHOOT_STATE
 enum class PLAYER_COMBAT_STATE
 {
 	NONE,
+	TRANSFORM,		// 変身
+	TRANS_CANCEL,	// 変身解除
 	GUARD,			// ガード
 	HIT,			// 被弾
 	DODGE,			// 回避
@@ -266,6 +270,19 @@ public:
 	// システム設定
 	void SetDodgeSystem(std::shared_ptr<DodgeSystem> dodgeSystem) { _dodgeSystem = dodgeSystem; }
 	void SetCameraManager(std::shared_ptr<CameraManager> cameraManager) { _cameraManager = cameraManager; }
+
+	// ステート
+	PLAYER_MOVEMENT_STATE GetMovementState()const{ return _playerState.movementState; }			// 基本移動状態取得
+	void SetMovementState(PLAYER_MOVEMENT_STATE state){ _playerState.movementState = state; }	// 基本移動状態設定
+
+	PLAYER_ATTACK_STATE GetAttackState()const{ return _playerState.attackState; }		// 攻撃状態取得
+	void SetAttackState(PLAYER_ATTACK_STATE state){ _playerState.attackState = state; }	// 攻撃状態設定
+
+	PLAYER_SHOOT_STATE GetShootState()const{ return _playerState.shootState; }			// 弾発射状態取得
+	void SetShootState(PLAYER_SHOOT_STATE state){ _playerState.shootState = state; }	// 弾発射状態設定
+
+	PLAYER_COMBAT_STATE GetCombatState()const{ return _playerState.combatState; }		// 特殊状態取得
+	void SetCombatState(PLAYER_COMBAT_STATE state){ _playerState.combatState = state; }	// 特殊状態設定
 	
 protected:	// 攻撃関係
 

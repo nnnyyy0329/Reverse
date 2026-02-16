@@ -246,8 +246,10 @@ bool ModeGame::Process()
 		_cameraManager->SetGameCamera(_gameCamera);
 		_cameraManager->SetDebugCamera(_debugCamera);
 		_cameraManager->SetAimCamera(_aimCamera);
-		_playerManager->SetCameraManager(_cameraManager);	// プレイヤーマネージャーにカメラマネージャーを設定
+		_playerManager->SetCameraManager(_cameraManager);				// カメラマネージャーを設定
+		_playerManager->SetAbilitySelectScreen(_abilitySelectScreen);	// 能力選択画面を設定
 		_playerLifeBarUI->SetPlayerManager(_playerManager);
+		_abilitySelectScreen->SetPlayerManager(_playerManager);	
 
 		// 弾丸プレイヤーにカメラマネージャーを設定
 		auto bulletPlayer = std::dynamic_pointer_cast<BulletPlayer>(_playerManager->GetPlayerByType(PLAYER_TYPE::BULLET));
@@ -415,6 +417,7 @@ bool ModeGame::Render()
 		_dodgeSystem->DebugRender();
 		_debugCamera->DebugRender();
 		_gameCamera->DebugRender();
+		_playerManager->DebugRender();
 
 		// ライト情報
 		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());

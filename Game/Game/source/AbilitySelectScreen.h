@@ -1,6 +1,8 @@
 #pragma once
 #include "appframe.h"
-#include "AbilityBase.h"  
+#include "AbilityBase.h" 
+
+class PlayerManager;
 
 class AbilitySelectScreen
 {
@@ -14,11 +16,12 @@ public:
 	bool Render();
 
 	// 選択関係関数
-	void SelectScreenByInput();		// 入力による画面表示
-	void SelectionByInput();		// 入力による選択処理
-	void SelectRender();			// 選択要素の表示
-	void SelectFrameRender();		// 選択画面表示
-	void ResetSelection();			// 選択をリセットする関数を追加
+	void SelectScreenByInput();				// 入力による画面表示
+	void SelectionByInput();				// 入力による選択処理
+	void SelectRender();					// 選択要素の表示
+	void SelectFrameRender();				// 選択画面表示
+	void ResetSelection();					// 選択をリセットする関数を追加
+	bool IsSelectActiveByPlayerType()const;	// プレイヤータイプに応じて選択可能かどうか
 
 	// ゲッターセッター
 	ABILITY_TYPE GetSelectedAbility()const	// 選択されたアビリティ取得
@@ -27,6 +30,10 @@ public:
 	}
 	int GetSelectedAbilityIndex()const { return _iSelectedAbility; }	// 選択されたアビリティ番号取得
 	bool GetIsSelectComplete()const{ return _bIsSelectComplete; }		// 選択完了フラグ取得
+	bool GetIsScreenActive()const { return _bIsScreenActive; }			// 選択画面表示フラグ取得
+
+	// クラスセット
+	void SetPlayerManager(std::shared_ptr<PlayerManager> playerManager) { _playerManager = playerManager; }
 
 	// 入力状態を設定する
 	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
@@ -41,6 +48,8 @@ public:
 	}
 
 protected:
+	std::shared_ptr<PlayerManager> _playerManager;	// プレイヤーマネージャー
+
 	// 表示用ハンドル
 	int _iHandle1;
 	int _iHandle2;

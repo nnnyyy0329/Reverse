@@ -14,6 +14,7 @@ CharaBase::CharaBase()
 	_fLife = 0.0f;
 	_fMaxLife = 0.0f;
 	_fGravity = 0.0f;
+	_bIsDead = false;
 
 	// キャラタイプ
 	_eCharaType = CHARA_TYPE::NONE;

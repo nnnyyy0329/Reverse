@@ -62,6 +62,9 @@ public:
 	float GetGravity() { return _fGravity; }	// 重力
 	void SetGravity(float f) { _fGravity = f; }	// 重力
 
+	bool IsDead() { return _bIsDead; }			// 死亡フラグ
+	void SetIsDead(bool b) { _bIsDead = b; }	// 死亡フラグ
+
 	CHARA_TYPE GetCharaType() { return _eCharaType; }// キャラタイプ
 	void SetCharaType(CHARA_TYPE eType) { _eCharaType = eType; }
 
@@ -74,6 +77,7 @@ protected:
 	VECTOR _vCollisionBottom;	// 当たり判定の下端
 	float _fCollisionR;			// 当たり判定の半径
 	float _fCollisionHeight;	// 当たり判定の高さ
+
 	// 3Dモデル描画用
 	float _colSubY;	// コリジョン判定時のY補正(腰位置）
 	// デバッグ用
@@ -85,6 +89,7 @@ protected:
 	float _fLife;		// 体力
 	float _fMaxLife;	// 最大体力
 	float _fGravity;	// 重力	
+	bool _bIsDead;		// 死亡フラグ
 
 	// キャラタイプ
 	CHARA_TYPE _eCharaType;

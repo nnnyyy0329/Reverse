@@ -320,6 +320,8 @@ PlayerAnimations BulletPlayer::GetPlayerAnimation()
 	animation.shoot.rightArmShoot	= "Schange_attack_01";
 	animation.shoot.leftArmShoot	= "Schange_attack_00";
 	animation.shoot.shootMove		= "shoot_move";
+	animation.combat.transform		= "";
+	animation.combat.transCancel	= "player_cancell_01";
 	animation.combat.guard			= "";
 	animation.combat.hit			= "player_damage_02";
 	animation.combat.dodge			= "dodge";

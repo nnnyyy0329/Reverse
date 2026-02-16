@@ -1,4 +1,5 @@
 #include "AbilitySelectScreen.h"
+#include "PlayerManager.h"
 
 namespace Render
 {
@@ -17,12 +18,14 @@ namespace
 
 AbilitySelectScreen::AbilitySelectScreen()
 {
+	_playerManager = nullptr;	// プレイヤーマネージャー
+
 	_iHandle1 = ResourceServer::GetInstance()->GetHandle("select1");
 	_iHandle2 = ResourceServer::GetInstance()->GetHandle("select2");
 	_iHandle3 = ResourceServer::GetInstance()->GetHandle("select3");
 
 	// 選択状態の初期化
-	_iCurrentSelection = 1;		// 現在選択中のアビリティ
+	_iCurrentSelection = 0;		// 現在選択中のアビリティ
 	_iSelectedAbility = -1;		// 決定されたアビリティ
 	_bIsSelectComplete = false;	// 選択完了フラグ
 	_bIsScreenActive = false;	// 選択画面表示フラグ
@@ -74,6 +77,8 @@ bool AbilitySelectScreen::Render()
 // 入力による画面表示
 void AbilitySelectScreen::SelectScreenByInput()
 {
+	//if(!IsSelectActiveByPlayerType()){ return; }	// プレイヤータイプに応じて選択可能かどうか
+
 	if(_trg & PAD_INPUT_8)
 	{
 		_bIsScreenActive = !_bIsScreenActive;
@@ -201,4 +206,21 @@ void AbilitySelectScreen::ResetSelection()
 {
 	_bIsSelectComplete = false;
 	_iSelectedAbility = -1;
+}
+
+// プレイヤータイプに応じて選択可能かどうか
+bool AbilitySelectScreen::IsSelectActiveByPlayerType()const
+{
+	if(!_playerManager){ return false; }
+	
+	// アクティブプレイヤーのタイプを取得
+	PLAYER_TYPE activeType = _playerManager->GetActivePlayerType();
+
+	// 表プレイヤー以外は選択不可
+	if(activeType != PLAYER_TYPE::SURFACE)
+	{
+		return false;	// 表プレイヤー以外は選択不可
+	}
+
+	return true;	// 表プレイヤーなら選択可能
 }

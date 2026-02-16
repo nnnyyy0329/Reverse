@@ -162,12 +162,14 @@ std::string PlayerBase::GetCombatStateString(PLAYER_COMBAT_STATE state) const
 {
 	switch(state)
 	{
-		case PLAYER_COMBAT_STATE::NONE:  return "NONE";
-		case PLAYER_COMBAT_STATE::GUARD: return "GUARD";	// ÉKÅ[Éh
-		case PLAYER_COMBAT_STATE::HIT:   return "HIT";		// îÌíe
-		case PLAYER_COMBAT_STATE::DODGE: return "DODGE";	// âÒî
-		case PLAYER_COMBAT_STATE::DEATH: return "DEATH";	// éÄñS
-		default:                         return "UNKNOWN";
+		case PLAYER_COMBAT_STATE::NONE:			return "NONE";
+		case PLAYER_COMBAT_STATE::TRANSFORM:	return "TRANSFORM";		// ïœêg
+		case PLAYER_COMBAT_STATE::TRANS_CANCEL:	return "TRSANS_CANCEL";	// ïœêgâèú
+		case PLAYER_COMBAT_STATE::GUARD:		return "GUARD";			// ÉKÅ[Éh
+		case PLAYER_COMBAT_STATE::HIT:			return "HIT";			// îÌíe
+		case PLAYER_COMBAT_STATE::DODGE:		return "DODGE";			// âÒî
+		case PLAYER_COMBAT_STATE::DEATH:		return "DEATH";			// éÄñS
+		default:								return "UNKNOWN";
 	}
 }
 

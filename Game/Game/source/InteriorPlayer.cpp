@@ -120,6 +120,8 @@ PlayerAnimations InteriorPlayer::GetPlayerAnimation()
 	animation.shoot.rightArmShoot	= "";
 	animation.shoot.leftArmShoot	= "";
 	animation.shoot.shootMove		= "";
+	animation.combat.transform		= "";
+	animation.combat.transCancel	= "player_cancell_00";
 	animation.combat.guard			= "";
 	animation.combat.hit			= "player_damage_00";
 	animation.combat.dodge			= "player_dodge_01";
