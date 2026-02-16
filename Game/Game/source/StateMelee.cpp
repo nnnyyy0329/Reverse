@@ -473,6 +473,9 @@ namespace Melee
 			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_NORMAL);
 		}
 
+		// エフェクト
+		EffectServer::GetInstance()->Play("Melee_Attack", owner->GetPos());
+
 		// 攻撃コリジョン生成
 		owner->StartAttack(MELEE_ATTACK_SETTINGS);
 		_bHasCollision = true;
@@ -635,6 +638,9 @@ namespace Melee
 		{
 			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_NORMAL);
 		}
+
+		// エフェクト
+		EffectServer::GetInstance()->Play("Melee_Attack", owner->GetPos());
 
 		// 突進攻撃コリジョン生成
 		owner->StartAttack(RUSH_SETTINGS);

@@ -92,7 +92,7 @@ bool ModeStageChange::Process()
 
 		case  LOADING_PHASE::COMPLETE:
 			// ƒ[ƒhŠ®—¹ŒãA­‚µ‘Ò‚Á‚Ä‚©‚çíœ
-			if (_loadingTimer > 120)
+			if (_loadingTimer > 10)
 			{
 				ModeServer::GetInstance()->Del(this);
 			}
