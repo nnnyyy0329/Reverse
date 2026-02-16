@@ -24,6 +24,13 @@ bool ModeLoading::Initialize()
 			rs->Register("SurfacePlayerAttackHit1", "res/effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 			rs->Register("SurfacePlayerAttackHit2", "res/effect/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
+			// 敵
+			// 共通
+			rs->Register("En_Damage", "res/effect/Enemy_Damage_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			// 近距離
+			rs->Register("Melee_Attack", "res/effect/NEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			// 遠距離
+			rs->Register("Ranged_Attack", "res/effect/SEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 		}
 
 		// 敵関連
@@ -51,26 +58,60 @@ bool ModeLoading::Initialize()
 		}
 
 		// 能力選択画面用
-		rs->Register("select1", "res/SelectItem/normal.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("select2", "res/SelectItem/melee.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("select3", "res/SelectItem/bullet.png", RESOURCE_TYPE::Graph, 1.0f);
-		//rs->Register("select1", "res/AbilitySelect/select1.png", RESOURCE_TYPE::Graph, 1.0f);
-		//rs->Register("select2", "res/AbilitySelect/select2.png", RESOURCE_TYPE::Graph, 1.0f);
-		//rs->Register("select3", "res/AbilitySelect/select4.png", RESOURCE_TYPE::Graph, 1.0f);
+		{
+			rs->Register("select1", "res/SelectItem/normal.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("select2", "res/SelectItem/melee.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("select3", "res/SelectItem/bullet.png", RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("select1", "res/AbilitySelect/select1.png", RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("select2", "res/AbilitySelect/select2.png", RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("select3", "res/AbilitySelect/select4.png", RESOURCE_TYPE::Graph, 1.0f);
+		}
 
 		// エネルギーUI用
-		rs->Register("EnergyFrame", "res/Energy/energy_frame_2.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("Energy1", "res/Energy/energy_1_2.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("Energy2", "res/Energy/energy_2_2.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("Energy3", "res/Energy/energy_3_2.png", RESOURCE_TYPE::Graph, 1.0f);
+		{
+			rs->Register("EnergyFrame", "res/Energy/energy_frame_2.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy1", "res/Energy/energy_1_2.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy2", "res/Energy/energy_2_2.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy3", "res/Energy/energy_3_2.png", RESOURCE_TYPE::Graph, 1.0f);
+		}
 
 		// スタミナUI用
-		rs->Register("StaminaFrame", "res/StaminaUI/staminaFrame.png", RESOURCE_TYPE::Graph, 1.0f);
-		rs->Register("Stamina", "res/StaminaUI/Stamina.png", RESOURCE_TYPE::Graph, 1.0f);
+		{
+			rs->Register("StaminaFrame", "res/StaminaUI/staminaFrame.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Stamina", "res/StaminaUI/Stamina.png", RESOURCE_TYPE::Graph, 1.0f);
+		}
+
+		// ステージモデル
+		{
+			// ステージ1のモデル
+			rs->Register("stage_fioor_1", "res/stage/json/stage_fioor_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_type_1", "res/stage/json/stage_wall_type_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_typeDoor_1", "res/stage/json/stage_wall_typeDoor_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_typeOutside_1", "res/stage/json/stage_wall_typeOutside_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_typeOutside_2", "res/stage/json/stage_wall_typeOutside_2.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_pillar_1", "res/stage/json/stage_pillar_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_door_close_1", "res/stage/json/stage_door_close_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("object_tana", "res/stage/json/object_tana.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("object_locker", "res/stage/json/object_locker.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("object_kyodan", "res/stage/json/object_kyodan.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("object_blackboard", "res/stage/json/object_blackboard.mv1", RESOURCE_TYPE::Model, 1.0f);
+			// ポータル
+			rs->Register("S_Portal_0to1", "res/stage/json/S_Portal_0to1.mv1", RESOURCE_TYPE::Model, 1.0f);
+
+			// ステージ2のモデル
+			rs->Register("stage2_floor_1", "res/stage/stage2_floor_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage2_wall_1", "res/stage/stage2_wall_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("S_portal_0", "res/stage/S_portal_0.mv1", RESOURCE_TYPE::Model, 1.0f);
+		}
 
 		// 音関連
 		{
-			rs->Register("renshuuVoice", "res/sound/7_01.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			// BGM
+			rs->Register("BGM_Stage01", "sound/BGM/stage_01.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Stage02", "sound/BGM/stage_02.mp3", RESOURCE_TYPE::Sound, 1.0f);
+
+			// SE
+			rs->Register("SE_En_Damage", "sound/SE/en_damage.mp3", RESOURCE_TYPE::Sound, 1.0f);
 		}
 	}
 
@@ -92,8 +133,8 @@ bool ModeLoading::Process()
 {
 	_frameCount++;
 
-	// ロードが完了かつ120フレーム経過後にゲームモードを追加
-	if (!_bIsAddGame && ResourceServer::GetInstance()->IsLoadComplete() && _frameCount >= 120) {
+	// ロードが完了かつ10フレーム経過後にゲームモードを追加
+	if (!_bIsAddGame && ResourceServer::GetInstance()->IsLoadComplete() && _frameCount >= 10) {
 		_bIsAddGame = true;
 		ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
 	}

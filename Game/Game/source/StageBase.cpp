@@ -8,6 +8,7 @@
 StageBase::StageBase(int stageNum) 
 	: _stageNum(stageNum)
 	, _totalEnemyCnt(0)
+	, _currentBGMName("")
 {
 	std::string path, jsonFile, jsonObjName;
 	switch (_stageNum) 
@@ -35,8 +36,18 @@ StageBase::StageBase(int stageNum)
 
 				if (_mapModelHandle.count(name) == 0)
 				{
-					std::string fileName = path + name + ".mv1";
-					_mapModelHandle[name] = MV1LoadModel(fileName.c_str());
+					// 読み込み済みのモデルハンドルを取得
+					int handle = ResourceServer::GetInstance()->GetHandle(name);
+					if (handle != -1)
+					{
+						_mapModelHandle[name] = handle;
+					}
+					//else
+					//{
+					//	// 読み込まれていないなら直接ロード
+					//	std::string fileName = path + name + ".mv1";
+					//	_mapModelHandle[name] = MV1LoadModel(fileName.c_str());
+					//}
 				}
 
 				if (_mapModelHandle.count(name) > 0)
@@ -45,7 +56,7 @@ StageBase::StageBase(int stageNum)
 					modelPos.drawFrame = MV1SearchFrame(modelPos.modelHandle, name.c_str());
 
 					std::string collisionName = "UCX_" + name;
-					modelPos.collisionFrame = MV1SearchFrame(modelPos.modelHandle, collisionName.c_str());
+					modelPos.collisionFrame = MV1SearchFrame(modelPos.modelHandle, name.c_str());
 
 					MV1SetPosition(modelPos.modelHandle, modelPos.pos);
 					MV1SetRotationXYZ(modelPos.modelHandle, modelPos.rot);
@@ -75,7 +86,7 @@ StageBase::StageBase(int stageNum)
 			[&](const std::string& name, const VECTOR& pos, const VECTOR& rot, const VECTOR& scale)
 			{
 				// 名前に応じて敵を生成
-				if (name == "S_MarkerA")
+				if (name == "S_Enemy00")
 				{
 					_stageEnemies.push_back(
 						EnemyFactory::CreateEnemy(EnemyType::MELEE, pos)
@@ -98,20 +109,6 @@ StageBase::StageBase(int stageNum)
 				}
 			}
 		);
-
-
-
-
-
-		//_stageEnemies.push_back(
-		//	EnemyFactory::CreateEnemy(EnemyType::MELEE, VGet(80, 0.0f, -300.0f))// テストで調整
-		//);
-		//_totalEnemyCnt++;// 敵を追加したらカウントアップ
-
-		//_stageEnemies.push_back(
-		//	EnemyFactory::CreateEnemy(EnemyType::TANK, VGet(80.0f, 0.0f, -300.0f))
-		//);
-		//_totalEnemyCnt++;
 	}
 
 	// トリガー
@@ -131,9 +128,16 @@ StageBase::StageBase(int stageNum)
 
 				if (_mapModelHandle.count(name) == 0)
 				{
-					std::string fileName = path + name + ".mv1";
-					int handle = MV1LoadModel(fileName.c_str());
-					_mapModelHandle[name] = handle;
+					int handle = ResourceServer::GetInstance()->GetHandle(name);
+					if (handle != -1)
+					{
+						_mapModelHandle[name] = handle;
+					}
+					//else
+					//{
+					//	std::string fileName = path + name + ".mv1";
+					//	_mapModelHandle[name] = MV1LoadModel(fileName.c_str());
+					//}
 				}
 
 				if (_mapModelHandle.count(name) > 0)
@@ -160,10 +164,30 @@ StageBase::StageBase(int stageNum)
 			}
 		);
 	}
+
+	// BGM
+	switch (_stageNum)
+	{
+	case 1:
+		_currentBGMName = "BGM_Stage01";
+		break;
+	case 2:
+		_currentBGMName = "BGM_Stage02";
+		break;
+	}
+	PlayStageBGM();
+
 }
 
 StageBase::~StageBase()
 {
+	StopStageBGM();
+
+	// BGMを解放
+	if (!_currentBGMName.empty())
+	{
+		SoundServer::GetInstance()->Unload(_currentBGMName);
+	}
 }
 
 void StageBase::Process()
@@ -199,9 +223,8 @@ void StageBase::Render()
 	// マップモデルの描画
 	{
 		for (auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) {
-			MV1DrawModel(ite->modelHandle);
-			//MV1DrawFrame(ite->modelHandle, ite->drawFrame);
-			//MV1DrawFrame(ite->modelHandle, ite->collisionFrame);// コリジョンフレームの描画
+			//MV1DrawModel(ite->modelHandle);
+			MV1DrawFrame(ite->modelHandle, ite->drawFrame);
 		}
 	}
 
@@ -246,7 +269,7 @@ void StageBase::CollisionRender()
 	// マップモデルのコリジョン描画
 	{
 		for (auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) {
-			MV1DrawFrame(ite->modelHandle, ite->collisionFrame);
+			//MV1DrawFrame(ite->modelHandle, ite->collisionFrame);
 		}
 	}
 
@@ -313,4 +336,22 @@ int StageBase::GetNextStageNumFromTrigger(const std::string& triggerName)
 	{
 		return 2;
 	}
+}
+
+void StageBase::PlayStageBGM()
+{
+	if (_currentBGMName.empty()) return;
+
+	// ループ再生
+	auto bgmHandle = SoundServer::GetInstance()->Play(_currentBGMName, DX_PLAYTYPE_LOOP);
+
+	// ボリューム設定
+}
+
+void StageBase::StopStageBGM()
+{
+	if (_currentBGMName.empty()) return;
+
+	// BGMを停止
+	SoundServer::GetInstance()->Stop(_currentBGMName);
 }

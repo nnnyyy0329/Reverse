@@ -116,6 +116,7 @@ bool Enemy::Process()
 	// ステート更新
 	if (_currentState) 
 	{
+		// ステート側でEnemyを制御
 		auto nextState = _currentState->Update(this);
 		if (nextState) 
 		{
@@ -388,11 +389,10 @@ void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 {
 	if (!newState) { return; }
 
-	// 現在のステートがステート変更を許可しているかチェック
 	if (_currentState)
 	{
-		// 優先度によるチェック
-		// 新しいステートが現在のステート以上なら変更を許可
+		// 現在のステートが変更可能か、
+		// 新しいステートのほうが優先度が高いかをチェック
 		bool canChange = _currentState->CanChangeState() ||
 			(newState->GetPriority() >= _currentState->GetPriority());
 
@@ -510,6 +510,12 @@ void Enemy::StopAttack()
 void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
 { 
 	if (_fLife <= 0.0f) { return; }
+
+	// SE再生
+	SoundServer::GetInstance()->Play("SE_En_Damage", DX_PLAYTYPE_BACK);
+
+	// エフェクト
+	EffectServer::GetInstance()->Play("En_Damage", _vPos);
 
 	// 変身前プレイヤーからの攻撃なら最低1は残す
 	if (eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER)

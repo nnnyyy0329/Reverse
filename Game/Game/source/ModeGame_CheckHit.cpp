@@ -512,7 +512,7 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		attack->AddHitCharas(chara);
 
 
-		EffectServer::GetInstance()->Play("SurfacePlayerAttackHit1", chara->GetPos());
+		//EffectServer::GetInstance()->Play("SurfacePlayerAttackHit1", chara->GetPos());
 
 		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
 		auto charaType = chara->GetCharaType();							// キャラのタイプ取得

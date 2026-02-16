@@ -27,6 +27,8 @@ bool ApplicationBase::Initialize(HINSTANCE hInstance)
 	// Effekseerを使用するには必ず設定する。
 	SetUseDirect3DVersion(DX_DIRECT3D_11);
 
+	SetZBufferBitDepth(32);
+
 	if (DxLib_Init() == -1)
 	{	// エラーが起きたら直ちに終了
 		return false;

@@ -65,6 +65,11 @@ public:
 	int GetCurrentEnemyCnt() { return static_cast<int>(_stageEnemies.size()); }// 現在の敵の数を取得
 	bool IsAllEnemiesDefeated() { return _stageEnemies.empty() && _totalEnemyCnt > 0; }// すべての敵が倒されたか
 
+	// BGM関連
+	void PlayStageBGM();// ステージBGMを再生
+	void StopStageBGM();// ステージBGMを停止
+	std::string GetCurrentBGMName() { return _currentBGMName; }// 現在のBGM名を取得
+
 protected:
 	std::map<std::string, int> _mapModelHandle;// マップモデル用ハンドル(名前、モデルハンドル)
 	std::vector<std::shared_ptr<Enemy>> _stageEnemies;// ステージ内の敵リスト
@@ -76,5 +81,9 @@ protected:
 	int _totalEnemyCnt;// ステージ内の敵の総数
 
 	std::vector<TRIGGERPOS> _triggerList;// トリガーリスト
+
+	// BGM関連
+	std::string _currentBGMName;// 再生中のBGM名
+
 };
 
