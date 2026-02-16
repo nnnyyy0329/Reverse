@@ -6,7 +6,7 @@
 // 被弾設定
 namespace HitConfig
 {
-	constexpr float HIT_SPEED = 5.0f;	// 被弾時の吹き飛び速度
+	constexpr float HIT_SPEED = 15.0f;	// 被弾時の吹き飛び速度
 	constexpr float HIT_DECAY = 0.9f;	// 被弾時の吹き飛び減衰率
 	constexpr float HIT_TIME = 30.0f;	// 被弾時間
 }
@@ -112,6 +112,11 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	_fHitSpeed = 0.0f;			// 被弾速度
 	_fHitSpeedDecay = 0.0f;		// 被弾速度減衰率
 	_fHitTime = 0.0f;			// 被弾時間
+
+	// 死亡関係
+	_bIsAlive = true;				// 生きているから
+	_bIsDeath = false;				// 死亡したか
+	_bIsDeathAnimComplete = false;	// 死亡アニメーションが再生し終わったか
 }
 
 // 被弾設定初期化
@@ -177,10 +182,7 @@ bool PlayerBase::Terminate()
 bool PlayerBase::Process()
 {
 	// 死亡処理
-	ProcessDeath();
-
-	// プレイヤーが死亡していたら処理終了
-	if(_playerState.combatState == PLAYER_COMBAT_STATE::DEATH) { return true; }
+	CallDeath();
 
 	// 共通処理呼び出し
 	CallProcess();

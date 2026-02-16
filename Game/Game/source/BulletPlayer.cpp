@@ -2,10 +2,11 @@
 #include "BulletManager.h"
 #include "CameraManager.h"
 
+// 弾発射設定
 namespace bulletConfig
 {
-	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(15, 70, 0);
-	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 70, 0);
+	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);
+	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);
 	constexpr float RADIUS = 10.0f;
 	constexpr float SPEED = 15.0f;
 	constexpr float LIFE_TIME = 120.0f;
@@ -15,8 +16,11 @@ BulletPlayer::BulletPlayer()
 {
 	_eCharaType = CHARA_TYPE::BULLET_PLAYER;
 
-	_shootIntervalTimer = 0.0f;
-	_bIsShootFromRightArm = false;
+	_shootIntervalTimer = 0.0f;		// 発射間隔タイマー
+	_bIsShootFromRightArm = false;	// 右腕から発射したかどうか
+	_bIsReadyCompleted = false;		// 構えアニメーション完了フラグ
+	_bWasShootKeyPressed = false;	// 前フレームで発射キーが押されていたか
+
 }
 
 BulletPlayer::~BulletPlayer()
@@ -77,26 +81,48 @@ void BulletPlayer::ProcessShoot()
 	// キーが押された
 	if(putKey)
 	{
-		// 発射カウントが残っているなら
-		if(_shootIntervalTimer <= 0.0f)
+		// 発射キーが新しく押され、発射カウントが残っていないなら
+		if(!_bWasShootKeyPressed && _shootIntervalTimer <= 0.0f)
 		{
-			// 発射状態を設定
-			if(_bIsShootFromRightArm)
+			// 構えに移行
+			_playerState.shootState = PLAYER_SHOOT_STATE::SHOOT_READY;	// 発射構え状態に移行
+			_bIsReadyCompleted = false;									// 構えアニメーション未完了
+
+			// アニメーション切り替え
+			ProcessPlayAnimation();
+		}
+		// 構え状態で構えアニメーションが完了しているなら
+		else if(_playerState.shootState == PLAYER_SHOOT_STATE::SHOOT_READY && !_bIsReadyCompleted)
+		{
+			// アニメーションが完了したかチェック
+			AnimManager* animManager = GetAnimManager();
+			if(animManager->IsAnimationFinished())
 			{
-				_playerState.shootState = PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT;
+				_bIsReadyCompleted = true; // 構えアニメーション完了フラグを立てる
+			}
+		}
+		// 発射構え状態が完了している、または既に構え完了状態で継続押下していて、発射カウントが0なら、
+		else if((_bIsReadyCompleted || _bWasShootKeyPressed) && _shootIntervalTimer <= 0.0f)
+		{
+			// 発射状態の設定
+			if(!_bIsShootFromRightArm)
+			{
+				_playerState.shootState = PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT; // 左腕発射
 			}
 			else
 			{
-				_playerState.shootState = PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT;
+				_playerState.shootState = PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT; // 右腕発射
 			}
+
+			// アニメーション切り替え
+			ProcessPlayAnimation();
 
 			// 弾の発射
 			ShootBullet();
 
 			// 発射間隔の設定
 			AnimManager* animManager = GetAnimManager();
-			float animTotalTime = animManager->GetCurrentAnimTotalTime();
-			_shootIntervalTimer = animTotalTime;
+			_shootIntervalTimer = animManager->GetCurrentAnimTotalTime();
 		}
 	}
 	// キーが離された
@@ -108,11 +134,12 @@ void BulletPlayer::ProcessShoot()
 			// キーが離されたら発射状態をリセット
 			if(_playerState.shootState != PLAYER_SHOOT_STATE::NONE)
 			{
-				// 状態リセット
-				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
-				_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;
+				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;	// 発射状態リセット
+				_bIsReadyCompleted = false;							// 構えアニメーション完了フラグをリセット	
 			}
 		}
+
+		_bIsShootFromRightArm = false; // 左腕から発射するようにリセット
 	}
 
 	// 弾発射カウントを減らす
@@ -121,26 +148,39 @@ void BulletPlayer::ProcessShoot()
 		_shootIntervalTimer--; // カウントを減らす
 		if(_shootIntervalTimer <= 0.0f)
 		{
-			// 古いステートを保存
-			PlayerState oldState = _playerState;
+			// 発射アニメーション完了後、キーが押されていたら
+			if(putKey)
+			{
+				// 発射状態の設定
+				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;	// 発射状態リセット
+			}
+			// 発射状態のリセット
+			else
+			{
+				// 古いステートを保存
+				PlayerState oldState = _playerState;
 
-			// 状態リセット
-			_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
-			_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;
+				// 状態リセット
+				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
+				_playerState.movementState = PLAYER_MOVEMENT_STATE::NONE;
 
-			// アニメーション更新
-			_oldPlayerState = oldState;		// 変更前の状態を設定
-			ProcessPlayAnimation();			// アニメーション更新
-			_oldPlayerState = _playerState; // 更新後の状態に同期
+				_bIsReadyCompleted = false; // 構えアニメーション完了フラグをリセット
+
+				// アニメーション更新
+				_oldPlayerState = oldState;		// 変更前の状態を設定
+				ProcessPlayAnimation();			// アニメーション更新
+				_oldPlayerState = _playerState; // 更新後の状態に同期
+			}
 		}
 	}
+
+	// 前フレームのキー状態を保存
+	_bWasShootKeyPressed = putKey;
 }
 
 // 弾の発射
 void BulletPlayer::ShootBullet()
 {
-	_bIsShootFromRightArm = !_bIsShootFromRightArm; // 右腕と左腕の切り替え
-
 	// 弾管理クラスの有効確認
 	auto bulletManager = _bulletManager.lock();
 	if(bulletManager)
@@ -168,13 +208,15 @@ void BulletPlayer::ShootBullet()
 		bulletManager->Shoot
 		(
 			VAdd(_vPos, worldOffset),
-			_vDir,
+			shootDirection,
 			bulletConfig::RADIUS,
 			bulletConfig::SPEED,
 			bulletConfig::LIFE_TIME,
 			_eCharaType
 		);
 	}
+
+	_bIsShootFromRightArm = !_bIsShootFromRightArm; // 右腕と左腕の切り替え
 }
 
 // エイムモードの処理
@@ -267,22 +309,21 @@ PlayerAnimations BulletPlayer::GetPlayerAnimation()
 	// 裏プレイヤー用のアニメーション設定
 	PlayerAnimations animation;
 
-	animation.movement.wait			= "player_damage_00";
-	animation.movement.walk			= "player_damage_00";
-	//animation.movement.wait			= "player_idle_00";
-	//animation.movement.walk			= "player_walk_00";
-	animation.movement.run			= "player_jog_00";
+	animation.movement.wait			= "player_idle_02";
+	animation.movement.walk			= "player_walk_02";
+	animation.movement.run			= "player_jog_02";
 	animation.movement.jumpUp		= "";
 	animation.movement.jumpDown		= "";
 	animation.movement.crouchWait	= "";
 	animation.movement.crouchWalk	= "";
-	animation.shoot.rightArmShoot	= "shoot_right";
-	animation.shoot.leftArmShoot	= "shoot_left";
+	animation.shoot.shootReady		= "Schange_set_00";
+	animation.shoot.rightArmShoot	= "Schange_attack_01";
+	animation.shoot.leftArmShoot	= "Schange_attack_00";
 	animation.shoot.shootMove		= "shoot_move";
 	animation.combat.guard			= "";
-	animation.combat.hit			= "player_damage_00";
+	animation.combat.hit			= "player_damage_02";
 	animation.combat.dodge			= "dodge";
-	animation.combat.death			= "player_dead_00";
+	animation.combat.death			= "player_dead_02";
 
 	return animation;
 }
@@ -330,7 +371,7 @@ DodgeConfig BulletPlayer::GetDodgeConfig()
 	config.startTime = 3.0f;            // 開始時間
 	config.activeTime = 15.0f;          // アクティブ時間
 	config.recoveryTime = 8.0f;         // 硬直時間
-	config.dodgeMoveSpeed = 12.0f;      // 移動速度
+	config.dodgeMoveSpeed = 19.0f;      // 移動速度
 
 	return config;
 }

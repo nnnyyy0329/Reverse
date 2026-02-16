@@ -43,6 +43,16 @@ struct ATTACK_COLLISION
 	float attackMoveSpeed;		// 攻撃中の移動速度
 };
 
+// 攻撃移動情報
+struct AttackMovement
+{
+	VECTOR moveDir;		// 移動方向
+	float moveDistance;	// 移動距離
+	float moveSpeed;	// 移動速度
+	float decayRate;	// 減衰率
+	bool canMove;		// 移動可能フラグ
+};
+
 class CharaBase;  // 前方宣言
 
 class AttackBase
@@ -65,6 +75,13 @@ public:
 	void AddHitCharas(std::shared_ptr<CharaBase> chara);		// 当たったキャラを追加
 	bool HasHitCharas(std::shared_ptr<CharaBase> chara)const;	// 当たったキャラを持っているかチェック
 	void ClearHitCharas();										// 当たったキャラリストクリア
+
+	// 攻撃中の移動処理
+	void UpdateAttackMove();				// 移動更新
+	virtual void ProcessAttackMovement();	// 移動処理
+
+	// デバッグ表示
+	void DrawAttackCollision();
 
 	// カプセル攻撃データ設定
 	void SetCapsuleAttackData
@@ -107,8 +124,6 @@ public:
 		bool hit		// ヒットフラグ
 	);
 
-	void DrawAttackCollision();	// 攻撃コリジョン表示
-
 	// ゲッターセッター
 	COLLISION_TYPE GetCollisionType() const { return _eColType; }			// コリジョンタイプ取得
 	ATTACK_COLLISION GetAttackCollision() const { return _stcAttackCol; }	// 攻撃コリジョン情報取得
@@ -120,11 +135,19 @@ public:
 	float GetDamage() const { return _stcAttackCol.damage; }		// ダメージ取得
 	void SetDamage(float damage) { _stcAttackCol.damage = damage; }	// ダメージ設定
 
+	void SetOwner(std::shared_ptr<CharaBase> owner) { _owner = owner; }		// 所有者設定
+	std::shared_ptr<CharaBase> GetOwner() const { return _owner.lock(); }	// 所有者取得
+
 protected:
-	// 攻撃コリジョン関係
+	std::weak_ptr<CharaBase> _owner;	// 所有者キャラ
+
+	// 状態関係
 	COLLISION_TYPE _eColType;		// コリジョンタイプ
-	ATTACK_COLLISION _stcAttackCol;	// 攻撃コリジョン情報
 	ATTACK_STATE _eAttackState;		// 攻撃状態
+
+	// 攻撃情報関係
+	ATTACK_COLLISION _stcAttackCol;		// 攻撃コリジョン情報
+	AttackMovement _stcAttackMovement;	// 攻撃中の移動情報
 
 private:
 	std::shared_ptr<EnergyManager> _energyManager;	// エネルギーマネージャー

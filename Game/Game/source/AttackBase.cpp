@@ -1,6 +1,12 @@
 // 担当 : 成田
 
 #include "AttackBase.h"
+#include "CharaBase.h"
+
+namespace
+{
+	constexpr float ATTACK_MOVE_DECAY_RATE = 0.9f; // 攻撃中の移動減衰率
+}
 
 AttackBase::AttackBase()
 {    
@@ -18,6 +24,13 @@ AttackBase::AttackBase()
     _stcAttackCol.isHit = false;
 	_stcAttackCol.attackState = ATTACK_STATE::INACTIVE;
 	_stcAttackCol.attackMoveSpeed = 0.0f;
+
+	// 攻撃移動情報の初期化
+	_stcAttackMovement.moveDir = VGet(0.0f, 0.0f, 0.0f);
+	_stcAttackMovement.moveDistance = 0.0f;
+	_stcAttackMovement.moveSpeed = 0.0f;
+	_stcAttackMovement.decayRate = 0.0f;
+	_stcAttackMovement.canMove = false;
 
     // コリジョンタイプ
     _eColType = COLLISION_TYPE::NONE;
@@ -41,7 +54,11 @@ bool AttackBase::Terminate()
 
 bool AttackBase::Process()
 {
-	UpdateAttackState();    // 攻撃状態更新処理
+    // 攻撃状態更新処理
+	UpdateAttackState();  
+
+    // 攻撃中の移動更新
+    UpdateAttackMove();
 
     return true;
 }
@@ -92,7 +109,7 @@ void AttackBase::UpdateAttackState()
 		case ATTACK_STATE::STARTUP: // 発生前
         {
 			_stcAttackCol.currentTime += 1.0f;  // 経過時間を進める
-            
+
 			// 発生遅延時間を超えたら攻撃判定をアクティブにする
             if(_stcAttackCol.currentTime >= _stcAttackCol.attackDelay)
             {
@@ -320,4 +337,61 @@ bool AttackBase::HasHitCharas(std::shared_ptr<CharaBase> chara)const
 void AttackBase::ClearHitCharas()
 {
     _hitCharas.clear();
+}
+
+
+// 攻撃中の移動更新
+void AttackBase::UpdateAttackMove()
+{
+    // 所有者キャラを取得
+    auto owner = GetOwner();
+    if(!owner){ return; }
+
+    // 移動速度が設定されており、現在の状態が指定された攻撃状態と一致するなら
+    if(_stcAttackCol.attackMoveSpeed > 0.0f && _eAttackState == _stcAttackCol.attackState)
+    {
+        // 攻撃中の移動処理
+        ProcessAttackMovement();
+    }
+}
+
+// 移動適用
+void AttackBase::ProcessAttackMovement()
+{
+    auto owner = GetOwner();
+    if(!owner) return;
+
+    // 所有者キャラから現在の向きを取得
+    VECTOR currentDir = owner->GetDir();
+
+    VECTOR moveDir;
+
+	// 攻撃方向が設定されている方を優先
+    if(VSize(_stcAttackCol.attackDir) > 0.0f)
+    {
+        moveDir = VNorm(_stcAttackCol.attackDir);
+    }
+    else
+    {
+        moveDir = VNorm(currentDir);
+    }
+
+    // 移動量計算
+	VECTOR vMove = VScale(moveDir, _stcAttackCol.attackMoveSpeed);
+
+	// 減衰処理
+	//vMove = VScale(vMove, ATTACK_MOVE_DECAY_RATE);
+
+    // キャラの位置を加算
+    VECTOR currentPos = owner->GetPos();
+    VECTOR newPos = VAdd(currentPos, vMove);
+	owner->SetPos(newPos);
+
+	// モデルの位置も更新
+	AnimManager* animManager = owner->GetAnimManager();
+    if(animManager != nullptr)
+    {
+		// モデルの位置を更新
+        MV1SetPosition(animManager->GetModelHandle(), newPos);
+    }
 }

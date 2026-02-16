@@ -118,7 +118,7 @@ PlayerAnimations SurfacePlayer::GetPlayerAnimation()
 	animation.shoot.shootMove		= "";
 	animation.combat.guard			= "";
 	animation.combat.hit			= "player_damage_00";
-	animation.combat.dodge			= "dodge";
+	animation.combat.dodge			= "player_dodge_00";
 	animation.combat.death			= "player_dead_00";
 
 	return animation;
@@ -143,7 +143,7 @@ AttackConstants SurfacePlayer::GetAttackConstants()
 	AttackConstants constants;
 
 	constants.attackOffsetScale = 85.0f;	// 攻撃判定オフセット倍率	
-	constants.surfaceMaxComboCount = 3;	// 表プレイヤー用コンボカウント
+	constants.surfaceMaxComboCount = 3;		// 表プレイヤー用コンボカウント
 
 	return constants;
 }
@@ -163,6 +163,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		25.0f,					// ダメージ
 		"SurfacePlayerAttack1",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};	
 
 	// 第2攻撃
@@ -177,6 +179,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		25.0f,					// ダメージ
 		"SurfacePlayerAttack2",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};
 
 	// 第3攻撃
@@ -191,6 +195,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		50.0f,					// ダメージ
 		"SurfacePlayerAttack3",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};
 }
 
@@ -201,11 +207,11 @@ DodgeConfig SurfacePlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType = DODGE_CHARA::SURFACE_PLAYER;
-	config.invincibleDuration = 20.0f;	// 無敵時間（長め）
-	config.startTime = 5.0f;			// 開始時間
-	config.activeTime = 20.0f;			// アクティブ時間
-	config.recoveryTime = 1.0f;			// 硬直時間
-	config.dodgeMoveSpeed = 12.0f;		// 移動速度（標準）
+	config.invincibleDuration = 20.0f;	// 無敵時間
+	config.startTime = 25.0f;			// 開始時間
+	config.activeTime = 30.0f;			// アクティブ時間
+	config.recoveryTime = 25.0f;			// 硬直時間
+	config.dodgeMoveSpeed = 12.0f;		// 移動速度
 
 	return config;
 }

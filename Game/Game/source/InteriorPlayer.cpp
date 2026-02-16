@@ -112,15 +112,17 @@ PlayerAnimations InteriorPlayer::GetPlayerAnimation()
 	animation.movement.crouchWalk	= "";
 	animation.attack.firstAttack	= "Nchange_attack_00";
 	animation.attack.secondAttack	= "Nchange_attack_01";
-	animation.attack.thirdAttack	= "Nchange_attack_02";
-	animation.attack.fourthAttack	= "Nchange_attack_03";
+	animation.attack.thirdAttack	= "Nchange_attack_05";
+	animation.attack.fourthAttack	= "Nchange_attack_06";
+	//animation.attack.thirdAttack	= "Nchange_attack_02";
+	//animation.attack.fourthAttack	= "Nchange_attack_03";
 	animation.attack.fifthAttack	= "Nchange_attack_04";
 	animation.shoot.rightArmShoot	= "";
 	animation.shoot.leftArmShoot	= "";
 	animation.shoot.shootMove		= "";
 	animation.combat.guard			= "";
 	animation.combat.hit			= "player_damage_00";
-	animation.combat.dodge			= "dodge";
+	animation.combat.dodge			= "player_dodge_01";
 	animation.combat.death			= "player_dead_00";
 
 	return animation;
@@ -165,7 +167,8 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		100.0f,					// ダメージ
 		"",						// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};
 
 	// 第2攻撃
@@ -180,6 +183,8 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		100.0f,					// ダメージ
 		"",						// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};
 
 	// 第3攻撃
@@ -188,12 +193,14 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		{0.0f, 150.0f, 0.0f},	// コリジョン上部位置
 		{0.0f, 80.0f, 0.0f},	// コリジョン下部位置
 		25.0f,					// 半径
-		8.0f,					// 発生フレーム
+		10.0f,					// 発生フレーム
 		12.0f,					// 持続フレーム
 		18.0f,					// 硬直フレーム
 		100.0f,					// ダメージ
 		"",						// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};
 
 	// 第4攻撃
@@ -202,12 +209,14 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
 		{0.0f, 50.0f, 0.0f},	// コリジョン下部位置
 		25.0f,					// 半径
-		8.0f,					// 発生フレーム
+		15.0f,					// 発生フレーム
 		12.0f,					// 持続フレーム
-		18.0f,					// 硬直フレーム
+		23.0f,					// 硬直フレーム
 		100.0f,					// ダメージ
 		"",						// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};
 
 	// 第5攻撃
@@ -222,6 +231,8 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		100.0f,					// ダメージ
 		"",						// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};
 }
 
@@ -232,11 +243,11 @@ DodgeConfig InteriorPlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType = DODGE_CHARA::INTERIOR_PLAYER;
-	config.invincibleDuration = 25.0f;  // 無敵時間（標準的）
-	config.startTime = 4.0f;            // 開始時間（少し早め）
+	config.invincibleDuration = 25.0f;  // 無敵時間
+	config.startTime = 4.0f;            // 開始時間
 	config.activeTime = 18.0f;          // アクティブ時間
-	config.recoveryTime = 12.0f;        // 硬直時間
-	config.dodgeMoveSpeed = 9.0f;       // 移動速度（やや早め）
+	config.recoveryTime = 18.0f;        // 硬直時間
+	config.dodgeMoveSpeed = 9.0f;       // 移動速度
 
 	return config;
 }

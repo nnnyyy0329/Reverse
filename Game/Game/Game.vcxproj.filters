@@ -157,6 +157,12 @@
     <ClCompile Include="source\AimCamera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
+    <ClCompile Include="source\PlayerAttackSystem.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase\System\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase_Death.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
     <ClCompile Include="source\ModeGameOver.cpp">
       <Filter>Mode\GameOver</Filter>
     </ClCompile>
@@ -309,6 +315,9 @@
     <ClInclude Include="source\AimCamera.h">
       <Filter>Camera</Filter>
     </ClInclude>
+    <ClInclude Include="source\PlayerAttackSystem.h">
+      <Filter>GameObject\CharaBase\PlayerBase\System\Attack</Filter>
+    </ClInclude>
     <ClInclude Include="source\ModeGameOver.h">
       <Filter>Mode\GameOver</Filter>
     </ClInclude>
@@ -412,6 +421,9 @@
     </Filter>
     <Filter Include="Mode\Title">
       <UniqueIdentifier>{553e3701-3d5b-4024-95d2-f0d7bf4115bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\System\Attack">
+      <UniqueIdentifier>{ab26c467-12ae-4435-b758-3cd3da027bb8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Mode\GameOver">
       <UniqueIdentifier>{48ffd704-7ecc-4724-821d-0a3095d23135}</UniqueIdentifier>

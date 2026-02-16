@@ -48,7 +48,6 @@ public:
 	void DebugRender();	// デバッグ情報描画
 
 	// 回避設定管理
-	void RegisterDefaultConfigs();												// デフォルト設定登録
 	void RegisterCharaConfig(DODGE_CHARA charaType, const DodgeConfig& config);	// キャラタイプ別設定登録
 
 	// 回避設定初期化

@@ -63,14 +63,14 @@ void PlayerBase::InitializeAttackData()
 			configs[i].topOffset,       // 上部
 			configs[i].bottomOffset,    // 下部
 			configs[i].radius,			// 半径
-			_vDir,						// 攻撃方向
+			_vMove,						// 攻撃方向
 			configs[i].delay,           // 発生フレーム
 			configs[i].duration,        // 持続フレーム
 			configs[i].recovery,        // 硬直フレーム
 			configs[i].damage,          // ダメージ
 			false,						// ヒットフラグ
-			ATTACK_STATE::INACTIVE,		// 攻撃状態
-			0.0f						// 攻撃中の移動速度
+			configs[i].attackState,		// 攻撃状態
+			configs[i].attackMoveSpeed	// 攻撃中の移動速度
 		);
 
 		_attacks.push_back(attack);
@@ -108,15 +108,14 @@ void PlayerBase::UpdateAttackColPos
 		VAdd(baseOffset, topOffset),	// 上部
 		VAdd(baseOffset, bottomOffset),	// 下部
 		col.attackColR,					// 半径
-		_vDir,							// 攻撃方向
+		col.attackDir,					// 攻撃方向
 		col.attackDelay,				// 発生遅延
 		col.attackDuration,				// 持続時間
 		col.recovery, 					// 後隙
 		col.damage, 					// ダメージ
 		col.isHit,						// ヒットフラグ
-		ATTACK_STATE::INACTIVE,			// 攻撃状態
-		0.0f							// 攻撃中の移動速度
-
+		col.attackState,				// 攻撃状態
+		col.attackMoveSpeed				// 攻撃中の移動速度
 	);
 }
 
@@ -157,6 +156,9 @@ void PlayerBase::ProcessAttack()
 // コンボ攻撃開始の処理
 void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack)
 {
+	// 攻撃オブジェクト設定
+	attack->SetOwner(shared_from_this());
+
 	// コリジョン位置更新処理
 	ProcessAttackColPos();	
 
@@ -429,7 +431,7 @@ bool PlayerBase::IsAttacking()
 		_playerState.attackState == PLAYER_ATTACK_STATE::FOURTH_ATTACK ||
 		_playerState.attackState == PLAYER_ATTACK_STATE::FIFTH_ATTACK)
 	{
-		_vMove = VGet(0, 0, 0);	// 攻撃中は移動不可
+		//_vMove = VGet(0, 0, 0);	// 攻撃中は移動不可
 		return true;
 	}
 
