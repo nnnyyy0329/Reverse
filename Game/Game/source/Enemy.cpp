@@ -36,6 +36,9 @@ namespace
 	constexpr auto SIGHT_CHECK_MAX_STEPS = 100;// 視線チェックの最大ステップ数
 	constexpr auto SIGHT_CHECK_MIN_THRESHOLD = 0.001f;// 視線チェックの最小閾値
 	constexpr auto WALL_NORMAL_THRESHOLD = 0.2f;// 壁判定の法線Y成分閾値
+
+	// エフェクト関連
+	constexpr auto DAMAGE_EFFECT_OFFSET_Y = 50.0f;// ダメージエフェクトYオフセット
 }
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
@@ -515,7 +518,8 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	SoundServer::GetInstance()->Play("SE_En_Damage", DX_PLAYTYPE_BACK);
 
 	// エフェクト
-	EffectServer::GetInstance()->Play("En_Damage", _vPos);
+	VECTOR efPos = VAdd(_vPos, VGet(0.0f, DAMAGE_EFFECT_OFFSET_Y, 0.0f));
+	EffectServer::GetInstance()->Play("En_Damage", efPos);
 
 	// 変身前プレイヤーからの攻撃なら最低1は残す
 	if (eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER)

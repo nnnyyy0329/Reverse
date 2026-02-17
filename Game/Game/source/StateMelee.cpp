@@ -5,7 +5,7 @@
 namespace 
 {
 	// 攻撃コリジョン設定用定数
-	constexpr auto ATTACK_COLLISION_OFFSET_Z = 100.0f;	// 攻撃コリジョン前方オフセット
+	constexpr auto ATTACK_COLLISION_OFFSET_Z = 80.0f;	// 攻撃コリジョン前方オフセット
 	constexpr auto ATTACK_COLLISION_OFFSET_Y = 60.0f;	// 攻撃コリジョンY位置オフセット
 	constexpr auto ATTACK_COLLISION_HEIGHT = 60.0f;		// 攻撃コリジョン高さ
 	constexpr auto ATTACK_COLLISION_RADIUS = 40.0f;		// 攻撃コリジョン半径
@@ -26,14 +26,14 @@ namespace
 	constexpr auto CONFRONT_DISTANCE_TOLERANCE = 30.0f;	// 対峙時の距離許容範囲
 
 	constexpr auto ATTACK_START_DISTANCE = 200.0f;		// 攻撃開始距離
-	constexpr auto ATTACK_EXECUTE_DISTANCE = 150.0f;	// 攻撃実行可能距離
+	constexpr auto ATTACK_EXECUTE_DISTANCE = 100.0f;	// 攻撃実行可能距離
 
 	constexpr auto RUSH_TARGET_REACHED_DISTANCE = 5.0f;	// 突進攻撃ターゲット到達判定距離
 	
 	// 時間制御用定数
-	constexpr auto ATTACK_CHARGE_TIME = 120.0f;			// 攻撃溜め時間
+	constexpr auto ATTACK_CHARGE_TIME = 30.0f;			// 攻撃溜め時間
 	constexpr auto ATTACK_EXECUTE_TIME = 90.0f;			// 攻撃実行時間
-	constexpr auto ATTACK_RECOVERY_TIME = 180.0f;		// 攻撃後隙時間
+	constexpr auto ATTACK_RECOVERY_TIME = 60.0f;		// 攻撃後隙時間
 
 	constexpr auto RUSH_CHARGE_TIME = 30.0f;			// 突進攻撃溜め時間
 	constexpr auto RUSH_EXECUTE_MAX_TIME = 120.0f;		// 突進攻撃最大実行時間
@@ -43,16 +43,16 @@ namespace
 	constexpr auto CONFRONT_MIN_DURATION = 90.0f;		// 対峙最小時間
 	constexpr auto CONFRONT_RANDOM_DURATION = 90.0f;	// 対峙ランダム追加時間
 
-	constexpr auto ATTACK_DURATION = 60.0f;				// 攻撃持続時間
-	constexpr auto ATTACK_RECOVERY = 60.0f;				// 攻撃後隙時間
+	constexpr auto ATTACK_DELAY = 30.0f;				// 攻撃発生遅延
+	constexpr auto ATTACK_DURATION = 30.0f;				// 攻撃持続時間
 	constexpr auto ATTACK_DAMAGE = 1.0f;				// 攻撃ダメージ量
 	constexpr auto RUSH_DAMAGE = 1.0f;					// 突進攻撃ダメージ量
 
 	constexpr auto BLEND_FRAME = 10.0f;					// アニメーションブレンドフレーム数
 	
 	// 確率制御用定数
-	constexpr auto CONFRONT_PROBABILITY = 40;			// 対峙状態への遷移確率(%)
-	constexpr auto RUSH_PROBABILITY = 40;				// 突進攻撃選択確率(%)
+	constexpr auto CONFRONT_PROBABILITY = 0;			// 対峙状態への遷移確率(%)
+	constexpr auto RUSH_PROBABILITY = 0;				// 突進攻撃選択確率(%)
 
 	constexpr auto WANDER_ANGLE_RANDOM_RANGE = 90;		// 徘徊時の角度ランダム範囲(度)
 	constexpr auto WANDER_ANGLE_RANDOM_OFFSET = 45;		// 徘徊時の角度ランダムオフセット(度)
@@ -75,9 +75,9 @@ namespace
 	constexpr auto ANIM_LOOP_COUNT = 0;					// アニメーションループ回数(0=無限)
 	constexpr auto ANIM_PLAY_COUNT = 1;					// アニメーション再生回数
 	constexpr auto ANIM_SPEED_NORMAL = 1.0f;			// アニメーション再生速度(通常)
-	
-	// コリジョン初期値用定数
-	constexpr auto COLLISION_DELAY_ZERO = 0.0f;			// コリジョン発生遅延なし
+
+	// エフェクト関連
+	constexpr auto ATTACK_EFFECT_OFFSET_Y = 80.0f;		// 攻撃エフェクトYオフセット
 
 	// 攻撃コリジョン設定生成
 	EnemyAttackSettings MakeMeleeAttackSettings()
@@ -87,9 +87,9 @@ namespace
 		settings.vTopOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y + ATTACK_COLLISION_HEIGHT, ATTACK_COLLISION_OFFSET_Z);
 		settings.vBottomOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y, ATTACK_COLLISION_OFFSET_Z);
 		settings.fRadius = ATTACK_COLLISION_RADIUS;
-		settings.fDelay = COLLISION_DELAY_ZERO;
+		settings.fDelay = ATTACK_DELAY;
 		settings.fDuration = ATTACK_DURATION;
-		settings.fRecovery = ATTACK_RECOVERY;
+		settings.fRecovery = 0.0f;
 		settings.fDamage = ATTACK_DAMAGE;
 		settings.ownerId = 0;
 		return settings;
@@ -103,9 +103,9 @@ namespace
 		settings.vTopOffset = VGet(0.0f, RUSH_COLLISION_OFFSET_Y + RUSH_COLLISION_HEIGHT, RUSH_COLLISION_OFFSET_Z);
 		settings.vBottomOffset = VGet(0.0f, RUSH_COLLISION_OFFSET_Y, RUSH_COLLISION_OFFSET_Z);
 		settings.fRadius = RUSH_COLLISION_RADIUS;
-		settings.fDelay = COLLISION_DELAY_ZERO;
+		settings.fDelay = 0.0f;
 		settings.fDuration = ATTACK_DURATION;
-		settings.fRecovery = ATTACK_RECOVERY;
+		settings.fRecovery = 0.0f;
 		settings.fDamage = RUSH_DAMAGE;
 		settings.ownerId = 0;
 		return settings;
@@ -434,6 +434,11 @@ namespace Melee
 		_fTimer = 0.0f;
 
 		// アニメーション設定
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+		}
 	}
 
 	std::shared_ptr<EnemyState> AttackCharge::Update(Enemy* owner)
@@ -474,7 +479,12 @@ namespace Melee
 		}
 
 		// エフェクト
-		EffectServer::GetInstance()->Play("Melee_Attack", owner->GetPos());
+		VECTOR efPos = VAdd(owner->GetPos(), VGet(0.0f, ATTACK_EFFECT_OFFSET_Y, 0.0f));
+		auto handle = EffectServer::GetInstance()->Play("Melee_Attack", efPos);
+		VECTOR dir = owner->GetDir();
+		float rotY = atan2f(dir.x, dir.z);
+		VECTOR rotation = VGet(0.0f, rotY, 0.0f);
+		EffectServer::GetInstance()->SetRot(handle, rotation);
 
 		// 攻撃コリジョン生成
 		owner->StartAttack(MELEE_ATTACK_SETTINGS);
@@ -640,7 +650,6 @@ namespace Melee
 		}
 
 		// エフェクト
-		EffectServer::GetInstance()->Play("Melee_Attack", owner->GetPos());
 
 		// 突進攻撃コリジョン生成
 		owner->StartAttack(RUSH_SETTINGS);
