@@ -5,7 +5,7 @@ namespace
 {
 	// ‰æ‘œ•\Ž¦—p
 	constexpr int DRAW_BAR_FRAME_X = 216;
-	constexpr int DRAW_BAR_FRAME_Y = 1000;
+	constexpr int DRAW_BAR_FRAME_Y = 930;
 	constexpr int DRAW_OFFSET_X = 6;
 	constexpr int DRAW_OFFSET_Y = 6;
 }
