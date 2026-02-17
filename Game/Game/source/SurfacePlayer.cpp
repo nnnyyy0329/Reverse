@@ -166,7 +166,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		3.0f,					// 攻撃中の移動速度
 		"SurfacePlayerAttack1",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		"",						// サウンド名
+		"sPlayerFirstAttack",	// サウンド名
 	};	
 
 	// 第2攻撃
@@ -183,7 +183,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		3.0f,					// 攻撃中の移動速度
 		"SurfacePlayerAttack2",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		"",						// サウンド名
+		"iPlayerAttack",		// サウンド名
 	};
 
 	// 第3攻撃
@@ -200,7 +200,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		3.0f,					// 攻撃中の移動速度
 		"SurfacePlayerAttack3",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		"",						// サウンド名
+		"iPlayerAttack",		// サウンド名
 	};
 }
 
