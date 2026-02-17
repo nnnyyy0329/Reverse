@@ -4,8 +4,8 @@
 
 namespace
 {
-	const float DECREMENT_COUNT = 1.0f;
-	const float SHIELD_COST_STAMINA = 0.5f;
+	constexpr float DECREMENT_COUNT = 1.0f;
+	constexpr float SHIELD_COST_STAMINA = 0.5f;
 }
 
 ShieldBase::ShieldBase()

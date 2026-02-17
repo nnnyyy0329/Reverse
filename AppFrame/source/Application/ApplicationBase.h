@@ -30,8 +30,10 @@ public:
 	struct AnalogStickState {
 		float lx = 0.0f;
 		float ly = 0.0f;
+		float lz = 0.0f;
 		float rx = 0.0f;
 		float ry = 0.0f;
+		float rz = 0.0f;
 	};
 	virtual AnalogStickState GetAnalog() const { return _analog; }
 	virtual float GetAnalogMin() const { return _analogMin; }

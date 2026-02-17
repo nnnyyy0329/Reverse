@@ -23,6 +23,8 @@ public:
 	VECTOR GetVTarget() const { return _vTarget; }		// 注視点を取得
 	float GetCameraAngleH() const { return _angleH; }	// カメラの水平角度を取得
 
+	void SetVPos(const VECTOR& pos) { _vPos = pos; }// カメラ位置を設定
+
 	// ターゲットを設定する関数
 	void SetTarget(std::shared_ptr<PlayerBase> target);
 
@@ -36,15 +38,6 @@ protected:
 
 	// ターゲットとなるゲームオブジェクト
 	std::shared_ptr<PlayerBase> _targetObject;
-
-	// 入力状態
-	int _key = 0;
-	int _trg = 0;
-	float _lx = 0.0f;
-	float _ly = 0.0f;
-	float _rx = 0.0f;
-	float _ry = 0.0f;
-	float _analogMin = 0.0f;
 
 	float _distance;	// 注視点からカメラまでの距離
 	float _angleH;		// 水平方向の角度(ラジアン)

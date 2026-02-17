@@ -14,6 +14,7 @@ class DodgeSystem;
 class CameraManager;
 class GameCamera;
 class DebugCamera;
+class AimCamera;
 
 class BulletManager;
 class AttackManager;
@@ -72,6 +73,7 @@ protected:
 	std::shared_ptr<StageBase>			_stage;					// ステージ
 	std::shared_ptr<GameCamera>			_gameCamera;			// ゲームカメラ
 	std::shared_ptr<DebugCamera>		_debugCamera;			// デバッグカメラ
+	std::shared_ptr<AimCamera>			_aimCamera;				// エイムカメラ
 	///std::shared_ptr<ShieldBase>			_shieldBase;			// シールドベース
 	std::shared_ptr<DodgeSystem>		_dodgeSystem;			// 回避システム
 	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;	// 能力選択画面
@@ -88,6 +90,9 @@ protected:
 	std::shared_ptr<StaminaUI>			_staminaUI;				// スタミナUI
 	std::shared_ptr<PlayerLifeBarUI>	_playerLifeBarUI;		// プレイヤーライフバーUI
 
+	// ベクターコンテナ
+	std::vector<LightInfo>	_lights;	// 生成されたライトを管理
+
 	// シングルトン取得
 	AttackManager* _attackManager = nullptr;
 	EnergyManager* _energyManager = nullptr;
@@ -97,21 +102,22 @@ protected:
 	bool _bViewCollision;	// 当たり判定表示
 	bool _bUseCollision;	// 当たり判定有効
 
-	// ベクターコンテナ
-	std::vector<LightInfo>	_lights;	// 生成されたライトを管理
-
 	bool _bIsStageChanging;// ステージ切り替え中フラグ
 	int _currentStageNum;// 現在のステージ番号
 
 private:
-	void CheckCollisionCharaMap	(std::shared_ptr<CharaBase> chara);										// キャラとマップの当たり判定
-	void CheckHitPlayerEnemy	(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);	// プレイヤーと敵の当たり判定
-	void CheckHitCharaBullet	(std::shared_ptr<CharaBase> chara);										// キャラと弾の当たり判定
+	void CheckCollisionCharaMap	(std::shared_ptr<CharaBase> chara);// キャラとマップの当たり判定
+	void CheckCollisionCharaChara(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);// キャラ同士の当たり判定
+	void CheckCollisionCameraMap();// カメラとマップの当たり判定
+	void CheckHitCharaBullet	(std::shared_ptr<CharaBase> chara);// キャラと弾の当たり判定
+	void CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player);// プレイヤーとトリガーの当たり判定
+
+
+
 	void CheckActiveAttack		(std::shared_ptr<CharaBase> chara);										// 有効な攻撃のチェック
 	void CheckHitCharaAttackCol	(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
 	void ConvertEnergy			(std::shared_ptr<AttackBase> attack, float damage);						// ダメージをエネルギーに変換する
-	void CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player);// プレイヤーとトリガーの当たり判定
-	bool OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);					// 攻撃所有者が自分に攻撃しているかどうか
+	bool OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);						// 攻撃所有者が自分に攻撃しているかどうか
 
 	// ライト関連
 	void InitializeLights();// ライト初期化

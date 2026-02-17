@@ -16,6 +16,8 @@ namespace
 
 	// 判定閾値
 	constexpr auto KNOCKBACK_MIN_DISTANCE = 0.001f;// ノックバック方向計算の最小距離
+
+	constexpr auto BLEND_FRAME = 10.0f;// アニメーションブレンドフレーム数
 }
 
 namespace Common
@@ -25,11 +27,37 @@ namespace Common
 	{
 		// タイマー初期化
 		_fTimer = 0.0f;
+		_fKnockbackSpeed = KNOCKBACK_SPEED;
+
+		// ターゲット情報取得
+		auto targetInfo = GetTargetInfo(owner);
+
+		if (targetInfo.bExist)
+		{
+			// ターゲットから敵へのベクトル計算
+			VECTOR vToEnemy = VScale(targetInfo.vToTarget, -1.0f);
+			vToEnemy.y = 0.0f;
+
+			float dist = VSize(vToEnemy);
+
+			if (dist > KNOCKBACK_MIN_DISTANCE)
+			{
+				_vKnockbackDir = VScale(vToEnemy, 1.0f / dist);
+			}
+			else
+			{
+				_vKnockbackDir = VScale(owner->GetDir(), -1.0f);
+			}
+		}
+		else
+		{
+			_vKnockbackDir = VScale(owner->GetDir(), -1.0f);
+		}
 
 		// ここでアニメーション設定
 		// 敵の種類ごとのアニメーション名を取得
 		const auto& param = owner->GetEnemyParam();
-		owner->GetAnimManager()->ChangeAnimationByName(param.animDamage, 1.0f, 1);
+		owner->GetAnimManager()->ChangeAnimationByName(param.animDamage, BLEND_FRAME, 1);
 	}
 
 	std::shared_ptr<EnemyState> Damage::Update(Enemy* owner) 
@@ -41,6 +69,20 @@ namespace Common
 		if (owner->GetDamageCount() >= owner->GetEnemyParam().damageToDown)
 		{
 			return std::make_shared<Down>();// ダウン状態へ
+		}
+
+		// ノックバック処理
+		if (_fTimer < KNOCKBACK_TIME)
+		{
+			// 速度減衰処理
+			_fKnockbackSpeed *= KNOCKBACK_DECELERATION;
+
+			MoveToTarget(owner, _vKnockbackDir, _fKnockbackSpeed);
+		}
+		else
+		{
+			// ノックバック終了後停止
+			StopMove(owner);
 		}
 
 		// 被ダメージ時間経過チェック
@@ -63,11 +105,11 @@ namespace Common
 		_fTimer = 0.0f;
 
 		// 移動停止
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+		StopMove(owner);
 
 		// ここでアニメーション設定
 		const auto& param = owner->GetEnemyParam();
-		owner->GetAnimManager()->ChangeAnimationByName(param.animDead, 1.0f, 1);
+		owner->GetAnimManager()->ChangeAnimationByName(param.animDead, BLEND_FRAME, 1);
 	}
 
 	std::shared_ptr<EnemyState> Dead::Update(Enemy* owner)
@@ -95,7 +137,7 @@ namespace Common
 		_fTimer = 0.0f;
 
 		// 移動停止
-		owner->SetMove(VGet(0.0f, 0.0f, 0.0f));
+		StopMove(owner);
 
 		// ここでアニメーション設定
 	}
@@ -128,37 +170,34 @@ namespace Common
 		// 被ダメージ回数リセット
 		owner->ResetDamageCount();
 
-		// ノックバック方向計算
-		auto target = owner->GetTarget();
-		if (target)
+		// ターゲット情報取得
+		auto targetInfo = GetTargetInfo(owner);
+
+		if (targetInfo.bExist)
 		{
 			// ターゲットから敵へのベクトル計算
-			VECTOR vToEnemy = VSub(owner->GetPos(), target->GetPos());
+			VECTOR vToEnemy = VScale(targetInfo.vToTarget, -1.0f);
 			vToEnemy.y = 0.0f;
 
-			// 距離計算
 			float dist = VSize(vToEnemy);
 
 			if (dist > KNOCKBACK_MIN_DISTANCE)
 			{
-				// 正規化してノックバック方向設定
 				_vKnockbackDir = VScale(vToEnemy, 1.0f / dist);
 			}
-			else 
+			else
 			{
-				// 重なっている場合は敵の向きの逆方向
 				_vKnockbackDir = VScale(owner->GetDir(), -1.0f);
 			}
 		}
 		else
 		{
-			// ターゲット不在時は敵の向きの逆方向
 			_vKnockbackDir = VScale(owner->GetDir(), -1.0f);
 		}
 
 		// ここでアニメーション設定
 		const auto& param = owner->GetEnemyParam();
-		owner->GetAnimManager()->ChangeAnimationByName(param.animDown, 1.0f, 1);
+		owner->GetAnimManager()->ChangeAnimationByName(param.animDown, BLEND_FRAME, 1);
 	}
 
 	std::shared_ptr<EnemyState> Down::Update(Enemy* owner)
@@ -172,9 +211,7 @@ namespace Common
 			// 速度減衰処理
 			_fKnockbackSpeed *= KNOCKBACK_DECELERATION;
 
-			// 移動処理
-			VECTOR vMove = VScale(_vKnockbackDir, _fKnockbackSpeed);
-			owner->SetMove(vMove);
+			MoveToTarget(owner, _vKnockbackDir, _fKnockbackSpeed);
 		}
 		else
 		{

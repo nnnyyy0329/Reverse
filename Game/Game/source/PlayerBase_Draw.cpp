@@ -45,9 +45,9 @@ void PlayerBase::DrawStatus()
 	auto color = GetColor(_renderConfig.debugColor.r, _renderConfig.debugColor.g, _renderConfig.debugColor.b);
 
 	// ステータス文字列取得関数
-	const char* statusStr = GetStatusString(_ePlayerStatus);
+	std::string statusStr = GetCurrentStateString();
 
-	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,"Player Status: %s", statusStr);
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color, "Player Status: %s", statusStr.c_str());
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 }
 
@@ -81,27 +81,96 @@ void PlayerBase::DrawColPos()
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 }
 
-// ステータス文字列取得関数
-const char* PlayerBase::GetStatusString(PLAYER_STATUS status)
+// 現在のステータス文字列取得関数
+std::string PlayerBase::GetCurrentStateString() const
 {
-	switch(status)
+	std::string result;
+
+	// 移動状態
+	result += "Move:" + GetMovementStateString(_playerState.movementState);
+
+	// 攻撃状態
+	if(_playerState.attackState != PLAYER_ATTACK_STATE::NONE)
 	{
-		case PLAYER_STATUS::NONE:			return "NONE";			// 初期
-		case PLAYER_STATUS::WAIT:			return "WAIT";			// 待機
-		case PLAYER_STATUS::WALK:			return "WALK";			// 歩行
-		case PLAYER_STATUS::RUN:			return "RUN";			// 走行
-		case PLAYER_STATUS::FIRST_ATTACK:	return "FIRST_ATTACK";	// 1段目攻撃
-		case PLAYER_STATUS::SECOND_ATTACK:	return "SECOND_ATTACK";	// 2段目攻撃
-		case PLAYER_STATUS::THIRD_ATTACK:	return "THIRD_ATTACK";	// 3段目攻撃
-		case PLAYER_STATUS::FOURTH_ATTACK:	return "FOURTH_ATTACK";	// 4段目攻撃
-		case PLAYER_STATUS::FIFTH_ATTACK:	return "FIFTH_ATTACK";	// 5段目攻撃
-		case PLAYER_STATUS::JUMP_UP:		return "JUMP_UP";		// ジャンプ（上昇）
-		case PLAYER_STATUS::JUMP_DOWN:		return "JUMP_DOWN";		// ジャンプ（下降）
-		case PLAYER_STATUS::CROUCH_WAIT:	return "CROUCH_WAIT";	// しゃがみ待機
-		case PLAYER_STATUS::CROUCH_WALK:	return "CROUCH_WALK";	// しゃがみ歩行
-		case PLAYER_STATUS::HIT:			return "HIT";			// 被弾
-		case PLAYER_STATUS::DODGE:			return "DODGE";			// 回避
-		case PLAYER_STATUS::DEATH:			return "DEATH";			// 死亡
-		default:							return "UNKNOWN";		// 不明
+		result += " | Attack:" + GetAttackStateString(_playerState.attackState);
+	}
+
+	// 発射状態
+	if(_playerState.shootState != PLAYER_SHOOT_STATE::NONE)
+	{
+		result += " | Shoot:" + GetShootStateString(_playerState.shootState);
+	}
+
+	// 特殊状態
+	if(_playerState.combatState != PLAYER_COMBAT_STATE::NONE)
+	{
+		result += " | Combat:" + GetCombatStateString(_playerState.combatState);
+	}
+
+	// 最終的な文字列を返す
+	return result.c_str();
+}
+
+// 基本移動状態文字列取得
+std::string PlayerBase::GetMovementStateString(PLAYER_MOVEMENT_STATE state) const
+{
+	switch(state)
+	{
+		case PLAYER_MOVEMENT_STATE::NONE:        return "NONE";
+		case PLAYER_MOVEMENT_STATE::WAIT:        return "WAIT";			// 待機
+		case PLAYER_MOVEMENT_STATE::WALK:        return "WALK";			// 歩き
+		case PLAYER_MOVEMENT_STATE::RUN:         return "RUN";			// 走り
+		case PLAYER_MOVEMENT_STATE::JUMP_UP:     return "JUMP_UP";		// ジャンプ上昇
+		case PLAYER_MOVEMENT_STATE::JUMP_DOWN:   return "JUMP_DOWN";	// ジャンプ下降
+		case PLAYER_MOVEMENT_STATE::CROUCH_WAIT: return "CROUCH_WAIT";	// しゃがみ待機
+		case PLAYER_MOVEMENT_STATE::CROUCH_WALK: return "CROUCH_WALK";	// しゃがみ歩き
+		default:                                 return "UNKNOWN";
 	}
 }
+
+// 攻撃状態文字列取得
+std::string PlayerBase::GetAttackStateString(PLAYER_ATTACK_STATE state) const
+{
+	switch(state)
+	{
+		case PLAYER_ATTACK_STATE::NONE:          return "NONE";
+		case PLAYER_ATTACK_STATE::FIRST_ATTACK:  return "FIRST_ATTACK";		// 1段目攻撃
+		case PLAYER_ATTACK_STATE::SECOND_ATTACK: return "SECOND_ATTACK";	// 2段目攻撃
+		case PLAYER_ATTACK_STATE::THIRD_ATTACK:  return "THIRD_ATTACK";		// 3段目攻撃
+		case PLAYER_ATTACK_STATE::FOURTH_ATTACK: return "FOURTH_ATTACK";	// 4段目攻撃
+		case PLAYER_ATTACK_STATE::FIFTH_ATTACK:  return "FIFTH_ATTACK";		// 5段目攻撃
+		default:                                 return "UNKNOWN";
+	}
+}
+
+// 弾発射状態文字列取得
+std::string PlayerBase::GetShootStateString(PLAYER_SHOOT_STATE state) const
+{
+	switch(state)
+	{
+		case PLAYER_SHOOT_STATE::NONE:           return "NONE";
+		case PLAYER_SHOOT_STATE::SHOOT_READY:    return "SHOOT_READY";		// 発射構え
+		case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT: return "RIGHT_ARM_SHOOT";	// 右腕発射
+		case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:  return "LEFT_ARM_SHOOT";	// 左腕発射
+		case PLAYER_SHOOT_STATE::SHOOT_MOVE:     return "SHOOT_MOVE";		// 発射移動
+		default:                                 return "UNKNOWN";
+	}
+}
+
+// 特殊状態文字列取得
+std::string PlayerBase::GetCombatStateString(PLAYER_COMBAT_STATE state) const
+{
+	switch(state)
+	{
+		case PLAYER_COMBAT_STATE::NONE:			return "NONE";
+		case PLAYER_COMBAT_STATE::TRANSFORM:	return "TRANSFORM";		// 変身
+		case PLAYER_COMBAT_STATE::TRANS_CANCEL:	return "TRSANS_CANCEL";	// 変身解除
+		case PLAYER_COMBAT_STATE::GUARD:		return "GUARD";			// ガード
+		case PLAYER_COMBAT_STATE::HIT:			return "HIT";			// 被弾
+		case PLAYER_COMBAT_STATE::DODGE:		return "DODGE";			// 回避
+		case PLAYER_COMBAT_STATE::DEATH:		return "DEATH";			// 死亡
+		default:								return "UNKNOWN";
+	}
+}
+
+

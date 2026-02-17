@@ -76,6 +76,8 @@ bool Enemy::Initialize()
 	_bIsExist = true;
 	_bCanRemove = false;
 
+	_defaultColor = MV1GetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0);
+
 	// ランダムなオフセットを適用して動きをずらす
 	ApplyRandomOffset();
 
@@ -106,9 +108,15 @@ bool Enemy::Process()
 		_currentState->UpdateSearch(this);
 	}
 
+	if (_bIsColorChanged)
+	{
+		UpdateColorChange();
+	}
+
 	// ステート更新
 	if (_currentState) 
 	{
+		// ステート側でEnemyを制御
 		auto nextState = _currentState->Update(this);
 		if (nextState) 
 		{
@@ -377,15 +385,14 @@ void Enemy::DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAng
 
 
 
-void Enemy::ChangeState(std::shared_ptr<EnemyState> newState) 
+void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 {
 	if (!newState) { return; }
 
-	// 現在のステートがステート変更を許可しているかチェック
 	if (_currentState)
 	{
-		// 優先度によるチェック
-		// 新しいステートが現在のステート以上なら変更を許可
+		// 現在のステートが変更可能か、
+		// 新しいステートのほうが優先度が高いかをチェック
 		bool canChange = _currentState->CanChangeState() ||
 			(newState->GetPriority() >= _currentState->GetPriority());
 
@@ -504,6 +511,12 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 { 
 	if (_fLife <= 0.0f) { return; }
 
+	// SE再生
+	SoundServer::GetInstance()->Play("SE_En_Damage", DX_PLAYTYPE_BACK);
+
+	// エフェクト
+	EffectServer::GetInstance()->Play("En_Damage", _vPos);
+
 	// 変身前プレイヤーからの攻撃なら最低1は残す
 	if (eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER)
 	{
@@ -514,7 +527,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 		{
 			_fLife = 1.0f;// 最低1は残す
 			// スタンステートへ遷移
-			ChangeState(std::make_shared<Common::Stun>());
+			ChangeState(std::make_unique<Common::Stun>());
 			return;
 		}
 	}
@@ -529,7 +542,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 		{
 			_fLife = 0.0f;// マイナス防止
 			// 死亡ステートへ遷移
-			ChangeState(std::make_shared<Common::Dead>());
+			ChangeState(std::make_unique<Common::Dead>());
 		}
 
 		return;
@@ -543,17 +556,22 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	{
 		_fLife = 0.0f;// マイナス防止
 		// 死亡ステートへ遷移
-		ChangeState(std::make_shared<Common::Dead>());
+		ChangeState(std::make_unique<Common::Dead>());
 		return;
 	}
 
 	// 生存時:通常ダメージ
 	_damageCnt++;// ダメージ回数をカウントアップ
 
+	// リアクションとしてマテリアルカラーを赤くする
+	COLOR_F red = GetColorF(1.0f, 0.0f, 0.0f, 1.0f);
+	MV1SetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0, red);
+	_bIsColorChanged = true;
+
 	// Down回数に達したら直接Downステートへ遷移
 	if (_damageCnt >= _enemyParam.damageToDown)
 	{
-		ChangeState(std::make_shared<Common::Down>());
+		ChangeState(std::make_unique<Common::Down>());
 		return;
 	}
 
@@ -565,19 +583,19 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	}
 
 	// ダメージステートへ遷移
-	ChangeState(std::make_shared<Common::Damage>());
+	ChangeState(std::make_unique<Common::Damage>());
 }
 
-bool Enemy::IsDead() const
+bool Enemy::IsDead()
 {
 	return _fLife <= 0.0f;// ライフが0以下なら死亡
 }
 
-std::shared_ptr<EnemyState> Enemy::GetRecoveryState() const
+std::unique_ptr<EnemyState> Enemy::GetRecoveryState()
 {
 	if (_recoveryHandler) 
 	{// ハンドラが設定されていれば実行
-		return _recoveryHandler(const_cast<Enemy*>(this));
+		return _recoveryHandler(this);
 	}
 
 	return nullptr;
@@ -734,4 +752,16 @@ bool Enemy::CheckLineOfSight(VECTOR vStart, VECTOR vEnd)
 	}
 
 	return true;// 視線が通っている
+}
+
+void Enemy::UpdateColorChange()
+{
+	static int changeTimer = 0;
+	changeTimer++;
+	if (changeTimer > 10)
+	{
+		MV1SetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0, _defaultColor);
+		_bIsColorChanged = false;
+		changeTimer = 0;
+	}
 }

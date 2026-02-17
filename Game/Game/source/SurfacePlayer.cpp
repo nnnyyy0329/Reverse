@@ -5,14 +5,14 @@
 namespace
 {
 	// 基礎ステータス定数
-	const float GRAVITY = -0.6f;		// 重力加速度
-	const float DEFAULT_LIFE = 100.0f;	// デフォルト体力
-	const float MAX_LIFE = 100.0f;		// 最大体力
+	constexpr float GRAVITY = -0.6f;		// 重力加速度
+	constexpr float DEFAULT_LIFE = 100.0f;	// デフォルト体力
+	constexpr float MAX_LIFE = 100.0f;		// 最大体力
 
 	// 表示用定数
-	const int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
-	const int DRAW_OFFSET_X = 900;		// 描画Xオフセット
-	const int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
+	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
+	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
+	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
 }
 
 SurfacePlayer::SurfacePlayer()
@@ -96,26 +96,31 @@ PlayerConfig SurfacePlayer::GetPlayerConfig()
 }
 
 // 表プレイヤーのアニメーション設定
-PlayerAnimation SurfacePlayer::GetPlayerAnimation()
+PlayerAnimations SurfacePlayer::GetPlayerAnimation()
 {
 	// 表プレイヤー用のアニメーション設定
-	PlayerAnimation animation;
+	PlayerAnimations animation;
 
-	animation.wait			= "player_idle_00";
-	animation.walk			= "player_walk_00";
-	animation.run			= "player_jog_00";
-	animation.jumpUp		= "jump_up";
-	animation.jumpDown		= "jump_down";
-	animation.crouchWait	= "crouch_idle";
-	animation.crouchWalk	= "crouch";
-	animation.firstAttack	= "absorb_attack_00";
-	animation.secondAttack	= "absorb_attack_01";
-	animation.thirdAttack	= "absorb_attack_02";
-	animation.fourthAttack	= "";
-	animation.fifthAttack	= "";
-	animation.hit			= "player_damage_00";
-	animation.dodge			= "dodge";
-	animation.death			= "player_dead_00";
+	animation.movement.wait			= "player_idle_00";
+	animation.movement.walk			= "player_walk_00";
+	animation.movement.run			= "player_jog_00";
+	animation.movement.jumpUp		= "";
+	animation.movement.jumpDown		= "";
+	animation.movement.crouchWait	= "";
+	animation.movement.crouchWalk	= "";
+	animation.attack.firstAttack	= "absorb_attack_00";
+	animation.attack.secondAttack	= "absorb_attack_01";
+	animation.attack.thirdAttack	= "absorb_attack_02";
+	animation.attack.fourthAttack	= "";
+	animation.attack.fifthAttack	= "";
+	animation.shoot.rightArmShoot	= "";
+	animation.shoot.leftArmShoot	= "";
+	animation.shoot.shootMove		= "";
+	animation.combat.transform		= "player_change_00";
+	animation.combat.guard			= "";
+	animation.combat.hit			= "player_damage_00";
+	animation.combat.dodge			= "player_dodge_00";
+	animation.combat.death			= "player_dead_00";
 
 	return animation;
 }
@@ -139,7 +144,7 @@ AttackConstants SurfacePlayer::GetAttackConstants()
 	AttackConstants constants;
 
 	constants.attackOffsetScale = 85.0f;	// 攻撃判定オフセット倍率	
-	constants.surfaceMaxComboCount = 3;	// 表プレイヤー用コンボカウント
+	constants.surfaceMaxComboCount = 3;		// 表プレイヤー用コンボカウント
 
 	return constants;
 }
@@ -159,6 +164,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		25.0f,					// ダメージ
 		"SurfacePlayerAttack1",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};	
 
 	// 第2攻撃
@@ -173,6 +180,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		25.0f,					// ダメージ
 		"SurfacePlayerAttack2",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};
 
 	// 第3攻撃
@@ -187,6 +196,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		50.0f,					// ダメージ
 		"SurfacePlayerAttack3",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
 	};
 }
 
@@ -197,11 +208,11 @@ DodgeConfig SurfacePlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType = DODGE_CHARA::SURFACE_PLAYER;
-	config.invincibleDuration = 20.0f;	// 無敵時間（長め）
-	config.startTime = 5.0f;			// 開始時間
-	config.activeTime = 20.0f;			// アクティブ時間
-	config.recoveryTime = 1.0f;			// 硬直時間
-	config.dodgeMoveSpeed = 12.0f;		// 移動速度（標準）
+	config.invincibleDuration = 20.0f;	// 無敵時間
+	config.startTime = 25.0f;			// 開始時間
+	config.activeTime = 30.0f;			// アクティブ時間
+	config.recoveryTime = 25.0f;			// 硬直時間
+	config.dodgeMoveSpeed = 12.0f;		// 移動速度
 
 	return config;
 }

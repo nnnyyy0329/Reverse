@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\AbilitySelectScreen.cpp" />
+    <ClCompile Include="source\AimCamera.cpp" />
     <ClCompile Include="source\AnimManager.cpp" />
     <ClCompile Include="source\ApplicationGlobal.cpp" />
     <ClCompile Include="source\ApplicationMain.cpp" />
@@ -177,14 +178,18 @@
     <ClCompile Include="source\LightManager.cpp" />
     <ClCompile Include="source\MenuItemBase.cpp" />
     <ClCompile Include="source\ModeGame.cpp" />
+    <ClCompile Include="source\ModeGameOver.cpp" />
     <ClCompile Include="source\ModeGame_CheckHit.cpp" />
     <ClCompile Include="source\ModeLoading.cpp" />
     <ClCompile Include="source\ModeMenu.cpp" />
     <ClCompile Include="source\AbilityBase.cpp" />
     <ClCompile Include="source\AbilityManager.cpp" />
     <ClCompile Include="source\ModeStageChange.cpp" />
+    <ClCompile Include="source\ModeTitle.cpp" />
+    <ClCompile Include="source\PlayerAttackSystem.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
     <ClCompile Include="source\PlayerBase_Attack.cpp" />
+    <ClCompile Include="source\PlayerBase_Death.cpp" />
     <ClCompile Include="source\PlayerBase_Dodge.cpp" />
     <ClCompile Include="source\PlayerBase_Draw.cpp" />
     <ClCompile Include="source\PlayerBase_Process.cpp" />
@@ -215,6 +220,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilitySelectScreen.h" />
+    <ClInclude Include="source\AimCamera.h" />
     <ClInclude Include="source\AnimManager.h" />
     <ClInclude Include="source\ApplicationGlobal.h" />
     <ClInclude Include="source\ApplicationMain.h" />
@@ -231,6 +237,7 @@
     <ClInclude Include="source\EnemyAttackSettings.h" />
     <ClInclude Include="source\EnemyFactory.h" />
     <ClInclude Include="source\EnemyState.h" />
+    <ClInclude Include="source\EnemyState_impl.h" />
     <ClInclude Include="source\EnergyManager.h" />
     <ClInclude Include="source\EnergyUI.h" />
     <ClInclude Include="source\GameCamera.h" />
@@ -251,11 +258,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="source\ModeGame.h" />
+    <ClInclude Include="source\ModeGameOver.h" />
     <ClInclude Include="source\ModeLoading.h" />
     <ClInclude Include="source\ModeMenu.h" />
     <ClInclude Include="source\AbilityBase.h" />
     <ClInclude Include="source\AbilityManager.h" />
     <ClInclude Include="source\ModeStageChange.h" />
+    <ClInclude Include="source\ModeTitle.h" />
+    <ClInclude Include="source\PlayerAttackSystem.h" />
     <ClInclude Include="source\PlayerBase.h" />
     <ClInclude Include="source\PlayerLifeBarUI.h" />
     <ClInclude Include="source\PlayerManager.h" />

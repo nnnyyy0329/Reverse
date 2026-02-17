@@ -4,6 +4,7 @@
 #include "AttackBase.h"
 #include "AttackManager.h"
 #include "DodgeSystem.h"
+#include "GameCamera.h"
 
 // キャラとマップの当たり判定
 void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
@@ -291,18 +292,158 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 	chara->SetPos(vProcessPos);
 }
 
-// プレイヤーと敵の当たり判定
-void ModeGame::CheckHitPlayerEnemy(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2)
+// キャラ同士の当たり判定
+void ModeGame::CheckCollisionCharaChara(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2)
 {
-	if(chara1 == nullptr || chara2 == nullptr) { return; }
+	if (!chara1 || !chara2) { return; }
 
-	if(HitCheck_Capsule_Capsule
-	(
-		chara1->GetCollisionTop(), chara1->GetCollisionBottom(), chara1->GetCollisionR(),
-		chara2->GetCollisionTop(), chara2->GetCollisionBottom(), chara2->GetCollisionR()
-	) != false)
+	if (chara1 == chara2) { return; }
+
+	VECTOR vChara1Top = chara1->GetCollisionTop();// キャラ1のカプセル上端
+	VECTOR vChara1Bottom = chara1->GetCollisionBottom();// キャラ1のカプセル下端
+	float fChara1Rad = chara1->GetCollisionR();// キャラ1のカプセル半径
+
+	VECTOR vChara2Top = chara2->GetCollisionTop();// キャラ2のカプセル上端
+	VECTOR vChara2Bottom = chara2->GetCollisionBottom();// キャラ2のカプセル下端
+	float fChara2Rad = chara2->GetCollisionR();// キャラ2のカプセル半径
+
+	// カプセル同士の当たり判定
+	if (!HitCheck_Capsule_Capsule(
+		vChara1Top, vChara1Bottom, fChara1Rad,
+		vChara2Top, vChara2Bottom, fChara2Rad))
 	{
-		//printfDx("Player and Enemy Hit!\n");
+		return;// 衝突していない
+	}
+
+	// 押し出し処理
+	// 各キャラの中心位置を計算
+	VECTOR vChara1Center = VAdd(vChara1Bottom, VScale(VSub(vChara1Top, vChara1Bottom), 0.5f));
+	VECTOR vChara2Center = VAdd(vChara2Bottom, VScale(VSub(vChara2Top, vChara2Bottom), 0.5f));
+
+	// キャラ1からキャラ2への方向ベクトルを計算(XZ平面のみ)
+	VECTOR vDir = VSub(vChara2Center, vChara1Center);
+	vDir.y = 0.0f; // Y軸は無視
+
+	// 方向ベクトルの長さを計算
+	float fDist = VSize(vDir);
+
+	// 距離がほぼ0の場合はラムダムな方向に押し出す
+	const float constMinDistance = 0.001f;
+	if (fDist < constMinDistance)
+	{
+		// ランダムな角度を生成
+		float fRandAngle = static_cast<float>(GetRand(359)) * DX_PI_F / 180.0f;
+		vDir = VGet(sinf(fRandAngle), 0.0f, cosf(fRandAngle));
+		fDist = 1.0f;// 正規化のために1に
+	}
+
+	// 方向ベクトルを正規化
+	VECTOR vDirNorm = VScale(vDir, 1.0f / fDist);
+
+	// 必要な押し出し距離を計算
+	// 両方のカプセル半径の合計から現在の距離を引く
+	float fRequiredDist = (fChara1Rad + fChara2Rad) - fDist;
+
+	// 押し出しが必要ない場合は終了
+	if (fRequiredDist <= 0.0f) { return; }
+
+	// 各キャラを半分ずつ押し出す
+	float fPushDist = fRequiredDist * 0.5f;
+
+	// キャラ1を逆方向に押し出す
+	VECTOR vPush1 = VScale(vDirNorm, -fPushDist);
+	VECTOR vNewPos1 = VAdd(chara1->GetPos(), vPush1);
+	chara1->SetPos(vNewPos1);
+
+	// キャラ2を正方向に押し出す
+	VECTOR vPush2 = VScale(vDirNorm, fPushDist);
+	VECTOR vNewPos2 = VAdd(chara2->GetPos(), vPush2);
+	chara2->SetPos(vNewPos2);
+}
+
+// カメラとマップの当たり判定
+void ModeGame::CheckCollisionCameraMap()
+{
+	if (!_gameCamera || !_stage) { return; }
+
+	// ステージの全マップモデルを取得
+	const auto& mapObjList = _stage->GetMapModelPosList();
+	if (mapObjList.empty()) { return; }
+
+	// 元のカメラ情報を取得
+	VECTOR vCamPos = _gameCamera->GetVPos();
+	VECTOR vCamTarget = _gameCamera->GetVTarget();
+
+	// 注視点からカメラへのベクトル
+	VECTOR vToCam = VSub(vCamPos, vCamTarget);
+	float fCamDist = VSize(vToCam);
+	const float conMinCamDist = 0.001f;
+	if (fCamDist < conMinCamDist) { return; }// 距離が近すぎる場合は処理しない
+
+	VECTOR vDir = VScale(vToCam, 1.0f / fCamDist);
+
+	// 球を使った当たり判定
+	const float fCamRad = 10.0f;// 半径
+	// 検出範囲の中心点と半径
+	VECTOR vMid = VAdd(vCamTarget, VScale(vDir, fCamDist * 0.5f));
+	const float fSphereMargin = 5.0f;
+	float fDetectRad = fCamDist * 0.5f + fCamRad + fSphereMargin;
+
+	bool bHasHit = false;
+	float fNearestDist = fCamDist;// 最も近い衝突距離
+
+	// 全マップモデルを走査
+	for (const auto& obj : mapObjList)
+	{
+		// コリジョンフレームがない、またはハンドルが無効
+		if (obj.collisionFrame == -1 || obj.modelHandle <= 0) { continue; }
+
+		MV1_COLL_RESULT_POLY_DIM hitPolys = MV1CollCheck_Sphere(
+			obj.modelHandle,
+			obj.collisionFrame,
+			vMid,
+			fDetectRad
+		);
+
+		// プレイヤーとカメラを結ぶ線分の間にぶつかるポリゴンがるかチェック
+		for (int i = 0; i < hitPolys.HitNum; ++i)
+		{
+			const MV1_COLL_RESULT_POLY& poly = hitPolys.Dim[i];
+
+			// 注視点からカメラへの線分とポリゴンの当たり判定
+			HITRESULT_LINE hitResult = HitCheck_Line_Triangle(
+				vCamTarget,
+				vCamPos,
+				poly.Position[0],
+				poly.Position[1],
+				poly.Position[2]
+			);
+
+			if (hitResult.HitFlag == 0) { continue; }
+
+			// 衝突点までの距離を計算
+			float fHitDist = VSize(VSub(hitResult.Position, vCamTarget));
+			if (fHitDist < fNearestDist)
+			{
+				fNearestDist = fHitDist;
+				bHasHit = true;
+			}
+		}
+
+		// ポリゴン情報のメモリ解放
+		MV1CollResultPolyDimTerminate(hitPolys);
+	}
+
+	// 当たっていたら手前に補正
+	if (bHasHit)
+	{
+		// 当たった位置からカメラ半径分だけ手前に移動
+		float fNewDist = fNearestDist - fCamRad;
+		if (fNewDist < 0.0f) { fNewDist = 0.0f; }
+
+		// 注視点から新しいカメラ位置を計算
+		vCamPos = VAdd(vCamTarget, VScale(vDir, fNewDist));
+		_gameCamera->SetVPos(vCamPos);
 	}
 }
 
@@ -371,7 +512,7 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		attack->AddHitCharas(chara);
 
 
-		EffectServer::GetInstance()->Play("SurfacePlayerAttackHit1", chara->GetPos());
+		//EffectServer::GetInstance()->Play("SurfacePlayerAttackHit1", chara->GetPos());
 
 		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
 		auto charaType = chara->GetCharaType();							// キャラのタイプ取得
@@ -513,6 +654,8 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 
 				// ステージ切り替えリクエスト
 				RequestStageChange(nextStageNum);
+
+				_currentStageNum = nextStageNum;// 現在のステージ番号を更新
 
 				return;// 一つのトリガーに当たったら処理を終了
 			}

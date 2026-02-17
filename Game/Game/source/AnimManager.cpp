@@ -75,7 +75,13 @@ bool AnimManager::ChangeAnimation(int animIndex, float fBlendFrame)
 	newAnim->fPlayTime = 0.0f;
 	newAnim->fCloseTime = 0.0f;
 	newAnim->fCloseTotalTime = 0.0f;
+	newAnim->fFadeInTime = 0.0f;
+	newAnim->fFadeInTotalTime = fBlendFrame; // フェードイン時間を設定
 	newAnim->loopCnt = _animResources[animIndex].loopCnt;
+
+	// 即切り替えの場合はブレンド率を1.0に設定
+	float startBlendRate = (fBlendFrame <= 0.0f) ? 1.0f : 0.0f;
+	MV1SetAttachAnimBlendRate(_modelHandle, newAnim->attachIndex, startBlendRate);
 
 	_activeAnims.push_back(newAnim);
 	_currentAnimIndex = animIndex;
@@ -125,11 +131,31 @@ void AnimManager::Update()
 
 		// ブレンド率を計算
 		float blendRate = 1.0f;
+		// フェードアウト処理
 		if (anim->fCloseTime > 0.0f)
 		{
-			blendRate = anim->fCloseTime / anim->fCloseTotalTime;
-			anim->fCloseTime -= 1.0f;
+			anim->fCloseTime -= 1.0f;// フレームで減少
+
+			if (anim->fCloseTotalTime > 0.0f)
+			{
+				blendRate = anim->fCloseTime / anim->fCloseTotalTime;
+			}
+			else
+			{
+				blendRate = 0.0f;
+			}
 		}
+		// フェードイン処理
+		else if (anim->fFadeInTotalTime > 0.0f && anim->fFadeInTime < anim->fFadeInTotalTime)
+		{
+			anim->fFadeInTime += 1.0f;// フレームで増加
+			blendRate = anim->fFadeInTime / anim->fFadeInTotalTime;
+			if (blendRate > 1.0f) { blendRate = 1.0f; }
+		}
+
+		// ブレンド率の範囲制限
+		if (blendRate < 0.0f) { blendRate = 0.0f; }
+		if (blendRate > 1.0f) { blendRate = 1.0f; }
 
 		// ブレンド率を設定
 		MV1SetAttachAnimBlendRate(_modelHandle, anim->attachIndex, blendRate);
@@ -224,8 +250,14 @@ bool AnimManager::ChangeAnimationByName(const char* animName, float fBlendFrame,
 	newAnim->fPlayTime = 0.0f;
 	newAnim->fCloseTime = 0.0f;
 	newAnim->fCloseTotalTime = 0.0f;
+	newAnim->fFadeInTime = 0.0f;
+	newAnim->fFadeInTotalTime = fBlendFrame; // フェードイン時間を設定
 	newAnim->loopCnt = loop;
 	newAnim->fPlaySpeed = fPlaySpeed;
+
+	// 即切り替えの場合はブレンド率を1.0に設定
+	float startBlendRate = (fBlendFrame <= 0.0f) ? 1.0f : 0.0f;
+	MV1SetAttachAnimBlendRate(_modelHandle, newAnim->attachIndex, startBlendRate);
 
 	_activeAnims.push_back(newAnim);
 	_currentAnimIndex = animIndex;
@@ -254,4 +286,15 @@ bool AnimManager::IsAnimationFinished()
 	// 最新のアニメーションの終了状態を確認
 	const AnimationData* currentAnim = _activeAnims.back();
 	return currentAnim->bIsFinished;
+}
+
+// アニメーションの総再生時間を取得
+float AnimManager::GetCurrentAnimTotalTime()
+{
+	// アクティブなアニメーションがない場合は0を返す
+	if(_activeAnims.empty()){ return 0.0f; }
+
+	// 最新のアニメーションの総再生時間を返す
+	const AnimationData* currentAnim = _activeAnims.back();
+	return currentAnim->fTotalTime;
 }

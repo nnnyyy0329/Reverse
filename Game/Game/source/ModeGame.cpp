@@ -3,6 +3,7 @@
 #include "ModeGame.h"
 #include "ModeMenu.h"
 #include "ModeStageChange.h"
+#include "ModeGameOver.h"
 
 #include "CharaBase.h"
 #include "StageBase.h"
@@ -12,6 +13,7 @@
 #include "CameraManager.h"
 #include "GameCamera.h"
 #include "DebugCamera.h"
+#include "AimCamera.h"
 
 #include "BulletManager.h"
 #include "AttackManager.h"
@@ -102,6 +104,9 @@ bool ModeGame::Initialize()
 		_gameCamera->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
 
 		_debugCamera = std::make_shared<DebugCamera>();
+
+		_aimCamera = std::make_shared<AimCamera>();
+		_aimCamera->SetTarget(_playerManager->GetActivePlayerShared());
 	}
 
 	// 敵設定
@@ -167,8 +172,10 @@ bool ModeGame::Process()
 	auto analog = ApplicationMain::GetInstance()->GetAnalog();
 	float lx = analog.lx;
 	float ly = analog.ly;
+	float lz = analog.lz;
 	float rx = analog.rx;
 	float ry = analog.ry;
+	float rz = analog.rz;
 	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
 
 	/// 入力取得
@@ -190,7 +197,15 @@ bool ModeGame::Process()
 		}
 	}
 
+	// ゲームオーバーチェック
+	{
+		// ModeGameOverを追加
+		//ModeGameOver* modeGameOver = new ModeGameOver(this);
+		//ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
+		// この後の処理をスキップ
+		//return true;
 
+	}
 
 	// 能力選択画面のデバッグ関数
 	if(_abilitySelectScreen && _abilitySelectScreen->GetIsSelectComplete())
@@ -200,10 +215,8 @@ bool ModeGame::Process()
 		_abilitySelectScreen->ResetSelection(); // 選択状態をリセット
 	}
 
-
-
 	// spaceキーでメニューを開く
-	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10)
+	if (trg & PAD_INPUT_10)
 	{
 		ModeMenu* modeMenu = new ModeMenu();
 		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
@@ -229,9 +242,18 @@ bool ModeGame::Process()
 
 	// クラスセット
 	{
+		_cameraManager->SetPlayer(_playerManager->GetActivePlayerShared());	// アクティブプレイヤーを設定
 		_cameraManager->SetGameCamera(_gameCamera);
 		_cameraManager->SetDebugCamera(_debugCamera);
+		_cameraManager->SetAimCamera(_aimCamera);
+		_playerManager->SetCameraManager(_cameraManager);				// カメラマネージャーを設定
+		_playerManager->SetAbilitySelectScreen(_abilitySelectScreen);	// 能力選択画面を設定
 		_playerLifeBarUI->SetPlayerManager(_playerManager);
+		_abilitySelectScreen->SetPlayerManager(_playerManager);	
+
+		// 弾丸プレイヤーにカメラマネージャーを設定
+		auto bulletPlayer = std::dynamic_pointer_cast<BulletPlayer>(_playerManager->GetPlayerByType(PLAYER_TYPE::BULLET));
+		if(bulletPlayer){ bulletPlayer->SetCameraManager(_cameraManager); }
 	}
 
 	// オブジェクトの更新
@@ -265,15 +287,27 @@ bool ModeGame::Process()
 			CheckHitCharaBullet(enemy);
 		}
 
-		// プレイヤーと敵の当たり判定
-		for (const auto& enemy : enemies)
-		{
-			CheckHitPlayerEnemy(player, enemy);
-		}
-
 		// キャラと攻撃コリジョンの当たり判定
 		CheckActiveAttack(player);										// プレイヤー
 		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
+
+		// キャラ同士
+		{
+			// プレイヤーと敵
+			for (const auto& enemy : enemies)
+			{
+				CheckCollisionCharaChara(player, enemy);
+			}
+
+			// 敵同士
+			for (size_t i = 0; i < enemies.size(); ++i)
+			{
+				for (size_t j = i + 1; j < enemies.size(); ++j)
+				{
+					CheckCollisionCharaChara(enemies[i], enemies[j]);
+				}
+			}
+		}
 
 		// マップ
 		if (_bUseCollision)
@@ -294,6 +328,7 @@ bool ModeGame::Process()
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
 
 		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
+		_aimCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
 		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
 
 		// 敵にターゲットのプレイヤーを設定
@@ -308,6 +343,8 @@ bool ModeGame::Process()
 
 	// カメラ更新
 	_cameraManager->Process();
+
+	CheckCollisionCameraMap();
 
 	return true;
 }
@@ -380,6 +417,7 @@ bool ModeGame::Render()
 		_dodgeSystem->DebugRender();
 		_debugCamera->DebugRender();
 		_gameCamera->DebugRender();
+		_playerManager->DebugRender();
 
 		// ライト情報
 		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());
