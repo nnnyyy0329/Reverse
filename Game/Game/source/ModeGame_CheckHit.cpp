@@ -511,7 +511,6 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		// ヒットしたキャラを登録
 		attack->AddHitCharas(chara);
 
-
 		//EffectServer::GetInstance()->Play("SurfacePlayerAttackHit1", chara->GetPos());
 
 		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
@@ -570,9 +569,9 @@ bool ModeGame::OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE own
 		case CHARA_TYPE::SURFACE_PLAYER:	// 表プレイヤー
 		case CHARA_TYPE::INTERIOR_PLAYER:	// 裏プレイヤー
 		{
-			// プレイヤーの場合、攻撃所有者がプレイヤーであるかを確認
-			return (ownerType == ATTACK_OWNER_TYPE::SURFACE_PLAYER);
-			return (ownerType == ATTACK_OWNER_TYPE::INTERIOR_PLAYER);
+			// プレイヤー同士の攻撃は当たらない
+			return (ownerType == ATTACK_OWNER_TYPE::SURFACE_PLAYER ||
+					ownerType == ATTACK_OWNER_TYPE::INTERIOR_PLAYER);
 		}
 
 		default:	// その他のキャラタイプ

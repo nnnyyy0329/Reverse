@@ -164,12 +164,8 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 	attack->ProcessStartAttack();		
 
 	// 攻撃エフェクト処理
-	// -1しているのは攻撃インデックスとコンボカウントのズレを調整するため
-	ProcessAttackEffect(comboCount - 1);
-
-	// 攻撃サウンド再生
-	// -1しているのは攻撃インデックスとコンボカウントのズレを調整するため
-	ProcessAttackSound(comboCount - 1);
+	// -1しているのは攻撃開始処理内で攻撃状態が更新されるため、次の攻撃状態を渡すため
+	ProcessAttackReaction(comboCount - 1);	// 攻撃反応処理
 
 	// AttackManagerに登録
 	std::shared_ptr<AttackBase> attackPtr = attack;
@@ -198,12 +194,9 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 	_bCanCombo = false;			// コンボフラグ初期化
 }
 
-// 攻撃エフェクト処理
-void PlayerBase::ProcessAttackEffect(int attackIndex)
+// 攻撃の反応処理
+void PlayerBase::ProcessAttackReaction(int attackIndex)
 {
-	// 攻撃設定を取得
-	AttackConstants constants = GetAttackConstants();
-
 	// キャラタイプに応じた最大コンボ数を取得
 	int maxComboCount = GetMaxComboCount();
 
@@ -214,34 +207,53 @@ void PlayerBase::ProcessAttackEffect(int attackIndex)
 	// 有効な攻撃インデックスかチェック
 	if(attackIndex >= 0 && attackIndex < static_cast<int>(configs.size()))
 	{
-		AttackConfig& config = configs[attackIndex];
+		// 攻撃エフェクト処理
+		ProcessAttackEffect(attackIndex, configs);
 
-		// エフェクト名が空でない場合のみ
-		if(!config.effectName.empty())
-		{
-			// エフェクト再生位置を計算
-			VECTOR effectPos = VAdd(_vPos, config.effectOffset);
+		// 攻撃サウンド処理
+		ProcessAttackSound(attackIndex, configs);
+	}
+}
 
-			// 攻撃方向に応じてオフセットを回転
-			VECTOR dirNorm = VNorm(_vDir);
-			VECTOR rotatedOffset = VGet
-			(
-				config.effectOffset.x * dirNorm.x - config.effectOffset.z * dirNorm.z,	// X成分
-				config.effectOffset.y,													// Y成分
-				config.effectOffset.x * dirNorm.z + config.effectOffset.z * dirNorm.x	// Z成分
-			);
-			effectPos = VAdd(_vPos, rotatedOffset);
+// 攻撃エフェクト処理
+void PlayerBase::ProcessAttackEffect(int attackIndex, std::vector<AttackConfig> configs)
+{
+	// 攻撃設定からエフェクト名とオフセットを取得
+	AttackConfig& config = configs[attackIndex];
 
-			// エフェクト再生
-			EffectServer::GetInstance()->Play(config.effectName, effectPos);
-		}
+	// エフェクト名が空でない場合のみ
+	if(!config.effectName.empty())
+	{
+		// エフェクト再生位置を計算
+		VECTOR effectPos = VAdd(_vPos, config.effectOffset);
+
+		// 攻撃方向に応じてオフセットを回転
+		VECTOR dirNorm = VNorm(_vDir);
+		VECTOR rotatedOffset = VGet
+		(
+			config.effectOffset.x * dirNorm.x - config.effectOffset.z * dirNorm.z,	// X成分
+			config.effectOffset.y,													// Y成分
+			config.effectOffset.x * dirNorm.z + config.effectOffset.z * dirNorm.x	// Z成分
+		);
+		effectPos = VAdd(_vPos, rotatedOffset);
+
+		// エフェクト再生
+		EffectServer::GetInstance()->Play(config.effectName, effectPos);
 	}
 }
 
 // 攻撃サウンド処理
-void PlayerBase::ProcessAttackSound(int attackIndex)
+void PlayerBase::ProcessAttackSound(int attackIndex, std::vector<AttackConfig> configs)
 {
-	
+	// 攻撃設定からサウンド名を取得
+	AttackConfig& config = configs[attackIndex];
+
+	// サウンド名が空でない場合のみ
+	if(!config.soundName.empty())
+	{
+		// サウンド再生
+		SoundServer::GetInstance()->Play(config.soundName, DX_PLAYTYPE_BACK);
+	}
 }
 
 // 攻撃分岐処理
