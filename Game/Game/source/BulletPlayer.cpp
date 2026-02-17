@@ -343,7 +343,7 @@ RenderConfig BulletPlayer::GetRenderConfig()
 }
 
 // 弾プレイヤーの攻撃定数設定
-AttackConstants BulletPlayer::GetAttackConstants()
+AttackConstants BulletPlayer::GetAttackConstants()const
 {
 	// 弾プレイヤーは攻撃を行わない
 

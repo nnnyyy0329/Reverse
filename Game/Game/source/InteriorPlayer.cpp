@@ -143,7 +143,7 @@ RenderConfig InteriorPlayer::GetRenderConfig()
 }
 
 // 攻撃判定のパラメーター
-AttackConstants InteriorPlayer::GetAttackConstants()
+AttackConstants InteriorPlayer::GetAttackConstants()const
 {
 	// InteriorPlayer専用の攻撃定数
 	AttackConstants constants;
@@ -167,10 +167,11 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		12.0f,					// 持続フレーム
 		18.0f,					// 硬直フレーム
 		100.0f,					// ダメージ
-		"",						// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
+		"",						// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		"",						// サウンド名
 	};
 
 	// 第2攻撃
@@ -183,10 +184,11 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		12.0f,					// 持続フレーム
 		18.0f,					// 硬直フレーム
 		100.0f,					// ダメージ
-		"",						// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
+		"",						// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		"",						// サウンド名
 	};
 
 	// 第3攻撃
@@ -199,10 +201,11 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		12.0f,					// 持続フレーム
 		18.0f,					// 硬直フレーム
 		100.0f,					// ダメージ
-		"",						// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
+		"",						// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		"",						// サウンド名
 	};
 
 	// 第4攻撃
@@ -215,10 +218,11 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		12.0f,					// 持続フレーム
 		23.0f,					// 硬直フレーム
 		100.0f,					// ダメージ
-		"",						// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
+		"",						// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		"",						// サウンド名
 	};
 
 	// 第5攻撃
@@ -231,10 +235,11 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		12.0f,					// 持続フレーム
 		18.0f,					// 硬直フレーム
 		100.0f,					// ダメージ
-		"",						// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
+		"",						// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		"",						// サウンド名
 	};
 }
 

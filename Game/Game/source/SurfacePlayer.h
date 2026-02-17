@@ -22,7 +22,7 @@ public:
 	virtual RenderConfig GetRenderConfig() override;					// 描画設定を取得
 	virtual DodgeConfig GetDodgeConfig() override;						// 回避設定を取得
 	virtual ShieldConfig GetShieldConfig() override;					// シールド設定を取得
-	virtual AttackConstants GetAttackConstants() override;				// 攻撃定数を取得
+	virtual AttackConstants GetAttackConstants()const override;			// 攻撃定数を取得
 	virtual void GetAttackConfigs(AttackConfig configs[3]) override;	// 攻撃設定を取得
 
 	/*****ゲッターセッター*****/

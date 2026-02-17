@@ -138,7 +138,7 @@ RenderConfig SurfacePlayer::GetRenderConfig()
 }
 
 // 攻撃判定のパラメーター
-AttackConstants SurfacePlayer::GetAttackConstants()
+AttackConstants SurfacePlayer::GetAttackConstants()const
 {
 	// SurfacePlayer専用の攻撃定数
 	AttackConstants constants;
@@ -162,10 +162,11 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		25.0f,					// 持続フレーム
 		20.0f,					// 硬直フレーム
 		25.0f,					// ダメージ
-		"SurfacePlayerAttack1",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
+		"SurfacePlayerAttack1",	// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		"",						// サウンド名
 	};	
 
 	// 第2攻撃
@@ -178,10 +179,11 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		15.0f,					// 持続フレーム
 		20.0f,					// 硬直フレーム
 		25.0f,					// ダメージ
-		"SurfacePlayerAttack2",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
+		"SurfacePlayerAttack2",	// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		"",						// サウンド名
 	};
 
 	// 第3攻撃
@@ -194,10 +196,11 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		25.0f,					// 持続フレーム
 		20.0f,					// 硬直フレーム
 		50.0f,					// ダメージ
-		"SurfacePlayerAttack3",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
+		"SurfacePlayerAttack3",	// エフェクト名
+		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		"",						// サウンド名
 	};
 }
 

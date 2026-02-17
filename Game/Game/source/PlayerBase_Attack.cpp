@@ -16,15 +16,7 @@ void PlayerBase::InitializeAttackData()
 	AttackConstants constants = GetAttackConstants();	// 攻撃定数取得
 
 	// キャラタイプに応じた最大コンボ数を取得
-	int maxComboCount;
-	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
-	{
-		maxComboCount = constants.surfaceMaxComboCount;
-	}
-	else
-	{
-		maxComboCount = constants.interiorMaxComboCount;
-	}
+	int maxComboCount = GetMaxComboCount();
 
 	// コンボカウントが0ならスキップ
 	if(maxComboCount <= 0)
@@ -172,7 +164,12 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 	attack->ProcessStartAttack();		
 
 	// 攻撃エフェクト処理
-	ProcessAttackEffect(comboCount - 1);	
+	// -1しているのは攻撃インデックスとコンボカウントのズレを調整するため
+	ProcessAttackEffect(comboCount - 1);
+
+	// 攻撃サウンド再生
+	// -1しているのは攻撃インデックスとコンボカウントのズレを調整するため
+	ProcessAttackSound(comboCount - 1);
 
 	// AttackManagerに登録
 	std::shared_ptr<AttackBase> attackPtr = attack;
@@ -208,15 +205,7 @@ void PlayerBase::ProcessAttackEffect(int attackIndex)
 	AttackConstants constants = GetAttackConstants();
 
 	// キャラタイプに応じた最大コンボ数を取得
-	int maxComboCount;
-	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
-	{
-		maxComboCount = constants.surfaceMaxComboCount;
-	}
-	else
-	{ 
-		maxComboCount = constants.interiorMaxComboCount;
-	}
+	int maxComboCount = GetMaxComboCount();
 
 	// 攻撃設定取得
 	std::vector<AttackConfig> configs(maxComboCount);
@@ -249,13 +238,19 @@ void PlayerBase::ProcessAttackEffect(int attackIndex)
 	}
 }
 
+// 攻撃サウンド処理
+void PlayerBase::ProcessAttackSound(int attackIndex)
+{
+	
+}
+
 // 攻撃分岐処理
 void PlayerBase::ProcessBranchAttack()
 {
 	// 現在の状態に応じて攻撃処理を分岐
 	int currentAttackIndex = GetAttackIndexByStatus(_playerState.attackState);
 
-	if(currentAttackIndex >= 0 && currentAttackIndex < static_cast<int>(_attacks.size()))
+	if(currentAttackIndex >= 0 && currentAttackIndex < (static_cast<int>(_attacks.size())))
 	{
 		// 汎用コンボ処理
 		ProcessComboAttack(currentAttackIndex);
@@ -404,20 +399,10 @@ bool PlayerBase::CanNextAttack()
 	// コンボが可能で、最大コンボ数以下の場合のみ次の攻撃可能
 	AttackConstants constants = GetAttackConstants();
 
-	// コンボ可能かつ最大コンボ数以下かチェック
-	int maxComboCount;
-
 	// キャラタイプに応じた最大コンボ数を取得
-	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
-	{
-		maxComboCount = constants.surfaceMaxComboCount;
-	}
-	else
-	{
-		maxComboCount = constants.interiorMaxComboCount;
-	}
+	int maxComboCount = GetMaxComboCount();
 
-
+	// コンボ可能で、現在のコンボカウントが最大コンボ数より小さいなら次の攻撃可能
 	return _bCanCombo && _iComboCount < maxComboCount;
 }
 
@@ -491,4 +476,23 @@ int PlayerBase::GetAttackIndexByStatus(PLAYER_ATTACK_STATE status)
 	}
 
 	return -1; // 見つからなかった場合
+}
+
+// 最大攻撃コンボ取得関数
+int PlayerBase::GetMaxComboCount()const
+{
+	AttackConstants constants = GetAttackConstants();	// 攻撃定数取得
+
+	// キャラタイプに応じた最大コンボ数を返す
+	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
+	{
+		return constants.surfaceMaxComboCount;	// 表プレイヤー用最大コンボ数
+	}
+	else if(_eCharaType == CHARA_TYPE::INTERIOR_PLAYER)
+	{
+		return constants.interiorMaxComboCount;	// 裏プレイヤー用最大コンボ数
+	}
+
+	// デフォルトは0
+	return 0;	
 }

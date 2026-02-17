@@ -30,7 +30,7 @@ public:
 	virtual RenderConfig GetRenderConfig() override;				// •`‰æİ’è‚ğæ“¾
 	virtual DodgeConfig GetDodgeConfig() override;					// ‰ñ”ğİ’è‚ğæ“¾
 	virtual ShieldConfig GetShieldConfig() override;				// ƒV[ƒ‹ƒhİ’è‚ğæ“¾
-	virtual AttackConstants GetAttackConstants() override;			// UŒ‚’è”‚ğæ“¾
+	virtual AttackConstants GetAttackConstants()const override;		// UŒ‚’è”‚ğæ“¾
 	virtual void GetAttackConfigs(AttackConfig configs[]) override;	// UŒ‚İ’è‚ğæ“¾
 
 	// ƒNƒ‰ƒXİ’è
