@@ -87,6 +87,7 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 
 	// アクション関係変数の初期化
 	_fVelY = 0.0f;				// Y方向の速度
+	_bIsDashInput = false;		// ダッシュ入力があるかどうか
 	_bIsJumping = false;		// ジャンプ中かどうか
 	_bIsStanding = true;		// 着地しているかどうか
 	_bIsCrouching = false;		// しゃがんでいるかどうか

@@ -73,6 +73,12 @@ void PlayerBase::ProcessMovePlayer()
 // 入力に応じた移動処理
 void PlayerBase::ProcessInputMove()
 {
+	// ダッシュ入力があれば移動速度を上げる
+	if(_trg & PAD_INPUT_9)
+	{
+		_bIsDashInput = !_bIsDashInput;	// ダッシュ入力フラグをトグルする
+	}
+
 	// アナログ入力による移動
 	if(abs(_lx) > _analogMin || abs(_ly) > _analogMin)
 	{
@@ -129,11 +135,16 @@ void PlayerBase::ProcessInputMove()
 			_vMove = VScale(_vMove, 1.0f / len);
 		}
 
-		// ダッシュ入力
-		if(_key & PAD_INPUT_9)
+		// ダッシュ入力があれば移動速度を上げる
+		if(_bIsDashInput)
 		{
 			_fMoveSpeed += _playerConfig.dashMoveSpeed;
 		}
+	}
+	// 移動入力がないなら
+	else
+	{
+		_bIsDashInput = false;	// ダッシュ入力フラグを下げる
 	}
 }
 
@@ -171,11 +182,10 @@ void PlayerBase::ProcessStatusAnimation()
 	else
 	{
 		bool isWalking = VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f;	// 移動入力があるかどうかをチェック
-		bool isRunning = (_key & PAD_INPUT_9) != 0;						// ダッシュ入力があるかどうかをチェック
 		bool isAiming = _cameraManager && _cameraManager->IsAimMode();	// エイム中かどうかをチェック
 
 		// 走っているなら
-		if(isWalking && isRunning) 
+		if(isWalking && _bIsDashInput)
 		{
 			// エイム中でなければ移動方向を向く
 			if(!isAiming)
