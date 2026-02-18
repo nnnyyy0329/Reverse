@@ -3,8 +3,8 @@
 
 namespace Render
 {
-	constexpr int SELECT_DRAW_X = 256;
-	constexpr int SELECT_DRAW_Y = 850;
+	constexpr int SELECT_DRAW_X = 1500;
+	constexpr int SELECT_DRAW_Y = 950;
 	constexpr int DRAW_OFFSET_X = 10;
 	constexpr int DRAW_OFFSET_Y = 0;
 }
