@@ -115,7 +115,6 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 
 	// 死亡関係
 	_bIsAlive = true;				// 生きているから
-	_bIsDeath = false;				// 死亡したか
 	_bIsDeathAnimComplete = false;	// 死亡アニメーションが再生し終わったか
 }
 
