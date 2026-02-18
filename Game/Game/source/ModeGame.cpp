@@ -199,12 +199,15 @@ bool ModeGame::Process()
 
 	// ゲームオーバーチェック
 	{
-		// ModeGameOverを追加
-		//ModeGameOver* modeGameOver = new ModeGameOver(this);
-		//ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
-		// この後の処理をスキップ
-		//return true;
-
+		auto activePlayer = _playerManager->GetActivePlayerShared();
+		if (activePlayer && activePlayer->IsDead())
+		{
+			// ModeGameOverを追加
+			ModeGameOver* modeGameOver = new ModeGameOver();
+			ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
+			// この後の処理をスキップ
+			return true;
+		}
 	}
 
 	// 能力選択画面のデバッグ関数
@@ -562,4 +565,49 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 
 	// 切り替え完了
 	_bIsStageChanging = false;
+}
+
+void ModeGame::RestartCurrentStage()
+{
+	// ステージの初期化
+	{
+		_stage.reset();
+		_stage = std::make_shared<StageBase>(_currentStageNum);
+
+		// 敵の再設定
+		for (const auto& enemy : _stage->GetEnemies())
+		{
+			enemy->SetTarget(_playerManager->GetActivePlayerShared());
+			enemy->SetBulletManager(_bulletManager);
+		}
+	}
+
+	// プレイヤーの初期化
+	{
+		// 初期位置に戻す
+		VECTOR startPos = _stage->GetPlayerStartPos();
+		VECTOR startRot = _stage->GetPlayerStartRot();
+
+		auto activePlayer = _playerManager->GetActivePlayerShared();
+		activePlayer->SetPos(startPos);
+		activePlayer->SetDir(startRot);
+
+		// ここでプレイヤーの状態をリセット
+	}
+
+	// オブジェクトの削除
+	{
+		_bulletManager->ClearAllBullets();
+		AttackManager::GetInstance()->ClearAllAttacks();
+	}
+
+	// ほかに削除するものがあればここに追加
+}
+
+void ModeGame::SetPlayerConfig(VECTOR vPos, VECTOR vRot)
+{
+	auto player = _playerManager->GetActivePlayerShared();
+
+	player->SetPos(vPos);
+	player->SetDir(vRot);
 }

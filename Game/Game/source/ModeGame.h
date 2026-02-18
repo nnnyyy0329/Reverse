@@ -65,6 +65,8 @@ public:
 	// ステージ切り替え関連
 	void RequestStageChange(int nextStageNum);// ステージ切り替えリクエスト
 	void ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum);// ステージ切り替え実行
+	void RestartCurrentStage();// 現在のステージをリスタート
+	void SetPlayerConfig(VECTOR vPos, VECTOR vRot);// jsonからの設定を適用(プレイヤー)
 	int GetCurrentStageNum() { return _currentStageNum; }
 
 protected:
@@ -129,5 +131,4 @@ private:
 	// ライトの位置、影響範囲、ライトの色
 	int AddPointLight(VECTOR vPos, float fRange, COLOR_F color);
 	void RemoveLight(int lightHandle);// 指定ライトを削除
-
 };

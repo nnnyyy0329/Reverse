@@ -2,8 +2,7 @@
 #include "ModeGame.h"
 #include "ApplicationMain.h"
 
-ModeGameOver::ModeGameOver(ModeGame* modeGame)
-	: _modeGame(modeGame)
+ModeGameOver::ModeGameOver()
 {
 }
 
@@ -34,8 +33,11 @@ bool ModeGameOver::Process()
 
 	if (trg & PAD_INPUT_10) {// spaceキー
 		// 現在のステージ番号からリスタート
-		int currentStageNum = _modeGame->GetCurrentStageNum();
-		_modeGame->RequestStageChange(currentStageNum);
+		ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
+		if (modeGame != nullptr)
+		{
+			modeGame->RestartCurrentStage();
+		}
 
 		// このモードを削除
 		ModeServer::GetInstance()->Del(this);
