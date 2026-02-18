@@ -26,6 +26,8 @@ CharaBase::~CharaBase()
 
 bool CharaBase::Initialize()
 {
+	_bIsDead = false;	// €–Sƒtƒ‰ƒO‰Šú‰»
+
 	return true;
 }
 

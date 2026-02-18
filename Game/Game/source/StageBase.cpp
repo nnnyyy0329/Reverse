@@ -1,6 +1,7 @@
 #include "StageBase.h"
 #include "Enemy.h"
 #include "EnemyFactory.h"
+#include "ModeGame.h"
 
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -9,6 +10,8 @@ StageBase::StageBase(int stageNum)
 	: _stageNum(stageNum)
 	, _totalEnemyCnt(0)
 	, _currentBGMName("")
+	, _vPlayerStartPos(VGet(0.0f, 0.0f, 0.0f))
+	, _vPlayerStartRot(VGet(0.0f, 0.0f, 0.0f))
 {
 	std::string path, jsonFile, jsonObjName;
 	switch (_stageNum) 
@@ -165,6 +168,32 @@ StageBase::StageBase(int stageNum)
 		);
 	}
 
+	// プレイヤー初期位置
+	{
+		std::string playerObjName = "playermarker";
+
+		LoadStageDataFromJson(
+			path + jsonFile,
+			playerObjName,
+			[&](const std::string& name, const VECTOR& pos, const VECTOR& rot, const VECTOR& scale)
+			{
+				if(name == "S_Player")
+				{
+					// 初期位置を保存
+					_vPlayerStartPos = pos;
+					_vPlayerStartRot = rot;
+
+					// ModeGameのインスタンスを取得
+					ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
+					if (modeGame != nullptr)
+					{
+						modeGame->SetPlayerConfig(pos, rot);
+					}
+				}
+			}
+		);
+	}
+
 	// BGM
 	switch (_stageNum)
 	{
@@ -182,12 +211,6 @@ StageBase::StageBase(int stageNum)
 StageBase::~StageBase()
 {
 	StopStageBGM();
-
-	// BGMを解放
-	if (!_currentBGMName.empty())
-	{
-		SoundServer::GetInstance()->Unload(_currentBGMName);
-	}
 }
 
 void StageBase::Process()

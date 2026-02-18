@@ -7,6 +7,9 @@ bool ModeLoading::Initialize()
 	_bIsAddGame = false;
 	_frameCount = 0;
 
+	_seHandle = LoadSoundMem("sound/SE/loading.mp3");
+	PlaySoundMem(_seHandle, DX_PLAYTYPE_LOOP);
+
 	// リソースの登録
 	{
 		auto rs = ResourceServer::GetInstance();
@@ -16,9 +19,9 @@ bool ModeLoading::Initialize()
 			rs->Register("Laser", "effect/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 			// 表プレイヤーの攻撃エフェクト
-			rs->Register("SurfacePlayerAttack1", "effect/Absorb_Attack_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("SurfacePlayerAttack2", "effect/Absorb_Attack_01.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("SurfacePlayerAttack3", "effect/Absorb_Attack_02.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("SurfacePlayerAttack1", "effect/sPlayer/Absorb_Attack_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("SurfacePlayerAttack2", "effect/sPlayer/Absorb_Attack_01.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("SurfacePlayerAttack3", "effect/sPlayer/Absorb_Attack_02.efkefc", RESOURCE_TYPE::Effect, 20.0f);
 
 			// 表プレイヤーのダメージエフェクト
 			rs->Register("InteriorPlayerAttack1", "effect/iPlayer/NChange_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
@@ -149,6 +152,7 @@ bool ModeLoading::Process()
 
 	// ロードが完了かつ10フレーム経過後にゲームモードを追加
 	if (!_bIsAddGame && ResourceServer::GetInstance()->IsLoadComplete() && _frameCount >= 10) {
+		StopSoundMem(_seHandle);
 		_bIsAddGame = true;
 		ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
 	}

@@ -394,6 +394,7 @@ protected:
 
 	// アクション関係変数
 	float _fVelY;			// Y方向の速度
+	bool _bIsDashInput;		// ダッシュ入力があるかどうか
 	bool _bIsJumping;		// ジャンプ中かどうか
 	bool _bIsStanding;		// 着地しているかどうか
 	bool _bIsCrouching;		// しゃがんでいるかどうか
