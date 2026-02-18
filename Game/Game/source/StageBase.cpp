@@ -211,12 +211,6 @@ StageBase::StageBase(int stageNum)
 StageBase::~StageBase()
 {
 	StopStageBGM();
-
-	// BGM‚ð‰ð•ú
-	if (!_currentBGMName.empty())
-	{
-		SoundServer::GetInstance()->Unload(_currentBGMName);
-	}
 }
 
 void StageBase::Process()

@@ -44,6 +44,8 @@ PlayerBase::~PlayerBase()
 
 bool PlayerBase::Initialize()
 {
+	CharaBase::Initialize();	// 基底クラスの初期化
+
 	_playerConfig = GetPlayerConfig();	// プレイヤー設定取得
 	_playerAnim = GetPlayerAnimation();	// プレイヤーアニメーション名データ取得
 	_renderConfig = GetRenderConfig();	// 表示設定データ取得

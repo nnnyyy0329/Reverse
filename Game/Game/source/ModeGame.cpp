@@ -200,7 +200,7 @@ bool ModeGame::Process()
 	// ゲームオーバーチェック
 	{
 		auto activePlayer = _playerManager->GetActivePlayerShared();
-		if (activePlayer && activePlayer->IsDead())
+		if (activePlayer && activePlayer->GetIsDead())
 		{
 			// ModeGameOverを追加
 			ModeGameOver* modeGameOver = new ModeGameOver();
@@ -589,19 +589,19 @@ void ModeGame::RestartCurrentStage()
 		VECTOR startRot = _stage->GetPlayerStartRot();
 
 		auto activePlayer = _playerManager->GetActivePlayerShared();
+		activePlayer->Initialize();
 		activePlayer->SetPos(startPos);
 		activePlayer->SetDir(startRot);
 
 		// ここでプレイヤーの状態をリセット
 	}
 
-	// オブジェクトの削除
+	// オブジェクトのクリア
 	{
 		_bulletManager->ClearAllBullets();
 		AttackManager::GetInstance()->ClearAllAttacks();
+		EffectServer::GetInstance()->Terminate();
 	}
-
-	// ほかに削除するものがあればここに追加
 }
 
 void ModeGame::SetPlayerConfig(VECTOR vPos, VECTOR vRot)
