@@ -191,7 +191,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		3.0f,					// 攻撃中の移動速度
 		"SurfacePlayerAttack1",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		"iPlayerAttack",		// サウンド名
+		"sPlayerFirstAttack",		// サウンド名
 	};
 
 	// 第3攻撃
