@@ -70,6 +70,9 @@ public:
 	void StopStageBGM();// ステージBGMを停止
 	std::string GetCurrentBGMName() { return _currentBGMName; }// 現在のBGM名を取得
 
+	VECTOR GetPlayerStartPos() { return _vPlayerStartPos; }
+	VECTOR GetPlayerStartRot() { return _vPlayerStartRot; }
+
 protected:
 	std::map<std::string, int> _mapModelHandle;// マップモデル用ハンドル(名前、モデルハンドル)
 	std::vector<std::shared_ptr<Enemy>> _stageEnemies;// ステージ内の敵リスト
@@ -85,5 +88,8 @@ protected:
 	// BGM関連
 	std::string _currentBGMName;// 再生中のBGM名
 
+	// プレイヤー初期位置
+	VECTOR _vPlayerStartPos;
+	VECTOR _vPlayerStartRot;
 };
 

@@ -7,6 +7,9 @@ bool ModeLoading::Initialize()
 	_bIsAddGame = false;
 	_frameCount = 0;
 
+	_seHandle = LoadSoundMem("sound/SE/loading.mp3");
+	PlaySoundMem(_seHandle, DX_PLAYTYPE_LOOP);
+
 	// リソースの登録
 	{
 		auto rs = ResourceServer::GetInstance();
@@ -149,6 +152,7 @@ bool ModeLoading::Process()
 
 	// ロードが完了かつ10フレーム経過後にゲームモードを追加
 	if (!_bIsAddGame && ResourceServer::GetInstance()->IsLoadComplete() && _frameCount >= 10) {
+		StopSoundMem(_seHandle);
 		_bIsAddGame = true;
 		ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
 	}
