@@ -13,5 +13,7 @@ public:
 private:
 	bool _bIsAddGame = false;
 	int _frameCount = 0;
+
+	int _seHandle;
 };
 
