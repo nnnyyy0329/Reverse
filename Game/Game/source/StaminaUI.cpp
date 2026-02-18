@@ -5,7 +5,7 @@ namespace
 {
 	// ‰æ‘œ•\Ž¦—p
 	const int DRAW_BAR_FRAME_X = 216;
-	const int DRAW_BAR_FRAME_Y = 700;
+	const int DRAW_BAR_FRAME_Y = 1000;
 	const int DRAW_OFFSET_X = 15;
 	const int DRAW_OFFSET_Y = 5;
 }
