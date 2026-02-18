@@ -10,9 +10,11 @@ namespace
 	constexpr auto DOWN_TIME = 90.0f;// ダウン時間
 
 	// ノックバック制御
-	constexpr auto KNOCKBACK_SPEED = 5.0f;// ノックバック速度
-	constexpr auto KNOCKBACK_TIME = 15.0f;// ノックバック時間
-	constexpr auto KNOCKBACK_DECELERATION = 0.9f;// ノックバック減速率
+	constexpr auto DAMAGE_KNOCKBACK_SPEED = 5.0f;// ノックバック速度
+	constexpr auto DAMAGE_KNOCKBACK_TIME = 15.0f;// ノックバック時間
+	constexpr auto DOWN_KNOCKBACK_SPEED = 18.0f;// ダウンノックバック速度
+	constexpr auto DOWN_KNOCKBACK_TIME = 90.0f;// ダウンノックバック時間
+	constexpr auto KNOCKBACK_DECELERATION = 0.95f;// ノックバック減速率
 
 	// 判定閾値
 	constexpr auto KNOCKBACK_MIN_DISTANCE = 0.001f;// ノックバック方向計算の最小距離
@@ -27,7 +29,7 @@ namespace Common
 	{
 		// タイマー初期化
 		_fTimer = 0.0f;
-		_fKnockbackSpeed = KNOCKBACK_SPEED;
+		_fKnockbackSpeed = DAMAGE_KNOCKBACK_SPEED;
 
 		// ターゲット情報取得
 		auto targetInfo = GetTargetInfo(owner);
@@ -72,7 +74,7 @@ namespace Common
 		}
 
 		// ノックバック処理
-		if (_fTimer < KNOCKBACK_TIME)
+		if (_fTimer < DAMAGE_KNOCKBACK_TIME)
 		{
 			// 速度減衰処理
 			_fKnockbackSpeed *= KNOCKBACK_DECELERATION;
@@ -110,6 +112,9 @@ namespace Common
 		// ここでアニメーション設定
 		const auto& param = owner->GetEnemyParam();
 		owner->GetAnimManager()->ChangeAnimationByName(param.animDead, BLEND_FRAME, 1);
+
+		// SE
+		SoundServer::GetInstance()->Play("SE_En_Dead", DX_PLAYTYPE_BACK);
 	}
 
 	std::shared_ptr<EnemyState> Dead::Update(Enemy* owner)
@@ -165,7 +170,7 @@ namespace Common
 	{
 		// タイマー初期化
 		_fTimer = 0.0f;
-		_fKnockbackSpeed = KNOCKBACK_SPEED;
+		_fKnockbackSpeed = DOWN_KNOCKBACK_SPEED;
 
 		// 被ダメージ回数リセット
 		owner->ResetDamageCount();
@@ -198,6 +203,9 @@ namespace Common
 		// ここでアニメーション設定
 		const auto& param = owner->GetEnemyParam();
 		owner->GetAnimManager()->ChangeAnimationByName(param.animDown, BLEND_FRAME, 1);
+
+		// SE
+		SoundServer::GetInstance()->Play("SE_En_Down", DX_PLAYTYPE_BACK);
 	}
 
 	std::shared_ptr<EnemyState> Down::Update(Enemy* owner)
@@ -206,7 +214,7 @@ namespace Common
 		_fTimer++;
 
 		// ノックバック処理
-		if (_fTimer < KNOCKBACK_TIME)
+		if (_fTimer < DOWN_KNOCKBACK_TIME)
 		{
 			// 速度減衰処理
 			_fKnockbackSpeed *= KNOCKBACK_DECELERATION;

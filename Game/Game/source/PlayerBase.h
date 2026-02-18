@@ -190,11 +190,8 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
-	// 被ダメージ処理
-	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)override;
-
-	// 弾での被ダメージ処理
-	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)override;	// 被ダメージ処理
+	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾での被ダメージ処理
 
 	// 共通初期化
 	void InitializePlayerConfig(PlayerConfig& config);			// プレイヤー設定初期化
@@ -316,6 +313,13 @@ protected:	// 攻撃関係
 	int GetAttackIndexByStatus(PLAYER_ATTACK_STATE status);							// 状態から攻撃インデックスを取得
 	int GetMaxComboCount()const;													// 最大コンボ数取得
 
+	// 攻撃コリジョン情報の受け取り用
+	VECTOR _vAttackColTop;
+	VECTOR _vAttackColBottom;
+	float _fAttackColR;
+	bool _bCanCombo;	// コンボ可能フラグ
+	int _iComboCount;	// コンボカウント
+
 protected:	// 弾発射関係
 	
 	virtual void ProcessShoot(){};	// 発射処理の仮想関数
@@ -358,9 +362,13 @@ protected:	// 死亡関係
 	void CheckDeathAnimFinished();	// 死亡アニメーションが再生し終わったか
 	void CheckDeath();				// 死亡したか
 
-	bool IsDeath()const;			// 死亡したか
-	bool IsAlive()const;			// プレイヤーが死亡したか
-	bool IsStateDeath()const;		// 死亡ステートになったか
+	bool IsDeath()const;		// 死亡したか
+	bool IsAlive()const;		// プレイヤーが死亡したか
+	bool IsStateDeath()const;	// 死亡ステートになったか
+
+	// 死亡関係変数
+	bool _bIsAlive;				// 生きているか
+	bool _bIsDeathAnimComplete;	// 死亡アニメーションが再生し終わったか
 
 protected:
 
@@ -396,13 +404,6 @@ protected:
 	int _iDrawOffsetX;		
 	int _iDrawOffsetY;
 
-	// 攻撃コリジョン情報の受け取り用
-	VECTOR _vAttackColTop;
-	VECTOR _vAttackColBottom;
-	float _fAttackColR;
-	bool _bCanCombo;	// コンボ可能フラグ
-	int _iComboCount;	// コンボカウント
-
 	// 被弾情報
 	VECTOR _vHitDir;		// 被弾方向
 	float _fHitSpeed;		// 被弾速度
@@ -411,11 +412,6 @@ protected:
 
 	// カメラ角度
 	float _cameraAngle;
-
-	// 死亡関係変数
-	bool _bIsAlive;				// 生きているか
-	bool _bIsDeath;				// 死亡したか
-	bool _bIsDeathAnimComplete;	// 死亡アニメーションが再生し終わったか
 };
 
 

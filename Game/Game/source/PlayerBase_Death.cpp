@@ -48,7 +48,7 @@ void PlayerBase::CheckDeath()
 {
 	if(_bIsDeathAnimComplete)
 	{
-		_bIsDeath = true;
+		_bIsDead = true;
 	}
 }
 
@@ -56,7 +56,7 @@ void PlayerBase::CheckDeath()
 bool PlayerBase::IsDeath()const
 {
 	// Ž€–Sƒtƒ‰ƒO‚ª—LŒø‚©
-	if(_bIsDeath)
+	if(_bIsDead)
 	{
 		// Ž€–S
 		return true;

@@ -199,12 +199,14 @@ bool ModeGame::Process()
 
 	// ゲームオーバーチェック
 	{
-		// ModeGameOverを追加
-		//ModeGameOver* modeGameOver = new ModeGameOver(this);
-		//ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
-		// この後の処理をスキップ
-		//return true;
-
+		if(_playerManager->GetActivePlayerShared()->GetIsDead())
+		{
+			// ModeGameOverを追加
+			//ModeGameOver* modeGameOver = new ModeGameOver(this);
+			//ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
+			// この後の処理をスキップ
+			//return true;
+		}
 	}
 
 	// 能力選択画面のデバッグ関数

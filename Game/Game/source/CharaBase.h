@@ -33,44 +33,45 @@ public:
 	virtual void CollisionRender(); // コリジョン描画
 
 	/*****ゲッターセッター*****/
-	VECTOR GetCollisionTop() { return _vCollisionTop; }		// 当たり判定の上端
-	void SetCollisionTop(VECTOR v) { _vCollisionTop = v; }	// 当たり判定の上端
+	/* virtualにしているのは、将来的に継承先で死亡フラグの管理方法を変える可能性があるため */
+	VECTOR GetCollisionTop()const{ return _vCollisionTop; }		// 当たり判定の上端
+	void SetCollisionTop(VECTOR v) { _vCollisionTop = v; }		// 当たり判定の上端
 
-	VECTOR GetCollisionBottom() { return _vCollisionBottom; }		// 当たり判定の下端
+	VECTOR GetCollisionBottom()const{ return _vCollisionBottom; }	// 当たり判定の下端
 	void SetCollisionBottom(VECTOR v) { _vCollisionBottom = v; }	// 当たり判定の下端
 
-	float GetCollisionR() { return _fCollisionR; }		// 当たり判定の半径
+	float GetCollisionR()const{ return _fCollisionR; }	// 当たり判定の半径
 	void SetCollisionR(float f) { _fCollisionR = f; }	// 当たり判定の半径
 
-	float GetCollisionHeight() { return _fCollisionHeight; }// 当たり判定の高さ
-	void SetCollisionHeight(float f) { _fCollisionHeight = f; }// 当たり判定の高さ
+	float GetCollisionHeight()const{ return _fCollisionHeight; }	// 当たり判定の高さ
+	void SetCollisionHeight(float f) { _fCollisionHeight = f; }		// 当たり判定の高さ
 
-	float GetColSubY() { return _colSubY; }		// コリジョン判定時のY補正(腰位置）
+	float GetColSubY()const{ return _colSubY; }	// コリジョン判定時のY補正(腰位置）
 
-	float GetMoveSpeed() { return _fMoveSpeed; }	// 移動速度
-	void SetMoveSpeed(float f) { _fMoveSpeed = f; }	// 移動速度
+	float GetMoveSpeed()const{ return _fMoveSpeed; }	// 移動速度
+	void SetMoveSpeed(float f) { _fMoveSpeed = f; }		// 移動速度
 
-	float GetDirSpeed() { return _fDirSpeed; }		// 回転速度
+	float GetDirSpeed()const{ return _fDirSpeed; }	// 回転速度
 	void SetDirSpeed(float f) { _fDirSpeed = f; }	// 回転速度
 
-	float GetLife() { return _fLife; }		// 体力
+	float GetLife()const{ return _fLife; }	// 体力
 	void SetLife(float f) { _fLife = f; }	// 体力
 
-	float GetMaxLife() { return _fMaxLife; }	// 最大体力
-	void SetMaxLife(float f) { _fMaxLife = f; }	// 最大体力
+	float GetMaxLife()const{ return _fMaxLife; }	// 最大体力
+	void SetMaxLife(float f) { _fMaxLife = f; }		// 最大体力
 
-	float GetGravity() { return _fGravity; }	// 重力
-	void SetGravity(float f) { _fGravity = f; }	// 重力
+	float GetGravity()const{ return _fGravity; }	// 重力
+	void SetGravity(float f) { _fGravity = f; }		// 重力
 
-	bool IsDead() { return _bIsDead; }			// 死亡フラグ
-	void SetIsDead(bool b) { _bIsDead = b; }	// 死亡フラグ
+	virtual bool GetIsDead()const{ return _bIsDead; }	// 死亡フラグ
+	void SetIsDead(bool b) { _bIsDead = b; }			// 死亡フラグ
 
-	CHARA_TYPE GetCharaType() { return _eCharaType; }// キャラタイプ
-	void SetCharaType(CHARA_TYPE eType) { _eCharaType = eType; }
+	CHARA_TYPE GetCharaType()const{ return _eCharaType; }			// キャラタイプ
+	void SetCharaType(CHARA_TYPE eType) { _eCharaType = eType; }	// キャラタイプ
 
 	// 被ダメージ処理
-	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo);// ここではライフを減らすだけ
-	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE eType);	// 弾による被ダメージ処理
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo);	// 攻撃による被ダメージ処理
+	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE eType);										// 弾による被ダメージ処理
 
 protected:
 	// キャラカプセルの当たり判定用

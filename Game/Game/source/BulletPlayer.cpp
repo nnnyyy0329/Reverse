@@ -20,7 +20,6 @@ BulletPlayer::BulletPlayer()
 	_bIsShootFromRightArm = false;	// 右腕から発射したかどうか
 	_bIsReadyCompleted = false;		// 構えアニメーション完了フラグ
 	_bWasShootKeyPressed = false;	// 前フレームで発射キーが押されていたか
-
 }
 
 BulletPlayer::~BulletPlayer()
@@ -237,7 +236,7 @@ void BulletPlayer::ProcessAimMode(bool aimKey)
 		if(_cameraManager && !_cameraManager->IsAimMode())
 		{
 			// エイムモード開始
-			_cameraManager->StartAimMode();
+			_cameraManager->StartAimMode();	// エイムモード開始
 		}
 	}
 	// エイムキーが押されていないなら
@@ -247,7 +246,7 @@ void BulletPlayer::ProcessAimMode(bool aimKey)
 		if(_cameraManager && _cameraManager->IsAimMode())
 		{
 			// エイムモード終了
-			_cameraManager->EndAimMode();
+			_cameraManager->EndAimMode();	// エイムモード終了
 		}
 	}
 }
