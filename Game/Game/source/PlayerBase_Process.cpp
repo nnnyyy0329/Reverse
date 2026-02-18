@@ -28,11 +28,15 @@ void PlayerBase::ProcessMovePlayer()
 	_vOldPos = _vPos;	// 前フレームの位置を保存
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
-	if(IsAttacking()){ return; }	// 攻撃中は移動入力を受け付けない
-	//if(IsShooting()){ return; }		// 発射中は移動入力を受け付けない
-	if(IsDodging()){ return; }		// 回避中は移動入力を受け付けない
-	if(IsHitStop()){ return; }		// 被弾中は移動入力を受け付けない
-	if(IsDeath()){ return; }		// 死亡中は移動入力を受け付けない
+	if(IsAttacking()){ return; }				// 攻撃中は移動入力を受け付けない
+	//if(IsShooting()){ return; }					// 発射中は移動入力を受け付けない
+	if(IsDodging()){ return; }					// 回避中は移動入力を受け付けない
+	if(IsHitStop()){ return; }					// 被弾中は移動入力を受け付けない
+	if(IsDeath()){ return; }					// 死亡中は移動入力を受け付けない
+
+	bool isAiming = _cameraManager->IsAimMode();	// エイムモード中かどうか
+	bool isShooting = IsShooting();					// 発射中かどうか
+	if(!isAiming && isShooting){ return; }			// 発射中でエイムモードでない場合は移動入力を受け付けない
 
 	// 移動処理
 	{
@@ -40,7 +44,6 @@ void PlayerBase::ProcessMovePlayer()
 		//if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
 		//if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
 		//if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
-
 		
 		// しゃがみ中かどうかで移動速度を変える
 		if(_bIsCrouching)
@@ -73,8 +76,7 @@ void PlayerBase::ProcessInputMove()
 	// アナログ入力による移動
 	if(abs(_lx) > _analogMin || abs(_ly) > _analogMin)
 	{
-		// カメラの水平角度を取得
-		float currentCameraAngle;
+		float currentCameraAngle;	// 現在のカメラの水平角度
 
 		// カメラマネージャーがあれば
 		if(_cameraManager)
