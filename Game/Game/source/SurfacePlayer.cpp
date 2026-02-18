@@ -65,7 +65,15 @@ void SurfacePlayer::DebugRender()
 // 被ダメージ処理
 void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
 {
+	// 基底クラスの被ダメージ処理呼び出し
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
+}
+
+// 弾での被ダメージ処理
+void SurfacePlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
+{
+	// 基底クラスの弾での被ダメージ処理呼び出し
+	PlayerBase::ApplyDamageByBullet(fDamage, chara);
 }
 
 // 表プレイヤーの情報設定

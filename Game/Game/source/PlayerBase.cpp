@@ -226,6 +226,16 @@ void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTAC
 	InitializeHitConfig(attackInfo.attackDir);
 }
 
+// 弾での被ダメージ処理
+void PlayerBase::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
+{
+	// 親クラスの被ダメージ処理呼び出し
+	CharaBase::ApplyDamageByBullet(fDamage, chara);
+
+	// 被弾状態に変更
+	_playerState.combatState = PLAYER_COMBAT_STATE::HIT;
+}
+
 // カメラ角度に合わせて移動方向を変換する
 VECTOR PlayerBase::TransformMoveDirection(VECTOR move, float cameraAngle)
 {

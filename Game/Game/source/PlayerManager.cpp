@@ -7,6 +7,15 @@
 #include "CameraManager.h"
 #include "AbilitySelectScreen.h"
 
+// 変身設定用の名前空間
+namespace TransformContants
+{
+	constexpr float TRANSFORM_TIME_INCREMENT = 1.0f;	// 変身時間の増加量
+	constexpr float ANIMATION_BLEND_TIME = 0.5f;		// アニメーションブレンド時間
+	constexpr int ANIMATION_NONE_LOOP_COUNT = 0;		// ループなしのループカウント
+	constexpr int ANIMATION_LOOP_COUNT = 1;				// ループありのループカウント
+}
+
 PlayerManager::PlayerManager()
 {
 	_cameraManager = nullptr;		// カメラマネージャー
@@ -63,9 +72,6 @@ bool PlayerManager::Process()
 	// 変身中でなければプレイヤー切り替え処理
 	if(!_bIsTransforming && !isAbilityScreenActive)
 	{
-		// 入力によるプレイヤー切り替え
-		//SwitchPlayerByInput();
-
 		// エネルギーによるプレイヤー切り替え
 		SwitchPlayerByEnergy();
 	}
@@ -119,31 +125,6 @@ bool PlayerManager::RegisterPlayer(PLAYER_TYPE type, std::shared_ptr<PlayerBase>
 	}
 
 	return true;
-}
-
-// 入力によるプレイヤー切り替え
-void PlayerManager:: SwitchPlayerByInput()
-{
-	// プレイヤーの入力チェック
-	if(_trg & PAD_INPUT_6)
-	{
-		// エネルギーのインスタンス取得
-		auto* energyManager = EnergyManager::GetInstance();
-
-		// 表プレイヤーで切り替え可能なら
-		if(_eActivePlayerType == PLAYER_TYPE::SURFACE && energyManager->CanSwitchPlayer())
-		{
-			// 表プレイヤー以外に切り替え
-			SwitchPlayer(PLAYER_TYPE::BULLET);
-			//SwitchPlayer(PLAYER_TYPE::INTERIOR);
-		}
-		// 裏プレイヤーなら表プレイヤーに切り替え
-		else if(_eActivePlayerType != PLAYER_TYPE::SURFACE)
-		{
-			// 裏プレイヤーから表プレイヤーに切り替え
-			SwitchPlayer(PLAYER_TYPE::SURFACE);
-		}
-	}
 }
 
 // アビリティによるプレイヤー切り替え

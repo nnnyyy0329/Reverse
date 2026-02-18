@@ -15,7 +15,6 @@ namespace
 
 	const float DODGE_COST_STAMINA = 10.0f;	// 回避に必要なスタミナ量
 	const float SHIELD_COST_STAMINA = 0.1f;	// シールドに必要なスタミナ量
-
 }
 
 // シングルトン用メンバ初期化

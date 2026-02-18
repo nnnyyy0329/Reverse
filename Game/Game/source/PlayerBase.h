@@ -191,12 +191,10 @@ public:
 	virtual bool	Render();		// 描画
 
 	// 被ダメージ処理
-	virtual void ApplyDamage
-	(
-		float fDamage,
-		ATTACK_OWNER_TYPE eType,
-		const ATTACK_COLLISION& attackInfo
-	);	
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)override;
+
+	// 弾での被ダメージ処理
+	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;
 
 	// 共通初期化
 	void InitializePlayerConfig(PlayerConfig& config);			// プレイヤー設定初期化
