@@ -52,6 +52,7 @@ bool CharaBase::Render()
 
 void CharaBase::DebugRender()
 {
+
 }
 
 void CharaBase::CollisionRender()

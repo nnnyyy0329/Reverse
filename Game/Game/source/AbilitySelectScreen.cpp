@@ -156,8 +156,8 @@ void AbilitySelectScreen::SelectRender()
 
 	// アビリティ画像を描画
 	DrawGraph(selectX[0], selectY, _iHandle1, TRUE);
-	DrawGraph(selectX[1], selectY, _iHandle2, TRUE);
-	DrawGraph(selectX[2], selectY, _iHandle3, TRUE);
+	DrawGraph(selectX[1], selectY, _iHandle3, TRUE);
+	DrawGraph(selectX[2], selectY, _iHandle2, TRUE);
 }
 
 // 選択画面表示

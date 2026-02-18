@@ -44,7 +44,11 @@ PlayerBase::~PlayerBase()
 
 bool PlayerBase::Initialize()
 {
-	CharaBase::Initialize();	// 基底クラスの初期化
+	// 基底クラスの初期化
+	CharaBase::Initialize();	
+
+	// エネルギーマネージャー初期化
+	EnergyManager::GetInstance()->Initialize();	
 
 	_playerConfig = GetPlayerConfig();	// プレイヤー設定取得
 	_playerAnim = GetPlayerAnimation();	// プレイヤーアニメーション名データ取得
@@ -103,12 +107,12 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 
 	// 表示用オフセット
 	_iDrawSizeOffset = config.drawSizeOffset;	// ずらす大きさ
-	_iDrawOffsetX = config.drawOffsetX;
-	_iDrawOffsetY = config.drawOffsetY;
+	_iDrawOffsetX = config.drawOffsetX;			// 描画Xオフセット
+	_iDrawOffsetY = config.drawOffsetY;			// 描画Yオフセット
 
 	// 攻撃システム
-	_bCanCombo = false;
-	_iComboCount = 0;
+	_bCanCombo = false;	// コンボ可能かどうか
+	_iComboCount = 0;	// コンボ数
 
 	// 被弾設定の初期化
 	_vHitDir = VGet(0, 0, 0);	// 被弾方向
