@@ -514,7 +514,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 { 
 	if (_fLife <= 0.0f) { return; }
 
-	// SE再生
+	// SE
 	SoundServer::GetInstance()->Play("SE_En_Damage", DX_PLAYTYPE_BACK);
 
 	// エフェクト

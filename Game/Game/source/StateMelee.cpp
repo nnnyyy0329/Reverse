@@ -479,12 +479,18 @@ namespace Melee
 		}
 
 		// エフェクト
-		VECTOR efPos = VAdd(owner->GetPos(), VGet(0.0f, ATTACK_EFFECT_OFFSET_Y, 0.0f));
-		auto handle = EffectServer::GetInstance()->Play("Melee_Attack", efPos);
-		VECTOR dir = owner->GetDir();
-		float rotY = atan2f(dir.x, dir.z);
-		VECTOR rotation = VGet(0.0f, rotY, 0.0f);
-		EffectServer::GetInstance()->SetRot(handle, rotation);
+		{
+			VECTOR efPos = VAdd(owner->GetPos(), VGet(0.0f, ATTACK_EFFECT_OFFSET_Y, 0.0f));
+			auto handle = EffectServer::GetInstance()->Play("Melee_Attack", efPos);
+
+			VECTOR dir = owner->GetDir();
+			float rotY = atan2f(dir.x, dir.z);
+			VECTOR rotation = VGet(0.0f, rotY, 0.0f);
+			EffectServer::GetInstance()->SetRot(handle, rotation);
+		}
+
+		// SE
+		SoundServer::GetInstance()->Play("SE_Melee_Attanck", DX_PLAYTYPE_BACK);
 
 		// 攻撃コリジョン生成
 		owner->StartAttack(MELEE_ATTACK_SETTINGS);
