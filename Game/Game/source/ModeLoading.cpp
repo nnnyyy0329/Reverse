@@ -13,24 +13,31 @@ bool ModeLoading::Initialize()
 
 		// エフェクト
 		{
-			rs->Register("Laser", "res/effect/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("Laser", "effect/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 			// 表プレイヤーの攻撃エフェクト
-			rs->Register("SurfacePlayerAttack1", "res/effect/Absorb_Attack_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("SurfacePlayerAttack2", "res/effect/Absorb_Attack_01.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("SurfacePlayerAttack3", "res/effect/Absorb_Attack_02.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("SurfacePlayerAttack1", "effect/Absorb_Attack_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("SurfacePlayerAttack2", "effect/Absorb_Attack_01.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("SurfacePlayerAttack3", "effect/Absorb_Attack_02.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+
+			// 表プレイヤーのダメージエフェクト
+			rs->Register("InteriorPlayerAttack1", "effect/iPlayer/NChange_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerAttack2", "effect/iPlayer/NChange_Attack_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerAttack3", "effect/iPlayer/NChange_Attack_02.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerAttack4", "effect/iPlayer/NChange_Attack_03.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerAttack5", "effect/iPlayer/NChange_Attack_04.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 			// 表プレイヤーの攻撃ヒットエフェクト
-			rs->Register("SurfacePlayerAttackHit1", "res/effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("SurfacePlayerAttackHit2", "res/effect/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("SurfacePlayerAttackHit1", "effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("SurfacePlayerAttackHit2", "effect/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 			// 敵
 			// 共通
-			rs->Register("En_Damage", "res/effect/Enemy_Damage_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("En_Damage", "effect/Enemy_Damage_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 			// 近距離
-			rs->Register("Melee_Attack", "res/effect/NEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("Melee_Attack", "effect/NEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 			// 遠距離
-			rs->Register("Ranged_Attack", "res/effect/SEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("Ranged_Attack", "effect/SEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 		}
 
 		// 敵関連
@@ -112,6 +119,10 @@ bool ModeLoading::Initialize()
 
 			// SE
 			rs->Register("SE_En_Damage", "sound/SE/en_damage.mp3", RESOURCE_TYPE::Sound, 1.0f);
+
+			// プレイヤーの攻撃
+			rs->Register("sPlayerFirstAttack", "sound/SE/sPlayerFirstAttack/sPlayerFirstAttack1.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("iPlayerAttack", "sound/SE/iPlayerAttack/iPlayerAttack1.mp3", RESOURCE_TYPE::Sound, 1.0f);
 		}
 	}
 

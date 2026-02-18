@@ -3,6 +3,8 @@
 #include "StageBase.h"
 #include "AttackBase.h"
 #include "AttackManager.h"
+#include "BulletManager.h"
+#include "Bullet.h"
 #include "DodgeSystem.h"
 #include "GameCamera.h"
 
@@ -447,6 +449,48 @@ void ModeGame::CheckCollisionCameraMap()
 	}
 }
 
+// キャラと弾の当たり判定
+void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
+{
+	if(!chara) { return; }
+
+	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
+
+	const auto& bullets = _bulletManager->GetBullets();// 弾のリストを取得
+
+	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
+
+	// 全弾ループ
+	for(const auto& bullet : bullets)
+	{
+		if(!bullet) { continue; }
+
+		// キャラと弾のタイプが同じなら無視する
+		if(bullet->GetShooterType() == myType) { continue; }
+
+		// 当たり判定
+		if(HitCheck_Capsule_Sphere(
+			chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
+			bullet->GetPos(), bullet->GetCollisionR()
+		))
+		{
+			// 当たった
+
+			// ダメージ処理とか
+			float damage = 10.0f;
+			chara->ApplyDamageByBullet(damage, bullet->GetShooterType());
+
+			deadBullets.push_back(bullet);// 削除リストに追加
+		}
+	}
+
+	// 全ての判定が終わった後に、まとめて削除する
+	for(const auto& deadBullet : deadBullets)
+	{
+		_bulletManager->RemoveBullet(deadBullet);
+	}
+}
+
 // キャラと攻撃コリジョンの当たり判定
 void ModeGame::CheckActiveAttack(std::shared_ptr<CharaBase> chara)
 {
@@ -511,7 +555,6 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		// ヒットしたキャラを登録
 		attack->AddHitCharas(chara);
 
-
 		//EffectServer::GetInstance()->Play("SurfacePlayerAttackHit1", chara->GetPos());
 
 		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
@@ -570,9 +613,9 @@ bool ModeGame::OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE own
 		case CHARA_TYPE::SURFACE_PLAYER:	// 表プレイヤー
 		case CHARA_TYPE::INTERIOR_PLAYER:	// 裏プレイヤー
 		{
-			// プレイヤーの場合、攻撃所有者がプレイヤーであるかを確認
-			return (ownerType == ATTACK_OWNER_TYPE::SURFACE_PLAYER);
-			return (ownerType == ATTACK_OWNER_TYPE::INTERIOR_PLAYER);
+			// プレイヤー同士の攻撃は当たらない
+			return (ownerType == ATTACK_OWNER_TYPE::SURFACE_PLAYER ||
+					ownerType == ATTACK_OWNER_TYPE::INTERIOR_PLAYER);
 		}
 
 		default:	// その他のキャラタイプ

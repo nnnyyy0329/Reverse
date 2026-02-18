@@ -449,46 +449,6 @@ bool ModeGame::Render()
 	return true;
 }
 
-// キャラと弾の当たり判定
-void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
-{
-	if (!chara) { return; }
-
-	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
-
-	const auto& bullets = _bulletManager->GetBullets();// 弾のリストを取得
-
-	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
-
-	// 全弾ループ
-	for (const auto& bullet : bullets)
-	{
-		if (!bullet) { continue; }
-
-		// キャラと弾のタイプが同じなら無視する
-		if (bullet->GetShooterType() == myType) { continue; }
-
-		// 当たり判定
-		if(HitCheck_Capsule_Sphere(
-			chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
-			bullet->GetPos(), bullet->GetCollisionR()
-		)) 
-		{
-			// 当たった
-
-			// ダメージ処理とか
-
-			deadBullets.push_back(bullet);// 削除リストに追加
-		}
-	}
-
-	// 全ての判定が終わった後に、まとめて削除する
-	for (const auto& deadBullet : deadBullets)
-	{
-		_bulletManager->RemoveBullet(deadBullet);
-	}
-}
-
 void ModeGame::InitializeLights()
 {
 	// ライトコンテナをクリア

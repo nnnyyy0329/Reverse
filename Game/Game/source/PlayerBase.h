@@ -57,10 +57,11 @@ struct AttackConfig
 	float duration;				// 持続
 	float recovery;				// 硬直
 	float damage;				// ダメージ
-	std::string effectName;		// エフェクト名
-	VECTOR effectOffset;		// エフェクト位置オフセット
 	ATTACK_STATE attackState;	// 攻撃状態
 	float attackMoveSpeed;		// 攻撃中の移動速度
+	std::string effectName;		// エフェクト名
+	VECTOR effectOffset;		// エフェクト位置オフセット
+	std::string soundName;		// サウンド名
 };
 
 // 基本移動アニメーション構造体
@@ -190,12 +191,10 @@ public:
 	virtual bool	Render();		// 描画
 
 	// 被ダメージ処理
-	virtual void ApplyDamage
-	(
-		float fDamage,
-		ATTACK_OWNER_TYPE eType,
-		const ATTACK_COLLISION& attackInfo
-	);	
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)override;
+
+	// 弾での被ダメージ処理
+	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;
 
 	// 共通初期化
 	void InitializePlayerConfig(PlayerConfig& config);			// プレイヤー設定初期化
@@ -286,7 +285,7 @@ public:
 	
 protected:	// 攻撃関係
 
-	virtual AttackConstants GetAttackConstants() = 0;			// 攻撃定数を取得
+	virtual AttackConstants GetAttackConstants()const = 0;		// 攻撃定数を取得
 	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;	// 攻撃設定を取得
 
 	// 攻撃システム
@@ -305,14 +304,17 @@ protected:	// 攻撃関係
 
 	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
 	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);				// 攻撃開始処理
-	void ProcessAttackEffect(int attackIndex);																					// 攻撃エフェクト処理
-	void ProcessComboAttack(int attackIndex);																					// コンボ攻撃処理
-	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);																// 攻撃終了処理
-	void EndAttackSequence();																									// 攻撃課程修了
-	void ProcessNextAttack(int currentIndex);																					// 次の攻撃処理
-	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_ATTACK_STATE status);													// 状態に対応する攻撃を取得
-	int GetInstanceId();																										// ID取得関数
-	int GetAttackIndexByStatus(PLAYER_ATTACK_STATE status);																		// 状態から攻撃インデックスを取得
+	void ProcessAttackReaction(int attackIndex);									// 攻撃反応処理
+	void ProcessAttackEffect(int attackIndex, std::vector<AttackConfig> configs);	// 攻撃エフェクト処理
+	void ProcessAttackSound(int attackIndex, std::vector<AttackConfig> configs);	// 攻撃サウンド処理
+	void ProcessComboAttack(int attackIndex);										// コンボ攻撃処理
+	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);					// 攻撃終了処理
+	void EndAttackSequence();														// 攻撃課程修了
+	void ProcessNextAttack(int currentIndex);										// 次の攻撃処理
+	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_ATTACK_STATE status);		// 状態に対応する攻撃を取得
+	int GetInstanceId();															// ID取得関数
+	int GetAttackIndexByStatus(PLAYER_ATTACK_STATE status);							// 状態から攻撃インデックスを取得
+	int GetMaxComboCount()const;													// 最大コンボ数取得
 
 protected:	// 弾発射関係
 	

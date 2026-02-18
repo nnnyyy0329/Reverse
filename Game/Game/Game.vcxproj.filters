@@ -70,9 +70,6 @@
     <ClCompile Include="source\ModeLoading.cpp">
       <Filter>Mode\Load</Filter>
     </ClCompile>
-    <ClCompile Include="source\PlayerManager.cpp">
-      <Filter>GameObject\CharaBase\Player</Filter>
-    </ClCompile>
     <ClCompile Include="source\StateCommon.cpp">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClCompile>
@@ -102,9 +99,6 @@
     </ClCompile>
     <ClCompile Include="source\StateTank.cpp">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PlayerLifeBarUI.cpp">
-      <Filter>GameObject\CharaBase\Player</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerBase.cpp">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
@@ -165,6 +159,24 @@
     </ClCompile>
     <ClCompile Include="source\ModeGameOver.cpp">
       <Filter>Mode\GameOver</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerLifeBarUI.cpp">
+      <Filter>GameObject\CharaBase\Player\LifeBar</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerManager.cpp">
+      <Filter>GameObject\CharaBase\Player\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerStateTransferSystem.cpp">
+      <Filter>GameObject\CharaBase\Player\System</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerSwitchSystem.cpp">
+      <Filter>GameObject\CharaBase\Player\System</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerTransformCancelSystem.cpp">
+      <Filter>GameObject\CharaBase\Player\System</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerTransformSystem.cpp">
+      <Filter>GameObject\CharaBase\Player\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -243,9 +255,6 @@
     <ClInclude Include="source\ModeLoading.h">
       <Filter>Mode\Load</Filter>
     </ClInclude>
-    <ClInclude Include="source\PlayerManager.h">
-      <Filter>GameObject\CharaBase\Player</Filter>
-    </ClInclude>
     <ClInclude Include="source\StateRanged.h">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClInclude>
@@ -266,9 +275,6 @@
     </ClInclude>
     <ClInclude Include="source\Item.h">
       <Filter>GameObject\CharaBase\Item</Filter>
-    </ClInclude>
-    <ClInclude Include="source\PlayerLifeBarUI.h">
-      <Filter>GameObject\CharaBase\Player</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerBase.h">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
@@ -320,6 +326,24 @@
     </ClInclude>
     <ClInclude Include="source\ModeGameOver.h">
       <Filter>Mode\GameOver</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerLifeBarUI.h">
+      <Filter>GameObject\CharaBase\Player\LifeBar</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerManager.h">
+      <Filter>GameObject\CharaBase\Player\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerStateTransferSystem.h">
+      <Filter>GameObject\CharaBase\Player\System</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerSwitchSystem.h">
+      <Filter>GameObject\CharaBase\Player\System</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerTransformCancelSystem.h">
+      <Filter>GameObject\CharaBase\Player\System</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerTransformSystem.h">
+      <Filter>GameObject\CharaBase\Player\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -427,6 +451,15 @@
     </Filter>
     <Filter Include="Mode\GameOver">
       <UniqueIdentifier>{48ffd704-7ecc-4724-821d-0a3095d23135}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player\LifeBar">
+      <UniqueIdentifier>{4c7a31b1-a223-4dbc-9283-a751ffa20c81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player\Manager">
+      <UniqueIdentifier>{107b1248-c5ee-4f10-b259-d3ec7e801990}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player\System">
+      <UniqueIdentifier>{c73b4588-4faf-45ab-ad15-cbb89be6bd76}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

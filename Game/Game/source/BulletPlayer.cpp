@@ -66,7 +66,15 @@ void BulletPlayer::DebugRender()
 // 被ダメージ処理
 void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
 {
+	// 基底クラスの被ダメージ処理を呼び出す
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
+}
+
+// 弾による被ダメージ処理
+void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
+{
+	// 基底クラスの弾による被ダメージ処理を呼び出す
+	PlayerBase::ApplyDamageByBullet(fDamage, chara);
 }
 
 // 発射間隔更新
@@ -343,7 +351,7 @@ RenderConfig BulletPlayer::GetRenderConfig()
 }
 
 // 弾プレイヤーの攻撃定数設定
-AttackConstants BulletPlayer::GetAttackConstants()
+AttackConstants BulletPlayer::GetAttackConstants()const
 {
 	// 弾プレイヤーは攻撃を行わない
 

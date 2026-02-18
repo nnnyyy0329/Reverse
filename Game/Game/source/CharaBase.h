@@ -70,6 +70,7 @@ public:
 
 	// 被ダメージ処理
 	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo);// ここではライフを減らすだけ
+	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE eType);	// 弾による被ダメージ処理
 
 protected:
 	// キャラカプセルの当たり判定用

@@ -34,8 +34,8 @@ public:
 
 	// プレイヤー管理
 	bool RegisterPlayer(PLAYER_TYPE type, std::shared_ptr<PlayerBase> player);	// プレイヤーの登録関数
-	void SwitchPlayerByInput();													// 入力によるプレイヤー切り替え
 	void SwitchPlayerByAbility(ABILITY_TYPE ability);							// アビリティによるプレイヤー切り替え
+
 	void SwitchPlayerByEnergy();												// エネルギーによるプレイヤー切り替え
 	void SwitchPlayer(PLAYER_TYPE type);										// プレイヤー切り替え関数
 	void EnableStateTransfer(bool enable) { _bEnableStateTransfer = enable; }	// 状態の引き継ぎ設定
@@ -57,8 +57,9 @@ public:
 	/*****ゲッターセッター*****/
 	PlayerBase* GetActivePlayer() const;									// アクティブプレイヤー取得
 	std::shared_ptr<PlayerBase> GetActivePlayerShared() const;				// アクティブプレイヤー取得(shared_ptr版)
-	PLAYER_TYPE GetActivePlayerType() const { return _eActivePlayerType; }	// アクティブプレイヤーのタイプ取得
 	std::shared_ptr<PlayerBase> GetPlayerByType(PLAYER_TYPE type) const;	// タイプでプレイヤーを取得
+	PLAYER_TYPE GetActivePlayerType() const { return _eActivePlayerType; }	// アクティブプレイヤーのタイプ取得
+	//PlayerBase* GetActivePlayer()const { return _activePlayer; }			// アクティブプレイヤー取得
 
 	// 入力状態を設定する
 	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
@@ -109,4 +110,3 @@ protected:
 	float _analogMin = 0.0f;
 
 };
-
