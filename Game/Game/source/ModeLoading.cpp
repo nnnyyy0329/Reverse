@@ -121,10 +121,10 @@ bool ModeLoading::Initialize()
 			rs->Register("BGM_Stage02", "sound/BGM/stage_02.mp3", RESOURCE_TYPE::Sound, 1.0f);
 
 			// SE
-			rs->Register("SE_En_Damage", "sound/SE/en_common/en_damage02.mp3", RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("SE_En_Dead", "sound/SE/en_common/en_dead02.mp3", RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("SE_En_Down", "sound/SE/en_common/en_down02.mp3", RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("SE_Melee_Attanck", "sound/SE/en_melee/en_melee_attack02.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_En_Damage", "sound/SE/en_common/en_damage.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_En_Dead", "sound/SE/en_common/en_dead.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_En_Down", "sound/SE/en_common/en_down.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_Melee_Attanck", "sound/SE/en_melee/en_melee_attack.mp3", RESOURCE_TYPE::Sound, 1.0f);
 
 			// ƒvƒŒƒCƒ„[‚ÌUŒ‚
 			rs->Register("sPlayerFirstAttack", "sound/SE/sPlayerFirstAttack/sPlayerFirstAttack1.mp3", RESOURCE_TYPE::Sound, 1.0f);

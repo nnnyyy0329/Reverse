@@ -355,7 +355,7 @@ int StageBase::GetNextStageNumFromTrigger(const std::string& triggerName)
 	{
 		return 1;
 	}
-	else if (triggerName.find("portal_0") != std::string::npos)
+	else if (triggerName.find("S_Portal_0to1") != std::string::npos)
 	{
 		return 2;
 	}
