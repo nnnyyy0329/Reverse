@@ -2,6 +2,12 @@
 #include "BulletManager.h"
 #include "CameraManager.h"
 
+// プレベータようパラメータ
+namespace
+{
+	constexpr float consumeShootEnergy = 10.0f;	// 発射に消費するエネルギー
+}
+
 // 弾発射設定
 namespace bulletConfig
 {
@@ -221,6 +227,13 @@ void BulletPlayer::ShootBullet()
 			bulletConfig::LIFE_TIME,
 			_eCharaType
 		);
+
+		// 発射時にエネルギー消費
+		EnergyManager* energyManager = EnergyManager::GetInstance();
+		if(energyManager)
+		{
+			energyManager->ConsumeEnergy(consumeShootEnergy);
+		}
 	}
 
 	_bIsShootFromRightArm = !_bIsShootFromRightArm; // 右腕と左腕の切り替え
@@ -292,7 +305,7 @@ PlayerConfig BulletPlayer::GetPlayerConfig()
 	// 移動速度設定
 	config.crouchMoveSpeed = 2.0f;
 	config.normalMoveSpeed = 4.5f;
-	config.dashMoveSpeed = 2.0f;
+	config.dashMoveSpeed = 3.5f;
 
 	// 基礎ステータス
 	config.life = 100.0f;

@@ -8,7 +8,7 @@
 namespace 
 {
 	constexpr auto DEFAULT_ENEMY_SPEED = 2.0f;// “G‚ÌˆÚ“®‘¬“x
-	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 10000.0f;// “G‚ÌÅ‘å‘Ì—Í
+	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 200.0f;// “G‚ÌÅ‘å‘Ì—Í
 
 	// Melee
 	constexpr auto MELEE_VISION_RANGE = 250.0f;// õ“G‹——£

@@ -211,7 +211,7 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 	if(targetType == PLAYER_TYPE::SURFACE)
 	{
 		// 即時切り替え
-		SwitchPlayerImmediate(targetType);
+		//SwitchPlayerImmediate(targetType);
 
 		return;
 	}
@@ -268,7 +268,7 @@ void PlayerManager::SwitchPlayerImmediate(PLAYER_TYPE targetType)
 // 変身処理
 void PlayerManager::ProcessTransform()
 {
-	if(!_bIsTransforming){ return; }
+	if(!_bIsTransforming){ return; }	// 変身中でなければ何もしない
 
 	_fTransformTime += 1.0f;	// 変身時間を更新
 

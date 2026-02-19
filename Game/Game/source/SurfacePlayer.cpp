@@ -88,8 +88,8 @@ PlayerConfig SurfacePlayer::GetPlayerConfig()
 	config.dashMoveSpeed = 2.5f;			
 
 	// 基礎ステータス
-	config.life = 100.0f;						
-	config.maxLife = 100.0f;					
+	config.maxLife = 200.0f;					
+	config.life = config.maxLife;
 	config.startPos = VGet(230.0f, 0.0f, 0.0f);	
 
 	// 表示設定
@@ -169,7 +169,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		20.0f,					// 発生フレーム
 		25.0f,					// 持続フレーム
 		20.0f,					// 硬直フレーム
-		25.0f,					// ダメージ
+		10.0f,					// ダメージ
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
 		"SurfacePlayerAttack1",	// エフェクト名
@@ -186,7 +186,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		20.0f,					// 発生フレーム
 		15.0f,					// 持続フレーム
 		20.0f,					// 硬直フレーム
-		25.0f,					// ダメージ
+		10.0f,					// ダメージ
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
 		"SurfacePlayerAttack1",	// エフェクト名
@@ -203,7 +203,7 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		20.0f,					// 発生フレーム
 		25.0f,					// 持続フレーム
 		20.0f,					// 硬直フレーム
-		50.0f,					// ダメージ
+		20.0f,					// ダメージ
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
 		"SurfacePlayerAttack3",	// エフェクト名

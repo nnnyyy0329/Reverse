@@ -8,6 +8,13 @@
 #include "DodgeSystem.h"
 #include "GameCamera.h"
 
+// プレベータようパラメータ
+namespace
+{
+	constexpr float consumeEnergy = 5.0f;
+	constexpr float playerBulletDamage = 50.0f;
+}
+
 // キャラとマップの当たり判定
 void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 {
@@ -477,8 +484,7 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 			// 当たった
 
 			// ダメージ処理とか
-			float damage = 1000.0f;
-			chara->ApplyDamageByBullet(damage, bullet->GetShooterType());
+			chara->ApplyDamageByBullet(playerBulletDamage, bullet->GetShooterType());
 			deadBullets.push_back(bullet);// 削除リストに追加
 		}
 	}
@@ -576,7 +582,7 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 	}
 }
 
-// ダメージをエネルギーに変換する
+// エネルギーによる変換処理
 void ModeGame::ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage)
 {
 	// 攻撃管理クラスから所有者情報を取得
@@ -593,7 +599,7 @@ void ModeGame::ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage)
 	else if(ownerType == ATTACK_OWNER_TYPE::INTERIOR_PLAYER)
 	{
 		// 消費変換
-		_energyManager->ConvertDamageToConsumeEnergy(damage);
+		_energyManager->ConvertDamageToConsumeEnergy(consumeEnergy);
 	}
 }
 
