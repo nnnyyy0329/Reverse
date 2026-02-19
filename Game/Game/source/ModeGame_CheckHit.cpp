@@ -477,7 +477,7 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 			// 当たった
 
 			// ダメージ処理とか
-			float damage = 10.0f;
+			float damage = 1000.0f;
 			chara->ApplyDamageByBullet(damage, bullet->GetShooterType());
 			deadBullets.push_back(bullet);// 削除リストに追加
 		}
