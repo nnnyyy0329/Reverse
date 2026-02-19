@@ -18,7 +18,7 @@ namespace
 	constexpr auto MELEE_MOVE_RADIUS = 800.0f;// 徘徊する範囲の半径(初期位置からの距離)
 	constexpr auto MELEE_IDLE_TIME = 120.0f;// 待機時間
 	constexpr auto MELEE_MOVE_TIME = 180.0f;// 徘徊時間
-	constexpr auto MELEE_DETECT_TIME = 90.0f;// 発見硬直
+	constexpr auto MELEE_DETECT_TIME = 60.0f;// 発見硬直
 	constexpr auto MELEE_ATTACK_TIME = 180.0f;// 攻撃時間
 
 	// Ranged
@@ -83,10 +83,10 @@ public:
 				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 
 				// 共通ステートのアニメーション名を設定
-				param.animDamage = "enemy_damage00_00";
+				param.animDamage = "enemy_damage_00";
 				param.animDead = "enemy_dead_00";
 				param.animStun = "Melee_Stun";
-				param.animDown = "enemy_damage01_00";
+				param.animDown = "enemy_dead_01";
 
 				enemy->SetEnemyParam(param);// パラメータ設定
 

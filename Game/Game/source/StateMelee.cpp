@@ -31,7 +31,7 @@ namespace
 	constexpr auto RUSH_TARGET_REACHED_DISTANCE = 5.0f;	// “ËiUŒ‚ƒ^[ƒQƒbƒg“ž’B”»’è‹——£
 	
 	// ŽžŠÔ§Œä—p’è”
-	constexpr auto ATTACK_CHARGE_TIME = 30.0f;			// UŒ‚—­‚ßŽžŠÔ
+	constexpr auto ATTACK_CHARGE_TIME = 10.0f;			// UŒ‚—­‚ßŽžŠÔ
 	constexpr auto ATTACK_EXECUTE_TIME = 90.0f;			// UŒ‚ŽÀsŽžŠÔ
 	constexpr auto ATTACK_RECOVERY_TIME = 60.0f;		// UŒ‚ŒãŒ„ŽžŠÔ
 
@@ -43,8 +43,8 @@ namespace
 	constexpr auto CONFRONT_MIN_DURATION = 90.0f;		// ‘Î›³Å¬ŽžŠÔ
 	constexpr auto CONFRONT_RANDOM_DURATION = 90.0f;	// ‘Î›³ƒ‰ƒ“ƒ_ƒ€’Ç‰ÁŽžŠÔ
 
-	constexpr auto ATTACK_DELAY = 30.0f;				// UŒ‚”­¶’x‰„
-	constexpr auto ATTACK_DURATION = 15.0f;				// UŒ‚Ž‘±ŽžŠÔ
+	constexpr auto ATTACK_DELAY = 55.0f;				// UŒ‚”­¶’x‰„
+	constexpr auto ATTACK_DURATION = 10.0f;				// UŒ‚Ž‘±ŽžŠÔ
 	constexpr auto ATTACK_DAMAGE = 20.0f;				// UŒ‚ƒ_ƒ[ƒW—Ê
 	constexpr auto RUSH_DAMAGE = 1.0f;					// “ËiUŒ‚ƒ_ƒ[ƒW—Ê
 
@@ -154,7 +154,7 @@ namespace Melee
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -198,7 +198,7 @@ namespace Melee
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 
 		// ˆÚ“®•ûŒüŒvŽZ
@@ -280,7 +280,7 @@ namespace Melee
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -321,7 +321,7 @@ namespace Melee
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -437,7 +437,7 @@ namespace Melee
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -540,7 +540,7 @@ namespace Melee
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -753,7 +753,7 @@ namespace Melee
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -785,7 +785,7 @@ namespace Melee
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -839,7 +839,7 @@ namespace Melee
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
