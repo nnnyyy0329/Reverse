@@ -111,15 +111,26 @@ void SoundServer::SetVolumeByHandle(int soundHandle, int volume)
 	ChangeVolumeSoundMem(volume, soundHandle);
 }
 
-//void SoundServer::SetMasterVolume(int volume)
-//{
-//	std::lock_guard<std::mutex> lk(_mtx);
-//	_masterVolume = std::clamp(volume, 0, 255);
-//	// 現在読み込まれている全ハンドルに適用
-//	for(auto& p : _resources) {
-//		ChangeVolumeSoundMem(_masterVolume, p.second);
-//	}
-//}
+void SoundServer::SetMasterVolume(int volume)
+{
+	std::lock_guard<std::mutex> lk(_mtx);
+
+	// 1. 三項演算子で範囲を絞る（C++11でも確実に動く）
+	_masterVolume = (volume < 0) ? 0 : (volume > 255 ? 255 : volume);
+
+	// 2. ループ（DXライブラリの型に合わせて int にキャストするとより安全）
+	for(auto& p : _resources) {
+		// p.second がハンドル（int）であることを想定
+		ChangeVolumeSoundMem(_masterVolume, (int)p.second);
+	}
+}
+
+
+int SoundServer::GetMasterVolume() const
+{
+	std::lock_guard<std::mutex> lk(_mtx);
+	return _masterVolume;
+}
 
 void SoundServer::StopAll()
 {

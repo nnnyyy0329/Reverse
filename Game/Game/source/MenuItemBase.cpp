@@ -4,6 +4,7 @@
 #include "CameraManager.h"
 #include "GameCamera.h"
 #include "DebugCamera.h"
+#include <Server/SoundServer.h> // 音量制御のため追加
 
 
 // ...（既存のコードはそのまま）...
@@ -81,61 +82,62 @@ int MenuDebugCamera::Selected()
 	return 0;
 }
 
-//MenuItemVolume::MenuItemVolume(void* param, const std::string& soundName, int initVolume)
-//	: MenuItemBase(param, "")
-//	, _soundName(soundName)
-//	, _volume(0)
-//{
-//	if(_soundName.empty())
-//	{
-//		// マスター音量
-//		_volume = SoundServer::GetInstance()->GetMasterVolume();
-//	}
-//	else
-//	{
-//		// C++14 対応：std::clamp を使わずに範囲制限
-//		_volume = std::max(0, std::min(initVolume, 255));
-//	}
-//	UpdateText();
-//}
-//
-//void MenuItemVolume::Increase()
-//{
-//	_volume = std::min(255, _volume + 16);
-//	if(_soundName.empty())
-//	{
-//		SoundServer::GetInstance()->SetMasterVolume(_volume);
-//	}
-//	else
-//	{
-//		SoundServer::GetInstance()->SetVolume(_soundName, _volume);
-//	}
-//	UpdateText();
-//}
-//
-//void MenuItemVolume::Decrease()
-//{
-//	_volume = std::max(0, _volume - 16);
-//	if(_soundName.empty())
-//	{
-//		SoundServer::GetInstance()->SetMasterVolume(_volume);
-//	}
-//	else
-//	{
-//		SoundServer::GetInstance()->SetVolume(_soundName, _volume);
-//	}
-//	UpdateText();
-//}
-//
-//void MenuItemVolume::UpdateText()
-//{
-//	int percent = (_volume * 100) / 255;
-//	if(_soundName.empty())
-//	{
-//		_text = "Master Volume: " + std::to_string(percent) + "%";
-//	}
-//	else
-//	{
-//		_text = _soundName + ": " + std::to_string(percent) + "%";
-//	}
-//}
+// MenuItemNumber 実装（音量対応版）
+MenuItemNumber::MenuItemNumber(void* param, const std::string& name, int initValue, int minValue, int maxValue, bool linkToVolume)
+	: MenuItemBase(param, "")
+	, _name(name)
+	, _value(initValue)
+	, _minValue(minValue)
+	, _maxValue(maxValue)
+	, _linkToVolume(linkToVolume)
+{
+	// 範囲チェック
+	if (_value < _minValue) _value = _minValue;
+	if (_value > _maxValue) _value = _maxValue;
+	UpdateText();
+	
+	// 初期音量設定
+	if (_linkToVolume) {
+		UpdateVolume();
+	}
+}
+
+void MenuItemNumber::Increase()
+{
+	_value++;
+	if (_value > _maxValue) _value = _maxValue;
+	UpdateText();
+	
+	// 音量連動
+	if (_linkToVolume) {
+		UpdateVolume();
+	}
+}
+
+void MenuItemNumber::Decrease()
+{
+	_value--;
+	if (_value < _minValue) _value = _minValue;
+	UpdateText();
+	
+	// 音量連動
+	if (_linkToVolume) {
+		UpdateVolume();
+	}
+}
+
+void MenuItemNumber::UpdateText()
+{
+	if (_linkToVolume) {
+		_text = _name + ": " + std::to_string(_value) + " (Volume)";
+	} else {
+		_text = _name + ": " + std::to_string(_value);
+	}
+}
+
+void MenuItemNumber::UpdateVolume()
+{
+	// 0-100 の値を 0-255 の音量に変換してマスター音量に設定
+	int volume = (_value * 255) / 100;
+	SoundServer::GetInstance()->SetMasterVolume(volume);
+}

@@ -308,22 +308,17 @@ bool ModeGame::Process()
 		if(ModeServer::GetInstance()->Get("menu") == nullptr)
 		{
 			ModeMenu* modeMenu = new ModeMenu();
-			modeMenu->SetCameraManager(_cameraManager); // 注意：既存の変数名に合わせてください
+			modeMenu->SetCameraManager(_cameraManager);
 
+			// 現在のマスター音量を取得して初期値に設定（255 -> 100 スケールに変換）
+			int currentVolume = SoundServer::GetInstance()->GetMasterVolume();
+			int initValue = (currentVolume * 100) / 255;
 
-
-
-
-			// デバッグカメラメニュー
-			auto debugCamera = new MenuDebugCamera(this, "Ikedasan BAKA");
-
-
-			debugCamera->SetCameraManagerMenu(_cameraManager);
-			debugCamera->SetDebugCameraMenu(_debugCamera);
-			debugCamera->SetGameCameraMenu(_gameCamera);
+			// 音量連動の数値変更メニュー項目を追加（0～100の範囲、音量連動ON）
+			auto volumeNumberItem = new MenuItemNumber(this, "Master Volume", initValue, 0, 100, true);
 
 			ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
-			modeMenu->AddMenuItem(debugCamera);
+			modeMenu->AddMenuItem(volumeNumberItem);
 		}
 	}
 

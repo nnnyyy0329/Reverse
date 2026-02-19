@@ -49,19 +49,43 @@ bool ModeMenu::Process() {
 		// ほかの処理
 	}
 
-
 	// spaceキーでメニューを閉じる
 	bool close = false;
-	if (trg & PAD_INPUT_10)
+	if(trg & PAD_INPUT_10)
 	{
 		_cameraManager->SetIsUseDebugCamera(false); // デバッグカメラOFFにする
 		close = true;
 	}
 
-	// 上下でカーソル移動をする
-	if (trg & PAD_INPUT_UP) { _curPos--; _curAnimCnt = 0; }
-	if (trg & PAD_INPUT_DOWN) { _curPos++; _curAnimCnt = 0; }
-
+	// 上下でMenuItemNumberの値変更 または カーソル移動
+	if(key & PAD_INPUT_UP) {
+		if(!_menuItems.empty()) {
+			auto* numberItem = dynamic_cast<MenuItemNumber*>(_menuItems[_curPos].get());
+			if(numberItem) {
+				numberItem->Increase();  // 数値変更優先
+			}
+			else {
+				_curPos--; _curAnimCnt = 0;  // 通常のカーソル移動
+			}
+		}
+		else {
+			_curPos--; _curAnimCnt = 0;
+		}
+	}
+	if(key & PAD_INPUT_DOWN) {
+		if(!_menuItems.empty()) {
+			auto* numberItem = dynamic_cast<MenuItemNumber*>(_menuItems[_curPos].get());
+			if(numberItem) {
+				numberItem->Decrease();  // 数値変更優先
+			}
+			else {
+				_curPos++; _curAnimCnt = 0;  // 通常のカーソル移動
+			}
+		}
+		else {
+			_curPos++; _curAnimCnt = 0;
+		}
+	}
 
 
 	// カーソル位置を上下ループ

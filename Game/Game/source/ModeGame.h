@@ -114,5 +114,5 @@ private:
 	void RemoveLight(int lightHandle);// w’èƒ‰ƒCƒg‚ğíœ
 
 	int _bgmHandle = -1;
-	
+	int _titleMenuPos;
 };

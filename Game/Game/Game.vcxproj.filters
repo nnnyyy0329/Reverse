@@ -114,6 +114,9 @@
     <ClCompile Include="source\Item.cpp">
       <Filter>GameObject\CharaBase\Item</Filter>
     </ClCompile>
+    <ClCompile Include="source\ItemManager.cpp">
+      <Filter>GameObject\CharaBase\Item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -220,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="source\AnimManager.h" />
     <ClInclude Include="source\Item.h">
+      <Filter>GameObject\CharaBase\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ItemManager.h">
       <Filter>GameObject\CharaBase\Item</Filter>
     </ClInclude>
   </ItemGroup>

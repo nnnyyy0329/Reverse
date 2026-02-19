@@ -88,3 +88,30 @@ private:
 	std::string _soundName;
 	int _volume;
 };
+
+// 数値変更メニュー項目（音量連動対応）
+class MenuItemNumber : public MenuItemBase
+{
+public:
+	MenuItemNumber(void* param, const std::string& name, int initValue = 50, int minValue = 0, int maxValue = 100, bool linkToVolume = false);
+
+	// Enter で完了させない（メニューを閉じない）
+	virtual int Selected() override { return 0; }
+
+	// 上下から呼ぶ
+	void Increase();
+	void Decrease();
+
+	// 現在の値
+	int GetValue() const { return _value; }
+
+private:
+	void UpdateText();
+	void UpdateVolume(); // 音量更新用
+
+	std::string _name;
+	int _value;
+	int _minValue;
+	int _maxValue;
+	bool _linkToVolume; // 音量連動フラグ
+};
