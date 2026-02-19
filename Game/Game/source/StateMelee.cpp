@@ -44,7 +44,7 @@ namespace
 	constexpr auto CONFRONT_RANDOM_DURATION = 90.0f;	// 対峙ランダム追加時間
 
 	constexpr auto ATTACK_DELAY = 30.0f;				// 攻撃発生遅延
-	constexpr auto ATTACK_DURATION = 15.0f;				// 攻撃持続時間
+	constexpr auto ATTACK_DURATION = 10.0f;				// 攻撃持続時間
 	constexpr auto ATTACK_DAMAGE = 20.0f;				// 攻撃ダメージ量
 	constexpr auto RUSH_DAMAGE = 1.0f;					// 突進攻撃ダメージ量
 

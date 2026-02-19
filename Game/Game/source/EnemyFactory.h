@@ -18,7 +18,7 @@ namespace
 	constexpr auto MELEE_MOVE_RADIUS = 800.0f;// œpœj‚·‚é”ÍˆÍ‚Ì”¼Œa(‰ŠúˆÊ’u‚©‚ç‚Ì‹——£)
 	constexpr auto MELEE_IDLE_TIME = 120.0f;// ‘Ò‹@ŠÔ
 	constexpr auto MELEE_MOVE_TIME = 180.0f;// œpœjŠÔ
-	constexpr auto MELEE_DETECT_TIME = 90.0f;// ”­Œ©d’¼
+	constexpr auto MELEE_DETECT_TIME = 60.0f;// ”­Œ©d’¼
 	constexpr auto MELEE_ATTACK_TIME = 180.0f;// UŒ‚ŠÔ
 
 	// Ranged
