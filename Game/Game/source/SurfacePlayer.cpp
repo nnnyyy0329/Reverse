@@ -88,8 +88,8 @@ PlayerConfig SurfacePlayer::GetPlayerConfig()
 	config.dashMoveSpeed = 2.5f;			
 
 	// 基礎ステータス
+	config.life = 200.0f;
 	config.maxLife = 200.0f;					
-	config.life = config.maxLife;
 	config.startPos = VGet(230.0f, 0.0f, 0.0f);	
 
 	// 表示設定

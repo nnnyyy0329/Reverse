@@ -308,8 +308,8 @@ PlayerConfig BulletPlayer::GetPlayerConfig()
 	config.dashMoveSpeed = 3.5f;
 
 	// 基礎ステータス
-	config.life = 100.0f;
-	config.maxLife = 100.0f;
+	config.life = 200.0f;
+	config.maxLife = 200.0f;
 	config.startPos = VGet(0.0f, 0.0f, 0.0f);
 
 	// 表示設定
@@ -344,7 +344,7 @@ PlayerAnimations BulletPlayer::GetPlayerAnimation()
 	animation.combat.transCancel	= "player_cancell_01";
 	animation.combat.guard			= "";
 	animation.combat.hit			= "player_damage_02";
-	animation.combat.dodge			= "dodge";
+	animation.combat.dodge			= "player_dodge_02";
 	animation.combat.death			= "player_dead_02";
 
 	return animation;

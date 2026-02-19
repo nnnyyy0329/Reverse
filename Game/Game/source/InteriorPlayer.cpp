@@ -90,8 +90,8 @@ PlayerConfig InteriorPlayer::GetPlayerConfig()
 	config.dashMoveSpeed = 2.6f;			
 
 	// 基礎ステータス
-	config.life = 100.0f;						
-	config.maxLife = 100.0f;					
+	config.life = 200.0f;
+	config.maxLife = 200.0f;
 	config.startPos = VGet(0.0f, 0.0f, 0.0f);	
 
 	// 表示設定
@@ -174,7 +174,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		8.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		18.0f,						// 硬直フレーム
-		100.0f,						// ダメージ
+		20.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
 		"InteriorPlayerAttack5",	// エフェクト名
@@ -191,7 +191,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		8.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		18.0f,						// 硬直フレーム
-		100.0f,						// ダメージ
+		30.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
 		"InteriorPlayerAttack5",	// エフェクト名
@@ -208,7 +208,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		10.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		18.0f,						// 硬直フレーム
-		100.0f,						// ダメージ
+		50.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
 		"InteriorPlayerAttack5",	// エフェクト名
@@ -225,7 +225,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		15.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		23.0f,						// 硬直フレーム
-		100.0f,						// ダメージ
+		50.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
 		"InteriorPlayerAttack5",	// エフェクト名

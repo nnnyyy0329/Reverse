@@ -83,10 +83,10 @@ public:
 				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 
 				// 共通ステートのアニメーション名を設定
-				param.animDamage = "enemy_damage_00";
+				param.animDamage = "enemy_damage00_00";
 				param.animDead = "enemy_dead_00";
 				param.animStun = "Melee_Stun";
-				param.animDown = "enemy_dead_01";
+				param.animDown = "enemy_damage01_00";
 
 				enemy->SetEnemyParam(param);// パラメータ設定
 
