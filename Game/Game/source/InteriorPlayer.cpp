@@ -87,7 +87,7 @@ PlayerConfig InteriorPlayer::GetPlayerConfig()
 	// 移動速度設定
 	config.crouchMoveSpeed = 3.0f;				
 	config.normalMoveSpeed = 7.5f;				
-	config.dashMoveSpeed = 3.0f;			
+	config.dashMoveSpeed = 2.6f;			
 
 	// 基礎ステータス
 	config.life = 100.0f;						

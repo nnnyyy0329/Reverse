@@ -557,7 +557,7 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 		enemy->SetBulletManager(_bulletManager);
 	}
 
-	// オブジェクトの削除
+	// オブジェクトのクリア
 	{
 		_bulletManager->ClearAllBullets();
 		AttackManager::GetInstance()->ClearAllAttacks();
@@ -600,7 +600,6 @@ void ModeGame::RestartCurrentStage()
 	{
 		_bulletManager->ClearAllBullets();
 		AttackManager::GetInstance()->ClearAllAttacks();
-		EffectServer::GetInstance()->Terminate();
 	}
 }
 

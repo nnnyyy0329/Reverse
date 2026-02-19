@@ -249,13 +249,13 @@ void PlayerBase::ProcessCollisionPos()
 	// しゃがみ状態で当たり判定の高さを変更
 	if(!_bIsCrouching) // 立っている場合
 	{
-		_vCollisionTop = VAdd(modelPos, VGet(0, 70.0f, 0));
-		_vCollisionBottom = VAdd(modelPos, VGet(0, 10.0f, 0));
+		_vCollisionBottom = VAdd(_vPos, VGet(0.0f, _fCollisionR, 0.0f));// 半径分ずらして中心位置に
+		_vCollisionTop = VAdd(_vPos, VGet(0.0f, _fCollisionHeight - _fCollisionR, 0.0f));// 高さ分ずらす
 	}
 	else // しゃがみ中なら
 	{
-		_vCollisionTop = VAdd(modelPos, VGet(0, 35.0f, 0));
-		_vCollisionBottom = VAdd(modelPos, VGet(0, 5.0f, 0));
+		_vCollisionBottom = VAdd(_vPos, VGet(0.0f, _fCollisionR, 0.0f));// 半径分ずらして中心位置に
+		_vCollisionTop = VAdd(_vPos, VGet(0.0f, _fCollisionHeight - _fCollisionR, 0.0f));// 高さ分ずらす
 	}
 }
 
