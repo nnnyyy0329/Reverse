@@ -84,13 +84,13 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 		vCapsuleTop = VAdd(vCapsuleTop, vStepMove);
 		vCapsuleBottom = VAdd(vCapsuleBottom, vStepMove);
 
-		// ステップ1:周囲のポリゴンを取得
+		// 1:周囲のポリゴンを取得
 		// 球範囲でポリゴンを取得して壁と床に分類
 		std::vector<MV1_COLL_RESULT_POLY> wallPolygons;// 壁ポリゴンリスト
 		std::vector<MV1_COLL_RESULT_POLY> floorPolygons;// 床ポリゴンリスト
 
 		// 検出範囲の中心をカプセルの中心に設定
-		const float constDetectionMargin = 50.0f;// 少し広めに
+		const float constDetectionMargin = 100.0f;// 少し広めに
 		const float detectionRadius = capsuleRadius + constDetectionMargin;// 半径に加算する
 		VECTOR vDetectionCenter = VAdd(vProcessPos, VGet(0.0f, capsuleHeight * 0.5f, 0.0f));
 
@@ -130,7 +130,7 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 			MV1CollResultPolyDimTerminate(polyResult);
 		}
 
-		// ステップ2:壁との衝突処理
+		// 2:壁との衝突処理
 		if (!wallPolygons.empty())
 		{
 			bool hasSlided = false;// スライド移動を適用したか
@@ -249,7 +249,7 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 			}
 		}
 
-		// ステップ3:床との接地判定
+		// 3:床との接地判定
 		if (!floorPolygons.empty())
 		{
 			// 足元から少し下の範囲をチェック
