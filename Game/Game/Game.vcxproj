@@ -184,6 +184,7 @@
     <ClCompile Include="source\ModeMenu.cpp" />
     <ClCompile Include="source\AbilityBase.cpp" />
     <ClCompile Include="source\AbilityManager.cpp" />
+    <ClCompile Include="source\ModeScenario.cpp" />
     <ClCompile Include="source\ModeStageChange.cpp" />
     <ClCompile Include="source\ModeTitle.cpp" />
     <ClCompile Include="source\PlayerAttackSystem.cpp" />
@@ -287,6 +288,7 @@
     <ClInclude Include="source\ModeMenu.h" />
     <ClInclude Include="source\AbilityBase.h" />
     <ClInclude Include="source\AbilityManager.h" />
+    <ClInclude Include="source\ModeScenario.h" />
     <ClInclude Include="source\ModeStageChange.h" />
     <ClInclude Include="source\ModeTitle.h" />
     <ClInclude Include="source\PlayerAttackSystem.h" />

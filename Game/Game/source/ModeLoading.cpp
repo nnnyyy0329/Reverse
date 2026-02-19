@@ -14,6 +14,8 @@ bool ModeLoading::Initialize()
 	{
 		auto rs = ResourceServer::GetInstance();
 
+		
+
 		// エフェクト
 		{
 			rs->Register("Laser", "effect/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
@@ -130,6 +132,8 @@ bool ModeLoading::Initialize()
 			rs->Register("sPlayerFirstAttack", "sound/SE/sPlayerFirstAttack/sPlayerFirstAttack1.mp3", RESOURCE_TYPE::Sound, 1.0f);
 			rs->Register("iPlayerAttack", "sound/SE/iPlayerAttack/iPlayerAttack1.mp3", RESOURCE_TYPE::Sound, 1.0f);
 		}
+
+		
 	}
 
 	// リソースのロード開始
