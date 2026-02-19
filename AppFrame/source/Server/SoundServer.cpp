@@ -16,6 +16,7 @@ void SoundServer::Initialize()
 {
 	std::lock_guard<std::mutex> lk(_mtx);
 	_resources.clear();
+	_masterVolume = 255; // 初期マスター音量
 }
 
 void SoundServer::Terminate()
@@ -41,6 +42,8 @@ bool SoundServer::Load(const std::string& name, const char* path)
 	if(handle < 0) {
 		return false; // 読み込み失敗
 	}
+
+	ChangeVolumeSoundMem(_masterVolume, handle);
 
 	_resources[name] = handle;
 	return true;
@@ -74,6 +77,9 @@ int SoundServer::Play(const std::string& name, int playType)
 	int h = it->second;
 	// PlaySoundMem の戻り値は成功/失敗だが、呼び出し側で停止したいのでハンドルを返す
 	PlaySoundMem(h, playType);
+
+	// 再生時にマスター音量を適用
+	ChangeVolumeSoundMem(_masterVolume, h);
 	return h;
 }
 
@@ -104,6 +110,16 @@ void SoundServer::SetVolumeByHandle(int soundHandle, int volume)
 	if(soundHandle < 0) return;
 	ChangeVolumeSoundMem(volume, soundHandle);
 }
+
+//void SoundServer::SetMasterVolume(int volume)
+//{
+//	std::lock_guard<std::mutex> lk(_mtx);
+//	_masterVolume = std::clamp(volume, 0, 255);
+//	// 現在読み込まれている全ハンドルに適用
+//	for(auto& p : _resources) {
+//		ChangeVolumeSoundMem(_masterVolume, p.second);
+//	}
+//}
 
 void SoundServer::StopAll()
 {

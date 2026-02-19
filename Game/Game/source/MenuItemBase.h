@@ -6,6 +6,7 @@ class ModeGame;
 class CameraManager;
 class GameCamera;
 class DebugCamera;
+class SoundServer;
 
 // メニュー項目用ベースクラス
 class MenuItemBase
@@ -62,4 +63,28 @@ protected:
 	std::shared_ptr<CameraManager> __cameraManager;
 	std::shared_ptr<DebugCamera> __debugCamera;
 	std::shared_ptr<GameCamera> __gameCamera;
+};
+
+
+class MenuItemVolume : public MenuItemBase
+{
+public:
+	// param: 呼び出し元(this) 等、 soundName: SoundServer に登録された名前
+	MenuItemVolume(void* param, const std::string& soundName, int initVolume = 255);
+
+	// Enter で完了させない（メニューを閉じない）
+	virtual int Selected() override { return 0; }
+
+	// 左右から呼ぶ
+	void Increase();
+	void Decrease();
+
+	// 現在の音量（0..255）
+	int GetVolume() const { return _volume; }
+
+private:
+	void UpdateText();
+
+	std::string _soundName;
+	int _volume;
 };

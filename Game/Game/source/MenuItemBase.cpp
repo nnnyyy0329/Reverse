@@ -5,6 +5,9 @@
 #include "GameCamera.h"
 #include "DebugCamera.h"
 
+
+// ...（既存のコードはそのまま）...
+
 int MenuItemViewDebugInfo::Selected()
 {
 	ModeGame* mdGame = static_cast<ModeGame*>(_param);
@@ -77,3 +80,62 @@ int MenuDebugCamera::Selected()
 
 	return 0;
 }
+
+//MenuItemVolume::MenuItemVolume(void* param, const std::string& soundName, int initVolume)
+//	: MenuItemBase(param, "")
+//	, _soundName(soundName)
+//	, _volume(0)
+//{
+//	if(_soundName.empty())
+//	{
+//		// マスター音量
+//		_volume = SoundServer::GetInstance()->GetMasterVolume();
+//	}
+//	else
+//	{
+//		// C++14 対応：std::clamp を使わずに範囲制限
+//		_volume = std::max(0, std::min(initVolume, 255));
+//	}
+//	UpdateText();
+//}
+//
+//void MenuItemVolume::Increase()
+//{
+//	_volume = std::min(255, _volume + 16);
+//	if(_soundName.empty())
+//	{
+//		SoundServer::GetInstance()->SetMasterVolume(_volume);
+//	}
+//	else
+//	{
+//		SoundServer::GetInstance()->SetVolume(_soundName, _volume);
+//	}
+//	UpdateText();
+//}
+//
+//void MenuItemVolume::Decrease()
+//{
+//	_volume = std::max(0, _volume - 16);
+//	if(_soundName.empty())
+//	{
+//		SoundServer::GetInstance()->SetMasterVolume(_volume);
+//	}
+//	else
+//	{
+//		SoundServer::GetInstance()->SetVolume(_soundName, _volume);
+//	}
+//	UpdateText();
+//}
+//
+//void MenuItemVolume::UpdateText()
+//{
+//	int percent = (_volume * 100) / 255;
+//	if(_soundName.empty())
+//	{
+//		_text = "Master Volume: " + std::to_string(percent) + "%";
+//	}
+//	else
+//	{
+//		_text = _soundName + ": " + std::to_string(percent) + "%";
+//	}
+//}

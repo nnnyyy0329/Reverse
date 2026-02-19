@@ -56,6 +56,12 @@ bool ModeLoading::Initialize()
 		//rs->Register("energy1", "res/try3/energy_1.png", RESOURCE_TYPE::Graph, 1.0f);
 		//rs->Register("energy2", "res/try3/energy_2.png", RESOURCE_TYPE::Graph, 1.0f);
 		//rs->Register("energy3", "res/try3/energy_3.png", RESOURCE_TYPE::Graph, 1.0f);
+
+		rs->Register("bgm1", "res/bgm/BGM_Title2.mp3", RESOURCE_TYPE::Sound, 1.0f);
+
+		rs->Register("title", "res/UI/Title.png", RESOURCE_TYPE::Graph, 1.0f);   
+
+
 	}
 
 	// リソースのロード開始

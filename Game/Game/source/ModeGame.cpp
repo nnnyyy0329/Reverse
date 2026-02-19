@@ -27,6 +27,9 @@
 #include "MenuItemBase.h"
 
 #include "Item.h"
+#include <Server/SoundServer.h>
+#include "ScenarioBase.h"
+
 
 bool ModeGame::Initialize() 
 {
@@ -81,7 +84,7 @@ bool ModeGame::Initialize()
 		_debugCamera = std::make_shared<DebugCamera>();
 	}
 
-	// 回避システム初期化
+	// 回避システム初期化loading
 	{
 		//_dodgeSystem = std::make_shared<DodgeSystem>();
 		//_dodgeSystem->Initialize();
@@ -117,7 +120,20 @@ bool ModeGame::Initialize()
 		_bUseCollision = true;
 	}
 
+	// --- BGM 読み込みと再生（追加） ---
+
+	SoundServer::GetInstance()->Play("bgm1", DX_PLAYTYPE_LOOP);
+
+
+
+	_ScenarioBase = std::make_unique<ScenarioBase>("title", 180, 30);
+	_ScenarioBase->SetPosition(0, 0);
+	_ScenarioBase->SetScale(0.5f, 0.5f);
+	_ScenarioBase->SetAutoClose(false); // ← ここで自動終了を無効化
+	_ScenarioBase->Show();
+
 	return true;
+
 }
 
 bool ModeGame::Terminate() 
@@ -129,6 +145,8 @@ bool ModeGame::Terminate()
 
 	// プレイヤー開放
 	_playerManager.reset();
+
+	_ScenarioBase.reset();
 
 	return true;
 }
@@ -145,7 +163,21 @@ bool ModeGame::Process()
 	float rx = analog.rx;
 	float ry = analog.ry;
 	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
+	if(_ScenarioBase)
+	{
+		_ScenarioBase->Update();
+	}
 
+	// タイトルスキップ：ボタン押でフェードアウト（Skip）または即時非表示（Hide）
+	if(_ScenarioBase && !_ScenarioBase->IsFinished())
+	{
+		if(trg & PAD_INPUT_1) { // 例：PAD_INPUT_1 をスキップボタンに割当
+			_ScenarioBase->Skip(); // フェードアウトでスキップしたい場合
+			// _ScenarioBase->Hide(); // 即時非表示にするならこちらを使う
+		}
+	}
+
+	
 	/// 入力取得
 	{
 		// プレイヤーマネージャーに入力状態を渡す
@@ -270,12 +302,45 @@ bool ModeGame::Process()
 	// カメラ更新
 	_cameraManager->Process();
 
+	if((ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_3))
+	{
+		// 既にメニューがあれば重複追加しない
+		if(ModeServer::GetInstance()->Get("menu") == nullptr)
+		{
+			ModeMenu* modeMenu = new ModeMenu();
+			modeMenu->SetCameraManager(_cameraManager); // 注意：既存の変数名に合わせてください
+
+
+
+
+
+			// デバッグカメラメニュー
+			auto debugCamera = new MenuDebugCamera(this, "Ikedasan BAKA");
+
+
+			debugCamera->SetCameraManagerMenu(_cameraManager);
+			debugCamera->SetDebugCameraMenu(_debugCamera);
+			debugCamera->SetGameCameraMenu(_gameCamera);
+
+			ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+			modeMenu->AddMenuItem(debugCamera);
+		}
+	}
+
+
 	return true;
 }
 
 bool ModeGame::Render() 
 {
 	base::Render();
+	// Scenario 描画（タイトル等）
+	if(_ScenarioBase && !_ScenarioBase->IsFinished())
+	{
+		// 余分な 3D 設定やオブジェクト描画をしないで Scenario のみ描画
+		_ScenarioBase->Render();
+		return true;
+	}
 
 	// 3D基本設定
 	{
@@ -324,6 +389,8 @@ bool ModeGame::Render()
 		_stage->CollisionRender();
 		AttackManager::GetInstance()->CollisionRender();
 	}
+
+	
 
 	// エフェクト描画
 	EffectServer::GetInstance()->Render();
@@ -490,4 +557,6 @@ void ModeGame::CheckHitCharaItem(std::shared_ptr<CharaBase> chara, std::shared_p
 	{
 	 //アイテムを消す処理
 	}
+
+	
 }

@@ -2,6 +2,7 @@
 #include "appframe.h"
 #include "CharaBase.h"
 #include "AttackManager.h"
+#include "ScenarioBase.h"
 
 // 前方宣言
 class CharaBase;
@@ -19,7 +20,7 @@ class EnergyUI;
 class DodgeSystem;
 class LightManager;
 class Item;
-
+class ScenarioBase;
 class AbilitySelectScreen;
 
 // ライト情報構造体
@@ -69,6 +70,7 @@ protected:
 	std::shared_ptr<EnergyUI>			_energyUI;				// エネルギーUI
 	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;	// 能力選択画面
 	std::shared_ptr<LightManager>		_lightManager;			// ライトマネージャー 
+	std::unique_ptr<ScenarioBase>        _ScenarioBase;           //　タイトル
 
 	// シングルトン取得
 	AttackManager* _attackManager = nullptr;
@@ -111,4 +113,6 @@ private:
 
 	void RemoveLight(int lightHandle);// 指定ライトを削除
 
+	int _bgmHandle = -1;
+	
 };

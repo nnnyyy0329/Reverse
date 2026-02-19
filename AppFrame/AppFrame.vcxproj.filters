@@ -37,6 +37,9 @@
     <Filter Include="Server\Sound">
       <UniqueIdentifier>{e23f687b-19ea-4472-861b-d107208df316}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Server\Title">
+      <UniqueIdentifier>{8c582810-5044-4735-b896-bb1a8e8ba880}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\CFile\CFile.cpp">

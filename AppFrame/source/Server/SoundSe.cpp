@@ -13,7 +13,7 @@ SoundSe::~SoundSe()
 }
 
 // サウンドのタイプを取得する
-SoundSe::TYPE SoundSe::GetType()
+SoundSe::SOUNDTYPE SoundSe::GetType()
 {
 	return SOUNDTYPE::SE;				// 効果音タイプを返す
 }
