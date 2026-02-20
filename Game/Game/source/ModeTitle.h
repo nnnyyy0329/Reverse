@@ -23,6 +23,8 @@ protected:
 
 private:
 
-	void Drawgraph(VECTOR pos, std::string name);
+	
 	bool _bIsAddLoading = false;
+
+	int _menuIndex;
 };
