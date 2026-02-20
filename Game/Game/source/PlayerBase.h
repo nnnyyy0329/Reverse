@@ -59,6 +59,7 @@ struct AttackConfig
 	float damage;				// ダメージ
 	ATTACK_STATE attackState;	// 攻撃状態
 	float attackMoveSpeed;		// 攻撃中の移動速度
+	bool canKnockback;			// 吹き飛ばし攻撃かどうか
 	std::string effectName;		// エフェクト名
 	VECTOR effectOffset;		// エフェクト位置オフセット
 	std::string soundName;		// サウンド名

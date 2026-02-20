@@ -37,10 +37,11 @@ struct ATTACK_COLLISION
 	float recovery;				// 攻撃後の後隙
 	float damage;				// ダメージ量
 	float currentTime;			// 現在の経過時間
-	bool isActive;				// 現在アクティブかどうか
-	bool isHit;					// ヒットしたかどうか
 	ATTACK_STATE attackState;	// 攻撃状態
 	float attackMoveSpeed;		// 攻撃中の移動速度
+	bool isActive;				// 現在アクティブかどうか
+	bool isHit;					// ヒットしたかどうか
+	bool canKnockback;			// 吹き飛ばし攻撃かどうか
 };
 
 // 攻撃移動情報
@@ -96,7 +97,8 @@ public:
 		float damage,				// ダメージ	
 		bool hit,					// ヒットフラグ
 		ATTACK_STATE attackState,	// 攻撃状態
-		float attackMoveSpeed		// 攻撃中の移動速度
+		float attackMoveSpeed,		// 攻撃中の移動速度
+		bool canKnockback			// 吹き飛ばし攻撃かどうか
 	);
 
 	// 円形攻撃データ設定

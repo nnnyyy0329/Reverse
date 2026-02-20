@@ -33,8 +33,6 @@ public:
 	std::shared_ptr<CharaBase> GetTarget() { return _targetPlayer; }
 	void SetTarget(std::shared_ptr<CharaBase> target) { _targetPlayer = target; }
 
-	int GetDamageCount() { return _damageCnt; }// 何回ダメージを受けたか
-
 	// モデル名のゲッターセッター
 	const std::string& GetModelName() const { return _modelName; }
 	void SetModelName(const std::string name) { _modelName = name; }
@@ -53,7 +51,6 @@ public:
 
 	// 被ダメージ処理
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo) override;
-	void ResetDamageCount() { _damageCnt = 0; }// ダメージカウントリセット
 
 	// 死亡判定
 	bool IsDead();
@@ -113,8 +110,6 @@ protected:
 
 	int _lifeBarHandle = -1;// ライフバー用
 	int _lifeBarFrameHandle = -1;// ライフバー枠用
-
-	int _damageCnt = 0;// 何回ダメージを受けたか(スタン用)
 
 	bool _bIsExist = true;// 生存フラグ
 	bool _bCanRemove = false;// delete可能フラグ

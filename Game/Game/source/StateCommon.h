@@ -40,20 +40,6 @@ namespace Common
 
 
 
-	// スタン
-	class Stun : public EnemyState
-	{
-	public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() override { return "Common:Stun"; }
-		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::TOP; }// 最優先
-	};
-
-
-
-
-
 	// ダウン
 	class Down : public EnemyState
 	{

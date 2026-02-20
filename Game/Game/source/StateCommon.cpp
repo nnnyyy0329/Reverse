@@ -67,12 +67,6 @@ namespace Common
 		// タイマー更新
 		_fTimer++;
 
-		// ダウン判定チェック
-		if (owner->GetDamageCount() >= owner->GetEnemyParam().damageToDown)
-		{
-			return std::make_shared<Down>();// ダウン状態へ
-		}
-
 		// ノックバック処理
 		if (_fTimer < DAMAGE_KNOCKBACK_TIME)
 		{
@@ -135,45 +129,12 @@ namespace Common
 
 
 
-	// スタン
-	void Stun::Enter(Enemy* owner) 
-	{
-		// タイマー初期化
-		_fTimer = 0.0f;
-
-		// 移動停止
-		StopMove(owner);
-
-		// ここでアニメーション設定
-	}
-
-	std::shared_ptr<EnemyState> Stun::Update(Enemy* owner)
-	{
-		// タイマー更新
-		_fTimer++;
-
-		// スタン時間経過チェック
-		if (_fTimer >= STUN_TIME) 
-		{
-			return owner->GetRecoveryState();// 回復状態へ
-		}
-
-		return nullptr;
-	}
-
-
-
-
-
 	// ダウン
 	void Down::Enter(Enemy* owner) 
 	{
 		// タイマー初期化
 		_fTimer = 0.0f;
 		_fKnockbackSpeed = DOWN_KNOCKBACK_SPEED;
-
-		// 被ダメージ回数リセット
-		owner->ResetDamageCount();
 
 		// ターゲット情報取得
 		auto targetInfo = GetTargetInfo(owner);

@@ -24,6 +24,7 @@ AttackBase::AttackBase()
     _stcAttackCol.isHit = false;
 	_stcAttackCol.attackState = ATTACK_STATE::INACTIVE;
 	_stcAttackCol.attackMoveSpeed = 0.0f;
+	_stcAttackCol.canKnockback = false;
 
 	// 攻撃移動情報の初期化
 	_stcAttackMovement.moveDir = VGet(0.0f, 0.0f, 0.0f);
@@ -173,7 +174,8 @@ void AttackBase::SetCapsuleAttackData
     float damage,
     bool hit,
     ATTACK_STATE attackState,
-    float attackMoveSpeed	
+    float attackMoveSpeed,
+	bool canKnockback
 )
 {
 	_stcAttackCol.attackColTop = top;                   // カプセル上部
@@ -187,6 +189,7 @@ void AttackBase::SetCapsuleAttackData
 	_stcAttackCol.isHit = hit;                          // ヒットフラグ
 	_stcAttackCol.attackState = attackState;            // 攻撃状態
 	_stcAttackCol.attackMoveSpeed = attackMoveSpeed;    // 攻撃中の移動速度
+	_stcAttackCol.canKnockback = canKnockback;        // 吹き飛ばし攻撃かどうか
 
 	_eColType = COLLISION_TYPE::CAPSULE;    // コリジョンタイプをカプセルに設定
 }

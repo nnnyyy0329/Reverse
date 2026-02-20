@@ -71,7 +71,6 @@ bool Enemy::Initialize()
 	_vOldPos = _vPos;
 	_vHomePos = _vPos;// 初期位置を保存
 	_fLife = _enemyParam.fMaxLife;// ライフに最大値をセット
-	_damageCnt = 0;
 	_bIsExist = true;
 	_bCanRemove = false;
 
@@ -189,7 +188,6 @@ void Enemy::DebugRender()
 			SetFontSize(size);
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  life   = %5.2f / %5.2f", _fLife, _enemyParam.fMaxLife); y += size;
-			DrawFormatString(x, y, GetColor(255, 255, 0), "  _damageCnt  = %d", _damageCnt); y += size;
 
 			// ステートから名前を取得
 			const char* stateName = "None";
@@ -450,8 +448,8 @@ void Enemy::StartAttack(const EnemyAttackSettings& settings)
 		settings.fDamage,// ダメージ
 		false,// ヒットフラグ
 		ATTACK_STATE::INACTIVE,
-		0.0f
-
+		0.0f,
+		false
 	);
 
 	// 攻撃開始
@@ -491,7 +489,8 @@ void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings)
 		col.damage,
 		col.isHit,
 		ATTACK_STATE::INACTIVE,
-		0.0f
+		0.0f,
+		false
 	);
 }
 
@@ -512,21 +511,6 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	// エフェクト
 	VECTOR efPos = VAdd(_vPos, VGet(0.0f, DAMAGE_EFFECT_OFFSET_Y, 0.0f));
 	EffectServer::GetInstance()->Play("En_Damage", efPos);
-
-	// 変身前プレイヤーからの攻撃なら最低1は残す
-	if (eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER)
-	{
-		// ダメージ適用後のライフを計算
-		auto lifeAfterDamage = _fLife - fDamage;
-
-		if (lifeAfterDamage <= 1.0f)
-		{
-			_fLife = 1.0f;// 最低1は残す
-			// スタンステートへ遷移
-			ChangeState(std::make_unique<Common::Stun>());
-			return;
-		}
-	}
 
 	// 現在のステートが最優先の場合、ダメージのみ受付
 	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::TOP)
@@ -557,15 +541,14 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	}
 
 	// 生存時:通常ダメージ
-	_damageCnt++;// ダメージ回数をカウントアップ
 
 	// リアクションとしてマテリアルカラーを赤くする
 	COLOR_F red = GetColorF(1.0f, 0.0f, 0.0f, 1.0f);
 	MV1SetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0, red);
 	_bIsColorChanged = true;
 
-	// Down回数に達したら直接Downステートへ遷移
-	if (_damageCnt >= _enemyParam.damageToDown)
+	// 吹っ飛びフラグがtrueならDownステートへ遷移
+	if (attackInfo.canKnockback)
 	{
 		ChangeState(std::make_unique<Common::Down>());
 		return;
@@ -748,7 +731,7 @@ void Enemy::UpdateColorChange()
 {
 	static int changeTimer = 0;
 	changeTimer++;
-	if (changeTimer > 10)
+	if (changeTimer > 30)
 	{
 		MV1SetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0, _defaultColor);
 		_bIsColorChanged = false;
