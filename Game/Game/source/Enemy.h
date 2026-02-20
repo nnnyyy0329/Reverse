@@ -73,13 +73,12 @@ public:
 	bool IsTargetDetected() { return _bIsTargetDetected; };// 索敵結果を取得
 	void SetTargetDetected(bool bDetected) { _bIsTargetDetected = bDetected; };// 索敵結果を設定
 
-	// 敵ごとに動きにばらつきを持たせるため
-	void ApplyRandomOffset();// ステート時間にランダムなオフセットを適用
-	float GetStateTimerOffset() { return _fStateTimerOffset; }
-
 	// 索敵の障害物チェック
 	void SetStage(std::shared_ptr<StageBase> stage) { _stage = stage; }// ステージ参照をセット
 	bool CheckLineOfSight(VECTOR vStart, VECTOR vEnd);// 視線が通っているか(障害物チェック)
+
+	// 移動可能範囲チェック
+	bool CheckInsideMoveArea(VECTOR vPos);// 指定座標が移動可能範囲内かどうか
 
 
 
@@ -126,10 +125,7 @@ protected:
 	int _searchTimer = 0;// 索敵タイマー
 	bool _bIsTargetDetected = false;// ターゲットが見つかったか
 
-	// 動きにばらつきを持たせるため
-	float _fStateTimerOffset = 0.0f;// ステート時間にばらつきを
-
-	std::weak_ptr<StageBase> _stage;// ステージ参照(障害物チェック用)
+	std::weak_ptr<StageBase> _stage;// ステージ参照
 
 	COLOR_F _defaultColor;// 元のマテリアルカラーを保存
 	bool _bIsColorChanged = false;// カラー変更中かどうか

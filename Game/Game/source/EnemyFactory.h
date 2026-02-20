@@ -15,7 +15,6 @@ namespace
 	constexpr auto MELEE_VISION_ANGLE = 180.0f;// ‰~‚Å‚Ìõ“G
 	constexpr auto MELEE_ATTACK_RANGE = 120.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
 	constexpr auto MELEE_CHASE_LIMIT_RANGE = 600.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ß‚ğ‚â‚ß‚é‹——£
-	constexpr auto MELEE_MOVE_RADIUS = 800.0f;// œpœj‚·‚é”ÍˆÍ‚Ì”¼Œa(‰ŠúˆÊ’u‚©‚ç‚Ì‹——£)
 	constexpr auto MELEE_IDLE_TIME = 120.0f;// ‘Ò‹@ŠÔ
 	constexpr auto MELEE_MOVE_TIME = 180.0f;// œpœjŠÔ
 	constexpr auto MELEE_DETECT_TIME = 60.0f;// ”­Œ©d’¼
@@ -35,7 +34,6 @@ namespace
 	constexpr auto TANK_VISION_ANGLE = 180.0f;// õ“GŠp“x
 	constexpr auto TANK_ATTACK_RANGE = 150.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
 	constexpr auto TANK_CHASE_LIMIT_RANGE = 700.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ß‚ğ‚â‚ß‚é‹——£
-	constexpr auto TANK_MOVE_RADIUS = 500.0f;// œpœj‚·‚é”ÍˆÍ‚Ì”¼Œa(‰ŠúˆÊ’u‚©‚ç‚Ì‹——£)
 	constexpr auto TANK_IDLE_TIME = 150.0f;;// ‘Ò‹@ŠÔ
 	constexpr auto TANK_MOVE_TIME = 120.0f;// œpœjŠÔ
 	constexpr auto TANK_DETECT_TIME = 120.0f;// ”­Œ©d’¼
@@ -75,7 +73,6 @@ public:
 				param.fVisionAngle = MELEE_VISION_ANGLE;
 				param.fAttackRange = MELEE_ATTACK_RANGE;
 				param.fChaseLimitRange = MELEE_CHASE_LIMIT_RANGE;
-				param.fMoveRadius = MELEE_MOVE_RADIUS;
 				param.fIdleTime = MELEE_IDLE_TIME;
 				param.fMoveTime = MELEE_MOVE_TIME;
 				param.fDetectTime = MELEE_DETECT_TIME;
@@ -111,7 +108,6 @@ public:
 			param.fVisionRange = RANGED_VISION_RANGE;
 			param.fVisionAngle = RANGED_VISION_ANGLE;
 			param.fChaseLimitRange = RANGED_CHASE_LIMIT_RANGE;
-			param.fMoveRadius = RANGED_MOVE_RADIUS;
 			param.fIdleTime = RANGED_IDLE_TIME;
 			param.fMoveTime = RANGED_MOVE_TIME;
 			param.fDetectTime = RANGED_DETECT_TIME;
@@ -147,7 +143,6 @@ public:
 				param.fVisionAngle = TANK_VISION_ANGLE;
 				param.fAttackRange = TANK_ATTACK_RANGE;
 				param.fChaseLimitRange = TANK_CHASE_LIMIT_RANGE;
-				param.fMoveRadius = TANK_MOVE_RADIUS;
 				param.fIdleTime = TANK_IDLE_TIME;
 				param.fMoveTime = TANK_MOVE_TIME;
 				param.fDetectTime = TANK_DETECT_TIME;

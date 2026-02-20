@@ -49,6 +49,7 @@ public:
 	const std::vector<std::shared_ptr<Enemy>>& GetEnemies() const { return _stageEnemies; }
 	const std::vector<MODELPOS>& GetMapModelPosList() const { return _mapModelPosList; }
 	const std::vector<TRIGGERPOS>& GetTriggerList() const { return _triggerList; }
+	const std::vector<MODELPOS>& GetMoveAreaList() const { return _moveAreaList; }
 
 	// ステージ切り替え
 	int GetNextStageNumFromTrigger(const std::string& triggerName);// トリガー名から次のステージ番号を取得
@@ -78,6 +79,8 @@ protected:
 	std::vector<std::shared_ptr<Enemy>> _stageEnemies;// ステージ内の敵リスト
 
 	std::vector<MODELPOS> _mapModelPosList;// json読み込みで設定したマップモデルのリスト
+
+	std::vector<MODELPOS> _moveAreaList;// 敵の移動可能範囲リスト
 
 	int _stageNum;// ステージ番号
 

@@ -25,8 +25,6 @@ struct EnemyParam
 	float fAttackRange = 0.0f;// これ以内なら攻撃する距離
 	float fChaseLimitRange = 0.0f;// これ以上離れたら接近をやめる距離
 
-	float fMoveRadius = 0.0f;// 徘徊する範囲の半径(初期位置からの距離)
-
 	float fAttackInterval = 0.0f;// 攻撃間隔
 
 	float fTurnSpeed = 60.0f;// 旋回速度(度 / フレーム)
@@ -77,18 +75,27 @@ public:
 	virtual void UpdateSearch(Enemy* owner) {};// 索敵処理(各ステートでオーバーライド)
 
 protected:
-	float CalcOffsetTime(Enemy* owner, float baseTime);// ステート時間に敵ごとのオフセットを適用
+	// baseTime に -range, +range のランダム幅で増減した値を返す
+	float CalcRandomRangeTime(float fBaseTime, float fRange);
 
 	// ターゲット情報を取得(ターゲットへのベクトル、距離を計算)
 	TargetInfo GetTargetInfo(Enemy* owner);
 
-	// ターゲットが存在しない場合の処理(Idleへ遷移)
-	template<typename IdleState>
-	std::shared_ptr<EnemyState> HandleNoTarget(Enemy* owner);
+	// ターゲットが存在しない場合の処理(LostTargetへ)
+	template<typename LostTargetState>
+	std::shared_ptr<EnemyState> TransitionToLostNoTarget(Enemy* owner);
 
-	// 追跡限界距離チェック(これ以上離れたらIdleへ遷移)
+	// 追跡限界距離チェック(これ以上離れたらLostTargetへ)
+	template<typename LostTargetState>
+	std::shared_ptr<EnemyState> TransitionToLostOverChaseLimit(Enemy* owner, float fDist);
+
+	// 移動可能範囲外チェック(範囲外ならIdleへ) : 徘徊ステート
 	template<typename IdleState>
-	std::shared_ptr<EnemyState> CheckChaseLimitAndHandle(Enemy* owner, float fDist);
+	std::shared_ptr<EnemyState> TransitionToIdleOutsideArea(Enemy* owner);
+
+	// 移動可能範囲外チェック(範囲外ならLostTargetへ) : 追跡系ステート
+	template<typename LostTargetState>
+	std::shared_ptr<EnemyState> TransitionToLostOutsideArea(Enemy* owner);
 
 	// ターゲット方向へ回転
 	void RotateToTarget(Enemy* onwer, const VECTOR& vDir, float fRotSpeed);

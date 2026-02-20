@@ -1,10 +1,24 @@
 #include "EnemyState.h"
 #include "Enemy.h"
 
-float EnemyState::CalcOffsetTime(Enemy* owner, float baseTime)
+float EnemyState::CalcRandomRangeTime(float fBaseTime, float fRange)
 {
-	if (!owner) { return baseTime; }
-	return baseTime + owner->GetStateTimerOffset();
+	if (fRange < 0.0f) { fRange = 0.0f; }
+
+	// ’†‰›‚ð0‚Æ‚·‚é‚½‚ßA”ÍˆÍ‚Ì2”{‚ð®”‚ÅŒvŽZ
+	int iRange = static_cast<int>(fRange * 2.0f);
+
+	// 0 ~ iRange ‚©‚ç fRange ‚ðˆø‚¢‚Ä -fRange ~ +fRange ‚É‚·‚é
+	float fOffset = 0.0f;
+	if (fRange > 0)
+	{
+		fOffset = static_cast<float>(GetRand(iRange)) - fRange;
+	}
+
+	float fResult = fBaseTime + fOffset;
+	if (fResult < 0.0f) { fResult = 0.0f; }
+
+	return fResult;
 }
 
 // ƒ^[ƒQƒbƒgî•ñ‚ðŽæ“¾

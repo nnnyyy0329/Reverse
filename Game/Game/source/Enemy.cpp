@@ -14,9 +14,6 @@ namespace
 
 	// 索敵制御
 	constexpr auto SEARCH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
-	
-	// ステート制御
-	constexpr auto MAX_STATE_OFFSET = 60.0f;// ステート時間をずらす範囲(フレーム)
 
 	// ライフバー表示設定
 	constexpr auto LIFEBAR_HEAD_OFFSET_Y = 100.0f;// ライフバーの表示位置オフセット
@@ -60,7 +57,6 @@ Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
 	SetCharaType(CHARA_TYPE::ENEMY);// キャラタイプを設定
 
 	_searchTimer = 0;
-	_fStateTimerOffset = 0.0f;
 }
 
 Enemy::~Enemy() 
@@ -80,9 +76,6 @@ bool Enemy::Initialize()
 	_bCanRemove = false;
 
 	_defaultColor = MV1GetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0);
-
-	// ランダムなオフセットを適用して動きをずらす
-	ApplyRandomOffset();
 
 	return true;
 }
@@ -129,6 +122,12 @@ bool Enemy::Process()
 
 	_vPos = VAdd(_vPos, _vMove);// 位置更新
 
+	// 移動可能範囲チェック
+	//if (!CheckInsideMoveArea(_vPos))
+	//{
+	//	_vPos = _vOldPos;// 範囲外なら移動前の位置に戻す
+	//}
+
 	// カプセルに座標を対応させる
 	_vCollisionBottom = VAdd(_vPos, VGet(0.0f, _fCollisionR, 0.0f));// 半径分ずらして中心位置に
 	_vCollisionTop = VAdd(_vPos, VGet(0.0f, _fCollisionHeight - _fCollisionR, 0.0f));// 高さ分ずらす
@@ -149,13 +148,6 @@ bool Enemy::Render()
 
 void Enemy::DebugRender() 
 {
-	// 移動範囲を描画
-	{
-		unsigned int color = GetColor(0, 0, 255);// 青
-		DrawCircle3D(_vHomePos, _enemyParam.fMoveRadius, color, 16);
-		DrawLine3D(_vPos, _vHomePos, color);// 現在位置から初期位置への線
-	}
-
 	// 索敵範囲を描画
 	{
 		auto fVisionRange = _enemyParam.fVisionRange;// 索敵距離
@@ -633,12 +625,6 @@ void Enemy::UpdateSearchTimer()
 	}
 }
 
-// ステート時間にランダムなオフセットを適用
-void Enemy::ApplyRandomOffset()
-{
-	_fStateTimerOffset = static_cast<float>(GetRand(static_cast<int>(MAX_STATE_OFFSET)));
-}
-
 void Enemy::SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg)
 {
 	// 現在の角度
@@ -768,4 +754,38 @@ void Enemy::UpdateColorChange()
 		_bIsColorChanged = false;
 		changeTimer = 0;
 	}
+}
+
+bool Enemy::CheckInsideMoveArea(VECTOR vPos)
+{
+	auto stage = _stage.lock();
+	if (!stage) { return true; }
+
+	const auto& areaList = stage->GetMoveAreaList();
+	if (areaList.empty()) { return true; }
+
+	// 足元からの線分
+	VECTOR vRayStart = VAdd(vPos, VGet(0.0f, _colSubY, 0.0f));
+	VECTOR vRayEnd = VAdd(vRayStart, VGet(0.0f, -1000.0f, 0.0f));
+
+	// 全移動可能エリアを走査
+	for (const auto& area : areaList)
+	{
+		if (area.collisionFrame == -1 || area.modelHandle <= 0) { continue; }
+
+		// 線分とモデルの当たり判定
+		MV1_COLL_RESULT_POLY result = MV1CollCheck_Line(
+			area.modelHandle,
+			area.collisionFrame,
+			vRayStart,
+			vRayEnd
+		);
+
+		if (result.HitFlag != 0)
+		{
+			return true;// 当たっていたら範囲内
+		}
+	}
+
+	return false;// どこにも当たらなければ範囲外
 }
