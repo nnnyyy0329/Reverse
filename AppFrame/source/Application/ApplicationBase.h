@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "../Mode//ModeServer.h"
+#include "EffekseerForDXLib.h"
 
 class ApplicationBase
 {
@@ -18,8 +19,8 @@ public:
 	virtual bool Render();
 
 	virtual bool AppWindowed() { return true; }
-	virtual int DispSizeW() { return 640; }
-	virtual int DispSizeH() { return 480; }
+	virtual int DispSizeW() { return 1920; }
+	virtual int DispSizeH() { return 1080; }
 
 	static	ApplicationBase	*GetInstance() { return _lpInstance; }
 	virtual int GetKey() { return _gKey; }
@@ -29,11 +30,15 @@ public:
 	struct AnalogStickState {
 		float lx = 0.0f;
 		float ly = 0.0f;
+		float lz = 0.0f;
 		float rx = 0.0f;
 		float ry = 0.0f;
+		float rz = 0.0f;
 	};
 	virtual AnalogStickState GetAnalog() const { return _analog; }
 	virtual float GetAnalogMin() const { return _analogMin; }
+
+
 
 protected:
 	static	ApplicationBase	*_lpInstance;

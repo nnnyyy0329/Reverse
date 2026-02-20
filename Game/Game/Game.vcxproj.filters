@@ -1,167 +1,483 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Game">
-      <UniqueIdentifier>{7e567ef0-407c-44e6-8977-ab420d28f6a5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Gamemain">
-      <UniqueIdentifier>{52a7dade-3a1c-4d1e-b99a-499473420d5c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\ObjectBase">
-      <UniqueIdentifier>{d81b0c46-0a46-4e7e-8a8c-463266dfab16}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\ObjectBase\CharaBase">
-      <UniqueIdentifier>{cf3d9983-d722-4df8-9b67-7cd9f95e778e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\ObjectBase\CharaBase\PlayerBase">
-      <UniqueIdentifier>{826fd0c4-4828-42a0-bb4f-daea080dbc2d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\ObjectBase\CharaBase\Enemy">
-      <UniqueIdentifier>{8ba0fe59-a9ad-4735-a772-80217d60dd58}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer">
-      <UniqueIdentifier>{898a96a2-9fcf-438e-a8e5-f532a41fc0e8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer">
-      <UniqueIdentifier>{e6749879-00b7-4dd0-a9e2-5d0692121485}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Camera">
-      <UniqueIdentifier>{3f9a689e-5ca0-4637-b781-e71e5de46f20}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Application">
-      <UniqueIdentifier>{2b4451e8-2781-4cd8-977b-cf046efac5da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Map">
-      <UniqueIdentifier>{18be5187-818d-451a-9395-43862d5e7e0d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\PlayerAbility">
-      <UniqueIdentifier>{09b6d8d1-f467-423b-a47a-03c7330f630f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Attack">
-      <UniqueIdentifier>{6748d8e2-e201-4466-a052-98f1eae00f2c}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\EnemyBase.cpp">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
+    <ClCompile Include="source\AbilityBase.cpp">
+      <Filter>Ability</Filter>
     </ClCompile>
-    <ClCompile Include="source\StealthEnemy.cpp">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
+    <ClCompile Include="source\AbilityManager.cpp">
+      <Filter>Ability</Filter>
     </ClCompile>
-    <ClCompile Include="source\BattleEnemy.cpp">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PlayerBase.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SurfacePlayer.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="source\GameObjectBase.cpp">
-      <Filter>Game\ObjectBase</Filter>
-    </ClCompile>
-    <ClCompile Include="source\CharaBase.cpp">
-      <Filter>Game\ObjectBase\CharaBase</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeGame.cpp" />
-    <ClCompile Include="source\ModeGame.cpp">
-      <Filter>Game\Gamemain</Filter>
-    </ClCompile>
-    <ClCompile Include="source\InteriorPlayer.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SurfacePlayer_Move.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SurfacePlayer_Draw.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="source\CameraManager.cpp">
-      <Filter>Game\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ApplicationMain.cpp">
-      <Filter>Game\Application</Filter>
+    <ClCompile Include="source\AbilitySelectScreen.cpp">
+      <Filter>Ability\Select</Filter>
     </ClCompile>
     <ClCompile Include="source\ApplicationGlobal.cpp">
-      <Filter>Game\Application</Filter>
+      <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="source\StageBase.cpp">
-      <Filter>Game\Map</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PlayerAbilityBase.cpp">
-      <Filter>Game\PlayerAbility</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PlayerAbilityManager.cpp">
-      <Filter>Game\PlayerAbility</Filter>
+    <ClCompile Include="source\ApplicationMain.cpp">
+      <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="source\AttackBase.cpp">
-      <Filter>Game\Attack</Filter>
+      <Filter>Attack</Filter>
     </ClCompile>
-    <ClCompile Include="source\InteriorPlayer_Move.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
+    <ClCompile Include="source\AttackManager.cpp">
+      <Filter>Attack</Filter>
     </ClCompile>
-    <ClCompile Include="source\InteriorPlayer_Draw.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
+    <ClCompile Include="source\Bullet.cpp">
+      <Filter>Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="source\PlayerManager.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
+    <ClCompile Include="source\BulletManager.cpp">
+      <Filter>Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CameraManager.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DebugCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DodgeSystem.cpp">
+      <Filter>Dodge</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Enemy.cpp">
+      <Filter>GameObject\CharaBase\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EnergyManager.cpp">
+      <Filter>Energy</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EnergyUI.cpp">
+      <Filter>Energy</Filter>
+    </ClCompile>
+    <ClCompile Include="source\GameCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\GameObjectBase.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CharaBase.cpp">
+      <Filter>GameObject\CharaBase</Filter>
+    </ClCompile>
+    <ClCompile Include="source\LightManager.cpp">
+      <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModeGame.cpp">
+      <Filter>Mode\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModeGame_CheckHit.cpp">
+      <Filter>Mode\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModeMenu.cpp">
+      <Filter>Mode\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModeLoading.cpp">
+      <Filter>Mode\Load</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StateCommon.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StateMelee.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StateRanged.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InteriorPlayer.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase\Interior</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SurfacePlayer.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StageBase.cpp">
+      <Filter>Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Item.cpp">
+      <Filter>GameObject\CharaBase\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AnimManager.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MenuItemBase.cpp">
+      <Filter>Mode\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StateTank.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerBase_Attack.cpp">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase_Draw.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase_Process.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="source\BulletPlayer.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModeStageChange.cpp">
+      <Filter>Mode\StageChange</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase_Dodge.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ShieldBase.cpp">
+      <Filter>Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ShieldManager.cpp">
+      <Filter>Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="source\GeometryUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StaminaManager.cpp">
+      <Filter>Stamina</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StaminaUI.cpp">
+      <Filter>Stamina</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerShieldSystem.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase_Shield.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EnemyState.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModeTitle.cpp">
+      <Filter>Mode\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AimCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerAttackSystem.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerBase_Death.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModeGameOver.cpp">
+      <Filter>Mode\GameOver</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerLifeBarUI.cpp">
+      <Filter>GameObject\CharaBase\Player\LifeBar</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerManager.cpp">
+      <Filter>GameObject\CharaBase\Player\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerStateTransferSystem.cpp">
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerSwitchSystem.cpp">
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerTransformCancelSystem.cpp">
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerTransformSystem.cpp">
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AbsorbAttack.cpp">
+      <Filter>Attack\AbsorbAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerAbsorbAttackSystem.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\AbsorbAttack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\EnemyBase.h">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
+    <ClInclude Include="source\AbilityBase.h">
+      <Filter>Ability</Filter>
     </ClInclude>
-    <ClInclude Include="source\StealthEnemy.h">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
+    <ClInclude Include="source\AbilityManager.h">
+      <Filter>Ability</Filter>
     </ClInclude>
-    <ClInclude Include="source\BattleEnemy.h">
-      <Filter>Game\ObjectBase\CharaBase\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="source\PlayerBase.h">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
-    </ClInclude>
-    <ClInclude Include="source\SurfacePlayer.h">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\SurfacePlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="source\GameObjectBase.h">
-      <Filter>Game\ObjectBase</Filter>
-    </ClInclude>
-    <ClInclude Include="source\CharaBase.h">
-      <Filter>Game\ObjectBase\CharaBase</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeGame.h" />
-    <ClInclude Include="source\ModeGame.h">
-      <Filter>Game\Gamemain</Filter>
-    </ClInclude>
-    <ClInclude Include="source\InteriorPlayer.h">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase\InteriorPlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="source\CameraManager.h">
-      <Filter>Game\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ApplicationMain.h">
-      <Filter>Game\Application</Filter>
+    <ClInclude Include="source\AbilitySelectScreen.h">
+      <Filter>Ability\Select</Filter>
     </ClInclude>
     <ClInclude Include="source\ApplicationGlobal.h">
-      <Filter>Game\Application</Filter>
+      <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="source\StageBase.h">
-      <Filter>Game\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="source\PlayerAbilityBase.h">
-      <Filter>Game\PlayerAbility</Filter>
-    </ClInclude>
-    <ClInclude Include="source\PlayerAbilityManager.h">
-      <Filter>Game\PlayerAbility</Filter>
+    <ClInclude Include="source\ApplicationMain.h">
+      <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="source\AttackBase.h">
-      <Filter>Game\Attack</Filter>
+      <Filter>Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AttackManager.h">
+      <Filter>Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Bullet.h">
+      <Filter>Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="source\BulletManager.h">
+      <Filter>Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CameraManager.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DebugCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DodgeSystem.h">
+      <Filter>Dodge</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy.h">
+      <Filter>GameObject\CharaBase\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnemyAttackSettings.h">
+      <Filter>GameObject\CharaBase\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnemyFactory.h">
+      <Filter>GameObject\CharaBase\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnergyManager.h">
+      <Filter>Energy</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnergyUI.h">
+      <Filter>Energy</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GameCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GameObjectBase.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CharaBase.h">
+      <Filter>GameObject\CharaBase</Filter>
+    </ClInclude>
+    <ClInclude Include="source\LightManager.h">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MenuItemBase.h">
+      <Filter>Mode\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeGame.h">
+      <Filter>Mode\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeMenu.h">
+      <Filter>Mode\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeLoading.h">
+      <Filter>Mode\Load</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateRanged.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateCommon.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateMelee.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\InteriorPlayer.h">
+      <Filter>GameObject\CharaBase\PlayerBase\Interior</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SurfacePlayer.h">
+      <Filter>GameObject\CharaBase\PlayerBase\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StageBase.h">
+      <Filter>Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Item.h">
+      <Filter>GameObject\CharaBase\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerBase.h">
+      <Filter>GameObject\CharaBase\PlayerBase</Filter>
+    </ClInclude>
+    <ClInclude Include="source\BulletPlayer.h">
+      <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnemyState.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AnimManager.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateTank.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeStageChange.h">
+      <Filter>Mode\StageChange</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ShieldBase.h">
+      <Filter>Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ShieldManager.h">
+      <Filter>Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GeometryUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StaminaManager.h">
+      <Filter>Stamina</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StaminaUI.h">
+      <Filter>Stamina</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerShieldSystem.h">
+      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnemyState_impl.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeTitle.h">
+      <Filter>Mode\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AimCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerAttackSystem.h">
+      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModeGameOver.h">
+      <Filter>Mode\GameOver</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerLifeBarUI.h">
+      <Filter>GameObject\CharaBase\Player\LifeBar</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerManager.h">
-      <Filter>Game\ObjectBase\CharaBase\PlayerBase</Filter>
+      <Filter>GameObject\CharaBase\Player\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="source\PlayerStateTransferSystem.h">
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerSwitchSystem.h">
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerTransformCancelSystem.h">
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerTransformSystem.h">
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AbsorbAttack.h">
+      <Filter>Attack\AbsorbAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerAbsorbAttackSystem.h">
+      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\AbsorbAttack</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Application">
+      <UniqueIdentifier>{87c0314d-652a-4329-9004-ec2304255003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ability">
+      <UniqueIdentifier>{b86c23fd-ce8b-42c7-add5-9af80d66bc70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Attack">
+      <UniqueIdentifier>{11a771de-2886-4c94-ba6d-eb82ee0753dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Energy">
+      <UniqueIdentifier>{b62c61cf-7a0d-4327-9eeb-cd79776299fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{aafd3f0c-c6bc-4625-9d3d-04e69443e631}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode">
+      <UniqueIdentifier>{b7cc6313-7f14-4cc0-b019-dd08b1d273f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Menu">
+      <UniqueIdentifier>{ab85a906-0c93-42e0-85fc-4b39edfd7ff8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Game">
+      <UniqueIdentifier>{071a6f3c-32d1-44fa-aad2-806ad8cdef07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ability\Select">
+      <UniqueIdentifier>{a6f37d0f-4ec0-4fde-8678-b0a924ba8e04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bullet">
+      <UniqueIdentifier>{dbd2dd3d-1e6f-4956-b6b1-3c0631975688}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{893ad2ee-5aab-40b9-aa68-c9e294459396}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dodge">
+      <UniqueIdentifier>{ba95561e-67be-42ca-ac72-9c02e57f6953}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase">
+      <UniqueIdentifier>{115adbb7-abe7-4a29-982e-3bf615a4c0a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player">
+      <UniqueIdentifier>{0508fdec-9467-4497-890d-aea969da1e84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Enemy">
+      <UniqueIdentifier>{1438df41-e46a-4b94-8d9f-b3c871467f7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Enemy\state">
+      <UniqueIdentifier>{44c6c8a1-7651-4700-9499-36dde91a8f9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Light">
+      <UniqueIdentifier>{5f3de31b-18bc-4482-b88b-2588d6bd9f6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Load">
+      <UniqueIdentifier>{35198714-23c1-46cf-8a55-86d69483f8d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Item">
+      <UniqueIdentifier>{cc558430-6e86-44d5-adb4-dee6afa34d11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase">
+      <UniqueIdentifier>{ac63fc4d-34ba-4f2c-bfa7-d1ac08909c3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\Surface">
+      <UniqueIdentifier>{5b68afb6-e1f7-435d-a520-87474eae2fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\Interior">
+      <UniqueIdentifier>{b58c1215-8fb2-471f-9ae2-7fa0077cff40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Item">
+      <UniqueIdentifier>{cc558430-6e86-44d5-adb4-dee6afa34d11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{8a4cbfe7-fc06-4c1c-94bf-2ce3a31c6539}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Stage">
+      <UniqueIdentifier>{f51f6167-8088-48fb-bc30-d4d31501d52c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\StageChange">
+      <UniqueIdentifier>{07a76089-1612-4fa7-ac07-4704b5d4c7af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shield">
+      <UniqueIdentifier>{b0027806-d42b-4e7e-beca-b04f3c795a5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{8672d866-e05c-4c31-a16a-c411684426f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Stamina">
+      <UniqueIdentifier>{9cbc9db6-546d-4b91-9379-313f022978ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\Bullet">
+      <UniqueIdentifier>{bf0c1bdb-2ada-440d-8231-314cd8dc3e52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Title">
+      <UniqueIdentifier>{553e3701-3d5b-4024-95d2-f0d7bf4115bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\GameOver">
+      <UniqueIdentifier>{48ffd704-7ecc-4724-821d-0a3095d23135}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player\LifeBar">
+      <UniqueIdentifier>{4c7a31b1-a223-4dbc-9283-a751ffa20c81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player\Manager">
+      <UniqueIdentifier>{107b1248-c5ee-4f10-b259-d3ec7e801990}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Attack\AbsorbAttack">
+      <UniqueIdentifier>{6a895db8-fead-4edc-9c40-ab1b75498cff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player\ManagerSystem">
+      <UniqueIdentifier>{c73b4588-4faf-45ab-ad15-cbb89be6bd76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem">
+      <UniqueIdentifier>{27cd3688-c122-4b8c-b9b2-9785d6f20b30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem\Shield">
+      <UniqueIdentifier>{aef1ea0b-20af-423a-b0c3-8551883a0b05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem\Attack">
+      <UniqueIdentifier>{ab26c467-12ae-4435-b758-3cd3da027bb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem\AbsorbAttack">
+      <UniqueIdentifier>{2cba8d52-2bd9-4b51-83ea-6c48e8109eab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

@@ -13,8 +13,8 @@ public:
 	virtual bool Render();
 
 	virtual bool AppWindowed() { return true; }
-	virtual int DispSizeW() { return 1280; }
-	virtual int DispSizeH() { return 720; }
+	virtual int DispSizeW() { return 1920; }
+	virtual int DispSizeH() { return 1080; }
 
 protected:
 

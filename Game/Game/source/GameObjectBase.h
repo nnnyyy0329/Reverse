@@ -1,5 +1,6 @@
 #pragma once
 #include "appframe.h"
+#include "AnimManager.h"
 
 class GameObjectBase
 {
@@ -11,7 +12,8 @@ public:
 	virtual bool Terminate();	// 終了
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
-	virtual void DebugRender();	// デバッグ描画
+	virtual void DebugRender() {};	// デバッグ情報描画
+	virtual void CollisionRender() {}; // コリジョン描画
 
 	// ゲッターセッター
 	VECTOR GetPos() { return _vPos; }
@@ -20,14 +22,16 @@ public:
 	VECTOR GetOldPos() { return _vOldPos; }
 	void SetOldPos(VECTOR v) { _vOldPos = v; }
 
-	VECTOR GetRad() { return _vDir; }
-	void SetRad(VECTOR v) { _vDir = v; }
+	VECTOR GetDir() { return _vDir; }
+	void SetDir(VECTOR v) { _vDir = v; }
 
 	VECTOR GetScale() { return _vScale; }
 	void SetScale(VECTOR v) { _vScale = v; }
 
 	VECTOR GetMove() { return _vMove; }
 	void SetMove(VECTOR v) { _vMove = v; }
+
+	AnimManager* GetAnimManager() { return &_animManager; }
 
 protected:
 	// 位置関連
@@ -37,14 +41,10 @@ protected:
 	VECTOR _vScale;		// 拡縮
 	VECTOR _vMove;		// 移動量
 
-	// モデル関連
-	int _iHandle;		// グラフィックハンドル
-	int _iAttachIndex;	// アタッチインデックス
-	float _fTotalTime;	// 総経過時間
-	float _fPlayTime;	// 再生時間
+	// アニメーション管理
+	AnimManager _animManager;
 
 private:
-
 
 };
 
