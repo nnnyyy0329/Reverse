@@ -7,6 +7,7 @@
 #include "Bullet.h"
 #include "DodgeSystem.h"
 #include "GameCamera.h"
+#include "SurfacePlayer.h"
 
 // プレベータようパラメータ
 namespace
@@ -715,4 +716,59 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 		}
 	}
 
+}
+
+// 吸収攻撃の当たり判定チェック関数
+void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<CharaBase> chara)
+{
+	if(!chara){ return; }
+	
+	// SurfacePlayerかチェック
+	auto surfacePlayer = std::dynamic_pointer_cast<SurfacePlayer>(chara);
+	if(!surfacePlayer){ return; }
+
+	// 吸収攻撃システムを取得
+	const PlayerAbsorbAttackSystem* absorbSystem = surfacePlayer->GetAbsorbAttackSystem();
+	if(!absorbSystem) { return; }
+
+	// 吸収攻撃がアクティブかチェック
+	if(!absorbSystem->IsAbsorbAttacking()){ return; }
+
+	// 吸収攻撃とキャラの当たり判定
+	CheckHitCharaAbsorbCol(chara, absorbSystem);
+}
+
+// キャラと吸収攻撃コリジョンの当たり判定
+void ModeGame::CheckHitCharaAbsorbCol(std::shared_ptr<CharaBase> chara, const PlayerAbsorbAttackSystem* absorbSystem)
+{
+	if(!chara || !absorbSystem){ return; }
+
+	// 攻撃所有者が自分に攻撃している場合は当たらない
+	if(OwnerIsAbsorbingOwner(chara)){ return; }
+
+	// 吸収攻撃コリジョン情報を取得
+	const AbsorbConfig& col = absorbSystem->GetAbsorbConfig();
+
+	/*if(HitCheck_Capsule_Triangle
+	(
+		
+	) != false)
+	{
+
+	}*/
+}
+
+// 攻撃所有者が自分に攻撃しているかどうか(吸収攻撃用)
+bool ModeGame::OwnerIsAbsorbingOwner(std::shared_ptr<CharaBase> chara)
+{
+	//if(chara->GetCharaType() == CHARA_TYPE::SURFACE_PLAYER ||
+	//	chara->GetCharaType() == CHARA_TYPE::INTERIOR_PLAYER ||
+	//	chara->GetCharaType() == CHARA_TYPE::BULLET_PLAYER)
+	//{
+	//	// プレイヤー同士の攻撃は当たらない
+	//	return true;
+	//}
+
+	// その他のキャラタイプは吸収攻撃の対象外とする
+	return false;
 }

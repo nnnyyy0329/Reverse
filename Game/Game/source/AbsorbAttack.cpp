@@ -5,10 +5,12 @@
 // 吸収攻撃の設定に関する定数
 namespace AbsorbConstants
 {
-	constexpr float DEFAULT_ABSORB_RATE = 0.5f;		// デフォルトの吸収率
-	constexpr float DEFAULT_ENERGY_ABSORB_RATE = 0.5f;		// デフォルトのエネルギー吸収率
-	constexpr float DEFAULT_HP_ABSORB_RATE = 0.5f;		// デフォルトのHP吸収率
-	constexpr float DEFAULT_ABSORB_RANGE = 50.0f;	// デフォルトの吸収範囲
+	constexpr float DEFAULT_ABSORB_RATE			= 0.5f;				// デフォルトの吸収率
+	constexpr float DEFAULT_ENERGY_ABSORB_RATE	= 0.5f;				// デフォルトのエネルギー吸収率
+	constexpr float DEFAULT_HP_ABSORB_RATE		= 0.5f;				// デフォルトのHP吸収率
+	constexpr float DEFAULT_ABSORB_RANGE		= 50.0f;			// デフォルトの吸収範囲
+	constexpr float DEFAULT_ABSORB_ANGLE		= DX_PI_F / 3.0f;	// デフォルトの吸収範囲の角度（60度）
+	constexpr int DEFAULT_ABSORB_DIVISION		= 16;				// デフォルトの吸収範囲の分割数
 }
 
 // 吸収量に関する定数
@@ -31,6 +33,8 @@ AbsorbAttack::AbsorbAttack() : AttackBase() // 親クラスのコンストラクタ呼び出し
 	_stcAbsorbConfig.energyAbsorbRate	= AbsorbConstants::DEFAULT_ENERGY_ABSORB_RATE;	// エネルギー吸収率の初期化
 	_stcAbsorbConfig.hpAbsorbRate		= AbsorbConstants::DEFAULT_HP_ABSORB_RATE;		// HP吸収率の初期化
 	_stcAbsorbConfig.absorbRange		= AbsorbConstants::DEFAULT_ABSORB_RANGE;		// 吸収範囲の初期化
+	_stcAbsorbConfig.absorbAngle		= AbsorbConstants::DEFAULT_ABSORB_ANGLE;		// 吸収範囲の角度の初期化
+	_stcAbsorbConfig.absorbDivision		= AbsorbConstants::DEFAULT_ABSORB_DIVISION;		// 吸収範囲の分割数の初期化
 	_stcAbsorbConfig.absorbEffectName	= "";											// 吸収エフェクト名の初期化
 
 	_fAbsorbCooldown = AbsorbTime::ABSORB_COOLDOWN;	// 吸収のクールダウン時間の初期化
@@ -86,7 +90,7 @@ void AbsorbAttack::ProcessDecrementTimer()
 		_fAbsorbTimer -= AbsorbTime::DECREMENT_ABSORB_TIMER;	// タイマーを減算
 
 		// タイマーが0未満になった場合
-		if(_fAbsorbTimer < 0.0f)
+		if(_fAbsorbTimer <= 0.0f)
 		{
 			_fAbsorbTimer = 0.0f;	// タイマーを0にリセット
 		}
@@ -123,6 +127,12 @@ void AbsorbAttack::ProcessAbsorbByInput(int key)
 void AbsorbAttack::SetAbsorbConfig(const AbsorbConfig& config)
 {
 	_stcAbsorbConfig = config;	// 吸収設定を保存
+}
+
+// 吸収攻撃の設定取得
+AbsorbConfig AbsorbAttack::GetAbsorbConfig() const
+{
+	return _stcAbsorbConfig;	// 吸収設定を返す
 }
 
 // 吸収処理
@@ -222,5 +232,86 @@ void AbsorbAttack::ProcessAbsorbAttackState()
 		{
 			break;
 		}
+	}
+}
+
+// デバッグ描画
+void AbsorbAttack::DebugRender()
+{
+	// 吸収攻撃の吸収範囲を描画
+	if(IsAbsorbActive())
+	{
+		// 所有者の位置と方向を取得
+		auto owner = GetOwner();
+		if(owner)
+		{
+			VECTOR ownerPos = owner->GetPos();
+			VECTOR ownerDir = owner->GetDir();
+
+			// 扇形の吸収範囲を描画
+			DrawAbsorbRange(ownerPos, ownerDir);
+		}
+	}
+}
+
+// 吸収範囲の扇形描画
+void AbsorbAttack::DrawAbsorbRange(const VECTOR& ownerPos, const VECTOR& ownerDir)
+{
+	float range = _stcAbsorbConfig.absorbRange;		// 吸収範囲
+	float angle = _stcAbsorbConfig.absorbAngle;		// 吸収範囲の角度
+	int division = _stcAbsorbConfig.absorbDivision;	// 吸収範囲の分割数
+
+	// 描画の色
+	int ABSORB_COLOR = GetColor(0, 255, 150);	// 吸収範囲の色
+	int BORDER_COLOR = GetColor(255, 255, 0);	// 吸収範囲の境界線の色
+	float HEIGHT_OFFSET = 5.0f;					// 地面からの高さオフセット
+
+	// 方向ベクトルの正規化
+	VECTOR normDir = VNorm(ownerDir);
+
+	// 基準の角度の計算
+	float baseAngle = atan2f(normDir.x, normDir.z);
+
+	// 扇形の角度
+	float startAngle = baseAngle - angle / 2.0f;	// 扇形の開始角度
+	float endAngle = baseAngle + angle / 2.0f;		// 扇形の終了角度
+
+	// 扇形を三角形で分割して描画
+	for(int i = 0; i < division; ++i)
+	{
+		float currentAngle = startAngle + (endAngle - startAngle) * (i / static_cast<float>(division));		// 現在の角度
+		float nextAngle = startAngle + (endAngle - startAngle) * ((i + 1) / static_cast<float>(division));	// 次の角度
+
+		// 各点の座標計算
+		VECTOR centerPoint = VAdd(ownerPos, VGet(0, HEIGHT_OFFSET, 0));														// 扇形の中心点
+		VECTOR currentPoint = VAdd(ownerPos, VGet(sinf(currentAngle) * range, HEIGHT_OFFSET, cosf(currentAngle) * range));	// 現在の角度の点
+		VECTOR nextPoint = VAdd(ownerPos, VGet(sinf(nextAngle) * range, HEIGHT_OFFSET, cosf(nextAngle) * range));			// 次の角度の点
+
+		// 三角形を半透明で描画
+		DrawTriangle3D(centerPoint, currentPoint, nextPoint, ABSORB_COLOR, TRUE);
+	}	
+
+	// 扇形の境界線を描画
+	VECTOR centerPos = VAdd(ownerPos, VGet(0, HEIGHT_OFFSET, 0));													// 扇形の中心点
+	VECTOR startBoundary = VAdd(ownerPos, VGet(sinf(startAngle) * range, HEIGHT_OFFSET, cosf(startAngle) * range));	// 扇形の開始角度の点
+	VECTOR endBoundary = VAdd(ownerPos, VGet(sinf(endAngle) * range, HEIGHT_OFFSET, cosf(endAngle) * range));		// 扇形の終了角度の点
+
+	// 中心から境界への線
+	DrawLine3D(centerPos, startBoundary, BORDER_COLOR);
+	DrawLine3D(centerPos, endBoundary, BORDER_COLOR);
+
+	// 外周の弧を描画
+	for(int i = 0; i < division; ++i)
+	{
+		// 角度の計算
+		float currentAngle = startAngle + (endAngle - startAngle) * i / division;		// 現在の角度
+		float nextAngle = startAngle + (endAngle - startAngle) * (i + 1) / division;	// 次の角度
+
+		// 各点の座標計算
+		VECTOR currentArc = VAdd(ownerPos, VGet(sinf(currentAngle) * range, HEIGHT_OFFSET, cosf(currentAngle) * range));	// 現在の角度の点
+		VECTOR nextArc = VAdd(ownerPos, VGet(sinf(nextAngle) * range, HEIGHT_OFFSET, cosf(nextAngle) * range));				// 次の角度の点
+
+		// 弧を描画
+		DrawLine3D(currentArc, nextArc, BORDER_COLOR);
 	}
 }

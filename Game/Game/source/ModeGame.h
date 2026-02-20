@@ -116,10 +116,13 @@ private:
 
 
 
-	void CheckActiveAttack		(std::shared_ptr<CharaBase> chara);										// 有効な攻撃のチェック
-	void CheckHitCharaAttackCol	(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);	// キャラと攻撃コリジョンの当たり判定
-	void ConvertEnergy			(std::shared_ptr<AttackBase> attack, float damage);						// ダメージをエネルギーに変換する
-	bool OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);						// 攻撃所有者が自分に攻撃しているかどうか
+	void CheckActiveAttack		(std::shared_ptr<CharaBase> chara);													// 有効な攻撃のチェック
+	void CheckHitCharaAttackCol	(std::shared_ptr<CharaBase> chara, std::shared_ptr<AttackBase> attack);				// キャラと攻撃コリジョンの当たり判定
+	void ConvertEnergy			(std::shared_ptr<AttackBase> attack, float damage);									// ダメージをエネルギーに変換する
+	void CheckHitAbsorbAttack	(std::shared_ptr<CharaBase> chara);													// 吸収攻撃の当たり判定チェック関数
+	void CheckHitCharaAbsorbCol	(std::shared_ptr<CharaBase> chara, const PlayerAbsorbAttackSystem* absorbSystem);	// キャラと吸収攻撃の当たり判定
+	bool OwnerIsAttackingOwner	(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);								// 攻撃所有者が自分に攻撃しているかどうか
+	bool OwnerIsAbsorbingOwner	(std::shared_ptr<CharaBase>chara);													// 攻撃所有者が自分に攻撃しているかどうか(吸収攻撃用)
 
 	// ライト関連
 	void InitializeLights();// ライト初期化

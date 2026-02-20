@@ -3,7 +3,8 @@
 #include "PlayerBase.h"
 #include "AttackManager.h"
 
-namespace
+// プレイヤーID定数
+namespace IdConstants
 {
 	constexpr int INTERIOR_PLAYER_ID = 1;	// 裏プレイヤーID
 	constexpr int SURFACE_PLAYER_ID = 2;	// 表プレイヤーID
@@ -465,12 +466,12 @@ int PlayerBase::GetInstanceId()
 	{
 		case CHARA_TYPE::INTERIOR_PLAYER: // 裏プレイヤー
 		{
-			return INTERIOR_PLAYER_ID;	// 裏プレイヤーID
+			return IdConstants::INTERIOR_PLAYER_ID;	// 裏プレイヤーID
 		}
 
 		case CHARA_TYPE::SURFACE_PLAYER: // 表プレイヤー
 		{
-			return SURFACE_PLAYER_ID;	// 表プレイヤーID
+			return IdConstants::SURFACE_PLAYER_ID;	// 表プレイヤーID
 		}
 
 		default:

@@ -8,6 +8,8 @@ struct AbsorbConfig
 	float energyAbsorbRate;			// ƒGƒlƒ‹ƒM[‹zû—¦
 	float hpAbsorbRate;				// HP‹zû—¦
 	float absorbRange;				// ‹zû”ÍˆÍ
+	float absorbAngle;				// ‹zû”ÍˆÍ‚ÌŠp“x
+	int absorbDivision;				// ‹zû”ÍˆÍ‚Ì•ªŠ„”
 	std::string absorbEffectName;	// ‹zûƒGƒtƒFƒNƒg–¼
 };
 
@@ -22,11 +24,20 @@ public:
 	virtual bool ProcessStartAttack() override;	// UŒ‚ŠJn
 	virtual bool ProcessStopAttack() override;	// UŒ‚’â~
 
+	// ƒfƒoƒbƒO•`‰æ
+	void DebugRender();
+
+	// ‹zû”ÍˆÍ‚ÌîŒ`•`‰æ
+	void DrawAbsorbRange(const VECTOR& ownerPos, const VECTOR& ownerDir);
+	
 	// “ü—Í‚É‚æ‚é‹zûˆ—
 	void ProcessAbsorbByInput(int key);
 
 	// ‹zûî•ñ‚ğİ’è‚·‚éŠÖ”
 	void SetAbsorbConfig(const AbsorbConfig& config);
+
+	// ‹zûUŒ‚‚Ìİ’èæ“¾
+	AbsorbConfig GetAbsorbConfig() const;
 
 	// ‹zûˆ—
 	void ProcessAbsorb(std::shared_ptr<CharaBase>owner);
