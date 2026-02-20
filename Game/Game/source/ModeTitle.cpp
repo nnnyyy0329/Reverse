@@ -31,6 +31,19 @@ namespace
 		SetFontSize(16);
 	}
 
+	void DrawSelectArrow(int x, int y, int size, unsigned int color)
+	{
+		// ▶ の三角形（左上基準で描く）
+		const int x0 = x;
+		const int y0 = y;
+		const int x1 = x;
+		const int y1 = y + size;
+		const int x2 = x + size;
+		const int y2 = y + (size / 2);
+
+		DrawTriangle(x0, y0, x1, y1, x2, y2, color, TRUE);
+	}
+
 	void ExitGame()
 	{
 		Effkseer_End();
@@ -139,6 +152,11 @@ bool ModeTitle::Render()
 		DrawMenuItem(textX, textY + 0 * lineGap, "スタート", _menuIndex == 0);
 		DrawMenuItem(textX, textY + 1 * lineGap, "オプション", _menuIndex == 1);
 		DrawMenuItem(textX, textY + 2 * lineGap, "ゲーム終了", _menuIndex == 2);
+
+		// 選択中の左に ▶ を出す
+		const int arrowX = textX - 50;
+		const int arrowY = textY + _menuIndex * lineGap + 10;
+		DrawSelectArrow(arrowX, arrowY, 28, GetColor(255, 255, 255));
 	}
 
 	return true;
