@@ -166,10 +166,32 @@ bool ModeLoading::Process()
 bool ModeLoading::Render()
 {
 	if (_bIsAddGame) { return true; }
-
 	auto progress = ResourceServer::GetInstance()->GetLoadProgress();
-	DrawFormatString(640, 340, GetColor(255, 255, 255), "Now Loading...");
-	DrawFormatString(640, 380, GetColor(255, 255, 255), "Progress: %.2f%%", progress * 100.0f);
+
+	SetFontSize(48);
+	const int textX = 640;
+	const int textY = 640;
+
+	// 光（外側）: 少し透明にして何回か描く
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 80); // 0-255
+	const int glowColor = GetColor(255, 0, 255);
+
+	for(int dy = -2; dy <= 2; ++dy)
+	{
+		for(int dx = -2; dx <= 2; ++dx)
+		{
+			if(dx == 0 && dy == 0) { continue; }
+		    DrawFormatString(textX + dx, textY     + dy, glowColor, "now loading");
+			DrawFormatString(textX + dx, textY+50 + dy, glowColor, "Progress: %.2f%%", progress * 100.0f);
+		}
+	}
+
+	// 本体（中心）
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	
+
+	SetFontSize(16);
+
 
 	return true;
 }

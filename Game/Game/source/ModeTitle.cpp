@@ -46,6 +46,10 @@ bool ModeTitle::Render()
 	ClearDrawScreen();
 
 
+	
+	//タイトル画像の設定
+	//-------------------------------------------------------------------
+	
 	// 画像サイズを取得
 	int w, h;
 	GetGraphSize(_titleHandle, &w, &h);
@@ -62,8 +66,40 @@ bool ModeTitle::Render()
 	// 拡縮描画
 	DrawExtendGraph(x, y, x + scaledW, y + scaledH, _titleHandle, TRUE);
 
-	// デバッグ表示
-	DrawFormatString(640, 340, GetColor(255, 255, 255), "Press Space or Button");
+
+
+
+
+
+	//タイトルのスタートボタン
+	//-------------------------------------------------------------------
+	
+
+	
+	SetFontSize(48);
+	const int textX = 840;
+	const int textY = 840;
+
+	// 光（外側）: 少し透明にして何回か描く
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 80); // 0-255
+	const int glowColor = GetColor(160, 0, 255); // 黄白っぽい光
+
+	for(int dy = -2; dy <= 2; ++dy)
+	{
+		for(int dx = -2; dx <= 2; ++dx)
+		{
+			if(dx == 0 && dy == 0) { continue; }
+			DrawFormatString(textX + dx, textY + dy, glowColor, "スタート");
+		}
+	}
+
+	// 本体（中心）
+	
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	DrawFormatString(textX, textY, GetColor(130, 0, 130), "スタート");
+
+	SetFontSize(16);
+	
 
 	return true;
 }
