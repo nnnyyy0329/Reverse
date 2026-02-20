@@ -348,12 +348,12 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.combatState)
 		{
-			case PLAYER_COMBAT_STATE::TRANSFORM:	return _playerAnim.combat.transform;
-			case PLAYER_COMBAT_STATE::TRANS_CANCEL:	return _playerAnim.combat.transCancel;
-			case PLAYER_COMBAT_STATE::GUARD:		return _playerAnim.combat.guard;
-			case PLAYER_COMBAT_STATE::HIT:			return _playerAnim.combat.hit;
-			case PLAYER_COMBAT_STATE::DODGE:		return _playerAnim.combat.dodge;
-			case PLAYER_COMBAT_STATE::DEATH:		return _playerAnim.combat.death;
+			case PLAYER_COMBAT_STATE::TRANSFORM:	return _playerAnim.combat.transform;	// 変身
+			case PLAYER_COMBAT_STATE::TRANS_CANCEL:	return _playerAnim.combat.transCancel;	// 変身解除
+			case PLAYER_COMBAT_STATE::GUARD:		return _playerAnim.combat.guard;		// ガード
+			case PLAYER_COMBAT_STATE::HIT:			return _playerAnim.combat.hit;			// 被弾	
+			case PLAYER_COMBAT_STATE::DODGE:		return _playerAnim.combat.dodge;		// 回避
+			case PLAYER_COMBAT_STATE::DEATH:		return _playerAnim.combat.death;		// 死亡
 		}
 	}
 
@@ -361,11 +361,12 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.attackState)
 		{
-			case PLAYER_ATTACK_STATE::FIRST_ATTACK:		return _playerAnim.attack.firstAttack;
-			case PLAYER_ATTACK_STATE::SECOND_ATTACK:	return _playerAnim.attack.secondAttack;
-			case PLAYER_ATTACK_STATE::THIRD_ATTACK:		return _playerAnim.attack.thirdAttack;
-			case PLAYER_ATTACK_STATE::FOURTH_ATTACK:	return _playerAnim.attack.fourthAttack;
-			case PLAYER_ATTACK_STATE::FIFTH_ATTACK:		return _playerAnim.attack.fifthAttack;
+			case PLAYER_ATTACK_STATE::ABSORPTION_ATTACK:	return _playerAnim.attack.absorptionAttack;	// 吸収攻撃
+			case PLAYER_ATTACK_STATE::FIRST_ATTACK:			return _playerAnim.attack.firstAttack;		// 1段目攻撃
+			case PLAYER_ATTACK_STATE::SECOND_ATTACK:		return _playerAnim.attack.secondAttack;		// 2段目攻撃
+			case PLAYER_ATTACK_STATE::THIRD_ATTACK:			return _playerAnim.attack.thirdAttack;		// 3段目攻撃
+			case PLAYER_ATTACK_STATE::FOURTH_ATTACK:		return _playerAnim.attack.fourthAttack;		// 4段目攻撃
+			case PLAYER_ATTACK_STATE::FIFTH_ATTACK:			return _playerAnim.attack.fifthAttack;		// 5段目攻撃
 		}
 	}
 
@@ -373,22 +374,22 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.shootState)
 		{
-			case PLAYER_SHOOT_STATE::SHOOT_READY:		return _playerAnim.shoot.shootReady;
-			case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT:	return _playerAnim.shoot.rightArmShoot;
-			case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:	return _playerAnim.shoot.leftArmShoot;
-			case PLAYER_SHOOT_STATE::SHOOT_MOVE:		return _playerAnim.shoot.shootMove;
+			case PLAYER_SHOOT_STATE::SHOOT_READY:		return _playerAnim.shoot.shootReady;	// 発射構え
+			case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT:	return _playerAnim.shoot.rightArmShoot;	// 右腕発射
+			case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:	return _playerAnim.shoot.leftArmShoot;	// 左腕発射
+			case PLAYER_SHOOT_STATE::SHOOT_MOVE:		return _playerAnim.shoot.shootMove;		// 発射移動
 		}
 	}
 
 	switch(_playerState.movementState)
 	{
-		case PLAYER_MOVEMENT_STATE::WAIT:			return _playerAnim.movement.wait;
-		case PLAYER_MOVEMENT_STATE::WALK:			return _playerAnim.movement.walk;
-		case PLAYER_MOVEMENT_STATE::RUN:			return _playerAnim.movement.run;
-		case PLAYER_MOVEMENT_STATE::JUMP_UP:		return _playerAnim.movement.jumpUp;
-		case PLAYER_MOVEMENT_STATE::JUMP_DOWN:		return _playerAnim.movement.jumpDown;
-		case PLAYER_MOVEMENT_STATE::CROUCH_WAIT:	return _playerAnim.movement.crouchWait;
-		case PLAYER_MOVEMENT_STATE::CROUCH_WALK:	return _playerAnim.movement.crouchWalk;
+		case PLAYER_MOVEMENT_STATE::WAIT:			return _playerAnim.movement.wait;		// 待機
+		case PLAYER_MOVEMENT_STATE::WALK:			return _playerAnim.movement.walk;		// 歩行
+		case PLAYER_MOVEMENT_STATE::RUN:			return _playerAnim.movement.run;		// 走行
+		case PLAYER_MOVEMENT_STATE::JUMP_UP:		return _playerAnim.movement.jumpUp;		// ジャンプ（上昇）
+		case PLAYER_MOVEMENT_STATE::JUMP_DOWN:		return _playerAnim.movement.jumpDown;	// ジャンプ（下降）
+		case PLAYER_MOVEMENT_STATE::CROUCH_WAIT:	return _playerAnim.movement.crouchWait;	// しゃがみ待機
+		case PLAYER_MOVEMENT_STATE::CROUCH_WALK:	return _playerAnim.movement.crouchWalk;	// しゃがみ歩行
 	}
 
 	return nullptr;

@@ -291,7 +291,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 			_bCanCombo = true;
 
 			// 次の攻撃入力があれば次の攻撃へ
-			if((_trg & PAD_INPUT_1) && CanNextAttack())
+			if(IsAttackInput() && CanNextAttack())
 			{
 				//ProcessNextAttack(attackIndex);
 			}
@@ -301,7 +301,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 		case ATTACK_STATE::RECOVERY:	// 硬直中
 		{
 			// 次の攻撃入力があれば次の攻撃へ
-			if((_trg & PAD_INPUT_1) && CanNextAttack())
+			if(IsAttackInput() && CanNextAttack())
 			{
 				ProcessNextAttack(attackIndex);
 			}
@@ -397,7 +397,7 @@ bool PlayerBase::IsStartAttack()
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||	// 歩きか
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN) &&	// 走りで
 		_playerState.attackState   == PLAYER_ATTACK_STATE::NONE	  &&	// 攻撃状態ではなく
-		_trg & PAD_INPUT_1)												// 入力があるなら
+		IsAttackInput())												// 入力があるなら
 	{
 		return true;
 	}
@@ -422,10 +422,10 @@ bool PlayerBase::CanNextAttack()
 bool PlayerBase::IsAttacking()
 {
 	// 攻撃状態中かチェック
-	if(_playerState.attackState == PLAYER_ATTACK_STATE::FIRST_ATTACK ||
-		_playerState.attackState == PLAYER_ATTACK_STATE::SECOND_ATTACK ||
-		_playerState.attackState == PLAYER_ATTACK_STATE::THIRD_ATTACK ||
-		_playerState.attackState == PLAYER_ATTACK_STATE::FOURTH_ATTACK ||
+	if(_playerState.attackState == PLAYER_ATTACK_STATE::FIRST_ATTACK	||
+		_playerState.attackState == PLAYER_ATTACK_STATE::SECOND_ATTACK	||
+		_playerState.attackState == PLAYER_ATTACK_STATE::THIRD_ATTACK	||
+		_playerState.attackState == PLAYER_ATTACK_STATE::FOURTH_ATTACK	||
 		_playerState.attackState == PLAYER_ATTACK_STATE::FIFTH_ATTACK)
 	{
 		//_vMove = VGet(0, 0, 0);	// 攻撃中は移動不可
@@ -433,6 +433,13 @@ bool PlayerBase::IsAttacking()
 	}
 
 	return false;
+}
+
+// 攻撃入力があったかチェック
+bool PlayerBase::IsAttackInput()
+{
+	// 攻撃入力があるかチェック
+	return (_trg & PAD_INPUT_6) != 0;
 }
 
 // ヘルパー関数

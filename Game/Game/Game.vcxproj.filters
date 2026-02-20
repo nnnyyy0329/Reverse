@@ -178,6 +178,9 @@
     <ClCompile Include="source\PlayerTransformSystem.cpp">
       <Filter>GameObject\CharaBase\Player\System</Filter>
     </ClCompile>
+    <ClCompile Include="source\AbsorbAttack.cpp">
+      <Filter>Attack\AbsorbAttack</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -345,6 +348,9 @@
     <ClInclude Include="source\PlayerTransformSystem.h">
       <Filter>GameObject\CharaBase\Player\System</Filter>
     </ClInclude>
+    <ClInclude Include="source\AbsorbAttack.h">
+      <Filter>Attack\AbsorbAttack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -460,6 +466,9 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\Player\System">
       <UniqueIdentifier>{c73b4588-4faf-45ab-ad15-cbb89be6bd76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Attack\AbsorbAttack">
+      <UniqueIdentifier>{6a895db8-fead-4edc-9c40-ab1b75498cff}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

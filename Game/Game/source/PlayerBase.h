@@ -79,11 +79,12 @@ struct PlayerMovementAnimations
 // 攻撃アニメーション構造体
 struct PlayerAttackAnimations
 {
-	const char* firstAttack;   // 1段目攻撃
-	const char* secondAttack;  // 2段目攻撃
-	const char* thirdAttack;   // 3段目攻撃
-	const char* fourthAttack;  // 4段目攻撃
-	const char* fifthAttack;   // 5段目攻撃
+	const char* absorptionAttack;	// 吸収攻撃
+	const char* firstAttack;		// 1段目攻撃
+	const char* secondAttack;		// 2段目攻撃
+	const char* thirdAttack;		// 3段目攻撃
+	const char* fourthAttack;		// 4段目攻撃
+	const char* fifthAttack;		// 5段目攻撃
 };
 
 // 発射アニメーション構造体
@@ -133,11 +134,12 @@ enum class PLAYER_MOVEMENT_STATE
 enum class PLAYER_ATTACK_STATE
 {
 	NONE,
-	FIRST_ATTACK,	// 1段目攻撃
-	SECOND_ATTACK,	// 2段目攻撃
-	THIRD_ATTACK,	// 3段目攻撃
-	FOURTH_ATTACK,	// 4段目攻撃
-	FIFTH_ATTACK,	// 5段目攻撃
+	ABSORPTION_ATTACK,	// 吸収攻撃
+	FIRST_ATTACK,		// 1段目攻撃
+	SECOND_ATTACK,		// 2段目攻撃
+	THIRD_ATTACK,		// 3段目攻撃
+	FOURTH_ATTACK,		// 4段目攻撃
+	FIFTH_ATTACK,		// 5段目攻撃
 	_EOT_,
 };
 
@@ -298,6 +300,7 @@ protected:	// 攻撃関係
 	bool IsStartAttack();			// 攻撃を開始できるかチェック
 	bool CanNextAttack();			// 次の攻撃が可能かチェック
 	bool IsAttacking();				// 攻撃中かチェック
+	bool IsAttackInput();			// 攻撃入力があるかチェック
 
 	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
 	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);				// 攻撃開始処理

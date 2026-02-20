@@ -52,11 +52,11 @@ bool AbilitySelectScreen::Terminate()
 
 bool AbilitySelectScreen::Process()
 {
-	// 入力による画面表示
-	SelectScreenByInput();
-
 	// 入力による選択処理
 	SelectionByInput();
+
+	// 入力による画面表示
+	SelectScreenByInput();
 
 	return true;
 }
@@ -79,7 +79,7 @@ void AbilitySelectScreen::SelectScreenByInput()
 {
 	//if(!IsSelectActiveByPlayerType()){ return; }	// プレイヤータイプに応じて選択可能かどうか
 
-	if(_trg & PAD_INPUT_8)
+	if(_trg & PAD_INPUT_4)
 	{
 		_bIsScreenActive = !_bIsScreenActive;
 	}
@@ -117,12 +117,15 @@ void AbilitySelectScreen::SelectionByInput()
 		}
 	}
 
-	// Zキーで決定
-	if(_trg & PAD_INPUT_1)
+	// Yボタンが押されたら
+	if(_trg & PAD_INPUT_4)
 	{
 		_iSelectedAbility = _iCurrentSelection;	// 選択されたアビリティを保存
 		_bIsSelectComplete = true;				// 選択完了
 		_bIsScreenActive = false;				// 選択画面非表示
+
+		// 選択完了後は入力をリセットしておく
+		_trg &= ~PAD_INPUT_4;
 	}
 
 	// 点滅カウンターを進める
