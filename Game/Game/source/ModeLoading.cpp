@@ -141,6 +141,31 @@ bool ModeLoading::Initialize()
 	return true;
 }
 
+namespace
+{
+	void DrawBlockLoadingBar(int x, int y, int blocks, int blockW, int blockH, int gap, float progress)
+	{
+		if(blocks <= 0) { return; }
+
+		if(progress < 0.0f) { progress = 0.0f; }
+		if(progress > 1.0f) { progress = 1.0f; }
+
+		const int filled = static_cast<int>(progress * static_cast<float>(blocks) + 0.5f);
+
+		const int colFilled = GetColor(0, 120, 255);
+		const int colEmpty = GetColor(170, 170, 170);
+
+		for(int i = 0; i < blocks; ++i)
+		{
+			const int bx = x + i * (blockW + gap);
+			const int by = y;
+
+			const int col = (i < filled) ? colFilled : colEmpty;
+			DrawBox(bx, by, bx + blockW, by + blockH, col, TRUE);
+		}
+	}
+}
+
 bool ModeLoading::Terminate() 
 {
 	base::Terminate();
@@ -152,7 +177,13 @@ bool ModeLoading::Terminate()
 
 bool ModeLoading::Process()
 {
+
 	_frameCount++;
+	// DEBUG: ロード完了してもゲームへ遷移しない（ローディング画面に留まる）
+	if(ResourceServer::GetInstance()->IsLoadComplete())
+	{
+		return true;
+	}
 
 	// ロードが完了かつ10フレーム経過後にゲームモードを追加
 	if (!_bIsAddGame && ResourceServer::GetInstance()->IsLoadComplete() && _frameCount >= 10) {
@@ -168,12 +199,27 @@ bool ModeLoading::Render()
 	if (_bIsAddGame) { return true; }
 	auto progress = ResourceServer::GetInstance()->GetLoadProgress();
 
+
+	// -------- ブロック式ローディングバー --------
+	const int blocks = 26;
+	const int blockW = 12;
+	const int blockH = 36;
+	const int gap = 6;
+
+	const int barX = 420;
+	const int barY = 520;
+
+	DrawBlockLoadingBar(barX, barY, blocks, blockW, blockH, gap, progress);
+
+
+
+
 	SetFontSize(48);
 	const int textX = 640;
 	const int textY = 640;
 
 	// 光（外側）: 少し透明にして何回か描く
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 80); // 0-255
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 80); 
 	const int glowColor = GetColor(255, 0, 255);
 
 	for(int dy = -2; dy <= 2; ++dy)
