@@ -57,12 +57,10 @@ public:
 	void EnableRemove() { _bCanRemove = true; }// delete可能にする
 
 
-	// 被ダメなどのリアクションステートから復帰するステートを取得
-	using RecoveryHandler = std::function<std::unique_ptr<EnemyState>(Enemy*)>;
-	// ハンドラをセットする関数(Factoryで設定)
-	void SetRecoveryHandler(RecoveryHandler handler) { _recoveryHandler = handler; }
-	// ハンドラを実行する(ステート側から呼ばれる関数)
-	std::unique_ptr<EnemyState> GetRecoveryState();
+	// 被ダメ後の遷移先を決定する
+	using AfterDamageStateSelector = std::function<std::shared_ptr<EnemyState>(Enemy*, int)>;
+	void SetAfterDamageStateSelector(AfterDamageStateSelector selector) { _afterDamageStateSelector = selector; }
+	std::shared_ptr<EnemyState> GetAfterDamageStateSelector(int comboCnt);
 
 	// 索敵関連
 	bool ShouldUpdateSearch() { return _searchTimer == 0; }// 索敵更新タイミングかどうか
@@ -76,6 +74,11 @@ public:
 
 	// 移動可能範囲チェック
 	bool CheckInsideMoveArea(VECTOR vPos);// 指定座標が移動可能範囲内かどうか
+
+	// 連続被ダメカウント管理
+	int GetDamageComboCnt() { return _damageComboCnt; }
+	void UpdateDamageCombo();// 連続被ダメカウントを更新
+	void UpdateDamageComboTimer();// リセットタイマー更新
 
 
 
@@ -106,7 +109,7 @@ protected:
 
 	std::shared_ptr<AttackBase> _attackCollision;// 攻撃コリジョン
 
-	RecoveryHandler _recoveryHandler;// 関数を保存する変数
+	AfterDamageStateSelector _afterDamageStateSelector;
 
 	int _lifeBarHandle = -1;// ライフバー用
 	int _lifeBarFrameHandle = -1;// ライフバー枠用
@@ -124,6 +127,9 @@ protected:
 
 	COLOR_F _defaultColor;// 元のマテリアルカラーを保存
 	bool _bIsColorChanged = false;// カラー変更中かどうか
+
+	int _damageComboCnt = 0;// 連続被ダメ回数
+	float _fDamageComboResetTimer = 0.0f;// リセットタイマー
 
 private:
 	void LoadEnemyModel();// モデルを名前に応じて読み込む

@@ -48,6 +48,8 @@ namespace
 
 	constexpr auto LOST_LOOK_MIN_TIME = 60.0f;			// 方向あたりの最低見渡し時間
 
+	constexpr auto COUNTER_EXECUTE_TIME = 60.0f;		// カウンター攻撃実行時間
+
 	constexpr auto BLEND_FRAME = 10.0f;					// アニメーションブレンドフレーム数
 	
 	// 確率制御用定数
@@ -121,9 +123,26 @@ namespace
 		return settings;
 	}
 
+	// 反撃攻撃コリジョン
+	EnemyAttackSettings MakeCounterSettings()
+	{
+		EnemyAttackSettings settings;
+		settings.colType = COLLISION_TYPE::CAPSULE;
+		settings.vTopOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y + ATTACK_COLLISION_HEIGHT, ATTACK_COLLISION_OFFSET_Z);
+		settings.vBottomOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y, ATTACK_COLLISION_OFFSET_Z);
+		settings.fRadius = ATTACK_COLLISION_RADIUS;
+		settings.fDelay = 0.0f;
+		settings.fDuration = ATTACK_DURATION;
+		settings.fRecovery = 0.0f;
+		settings.fDamage = 0.0f;
+		settings.ownerId = 0;
+		return settings;
+	}
+
 	// 定数として保存
 	const EnemyAttackSettings MELEE_ATTACK_SETTINGS = MakeMeleeAttackSettings();
 	const EnemyAttackSettings RUSH_SETTINGS = MakeRushSettings();
+	const EnemyAttackSettings COUNTER_SETTINGS = MakeCounterSettings();
 }
 
 namespace Melee
@@ -966,5 +985,56 @@ namespace Melee
 	void LostTarget::UpdateSearch(Enemy* owner)
 	{
 		owner->SetTargetDetected(Melee::IsTargetVisible(owner));
+	}
+
+
+
+
+
+	// 反撃
+	void CounterAttack::Enter(Enemy* owner)
+	{
+		// タイマー初期化
+		_fTimer = 0.0f;
+		_bHasCollision = false;
+
+		// アニメーション設定
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_NORMAL);
+		}
+
+		// 攻撃コリジョン生成
+		owner->StartAttack(COUNTER_SETTINGS);
+		_bHasCollision = true;
+	}
+
+	std::shared_ptr<EnemyState> CounterAttack::Update(Enemy* owner)
+	{
+		_fTimer++;
+
+		StopMove(owner);
+
+		if (_bHasCollision)
+		{
+			owner->UpdateAttackTransform(COUNTER_SETTINGS);
+		}
+
+		if (_fTimer >= COUNTER_EXECUTE_TIME)
+		{
+			return std::make_shared<Approach>();
+		}
+
+		return nullptr;
+	}
+
+	void CounterAttack::Exit(Enemy* owner)
+	{
+		if (_bHasCollision)
+		{
+			owner->StopAttack();
+			_bHasCollision = false;
+		}
 	}
 }

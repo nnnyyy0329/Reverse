@@ -4,8 +4,8 @@
 namespace 
 {
 	// 状態時間
-	constexpr auto DAMAGE_TIME = 50.0f;// 被ダメージ時間
-	constexpr auto STUN_TIME = 180.0f;// スタン時間
+	constexpr auto DAMAGE_TIME = 20.0f;// 初期被ダメ時間
+	constexpr auto DAMAGE_TIME_ADD = 10.0f;// 連続ヒットごとに加算する時間
 	constexpr auto DEAD_TIME = 60.0f;// 死亡時間
 	constexpr auto DOWN_TIME = 90.0f;// ダウン時間
 
@@ -27,6 +27,9 @@ namespace Common
 	// 被ダメージ
 	void Damage::Enter(Enemy* owner) 
 	{
+		// Enter時点のコンボ数を保存
+		_comboCnt = owner->GetDamageComboCnt();
+
 		// タイマー初期化
 		_fTimer = 0.0f;
 		_fKnockbackSpeed = DAMAGE_KNOCKBACK_SPEED;
@@ -81,10 +84,11 @@ namespace Common
 			StopMove(owner);
 		}
 
-		// 被ダメージ時間経過チェック
-		if (_fTimer >= DAMAGE_TIME) 
+		// コンボ数に応じたステート時間
+		const float fDamageTime = DAMAGE_TIME + DAMAGE_TIME_ADD * static_cast<float>(_comboCnt);
+		if (_fTimer >= fDamageTime)
 		{
-			return owner->GetRecoveryState();// 回復状態へ
+			return owner->GetAfterDamageStateSelector(_comboCnt);
 		}
 
 		return nullptr;
@@ -191,7 +195,6 @@ namespace Common
 		// ダウン時間経過チェック
 		if (_fTimer >= DOWN_TIME)
 		{
-			return owner->GetRecoveryState();// 回復状態へ
 		}
 
 		return nullptr;

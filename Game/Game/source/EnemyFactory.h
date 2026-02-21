@@ -38,7 +38,6 @@ namespace
 	constexpr auto TANK_MOVE_TIME = 120.0f;// 徘徊時間
 	constexpr auto TANK_DETECT_TIME = 120.0f;// 発見硬直
 	constexpr auto TANK_MOVE_SPEED = 1.5f;// 移動速度
-	constexpr auto TANK_DAMAGE_TO_DOWN = 5;// ダウンまでの被ダメージ回数
 }
 
 // 敵の種類
@@ -87,17 +86,21 @@ public:
 
 				enemy->SetEnemyParam(param);// パラメータ設定
 
-				// ハンドラの中身を設定
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::unique_ptr<EnemyState> 
+				// 被ダメ後の遷移先を決定
+				enemy->SetAfterDamageStateSelector([](Enemy* e, int comboCnt)->std::shared_ptr<EnemyState>
 					{
-					// ターゲットが存在すれば接近
-					if (e->GetTarget()) 
-					{
-						return std::make_unique<Melee::Approach>();
-					}
-					// 見えていなければ待機
-					return std::make_unique<Melee::Idle>();
-				});
+						if (!e->GetTarget())
+						{
+							return std::make_shared<Melee::Idle>();
+						}
+
+						if (comboCnt >= 1)
+						{
+							return std::make_shared<Melee::CounterAttack>();
+						}
+
+						return std::make_shared<Melee::Approach>();
+					});
 				break;
 
 		case EnemyType::RANGED:// 遠距離型
@@ -121,17 +124,7 @@ public:
 
 			enemy->SetEnemyParam(param);
 
-			// ハンドラの中身を設定
-			enemy->SetRecoveryHandler([](Enemy* e) -> std::unique_ptr<EnemyState>
-				{
-					// ターゲットが存在すれば接近
-					if (e->GetTarget())
-					{
-						return std::make_unique<Ranged::Approach>();
-					}
-					// 見えていなければ待機
-					return std::make_unique<Ranged::Idle>();
-				});
+			// 被ダメ後の遷移先を決定
 			break;
 
 		case EnemyType::TANK:// タンク型
@@ -147,20 +140,9 @@ public:
 				param.fMoveTime = TANK_MOVE_TIME;
 				param.fDetectTime = TANK_DETECT_TIME;
 				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
-				param.damageToDown = TANK_DAMAGE_TO_DOWN;
 				enemy->SetEnemyParam(param);
 
-
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::unique_ptr<EnemyState>
-					{
-					// ターゲットが存在すれば接近
-					if (e->GetTarget())
-					{
-						return std::make_unique<Tank::Approach>();
-					}
-					// 見えていなければ待機
-					return std::make_unique<Tank::Idle>();
-				});
+				// 被ダメ後の遷移先を決定
 				break;
 		}
 

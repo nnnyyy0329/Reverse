@@ -36,6 +36,9 @@ namespace
 
 	// エフェクト関連
 	constexpr auto DAMAGE_EFFECT_OFFSET_Y = 50.0f;// ダメージエフェクトYオフセット
+
+	// 連続被ダメ管理
+	constexpr auto DAMAGE_COMBO_RESET_TIME = 90.0f;// この時間内に再ヒットしなければリセット
 }
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
@@ -95,6 +98,9 @@ bool Enemy::Process()
 
 	// 索敵タイマー更新
 	UpdateSearchTimer();
+
+	// 連続被ダメリセットタイマー更新
+	UpdateDamageComboTimer();
 
 	// 索敵更新タイミングなら索敵を実行
 	if (ShouldUpdateSearch())
@@ -557,10 +563,12 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	// 中断されないアクション中はDamageステートへ遷移しない
 	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::HIGH)
 	{
-		// カウントだけ増やす
+		// 連続被ダメカウントは更新
+		UpdateDamageCombo();
 		return;
 	}
 
+	UpdateDamageCombo();
 	// ダメージステートへ遷移
 	ChangeState(std::make_unique<Common::Damage>());
 }
@@ -570,11 +578,11 @@ bool Enemy::IsDead()
 	return _fLife <= 0.0f;// ライフが0以下なら死亡
 }
 
-std::unique_ptr<EnemyState> Enemy::GetRecoveryState()
+std::shared_ptr<EnemyState> Enemy::GetAfterDamageStateSelector(int comboCnt)
 {
-	if (_recoveryHandler) 
-	{// ハンドラが設定されていれば実行
-		return _recoveryHandler(this);
+	if (_afterDamageStateSelector)
+	{
+		return _afterDamageStateSelector(this, comboCnt);
 	}
 
 	return nullptr;
@@ -771,4 +779,30 @@ bool Enemy::CheckInsideMoveArea(VECTOR vPos)
 	}
 
 	return false;// どこにも当たらなければ範囲外
+}
+
+void Enemy::UpdateDamageCombo()
+{
+	if (_fDamageComboResetTimer > 0.0f)
+	{
+		_damageComboCnt++;
+	}
+	else if (_fDamageComboResetTimer <= 0.0f)
+	{
+		_damageComboCnt = 1;// 初回ヒット
+	}
+
+	_fDamageComboResetTimer = DAMAGE_COMBO_RESET_TIME;// タイマーリセット
+}
+
+void Enemy::UpdateDamageComboTimer()
+{
+	if (_fDamageComboResetTimer > 0.0f)
+	{
+		_fDamageComboResetTimer--;
+		if (_fDamageComboResetTimer <= 0.0f)
+		{
+			_damageComboCnt = 0;// 時間切れでリセット
+		}
+	}
 }

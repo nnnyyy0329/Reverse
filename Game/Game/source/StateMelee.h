@@ -201,5 +201,23 @@ namespace Melee
 		float _fLookDuration;// Œ»İ‚ÌŒü‚«‚ÌˆÛŠÔ
 		int _lookCnt;// Œ©“n‚µ‰ñ”
 	};
+
+
+
+
+
+	// ”½Œ‚
+	class CounterAttack : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		void Exit(Enemy* owner) override;
+		const char* GetName() override { return "Melee:CounterAttack"; }
+		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
+
+	private:
+		bool _bHasCollision;
+	};
 }
 

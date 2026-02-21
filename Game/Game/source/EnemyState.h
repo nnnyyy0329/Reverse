@@ -19,7 +19,7 @@ struct EnemyParam
 	float fMoveSpeed = 2.0f;// 敵の基本移動速度
 
 	float fVisionRange = 0.0f;// 敵の索敵距離
-	float fVisionAngle = 30.0f;// 敵の視界の角度(半分)
+	float fVisionAngle = 0.0f;// 敵の視界の角度(半分)
 	float fVisionCos = 0.0f;// 判定で使うcos値
 
 	float fAttackRange = 0.0f;// これ以内なら攻撃する距離
@@ -35,7 +35,6 @@ struct EnemyParam
 	float fAttackTime = 0.0f;// 攻撃時間
 
 	float fMaxLife = 100.0f;// 最大体力
-	int damageToDown = 3;// ダウンまでの被ダメージ回数
 
 	// 共通ステートのアニメーション名
 	const char* animDamage = "Damage";
