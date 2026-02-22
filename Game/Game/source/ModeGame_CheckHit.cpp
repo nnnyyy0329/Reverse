@@ -8,6 +8,8 @@
 #include "DodgeSystem.h"
 #include "GameCamera.h"
 #include "SurfacePlayer.h"
+#include "PlayerAbsorbAttackSystem.h" 
+#include "AbsorbAttack.h"
 
 // プレベータようパラメータ
 namespace
@@ -583,6 +585,35 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 	}
 }
 
+// 攻撃所有者が自分に攻撃しているかどうか
+bool ModeGame::OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType)
+{
+	// 同じキャラからの攻撃かチェック
+	switch(charaType)
+	{
+		case CHARA_TYPE::ENEMY:	// 敵キャラ
+		{
+			// 敵キャラの場合、攻撃所有者が敵であるかを確認
+			return (ownerType == ATTACK_OWNER_TYPE::ENEMY);
+		}
+
+		case CHARA_TYPE::SURFACE_PLAYER:	// 表プレイヤー
+		case CHARA_TYPE::INTERIOR_PLAYER:	// 裏プレイヤー
+		{
+			// プレイヤー同士の攻撃は当たらない
+			return (ownerType == ATTACK_OWNER_TYPE::SURFACE_PLAYER ||
+				ownerType == ATTACK_OWNER_TYPE::INTERIOR_PLAYER);
+		}
+
+		default:	// その他のキャラタイプ
+		{
+			return false;
+		}
+	}
+
+	return false;
+}
+
 // エネルギーによる変換処理
 void ModeGame::ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage)
 {
@@ -602,35 +633,6 @@ void ModeGame::ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage)
 		// 消費変換
 		_energyManager->ConvertDamageToConsumeEnergy(consumeEnergy);
 	}
-}
-
-// 攻撃所有者が自分に攻撃しているかどうか
-bool ModeGame::OwnerIsAttackingOwner(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType)
-{
-	// 同じキャラからの攻撃かチェック
-	switch(charaType)
-	{
-		case CHARA_TYPE::ENEMY:	// 敵キャラ
-		{
-			// 敵キャラの場合、攻撃所有者が敵であるかを確認
-			return (ownerType == ATTACK_OWNER_TYPE::ENEMY);
-		}
-
-		case CHARA_TYPE::SURFACE_PLAYER:	// 表プレイヤー
-		case CHARA_TYPE::INTERIOR_PLAYER:	// 裏プレイヤー
-		{
-			// プレイヤー同士の攻撃は当たらない
-			return (ownerType == ATTACK_OWNER_TYPE::SURFACE_PLAYER ||
-					ownerType == ATTACK_OWNER_TYPE::INTERIOR_PLAYER);
-		}
-
-		default:	// その他のキャラタイプ
-		{
-			return false;
-		}
-	}
-
-	return false;
 }
 
 // プレイヤーとトリガーの当たり判定
@@ -719,55 +721,66 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 }
 
 // 吸収攻撃の当たり判定チェック関数
-void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<CharaBase> chara)
+void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<CharaBase> player, std::shared_ptr<CharaBase>enemy)
 {
-	if(!chara){ return; }
+	if(!player || !enemy){ return; }
 	
 	// SurfacePlayerかチェック
-	auto surfacePlayer = std::dynamic_pointer_cast<SurfacePlayer>(chara);
+	auto surfacePlayer = std::dynamic_pointer_cast<SurfacePlayer>(player);
 	if(!surfacePlayer){ return; }
 
 	// 吸収攻撃システムを取得
-	const PlayerAbsorbAttackSystem* absorbSystem = surfacePlayer->GetAbsorbAttackSystem();
-	if(!absorbSystem) { return; }
+	const PlayerAbsorbAttackSystem* absorbSystemConst = surfacePlayer->GetAbsorbAttackSystem();
+	if(!absorbSystemConst) { return; }
 
 	// 吸収攻撃がアクティブかチェック
-	if(!absorbSystem->IsAbsorbAttacking()){ return; }
+	if(!absorbSystemConst->IsAbsorbAttacking()){ return; }
 
-	// 吸収攻撃とキャラの当たり判定
-	CheckHitCharaAbsorbCol(chara, absorbSystem);
+	// 非 cons tにキャスト
+	PlayerAbsorbAttackSystem* absorbSystem = const_cast<PlayerAbsorbAttackSystem*>(absorbSystemConst);
+
+	// 吸収の所有者を渡して判定
+	CheckHitCharaAbsorbAttack(enemy, surfacePlayer, absorbSystem);
 }
 
-// キャラと吸収攻撃コリジョンの当たり判定
-void ModeGame::CheckHitCharaAbsorbCol(std::shared_ptr<CharaBase> chara, const PlayerAbsorbAttackSystem* absorbSystem)
+// キャラと吸収攻撃の当たり判定
+void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::shared_ptr<CharaBase> owner, PlayerAbsorbAttackSystem* absorbSystem)
 {
-	if(!chara || !absorbSystem){ return; }
-
-	// 攻撃所有者が自分に攻撃している場合は当たらない
-	if(OwnerIsAbsorbingOwner(chara)){ return; }
+	if(!chara || !owner || !absorbSystem){ return; }
 
 	// 吸収攻撃コリジョン情報を取得
-	const AbsorbConfig& col = absorbSystem->GetAbsorbConfig();
+	const AbsorbConfig& config = absorbSystem->GetAbsorbConfig();
 
-	/*if(HitCheck_Capsule_Triangle
-	(
-		
-	) != false)
+	// 攻撃所有者が自分に攻撃している場合は当たらない
+	//if(OwnerIsAbsorbingOwner(owner)){ return; }
+
+	// 扇形データを取得
+	SectorData sectorData;
+
+	sectorData.center		= owner->GetPos();
+	sectorData.direction	= owner->GetDir();
+	sectorData.range		= config.absorbRange;
+	sectorData.angle		= config.absorbAngle;
+	sectorData.heightOffset = 0.0f;
+
+	// GeometryUtilityを使用して扇形内判定
+	if(GeometryUtility::IsInSector(chara->GetPos(), sectorData))
 	{
-
-	}*/
+		// プレイヤーの吸収システムの更新呼び出し
+		absorbSystem->ProcessAbsorb();
+	}
 }
 
-// 攻撃所有者が自分に攻撃しているかどうか(吸収攻撃用)
-bool ModeGame::OwnerIsAbsorbingOwner(std::shared_ptr<CharaBase> chara)
+// 攻撃所有者が自分に攻撃しているかどうか
+bool ModeGame::OwnerIsAbsorbingOwner(std::shared_ptr<CharaBase> owner)
 {
-	//if(chara->GetCharaType() == CHARA_TYPE::SURFACE_PLAYER ||
-	//	chara->GetCharaType() == CHARA_TYPE::INTERIOR_PLAYER ||
-	//	chara->GetCharaType() == CHARA_TYPE::BULLET_PLAYER)
-	//{
-	//	// プレイヤー同士の攻撃は当たらない
-	//	return true;
-	//}
+	if(owner->GetCharaType() == CHARA_TYPE::SURFACE_PLAYER ||
+		owner->GetCharaType() == CHARA_TYPE::INTERIOR_PLAYER ||
+		owner->GetCharaType() == CHARA_TYPE::BULLET_PLAYER)
+	{
+		// プレイヤー同士の攻撃は当たらない
+		return true;
+	}
 
 	// その他のキャラタイプは吸収攻撃の対象外とする
 	return false;

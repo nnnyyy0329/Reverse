@@ -291,8 +291,15 @@ bool ModeGame::Process()
 		}
 
 		// キャラと攻撃コリジョンの当たり判定
-		CheckActiveAttack(player);										// プレイヤー
-		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
+		{
+			CheckActiveAttack(player);										// プレイヤー
+			for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
+		}
+
+		// キャラと吸収攻撃
+		{
+			for(const auto& enemy : enemies){ CheckHitAbsorbAttack(player, enemy); }
+		}
 
 		// キャラ同士
 		{

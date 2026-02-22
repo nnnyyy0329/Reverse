@@ -37,10 +37,10 @@ private:
 	std::unique_ptr<PlayerAbsorbAttackSystem> _absorbAttackSystem;
 
 	// 吸収攻撃関連
-	void MakeAbsorbSystem();										// 吸収攻撃システム生成
-	void InitializeAbsorbSystem();									// 吸収攻撃システム初期化
-	void ProcessAbsorbSystem();										// 吸収攻撃システム処理
-	AbsorbConfig GetAbsorbConfig();									// 吸収攻撃設定取得
+	AbsorbConfig GetAbsorbConfig();	// 吸収攻撃設定取得
+	void MakeAbsorbSystem();		// 吸収攻撃システム生成
+	void InitializeAbsorbSystem();	// 吸収攻撃システム初期化
+	void ProcessAbsorbSystem();		// 吸収攻撃システム処理
 
 	void AbsorbSystemDebugRender();	// 吸収攻撃システムデバッグ描画
 

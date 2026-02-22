@@ -32,6 +32,9 @@ public:
 	// 吸収攻撃の入力処理
 	void ProcessAbsorbInput(int key);
 
+	// 吸収の更新処理
+	void ProcessAbsorb();
+
 	// 吸収攻撃が開始可能かどうか
 	bool CanStartAbsorbAttack() const;
 
@@ -39,8 +42,11 @@ public:
 	bool IsAbsorbAttacking() const;	
 
 private:
-	// 吸収攻撃の更新処理
-	void ProcessAbsorbAttack();
+	// 吸収攻撃クラスインスタンスの作成
+	void MakeAbsorbAttack();
+
+	// 初期化時の所有者設定
+	void InitializeSetOwner(std::weak_ptr<CharaBase> owner);
 
 	// 吸収攻撃の状態更新
 	void ProcessAbsorbAttackState();

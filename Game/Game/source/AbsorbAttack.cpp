@@ -23,7 +23,7 @@ namespace AbsorbAmount
 // 吸収時間に関する定数
 namespace AbsorbTime
 {
-	constexpr float ABSORB_COOLDOWN = 10.0f;		// 吸収のクールダウン時間
+	constexpr float ABSORB_COOLDOWN = 30.0f;		// 吸収のクールダウン時間
 	constexpr float DECREMENT_ABSORB_TIMER = 1.0f;	// 吸収タイマーの減算量
 }
 
@@ -106,18 +106,12 @@ void AbsorbAttack::ProcessAbsorbByInput(int key)
 		if(!IsAbsorbActive()){ return; }	// 吸収がアクティブでない場合は処理しない
 
 		_bIsInputActive = true;	// 入力が有効に設定
-
-		// 吸収処理実行
-		auto owner = GetOwner();
-		if(owner)
-		{
-			// 吸収処理
-			ProcessAbsorb(owner);
-		}
 	}
 	// 入力がない場合
 	else
 	{
+		_bIsInputActive = false;	// 入力が無効に設定
+
 		// 吸収処理停止
 		ProcessStopAttack();
 	}
@@ -144,17 +138,25 @@ void AbsorbAttack::ProcessAbsorb(std::shared_ptr<CharaBase> owner)
 	// クールダウン中の場合は処理しない
 	if(_fAbsorbTimer > 0.0f){ return; }	
 
+	// 扇形データ設定
+	SectorData sectorData;
+
+	sectorData.center		= owner->GetPos();
+	sectorData.direction	= owner->GetDir();
+	sectorData.range		= _stcAbsorbConfig.absorbRange;
+	sectorData.angle		= _stcAbsorbConfig.absorbAngle;
+	sectorData.heightOffset = 0.0f;
+
 	// エネルギー吸収処理
 	ProcessEnergyAbsorb(owner);
 
 	// HP吸収処理
-	ProcessHPAbsorb(owner);
+	//ProcessHPAbsorb(owner);
 
 	// 吸収エフェクト処理
 	ProcessAbsorbEffect(owner->GetPos());
 
-	// タイマーをリセット
-	_fAbsorbTimer = _fAbsorbCooldown;
+	_fAbsorbTimer = _fAbsorbCooldown;	// タイマーをリセット
 }
 
 // エネルギー吸収処理
@@ -257,61 +259,19 @@ void AbsorbAttack::DebugRender()
 // 吸収範囲の扇形描画
 void AbsorbAttack::DrawAbsorbRange(const VECTOR& ownerPos, const VECTOR& ownerDir)
 {
-	float range = _stcAbsorbConfig.absorbRange;		// 吸収範囲
-	float angle = _stcAbsorbConfig.absorbAngle;		// 吸収範囲の角度
-	int division = _stcAbsorbConfig.absorbDivision;	// 吸収範囲の分割数
+	// 扇形データ設定
+	SectorData sectorData;
 
-	// 描画の色
-	int ABSORB_COLOR = GetColor(0, 255, 150);	// 吸収範囲の色
-	int BORDER_COLOR = GetColor(255, 255, 0);	// 吸収範囲の境界線の色
-	float HEIGHT_OFFSET = 5.0f;					// 地面からの高さオフセット
+	sectorData.center		= ownerPos;
+	sectorData.direction	= ownerDir;
+	sectorData.range		= _stcAbsorbConfig.absorbRange;
+	sectorData.angle		= _stcAbsorbConfig.absorbAngle;
+	sectorData.heightOffset = 1.0f;
 
-	// 方向ベクトルの正規化
-	VECTOR normDir = VNorm(ownerDir);
+	// 色設定
+	int fillColor = GetColor(0, 255, 150);
+	int lineColor = GetColor(255, 255, 0);
 
-	// 基準の角度の計算
-	float baseAngle = atan2f(normDir.x, normDir.z);
-
-	// 扇形の角度
-	float startAngle = baseAngle - angle / 2.0f;	// 扇形の開始角度
-	float endAngle = baseAngle + angle / 2.0f;		// 扇形の終了角度
-
-	// 扇形を三角形で分割して描画
-	for(int i = 0; i < division; ++i)
-	{
-		float currentAngle = startAngle + (endAngle - startAngle) * (i / static_cast<float>(division));		// 現在の角度
-		float nextAngle = startAngle + (endAngle - startAngle) * ((i + 1) / static_cast<float>(division));	// 次の角度
-
-		// 各点の座標計算
-		VECTOR centerPoint = VAdd(ownerPos, VGet(0, HEIGHT_OFFSET, 0));														// 扇形の中心点
-		VECTOR currentPoint = VAdd(ownerPos, VGet(sinf(currentAngle) * range, HEIGHT_OFFSET, cosf(currentAngle) * range));	// 現在の角度の点
-		VECTOR nextPoint = VAdd(ownerPos, VGet(sinf(nextAngle) * range, HEIGHT_OFFSET, cosf(nextAngle) * range));			// 次の角度の点
-
-		// 三角形を半透明で描画
-		DrawTriangle3D(centerPoint, currentPoint, nextPoint, ABSORB_COLOR, TRUE);
-	}	
-
-	// 扇形の境界線を描画
-	VECTOR centerPos = VAdd(ownerPos, VGet(0, HEIGHT_OFFSET, 0));													// 扇形の中心点
-	VECTOR startBoundary = VAdd(ownerPos, VGet(sinf(startAngle) * range, HEIGHT_OFFSET, cosf(startAngle) * range));	// 扇形の開始角度の点
-	VECTOR endBoundary = VAdd(ownerPos, VGet(sinf(endAngle) * range, HEIGHT_OFFSET, cosf(endAngle) * range));		// 扇形の終了角度の点
-
-	// 中心から境界への線
-	DrawLine3D(centerPos, startBoundary, BORDER_COLOR);
-	DrawLine3D(centerPos, endBoundary, BORDER_COLOR);
-
-	// 外周の弧を描画
-	for(int i = 0; i < division; ++i)
-	{
-		// 角度の計算
-		float currentAngle = startAngle + (endAngle - startAngle) * i / division;		// 現在の角度
-		float nextAngle = startAngle + (endAngle - startAngle) * (i + 1) / division;	// 次の角度
-
-		// 各点の座標計算
-		VECTOR currentArc = VAdd(ownerPos, VGet(sinf(currentAngle) * range, HEIGHT_OFFSET, cosf(currentAngle) * range));	// 現在の角度の点
-		VECTOR nextArc = VAdd(ownerPos, VGet(sinf(nextAngle) * range, HEIGHT_OFFSET, cosf(nextAngle) * range));				// 次の角度の点
-
-		// 弧を描画
-		DrawLine3D(currentArc, nextArc, BORDER_COLOR);
-	}
+	// 扇形描画
+	GeometryUtility::DrawSector(sectorData, _stcAbsorbConfig.absorbDivision, fillColor, lineColor);
 }

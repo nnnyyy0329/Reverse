@@ -23,12 +23,6 @@ public:
 	virtual bool Process() override;			// 更新
 	virtual bool ProcessStartAttack() override;	// 攻撃開始
 	virtual bool ProcessStopAttack() override;	// 攻撃停止
-
-	// デバッグ描画
-	void DebugRender();
-
-	// 吸収範囲の扇形描画
-	void DrawAbsorbRange(const VECTOR& ownerPos, const VECTOR& ownerDir);
 	
 	// 入力による吸収処理
 	void ProcessAbsorbByInput(int key);
@@ -47,6 +41,12 @@ public:
 
 	// 入力が有効かどうか
 	bool IsInputActive() const { return _bIsInputActive; }
+
+	// デバッグ描画
+	void DebugRender();
+
+	// 吸収範囲の扇形描画
+	void DrawAbsorbRange(const VECTOR& ownerPos, const VECTOR& ownerDir);
 
 private:	// 内部処理
 

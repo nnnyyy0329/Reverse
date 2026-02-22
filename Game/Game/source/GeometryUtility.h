@@ -1,6 +1,16 @@
 #pragma once
 #include "appframe.h"
 
+// 扇形の基本データ構造体
+struct SectorData
+{
+	VECTOR center;				// 中心点
+	VECTOR direction;			// 方向ベクトル  
+	float range;				// 範囲
+	float angle;				// 角度（ラジアン）
+	float heightOffset;			// 高さオフセット
+};
+
 namespace GeometryUtility
 {
 	// 対象が前方にあるかどうかを判定する
@@ -20,5 +30,11 @@ namespace GeometryUtility
 
 	// 2つのベクトル間の角度を取得（度数法）
 	float GetAngleDeg(const VECTOR& vec1, const VECTOR& vec2);
+
+	// 扇形内にいるかチェック
+	bool IsInSector(const VECTOR& targetPos, const SectorData& sectorData);
+
+	// 扇形の描画用の点を計算
+	void DrawSector(const SectorData& sectorData, int division, int fillColor, int lineColor);
 }
 

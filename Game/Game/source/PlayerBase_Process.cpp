@@ -29,7 +29,6 @@ void PlayerBase::ProcessMovePlayer()
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
 	if(IsAttacking()){ return; }				// 攻撃中は移動入力を受け付けない
-	//if(IsShooting()){ return; }					// 発射中は移動入力を受け付けない
 	if(IsDodging()){ return; }					// 回避中は移動入力を受け付けない
 	if(IsHitStop()){ return; }					// 被弾中は移動入力を受け付けない
 	if(IsDeath()){ return; }					// 死亡中は移動入力を受け付けない

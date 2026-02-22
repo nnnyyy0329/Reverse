@@ -20,10 +20,28 @@ bool PlayerAbsorbAttackSystem::Initialize(std::weak_ptr<CharaBase> owner)
 {
 	if(_bIsInitialized){ return false; }	// すでに初期化されている場合は何もしない
 
-	_owner = owner;	// 所有者設定
+	// 吸収攻撃クラスインスタンスの作成
+	MakeAbsorbAttack();
 
+	// 初期化時の所有者設定
+	InitializeSetOwner(owner);
+
+	_bIsInitialized = true;	// 初期化完了
+
+	return true;
+}
+
+// 吸収攻撃クラスインスタンスの作成
+void PlayerAbsorbAttackSystem::MakeAbsorbAttack()
+{
 	// 吸収攻撃オブジェクト生成
 	_absorbAttack = std::make_unique<AbsorbAttack>();
+}
+
+// 初期化時の所有者設定
+void PlayerAbsorbAttackSystem::InitializeSetOwner(std::weak_ptr<CharaBase> owner)
+{
+	_owner = owner;	// 所有者設定
 
 	// オーナーの設定
 	auto ownerPtr = _owner.lock();
@@ -32,10 +50,6 @@ bool PlayerAbsorbAttackSystem::Initialize(std::weak_ptr<CharaBase> owner)
 		// 吸収攻撃オブジェクトに所有者を設定
 		_absorbAttack->SetOwner(ownerPtr);
 	}
-
-	_bIsInitialized = true;	// 初期化完了
-
-	return true;
 }
 
 bool PlayerAbsorbAttackSystem::Terminate()
@@ -65,9 +79,6 @@ bool PlayerAbsorbAttackSystem::Process()
 
 	// 状態更新処理
 	ProcessAbsorbAttackState();
-
-	// 吸収攻撃の処理
-	ProcessAbsorbAttack();
 
 	return true;
 }
@@ -128,7 +139,7 @@ void PlayerAbsorbAttackSystem::StopAbsorbAttack()
 }
 
 // 吸収攻撃の更新処理
-void PlayerAbsorbAttackSystem::ProcessAbsorbAttack()
+void PlayerAbsorbAttackSystem::ProcessAbsorb()
 {
 	if(!IsAbsorbAttacking()){ return; }	// 攻撃オブジェクトがない場合はスキップ
 
