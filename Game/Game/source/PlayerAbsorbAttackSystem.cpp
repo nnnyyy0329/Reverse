@@ -2,7 +2,7 @@
 
 namespace AbsorbAttackConstants
 {
-	constexpr int ABSORB_INPUT_KEY = PAD_INPUT_6;	// ‹zûUŒ‚‚Ì“ü—ÍƒL[
+	//constexpr int ABSORB_INPUT_KEY = PAD_INPUT_6;	// ‹zûUŒ‚‚Ì“ü—ÍƒL[
 }
 
 PlayerAbsorbAttackSystem::PlayerAbsorbAttackSystem()
@@ -153,7 +153,7 @@ void PlayerAbsorbAttackSystem::ProcessAbsorb()
 // ‹zûUŒ‚‚Ì“ü—Íˆ—
 void PlayerAbsorbAttackSystem::ProcessAbsorbInput(int key)
 {
-	if((key & AbsorbAttackConstants::ABSORB_INPUT_KEY) && CanStartAbsorbAttack())
+	if(key && CanStartAbsorbAttack())
 	{
 		// UŒ‚ŠJn
 		StartAbsorbAttack();
@@ -162,8 +162,8 @@ void PlayerAbsorbAttackSystem::ProcessAbsorbInput(int key)
 	// ’·‰Ÿ‚µˆ—
 	if(IsAbsorbAttacking())
 	{
-		bool isInputActive = (key & AbsorbAttackConstants::ABSORB_INPUT_KEY);	// “ü—Í‚ª‚ ‚é‚©‚Ç‚¤‚©
-		_absorbAttack->ProcessAbsorbByInput(isInputActive);						// “ü—Í‚É‚æ‚é‹zûˆ—
+		bool isInputActive = key;							// “ü—Í‚ª‚ ‚é‚©‚Ç‚¤‚©
+		_absorbAttack->ProcessAbsorbByInput(isInputActive);	// “ü—Í‚É‚æ‚é‹zûˆ—
 	}
 }
 

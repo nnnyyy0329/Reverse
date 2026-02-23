@@ -20,6 +20,8 @@ public:
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo) override;	// 被ダメージ処理
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
 
+	void ProcessAbsorb()override;	// 基底クラスの吸収攻撃処理をオーバーライド
+
 	// 純粋仮想関数のオーバーライド
 	virtual PlayerConfig		GetPlayerConfig()			override;	// 設定を取得
 	virtual PlayerAnimations	GetPlayerAnimation()		override;	// アニメーション設定を取得
@@ -41,8 +43,10 @@ private:
 	void MakeAbsorbSystem();		// 吸収攻撃システム生成
 	void InitializeAbsorbSystem();	// 吸収攻撃システム初期化
 	void ProcessAbsorbSystem();		// 吸収攻撃システム処理
-
 	void AbsorbSystemDebugRender();	// 吸収攻撃システムデバッグ描画
+
+	bool _bIsReadyCompleted;	// 構えアニメーション完了フラグ
+	bool _bWasAbsorbKeyPressed;	// 前フレームで吸収キーが押されていたか
 
 protected:
 

@@ -9,6 +9,7 @@
 
 // 前方宣言
 class CameraManager;
+class AbsorbAttack;
 
 // プレイヤー設定データ構造体
 struct PlayerConfig
@@ -79,21 +80,30 @@ struct PlayerMovementAnimations
 // 攻撃アニメーション構造体
 struct PlayerAttackAnimations
 {
-	const char* absorptionAttack;	// 吸収攻撃
 	const char* firstAttack;		// 1段目攻撃
 	const char* secondAttack;		// 2段目攻撃
 	const char* thirdAttack;		// 3段目攻撃
 	const char* fourthAttack;		// 4段目攻撃
 	const char* fifthAttack;		// 5段目攻撃
+	const char* firstSkill;			// スキル1
+	const char* secondSkill;		// スキル2
 };
 
-// 発射アニメーション構造体
+// 弾発射アニメーション構造体
 struct PlayerShootAnimations
 {
 	const char* shootReady;     // 発射構え
 	const char* rightArmShoot;  // 右腕発射
 	const char* leftArmShoot;   // 左腕発射
 	const char* shootMove;      // 発射移動
+};
+
+// 吸収攻撃アニメーション構造体
+struct PlayerAbsorbAnimations
+{
+	const char* absorbReady;	// 吸収構え
+	const char* absorbActive;	// 吸収中
+	const char* absorbEnd;		// 吸収終了
 };
 
 // 戦闘アニメーション構造体
@@ -110,10 +120,11 @@ struct PlayerCombatAnimations
 // 統合アニメーション構造体
 struct PlayerAnimations
 {
-	PlayerMovementAnimations movement;
-	PlayerAttackAnimations attack;
-	PlayerShootAnimations shoot;
-	PlayerCombatAnimations combat;
+	PlayerMovementAnimations	movement;	// 基本構想
+	PlayerAttackAnimations		attack;		// 攻撃
+	PlayerShootAnimations		shoot;		// 弾発射
+	PlayerAbsorbAnimations		absorb;		// 吸収攻撃
+	PlayerCombatAnimations		combat;		// 特殊
 };
 
 // 基本移動状態
@@ -134,12 +145,13 @@ enum class PLAYER_MOVEMENT_STATE
 enum class PLAYER_ATTACK_STATE
 {
 	NONE,
-	ABSORPTION_ATTACK,	// 吸収攻撃
 	FIRST_ATTACK,		// 1段目攻撃
 	SECOND_ATTACK,		// 2段目攻撃
 	THIRD_ATTACK,		// 3段目攻撃
 	FOURTH_ATTACK,		// 4段目攻撃
 	FIFTH_ATTACK,		// 5段目攻撃
+	FIRST_SKILL,		// スキル1
+	SECOND_SKILL,		// スキル2
 	_EOT_,
 };
 
@@ -151,6 +163,16 @@ enum class PLAYER_SHOOT_STATE
 	RIGHT_ARM_SHOOT,	// 右腕発射
 	LEFT_ARM_SHOOT,		// 左腕発射
 	SHOOT_MOVE,			// 発射移動
+	_EOT_,
+};
+
+// 吸収攻撃状態列挙型を追加
+enum class PLAYER_ABSORB_STATE
+{
+	NONE,
+	ABSORB_READY,		// 吸収構え
+	ABSORB_ACTIVE,		// 吸収中
+	ABSORB_END,			// 吸収終了
 	_EOT_,
 };
 
@@ -170,14 +192,16 @@ enum class PLAYER_COMBAT_STATE
 // 統合状態管理構造体
 struct PlayerState
 {
-	PLAYER_MOVEMENT_STATE movementState;	// 基本移動状態
-	PLAYER_ATTACK_STATE attackState;		// 攻撃状態
-	PLAYER_SHOOT_STATE shootState;			// 弾発射状態
-	PLAYER_COMBAT_STATE combatState;		// 特殊状態
+	PLAYER_MOVEMENT_STATE	movementState;	// 基本移動状態
+	PLAYER_ATTACK_STATE		attackState;	// 攻撃状態
+	PLAYER_SHOOT_STATE		shootState;		// 弾発射状態
+	PLAYER_ABSORB_STATE		absorbState;	// 吸収攻撃状態
+	PLAYER_COMBAT_STATE		combatState;	// 特殊状態
 
 	bool IsStateAttacking() const { return attackState   != PLAYER_ATTACK_STATE::NONE; }
 	bool IsStateMoving()	const { return movementState != PLAYER_MOVEMENT_STATE::NONE; }
 	bool IsStateShooting()	const { return shootState	 != PLAYER_SHOOT_STATE::NONE; }
+	bool IsStateAbsorbing()	const { return absorbState	 != PLAYER_ABSORB_STATE::NONE; }
 	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }
 };
 
@@ -225,10 +249,11 @@ public:
 
 	// ステータス文字列変換
 	std::string GetCurrentStateString() const;								// 現在の状態文字列取得
-	std::string GetMovementStateString(PLAYER_MOVEMENT_STATE state) const;	// 基本移動状態文字列取得
-	std::string GetAttackStateString(PLAYER_ATTACK_STATE state) const;		// 攻撃状態文字列取得
-	std::string GetShootStateString(PLAYER_SHOOT_STATE state) const;		// 弾発射状態文字列取得
-	std::string GetCombatStateString(PLAYER_COMBAT_STATE state) const;		// 特殊状態文字列取得
+	std::string GetMovementStateString(PLAYER_MOVEMENT_STATE state)	const;	// 基本移動の状態文字列取得
+	std::string GetAttackStateString  (PLAYER_ATTACK_STATE state)	const;	// 攻撃状態の文字列取得
+	std::string GetShootStateString   (PLAYER_SHOOT_STATE state)	const;	// 弾発射状態の文字列取得
+	std::string GetAbsorbStateString  (PLAYER_ABSORB_STATE state)	const;	// 吸収攻撃状態の文字列取得
+	std::string GetCombatStateString  (PLAYER_COMBAT_STATE state)	const;	// 特殊状態の文字列取得
 
 	// 現在のアニメーション名取得
 	const char* GetCurrentAnimationName() const;
@@ -278,6 +303,9 @@ public:
 
 	PLAYER_SHOOT_STATE GetShootState()const{ return _playerState.shootState; }			// 弾発射状態取得
 	void SetShootState(PLAYER_SHOOT_STATE state){ _playerState.shootState = state; }	// 弾発射状態設定
+
+	PLAYER_ABSORB_STATE GetAbsorbState()const{ return _playerState.absorbState; }		// 吸収攻撃状態取得
+	void SetAbsorbState(PLAYER_ABSORB_STATE state){ _playerState.absorbState = state; }	// 吸収攻撃状態設定
 
 	PLAYER_COMBAT_STATE GetCombatState()const{ return _playerState.combatState; }		// 特殊状態取得
 	void SetCombatState(PLAYER_COMBAT_STATE state){ _playerState.combatState = state; }	// 特殊状態設定
@@ -329,6 +357,11 @@ protected:	// 弾発射関係
 
 	virtual bool IsShooting()const{ return _playerState.shootState != PLAYER_SHOOT_STATE::NONE; }
 
+protected:
+
+	virtual void ProcessAbsorb(){};	// 吸収攻撃の仮想関数
+
+	virtual bool IsAbsorbing()const{ return _playerState.absorbState != PLAYER_ABSORB_STATE::NONE; }
 
 protected:	// 回避関係
 

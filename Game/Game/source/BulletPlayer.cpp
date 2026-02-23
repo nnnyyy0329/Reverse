@@ -16,6 +16,8 @@ namespace bulletConfig
 	constexpr float RADIUS = 10.0f;
 	constexpr float SPEED = 15.0f;
 	constexpr float LIFE_TIME = 120.0f;
+
+	constexpr bool SHOOT_INPUT_KEY = PAD_INPUT_6;
 }
 
 BulletPlayer::BulletPlayer()
@@ -85,11 +87,13 @@ void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 // 発射間隔更新
 void BulletPlayer::ProcessShoot()
 {
-	bool putKey = (_key & PAD_INPUT_6) != 0;	// 発射キー
-	bool aimKey = (_key & PAD_INPUT_5) != 0;	// エイムキー
+	bool putKey = (_key & bulletConfig::SHOOT_INPUT_KEY) != 0;	// 発射キー
+	//bool aimKey = (_key & PAD_INPUT_5) != 0;	// エイムキー
+
+	_cameraManager->StartAimMode();	// エイムモード開始
 
 	// エイムモードの制御
-	ProcessAimMode(aimKey);
+	//ProcessAimMode(aimKey);
 
 	// キーが押された
 	if(putKey)

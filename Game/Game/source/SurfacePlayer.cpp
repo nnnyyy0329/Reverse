@@ -15,6 +15,11 @@ namespace
 	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
 }
 
+namespace AbsorbConstants
+{
+	constexpr int ABSORB_INPUT_KEY = PAD_INPUT_6;	// 吸収攻撃の入力キー
+}
+
 SurfacePlayer::SurfacePlayer()
 {
 	// キャラタイプ
@@ -22,6 +27,9 @@ SurfacePlayer::SurfacePlayer()
 
 	// 吸収攻撃システムの生成
 	MakeAbsorbSystem();
+
+	_bIsReadyCompleted = false;		// 構えアニメーション完了フラグ
+	_bWasAbsorbKeyPressed = false;	// 前フレームで吸収キーが押されていたか
 }
 
 SurfacePlayer::~SurfacePlayer()
@@ -88,6 +96,77 @@ void SurfacePlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 	PlayerBase::ApplyDamageByBullet(fDamage, chara);
 }
 
+// 基底クラスの吸収攻撃処理をオーバーライド
+void SurfacePlayer::ProcessAbsorb()
+{
+	// int 型から bool にキャスト
+	bool absorbInput = static_cast<bool>(AbsorbConstants::ABSORB_INPUT_KEY);
+
+	// 吸収攻撃システムの入力処理を実行
+	if(_absorbAttackSystem)
+	{
+		// 吸収攻撃システムの入力処理を実行
+		_absorbAttackSystem->ProcessAbsorbInput(_key);
+	}
+
+	// キーが押された
+	if(absorbInput)
+	{
+		// 吸収キーが新しく押された場合
+		if(!_bWasAbsorbKeyPressed && GetAttackState() == PLAYER_ATTACK_STATE::NONE)
+		{
+			// 構えに移行
+			_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_READY;	// 構え状態
+			_bIsReadyCompleted = false;										// 構えアニメーション未完了
+
+			// アニメーション切り替え
+			ProcessPlayAnimation();
+		}
+		// 構え状態で構えアニメーションが完了チェック
+		else if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY && !_bIsReadyCompleted)
+		{
+			// アニメーションが完了したかチェック
+			AnimManager* animManager = GetAnimManager();
+			if(animManager->IsAnimationFinished())
+			{
+				_bIsReadyCompleted = true;										// 構えアニメーション完了
+				_playerState.absorbState =PLAYER_ABSORB_STATE::ABSORB_ACTIVE;	// アクティブ状態に移行
+
+				// アニメーション切り替え
+				ProcessPlayAnimation();
+			}
+		}
+	}
+	// キーが離された
+	else
+	{
+		// 吸収攻撃中にキーが離された場合
+		if(GetAbsorbState() != PLAYER_ABSORB_STATE::NONE)
+		{
+			_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_END;	// 終了状態に移行
+
+			// 終了アニメーション開始
+			ProcessPlayAnimation();
+
+			// 終了アニメーション完了後に状態リセット
+			AnimManager* animManager = GetAnimManager();
+			if(animManager->IsAnimationFinished())
+			{
+				// 状態リセット
+				_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
+				_playerState.absorbState = PLAYER_ABSORB_STATE::NONE;
+				_bIsReadyCompleted = false;
+
+				// アニメーション更新
+				ProcessPlayAnimation();
+			}
+		}
+	}
+
+	// 前フレームのキー状態を保存
+	_bWasAbsorbKeyPressed = absorbInput;
+}
+
 // 表プレイヤーの情報設定
 PlayerConfig SurfacePlayer::GetPlayerConfig()
 {
@@ -136,6 +215,9 @@ PlayerAnimations SurfacePlayer::GetPlayerAnimation()
 	animation.shoot.rightArmShoot	= "";
 	animation.shoot.leftArmShoot	= "";
 	animation.shoot.shootMove		= "";
+	animation.absorb.absorbReady	= "";
+	animation.absorb.absorbActive	= "";
+	animation.absorb.absorbEnd		= "";
 	animation.combat.transform		= "player_change_00";
 	animation.combat.guard			= "";
 	animation.combat.hit			= "player_damage_00";
@@ -283,7 +365,7 @@ void SurfacePlayer::ProcessAbsorbSystem()
 	// 吸収攻撃システムの処理
 	if(_absorbAttackSystem)
 	{
-		_absorbAttackSystem->ProcessAbsorbInput(_key);	// 入力処理
+		//_absorbAttackSystem->ProcessAbsorbInput(_key);	// 入力処理
 		_absorbAttackSystem->Process();					// 吸収システムの更新処理
 	}
 }
