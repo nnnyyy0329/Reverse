@@ -61,6 +61,10 @@ public:
 	using AfterDamageStateSelector = std::function<std::shared_ptr<EnemyState>(Enemy*, int)>;
 	void SetAfterDamageStateSelector(AfterDamageStateSelector selector) { _afterDamageStateSelector = selector; }
 	std::shared_ptr<EnemyState> GetAfterDamageStateSelector(int comboCnt);
+	// ダウン後の遷移先を決定する
+	using AfterDownStateSelector = std::function<std::shared_ptr<EnemyState>(Enemy*)>;
+	void SetAfterDownStateSelector(AfterDownStateSelector selector) { _afterDownStateSelector = selector; }
+	std::shared_ptr<EnemyState> GetAfterDownStateSelector();
 
 	// 索敵関連
 	bool ShouldUpdateSearch() { return _searchTimer == 0; }// 索敵更新タイミングかどうか
@@ -110,6 +114,7 @@ protected:
 	std::shared_ptr<AttackBase> _attackCollision;// 攻撃コリジョン
 
 	AfterDamageStateSelector _afterDamageStateSelector;
+	AfterDownStateSelector _afterDownStateSelector;
 
 	int _lifeBarHandle = -1;// ライフバー用
 	int _lifeBarFrameHandle = -1;// ライフバー枠用

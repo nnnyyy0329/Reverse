@@ -107,5 +107,6 @@ protected:
 
 	float _fTimer = 0.0f;
 	float _fTargetTimer = 0.0f;
+	float _fAnimSpeed = 1.0f;
 
 };

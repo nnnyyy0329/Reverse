@@ -131,10 +131,10 @@ namespace
 		settings.vTopOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y + ATTACK_COLLISION_HEIGHT, ATTACK_COLLISION_OFFSET_Z);
 		settings.vBottomOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y, ATTACK_COLLISION_OFFSET_Z);
 		settings.fRadius = ATTACK_COLLISION_RADIUS;
-		settings.fDelay = 0.0f;
+		settings.fDelay = ATTACK_DELAY;
 		settings.fDuration = ATTACK_DURATION;
 		settings.fRecovery = 0.0f;
-		settings.fDamage = 0.0f;
+		settings.fDamage = 1.0f;
 		settings.ownerId = 0;
 		return settings;
 	}
@@ -997,6 +997,12 @@ namespace Melee
 		// タイマー初期化
 		_fTimer = 0.0f;
 		_bHasCollision = false;
+
+		auto targetInfo = GetTargetInfo(owner);
+		if (targetInfo.bExist)
+		{
+			owner->SetDir(targetInfo.vDir);
+		}
 
 		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();

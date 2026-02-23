@@ -67,41 +67,53 @@ public:
 			// モデル名を設定
 			enemy->SetModelName("Melee");
 
-				param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
-				param.fVisionRange = MELEE_VISION_RANGE;
-				param.fVisionAngle = MELEE_VISION_ANGLE;
-				param.fAttackRange = MELEE_ATTACK_RANGE;
-				param.fChaseLimitRange = MELEE_CHASE_LIMIT_RANGE;
-				param.fIdleTime = MELEE_IDLE_TIME;
-				param.fMoveTime = MELEE_MOVE_TIME;
-				param.fDetectTime = MELEE_DETECT_TIME;
-				param.fAttackTime = MELEE_ATTACK_TIME;
-				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+			param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
+			param.fVisionRange = MELEE_VISION_RANGE;
+			param.fVisionAngle = MELEE_VISION_ANGLE;
+			param.fAttackRange = MELEE_ATTACK_RANGE;
+			param.fChaseLimitRange = MELEE_CHASE_LIMIT_RANGE;
+			param.fIdleTime = MELEE_IDLE_TIME;
+			param.fMoveTime = MELEE_MOVE_TIME;
+			param.fDetectTime = MELEE_DETECT_TIME;
+			param.fAttackTime = MELEE_ATTACK_TIME;
+			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 
-				// 共通ステートのアニメーション名を設定
-				param.animDamage = "enemy_damage_00";
-				param.animDead = "enemy_dead_00";
-				param.animStun = "Melee_Stun";
-				param.animDown = "enemy_dead_01";
+			// 共通ステートのアニメーション名を設定
+			param.animDamage = "enemy_damage_00";
+			param.animDead = "enemy_dead_00";
+			param.animStun = "Melee_Stun";
+			param.animDown = "enemy_dead_01";
 
-				enemy->SetEnemyParam(param);// パラメータ設定
+			enemy->SetEnemyParam(param);// パラメータ設定
 
-				// 被ダメ後の遷移先を決定
-				enemy->SetAfterDamageStateSelector([](Enemy* e, int comboCnt)->std::shared_ptr<EnemyState>
-					{
-						if (!e->GetTarget())
-						{
-							return std::make_shared<Melee::Idle>();
-						}
+			// 被ダメ後の遷移先を決定
+			enemy->SetAfterDamageStateSelector([](Enemy* e, int comboCnt)->std::shared_ptr<EnemyState>
+			{
+				if (!e->GetTarget())
+				{
+					return std::make_shared<Melee::Idle>();
+				}
 
-						if (comboCnt >= 1)
-						{
-							return std::make_shared<Melee::CounterAttack>();
-						}
+				if (comboCnt >= 1)
+				{
+					return std::make_shared<Melee::CounterAttack>();
+				}
 
-						return std::make_shared<Melee::Approach>();
-					});
-				break;
+				return std::make_shared<Melee::Approach>();
+			});
+
+			// ダウン後の遷移先を決定
+			enemy->SetAfterDownStateSelector([](Enemy* e)->std::shared_ptr<EnemyState>
+			{
+				if (e->GetTarget())
+				{
+					return std::make_shared<Melee::Approach>();
+				}
+
+				return std::make_shared<Melee::Idle>();
+			});
+
+		break;
 
 		case EnemyType::RANGED:// 遠距離型
 
@@ -125,25 +137,27 @@ public:
 			enemy->SetEnemyParam(param);
 
 			// 被ダメ後の遷移先を決定
-			break;
+
+		break;
 
 		case EnemyType::TANK:// タンク型
 
 			enemy->SetModelName("Melee");
 
-				param.fMoveSpeed = TANK_MOVE_SPEED;
-				param.fVisionRange = TANK_VISION_RANGE;
-				param.fVisionAngle = TANK_VISION_ANGLE;
-				param.fAttackRange = TANK_ATTACK_RANGE;
-				param.fChaseLimitRange = TANK_CHASE_LIMIT_RANGE;
-				param.fIdleTime = TANK_IDLE_TIME;
-				param.fMoveTime = TANK_MOVE_TIME;
-				param.fDetectTime = TANK_DETECT_TIME;
-				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
-				enemy->SetEnemyParam(param);
+			param.fMoveSpeed = TANK_MOVE_SPEED;
+			param.fVisionRange = TANK_VISION_RANGE;
+			param.fVisionAngle = TANK_VISION_ANGLE;
+			param.fAttackRange = TANK_ATTACK_RANGE;
+			param.fChaseLimitRange = TANK_CHASE_LIMIT_RANGE;
+			param.fIdleTime = TANK_IDLE_TIME;
+			param.fMoveTime = TANK_MOVE_TIME;
+			param.fDetectTime = TANK_DETECT_TIME;
+			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+			enemy->SetEnemyParam(param);
 
-				// 被ダメ後の遷移先を決定
-				break;
+			// 被ダメ後の遷移先を決定
+
+		break;
 		}
 
 		// 設定後に初期化を呼び出す

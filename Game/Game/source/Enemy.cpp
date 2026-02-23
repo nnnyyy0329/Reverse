@@ -588,6 +588,16 @@ std::shared_ptr<EnemyState> Enemy::GetAfterDamageStateSelector(int comboCnt)
 	return nullptr;
 }
 
+std::shared_ptr<EnemyState> Enemy::GetAfterDownStateSelector()
+{
+	if (_afterDownStateSelector)
+	{
+		return _afterDownStateSelector(this);
+	}
+
+	return nullptr;
+}
+
 void Enemy::LoadEnemyModel()
 {
 	// ƒ‚ƒfƒ‹“Ç‚İ‚İ

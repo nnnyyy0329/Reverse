@@ -3,9 +3,7 @@
 
 namespace 
 {
-	// 状態時間
-	constexpr auto DAMAGE_TIME = 20.0f;// 初期被ダメ時間
-	constexpr auto DAMAGE_TIME_ADD = 10.0f;// 連続ヒットごとに加算する時間
+	// ステート時間
 	constexpr auto DEAD_TIME = 60.0f;// 死亡時間
 	constexpr auto DOWN_TIME = 90.0f;// ダウン時間
 
@@ -20,6 +18,25 @@ namespace
 	constexpr auto KNOCKBACK_MIN_DISTANCE = 0.001f;// ノックバック方向計算の最小距離
 
 	constexpr auto BLEND_FRAME = 10.0f;// アニメーションブレンドフレーム数
+
+	// 被ダメージ
+	constexpr auto DAMAGE_ANIM_LENGTH = 42.0f;// ダメージアニメーションの長さ
+	// コンボ数ごとに再生スピードを遅くする
+	constexpr float DAMAGE_ANIM_SPEEDS[] = { 1.2f, 1.0f, 0.8f, 0.6f };
+	// コンボ数から再生スピードを取得
+	float GetDamageAnimSpeed(int comboCnt)
+	{
+		int index = comboCnt - 1;// コンボは1から始まるため
+		if (index < 0) { index = 0; }
+		if (index >= 4) { index = 3; }
+		return DAMAGE_ANIM_SPEEDS[index];
+	}
+	// コンボ数からステート時間を取得
+	float GetDamageStateTime(int comboCnt)
+	{
+		// アニメージョンの長さを再生スピードで割った値を返す
+		return DAMAGE_ANIM_LENGTH / GetDamageAnimSpeed(comboCnt);
+	}
 }
 
 namespace Common
@@ -62,7 +79,7 @@ namespace Common
 		// ここでアニメーション設定
 		// 敵の種類ごとのアニメーション名を取得
 		const auto& param = owner->GetEnemyParam();
-		owner->GetAnimManager()->ChangeAnimationByName(param.animDamage, BLEND_FRAME, 1);
+		owner->GetAnimManager()->ChangeAnimationByName(param.animDamage, BLEND_FRAME, 1, GetDamageAnimSpeed(_comboCnt));
 	}
 
 	std::shared_ptr<EnemyState> Damage::Update(Enemy* owner) 
@@ -85,8 +102,7 @@ namespace Common
 		}
 
 		// コンボ数に応じたステート時間
-		const float fDamageTime = DAMAGE_TIME + DAMAGE_TIME_ADD * static_cast<float>(_comboCnt);
-		if (_fTimer >= fDamageTime)
+		if (_fTimer >= GetDamageStateTime(_comboCnt))
 		{
 			return owner->GetAfterDamageStateSelector(_comboCnt);
 		}
@@ -195,6 +211,7 @@ namespace Common
 		// ダウン時間経過チェック
 		if (_fTimer >= DOWN_TIME)
 		{
+			return owner->GetAfterDownStateSelector();
 		}
 
 		return nullptr;
