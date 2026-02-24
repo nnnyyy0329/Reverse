@@ -321,7 +321,7 @@ void PlayerBase::ProcessDebug()
 		EnergyManager::GetInstance()->ConsumeEnergy(10.0f);
 	}
 
-	if (_trg & PAD_INPUT_8)
+	if (_trg & PAD_INPUT_5)
 	{
 		EnergyManager::GetInstance()->AddEnergy(100.0f);
 	}
@@ -365,8 +365,6 @@ const char* PlayerBase::GetCurrentAnimationName() const
 			case PLAYER_ATTACK_STATE::THIRD_ATTACK:			return _playerAnim.attack.thirdAttack;		// 3段目攻撃
 			case PLAYER_ATTACK_STATE::FOURTH_ATTACK:		return _playerAnim.attack.fourthAttack;		// 4段目攻撃
 			case PLAYER_ATTACK_STATE::FIFTH_ATTACK:			return _playerAnim.attack.fifthAttack;		// 5段目攻撃
-			case PLAYER_ATTACK_STATE::FIRST_SKILL:			return _playerAnim.attack.firstSkill;		// スキル1
-			case PLAYER_ATTACK_STATE::SECOND_SKILL:			return _playerAnim.attack.secondSkill;		// スキル2
 		}
 	}
 
@@ -385,9 +383,9 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.absorbState)
 		{
-			case PLAYER_ABSORB_STATE::ABSORB_READY:		return _playerAnim.absorb.absorbReady;	// 吸収攻撃構え
-			case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:	return _playerAnim.absorb.absorbActive;	// 吸収攻撃中
-			case PLAYER_ABSORB_STATE::ABSORB_END:		return _playerAnim.absorb.absorbEnd;	// 吸収攻撃終了
+			case PLAYER_ABSORB_STATE::ABSORB_START:		return _playerAnim.absorb.absorbStart;	// 吸収開始
+			case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:	return _playerAnim.absorb.absorbActive;	// 吸収中
+			case PLAYER_ABSORB_STATE::ABSORB_END:		return _playerAnim.absorb.absorbEnd;	// 吸収終了
 		}
 	}
 
@@ -415,8 +413,8 @@ int PlayerBase::GetLoopCount() const
 	// 発射状態の場合1回再生
 	if(_playerState.combatState	 != PLAYER_COMBAT_STATE::NONE ||
 		_playerState.attackState != PLAYER_ATTACK_STATE::NONE ||
-		_playerState.shootState	 != PLAYER_SHOOT_STATE ::NONE ||
-		_playerState.absorbState !=	PLAYER_ABSORB_STATE::NONE)
+		_playerState.absorbState != PLAYER_ABSORB_STATE::NONE ||
+		_playerState.shootState	 != PLAYER_SHOOT_STATE::NONE)
 	{
 		return 1;
 	}

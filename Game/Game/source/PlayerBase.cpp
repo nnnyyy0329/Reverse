@@ -24,6 +24,7 @@ PlayerBase::PlayerBase()
 	_playerState.movementState = PLAYER_MOVEMENT_STATE::NONE;
 	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
 	_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
+	_playerState.absorbState = PLAYER_ABSORB_STATE::NONE;
 	_playerState.combatState = PLAYER_COMBAT_STATE::NONE;
 	_oldPlayerState = _playerState;
 
