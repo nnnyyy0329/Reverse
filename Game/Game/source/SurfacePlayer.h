@@ -45,6 +45,7 @@ private:
 	void ProcessAbsorbSystem();		// 吸収攻撃システム処理
 	void AbsorbSystemDebugRender();	// 吸収攻撃システムデバッグ描画
 
+	float _fAbsorbAnimCount;	// 吸収アニメーションカウント
 	bool _bIsReadyCompleted;	// 構えアニメーション完了フラグ
 	bool _bWasAbsorbKeyPressed;	// 前フレームで吸収キーが押されていたか
 

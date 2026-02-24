@@ -28,6 +28,7 @@ SurfacePlayer::SurfacePlayer()
 	// 吸収攻撃システムの生成
 	MakeAbsorbSystem();
 
+	_fAbsorbAnimCount = 0.0f;		// 吸収アニメーションカウント
 	_bIsReadyCompleted = false;		// 構えアニメーション完了フラグ
 	_bWasAbsorbKeyPressed = false;	// 前フレームで吸収キーが押されていたか
 }
@@ -100,7 +101,7 @@ void SurfacePlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 void SurfacePlayer::ProcessAbsorb()
 {
 	// int 型から bool にキャスト
-	bool absorbInput = static_cast<bool>(AbsorbConstants::ABSORB_INPUT_KEY);
+	bool absorbInput = (_key & AbsorbConstants::ABSORB_INPUT_KEY) != 0;
 
 	// 吸収攻撃システムの入力処理を実行
 	if(_absorbAttackSystem)
@@ -134,6 +135,12 @@ void SurfacePlayer::ProcessAbsorb()
 
 				// アニメーション切り替え
 				ProcessPlayAnimation();
+				
+				if(_fAbsorbAnimCount <= 0.0f)
+				{
+					// 吸収アニメーションカウントをセット
+					_fAbsorbAnimCount = animManager->GetCurrentAnimTotalTime();
+				}
 			}
 		}
 	}
@@ -162,6 +169,14 @@ void SurfacePlayer::ProcessAbsorb()
 			}
 		}
 	}
+
+
+	// カウントを減らす
+	if(_fAbsorbAnimCount > 0.0f)
+	{
+		_fAbsorbAnimCount--; // カウントを減らす
+	}
+
 
 	// 前フレームのキー状態を保存
 	_bWasAbsorbKeyPressed = absorbInput;
@@ -398,5 +413,11 @@ void SurfacePlayer::AbsorbSystemDebugRender()
 	if(_absorbAttackSystem)
 	{
 		_absorbAttackSystem->DebugRender();
+	}
+
+	// カウントのデバッグ表示
+	if(_fAbsorbAnimCount > 0.0f)
+	{
+		DrawFormatString(10, 530, GetColor(255, 255, 255), "吸収カウント: %3.2f", _fAbsorbAnimCount);
 	}
 }
