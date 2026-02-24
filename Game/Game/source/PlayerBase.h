@@ -79,7 +79,6 @@ struct PlayerMovementAnimations
 // UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“\‘¢‘Ì
 struct PlayerAttackAnimations
 {
-	const char* absorptionAttack;	// ‹zûUŒ‚
 	const char* firstAttack;		// 1’i–ÚUŒ‚
 	const char* secondAttack;		// 2’i–ÚUŒ‚
 	const char* thirdAttack;		// 3’i–ÚUŒ‚
@@ -94,6 +93,14 @@ struct PlayerShootAnimations
 	const char* rightArmShoot;  // ‰E˜r”­Ë
 	const char* leftArmShoot;   // ¶˜r”­Ë
 	const char* shootMove;      // ”­ËˆÚ“®
+};
+
+// ‹zûUŒ‚‚ÌƒXƒe[ƒg
+struct PlayerAbsorbAnimations
+{
+	const char* absorbStart;	// ‹zûŠJn
+	const char* absorbActive;	// ‹zû’†
+	const char* absorbEnd;		// ‹zûI—¹
 };
 
 // í“¬ƒAƒjƒ[ƒVƒ‡ƒ“\‘¢‘Ì
@@ -113,6 +120,7 @@ struct PlayerAnimations
 	PlayerMovementAnimations movement;
 	PlayerAttackAnimations attack;
 	PlayerShootAnimations shoot;
+	PlayerAbsorbAnimations absorb;
 	PlayerCombatAnimations combat;
 };
 
@@ -134,7 +142,6 @@ enum class PLAYER_MOVEMENT_STATE
 enum class PLAYER_ATTACK_STATE
 {
 	NONE,
-	ABSORPTION_ATTACK,	// ‹zûUŒ‚
 	FIRST_ATTACK,		// 1’i–ÚUŒ‚
 	SECOND_ATTACK,		// 2’i–ÚUŒ‚
 	THIRD_ATTACK,		// 3’i–ÚUŒ‚
@@ -151,6 +158,16 @@ enum class PLAYER_SHOOT_STATE
 	RIGHT_ARM_SHOOT,	// ‰E˜r”­Ë
 	LEFT_ARM_SHOOT,		// ¶˜r”­Ë
 	SHOOT_MOVE,			// ”­ËˆÚ“®
+	_EOT_,
+};
+
+// ‹zûUŒ‚‚Ìó‘Ô
+enum class PLAYER_ABSORB_STATE
+{
+	NONE,
+	ABSORB_START,	// ‹zûŠJn
+	ABSORB_ACTIVE,	// ‹zû’†
+	ABSORB_END,		// ‹zûI—¹
 	_EOT_,
 };
 
@@ -173,11 +190,13 @@ struct PlayerState
 	PLAYER_MOVEMENT_STATE movementState;	// Šî–{ˆÚ“®ó‘Ô
 	PLAYER_ATTACK_STATE attackState;		// UŒ‚ó‘Ô
 	PLAYER_SHOOT_STATE shootState;			// ’e”­Ëó‘Ô
+	PLAYER_ABSORB_STATE absorbState;		// ‹zûUŒ‚ó‘Ô
 	PLAYER_COMBAT_STATE combatState;		// “Áêó‘Ô
 
 	bool IsStateAttacking() const { return attackState   != PLAYER_ATTACK_STATE::NONE; }
 	bool IsStateMoving()	const { return movementState != PLAYER_MOVEMENT_STATE::NONE; }
 	bool IsStateShooting()	const { return shootState	 != PLAYER_SHOOT_STATE::NONE; }
+	bool IsStateAbsorbing()	const { return absorbState   != PLAYER_ABSORB_STATE::NONE; }
 	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }
 };
 
@@ -228,6 +247,7 @@ public:
 	std::string GetMovementStateString(PLAYER_MOVEMENT_STATE state) const;	// Šî–{ˆÚ“®ó‘Ô•¶š—ñæ“¾
 	std::string GetAttackStateString(PLAYER_ATTACK_STATE state) const;		// UŒ‚ó‘Ô•¶š—ñæ“¾
 	std::string GetShootStateString(PLAYER_SHOOT_STATE state) const;		// ’e”­Ëó‘Ô•¶š—ñæ“¾
+	std::string GetAbsorbStateString(PLAYER_ABSORB_STATE state) const;		// ‹zûUŒ‚ó‘Ô•¶š—ñæ“¾
 	std::string GetCombatStateString(PLAYER_COMBAT_STATE state) const;		// “Áêó‘Ô•¶š—ñæ“¾
 
 	// Œ»İ‚ÌƒAƒjƒ[ƒVƒ‡ƒ“–¼æ“¾
@@ -278,6 +298,9 @@ public:
 
 	PLAYER_SHOOT_STATE GetShootState()const{ return _playerState.shootState; }			// ’e”­Ëó‘Ôæ“¾
 	void SetShootState(PLAYER_SHOOT_STATE state){ _playerState.shootState = state; }	// ’e”­Ëó‘Ôİ’è
+
+	PLAYER_ABSORB_STATE GetAbsorbState()const{ return _playerState.absorbState; }		// ‹zûUŒ‚ó‘Ôæ“¾
+	void SetAbsorbState(PLAYER_ABSORB_STATE state){ _playerState.absorbState = state; }	// ‹zûUŒ‚ó‘Ôİ’è
 
 	PLAYER_COMBAT_STATE GetCombatState()const{ return _playerState.combatState; }		// “Áêó‘Ôæ“¾
 	void SetCombatState(PLAYER_COMBAT_STATE state){ _playerState.combatState = state; }	// “Áêó‘Ôİ’è

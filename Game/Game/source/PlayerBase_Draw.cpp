@@ -101,6 +101,12 @@ std::string PlayerBase::GetCurrentStateString() const
 		result += " | Shoot:" + GetShootStateString(_playerState.shootState);
 	}
 
+	// ‹zûó‘Ô
+	if(_playerState.absorbState != PLAYER_ABSORB_STATE::NONE)
+	{
+		result += " | Absorb:" + GetAbsorbStateString(_playerState.absorbState);
+	}
+
 	// “Áêó‘Ô
 	if(_playerState.combatState != PLAYER_COMBAT_STATE::NONE)
 	{
@@ -156,6 +162,20 @@ std::string PlayerBase::GetShootStateString(PLAYER_SHOOT_STATE state) const
 		default:                                 return "UNKNOWN";
 	}
 }
+
+// ‹zûUŒ‚ó‘Ô•¶š—ñæ“¾
+std::string PlayerBase::GetAbsorbStateString(PLAYER_ABSORB_STATE state) const
+{
+	switch(state)
+	{
+		case PLAYER_ABSORB_STATE::NONE:				return "NONE";
+		case PLAYER_ABSORB_STATE::ABSORB_START:		return "ABSORB_START";	// ‹zûŠJn
+		case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:	return "ABSORB_ACTIVE";	// ‹zû’†
+		case PLAYER_ABSORB_STATE::ABSORB_END:		return "ABSORB_END";	// ‹zûI—¹
+		default:									return "UNKNOWN";
+	}
+}
+
 
 // “Áêó‘Ô•¶š—ñæ“¾
 std::string PlayerBase::GetCombatStateString(PLAYER_COMBAT_STATE state) const

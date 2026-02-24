@@ -360,7 +360,6 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.attackState)
 		{
-			case PLAYER_ATTACK_STATE::ABSORPTION_ATTACK:	return _playerAnim.attack.absorptionAttack;	// 吸収攻撃
 			case PLAYER_ATTACK_STATE::FIRST_ATTACK:			return _playerAnim.attack.firstAttack;		// 1段目攻撃
 			case PLAYER_ATTACK_STATE::SECOND_ATTACK:		return _playerAnim.attack.secondAttack;		// 2段目攻撃
 			case PLAYER_ATTACK_STATE::THIRD_ATTACK:			return _playerAnim.attack.thirdAttack;		// 3段目攻撃
@@ -377,6 +376,16 @@ const char* PlayerBase::GetCurrentAnimationName() const
 			case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT:	return _playerAnim.shoot.rightArmShoot;	// 右腕発射
 			case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:	return _playerAnim.shoot.leftArmShoot;	// 左腕発射
 			case PLAYER_SHOOT_STATE::SHOOT_MOVE:		return _playerAnim.shoot.shootMove;		// 発射移動
+		}
+	}
+
+	if(_playerState.absorbState != PLAYER_ABSORB_STATE::NONE)
+	{
+		switch(_playerState.absorbState)
+		{
+			case PLAYER_ABSORB_STATE::ABSORB_START:		return _playerAnim.absorb.absorbStart;	// 吸収開始
+			case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:	return _playerAnim.absorb.absorbActive;	// 吸収中
+			case PLAYER_ABSORB_STATE::ABSORB_END:		return _playerAnim.absorb.absorbEnd;	// 吸収終了
 		}
 	}
 
@@ -404,6 +413,7 @@ int PlayerBase::GetLoopCount() const
 	// 発射状態の場合1回再生
 	if(_playerState.combatState	 != PLAYER_COMBAT_STATE::NONE ||
 		_playerState.attackState != PLAYER_ATTACK_STATE::NONE ||
+		_playerState.absorbState != PLAYER_ABSORB_STATE::NONE ||
 		_playerState.shootState	 != PLAYER_SHOOT_STATE::NONE)
 	{
 		return 1;
@@ -420,5 +430,6 @@ bool PlayerBase::HasStateChanged()const
 	return (_oldPlayerState.movementState != _playerState.movementState ||	// 移動状態
 			_oldPlayerState.attackState   != _playerState.attackState	||	// 攻撃状態
 			_oldPlayerState.shootState    != _playerState.shootState	||	// 発射状態
+			_oldPlayerState.absorbState	  != _playerState.absorbState	||	// 吸収攻撃状態
 			_oldPlayerState.combatState   != _playerState.combatState);		// 戦闘状態
 }
