@@ -176,6 +176,9 @@ namespace Melee
 		if (dot < FAN_VISION_COS) { return false; }
 
 		// 障害物チェック
+		VECTOR vStart = owner->GetPos();
+		VECTOR vEnd = target->GetPos();
+		if (!owner->CheckLineOfSight(vStart, vEnd)) { return false; }
 
 		return true;
 	}
