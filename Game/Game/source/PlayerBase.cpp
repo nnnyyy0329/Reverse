@@ -157,15 +157,17 @@ void PlayerBase::InitializeState()
 {
 	// 基礎ステータスの初期化
 	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 待機状態
-	_playerState.attackState   = PLAYER_ATTACK_STATE::NONE;
-	_playerState.shootState	   = PLAYER_SHOOT_STATE::NONE;
-	_playerState.combatState   = PLAYER_COMBAT_STATE::NONE;
+	_playerState.attackState   = PLAYER_ATTACK_STATE  ::NONE;
+	_playerState.shootState	   = PLAYER_SHOOT_STATE   ::NONE;
+	_playerState.absorbState   = PLAYER_ABSORB_STATE  ::NONE;
+	_playerState.combatState   = PLAYER_COMBAT_STATE  ::NONE;
 
 	// 古いステートを異なる値に設定して状態変化を認識させる
 	_oldPlayerState.movementState = PLAYER_MOVEMENT_STATE::NONE;
-	_oldPlayerState.attackState   = PLAYER_ATTACK_STATE::NONE;
-	_oldPlayerState.shootState	  = PLAYER_SHOOT_STATE::NONE;
-	_oldPlayerState.combatState   = PLAYER_COMBAT_STATE::NONE;
+	_oldPlayerState.attackState   = PLAYER_ATTACK_STATE  ::NONE;
+	_oldPlayerState.shootState	  = PLAYER_SHOOT_STATE	 ::NONE;
+	_oldPlayerState.absorbState	  = PLAYER_ABSORB_STATE	 ::NONE;
+	_oldPlayerState.combatState   = PLAYER_COMBAT_STATE	 ::NONE;
 }
 
 // アニメーション初期化
@@ -199,6 +201,9 @@ bool PlayerBase::Process()
 
 	// 弾発射処理の仮想関数
 	ProcessShoot();
+
+	// 吸収攻撃の仮想関数
+	ProcessAbsorb();
 
 	// 回避関係Process呼び出し用関数
 	CallProcessDodge();

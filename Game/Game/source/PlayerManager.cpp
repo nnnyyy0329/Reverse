@@ -399,6 +399,8 @@ void PlayerManager::EndTransformCancel()
 		_activePlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);
 	}
 
+	_cameraManager->EndAimMode();	// エイムモード終了
+
 	_fTransformCancelTime = 0.0f;
 	_bIsTransformCanceling = false;
 }
