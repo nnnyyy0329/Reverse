@@ -29,8 +29,9 @@ namespace
 	constexpr auto LOST_NEARBY_HOME = 10.0f;			// 帰還完了判定距離
 
 	// 時間制御用定数
-	constexpr auto ATTACK_CHARGE_TIME = 30.0f;			// 攻撃溜め時間
+	constexpr auto ATTACK_CHARGE_TIME = 40.0f;			// 攻撃溜め時間
 	constexpr auto ATTACK_EXECUTE_TIME = 90.0f;			// 攻撃実行時間
+	constexpr auto COUNTER_EXECUTE_TIME = 60.0f;		// カウンター攻撃実行時間
 	constexpr auto ATTACK_RECOVERY_TIME = 60.0f;		// 攻撃後隙時間
 
 	constexpr auto RUSH_CHARGE_TIME = 30.0f;			// 突進攻撃溜め時間
@@ -41,23 +42,18 @@ namespace
 	constexpr auto CONFRONT_MIN_DURATION = 90.0f;		// 対峙最小時間
 	constexpr auto CONFRONT_MAX_DURATION = 180.0f;		// 対峙最大時間
 
-	constexpr auto ATTACK_DELAY = 50.0f;				// 攻撃発生遅延
+	constexpr auto ATTACK_DELAY = 10.0f;				// 攻撃発生遅延
+	constexpr auto COUNTER_DELAY = 33.0f;				// カウンター攻撃発生遅延
 	constexpr auto ATTACK_DURATION = 15.0f;				// 攻撃持続時間
+	constexpr auto COUNTER_DURATION = 10.0f;			// カウンター攻撃持続時間
 	constexpr auto ATTACK_DAMAGE = 20.0f;				// 攻撃ダメージ量
 	constexpr auto RUSH_DAMAGE = 1.0f;					// 突進攻撃ダメージ量
-
-	constexpr auto LOST_LOOK_MIN_TIME = 60.0f;			// 方向あたりの最低見渡し時間
-
-	constexpr auto COUNTER_EXECUTE_TIME = 60.0f;		// カウンター攻撃実行時間
 
 	constexpr auto BLEND_FRAME = 10.0f;					// アニメーションブレンドフレーム数
 	
 	// 確率制御用定数
 	constexpr auto CONFRONT_PROBABILITY = 0;			// 対峙状態への遷移確率(%)
 	constexpr auto RUSH_PROBABILITY = 0;				// 突進攻撃選択確率(%)
-
-	constexpr auto WANDER_ANGLE_RANDOM_RANGE = 90;		// 徘徊時の角度ランダム範囲(度)
-	constexpr auto WANDER_ANGLE_RANDOM_OFFSET = 45;		// 徘徊時の角度ランダムオフセット(度)
 	
 	// 速度制御用定数
 	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;			// スムーズ回転速度
@@ -67,17 +63,19 @@ namespace
 	constexpr auto CONFRONT_RETREAT_SPEED = 1.0f;		// 対峙時の後退速度
 
 	constexpr auto ATTACK_APPROACH_SPEED = 2.0f;		// 攻撃開始時の接近速度
+	constexpr auto ATTACK_EXECUTE_SPEED = 2.5f;			// 攻撃実行時の前進速度
 
 	constexpr auto RUSH_INITIAL_SPEED = 10.0f;			// 突進攻撃初速
 	constexpr auto RUSH_DECELERATION_RATE = 0.95f;		// 突進攻撃減速率
 	constexpr auto RUSH_MIN_SPEED_THRESHOLD = 0.1f;		// 突進攻撃最小速度閾値(これ以下で到達とみなす)
 	
-	constexpr auto LOST_ROTATE_SPEED = 3.0f;			// 見渡し回転速度
+	constexpr auto LOST_ROTATE_SPEED = 1.5f;			// 見渡し回転速度
 
 	// アニメーション制御用定数
 	constexpr auto ANIM_LOOP_COUNT = 0;					// アニメーションループ回数(0=無限)
 	constexpr auto ANIM_PLAY_COUNT = 1;					// アニメーション再生回数
 	constexpr auto ANIM_SPEED_NORMAL = 1.0f;			// アニメーション再生速度(通常)
+	constexpr auto ANIM_SPEED_FAST = 1.5f;				// アニメーション再生速度(速い)
 
 	// エフェクト関連
 	constexpr auto ATTACK_EFFECT_OFFSET_Y = 80.0f;		// 攻撃エフェクトYオフセット
@@ -89,7 +87,14 @@ namespace
 	constexpr auto CONFRONT_DURATION_RANGE = 45.0f;		// 対峙時間のランダム幅
 	constexpr auto LOST_LOOK_RANDOM_TIME = 60.0f;		// 見渡し時間ランダム幅
 
+	constexpr auto LOST_LOOK_ARRIVE_THRESHOLD = 2.0f;	// 見渡し到達判定角度
+	constexpr auto LOST_LOOK_ANGLE = 45.0f;				// 見渡し回転角度
 	constexpr auto LOST_LOOK_COUNT = 3;					// 見渡し回数
+	constexpr auto LOST_WAIT_TIME = 60.0f;				// 帰還前の待機時間
+
+	constexpr auto FAN_VISON_HALF_ANGLE = 45.0f;// 扇形視界の半角(度)
+	const float FAN_VISION_COS = cosf(FAN_VISON_HALF_ANGLE * DEGREE_TO_RADIAN);// cos値
+	constexpr auto TARGET_DETECT_RADIUS = 20.0f;// ターゲット検出に幅を持たせる(半径)
 
 	// 攻撃コリジョン設定生成
 	EnemyAttackSettings MakeMeleeAttackSettings()
@@ -131,8 +136,8 @@ namespace
 		settings.vTopOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y + ATTACK_COLLISION_HEIGHT, ATTACK_COLLISION_OFFSET_Z);
 		settings.vBottomOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y, ATTACK_COLLISION_OFFSET_Z);
 		settings.fRadius = ATTACK_COLLISION_RADIUS;
-		settings.fDelay = ATTACK_DELAY;
-		settings.fDuration = ATTACK_DURATION;
+		settings.fDelay = COUNTER_DELAY;
+		settings.fDuration = COUNTER_DURATION;
 		settings.fRecovery = 0.0f;
 		settings.fDamage = 1.0f;
 		settings.ownerId = 0;
@@ -147,21 +152,30 @@ namespace
 
 namespace Melee
 {
-	// 視界判定
-	bool IsTargetVisible(Enemy* owner)
+	// 扇形視界判定
+	bool IsTargetVisibleFan(Enemy* owner)
 	{
-		// ターゲット存在チェック
 		auto target = owner->GetTarget();
 		if (!target) { return false; }
 
-		// ベクトル計算
 		VECTOR vToTarget = VSub(target->GetPos(), owner->GetPos());
-		
-		// 距離チェック
+		vToTarget.y = 0.0f;
+
 		float dist = VSize(vToTarget);
+		if (dist <= TARGET_DETECT_RADIUS) { return true; }// 発見したとみなす
 		if (dist > owner->GetEnemyParam().fVisionRange) { return false; }
 
-		// 障害物チェック(未実装)
+		// 角度チェック
+		VECTOR vOwnerDir = owner->GetDir();
+		vOwnerDir.y = 0.0f;// 水平面上での判定
+		vOwnerDir = VNorm(vOwnerDir);
+
+		VECTOR vToTargetNorm = VNorm(vToTarget);
+
+		float dot = VDot(vOwnerDir, vToTargetNorm);
+		if (dot < FAN_VISION_COS) { return false; }
+
+		// 障害物チェック
 
 		return true;
 	}
@@ -209,8 +223,8 @@ namespace Melee
 
 	void Idle::UpdateSearch(Enemy* owner)
 	{
-		// 視界判定結果を設定
-		owner->SetTargetDetected(Melee::IsTargetVisible(owner));
+		// 扇形判定
+		owner->SetTargetDetected(Melee::IsTargetVisibleFan(owner));
 	}
 
 
@@ -268,8 +282,7 @@ namespace Melee
 
 	void Wander::UpdateSearch(Enemy* owner)
 	{
-		// 視界判定結果を設定
-		owner->SetTargetDetected(Melee::IsTargetVisible(owner));
+		owner->SetTargetDetected(Melee::IsTargetVisibleFan(owner));
 	}
 
 
@@ -349,6 +362,10 @@ namespace Melee
 		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
 		if (result) { return result; }
 
+		// 移動可能範囲外チェック
+		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
+		if (areaResult) { return areaResult; }
+
 		// 対峙ステートになるかチェック
 		if (targetInfo.fDist <= CONFRONT_ENTER_DISTANCE)
 		{
@@ -416,6 +433,10 @@ namespace Melee
 		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
 		if (result) { return result; }
 
+		// 移動可能範囲外チェック
+		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
+		if (areaResult) { return areaResult; }
+
 		// 攻撃タイプ別の遷移処理
 		if (_eAttackType == AttackType::RUSH)
 		{
@@ -442,11 +463,10 @@ namespace Melee
 		// タイマー初期化
 		_fTimer = 0.0f;
 
-		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_NORMAL);
 		}
 	}
 
@@ -481,11 +501,6 @@ namespace Melee
 		_bHasCollision = false;
 
 		// アニメーション設定
-		AnimManager* animManager = owner->GetAnimManager();
-		if (animManager)
-		{
-			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_NORMAL);
-		}
 
 		// エフェクト
 		{
@@ -511,8 +526,15 @@ namespace Melee
 		// タイマー更新
 		_fTimer++;
 
-		// 移動停止
-		StopMove(owner);
+		// 少し前進しながら攻撃
+		if (_fTimer >= ATTACK_DELAY && _fTimer <= ATTACK_DELAY + ATTACK_DURATION)
+		{
+			MoveToTarget(owner, owner->GetDir(), ATTACK_EXECUTE_SPEED);
+		}
+		else// その後は移動停止
+		{
+			StopMove(owner);
+		}
 
 		// 攻撃コリジョン生成
 		if (_bHasCollision)
@@ -891,18 +913,18 @@ namespace Melee
 	void LostTarget::Enter(Enemy* owner)
 	{
 		_fTimer = 0.0f;
+		_fWaitTimer = 0.0f;
 		_ePhase = Phase::LOOK_AROUND;// 見渡しから
 		_lookCnt = 0;
 
-		// 見渡し方向
-		float fCurrentAngle = atan2f(owner->GetDir().x, owner->GetDir().z);
-		float fOffset = static_cast<float>(GetRand(180) - 90) * DEGREE_TO_RADIAN;// -90 ~ +90度のランダムオフセット 
-		float fTargetAngle = fCurrentAngle + fOffset;
-		_vLookDir = VGet(sinf(fTargetAngle), 0.0f, cosf(fTargetAngle));
-		_vLookDir = VNorm(_vLookDir);
-		// 見渡し時間
-		_fLookDuration = CalcRandomRangeTime(LOST_LOOK_MIN_TIME, LOST_LOOK_RANDOM_TIME);
-		_fLookTimer = 0.0f;
+		// 現在の向きを基準の角度とする
+		_fBaseAngle = atan2f(owner->GetDir().x, owner->GetDir().z);
+		_vBaseDir = owner->GetDir();
+		_vBaseDir.y = 0.0f;
+		_vBaseDir = VNorm(_vBaseDir);
+
+		// 最初の見渡し方向を設定
+		SetNextLookDir();
 
 		StopMove(owner);
 
@@ -929,37 +951,61 @@ namespace Melee
 			// 目標方向へ回転
 			RotateToTarget(owner, _vLookDir, LOST_ROTATE_SPEED);
 
-			_fLookTimer++;
+			// 現在の向きと目標方向の角度差を計算
+			VECTOR vCurrentDir = owner->GetDir();
+			float dot = VDot(vCurrentDir, _vLookDir);
+			if (dot > 1.0f) { dot = 1.0f; }
+			if (dot < -1.0f) { dot = -1.0f; }
+			float diffDeg = acosf(dot) * RADIAN_TO_DEGREE;
 
-			// 見渡し時間経過で次の見渡し方向へ
-			if (_fLookTimer >= _fLookDuration)
+			// 目標方向に到達したら次の見渡し方向へ
+			if (diffDeg <= LOST_LOOK_ARRIVE_THRESHOLD)
 			{
 				_lookCnt++;
 
 				if (_lookCnt >= LOST_LOOK_COUNT)
 				{
-					// 見渡し完了で帰還フェーズで
-					_ePhase = Phase::RETURN_HOME;
-
-					// アニメーション設定
-					AnimManager* animManager = owner->GetAnimManager();
-					if (animManager)
-					{
-						animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
-					}
+					_ePhase = Phase::TO_BASE;
+				}
+				else
+				{
+					// 次の見渡し方向設定
+					SetNextLookDir();
 				}
 			}
-			else
+		}
+		else if (_ePhase == Phase::TO_BASE)
+		{
+			// 基準方向へ回転
+			RotateToTarget(owner, _vBaseDir, LOST_ROTATE_SPEED);
+
+			// 基準方向への到達判定
+			VECTOR vCurrentDir = owner->GetDir();
+			float dot = VDot(vCurrentDir, _vBaseDir);
+			if (dot > 1.0f) { dot = 1.0f; }
+			if (dot < -1.0f) { dot = -1.0f; }
+			float diffDeg = acosf(dot) * RADIAN_TO_DEGREE;
+
+			if(diffDeg <= LOST_LOOK_ARRIVE_THRESHOLD)
 			{
-				// 次の見渡し方向をランダムに決定
-				float fCurrentAngle = atan2f(owner->GetDir().x, owner->GetDir().z);
-				float fOffset = static_cast<float>(GetRand(240) - 120) * DEGREE_TO_RADIAN;// -120 ~ +120度のランダムオフセット
-				float fTargetAngle = fCurrentAngle + fOffset;
-				_vLookDir = VGet(sinf(fTargetAngle), 0.0f, cosf(fTargetAngle));
-				_vLookDir = VNorm(_vLookDir);
-				// 見渡し時間
-				_fLookDuration = CalcRandomRangeTime(LOST_LOOK_MIN_TIME, LOST_LOOK_RANDOM_TIME);
-				_fLookTimer = 0.0f;
+				_ePhase = Phase::WAIT;
+				_fWaitTimer = 0.0f;
+			}
+		}
+		else if(_ePhase == Phase::WAIT)
+		{
+			_fWaitTimer++;
+
+			if(_fWaitTimer >= LOST_WAIT_TIME)
+			{
+				_ePhase = Phase::RETURN_HOME;
+
+				// アニメーション設定
+				AnimManager* animManager = owner->GetAnimManager();
+				if (animManager)
+				{
+					animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+				}
 			}
 		}
 		else// RETURN_HOME
@@ -970,12 +1016,12 @@ namespace Melee
 
 			if (dist <= LOST_NEARBY_HOME)
 			{
-				return std::make_shared<Idle>();// 帰還完了
+				return std::make_shared<Idle>();
 			}
 
 			// 初期位置方向へ移動
 			VECTOR vDir = VNorm(vToHome);
-			RotateToTarget(owner, vDir, LOST_ROTATE_SPEED);
+			RotateToTarget(owner, vDir, SMOOTH_ROTATE_SPEED);
 			MoveToTarget(owner, vDir, owner->GetEnemyParam().fMoveSpeed);
 		}
 
@@ -984,7 +1030,16 @@ namespace Melee
 
 	void LostTarget::UpdateSearch(Enemy* owner)
 	{
-		owner->SetTargetDetected(Melee::IsTargetVisible(owner));
+		owner->SetTargetDetected(Melee::IsTargetVisibleFan(owner));
+	}
+
+	void LostTarget::SetNextLookDir()
+	{
+		// lookCntの偶数奇数で左右交互に振り分け
+		float sign = (_lookCnt % 2 == 0) ? 1.0f : -1.0f;
+		float fTargetAngle = _fBaseAngle + sign * LOST_LOOK_ANGLE * DEGREE_TO_RADIAN;
+		_vLookDir = VGet(sinf(fTargetAngle), 0.0f, cosf(fTargetAngle));
+		_vLookDir = VNorm(_vLookDir);
 	}
 
 
@@ -1008,7 +1063,7 @@ namespace Melee
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_NORMAL);
+			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_FAST);
 		}
 
 		// 攻撃コリジョン生成

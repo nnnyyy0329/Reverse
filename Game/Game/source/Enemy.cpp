@@ -128,10 +128,15 @@ bool Enemy::Process()
 	_vPos = VAdd(_vPos, _vMove);// 位置更新
 
 	// 移動可能範囲チェック
-	//if (!CheckInsideMoveArea(_vPos))
-	//{
-	//	_vPos = _vOldPos;// 範囲外なら移動前の位置に戻す
-	//}
+	if (!CheckInsideMoveArea(_vPos))
+	{
+		_vPos = _vOldPos;// 範囲外なら移動前の位置に戻す
+		_bIsOutSideMoveArea = true;// エリア外フラグ
+	}
+	else
+	{
+		_bIsOutSideMoveArea = false;
+	}
 
 	// カプセルに座標を対応させる
 	_vCollisionBottom = VAdd(_vPos, VGet(0.0f, _fCollisionR, 0.0f));// 半径分ずらして中心位置に
@@ -414,10 +419,6 @@ void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 void Enemy::SetEnemyParam(const EnemyParam& param) 
 {
 	_enemyParam = param;
-
-	// 視界のcos値を計算して設定
-	auto rad = _enemyParam.fVisionAngle * DEGREE_TO_RADIAN;
-	_enemyParam.fVisionCos = cosf(rad);
 }
 
 void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime) 

@@ -22,11 +22,10 @@ inline std::shared_ptr<EnemyState> EnemyState::TransitionToLostOverChaseLimit(En
 	return nullptr;
 }
 
-
 template<typename IdleState>
 inline std::shared_ptr<EnemyState> EnemyState::TransitionToIdleOutsideArea(Enemy* owner)
 {
-	if (!owner->CheckInsideMoveArea(owner->GetPos()))
+	if (owner->IsOutSideMoveArea())
 	{
 		return std::make_shared<IdleState>();
 	}
@@ -37,7 +36,7 @@ inline std::shared_ptr<EnemyState> EnemyState::TransitionToIdleOutsideArea(Enemy
 template<typename LostTargetState>
 inline std::shared_ptr<EnemyState> EnemyState::TransitionToLostOutsideArea(Enemy* owner)
 {
-	if (!owner->CheckInsideMoveArea(owner->GetPos()))
+	if (owner->IsOutSideMoveArea())
 	{
 		owner->SetTargetDetected(false);
 		return std::make_shared<LostTargetState>();

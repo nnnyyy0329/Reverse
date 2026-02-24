@@ -107,6 +107,8 @@ bool ModeLoading::Initialize()
 			rs->Register("object_blackboard", "res/stage/json/object_blackboard.mv1", RESOURCE_TYPE::Model, 1.0f);
 			// ポータル
 			rs->Register("S_Portal_0to1", "res/stage/json/S_Portal_0to1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			// 敵の移動可能範囲
+			rs->Register("Enemy_Area", "res/stage/json/Enemy_Area.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ステージ2のモデル
 			rs->Register("stage2_floor_1", "res/stage/stage2_floor_1.mv1", RESOURCE_TYPE::Model, 1.0f);

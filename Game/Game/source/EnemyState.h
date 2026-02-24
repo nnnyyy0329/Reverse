@@ -19,13 +19,10 @@ struct EnemyParam
 	float fMoveSpeed = 2.0f;// “G‚ÌŠî–{ˆÚ“®‘¬“x
 
 	float fVisionRange = 0.0f;// “G‚Ìõ“G‹——£
-	float fVisionAngle = 0.0f;// “G‚Ì‹ŠE‚ÌŠp“x(”¼•ª)
-	float fVisionCos = 0.0f;// ”»’è‚Åg‚¤cos’l
+	float fVisionAngle = 0.0f;// “G‚Ì‹ŠE‚ÌŠp“x
 
 	float fAttackRange = 0.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
 	float fChaseLimitRange = 0.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ß‚ğ‚â‚ß‚é‹——£
-
-	float fAttackInterval = 0.0f;// UŒ‚ŠÔŠu
 
 	float fTurnSpeed = 60.0f;// ù‰ñ‘¬“x(“x / ƒtƒŒ[ƒ€)
 

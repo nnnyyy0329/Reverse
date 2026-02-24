@@ -12,7 +12,7 @@ namespace
 
 	// Melee
 	constexpr auto MELEE_VISION_RANGE = 250.0f;// õ“G‹——£
-	constexpr auto MELEE_VISION_ANGLE = 180.0f;// ‰~‚Å‚Ìõ“G
+	constexpr auto MELEE_VISION_ANGLE = 60.0f;// ‰~‚Å‚Ìõ“G
 	constexpr auto MELEE_ATTACK_RANGE = 120.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
 	constexpr auto MELEE_CHASE_LIMIT_RANGE = 600.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ß‚ğ‚â‚ß‚é‹——£
 	constexpr auto MELEE_IDLE_TIME = 120.0f;// ‘Ò‹@ŠÔ

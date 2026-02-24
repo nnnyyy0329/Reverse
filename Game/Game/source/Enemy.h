@@ -78,6 +78,7 @@ public:
 
 	// 移動可能範囲チェック
 	bool CheckInsideMoveArea(VECTOR vPos);// 指定座標が移動可能範囲内かどうか
+	bool IsOutSideMoveArea() { return _bIsOutSideMoveArea; }
 
 	// 連続被ダメカウント管理
 	int GetDamageComboCnt() { return _damageComboCnt; }
@@ -135,6 +136,8 @@ protected:
 
 	int _damageComboCnt = 0;// 連続被ダメ回数
 	float _fDamageComboResetTimer = 0.0f;// リセットタイマー
+
+	bool _bIsOutSideMoveArea = false;// エリア外へ移動しようとしたか
 
 private:
 	void LoadEnemyModel();// モデルを名前に応じて読み込む

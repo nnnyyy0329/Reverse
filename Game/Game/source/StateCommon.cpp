@@ -22,7 +22,7 @@ namespace
 	// 被ダメージ
 	constexpr auto DAMAGE_ANIM_LENGTH = 42.0f;// ダメージアニメーションの長さ
 	// コンボ数ごとに再生スピードを遅くする
-	constexpr float DAMAGE_ANIM_SPEEDS[] = { 1.2f, 1.0f, 0.8f, 0.6f };
+	constexpr float DAMAGE_ANIM_SPEEDS[] = { 2.0f, 1.5f, 1.0f, 0.5f };
 	// コンボ数から再生スピードを取得
 	float GetDamageAnimSpeed(int comboCnt)
 	{

@@ -3,8 +3,8 @@
 
 namespace Melee
 {
-	// 円形視界判定(距離のみチェック)
-	bool IsTargetVisible(Enemy* owner);
+	// 扇形視界判定 : 未発見
+	bool IsTargetVisibleFan(Enemy* owner);
 
 	// 待機
 	class Idle : public EnemyState
@@ -192,14 +192,19 @@ namespace Melee
 		enum class Phase
 		{
 			LOOK_AROUND,// 周囲を見渡す
+			TO_BASE,// 基準方向へ戻る
+			WAIT,// 帰還前に待機
 			RETURN_HOME// 帰還
 		};
 		Phase _ePhase;
 
 		VECTOR _vLookDir;// 見渡しの目標方向
-		float _fLookTimer;// 現在の向きを維持するタイマー
-		float _fLookDuration;// 現在の向きの維持時間
+		VECTOR _vBaseDir;// 基準方向
+		float _fBaseAngle;// 基準角度
 		int _lookCnt;// 見渡し回数
+		float _fWaitTimer;// 待機タイマー
+
+		void SetNextLookDir();// 次の見渡し方向を設定
 	};
 
 
