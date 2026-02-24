@@ -79,7 +79,7 @@ void AbilitySelectScreen::SelectScreenByInput()
 {
 	//if(!IsSelectActiveByPlayerType()){ return; }	// プレイヤータイプに応じて選択可能かどうか
 
-	if(_trg & PAD_INPUT_8)
+	if(_inputManager->IsTrigger(INPUT_ACTION::TRANSFORM))
 	{
 		_bIsScreenActive = !_bIsScreenActive;
 	}
@@ -92,7 +92,7 @@ void AbilitySelectScreen::SelectionByInput()
 	if(!_bIsScreenActive){ return; }	// 選択画面が表示されていなかったら処理しない
 
 	// 左キーが押されたら
-	if(_trg & PAD_INPUT_LEFT)
+	if(_inputManager->IsTrigger(INPUT_ACTION::MOVE_LEFT))
 	{
 		_iCurrentSelection--;	// 左に移動
 
@@ -105,7 +105,7 @@ void AbilitySelectScreen::SelectionByInput()
 	}
 
 	// 右キーが押されたら
-	if(_trg & PAD_INPUT_RIGHT)
+	if(_inputManager->IsTrigger(INPUT_ACTION::MOVE_RIGHT))
 	{
 		_iCurrentSelection++;	// 右に移動
 
@@ -118,7 +118,7 @@ void AbilitySelectScreen::SelectionByInput()
 	}
 
 	// Zキーで決定
-	if(_trg & PAD_INPUT_1)
+	if(_inputManager->IsTrigger(INPUT_ACTION::TRANSFORM))
 	{
 		_iSelectedAbility = _iCurrentSelection;	// 選択されたアビリティを保存
 		_bIsSelectComplete = true;				// 選択完了

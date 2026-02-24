@@ -46,12 +46,6 @@ bool CameraManager::Process()
 // カメラ切り替え
 void CameraManager::SwitchCamera()
 {
-	if(_trg & PAD_INPUT_4)
-	{
-		// デバッグカメラ使用フラグ切り替え
-		//_bIsUseDebugCamera = !_bIsUseDebugCamera;
-	}
-
 	if(!IsAimMode())
 	{
 		// カメラタイプ切り替え
@@ -79,7 +73,7 @@ void CameraManager::SwitchCameraProcess()
 		{
 			if(_gameCamera)
 			{
-				_gameCamera->Process(_key, _trg, _lx, _ly, _rx, _ry, _analogMin, false);
+				_gameCamera->Process(_inputManager, false);
 			}
 
 			break;
@@ -93,9 +87,9 @@ void CameraManager::SwitchCameraProcess()
 				bool isInput = false;
 
 				// 押している間は入力を有効にする
-				if(_key & PAD_INPUT_2){ isInput = true; }
+				isInput = _inputManager && _inputManager->IsHold(INPUT_ACTION::DODGE);
 
-				_debugCamera->Process(_key, _trg, _lx, _ly, _rx, _ry, _analogMin, isInput);
+				_debugCamera->Process(_inputManager, isInput);
 			}
 
 			break;
@@ -106,7 +100,7 @@ void CameraManager::SwitchCameraProcess()
 		{
 			if(_aimCamera)
 			{
-				_aimCamera->Process(_key, _trg, _lx, _ly, _rx, _ry, _analogMin, true);
+				_aimCamera->Process(_inputManager, true);
 			}
 
 			break;
@@ -322,4 +316,14 @@ void CameraManager::SetPlayer(std::shared_ptr<PlayerBase> player)
 	{
 		_aimCamera->SetTarget(player);	// エイムカメラにターゲット設定
 	}
+}
+
+void CameraManager::SetInputManager(InputManager* input)
+{
+	_inputManager = input;
+
+	// 各カメラにもセット
+	if (_gameCamera) { _gameCamera->SetInputManager(input); }
+	if (_debugCamera) { _debugCamera->SetInputManager(input); }
+	if (_aimCamera) { _aimCamera->SetInputManager(input); }
 }

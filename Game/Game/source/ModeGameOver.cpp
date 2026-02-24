@@ -29,9 +29,9 @@ bool ModeGameOver::Process()
 	// これより下のモードの処理をスキップ
 	ModeServer::GetInstance()->SkipProcessUnderLayer();
 
-	int trg = ApplicationMain::GetInstance()->GetTrg();
+	InputManager* input = InputManager::GetInstance();
 
-	if (trg & PAD_INPUT_10) {// spaceキー
+	if (input->IsTrigger(INPUT_ACTION::SELECT)) {// spaceキー
 		// 現在のステージ番号からリスタート
 		ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
 		if (modeGame != nullptr)

@@ -26,8 +26,17 @@ DebugCamera::~DebugCamera()
 
 // 左スティック:ターゲットの移動(ボタン同時押し(B)で高さ変更、ズーム)
 // 右スティック:カメラの回転
-void DebugCamera::Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool bIsPut)
+void DebugCamera::Process(InputManager* input, bool isInput)
 {
+	const AnalogState& analog = input->GetAnalog();
+	float analogMin = input->GetAnalogMin();
+	float rx = analog.rx;
+	float ry = analog.ry;
+	float lx = analog.lx;
+	float ly = analog.ly;
+
+	bool bIsPut = input->IsHold(INPUT_ACTION::DODGE);
+
 	// カメラの回転
 	{
 		if (abs(rx) > analogMin) _angleH -= rx * ROTATE_SPEED;

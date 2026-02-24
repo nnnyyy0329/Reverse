@@ -293,7 +293,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 			_bCanCombo = true;
 
 			// ŽŸ‚ÌUŒ‚“ü—Í‚ª‚ ‚ê‚ÎŽŸ‚ÌUŒ‚‚Ö
-			if((_trg & PAD_INPUT_1) && CanNextAttack())
+			if(_inputManager->IsTrigger(INPUT_ACTION::ATTACK) && CanNextAttack())
 			{
 				//ProcessNextAttack(attackIndex);
 			}
@@ -303,7 +303,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 		case ATTACK_STATE::RECOVERY:	// d’¼’†
 		{
 			// ŽŸ‚ÌUŒ‚“ü—Í‚ª‚ ‚ê‚ÎŽŸ‚ÌUŒ‚‚Ö
-			if((_trg & PAD_INPUT_1) && CanNextAttack())
+			if(_inputManager->IsTrigger(INPUT_ACTION::ATTACK) && CanNextAttack())
 			{
 				ProcessNextAttack(attackIndex);
 			}
@@ -394,12 +394,14 @@ void PlayerBase::ReceiveAttackColData()
 // UŒ‚‚ðŠJŽn‚Å‚«‚é‚©ƒ`ƒFƒbƒN
 bool PlayerBase::IsStartAttack()
 {
+	if (!_inputManager) { return false; }
+
 	// UŒ‚“ü—Íƒ`ƒFƒbƒN
 	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||	// ‘Ò‹@‚©
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||	// •à‚«‚©
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN) &&	// ‘–‚è‚Å
 		_playerState.attackState   == PLAYER_ATTACK_STATE::NONE	  &&	// UŒ‚ó‘Ô‚Å‚Í‚È‚­
-		_trg & PAD_INPUT_1)												// “ü—Í‚ª‚ ‚é‚È‚ç
+		_inputManager->IsTrigger(INPUT_ACTION::ATTACK))												// “ü—Í‚ª‚ ‚é‚È‚ç
 	{
 		return true;
 	}

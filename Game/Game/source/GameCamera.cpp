@@ -25,8 +25,13 @@ GameCamera::GameCamera()
 	_targetOffset = VGet(0.0f, 150.0f, 0.0f);
 }
 
-void GameCamera::Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool isInput)
+void GameCamera::Process(InputManager* input, bool isInput)
 {
+	const AnalogState& analog = input->GetAnalog();
+	float analogMin = input->GetAnalogMin();
+	float rx = analog.rx;
+	float ry = analog.ry;
+
 	// ƒJƒƒ‰XVˆ—
 	UpdateCamera();
 

@@ -168,33 +168,25 @@ bool ModeGame::Process()
 {
 	base::Process();
 	
-	int key = ApplicationMain::GetInstance()->GetKey();
-	int trg = ApplicationMain::GetInstance()->GetTrg();
-	auto analog = ApplicationMain::GetInstance()->GetAnalog();
-	float lx = analog.lx;
-	float ly = analog.ly;
-	float lz = analog.lz;
-	float rx = analog.rx;
-	float ry = analog.ry;
-	float rz = analog.rz;
-	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
+	// InputManagerから入力を取得
+	InputManager* input = InputManager::GetInstance();
  
-	/// 入力取得
+	// 入力を渡す
 	{
 		// プレイヤーマネージャーに入力状態を渡す
 		if(_playerManager)
 		{
-			_playerManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
+			_playerManager->SetInputManager(input);
 		}
 		// カメラマネージャーに入力状態を渡す
 		if(_cameraManager)
 		{
-			_cameraManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
+			_cameraManager->SetInputManager(input);
 		}
 		// 能力選択画面に入力状態を渡す
 		if(_abilitySelectScreen)
 		{
-			_abilitySelectScreen->SetInput(key, trg, lx, ly, rx, ry, analogMin);
+			_abilitySelectScreen->SetInputManager(input);
 		}
 	}
 
@@ -220,29 +212,29 @@ bool ModeGame::Process()
 	}
 
 	// spaceキーでメニューを開く
-	if (trg & PAD_INPUT_10)
-	{
-		ModeMenu* modeMenu = new ModeMenu();
-		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+	//if (trg & PAD_INPUT_10)
+	//{
+	//	ModeMenu* modeMenu = new ModeMenu();
+	//	ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 
-		modeMenu->SetCameraManager(_cameraManager);
+	//	modeMenu->SetCameraManager(_cameraManager);
 
-		// メニュー項目を作成
-		auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
-		auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
-		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
-		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+	//	// メニュー項目を作成
+	//	auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
+	//	auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
+	//	auto useCollision = new MenuItemUseCollision(this, "UseCollision");
+	//	auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
 
-		// カメラ情報を設定
-		debugCamera->SetCameraManagerMenu(_cameraManager);
-		debugCamera->SetDebugCameraMenu(_debugCamera);
-		debugCamera->SetGameCameraMenu(_gameCamera);
+	//	// カメラ情報を設定
+	//	debugCamera->SetCameraManagerMenu(_cameraManager);
+	//	debugCamera->SetDebugCameraMenu(_debugCamera);
+	//	debugCamera->SetGameCameraMenu(_gameCamera);
 
-		modeMenu->AddMenuItem(viewDebugInfo);
-		modeMenu->AddMenuItem(viewCollision);
-		modeMenu->AddMenuItem(useCollision);
-		modeMenu->AddMenuItem(debugCamera);
-	}
+	//	modeMenu->AddMenuItem(viewDebugInfo);
+	//	modeMenu->AddMenuItem(viewCollision);
+	//	modeMenu->AddMenuItem(useCollision);
+	//	modeMenu->AddMenuItem(debugCamera);
+	//}
 
 	// クラスセット
 	{

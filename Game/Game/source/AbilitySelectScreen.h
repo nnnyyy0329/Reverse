@@ -35,17 +35,7 @@ public:
 	// クラスセット
 	void SetPlayerManager(std::shared_ptr<PlayerManager> playerManager) { _playerManager = playerManager; }
 
-	// 入力状態を設定する
-	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
-	{
-		_key = key;
-		_trg = trg;
-		_lx = lx;
-		_ly = ly;
-		_rx = rx;
-		_ry = ry;
-		_analogMin = analogMin;
-	}
+	void SetInputManager(InputManager* input) { _inputManager = input; }
 
 protected:
 	std::shared_ptr<PlayerManager> _playerManager;	// プレイヤーマネージャー
@@ -65,13 +55,6 @@ protected:
 	int _iCursorCount;
 	bool _bShowCursor;
 
-	// 入力関係
-	int _key = 0;
-	int _trg = 0;
-	float _lx = 0.0f;
-	float _ly = 0.0f;
-	float _rx = 0.0f;
-	float _ry = 0.0f;
-	float _analogMin = 0.0f;
+	InputManager* _inputManager = nullptr;
 };
 

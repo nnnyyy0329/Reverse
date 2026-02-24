@@ -7,13 +7,15 @@ public:
 	DebugCamera();
 	virtual ~DebugCamera();
 
-	void Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool isInput);
+	void Process(InputManager* input, bool isInput);
 	void Render();
 	void DebugRender();
 
 	void SetUp();
 
 	void SetInfo(VECTOR vPos, VECTOR vTarget);// À•W‚Æ’‹“_‚ğİ’è
+
+	void SetInputManager(InputManager* input) { _inputManager = input; }
 
 protected:
 	void UpdatePosFromAngle();// Šp“x‚Æ‹——£‚©‚çÀ•W‚ğŒvZ
@@ -28,5 +30,7 @@ protected:
 
 	float _nearClip;// •`‰æ‚·‚éè‘O‚Ì‹——£
 	float _farClip;// •`‰æ‚·‚é‰œ‚Ì‹——£
+
+	InputManager* _inputManager = nullptr;
 };
 

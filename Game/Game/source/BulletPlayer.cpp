@@ -79,8 +79,8 @@ void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 // 発射間隔更新
 void BulletPlayer::ProcessShoot()
 {
-	bool putKey = (_key & PAD_INPUT_6) != 0;	// 発射キー
-	bool aimKey = (_key & PAD_INPUT_5) != 0;	// エイムキー
+	bool putKey = _inputManager->IsHold(INPUT_ACTION::ATTACK);	// 発射キー
+	bool aimKey = _inputManager->IsHold(INPUT_ACTION::ABILITY);	// エイムキー
 
 	// エイムモードの制御
 	ProcessAimMode(aimKey);

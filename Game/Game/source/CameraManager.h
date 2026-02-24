@@ -50,17 +50,7 @@ class CameraManager
 	bool GetIsUseDebugCamera()const { return _bIsUseDebugCamera; }			// デバッグカメラ使用フラグ取得
 	void SetIsUseDebugCamera(bool bIsUse) { _bIsUseDebugCamera = bIsUse; }	// デバッグカメラ使用フラグ設定
 
-	// 入力状態を設定する
-	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
-	{
-		_key = key;
-		_trg = trg;
-		_lx = lx;
-		_ly = ly;
-		_rx = rx;
-		_ry = ry;
-		_analogMin = analogMin;
-	}
+	void SetInputManager(InputManager* input);
 
 protected:
 	std::shared_ptr<GameCamera> _gameCamera;
@@ -73,14 +63,7 @@ protected:
 	// デバッグカメラ使用フラグ
 	bool _bIsUseDebugCamera;
 
-	// 入力状態
-	int _key = 0;
-	int _trg = 0;
-	float _lx = 0.0f;
-	float _ly = 0.0f;
-	float _rx = 0.0f;
-	float _ry = 0.0f;
-	float _analogMin = 0.0f;
+	InputManager* _inputManager = nullptr;
 
 };
 

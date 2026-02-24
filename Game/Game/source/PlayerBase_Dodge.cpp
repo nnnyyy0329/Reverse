@@ -68,7 +68,7 @@ void PlayerBase::ProcessDodge()
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN)
 		&& StaminaManager::GetInstance()->CanDodge()
-		&& _trg & PAD_INPUT_3)
+		&& _inputManager->IsTrigger(INPUT_ACTION::DODGE))
 	{
 		// ‰ñ”ðŠJŽn
 		ProcessStartDodge();

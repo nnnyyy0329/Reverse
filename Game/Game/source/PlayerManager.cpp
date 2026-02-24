@@ -83,13 +83,13 @@ bool PlayerManager::Process()
 		if(_bIsTransforming || _bIsTransformCanceling || isAbilityScreenActive)
 		{
 			// 入力を無効化
-			_activePlayer->SetInput(0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+			_activePlayer->SetInputManager(InputManager::GetNullInstance());
 		}
 		// それ以外の場合
 		else
 		{
 			// 入力をアクティブプレイヤーに渡す
-			_activePlayer->SetInput(_key, _trg, _lx, _ly, _rx, _ry, _analogMin);
+			_activePlayer->SetInputManager(_inputManager);
 		}
 
 		_activePlayer->SetCameraManager(_cameraManager);
