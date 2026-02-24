@@ -133,7 +133,7 @@ PlayerAnimations SurfacePlayer::GetPlayerAnimation()
 	//animation.attack.thirdAttack	= "absorb_attack_02";
 	//animation.attack.fourthAttack	= "";
 	//animation.attack.fifthAttack	= "";
-	animation.attack.firstSkill		= "";
+	animation.attack.firstSkill		= ""; 
 	animation.attack.secondSkill	= "";
 	animation.absorb.absorbReady	= "absorb_ready_00";
 	animation.absorb.absorbActive	= "absorb_active_00";

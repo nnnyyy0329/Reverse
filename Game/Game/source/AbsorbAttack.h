@@ -10,6 +10,7 @@ struct AbsorbConfig
 	float absorbRange;				// 吸収範囲
 	float absorbAngle;				// 吸収範囲の角度
 	int absorbDivision;				// 吸収範囲の分割数
+	bool isActive;					// 吸収攻撃がアクティブかどうか
 	std::string absorbEffectName;	// 吸収エフェクト名
 };
 
@@ -45,8 +46,14 @@ public:
 	// デバッグ描画
 	void DebugRender();
 
-	// 吸収範囲の扇形描画
+	// 吸収範囲の扇形デバッグ描画
 	void DrawAbsorbRange(const VECTOR& ownerPos, const VECTOR& ownerDir);
+
+	// 吸収攻撃の状態更新デバッグ描画
+	void DrawAbsorbAttackState();
+
+	// 吸収攻撃のカウントデバッグ描画
+	void DrawAbsorbTimer();
 
 private:	// 内部処理
 

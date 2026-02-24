@@ -751,9 +751,6 @@ void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::
 	// 吸収攻撃コリジョン情報を取得
 	const AbsorbConfig& config = absorbSystem->GetAbsorbConfig();
 
-	// 攻撃所有者が自分に攻撃している場合は当たらない
-	//if(OwnerIsAbsorbingOwner(owner)){ return; }
-
 	// 扇形データを取得
 	SectorData sectorData;
 
@@ -766,6 +763,8 @@ void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::
 	// GeometryUtilityを使用して扇形内判定
 	if(GeometryUtility::IsInSector(chara->GetPos(), sectorData))
 	{
+		if(!config.isActive){ return; }	// 吸収攻撃が有効でない場合は当たらない
+
 		// プレイヤーの吸収システムの更新呼び出し
 		absorbSystem->ProcessAbsorb();
 	}

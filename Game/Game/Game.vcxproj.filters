@@ -178,15 +178,6 @@
     <ClCompile Include="source\PlayerTransformSystem.cpp">
       <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
     </ClCompile>
-    <ClCompile Include="source\ModeScenario.cpp">
-      <Filter>Mode\Scenario</Filter>
-    </ClCompile>
-    <ClCompile Include="source\AbsorbAttack.cpp">
-      <Filter>Attack\AbsorbAttack</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PlayerAbsorbAttackSystem.cpp">
-      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\AbsorbAttack</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -472,21 +463,6 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\Player\ManagerSystem">
       <UniqueIdentifier>{c73b4588-4faf-45ab-ad15-cbb89be6bd76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Mode\Scenario">
-      <UniqueIdentifier>{aaf8594f-ac6c-4a92-af50-939b60af057a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem">
-      <UniqueIdentifier>{27cd3688-c122-4b8c-b9b2-9785d6f20b30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem\Shield">
-      <UniqueIdentifier>{aef1ea0b-20af-423a-b0c3-8551883a0b05}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem\Attack">
-      <UniqueIdentifier>{ab26c467-12ae-4435-b758-3cd3da027bb8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem\AbsorbAttack">
-      <UniqueIdentifier>{2cba8d52-2bd9-4b51-83ea-6c48e8109eab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
