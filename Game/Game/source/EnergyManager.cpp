@@ -30,6 +30,8 @@ EnergyManager::~EnergyManager()
 
 bool EnergyManager::Initialize()
 {
+	_currentEnergy = 0.0f;	// ƒGƒlƒ‹ƒM[‰Šú‰»
+
     return true;
 }
 

@@ -170,7 +170,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	{
 		{0.0f, 80.0f, 0.0f},		// コリジョン上部位置
 		{0.0f, 120.0f, 0.0f}, 		// コリジョン下部位置
-		25.0f,						// 半径
+		35.0f,						// 半径
 		8.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		18.0f,						// 硬直フレーム
@@ -188,7 +188,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	{
 		{0.0f, 20.0f, 0.0f},		// コリジョン上部位置
 		{0.0f, 100.0f, 0.0f},		// コリジョン下部位置
-		25.0f,						// 半径
+		35.0f,						// 半径
 		8.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		18.0f,						// 硬直フレーム
@@ -206,7 +206,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	{ 
 		{0.0f, 150.0f, 0.0f},		// コリジョン上部位置
 		{0.0f, 80.0f, 0.0f},		// コリジョン下部位置
-		25.0f,						// 半径
+		35.0f,						// 半径
 		10.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		18.0f,						// 硬直フレーム
@@ -224,7 +224,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	{
 		{0.0f, 100.0f, 0.0f},		// コリジョン上部位置
 		{0.0f, 50.0f, 0.0f},		// コリジョン下部位置
-		25.0f,						// 半径
+		35.0f,						// 半径
 		15.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		23.0f,						// 硬直フレーム
@@ -242,7 +242,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	{
 		{0.0f, 150.0f, 0.0f},		// コリジョン上部位置
 		{0.0f, 80.0f, 0.0f},		// コリジョン下部位置
-		25.0f,						// 半径
+		35.0f,						// 半径
 		8.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		18.0f,						// 硬直フレーム
@@ -263,11 +263,11 @@ DodgeConfig InteriorPlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType = DODGE_CHARA::INTERIOR_PLAYER;
-	config.invincibleDuration = 25.0f;  // 無敵時間
-	config.startTime = 4.0f;            // 開始時間
-	config.activeTime = 18.0f;          // アクティブ時間
-	config.recoveryTime = 18.0f;        // 硬直時間
-	config.dodgeMoveSpeed = 9.0f;       // 移動速度
+	config.invincibleDuration = 25.0f;	// 無敵時間
+	config.startTime = 4.0f;			// 開始時間
+	config.activeTime = 18.0f;			// アクティブ時間
+	config.recoveryTime = 3.0f;			// 硬直時間
+	config.dodgeMoveSpeed = 9.0f;		// 移動速度
 
 	return config;
 }

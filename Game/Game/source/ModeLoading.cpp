@@ -19,16 +19,16 @@ bool ModeLoading::Initialize()
 			rs->Register("Laser", "effect/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 			// 表プレイヤーの攻撃エフェクト
-			rs->Register("SurfacePlayerAttack1", "effect/sPlayer/Absorb_Attack_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("SurfacePlayerAttack2", "effect/sPlayer/Absorb_Attack_01.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("SurfacePlayerAttack3", "effect/sPlayer/Absorb_Attack_02.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("SurfacePlayerAttack1", "effect/surfacePlayer/Absorb_Attack_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("SurfacePlayerAttack2", "effect/surfacePlayer/Absorb_Attack_01.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("SurfacePlayerAttack3", "effect/surfacePlayer/Absorb_Attack_02.efkefc", RESOURCE_TYPE::Effect, 20.0f);
 
 			// 表プレイヤーのダメージエフェクト
-			rs->Register("InteriorPlayerAttack1", "effect/iPlayer/NChange_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("InteriorPlayerAttack2", "effect/iPlayer/NChange_Attack_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("InteriorPlayerAttack3", "effect/iPlayer/NChange_Attack_02.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("InteriorPlayerAttack4", "effect/iPlayer/NChange_Attack_03.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("InteriorPlayerAttack5", "effect/iPlayer/NChange_Attack_04.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerAttack1", "effect/interiorPlayer/NChange_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerAttack2", "effect/interiorPlayer/NChange_Attack_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerAttack3", "effect/interiorPlayer/NChange_Attack_02.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerAttack4", "effect/interiorPlayer/NChange_Attack_03.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerAttack5", "effect/interiorPlayer/NChange_Attack_04.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 			// 表プレイヤーの攻撃ヒットエフェクト
 			rs->Register("SurfacePlayerAttackHit1", "effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
@@ -72,9 +72,6 @@ bool ModeLoading::Initialize()
 			rs->Register("select1", "res/SelectItem/normal.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("select2", "res/SelectItem/melee.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("select3", "res/SelectItem/bullet.png", RESOURCE_TYPE::Graph, 1.0f);
-			//rs->Register("select1", "res/AbilitySelect/select1.png", RESOURCE_TYPE::Graph, 1.0f);
-			//rs->Register("select2", "res/AbilitySelect/select2.png", RESOURCE_TYPE::Graph, 1.0f);
-			//rs->Register("select3", "res/AbilitySelect/select4.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// エネルギーUI用
