@@ -156,12 +156,12 @@ std::string PlayerBase::GetShootStateString(PLAYER_SHOOT_STATE state) const
 {
 	switch(state)
 	{
-		case PLAYER_SHOOT_STATE::NONE:           return "NONE";
-		case PLAYER_SHOOT_STATE::SHOOT_READY:    return "SHOOT_READY";		// î≠éÀç\Ç¶
-		case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT: return "RIGHT_ARM_SHOOT";	// âEòrî≠éÀ
-		case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:  return "LEFT_ARM_SHOOT";	// ç∂òrî≠éÀ
-		case PLAYER_SHOOT_STATE::SHOOT_MOVE:     return "SHOOT_MOVE";		// î≠éÀà⁄ìÆ
-		default:                                 return "UNKNOWN";
+		case PLAYER_SHOOT_STATE::NONE:				return "NONE";
+		case PLAYER_SHOOT_STATE::SHOOT_READY:		return "SHOOT_READY";		// î≠éÀç\Ç¶
+		case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT:	return "RIGHT_ARM_SHOOT";	// âEòrî≠éÀ
+		case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:	return "LEFT_ARM_SHOOT";	// ç∂òrî≠éÀ
+		case PLAYER_SHOOT_STATE::SHOOT_MOVE:		return "SHOOT_MOVE";		// î≠éÀà⁄ìÆ
+		default:									return "UNKNOWN";
 	}
 }
 

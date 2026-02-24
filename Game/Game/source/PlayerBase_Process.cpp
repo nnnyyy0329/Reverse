@@ -385,9 +385,9 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.absorbState)
 		{
-			case PLAYER_ABSORB_STATE::ABSORB_READY:		return _playerAnim.absorb.absorbReady;
-			case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:	return _playerAnim.absorb.absorbActive;
-			case PLAYER_ABSORB_STATE::ABSORB_END:		return _playerAnim.absorb.absorbEnd;
+			case PLAYER_ABSORB_STATE::ABSORB_READY:		return _playerAnim.absorb.absorbReady;	// 吸収攻撃構え
+			case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:	return _playerAnim.absorb.absorbActive;	// 吸収攻撃中
+			case PLAYER_ABSORB_STATE::ABSORB_END:		return _playerAnim.absorb.absorbEnd;	// 吸収攻撃終了
 		}
 	}
 
