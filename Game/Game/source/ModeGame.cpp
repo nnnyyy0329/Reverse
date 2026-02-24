@@ -29,6 +29,7 @@
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
 #include "BulletPlayer.h"
+#include "PlayerUnlockManager.h"
 
 #include "EnergyUI.h"
 #include "PlayerLifeBarUI.h"
@@ -90,6 +91,12 @@ bool ModeGame::Initialize()
 		bulletPlayer->Initialize();
 		_playerManager->RegisterPlayer(PLAYER_TYPE::BULLET, bulletPlayer);
 		bulletPlayer->SetBulletManager(_bulletManager);
+	}
+
+	// プレイヤーアンロックマネージャー初期化
+	{
+		_playerUnlockManager = std::make_shared<PlayerUnlockManager>();
+		_playerUnlockManager->Initialize();
 	}
 
 	// ステージ初期化
