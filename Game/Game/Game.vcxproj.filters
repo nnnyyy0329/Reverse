@@ -178,6 +178,9 @@
     <ClCompile Include="source\PlayerTransformSystem.cpp">
       <Filter>GameObject\CharaBase\Player\System</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeScenario.cpp">
+      <Filter>Mode\Scenario</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -345,6 +348,9 @@
     <ClInclude Include="source\PlayerTransformSystem.h">
       <Filter>GameObject\CharaBase\Player\System</Filter>
     </ClInclude>
+    <ClInclude Include="source\ModeScenario.h">
+      <Filter>Mode\Scenario</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -460,6 +466,9 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\Player\System">
       <UniqueIdentifier>{c73b4588-4faf-45ab-ad15-cbb89be6bd76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Scenario">
+      <UniqueIdentifier>{aaf8594f-ac6c-4a92-af50-939b60af057a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

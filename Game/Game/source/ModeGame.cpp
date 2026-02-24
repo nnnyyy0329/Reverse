@@ -178,7 +178,7 @@ bool ModeGame::Process()
 	float ry = analog.ry;
 	float rz = analog.rz;
 	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
-
+ 
 	/// 入力取得
 	{
 		// プレイヤーマネージャーに入力状態を渡す
