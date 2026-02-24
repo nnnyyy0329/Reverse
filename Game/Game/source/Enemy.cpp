@@ -130,8 +130,12 @@ bool Enemy::Process()
 	// 移動可能範囲チェック
 	if (!CheckInsideMoveArea(_vPos))
 	{
-		_vPos = _vOldPos;// 範囲外なら移動前の位置に戻す
-		_bIsOutSideMoveArea = true;// エリア外フラグ
+		// エリア外 初期位置へ押し戻しを試みる
+		if (!CorrectPosToMoveArea())
+		{
+			_vPos = _vOldPos;// 失敗なら前フレームの位置に戻す
+		}
+		_bIsOutSideMoveArea = true;// エリア外
 	}
 	else
 	{
@@ -790,6 +794,43 @@ bool Enemy::CheckInsideMoveArea(VECTOR vPos)
 	}
 
 	return false;// どこにも当たらなければ範囲外
+}
+
+bool Enemy::CorrectPosToMoveArea()
+{
+	// 初期位置方向へのベクトルを計算
+	VECTOR vToHome = VSub(_vHomePos, _vPos);
+	vToHome.y = 0.0f;
+
+	float dist = VSize(vToHome);
+
+	if (dist < 0.01f) { return false; }// ほぼ初期位置
+
+	VECTOR vDir = VNorm(vToHome);
+
+	// 初期位置方向へ少しづつ移動して、範囲内かチェック
+	const float correctStep = 5.0f;// 補正ステップ距離
+	const int correctMaxSteps = 20;// 最大試行回数
+
+	for (int i = 1; i <= correctMaxSteps; ++i)
+	{
+		float fOffset = correctStep * static_cast<float>(i);
+
+		// ステップ距離が初期位置までの距離を超えないようにする
+		if (fOffset > dist) { fOffset = dist; }
+
+		VECTOR vCandidate = VAdd(_vPos, VScale(vDir, fOffset));
+
+		if (CheckInsideMoveArea(vCandidate))
+		{
+			_vPos = vCandidate;// 範囲内で採用
+			return true;
+		}
+
+		if (fOffset >= dist) { break; }// 初期位置を超えたら終了
+	}
+
+	return false;// 補正失敗
 }
 
 void Enemy::UpdateDamageCombo()

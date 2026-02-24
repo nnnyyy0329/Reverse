@@ -79,6 +79,7 @@ public:
 	// 移動可能範囲チェック
 	bool CheckInsideMoveArea(VECTOR vPos);// 指定座標が移動可能範囲内かどうか
 	bool IsOutSideMoveArea() { return _bIsOutSideMoveArea; }
+	bool CorrectPosToMoveArea();// 初期位置方向へ押し戻す
 
 	// 連続被ダメカウント管理
 	int GetDamageComboCnt() { return _damageComboCnt; }

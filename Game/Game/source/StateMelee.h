@@ -3,7 +3,7 @@
 
 namespace Melee
 {
-	// 扇形視界判定 : 未発見
+	// 扇形視界判定
 	bool IsTargetVisibleFan(Enemy* owner);
 
 	// 待機
@@ -14,6 +14,9 @@ namespace Melee
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() override { return "Melee:Idle"; }// 名前を返す(デバッグ用)
 		void UpdateSearch(Enemy* owner) override;
+
+	private:
+		bool _bFaceHome = false;// 初期位置方向を向く
 	};
 
 
@@ -28,6 +31,9 @@ namespace Melee
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() override { return "Melee:Wander"; }
 		void UpdateSearch(Enemy* owner) override;
+
+	private:
+		bool _bFaseHome = false;
 	};
 
 
