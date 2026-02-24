@@ -122,12 +122,12 @@ PlayerAnimations InteriorPlayer::GetPlayerAnimation()
 	animation.attack.secondAttack	= "Nchange_attack_01";
 	animation.attack.thirdAttack	= "Nchange_attack_05";
 	animation.attack.fourthAttack	= "Nchange_attack_06";
-	//animation.attack.thirdAttack	= "Nchange_attack_02";
-	//animation.attack.fourthAttack	= "Nchange_attack_03";
 	animation.attack.fifthAttack	= "Nchange_attack_04";
-	animation.shoot.rightArmShoot	= "";
-	animation.shoot.leftArmShoot	= "";
-	animation.shoot.shootMove		= "";
+	animation.attack.firstSkill		= "";
+	animation.attack.secondSkill	= "";
+	animation.absorb.absorbReady	= "";
+	animation.absorb.absorbActive	= "";
+	animation.absorb.absorbEnd		= "";
 	animation.combat.transform		= "";
 	animation.combat.transCancel	= "player_cancell_00";
 	animation.combat.guard			= "";

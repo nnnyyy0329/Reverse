@@ -383,7 +383,7 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.absorbState)
 		{
-			case PLAYER_ABSORB_STATE::ABSORB_START:		return _playerAnim.absorb.absorbStart;	// 吸収開始
+			case PLAYER_ABSORB_STATE::ABSORB_READY:		return _playerAnim.absorb.absorbReady;	// 吸収開始
 			case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:	return _playerAnim.absorb.absorbActive;	// 吸収中
 			case PLAYER_ABSORB_STATE::ABSORB_END:		return _playerAnim.absorb.absorbEnd;	// 吸収終了
 		}

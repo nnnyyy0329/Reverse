@@ -171,9 +171,9 @@ std::string PlayerBase::GetAbsorbStateString(PLAYER_ABSORB_STATE state) const
 	switch(state)
 	{
 		case PLAYER_ABSORB_STATE::NONE:				return "NONE";
-		case PLAYER_ABSORB_STATE::ABSORB_READY:		return "ABSORB_READY";
-		case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:	return "ABSORB_ACTIVE";
-		case PLAYER_ABSORB_STATE::ABSORB_END:		return "ABSORB_END";
+		case PLAYER_ABSORB_STATE::ABSORB_READY:		return "ABSORB_READY";	// ãzé˚ç\Ç¶
+		case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:	return "ABSORB_ACTIVE";	// ãzé˚íÜ
+		case PLAYER_ABSORB_STATE::ABSORB_END:		return "ABSORB_END";	// ãzé˚èIóπ
 		default:									return "UNKNOWN";
 	}
 }
