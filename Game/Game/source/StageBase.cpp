@@ -17,7 +17,7 @@ StageBase::StageBase(int stageNum)
 	switch (_stageNum) 
 	{
 	case 1:
-		path = "res/stage/json/"; jsonFile = "stage_00.json"; jsonObjName = "res";
+		path = "res/stage/json/"; jsonFile = "stage_01.json"; jsonObjName = "res";
 		break;
 	case 2:
 		path = "res/stage/"; jsonFile = "try_stage_1.json"; jsonObjName = "res";
@@ -194,6 +194,60 @@ StageBase::StageBase(int stageNum)
 		);
 	}
 
+	// “G‚ÌˆÚ“®‰Â”\”ÍˆÍ
+	{
+		std::string areaObjName = "Area";
+
+		LoadStageDataFromJson(
+			path + jsonFile,
+			areaObjName,
+			[&](const std::string& name, const VECTOR& pos, const VECTOR& rot, const VECTOR& scale)
+			{
+				MODELPOS area;
+				area.name = name;
+				area.pos = pos;
+				area.rot = rot;
+				area.scale = scale;
+
+				if (_mapModelHandle.count(name) == 0)
+				{
+					int handle = ResourceServer::GetInstance()->GetHandle(name);
+					if (handle != -1)
+					{
+						_mapModelHandle[name] = handle;
+					}
+					//else
+					//{
+					//	std::string fileName = path + name + ".mv1";
+					//	_mapModelHandle[name] = MV1LoadModel(fileName.c_str());
+					//}
+				}
+
+				if (_mapModelHandle.count(name) > 0)
+				{
+					area.modelHandle = MV1DuplicateModel(_mapModelHandle[name]);
+
+					std::string collisionName = "UCX_" + name;
+					area.collisionFrame = MV1SearchFrame(area.modelHandle, collisionName.c_str());
+
+					MV1SetPosition(area.modelHandle, area.pos);
+					MV1SetRotationXYZ(area.modelHandle, area.rot);
+					MV1SetScale(area.modelHandle, area.scale);
+
+					if (area.collisionFrame != -1)
+					{
+						MV1SetupCollInfo(area.modelHandle, area.collisionFrame, 4, 4, 4);
+					}
+				}
+
+				if (area.modelHandle != -1)
+				{
+					_moveAreaList.push_back(area);
+				}
+			}
+		);
+	}
+
 	// BGM
 	switch (_stageNum)
 	{
@@ -283,6 +337,13 @@ void StageBase::DebugRender()
 	{
 		for (auto& trig : _triggerList) {
 			MV1DrawModel(trig.modelHandle);
+		}
+	}
+
+	// “G‚ÌˆÚ“®‰Â”\”ÍˆÍ
+	{
+		for (auto& area : _moveAreaList) {
+			MV1DrawModel(area.modelHandle);
 		}
 	}
 }

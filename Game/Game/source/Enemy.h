@@ -33,8 +33,6 @@ public:
 	std::shared_ptr<CharaBase> GetTarget() { return _targetPlayer; }
 	void SetTarget(std::shared_ptr<CharaBase> target) { _targetPlayer = target; }
 
-	int GetDamageCount() { return _damageCnt; }// 何回ダメージを受けたか
-
 	// モデル名のゲッターセッター
 	const std::string& GetModelName() const { return _modelName; }
 	void SetModelName(const std::string name) { _modelName = name; }
@@ -53,19 +51,20 @@ public:
 
 	// 被ダメージ処理
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo) override;
-	void ResetDamageCount() { _damageCnt = 0; }// ダメージカウントリセット
 
 	// 死亡判定
 	bool IsDead();
 	void EnableRemove() { _bCanRemove = true; }// delete可能にする
 
 
-	// 被ダメなどのリアクションステートから復帰するステートを取得
-	using RecoveryHandler = std::function<std::unique_ptr<EnemyState>(Enemy*)>;
-	// ハンドラをセットする関数(Factoryで設定)
-	void SetRecoveryHandler(RecoveryHandler handler) { _recoveryHandler = handler; }
-	// ハンドラを実行する(ステート側から呼ばれる関数)
-	std::unique_ptr<EnemyState> GetRecoveryState();
+	// 被ダメ後の遷移先を決定する
+	using AfterDamageStateSelector = std::function<std::shared_ptr<EnemyState>(Enemy*, int)>;
+	void SetAfterDamageStateSelector(AfterDamageStateSelector selector) { _afterDamageStateSelector = selector; }
+	std::shared_ptr<EnemyState> GetAfterDamageStateSelector(int comboCnt);
+	// ダウン後の遷移先を決定する
+	using AfterDownStateSelector = std::function<std::shared_ptr<EnemyState>(Enemy*)>;
+	void SetAfterDownStateSelector(AfterDownStateSelector selector) { _afterDownStateSelector = selector; }
+	std::shared_ptr<EnemyState> GetAfterDownStateSelector();
 
 	// 索敵関連
 	bool ShouldUpdateSearch() { return _searchTimer == 0; }// 索敵更新タイミングかどうか
@@ -73,13 +72,18 @@ public:
 	bool IsTargetDetected() { return _bIsTargetDetected; };// 索敵結果を取得
 	void SetTargetDetected(bool bDetected) { _bIsTargetDetected = bDetected; };// 索敵結果を設定
 
-	// 敵ごとに動きにばらつきを持たせるため
-	void ApplyRandomOffset();// ステート時間にランダムなオフセットを適用
-	float GetStateTimerOffset() { return _fStateTimerOffset; }
-
 	// 索敵の障害物チェック
 	void SetStage(std::shared_ptr<StageBase> stage) { _stage = stage; }// ステージ参照をセット
 	bool CheckLineOfSight(VECTOR vStart, VECTOR vEnd);// 視線が通っているか(障害物チェック)
+
+	// 移動可能範囲チェック
+	bool CheckInsideMoveArea(VECTOR vPos);// 指定座標が移動可能範囲内かどうか
+	bool IsOutSideMoveArea() { return _bIsOutSideMoveArea; }
+
+	// 連続被ダメカウント管理
+	int GetDamageComboCnt() { return _damageComboCnt; }
+	void UpdateDamageCombo();// 連続被ダメカウントを更新
+	void UpdateDamageComboTimer();// リセットタイマー更新
 
 
 
@@ -110,12 +114,11 @@ protected:
 
 	std::shared_ptr<AttackBase> _attackCollision;// 攻撃コリジョン
 
-	RecoveryHandler _recoveryHandler;// 関数を保存する変数
+	AfterDamageStateSelector _afterDamageStateSelector;
+	AfterDownStateSelector _afterDownStateSelector;
 
 	int _lifeBarHandle = -1;// ライフバー用
 	int _lifeBarFrameHandle = -1;// ライフバー枠用
-
-	int _damageCnt = 0;// 何回ダメージを受けたか(スタン用)
 
 	bool _bIsExist = true;// 生存フラグ
 	bool _bCanRemove = false;// delete可能フラグ
@@ -126,13 +129,15 @@ protected:
 	int _searchTimer = 0;// 索敵タイマー
 	bool _bIsTargetDetected = false;// ターゲットが見つかったか
 
-	// 動きにばらつきを持たせるため
-	float _fStateTimerOffset = 0.0f;// ステート時間にばらつきを
-
-	std::weak_ptr<StageBase> _stage;// ステージ参照(障害物チェック用)
+	std::weak_ptr<StageBase> _stage;// ステージ参照
 
 	COLOR_F _defaultColor;// 元のマテリアルカラーを保存
 	bool _bIsColorChanged = false;// カラー変更中かどうか
+
+	int _damageComboCnt = 0;// 連続被ダメ回数
+	float _fDamageComboResetTimer = 0.0f;// リセットタイマー
+
+	bool _bIsOutSideMoveArea = false;// エリア外へ移動しようとしたか
 
 private:
 	void LoadEnemyModel();// モデルを名前に応じて読み込む

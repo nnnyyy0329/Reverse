@@ -178,6 +178,9 @@
     <ClCompile Include="source\PlayerTransformSystem.cpp">
       <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeScenario.cpp">
+      <Filter>Mode\Scenario</Filter>
+    </ClCompile>
     <ClCompile Include="source\AbsorbAttack.cpp">
       <Filter>Attack\AbsorbAttack</Filter>
     </ClCompile>
@@ -357,6 +360,9 @@
     <ClInclude Include="source\PlayerAbsorbAttackSystem.h">
       <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\AbsorbAttack</Filter>
     </ClInclude>
+    <ClInclude Include="source\ModeScenario.h">
+      <Filter>Mode\Scenario</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -466,6 +472,9 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\Player\ManagerSystem">
       <UniqueIdentifier>{c73b4588-4faf-45ab-ad15-cbb89be6bd76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Scenario">
+      <UniqueIdentifier>{aaf8594f-ac6c-4a92-af50-939b60af057a}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem">
       <UniqueIdentifier>{27cd3688-c122-4b8c-b9b2-9785d6f20b30}</UniqueIdentifier>

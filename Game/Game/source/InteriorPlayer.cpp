@@ -177,6 +177,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		20.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
+		false,						// 吹き飛ばし攻撃かどうか
 		"InteriorPlayerAttack5",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
 		"iPlayerAttack",			// サウンド名
@@ -194,6 +195,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		30.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
+		false,						// 吹き飛ばし攻撃かどうか
 		"InteriorPlayerAttack5",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
 		"iPlayerAttack",			// サウンド名
@@ -211,6 +213,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		50.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
+		false,						// 吹き飛ばし攻撃かどうか
 		"InteriorPlayerAttack5",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
 		"iPlayerAttack",			// サウンド名
@@ -228,6 +231,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		50.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
+		false,						// 吹き飛ばし攻撃かどうか
 		"InteriorPlayerAttack5",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
 		"iPlayerAttack",			// サウンド名
@@ -245,6 +249,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		100.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
+		true,						// 吹き飛ばし攻撃かどうか
 		"InteriorPlayerAttack5",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
 		"iPlayerAttack",			// サウンド名

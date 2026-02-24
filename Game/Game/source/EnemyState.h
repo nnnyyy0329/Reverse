@@ -19,15 +19,10 @@ struct EnemyParam
 	float fMoveSpeed = 2.0f;// 敵の基本移動速度
 
 	float fVisionRange = 0.0f;// 敵の索敵距離
-	float fVisionAngle = 30.0f;// 敵の視界の角度(半分)
-	float fVisionCos = 0.0f;// 判定で使うcos値
+	float fVisionAngle = 0.0f;// 敵の視界の角度
 
 	float fAttackRange = 0.0f;// これ以内なら攻撃する距離
 	float fChaseLimitRange = 0.0f;// これ以上離れたら接近をやめる距離
-
-	float fMoveRadius = 0.0f;// 徘徊する範囲の半径(初期位置からの距離)
-
-	float fAttackInterval = 0.0f;// 攻撃間隔
 
 	float fTurnSpeed = 60.0f;// 旋回速度(度 / フレーム)
 
@@ -37,7 +32,6 @@ struct EnemyParam
 	float fAttackTime = 0.0f;// 攻撃時間
 
 	float fMaxLife = 100.0f;// 最大体力
-	int damageToDown = 3;// ダウンまでの被ダメージ回数
 
 	// 共通ステートのアニメーション名
 	const char* animDamage = "Damage";
@@ -77,18 +71,27 @@ public:
 	virtual void UpdateSearch(Enemy* owner) {};// 索敵処理(各ステートでオーバーライド)
 
 protected:
-	float CalcOffsetTime(Enemy* owner, float baseTime);// ステート時間に敵ごとのオフセットを適用
+	// baseTime に -range, +range のランダム幅で増減した値を返す
+	float CalcRandomRangeTime(float fBaseTime, float fRange);
 
 	// ターゲット情報を取得(ターゲットへのベクトル、距離を計算)
 	TargetInfo GetTargetInfo(Enemy* owner);
 
-	// ターゲットが存在しない場合の処理(Idleへ遷移)
-	template<typename IdleState>
-	std::shared_ptr<EnemyState> HandleNoTarget(Enemy* owner);
+	// ターゲットが存在しない場合の処理(LostTargetへ)
+	template<typename LostTargetState>
+	std::shared_ptr<EnemyState> TransitionToLostNoTarget(Enemy* owner);
 
-	// 追跡限界距離チェック(これ以上離れたらIdleへ遷移)
+	// 追跡限界距離チェック(これ以上離れたらLostTargetへ)
+	template<typename LostTargetState>
+	std::shared_ptr<EnemyState> TransitionToLostOverChaseLimit(Enemy* owner, float fDist);
+
+	// 移動可能範囲外チェック(範囲外ならIdleへ) : 徘徊ステート
 	template<typename IdleState>
-	std::shared_ptr<EnemyState> CheckChaseLimitAndHandle(Enemy* owner, float fDist);
+	std::shared_ptr<EnemyState> TransitionToIdleOutsideArea(Enemy* owner);
+
+	// 移動可能範囲外チェック(範囲外ならLostTargetへ) : 追跡系ステート
+	template<typename LostTargetState>
+	std::shared_ptr<EnemyState> TransitionToLostOutsideArea(Enemy* owner);
 
 	// ターゲット方向へ回転
 	void RotateToTarget(Enemy* onwer, const VECTOR& vDir, float fRotSpeed);
@@ -101,5 +104,6 @@ protected:
 
 	float _fTimer = 0.0f;
 	float _fTargetTimer = 0.0f;
+	float _fAnimSpeed = 1.0f;
 
 };

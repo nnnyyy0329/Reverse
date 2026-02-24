@@ -114,6 +114,7 @@ bool ModeGame::Initialize()
 	{
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
 		enemy->SetBulletManager(_bulletManager);
+		enemy->SetStage(_stage);
 	}
 
 	// 能力選択画面初期化
@@ -177,7 +178,7 @@ bool ModeGame::Process()
 	float ry = analog.ry;
 	float rz = analog.rz;
 	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
-
+ 
 	/// 入力取得
 	{
 		// プレイヤーマネージャーに入力状態を渡す
@@ -562,6 +563,7 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 	{
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
 		enemy->SetBulletManager(_bulletManager);
+		enemy->SetStage(_stage);
 	}
 
 	// オブジェクトのクリア
@@ -586,6 +588,7 @@ void ModeGame::RestartCurrentStage()
 		{
 			enemy->SetTarget(_playerManager->GetActivePlayerShared());
 			enemy->SetBulletManager(_bulletManager);
+			enemy->SetStage(_stage);
 		}
 	}
 

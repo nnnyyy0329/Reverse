@@ -63,7 +63,8 @@ void PlayerBase::InitializeAttackData()
 			configs[i].damage,          // ダメージ
 			false,						// ヒットフラグ
 			configs[i].attackState,		// 攻撃状態
-			configs[i].attackMoveSpeed	// 攻撃中の移動速度
+			configs[i].attackMoveSpeed,	// 攻撃中の移動速度
+			configs[i].canKnockback		// 吹き飛ばし攻撃かどうか
 		);
 
 		_attacks.push_back(attack);
@@ -108,7 +109,8 @@ void PlayerBase::UpdateAttackColPos
 		col.damage, 					// ダメージ
 		col.isHit,						// ヒットフラグ
 		col.attackState,				// 攻撃状態
-		col.attackMoveSpeed				// 攻撃中の移動速度
+		col.attackMoveSpeed,			// 攻撃中の移動速度
+		col.canKnockback				// 吹き飛ばし攻撃かどうか
 	);
 }
 
