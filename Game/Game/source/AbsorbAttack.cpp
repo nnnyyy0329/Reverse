@@ -35,6 +35,7 @@ AbsorbAttack::AbsorbAttack() : AttackBase() // 親クラスのコンストラクタ呼び出し
 	_stcAbsorbConfig.absorbRange		= AbsorbConstants::DEFAULT_ABSORB_RANGE;		// 吸収範囲の初期化
 	_stcAbsorbConfig.absorbAngle		= AbsorbConstants::DEFAULT_ABSORB_ANGLE;		// 吸収範囲の角度の初期化
 	_stcAbsorbConfig.absorbDivision		= AbsorbConstants::DEFAULT_ABSORB_DIVISION;		// 吸収範囲の分割数の初期化
+	_stcAbsorbConfig.isActive			= false;										// 吸収攻撃が有効かどうかの初期化
 	_stcAbsorbConfig.absorbEffectName	= "";											// 吸収エフェクト名の初期化
 
 	_fAbsorbCooldown = AbsorbTime::ABSORB_COOLDOWN;	// 吸収のクールダウン時間の初期化
@@ -65,6 +66,8 @@ bool AbsorbAttack::ProcessStartAttack()
 	// 基底クラスの攻撃開始処理
 	AttackBase::ProcessStartAttack();
 
+	_bIsInputActive = true;  // 入力をアクティブに設定
+
 	return true;
 }
 
@@ -73,11 +76,12 @@ bool AbsorbAttack::ProcessStopAttack()
 {
 	if(!IsAbsorbActive()){ return false; }	// 吸収がアクティブでない場合は処理しない
 
+	_bIsInputActive = false;				// 入力を非アクティブに設定
 	_eAttackState = ATTACK_STATE::RECOVERY;	// 状態を硬直中に遷移
 	_stcAttackCol.isActive = false;			// 攻撃判定を非アクティブにする
 	_stcAttackCol.currentTime = 0.0f;		// タイマーリセット
 
-	// 吸収攻撃の停止処理は、基底クラスの攻撃停止処理を呼び出すことで完了する
+	// 基底クラスの攻撃停止処理を呼び出す
 	return AttackBase::ProcessStopAttack();
 }
 
@@ -98,22 +102,14 @@ void AbsorbAttack::ProcessDecrementTimer()
 }
 
 // 入力による吸収処理
-void AbsorbAttack::ProcessAbsorbByInput(int key)
+void AbsorbAttack::ProcessAbsorbByInput(int isInputActive)
 {
+	_bIsInputActive = isInputActive;
+
 	// 入力がある場合のみ処理
-	if(key)
+	if(isInputActive && IsAbsorbActive())
 	{
-		if(!IsAbsorbActive()){ return; }	// 吸収がアクティブでない場合は処理しない
 
-		_bIsInputActive = true;	// 入力が有効に設定
-	}
-	// 入力がない場合
-	else
-	{
-		_bIsInputActive = false;	// 入力が無効に設定
-
-		// 吸収処理停止
-		ProcessStopAttack();
 	}
 }
 
@@ -202,6 +198,7 @@ void AbsorbAttack::ProcessAbsorbAttackState()
 			{
 				_stcAttackCol.currentTime = 0.0f;		// タイマーリセット
 				_eAttackState = ATTACK_STATE::ACTIVE;	// 状態遷移
+				_stcAbsorbConfig.isActive = true;		// 吸収攻撃を有効にする
 			}
 
 			break;
@@ -209,7 +206,11 @@ void AbsorbAttack::ProcessAbsorbAttackState()
 
 		case ATTACK_STATE::ACTIVE: // 攻撃判定中状態
 		{
-			// 長押し中はACTIVEを維持する
+			// 入力がアクティブでない場合は終了
+			if(!_bIsInputActive)
+			{
+				ProcessStopAttack();
+			}
 
 			break;
 		}
@@ -223,6 +224,7 @@ void AbsorbAttack::ProcessAbsorbAttackState()
 			{
 				_eAttackState = ATTACK_STATE::INACTIVE;	// 状態遷移
 				_stcAttackCol.currentTime = 0.0f;		// タイマーリセット
+				_stcAbsorbConfig.isActive = false;		// 吸収攻撃を無効にする
 				ClearHitCharas();						// ヒットリストクリア
 			}
 
@@ -232,6 +234,8 @@ void AbsorbAttack::ProcessAbsorbAttackState()
 		case ATTACK_STATE::INACTIVE: // 非アクティブ状態
 		default:
 		{
+			_stcAbsorbConfig.isActive = false;	// 吸収攻撃を無効にする
+
 			break;
 		}
 	}

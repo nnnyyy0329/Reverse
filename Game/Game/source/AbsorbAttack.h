@@ -10,6 +10,7 @@ struct AbsorbConfig
 	float absorbRange;				// ‹zû”ÍˆÍ
 	float absorbAngle;				// ‹zû”ÍˆÍ‚ÌŠp“x
 	int absorbDivision;				// ‹zû”ÍˆÍ‚Ì•ªŠ„”
+	bool isActive;					// ‹zûUŒ‚‚ª—LŒø‚©‚Ç‚¤‚©	
 	std::string absorbEffectName;	// ‹zûƒGƒtƒFƒNƒg–¼
 };
 
@@ -25,7 +26,7 @@ public:
 	virtual bool ProcessStopAttack() override;	// UŒ‚’â~
 	
 	// “ü—Í‚É‚æ‚é‹zûˆ—
-	void ProcessAbsorbByInput(int key);
+	void ProcessAbsorbByInput(int isInputActive);
 
 	// ‹zûî•ñ‚ğİ’è‚·‚éŠÖ”
 	void SetAbsorbConfig(const AbsorbConfig& config);

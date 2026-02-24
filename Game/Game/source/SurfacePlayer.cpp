@@ -100,42 +100,159 @@ void SurfacePlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 // 基底クラスの吸収攻撃処理をオーバーライド
 void SurfacePlayer::ProcessAbsorb()
 {
-	// int 型から bool にキャスト
-	bool absorbInput = (_key & AbsorbConstants::ABSORB_INPUT_KEY) != 0;
+	// 入力状態の取得
+	bool currentKeyPressed = (_key & AbsorbConstants::ABSORB_INPUT_KEY) != 0;	// 現在の吸収キーの押下状態
+	bool keyNewPressed = currentKeyPressed && !_bWasAbsorbKeyPressed;			// 吸収キーが新たに押されたか
+	bool keyNewReleased = !currentKeyPressed && _bWasAbsorbKeyPressed;			// 吸収キーが新たに離されたか
+
+	switch(_playerState.absorbState)
+	{
+		case PLAYER_ABSORB_STATE::NONE:
+		{
+			// キーが新たに押され、攻撃状態がNONEの場合のみ処理を行う
+			if(keyNewPressed && GetAttackState() == PLAYER_ATTACK_STATE::NONE)
+			{
+				// 吸収攻撃開始可能かチェック
+				if(_absorbAttackSystem && _absorbAttackSystem->CanStartAbsorbAttack())
+				{
+					_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_READY;	// 構え状態に移行	
+					_bIsReadyCompleted = false;										// 構えアニメーション未完了
+
+					// アニメーション切り替え
+					ProcessPlayAnimation();
+				}
+			}
+
+			break;
+		}
+
+		case PLAYER_ABSORB_STATE::ABSORB_READY:
+		{
+			// キーが離された場合は終了状態へ
+			if(keyNewReleased)
+			{
+				_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_END;
+				ProcessPlayAnimation();
+			}
+			// 構えアニメーション完了チェック
+			else if(currentKeyPressed && !_bIsReadyCompleted)
+			{
+				AnimManager* animManager = GetAnimManager();
+				if(animManager && animManager->IsAnimationFinished())
+				{
+					_bIsReadyCompleted = true;
+					_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_ACTIVE;
+
+					// 吸収攻撃システム開始
+					if(_absorbAttackSystem)
+					{
+						_absorbAttackSystem->StartAbsorbAttack();
+					}
+
+					ProcessPlayAnimation();
+
+					if(_fAbsorbAnimCount <= 0.0f)
+					{
+						_fAbsorbAnimCount = animManager->GetCurrentAnimTotalTime();
+					}
+				}
+			}
+
+			break;
+		}
+
+		case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:
+		{
+			// キーが離された場合は停止
+			if(keyNewReleased)
+			{
+				if(_absorbAttackSystem)
+				{
+					// 吸収攻撃システム停止
+					_absorbAttackSystem->StopAbsorbAttack();
+				}
+
+				_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_END;	// 終了状態に移行
+
+				// アニメーション切り替え
+				ProcessPlayAnimation();
+			}
+			// 吸収システムが非アクティブになった場合も終了状態へ
+			else if(!_absorbAttackSystem->IsAbsorbAttacking())
+			{
+				_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_END;	// 終了状態に移行
+
+				// アニメーション切り替え
+				ProcessPlayAnimation();
+			}
+
+			break;
+		}
+
+		case PLAYER_ABSORB_STATE::ABSORB_END:
+		{
+			AnimManager* animManager = GetAnimManager();
+
+			// 終了アニメーション完了チェック
+			if(animManager && animManager->IsAnimationFinished())
+			{
+				_playerState.attackState = PLAYER_ATTACK_STATE::NONE;		// 攻撃状態をリセット
+				_playerState.absorbState = PLAYER_ABSORB_STATE::NONE;		// 吸収攻撃状態をリセット
+				_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 移動状態を待機にリセット
+				_bIsReadyCompleted = false;									// 構えアニメーション完了フラグリセット
+
+				// アニメーション切り替え
+				ProcessPlayAnimation();
+			}
+
+			break;
+		}
+	}
 
 	// 吸収攻撃システムの入力処理を実行
 	if(_absorbAttackSystem)
 	{
-		// 吸収攻撃システムの入力処理を実行
-		_absorbAttackSystem->ProcessAbsorbInput(_key);
-	}
-
-	// キーが押された
-	if(absorbInput)
-	{
-		// 吸収キーが新しく押された場合
-		if(!_bWasAbsorbKeyPressed && GetAttackState() == PLAYER_ATTACK_STATE::NONE)
+		// キーが新たに押され、攻撃状態がNONEの場合にのみ処理を行う
+		if(keyNewPressed && GetAttackState() == PLAYER_ATTACK_STATE::NONE)
 		{
-			// 構えに移行
-			_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_READY;	// 構え状態
-			_bIsReadyCompleted = false;										// 構えアニメーション未完了
-
-			// アニメーション切り替え
-			ProcessPlayAnimation();
-		}
-		// 構え状態で構えアニメーションが完了チェック
-		else if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY && !_bIsReadyCompleted)
-		{
-			// アニメーションが完了したかチェック
-			AnimManager* animManager = GetAnimManager();
-			if(animManager->IsAnimationFinished())
+			if(_absorbAttackSystem->CanStartAbsorbAttack())
 			{
-				_bIsReadyCompleted = true;										// 構えアニメーション完了
-				_playerState.absorbState =PLAYER_ABSORB_STATE::ABSORB_ACTIVE;	// アクティブ状態に移行
+				// 吸収攻撃開始
+				_absorbAttackSystem->StartAbsorbAttack();
+
+				_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_READY;	// 構え状態に移行
+				_bIsReadyCompleted = false;										// 構えアニメーション未完了
 
 				// アニメーション切り替え
 				ProcessPlayAnimation();
-				
+			}
+		}
+		// キーが離された場合は停止処理
+		else if(keyNewReleased && GetAbsorbState() != PLAYER_ABSORB_STATE::NONE)
+		{
+			// 吸収攻撃停止
+			_absorbAttackSystem->StopAbsorbAttack();
+
+			_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_END;	// 終了状態に移行
+
+			// 終了アニメーション開始
+			ProcessPlayAnimation();
+		}
+		// キーが押され続けている間の処理
+		else if(currentKeyPressed && _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY && !_bIsReadyCompleted)
+		{
+			AnimManager* animManager = GetAnimManager();
+
+			// 構えアニメーション完了チェック
+			if(animManager->IsAnimationFinished())
+			{
+				_bIsReadyCompleted = true;										// 構えアニメーション完了
+				_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_ACTIVE;	// アクティブ状態に移行
+
+				// アニメーション切り替え
+				ProcessPlayAnimation();
+
+				// 吸収アニメーションカウントをセット
 				if(_fAbsorbAnimCount <= 0.0f)
 				{
 					// 吸収アニメーションカウントをセット
@@ -144,32 +261,23 @@ void SurfacePlayer::ProcessAbsorb()
 			}
 		}
 	}
-	// キーが離された
-	else
+
+	// 終了状態の処理
+	if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_END)
 	{
-		// 吸収攻撃中にキーが離された場合
-		if(GetAbsorbState() != PLAYER_ABSORB_STATE::NONE)
+		AnimManager* animManager = GetAnimManager();
+
+		// 終了アニメーション完了チェック
+		if(animManager->IsAnimationFinished())
 		{
-			_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_END;	// 終了状態に移行
+			_playerState.attackState = PLAYER_ATTACK_STATE::NONE;	// 攻撃状態をリセット
+			_playerState.absorbState = PLAYER_ABSORB_STATE::NONE;	// 吸収攻撃状態をリセット
+			_bIsReadyCompleted = false;								// 構えアニメーション完了フラグリセット
 
-			// 終了アニメーション開始
+			// アニメーション切り替え
 			ProcessPlayAnimation();
-
-			// 終了アニメーション完了後に状態リセット
-			AnimManager* animManager = GetAnimManager();
-			if(animManager->IsAnimationFinished())
-			{
-				// 状態リセット
-				_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
-				_playerState.absorbState = PLAYER_ABSORB_STATE::NONE;
-				_bIsReadyCompleted = false;
-
-				// アニメーション更新
-				ProcessPlayAnimation();
-			}
 		}
 	}
-
 
 	// カウントを減らす
 	if(_fAbsorbAnimCount > 0.0f)
@@ -177,9 +285,8 @@ void SurfacePlayer::ProcessAbsorb()
 		_fAbsorbAnimCount--; // カウントを減らす
 	}
 
-
 	// 前フレームのキー状態を保存
-	_bWasAbsorbKeyPressed = absorbInput;
+	_bWasAbsorbKeyPressed = currentKeyPressed;
 }
 
 // 表プレイヤーの情報設定

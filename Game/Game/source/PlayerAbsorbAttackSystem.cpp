@@ -80,6 +80,17 @@ bool PlayerAbsorbAttackSystem::Process()
 	// 状態更新処理
 	ProcessAbsorbAttackState();
 
+	// アクティブ状態でのみ吸収処理を実行
+	if(IsAbsorbAttacking())
+	{
+		auto owner = _owner.lock();
+		if(owner)
+		{
+			// 吸収処理
+			_absorbAttack->ProcessAbsorb(owner);
+		}
+	}
+
 	return true;
 }
 
@@ -153,18 +164,18 @@ void PlayerAbsorbAttackSystem::ProcessAbsorb()
 // 吸収攻撃の入力処理
 void PlayerAbsorbAttackSystem::ProcessAbsorbInput(int key)
 {
-	if(key && CanStartAbsorbAttack())
-	{
-		// 攻撃開始
-		StartAbsorbAttack();
-	}
+	//if(key && CanStartAbsorbAttack())
+	//{
+	//	// 攻撃開始
+	//	StartAbsorbAttack();
+	//}
 
-	// 長押し処理
-	if(IsAbsorbAttacking())
-	{
-		bool isInputActive = key;							// 入力があるかどうか
-		_absorbAttack->ProcessAbsorbByInput(isInputActive);	// 入力による吸収処理
-	}
+	//// 長押し処理
+	//if(IsAbsorbAttacking())
+	//{
+	//	bool isInputActive = key;							// 入力があるかどうか
+	//	_absorbAttack->ProcessAbsorbByInput(isInputActive);	// 入力による吸収処理
+	//}
 }
 
 // 吸収攻撃の状態更新

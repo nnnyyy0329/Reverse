@@ -766,6 +766,8 @@ void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::
 	// GeometryUtilityを使用して扇形内判定
 	if(GeometryUtility::IsInSector(chara->GetPos(), sectorData))
 	{
+		if(!config.isActive){ return; }	// 吸収攻撃が有効でない場合は当たらない
+
 		// プレイヤーの吸収システムの更新呼び出し
 		absorbSystem->ProcessAbsorb();
 	}

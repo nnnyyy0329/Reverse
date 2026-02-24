@@ -129,7 +129,7 @@ private:
 	void ConvertEnergy				(std::shared_ptr<AttackBase> attack, float damage);							
 
 	// ‹zûUŒ‚‚Ì“–‚½‚è”»’èƒ`ƒFƒbƒNŠÖ”
-	void CheckHitAbsorbAttack(std::shared_ptr<CharaBase> player, std::shared_ptr<CharaBase>enemy);
+	void CheckHitAbsorbAttack		(std::shared_ptr<CharaBase> player, std::shared_ptr<CharaBase>enemy);
 
 	// ƒLƒƒƒ‰‚Æ‹zûUŒ‚‚Ì“–‚½‚è”»’è
 	void CheckHitCharaAbsorbAttack	(std::shared_ptr<CharaBase> chara, std::shared_ptr<CharaBase> owner, PlayerAbsorbAttackSystem* absorbSystem);
