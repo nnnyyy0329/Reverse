@@ -8,17 +8,16 @@
 namespace 
 {
 	constexpr auto DEFAULT_ENEMY_SPEED = 2.0f;// “G‚ÌˆÚ“®‘¬“x
-	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 10000.0f;// “G‚ÌÅ‘å‘Ì—Í
+	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 20000.0f;// “G‚ÌÅ‘å‘Ì—Í
 
 	// Melee
 	constexpr auto MELEE_VISION_RANGE = 250.0f;// õ“G‹——£
-	constexpr auto MELEE_VISION_ANGLE = 180.0f;// ‰~‚Å‚Ìõ“G
+	constexpr auto MELEE_VISION_ANGLE = 60.0f;// ‰~‚Å‚Ìõ“G
 	constexpr auto MELEE_ATTACK_RANGE = 120.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
 	constexpr auto MELEE_CHASE_LIMIT_RANGE = 600.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ß‚ğ‚â‚ß‚é‹——£
-	constexpr auto MELEE_MOVE_RADIUS = 800.0f;// œpœj‚·‚é”ÍˆÍ‚Ì”¼Œa(‰ŠúˆÊ’u‚©‚ç‚Ì‹——£)
 	constexpr auto MELEE_IDLE_TIME = 120.0f;// ‘Ò‹@ŠÔ
 	constexpr auto MELEE_MOVE_TIME = 180.0f;// œpœjŠÔ
-	constexpr auto MELEE_DETECT_TIME = 90.0f;// ”­Œ©d’¼
+	constexpr auto MELEE_DETECT_TIME = 60.0f;// ”­Œ©d’¼
 	constexpr auto MELEE_ATTACK_TIME = 180.0f;// UŒ‚ŠÔ
 
 	// Ranged
@@ -35,12 +34,10 @@ namespace
 	constexpr auto TANK_VISION_ANGLE = 180.0f;// õ“GŠp“x
 	constexpr auto TANK_ATTACK_RANGE = 150.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
 	constexpr auto TANK_CHASE_LIMIT_RANGE = 700.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ß‚ğ‚â‚ß‚é‹——£
-	constexpr auto TANK_MOVE_RADIUS = 500.0f;// œpœj‚·‚é”ÍˆÍ‚Ì”¼Œa(‰ŠúˆÊ’u‚©‚ç‚Ì‹——£)
 	constexpr auto TANK_IDLE_TIME = 150.0f;;// ‘Ò‹@ŠÔ
 	constexpr auto TANK_MOVE_TIME = 120.0f;// œpœjŠÔ
 	constexpr auto TANK_DETECT_TIME = 120.0f;// ”­Œ©d’¼
 	constexpr auto TANK_MOVE_SPEED = 1.5f;// ˆÚ“®‘¬“x
-	constexpr auto TANK_DAMAGE_TO_DOWN = 5;// ƒ_ƒEƒ“‚Ü‚Å‚Ì”íƒ_ƒ[ƒW‰ñ”
 }
 
 // “G‚Ìí—Ş
@@ -70,38 +67,53 @@ public:
 			// ƒ‚ƒfƒ‹–¼‚ğİ’è
 			enemy->SetModelName("Melee");
 
-				param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
-				param.fVisionRange = MELEE_VISION_RANGE;
-				param.fVisionAngle = MELEE_VISION_ANGLE;
-				param.fAttackRange = MELEE_ATTACK_RANGE;
-				param.fChaseLimitRange = MELEE_CHASE_LIMIT_RANGE;
-				param.fMoveRadius = MELEE_MOVE_RADIUS;
-				param.fIdleTime = MELEE_IDLE_TIME;
-				param.fMoveTime = MELEE_MOVE_TIME;
-				param.fDetectTime = MELEE_DETECT_TIME;
-				param.fAttackTime = MELEE_ATTACK_TIME;
-				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+			param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
+			param.fVisionRange = MELEE_VISION_RANGE;
+			param.fVisionAngle = MELEE_VISION_ANGLE;
+			param.fAttackRange = MELEE_ATTACK_RANGE;
+			param.fChaseLimitRange = MELEE_CHASE_LIMIT_RANGE;
+			param.fIdleTime = MELEE_IDLE_TIME;
+			param.fMoveTime = MELEE_MOVE_TIME;
+			param.fDetectTime = MELEE_DETECT_TIME;
+			param.fAttackTime = MELEE_ATTACK_TIME;
+			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 
-				// ‹¤’ÊƒXƒe[ƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ğİ’è
-				param.animDamage = "enemy_damage00_00";
-				param.animDead = "enemy_dead_00";
-				param.animStun = "Melee_Stun";
-				param.animDown = "enemy_damage01_00";
+			// ‹¤’ÊƒXƒe[ƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ğİ’è
+			param.animDamage = "enemy_damage_00";
+			param.animDead = "enemy_dead_00";
+			param.animStun = "Melee_Stun";
+			param.animDown = "enemy_dead_01";
 
-				enemy->SetEnemyParam(param);// ƒpƒ‰ƒ[ƒ^İ’è
+			enemy->SetEnemyParam(param);// ƒpƒ‰ƒ[ƒ^İ’è
 
-				// ƒnƒ“ƒhƒ‰‚Ì’†g‚ğİ’è
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::unique_ptr<EnemyState> 
-					{
-					// ƒ^[ƒQƒbƒg‚ª‘¶İ‚·‚ê‚ÎÚ‹ß
-					if (e->GetTarget()) 
-					{
-						return std::make_unique<Melee::Approach>();
-					}
-					// Œ©‚¦‚Ä‚¢‚È‚¯‚ê‚Î‘Ò‹@
-					return std::make_unique<Melee::Idle>();
-				});
-				break;
+			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
+			enemy->SetAfterDamageStateSelector([](Enemy* e, int comboCnt)->std::shared_ptr<EnemyState>
+			{
+				if (!e->GetTarget())
+				{
+					return std::make_shared<Melee::Idle>();
+				}
+
+				if (comboCnt >= 1)
+				{
+					return std::make_shared<Melee::CounterAttack>();
+				}
+
+				return std::make_shared<Melee::Approach>();
+			});
+
+			// ƒ_ƒEƒ“Œã‚Ì‘JˆÚæ‚ğŒˆ’è
+			enemy->SetAfterDownStateSelector([](Enemy* e)->std::shared_ptr<EnemyState>
+			{
+				if (e->GetTarget())
+				{
+					return std::make_shared<Melee::Approach>();
+				}
+
+				return std::make_shared<Melee::Idle>();
+			});
+
+		break;
 
 		case EnemyType::RANGED:// ‰“‹——£Œ^
 
@@ -111,7 +123,6 @@ public:
 			param.fVisionRange = RANGED_VISION_RANGE;
 			param.fVisionAngle = RANGED_VISION_ANGLE;
 			param.fChaseLimitRange = RANGED_CHASE_LIMIT_RANGE;
-			param.fMoveRadius = RANGED_MOVE_RADIUS;
 			param.fIdleTime = RANGED_IDLE_TIME;
 			param.fMoveTime = RANGED_MOVE_TIME;
 			param.fDetectTime = RANGED_DETECT_TIME;
@@ -125,48 +136,28 @@ public:
 
 			enemy->SetEnemyParam(param);
 
-			// ƒnƒ“ƒhƒ‰‚Ì’†g‚ğİ’è
-			enemy->SetRecoveryHandler([](Enemy* e) -> std::unique_ptr<EnemyState>
-				{
-					// ƒ^[ƒQƒbƒg‚ª‘¶İ‚·‚ê‚ÎÚ‹ß
-					if (e->GetTarget())
-					{
-						return std::make_unique<Ranged::Approach>();
-					}
-					// Œ©‚¦‚Ä‚¢‚È‚¯‚ê‚Î‘Ò‹@
-					return std::make_unique<Ranged::Idle>();
-				});
-			break;
+			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
+
+		break;
 
 		case EnemyType::TANK:// ƒ^ƒ“ƒNŒ^
 
 			enemy->SetModelName("Melee");
 
-				param.fMoveSpeed = TANK_MOVE_SPEED;
-				param.fVisionRange = TANK_VISION_RANGE;
-				param.fVisionAngle = TANK_VISION_ANGLE;
-				param.fAttackRange = TANK_ATTACK_RANGE;
-				param.fChaseLimitRange = TANK_CHASE_LIMIT_RANGE;
-				param.fMoveRadius = TANK_MOVE_RADIUS;
-				param.fIdleTime = TANK_IDLE_TIME;
-				param.fMoveTime = TANK_MOVE_TIME;
-				param.fDetectTime = TANK_DETECT_TIME;
-				param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
-				param.damageToDown = TANK_DAMAGE_TO_DOWN;
-				enemy->SetEnemyParam(param);
+			param.fMoveSpeed = TANK_MOVE_SPEED;
+			param.fVisionRange = TANK_VISION_RANGE;
+			param.fVisionAngle = TANK_VISION_ANGLE;
+			param.fAttackRange = TANK_ATTACK_RANGE;
+			param.fChaseLimitRange = TANK_CHASE_LIMIT_RANGE;
+			param.fIdleTime = TANK_IDLE_TIME;
+			param.fMoveTime = TANK_MOVE_TIME;
+			param.fDetectTime = TANK_DETECT_TIME;
+			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+			enemy->SetEnemyParam(param);
 
+			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
 
-				enemy->SetRecoveryHandler([](Enemy* e) -> std::unique_ptr<EnemyState>
-					{
-					// ƒ^[ƒQƒbƒg‚ª‘¶İ‚·‚ê‚ÎÚ‹ß
-					if (e->GetTarget())
-					{
-						return std::make_unique<Tank::Approach>();
-					}
-					// Œ©‚¦‚Ä‚¢‚È‚¯‚ê‚Î‘Ò‹@
-					return std::make_unique<Tank::Idle>();
-				});
-				break;
+		break;
 		}
 
 		// İ’èŒã‚É‰Šú‰»‚ğŒÄ‚Ño‚·

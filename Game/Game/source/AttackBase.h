@@ -2,7 +2,9 @@
 
 #pragma once
 #include "appframe.h"
-#include "EnergyManager.h"
+
+  // 前方宣言
+class CharaBase;
 
 enum class COLLISION_TYPE
 {
@@ -37,10 +39,11 @@ struct ATTACK_COLLISION
 	float recovery;				// 攻撃後の後隙
 	float damage;				// ダメージ量
 	float currentTime;			// 現在の経過時間
-	bool isActive;				// 現在アクティブかどうか
-	bool isHit;					// ヒットしたかどうか
 	ATTACK_STATE attackState;	// 攻撃状態
 	float attackMoveSpeed;		// 攻撃中の移動速度
+	bool isActive;				// 現在アクティブかどうか
+	bool isHit;					// ヒットしたかどうか
+	bool canKnockback;			// 吹き飛ばし攻撃かどうか
 };
 
 // 攻撃移動情報
@@ -52,8 +55,6 @@ struct AttackMovement
 	float decayRate;	// 減衰率
 	bool canMove;		// 移動可能フラグ
 };
-
-class CharaBase;  // 前方宣言
 
 class AttackBase
 {
@@ -71,14 +72,14 @@ public:
 	virtual bool ProcessStopAttack();	// 攻撃停止
 	void UpdateAttackState();			// 攻撃状態更新
 
+	// 攻撃中の移動処理
+	void UpdateAttackMove();				// 移動更新
+	virtual void ProcessAttackMovement();	// 移動処理
+
 	// 当たったキャラ管理
 	void AddHitCharas(std::shared_ptr<CharaBase> chara);		// 当たったキャラを追加
 	bool HasHitCharas(std::shared_ptr<CharaBase> chara)const;	// 当たったキャラを持っているかチェック
 	void ClearHitCharas();										// 当たったキャラリストクリア
-
-	// 攻撃中の移動処理
-	void UpdateAttackMove();				// 移動更新
-	virtual void ProcessAttackMovement();	// 移動処理
 
 	// デバッグ表示
 	void DrawAttackCollision();
@@ -96,7 +97,8 @@ public:
 		float damage,				// ダメージ	
 		bool hit,					// ヒットフラグ
 		ATTACK_STATE attackState,	// 攻撃状態
-		float attackMoveSpeed		// 攻撃中の移動速度
+		float attackMoveSpeed,		// 攻撃中の移動速度
+		bool canKnockback			// 吹き飛ばし攻撃かどうか
 	);
 
 	// 円形攻撃データ設定
@@ -150,7 +152,6 @@ protected:
 	AttackMovement _stcAttackMovement;	// 攻撃中の移動情報
 
 private:
-	std::shared_ptr<EnergyManager> _energyManager;	// エネルギーマネージャー
 	std::vector<std::shared_ptr<CharaBase>> _hitCharas;	// 当たったキャラを管理
 
 };

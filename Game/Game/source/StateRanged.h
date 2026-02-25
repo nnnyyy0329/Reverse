@@ -121,13 +121,26 @@ namespace Ranged
 
 
 
-	// 帰還
-	class ReturnHome : public EnemyState
+	// ターゲットを見失ったとき
+	class LostTarget : public EnemyState
 	{
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() override { return "Ranged:ReturnHome"; }
+		const char* GetName() override { return "Ranged:LostTarget"; }
 		void UpdateSearch(Enemy* owner) override;
+
+	private:
+		enum class Phase
+		{
+			LOOK_AROUND,// 周囲を見渡す
+			RETURN_HOME// 帰還
+		};
+		Phase _ePhase;
+
+		VECTOR _vLookDir;// 見渡しの目標方向
+		float _fLookTimer;// 現在の向きを維持するタイマー
+		float _fLookDuration;// 現在の向きの維持時間
+		int _lookCnt;// 見渡し回数
 	};
 }

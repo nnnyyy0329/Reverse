@@ -114,6 +114,7 @@ bool ModeGame::Initialize()
 	{
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
 		enemy->SetBulletManager(_bulletManager);
+		enemy->SetStage(_stage);
 	}
 
 	// 能力選択画面初期化
@@ -177,7 +178,7 @@ bool ModeGame::Process()
 	float ry = analog.ry;
 	float rz = analog.rz;
 	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
-
+ 
 	/// 入力取得
 	{
 		// プレイヤーマネージャーに入力状態を渡す
@@ -291,8 +292,15 @@ bool ModeGame::Process()
 		}
 
 		// キャラと攻撃コリジョンの当たり判定
-		CheckActiveAttack(player);										// プレイヤー
-		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
+		{
+			CheckActiveAttack(player);										// プレイヤー
+			for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
+		}
+
+		// キャラと吸収攻撃
+		{
+			for(const auto& enemy : enemies){ CheckHitAbsorbAttack(player, enemy); }
+		}
 
 		// キャラ同士
 		{
@@ -555,9 +563,10 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 	{
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
 		enemy->SetBulletManager(_bulletManager);
+		enemy->SetStage(_stage);
 	}
 
-	// オブジェクトの削除
+	// オブジェクトのクリア
 	{
 		_bulletManager->ClearAllBullets();
 		AttackManager::GetInstance()->ClearAllAttacks();
@@ -579,6 +588,7 @@ void ModeGame::RestartCurrentStage()
 		{
 			enemy->SetTarget(_playerManager->GetActivePlayerShared());
 			enemy->SetBulletManager(_bulletManager);
+			enemy->SetStage(_stage);
 		}
 	}
 
@@ -600,7 +610,6 @@ void ModeGame::RestartCurrentStage()
 	{
 		_bulletManager->ClearAllBullets();
 		AttackManager::GetInstance()->ClearAllAttacks();
-		EffectServer::GetInstance()->Terminate();
 	}
 }
 

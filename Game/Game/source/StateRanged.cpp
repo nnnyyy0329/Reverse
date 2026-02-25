@@ -11,6 +11,8 @@ namespace
 	constexpr auto RETREAT_TRIGGER_DISTANCE = 250.0f;	// 後退開始距離
 	constexpr auto APPROACH_STOP_DISTANCE = 400.0f;		// 接近停止距離
 
+	constexpr auto LOST_NEARBY_HOME = 10.0f;			// 帰還完了判定距離
+
 	// 時間制御用定数
 	constexpr auto WANDER_LOOK_MIN_TIME = 60.0f;		// 徘徊時の最小視線停止時間
 	constexpr auto WANDER_LOOK_RANDOM_TIME = 60.0f;		// 徘徊時の視線停止ランダム追加時間
@@ -18,6 +20,9 @@ namespace
 	constexpr auto SHOT_EXECUTE_TIME = 30.0f;			// 射撃実行時間
 	constexpr auto SHOT_RECOVERY_TIME = 60.0f;			// 射撃後隙時間
 	constexpr auto SHOT_INTERVAL_TIME = 90.0f;			// 射撃間隔時間
+
+	constexpr auto LOST_LOOK_MIN_TIME = 60.0f;			// 方向あたりの最低見渡し時間
+
 	constexpr auto BLEND_FRAME = 1.0f;					// アニメーションブレンドフレーム数
 
 	// 速度制御用定数
@@ -25,6 +30,8 @@ namespace
 	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;			// スムーズ回転速度
 	constexpr auto APPROACH_SPEED = 1.0f;				// 接近速度(ゆっくり)
 	constexpr auto RETREAT_SPEED = 1.5f;				// 後退速度
+
+	constexpr auto LOST_ROTATE_SPEED = 3.0f;			// 見渡し回転速度
 
 	// 確率制御用定数
 	constexpr auto WANDER_ANGLE_RANDOM_RANGE = 180;		// 徘徊時の角度ランダム範囲(度)
@@ -41,6 +48,14 @@ namespace
 	constexpr auto BULLET_LIFETIME = 180;				// 弾生存時間(フレーム)
 	constexpr auto BULLET_SPAWN_OFFSET_Y = 100.0f;		// 弾発射Y座標オフセット
 	constexpr auto BULLET_SPAWN_OFFSET_Z = 50.0f;		// 弾発射前方オフセット
+
+	// 時間ランダム幅定数
+	constexpr auto IDLE_TIME_RANGE = 30.0f;				// 待機時間のランダム幅
+	constexpr auto NOTICE_TIME_RANGE = 10.0f;			// 発見硬直のランダム幅
+	constexpr auto SHOT_INTERVAL_TIME_RANGE = 20.0f;	// 射撃間隔時間のランダム幅
+	constexpr auto LOST_LOOK_RANDOM_TIME = 60.0f;		// 見渡し時間ランダム幅
+
+	constexpr auto LOST_LOOK_COUNT = 3;					// 見渡し回数
 }
 
 namespace Ranged
@@ -73,7 +88,7 @@ namespace Ranged
 		_fTimer = 0.0f;
 
 		// 時間にばらつきを持たせる
-		_fTargetTimer = CalcOffsetTime(owner, owner->GetEnemyParam().fIdleTime);
+		_fTargetTimer = CalcRandomRangeTime(owner->GetEnemyParam().fIdleTime, IDLE_TIME_RANGE);
 
 		// ここでアニメーション設定
 	}
@@ -170,6 +185,9 @@ namespace Ranged
 		// タイマー初期化
 		_fTimer = 0.0f;
 
+		// 時間ランダム設定
+		_fTargetTimer = CalcRandomRangeTime(owner->GetEnemyParam().fDetectTime, NOTICE_TIME_RANGE);
+
 		// ここでアニメーション設定
 	}
 
@@ -186,7 +204,7 @@ namespace Ranged
 		}
 
 		// 時間経過チェック
-		if (_fTimer >= owner->GetEnemyParam().fDetectTime)
+		if (_fTimer >= _fTargetTimer)
 		{
 			return std::make_shared<Approach>();
 		}
@@ -215,12 +233,16 @@ namespace Ranged
 		// ターゲット存在チェック
 		if (!targetInfo.bExist)
 		{
-			return HandleNoTarget<Idle>(owner);
+			return TransitionToLostNoTarget<LostTarget>(owner);
 		}
 
 		// 追跡限界距離チェック
-		auto result = CheckChaseLimitAndHandle<Idle>(owner, targetInfo.fDist);
+		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
 		if(result) { return result; }
+
+		// 移動可能範囲外チェック
+		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
+		if (areaResult) { return areaResult; }
 
 		// 射撃射程内チェック
 		if (targetInfo.fDist <= APPROACH_STOP_DISTANCE)
@@ -258,15 +280,19 @@ namespace Ranged
 		// ターゲット存在チェック
 		if (!targetInfo.bExist)
 		{
-			return HandleNoTarget<Idle>(owner);
+			return TransitionToLostNoTarget<LostTarget>(owner);
 		}
 
 		// タイマー更新
 		_fTimer++;
 
 		// 追跡限界距離チェック
-		auto result = CheckChaseLimitAndHandle<Idle>(owner, targetInfo.fDist);
+		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
 		if (result) { return result; }
+
+		// 移動可能範囲外チェック
+		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
+		if (areaResult) { return areaResult; }
 
 		// 射撃射程内に入った場合
 		if (targetInfo.fDist >= SHOT_RANGE_MIN && targetInfo.fDist <= SHOT_RANGE_MAX)
@@ -451,6 +477,9 @@ namespace Ranged
 		// タイマー初期化
 		_fTimer = 0.0f;
 
+		// 時間ランダム設定
+		_fTargetTimer = CalcRandomRangeTime(SHOT_INTERVAL_TIME, SHOT_INTERVAL_TIME_RANGE);
+
 		// ここでアニメーション設定
 	}
 
@@ -462,15 +491,19 @@ namespace Ranged
 		// ターゲット存在チェック
 		if (!targetInfo.bExist)
 		{
-			return HandleNoTarget<Idle>(owner);
+			return TransitionToLostNoTarget<LostTarget>(owner);
 		}
 
 		// タイマー更新
 		_fTimer++;
 		
 		// 追跡限界距離チェック
-		auto result = CheckChaseLimitAndHandle<Idle>(owner, targetInfo.fDist);
+		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
 		if (result) { return result; }
+
+		// 移動可能範囲外チェック
+		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
+		if (areaResult) { return areaResult; }
 
 		// ターゲット方向へ追従
 		RotateToTarget(owner, targetInfo.vDir, SMOOTH_ROTATE_SPEED);
@@ -486,7 +519,7 @@ namespace Ranged
 		}
 
 		// 射撃間隔時間終了チェック
-		if (_fTimer >= SHOT_INTERVAL_TIME)
+		if (_fTimer >= _fTargetTimer)
 		{
 			return std::make_shared<ShotStart>();
 		}
@@ -498,44 +531,98 @@ namespace Ranged
 
 
 
-	// 帰還
-	void ReturnHome::Enter(Enemy* owner)
+	// ターゲットを見失ったとき
+	void LostTarget::Enter(Enemy* owner)
 	{
-		// タイマー初期化
 		_fTimer = 0.0f;
+		_ePhase = Phase::LOOK_AROUND;// 見渡しから
+		_lookCnt = 0;
 
-		// ここでアニメーション設定
+		// 見渡し方向
+		float fCurrentAngle = atan2f(owner->GetDir().x, owner->GetDir().z);
+		float fOffset = static_cast<float>(GetRand(180) - 90) * DEGREE_TO_RADIAN;// -90 ~ +90度のランダムオフセット 
+		float fTargetAngle = fCurrentAngle + fOffset;
+		_vLookDir = VGet(sinf(fTargetAngle), 0.0f, cosf(fTargetAngle));
+		_vLookDir = VNorm(_vLookDir);
+		// 見渡し時間
+		_fLookDuration = CalcRandomRangeTime(LOST_LOOK_MIN_TIME, LOST_LOOK_RANDOM_TIME);
+		_fLookTimer = 0.0f;
+
+		StopMove(owner);
+
+		// アニメーション設定
 	}
 
-	std::shared_ptr<EnemyState> ReturnHome::Update(Enemy* owner)
+	std::shared_ptr<EnemyState> LostTarget::Update(Enemy* owner)
 	{
-		// 索敵結果チェック
-		if(owner->IsTargetDetected() )
+		// 再索敵
+		if (owner->IsTargetDetected())
 		{
 			return std::make_shared<Notice>();
 		}
 
-		// 初期位置への距離計算
-		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
-		float dist = VSize(vToHome);
+		StopMove(owner);
 
-		// 到達判定チェック
-		if(dist <= NEARBY_HOME) 
+		if (_ePhase == Phase::LOOK_AROUND)
 		{
-			return std::make_shared<Idle>();
-		}
+			// 目標方向へ回転
+			RotateToTarget(owner, _vLookDir, LOST_ROTATE_SPEED);
 
-		// 初期位置方向へ回転・移動
-		VECTOR vDir = VNorm(vToHome);
-		RotateToTarget(owner, vDir, SMOOTH_ROTATE_SPEED);
-		MoveToTarget(owner, vDir, owner->GetEnemyParam().fMoveSpeed);
+			_fLookTimer++;
+
+			// 見渡し時間経過で次の見渡し方向へ
+			if (_fLookTimer >= _fLookDuration)
+			{
+				_lookCnt++;
+
+				if (_lookCnt >= LOST_LOOK_COUNT)
+				{
+					// 見渡し完了で帰還フェーズで
+					_ePhase = Phase::RETURN_HOME;
+
+					// アニメーション設定
+					AnimManager* animManager = owner->GetAnimManager();
+					if (animManager)
+					{
+						animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+					}
+				}
+			}
+			else
+			{
+				// 次の見渡し方向をランダムに決定
+				float fCurrentAngle = atan2f(owner->GetDir().x, owner->GetDir().z);
+				float fOffset = static_cast<float>(GetRand(240) - 120) * DEGREE_TO_RADIAN;// -120 ~ +120度のランダムオフセット
+				float fTargetAngle = fCurrentAngle + fOffset;
+				_vLookDir = VGet(sinf(fTargetAngle), 0.0f, cosf(fTargetAngle));
+				_vLookDir = VNorm(_vLookDir);
+				// 見渡し時間
+				_fLookDuration = CalcRandomRangeTime(LOST_LOOK_MIN_TIME, LOST_LOOK_RANDOM_TIME);
+				_fLookTimer = 0.0f;
+			}
+		}
+		else// RETURN_HOME
+		{
+			// 初期位置への距離計算
+			VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
+			float dist = VSize(vToHome);
+
+			if (dist <= LOST_NEARBY_HOME)
+			{
+				return std::make_shared<Idle>();// 帰還完了
+			}
+
+			// 初期位置方向へ移動
+			VECTOR vDir = VNorm(vToHome);
+			RotateToTarget(owner, vDir, LOST_ROTATE_SPEED);
+			MoveToTarget(owner, vDir, owner->GetEnemyParam().fMoveSpeed);
+		}
 
 		return nullptr;
 	}
 
-	void ReturnHome::UpdateSearch(Enemy* owner)
+	void LostTarget::UpdateSearch(Enemy* owner)
 	{
-		// 視界判定結果を設定
 		owner->SetTargetDetected(Ranged::IsTargetVisible(owner));
 	}
 }

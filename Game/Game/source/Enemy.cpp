@@ -14,9 +14,6 @@ namespace
 
 	// 索敵制御
 	constexpr auto SEARCH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
-	
-	// ステート制御
-	constexpr auto MAX_STATE_OFFSET = 60.0f;// ステート時間をずらす範囲(フレーム)
 
 	// ライフバー表示設定
 	constexpr auto LIFEBAR_HEAD_OFFSET_Y = 100.0f;// ライフバーの表示位置オフセット
@@ -39,6 +36,9 @@ namespace
 
 	// エフェクト関連
 	constexpr auto DAMAGE_EFFECT_OFFSET_Y = 50.0f;// ダメージエフェクトYオフセット
+
+	// 連続被ダメ管理
+	constexpr auto DAMAGE_COMBO_RESET_TIME = 90.0f;// この時間内に再ヒットしなければリセット
 }
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
@@ -60,7 +60,6 @@ Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
 	SetCharaType(CHARA_TYPE::ENEMY);// キャラタイプを設定
 
 	_searchTimer = 0;
-	_fStateTimerOffset = 0.0f;
 }
 
 Enemy::~Enemy() 
@@ -75,14 +74,10 @@ bool Enemy::Initialize()
 	_vOldPos = _vPos;
 	_vHomePos = _vPos;// 初期位置を保存
 	_fLife = _enemyParam.fMaxLife;// ライフに最大値をセット
-	_damageCnt = 0;
 	_bIsExist = true;
 	_bCanRemove = false;
 
 	_defaultColor = MV1GetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0);
-
-	// ランダムなオフセットを適用して動きをずらす
-	ApplyRandomOffset();
 
 	return true;
 }
@@ -103,6 +98,9 @@ bool Enemy::Process()
 
 	// 索敵タイマー更新
 	UpdateSearchTimer();
+
+	// 連続被ダメリセットタイマー更新
+	UpdateDamageComboTimer();
 
 	// 索敵更新タイミングなら索敵を実行
 	if (ShouldUpdateSearch())
@@ -129,9 +127,20 @@ bool Enemy::Process()
 
 	_vPos = VAdd(_vPos, _vMove);// 位置更新
 
+	// 移動可能範囲チェック
+	if (!CheckInsideMoveArea(_vPos))
+	{
+		_vPos = _vOldPos;// 範囲外なら移動前の位置に戻す
+		_bIsOutSideMoveArea = true;// エリア外フラグ
+	}
+	else
+	{
+		_bIsOutSideMoveArea = false;
+	}
+
 	// カプセルに座標を対応させる
-	_vCollisionBottom = VAdd(_vPos, VGet(0, _fCollisionR, 0));// 半径分ずらして中心位置に
-	_vCollisionTop = VAdd(_vPos, VGet(0, _fCollisionHeight - _fCollisionR, 0));// 高さ分ずらす
+	_vCollisionBottom = VAdd(_vPos, VGet(0.0f, _fCollisionR, 0.0f));// 半径分ずらして中心位置に
+	_vCollisionTop = VAdd(_vPos, VGet(0.0f, _fCollisionHeight - _fCollisionR, 0.0f));// 高さ分ずらす
 
 	return true;
 }
@@ -149,13 +158,6 @@ bool Enemy::Render()
 
 void Enemy::DebugRender() 
 {
-	// 移動範囲を描画
-	{
-		unsigned int color = GetColor(0, 0, 255);// 青
-		DrawCircle3D(_vHomePos, _enemyParam.fMoveRadius, color, 16);
-		DrawLine3D(_vPos, _vHomePos, color);// 現在位置から初期位置への線
-	}
-
 	// 索敵範囲を描画
 	{
 		auto fVisionRange = _enemyParam.fVisionRange;// 索敵距離
@@ -197,7 +199,6 @@ void Enemy::DebugRender()
 			SetFontSize(size);
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  pos    = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z); y += size;
 			DrawFormatString(x, y, GetColor(255, 255, 0), "  life   = %5.2f / %5.2f", _fLife, _enemyParam.fMaxLife); y += size;
-			DrawFormatString(x, y, GetColor(255, 255, 0), "  _damageCnt  = %d", _damageCnt); y += size;
 
 			// ステートから名前を取得
 			const char* stateName = "None";
@@ -418,10 +419,6 @@ void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 void Enemy::SetEnemyParam(const EnemyParam& param) 
 {
 	_enemyParam = param;
-
-	// 視界のcos値を計算して設定
-	auto rad = _enemyParam.fVisionAngle * DEGREE_TO_RADIAN;
-	_enemyParam.fVisionCos = cosf(rad);
 }
 
 void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime) 
@@ -458,8 +455,8 @@ void Enemy::StartAttack(const EnemyAttackSettings& settings)
 		settings.fDamage,// ダメージ
 		false,// ヒットフラグ
 		ATTACK_STATE::INACTIVE,
-		0.0f
-
+		0.0f,
+		false
 	);
 
 	// 攻撃開始
@@ -499,7 +496,8 @@ void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings)
 		col.damage,
 		col.isHit,
 		ATTACK_STATE::INACTIVE,
-		0.0f
+		0.0f,
+		false
 	);
 }
 
@@ -520,21 +518,6 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	// エフェクト
 	VECTOR efPos = VAdd(_vPos, VGet(0.0f, DAMAGE_EFFECT_OFFSET_Y, 0.0f));
 	EffectServer::GetInstance()->Play("En_Damage", efPos);
-
-	// 変身前プレイヤーからの攻撃なら最低1は残す
-	if (eType == ATTACK_OWNER_TYPE::SURFACE_PLAYER)
-	{
-		// ダメージ適用後のライフを計算
-		auto lifeAfterDamage = _fLife - fDamage;
-
-		if (lifeAfterDamage <= 1.0f)
-		{
-			_fLife = 1.0f;// 最低1は残す
-			// スタンステートへ遷移
-			ChangeState(std::make_unique<Common::Stun>());
-			return;
-		}
-	}
 
 	// 現在のステートが最優先の場合、ダメージのみ受付
 	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::TOP)
@@ -565,15 +548,14 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	}
 
 	// 生存時:通常ダメージ
-	_damageCnt++;// ダメージ回数をカウントアップ
 
 	// リアクションとしてマテリアルカラーを赤くする
 	COLOR_F red = GetColorF(1.0f, 0.0f, 0.0f, 1.0f);
 	MV1SetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0, red);
 	_bIsColorChanged = true;
 
-	// Down回数に達したら直接Downステートへ遷移
-	if (_damageCnt >= _enemyParam.damageToDown)
+	// 吹っ飛びフラグがtrueならDownステートへ遷移
+	if (attackInfo.canKnockback)
 	{
 		ChangeState(std::make_unique<Common::Down>());
 		return;
@@ -582,10 +564,12 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	// 中断されないアクション中はDamageステートへ遷移しない
 	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::HIGH)
 	{
-		// カウントだけ増やす
+		// 連続被ダメカウントは更新
+		UpdateDamageCombo();
 		return;
 	}
 
+	UpdateDamageCombo();
 	// ダメージステートへ遷移
 	ChangeState(std::make_unique<Common::Damage>());
 }
@@ -595,11 +579,21 @@ bool Enemy::IsDead()
 	return _fLife <= 0.0f;// ライフが0以下なら死亡
 }
 
-std::unique_ptr<EnemyState> Enemy::GetRecoveryState()
+std::shared_ptr<EnemyState> Enemy::GetAfterDamageStateSelector(int comboCnt)
 {
-	if (_recoveryHandler) 
-	{// ハンドラが設定されていれば実行
-		return _recoveryHandler(this);
+	if (_afterDamageStateSelector)
+	{
+		return _afterDamageStateSelector(this, comboCnt);
+	}
+
+	return nullptr;
+}
+
+std::shared_ptr<EnemyState> Enemy::GetAfterDownStateSelector()
+{
+	if (_afterDownStateSelector)
+	{
+		return _afterDownStateSelector(this);
 	}
 
 	return nullptr;
@@ -631,12 +625,6 @@ void Enemy::UpdateSearchTimer()
 	{
 		_searchTimer = 0;
 	}
-}
-
-// ステート時間にランダムなオフセットを適用
-void Enemy::ApplyRandomOffset()
-{
-	_fStateTimerOffset = static_cast<float>(GetRand(static_cast<int>(MAX_STATE_OFFSET)));
 }
 
 void Enemy::SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg)
@@ -762,10 +750,70 @@ void Enemy::UpdateColorChange()
 {
 	static int changeTimer = 0;
 	changeTimer++;
-	if (changeTimer > 10)
+	if (changeTimer > 30)
 	{
 		MV1SetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0, _defaultColor);
 		_bIsColorChanged = false;
 		changeTimer = 0;
+	}
+}
+
+bool Enemy::CheckInsideMoveArea(VECTOR vPos)
+{
+	auto stage = _stage.lock();
+	if (!stage) { return true; }
+
+	const auto& areaList = stage->GetMoveAreaList();
+	if (areaList.empty()) { return true; }
+
+	// 足元からの線分
+	VECTOR vRayStart = VAdd(vPos, VGet(0.0f, _colSubY, 0.0f));
+	VECTOR vRayEnd = VAdd(vRayStart, VGet(0.0f, -1000.0f, 0.0f));
+
+	// 全移動可能エリアを走査
+	for (const auto& area : areaList)
+	{
+		if (area.collisionFrame == -1 || area.modelHandle <= 0) { continue; }
+
+		// 線分とモデルの当たり判定
+		MV1_COLL_RESULT_POLY result = MV1CollCheck_Line(
+			area.modelHandle,
+			area.collisionFrame,
+			vRayStart,
+			vRayEnd
+		);
+
+		if (result.HitFlag != 0)
+		{
+			return true;// 当たっていたら範囲内
+		}
+	}
+
+	return false;// どこにも当たらなければ範囲外
+}
+
+void Enemy::UpdateDamageCombo()
+{
+	if (_fDamageComboResetTimer > 0.0f)
+	{
+		_damageComboCnt++;
+	}
+	else if (_fDamageComboResetTimer <= 0.0f)
+	{
+		_damageComboCnt = 1;// 初回ヒット
+	}
+
+	_fDamageComboResetTimer = DAMAGE_COMBO_RESET_TIME;// タイマーリセット
+}
+
+void Enemy::UpdateDamageComboTimer()
+{
+	if (_fDamageComboResetTimer > 0.0f)
+	{
+		_fDamageComboResetTimer--;
+		if (_fDamageComboResetTimer <= 0.0f)
+		{
+			_damageComboCnt = 0;// 時間切れでリセット
+		}
 	}
 }

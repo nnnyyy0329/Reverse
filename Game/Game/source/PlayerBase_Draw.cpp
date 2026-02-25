@@ -101,6 +101,12 @@ std::string PlayerBase::GetCurrentStateString() const
 		result += " | Shoot:" + GetShootStateString(_playerState.shootState);
 	}
 
+	// 吸収攻撃状態
+	if(_playerState.absorbState != PLAYER_ABSORB_STATE::NONE)
+	{
+		result += " | Absorb:" + GetAbsorbStateString(_playerState.absorbState);
+	}
+
 	// 特殊状態
 	if(_playerState.combatState != PLAYER_COMBAT_STATE::NONE)
 	{
@@ -133,13 +139,15 @@ std::string PlayerBase::GetAttackStateString(PLAYER_ATTACK_STATE state) const
 {
 	switch(state)
 	{
-		case PLAYER_ATTACK_STATE::NONE:          return "NONE";
-		case PLAYER_ATTACK_STATE::FIRST_ATTACK:  return "FIRST_ATTACK";		// 1段目攻撃
-		case PLAYER_ATTACK_STATE::SECOND_ATTACK: return "SECOND_ATTACK";	// 2段目攻撃
-		case PLAYER_ATTACK_STATE::THIRD_ATTACK:  return "THIRD_ATTACK";		// 3段目攻撃
-		case PLAYER_ATTACK_STATE::FOURTH_ATTACK: return "FOURTH_ATTACK";	// 4段目攻撃
-		case PLAYER_ATTACK_STATE::FIFTH_ATTACK:  return "FIFTH_ATTACK";		// 5段目攻撃
-		default:                                 return "UNKNOWN";
+		case PLAYER_ATTACK_STATE::NONE:					return "NONE";
+		case PLAYER_ATTACK_STATE::FIRST_ATTACK:			return "FIRST_ATTACK";		// 1段目攻撃
+		case PLAYER_ATTACK_STATE::SECOND_ATTACK:		return "SECOND_ATTACK";		// 2段目攻撃
+		case PLAYER_ATTACK_STATE::THIRD_ATTACK:			return "THIRD_ATTACK";		// 3段目攻撃
+		case PLAYER_ATTACK_STATE::FOURTH_ATTACK:		return "FOURTH_ATTACK";		// 4段目攻撃
+		case PLAYER_ATTACK_STATE::FIFTH_ATTACK:			return "FIFTH_ATTACK";		// 5段目攻撃
+		case PLAYER_ATTACK_STATE::FIRST_SKILL:			return "FIRST_SKILL";		// スキル1
+		case PLAYER_ATTACK_STATE::SECOND_SKILL:			return "SECOND_SKILL";		// スキル2
+		default:										return "UNKNOWN";
 	}
 }
 
@@ -148,12 +156,25 @@ std::string PlayerBase::GetShootStateString(PLAYER_SHOOT_STATE state) const
 {
 	switch(state)
 	{
-		case PLAYER_SHOOT_STATE::NONE:           return "NONE";
-		case PLAYER_SHOOT_STATE::SHOOT_READY:    return "SHOOT_READY";		// 発射構え
-		case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT: return "RIGHT_ARM_SHOOT";	// 右腕発射
-		case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:  return "LEFT_ARM_SHOOT";	// 左腕発射
-		case PLAYER_SHOOT_STATE::SHOOT_MOVE:     return "SHOOT_MOVE";		// 発射移動
-		default:                                 return "UNKNOWN";
+		case PLAYER_SHOOT_STATE::NONE:				return "NONE";
+		case PLAYER_SHOOT_STATE::SHOOT_READY:		return "SHOOT_READY";		// 発射構え
+		case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT:	return "RIGHT_ARM_SHOOT";	// 右腕発射
+		case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:	return "LEFT_ARM_SHOOT";	// 左腕発射
+		case PLAYER_SHOOT_STATE::SHOOT_MOVE:		return "SHOOT_MOVE";		// 発射移動
+		default:									return "UNKNOWN";
+	}
+}
+
+// 吸収攻撃状態文字列取得
+std::string PlayerBase::GetAbsorbStateString(PLAYER_ABSORB_STATE state) const
+{
+	switch(state)
+	{
+		case PLAYER_ABSORB_STATE::NONE:				return "NONE";
+		case PLAYER_ABSORB_STATE::ABSORB_READY:		return "ABSORB_READY";	// 吸収構え
+		case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:	return "ABSORB_ACTIVE";	// 吸収中
+		case PLAYER_ABSORB_STATE::ABSORB_END:		return "ABSORB_END";	// 吸収終了
+		default:									return "UNKNOWN";
 	}
 }
 

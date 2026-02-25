@@ -29,7 +29,6 @@ void PlayerBase::ProcessMovePlayer()
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
 	if(IsAttacking()){ return; }				// 攻撃中は移動入力を受け付けない
-	//if(IsShooting()){ return; }					// 発射中は移動入力を受け付けない
 	if(IsDodging()){ return; }					// 回避中は移動入力を受け付けない
 	if(IsHitStop()){ return; }					// 被弾中は移動入力を受け付けない
 	if(IsDeath()){ return; }					// 死亡中は移動入力を受け付けない
@@ -249,13 +248,13 @@ void PlayerBase::ProcessCollisionPos()
 	// しゃがみ状態で当たり判定の高さを変更
 	if(!_bIsCrouching) // 立っている場合
 	{
-		_vCollisionTop = VAdd(modelPos, VGet(0, 70.0f, 0));
-		_vCollisionBottom = VAdd(modelPos, VGet(0, 10.0f, 0));
+		_vCollisionBottom = VAdd(_vPos, VGet(0.0f, _fCollisionR, 0.0f));// 半径分ずらして中心位置に
+		_vCollisionTop = VAdd(_vPos, VGet(0.0f, _fCollisionHeight - _fCollisionR, 0.0f));// 高さ分ずらす
 	}
 	else // しゃがみ中なら
 	{
-		_vCollisionTop = VAdd(modelPos, VGet(0, 35.0f, 0));
-		_vCollisionBottom = VAdd(modelPos, VGet(0, 5.0f, 0));
+		_vCollisionBottom = VAdd(_vPos, VGet(0.0f, _fCollisionR, 0.0f));// 半径分ずらして中心位置に
+		_vCollisionTop = VAdd(_vPos, VGet(0.0f, _fCollisionHeight - _fCollisionR, 0.0f));// 高さ分ずらす
 	}
 }
 
@@ -348,12 +347,12 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.combatState)
 		{
-			case PLAYER_COMBAT_STATE::TRANSFORM:	return _playerAnim.combat.transform;
-			case PLAYER_COMBAT_STATE::TRANS_CANCEL:	return _playerAnim.combat.transCancel;
-			case PLAYER_COMBAT_STATE::GUARD:		return _playerAnim.combat.guard;
-			case PLAYER_COMBAT_STATE::HIT:			return _playerAnim.combat.hit;
-			case PLAYER_COMBAT_STATE::DODGE:		return _playerAnim.combat.dodge;
-			case PLAYER_COMBAT_STATE::DEATH:		return _playerAnim.combat.death;
+			case PLAYER_COMBAT_STATE::TRANSFORM:	return _playerAnim.combat.transform;	// 変身
+			case PLAYER_COMBAT_STATE::TRANS_CANCEL:	return _playerAnim.combat.transCancel;	// 変身解除
+			case PLAYER_COMBAT_STATE::GUARD:		return _playerAnim.combat.guard;		// ガード
+			case PLAYER_COMBAT_STATE::HIT:			return _playerAnim.combat.hit;			// 被弾	
+			case PLAYER_COMBAT_STATE::DODGE:		return _playerAnim.combat.dodge;		// 回避
+			case PLAYER_COMBAT_STATE::DEATH:		return _playerAnim.combat.death;		// 死亡
 		}
 	}
 
@@ -361,11 +360,11 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.attackState)
 		{
-			case PLAYER_ATTACK_STATE::FIRST_ATTACK:		return _playerAnim.attack.firstAttack;
-			case PLAYER_ATTACK_STATE::SECOND_ATTACK:	return _playerAnim.attack.secondAttack;
-			case PLAYER_ATTACK_STATE::THIRD_ATTACK:		return _playerAnim.attack.thirdAttack;
-			case PLAYER_ATTACK_STATE::FOURTH_ATTACK:	return _playerAnim.attack.fourthAttack;
-			case PLAYER_ATTACK_STATE::FIFTH_ATTACK:		return _playerAnim.attack.fifthAttack;
+			case PLAYER_ATTACK_STATE::FIRST_ATTACK:			return _playerAnim.attack.firstAttack;		// 1段目攻撃
+			case PLAYER_ATTACK_STATE::SECOND_ATTACK:		return _playerAnim.attack.secondAttack;		// 2段目攻撃
+			case PLAYER_ATTACK_STATE::THIRD_ATTACK:			return _playerAnim.attack.thirdAttack;		// 3段目攻撃
+			case PLAYER_ATTACK_STATE::FOURTH_ATTACK:		return _playerAnim.attack.fourthAttack;		// 4段目攻撃
+			case PLAYER_ATTACK_STATE::FIFTH_ATTACK:			return _playerAnim.attack.fifthAttack;		// 5段目攻撃
 		}
 	}
 
@@ -373,22 +372,32 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.shootState)
 		{
-			case PLAYER_SHOOT_STATE::SHOOT_READY:		return _playerAnim.shoot.shootReady;
-			case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT:	return _playerAnim.shoot.rightArmShoot;
-			case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:	return _playerAnim.shoot.leftArmShoot;
-			case PLAYER_SHOOT_STATE::SHOOT_MOVE:		return _playerAnim.shoot.shootMove;
+			case PLAYER_SHOOT_STATE::SHOOT_READY:		return _playerAnim.shoot.shootReady;	// 発射構え
+			case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT:	return _playerAnim.shoot.rightArmShoot;	// 右腕発射
+			case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:	return _playerAnim.shoot.leftArmShoot;	// 左腕発射
+			case PLAYER_SHOOT_STATE::SHOOT_MOVE:		return _playerAnim.shoot.shootMove;		// 発射移動
+		}
+	}
+
+	if(_playerState.absorbState != PLAYER_ABSORB_STATE::NONE)
+	{
+		switch(_playerState.absorbState)
+		{
+			case PLAYER_ABSORB_STATE::ABSORB_READY:		return _playerAnim.absorb.absorbReady;	// 吸収開始
+			case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:	return _playerAnim.absorb.absorbActive;	// 吸収中
+			case PLAYER_ABSORB_STATE::ABSORB_END:		return _playerAnim.absorb.absorbEnd;	// 吸収終了
 		}
 	}
 
 	switch(_playerState.movementState)
 	{
-		case PLAYER_MOVEMENT_STATE::WAIT:			return _playerAnim.movement.wait;
-		case PLAYER_MOVEMENT_STATE::WALK:			return _playerAnim.movement.walk;
-		case PLAYER_MOVEMENT_STATE::RUN:			return _playerAnim.movement.run;
-		case PLAYER_MOVEMENT_STATE::JUMP_UP:		return _playerAnim.movement.jumpUp;
-		case PLAYER_MOVEMENT_STATE::JUMP_DOWN:		return _playerAnim.movement.jumpDown;
-		case PLAYER_MOVEMENT_STATE::CROUCH_WAIT:	return _playerAnim.movement.crouchWait;
-		case PLAYER_MOVEMENT_STATE::CROUCH_WALK:	return _playerAnim.movement.crouchWalk;
+		case PLAYER_MOVEMENT_STATE::WAIT:			return _playerAnim.movement.wait;		// 待機
+		case PLAYER_MOVEMENT_STATE::WALK:			return _playerAnim.movement.walk;		// 歩行
+		case PLAYER_MOVEMENT_STATE::RUN:			return _playerAnim.movement.run;		// 走行
+		case PLAYER_MOVEMENT_STATE::JUMP_UP:		return _playerAnim.movement.jumpUp;		// ジャンプ（上昇）
+		case PLAYER_MOVEMENT_STATE::JUMP_DOWN:		return _playerAnim.movement.jumpDown;	// ジャンプ（下降）
+		case PLAYER_MOVEMENT_STATE::CROUCH_WAIT:	return _playerAnim.movement.crouchWait;	// しゃがみ待機
+		case PLAYER_MOVEMENT_STATE::CROUCH_WALK:	return _playerAnim.movement.crouchWalk;	// しゃがみ歩行
 	}
 
 	return nullptr;
@@ -404,6 +413,7 @@ int PlayerBase::GetLoopCount() const
 	// 発射状態の場合1回再生
 	if(_playerState.combatState	 != PLAYER_COMBAT_STATE::NONE ||
 		_playerState.attackState != PLAYER_ATTACK_STATE::NONE ||
+		_playerState.absorbState != PLAYER_ABSORB_STATE::NONE ||
 		_playerState.shootState	 != PLAYER_SHOOT_STATE::NONE)
 	{
 		return 1;
@@ -420,5 +430,6 @@ bool PlayerBase::HasStateChanged()const
 	return (_oldPlayerState.movementState != _playerState.movementState ||	// 移動状態
 			_oldPlayerState.attackState   != _playerState.attackState	||	// 攻撃状態
 			_oldPlayerState.shootState    != _playerState.shootState	||	// 発射状態
+			_oldPlayerState.absorbState	  != _playerState.absorbState	||	// 吸収攻撃状態
 			_oldPlayerState.combatState   != _playerState.combatState);		// 戦闘状態
 }

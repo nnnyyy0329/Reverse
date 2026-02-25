@@ -3,7 +3,8 @@
 #include "PlayerBase.h"
 #include "AttackManager.h"
 
-namespace
+// プレイヤーID定数
+namespace IdConstants
 {
 	constexpr int INTERIOR_PLAYER_ID = 1;	// 裏プレイヤーID
 	constexpr int SURFACE_PLAYER_ID = 2;	// 表プレイヤーID
@@ -62,7 +63,8 @@ void PlayerBase::InitializeAttackData()
 			configs[i].damage,          // ダメージ
 			false,						// ヒットフラグ
 			configs[i].attackState,		// 攻撃状態
-			configs[i].attackMoveSpeed	// 攻撃中の移動速度
+			configs[i].attackMoveSpeed,	// 攻撃中の移動速度
+			configs[i].canKnockback		// 吹き飛ばし攻撃かどうか
 		);
 
 		_attacks.push_back(attack);
@@ -107,7 +109,8 @@ void PlayerBase::UpdateAttackColPos
 		col.damage, 					// ダメージ
 		col.isHit,						// ヒットフラグ
 		col.attackState,				// 攻撃状態
-		col.attackMoveSpeed				// 攻撃中の移動速度
+		col.attackMoveSpeed,			// 攻撃中の移動速度
+		col.canKnockback				// 吹き飛ばし攻撃かどうか
 	);
 }
 
@@ -291,7 +294,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 			_bCanCombo = true;
 
 			// 次の攻撃入力があれば次の攻撃へ
-			if((_trg & PAD_INPUT_1) && CanNextAttack())
+			if(IsAttackInput() && CanNextAttack())
 			{
 				//ProcessNextAttack(attackIndex);
 			}
@@ -301,7 +304,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 		case ATTACK_STATE::RECOVERY:	// 硬直中
 		{
 			// 次の攻撃入力があれば次の攻撃へ
-			if((_trg & PAD_INPUT_1) && CanNextAttack())
+			if(IsAttackInput() && CanNextAttack())
 			{
 				ProcessNextAttack(attackIndex);
 			}
@@ -397,7 +400,7 @@ bool PlayerBase::IsStartAttack()
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||	// 歩きか
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN) &&	// 走りで
 		_playerState.attackState   == PLAYER_ATTACK_STATE::NONE	  &&	// 攻撃状態ではなく
-		_trg & PAD_INPUT_1)												// 入力があるなら
+		IsAttackInput())												// 入力があるなら
 	{
 		return true;
 	}
@@ -422,10 +425,10 @@ bool PlayerBase::CanNextAttack()
 bool PlayerBase::IsAttacking()
 {
 	// 攻撃状態中かチェック
-	if(_playerState.attackState == PLAYER_ATTACK_STATE::FIRST_ATTACK ||
-		_playerState.attackState == PLAYER_ATTACK_STATE::SECOND_ATTACK ||
-		_playerState.attackState == PLAYER_ATTACK_STATE::THIRD_ATTACK ||
-		_playerState.attackState == PLAYER_ATTACK_STATE::FOURTH_ATTACK ||
+	if(_playerState.attackState == PLAYER_ATTACK_STATE::FIRST_ATTACK	||
+		_playerState.attackState == PLAYER_ATTACK_STATE::SECOND_ATTACK	||
+		_playerState.attackState == PLAYER_ATTACK_STATE::THIRD_ATTACK	||
+		_playerState.attackState == PLAYER_ATTACK_STATE::FOURTH_ATTACK	||
 		_playerState.attackState == PLAYER_ATTACK_STATE::FIFTH_ATTACK)
 	{
 		//_vMove = VGet(0, 0, 0);	// 攻撃中は移動不可
@@ -433,6 +436,13 @@ bool PlayerBase::IsAttacking()
 	}
 
 	return false;
+}
+
+// 攻撃入力があったかチェック
+bool PlayerBase::IsAttackInput()
+{
+	// 攻撃入力があるかチェック
+	return (_trg & PAD_INPUT_6) != 0;
 }
 
 // ヘルパー関数
@@ -458,12 +468,12 @@ int PlayerBase::GetInstanceId()
 	{
 		case CHARA_TYPE::INTERIOR_PLAYER: // 裏プレイヤー
 		{
-			return INTERIOR_PLAYER_ID;	// 裏プレイヤーID
+			return IdConstants::INTERIOR_PLAYER_ID;	// 裏プレイヤーID
 		}
 
 		case CHARA_TYPE::SURFACE_PLAYER: // 表プレイヤー
 		{
-			return SURFACE_PLAYER_ID;	// 表プレイヤーID
+			return IdConstants::SURFACE_PLAYER_ID;	// 表プレイヤーID
 		}
 
 		default:
