@@ -72,16 +72,16 @@ void PlayerBase::ProcessMovePlayer()
 // 入力に応じた移動処理
 void PlayerBase::ProcessInputMove()
 {
-	if (!_inputManager) { return; }
+	auto im = InputManager::GetInstance();
 
 	// ダッシュ入力があれば移動速度を上げる
-	if(_inputManager->IsTrigger(INPUT_ACTION::DASH))
+	if(im->IsTrigger(INPUT_ACTION::DASH))
 	{
 		_bIsDashInput = !_bIsDashInput;	// ダッシュ入力フラグをトグルする
 	}
 
-	const AnalogState& analog = _inputManager->GetAnalog();
-	float analogMin = _inputManager->GetAnalogMin();
+	const AnalogState& analog = im->GetAnalog();
+	float analogMin = im->GetAnalogMin();
 
 	// アナログ入力による移動
 	if(abs(analog.lx) > analogMin || abs(analog.ly) > analogMin)

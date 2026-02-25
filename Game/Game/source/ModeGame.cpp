@@ -170,25 +170,6 @@ bool ModeGame::Process()
 	
 	// InputManagerから入力を取得
 	InputManager* input = InputManager::GetInstance();
- 
-	// 入力を渡す
-	{
-		// プレイヤーマネージャーに入力状態を渡す
-		if(_playerManager)
-		{
-			_playerManager->SetInputManager(input);
-		}
-		// カメラマネージャーに入力状態を渡す
-		if(_cameraManager)
-		{
-			_cameraManager->SetInputManager(input);
-		}
-		// 能力選択画面に入力状態を渡す
-		if(_abilitySelectScreen)
-		{
-			_abilitySelectScreen->SetInputManager(input);
-		}
-	}
 
 	// ゲームオーバーチェック
 	{

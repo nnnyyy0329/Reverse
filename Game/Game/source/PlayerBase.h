@@ -273,8 +273,6 @@ public:
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
 
-	void SetInputManager(InputManager* input) { _inputManager = input; }
-
 	/*****ゲッターセッター*****/
 	VECTOR GetAttackColTop(){ return _vAttackColTop; }			// 攻撃コリジョン上部
 	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }	// 攻撃コリジョン下部
@@ -408,8 +406,6 @@ protected:
 	// 状態
 	PlayerState _playerState;		// 現在の状態
 	PlayerState _oldPlayerState;	// 前フレームの状態
-
-	InputManager* _inputManager = nullptr;
 
 	// アクション関係変数
 	float _fVelY;			// Y方向の速度

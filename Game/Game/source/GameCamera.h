@@ -28,8 +28,6 @@ public:
 	// ターゲットを設定する関数
 	void SetTarget(std::shared_ptr<PlayerBase> target);
 
-	void SetInputManager(InputManager* input) { _inputManager = input; }
-
 protected:
 	VECTOR _vPos;
 	VECTOR _vTarget;		// 注視点
@@ -44,6 +42,4 @@ protected:
 	float _distance;	// 注視点からカメラまでの距離
 	float _angleH;		// 水平方向の角度(ラジアン)
 	float _angleV;		// 垂直方向の角度(ラジアン)
-
-	InputManager* _inputManager = nullptr;
 };

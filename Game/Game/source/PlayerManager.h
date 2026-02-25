@@ -61,8 +61,6 @@ public:
 	PLAYER_TYPE GetActivePlayerType() const { return _eActivePlayerType; }	// アクティブプレイヤーのタイプ取得
 	//PlayerBase* GetActivePlayer()const { return _activePlayer; }			// アクティブプレイヤー取得
 
-	void SetInputManager(InputManager* input) { _inputManager = input; }
-
 	// クラスセット
 	void SetCameraManager(std::shared_ptr<CameraManager> cameraManager) { _cameraManager = cameraManager; }
 	void SetAbilitySelectScreen(std::shared_ptr<AbilitySelectScreen> abilityScreen){_abilitySelectScreen = abilityScreen;}
@@ -89,7 +87,5 @@ protected:
 
 	// プレイヤー切り替え時の状態引き継ぎフラグ
 	bool _bEnableStateTransfer;		
-
-	InputManager* _inputManager = nullptr;
 
 };

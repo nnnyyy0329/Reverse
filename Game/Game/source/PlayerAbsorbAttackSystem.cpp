@@ -151,9 +151,11 @@ void PlayerAbsorbAttackSystem::ProcessAbsorb()
 }
 
 // ‹zûUŒ‚‚Ì“ü—Íˆ—
-void PlayerAbsorbAttackSystem::ProcessAbsorbInput(int key)
+void PlayerAbsorbAttackSystem::ProcessAbsorbInput()
 {
-	if((key & AbsorbAttackConstants::ABSORB_INPUT_KEY) && CanStartAbsorbAttack())
+	auto im = InputManager::GetInstance();
+
+	if(im->IsHold(INPUT_ACTION::ATTACK) && CanStartAbsorbAttack())
 	{
 		// UŒ‚ŠJn
 		StartAbsorbAttack();
@@ -162,7 +164,7 @@ void PlayerAbsorbAttackSystem::ProcessAbsorbInput(int key)
 	// ’·‰Ÿ‚µˆ—
 	if(IsAbsorbAttacking())
 	{
-		bool isInputActive = (key & AbsorbAttackConstants::ABSORB_INPUT_KEY);	// “ü—Í‚ª‚ ‚é‚©‚Ç‚¤‚©
+		bool isInputActive = im->IsHold(INPUT_ACTION::ATTACK);	// “ü—Í‚ª‚ ‚é‚©‚Ç‚¤‚©
 		_absorbAttack->ProcessAbsorbByInput(isInputActive);						// “ü—Í‚É‚æ‚é‹zûˆ—
 	}
 }

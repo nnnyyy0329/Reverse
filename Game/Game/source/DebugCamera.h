@@ -15,8 +15,6 @@ public:
 
 	void SetInfo(VECTOR vPos, VECTOR vTarget);// 座標と注視点を設定
 
-	void SetInputManager(InputManager* input) { _inputManager = input; }
-
 protected:
 	void UpdatePosFromAngle();// 角度と距離から座標を計算
 	void CalcAngleFromPos();// 座標から角度と距離を計算
@@ -30,7 +28,5 @@ protected:
 
 	float _nearClip;// 描画する手前の距離
 	float _farClip;// 描画する奥の距離
-
-	InputManager* _inputManager = nullptr;
 };
 

@@ -35,8 +35,6 @@ public:
 	// クラスセット
 	void SetPlayerManager(std::shared_ptr<PlayerManager> playerManager) { _playerManager = playerManager; }
 
-	void SetInputManager(InputManager* input) { _inputManager = input; }
-
 protected:
 	std::shared_ptr<PlayerManager> _playerManager;	// プレイヤーマネージャー
 
@@ -54,7 +52,5 @@ protected:
 	// 選択カーソル用
 	int _iCursorCount;
 	bool _bShowCursor;
-
-	InputManager* _inputManager = nullptr;
 };
 

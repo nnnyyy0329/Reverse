@@ -288,7 +288,7 @@ void SurfacePlayer::ProcessAbsorbSystem()
 	// 吸収攻撃システムの処理
 	if(_absorbAttackSystem)
 	{
-		_absorbAttackSystem->ProcessAbsorbInput(_key);	// 入力処理
+		_absorbAttackSystem->ProcessAbsorbInput();	// 入力処理
 		_absorbAttackSystem->Process();					// 吸収システムの更新処理
 	}
 }

@@ -50,8 +50,6 @@ class CameraManager
 	bool GetIsUseDebugCamera()const { return _bIsUseDebugCamera; }			// デバッグカメラ使用フラグ取得
 	void SetIsUseDebugCamera(bool bIsUse) { _bIsUseDebugCamera = bIsUse; }	// デバッグカメラ使用フラグ設定
 
-	void SetInputManager(InputManager* input);
-
 protected:
 	std::shared_ptr<GameCamera> _gameCamera;
 	std::shared_ptr<DebugCamera> _debugCamera;
@@ -62,8 +60,6 @@ protected:
 
 	// デバッグカメラ使用フラグ
 	bool _bIsUseDebugCamera;
-
-	InputManager* _inputManager = nullptr;
 
 };
 

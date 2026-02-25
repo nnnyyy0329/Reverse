@@ -34,8 +34,6 @@ public:
 	// ターゲット設定
 	void SetTarget(std::shared_ptr<PlayerBase> target);
 
-	void SetInputManager(InputManager* input) { _inputManager = input; }
-
 protected:
 	// カメラ基本設定
 	VECTOR _vPos;		// カメラ位置
@@ -64,7 +62,5 @@ protected:
 
 	// プレイヤー右後ろのオフセット
 	VECTOR _aimCameraOffset; 
-
-	InputManager* _inputManager = nullptr;
 };
 
