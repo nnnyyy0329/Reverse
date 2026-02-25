@@ -137,7 +137,7 @@
       <Filter>Stamina</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerShieldSystem.cpp">
-      <Filter>GameObject\CharaBase\PlayerBase\System\Shield</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Shield</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerBase_Shield.cpp">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
@@ -152,7 +152,7 @@
       <Filter>Camera</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerAttackSystem.cpp">
-      <Filter>GameObject\CharaBase\PlayerBase\System\Attack</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Attack</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerBase_Death.cpp">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
@@ -167,19 +167,25 @@
       <Filter>GameObject\CharaBase\Player\Manager</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerStateTransferSystem.cpp">
-      <Filter>GameObject\CharaBase\Player\System</Filter>
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerSwitchSystem.cpp">
-      <Filter>GameObject\CharaBase\Player\System</Filter>
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerTransformCancelSystem.cpp">
-      <Filter>GameObject\CharaBase\Player\System</Filter>
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerTransformSystem.cpp">
-      <Filter>GameObject\CharaBase\Player\System</Filter>
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
     </ClCompile>
     <ClCompile Include="source\ModeScenario.cpp">
       <Filter>Mode\Scenario</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AbsorbAttack.cpp">
+      <Filter>Attack\AbsorbAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerAbsorbAttackSystem.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\AbsorbAttack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,7 +319,7 @@
       <Filter>Stamina</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerShieldSystem.h">
-      <Filter>GameObject\CharaBase\PlayerBase\System\Shield</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Shield</Filter>
     </ClInclude>
     <ClInclude Include="source\EnemyState_impl.h">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
@@ -325,7 +331,7 @@
       <Filter>Camera</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerAttackSystem.h">
-      <Filter>GameObject\CharaBase\PlayerBase\System\Attack</Filter>
+      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Attack</Filter>
     </ClInclude>
     <ClInclude Include="source\ModeGameOver.h">
       <Filter>Mode\GameOver</Filter>
@@ -337,16 +343,22 @@
       <Filter>GameObject\CharaBase\Player\Manager</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerStateTransferSystem.h">
-      <Filter>GameObject\CharaBase\Player\System</Filter>
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerSwitchSystem.h">
-      <Filter>GameObject\CharaBase\Player\System</Filter>
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerTransformCancelSystem.h">
-      <Filter>GameObject\CharaBase\Player\System</Filter>
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerTransformSystem.h">
-      <Filter>GameObject\CharaBase\Player\System</Filter>
+      <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AbsorbAttack.h">
+      <Filter>Attack\AbsorbAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerAbsorbAttackSystem.h">
+      <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\AbsorbAttack</Filter>
     </ClInclude>
     <ClInclude Include="source\ModeScenario.h">
       <Filter>Mode\Scenario</Filter>
@@ -443,17 +455,8 @@
     <Filter Include="GameObject\CharaBase\PlayerBase\Bullet">
       <UniqueIdentifier>{bf0c1bdb-2ada-440d-8231-314cd8dc3e52}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\CharaBase\PlayerBase\System">
-      <UniqueIdentifier>{27cd3688-c122-4b8c-b9b2-9785d6f20b30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\CharaBase\PlayerBase\System\Shield">
-      <UniqueIdentifier>{aef1ea0b-20af-423a-b0c3-8551883a0b05}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Mode\Title">
       <UniqueIdentifier>{553e3701-3d5b-4024-95d2-f0d7bf4115bd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\CharaBase\PlayerBase\System\Attack">
-      <UniqueIdentifier>{ab26c467-12ae-4435-b758-3cd3da027bb8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Mode\GameOver">
       <UniqueIdentifier>{48ffd704-7ecc-4724-821d-0a3095d23135}</UniqueIdentifier>
@@ -464,11 +467,26 @@
     <Filter Include="GameObject\CharaBase\Player\Manager">
       <UniqueIdentifier>{107b1248-c5ee-4f10-b259-d3ec7e801990}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\CharaBase\Player\System">
+    <Filter Include="Attack\AbsorbAttack">
+      <UniqueIdentifier>{6a895db8-fead-4edc-9c40-ab1b75498cff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player\ManagerSystem">
       <UniqueIdentifier>{c73b4588-4faf-45ab-ad15-cbb89be6bd76}</UniqueIdentifier>
     </Filter>
     <Filter Include="Mode\Scenario">
       <UniqueIdentifier>{aaf8594f-ac6c-4a92-af50-939b60af057a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem">
+      <UniqueIdentifier>{27cd3688-c122-4b8c-b9b2-9785d6f20b30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem\Shield">
+      <UniqueIdentifier>{aef1ea0b-20af-423a-b0c3-8551883a0b05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem\Attack">
+      <UniqueIdentifier>{ab26c467-12ae-4435-b758-3cd3da027bb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem\AbsorbAttack">
+      <UniqueIdentifier>{2cba8d52-2bd9-4b51-83ea-6c48e8109eab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

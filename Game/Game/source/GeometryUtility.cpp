@@ -122,4 +122,64 @@ namespace GeometryUtility
 		// 角度をラジアンで取得し、度数法に変換して返す
 		return GetAngleRad(vec1, vec2) * RADIAN_TO_DEGREE;
 	}
+
+	// 扇形内にいるかチェック
+	bool IsInSector(const VECTOR& targetPos, const SectorData& sectorData)
+	{
+		// 距離チェック
+		VECTOR toTarget = VSub(targetPos, sectorData.center);	// ターゲットへの向き
+		toTarget.y = 0.0f;										// Y軸はむしする
+		float distance = VSize(toTarget);						// ベクトルのサイズ取得
+
+		if(distance > sectorData.range){ return false; }	// 扇形範囲内に入っていないならスキップ
+		if(distance < 0.001f){ return true; }				// ほぼ中心に入っているならtrueにする
+
+		// 角度チェック
+		VECTOR normDir = VNorm(sectorData.direction);	// 扇形情報の向きを正規化
+		VECTOR normToTarget = VNorm(toTarget);			// ターゲットへの向きを正規化
+
+		float dot = VDot(normDir, normToTarget);			// 扇形の向きベクトルとターゲットへの向きベクトル間の内積取得
+		float angle = acosf(fmax(-1.0f, fmin(1.0f, dot)));	// クランプ
+
+		// 扇形内に入っているなら
+		return angle <= sectorData.angle / 2.0f;
+	}
+
+	// 扇形描画
+	void DrawSector(const SectorData& sectorData, int division, int fillColor, int lineColor)
+	{
+		// 基準角度計算
+		VECTOR normDir = VNorm(sectorData.direction);
+		float baseAngle = atan2f(normDir.x, normDir.z);
+
+		float halfAngle = sectorData.angle / 2.0f;	// 半分の角度
+		float startAngle = baseAngle - halfAngle;	// 開始角度
+		float endAngle = baseAngle + halfAngle;		// 終了角度
+
+		// 中心点
+		VECTOR center = VAdd(sectorData.center, VGet(0, sectorData.heightOffset, 0));
+
+		// 三角形で扇形を描画
+		for(int i = 0; i < division; ++i)
+		{
+			float angle1 = startAngle + (endAngle - startAngle) * i / division;
+			float angle2 = startAngle + (endAngle - startAngle) * (i + 1) / division;
+
+			VECTOR p1 = VAdd(center, VGet(sinf(angle1) * sectorData.range, 0, cosf(angle1) * sectorData.range));
+			VECTOR p2 = VAdd(center, VGet(sinf(angle2) * sectorData.range, 0, cosf(angle2) * sectorData.range));
+
+			// 塗りつぶし
+			DrawTriangle3D(center, p1, p2, fillColor, TRUE);
+
+			// 線
+			DrawLine3D(p1, p2, lineColor);
+		}
+
+		// 境界線
+		VECTOR startPoint = VAdd(center, VGet(sinf(startAngle) * sectorData.range, 0, cosf(startAngle) * sectorData.range));
+		VECTOR endPoint = VAdd(center, VGet(sinf(endAngle) * sectorData.range, 0, cosf(endAngle) * sectorData.range));
+
+		DrawLine3D(center, startPoint, lineColor);
+		DrawLine3D(center, endPoint, lineColor);
+	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObjectBase.h"
 #include "AttackManager.h"
+#include "EnergyManager.h"
 
 enum class CHARA_TYPE
 {

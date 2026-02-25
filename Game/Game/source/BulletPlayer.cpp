@@ -2,6 +2,12 @@
 #include "BulletManager.h"
 #include "CameraManager.h"
 
+// プレベータようパラメータ
+namespace
+{
+	constexpr float consumeShootEnergy = 10.0f;	// 発射に消費するエネルギー
+}
+
 // 弾発射設定
 namespace bulletConfig
 {
@@ -10,6 +16,8 @@ namespace bulletConfig
 	constexpr float RADIUS = 10.0f;
 	constexpr float SPEED = 15.0f;
 	constexpr float LIFE_TIME = 120.0f;
+
+	constexpr bool SHOOT_INPUT_KEY = PAD_INPUT_6;
 }
 
 BulletPlayer::BulletPlayer()
@@ -82,8 +90,10 @@ void BulletPlayer::ProcessShoot()
 	bool putKey = _inputManager->IsHold(INPUT_ACTION::ATTACK);	// 発射キー
 	bool aimKey = _inputManager->IsHold(INPUT_ACTION::ABILITY);	// エイムキー
 
+	_cameraManager->StartAimMode();	// エイムモード開始
+
 	// エイムモードの制御
-	ProcessAimMode(aimKey);
+	//ProcessAimMode(aimKey);
 
 	// キーが押された
 	if(putKey)
@@ -221,6 +231,13 @@ void BulletPlayer::ShootBullet()
 			bulletConfig::LIFE_TIME,
 			_eCharaType
 		);
+
+		// 発射時にエネルギー消費
+		EnergyManager* energyManager = EnergyManager::GetInstance();
+		if(energyManager)
+		{
+			energyManager->ConsumeEnergy(consumeShootEnergy);
+		}
 	}
 
 	_bIsShootFromRightArm = !_bIsShootFromRightArm; // 右腕と左腕の切り替え
@@ -292,11 +309,11 @@ PlayerConfig BulletPlayer::GetPlayerConfig()
 	// 移動速度設定
 	config.crouchMoveSpeed = 2.0f;
 	config.normalMoveSpeed = 4.5f;
-	config.dashMoveSpeed = 2.0f;
+	config.dashMoveSpeed = 3.5f;
 
 	// 基礎ステータス
-	config.life = 100.0f;
-	config.maxLife = 100.0f;
+	config.life = 200.0f;
+	config.maxLife = 200.0f;
 	config.startPos = VGet(0.0f, 0.0f, 0.0f);
 
 	// 表示設定
@@ -331,7 +348,7 @@ PlayerAnimations BulletPlayer::GetPlayerAnimation()
 	animation.combat.transCancel	= "player_cancell_01";
 	animation.combat.guard			= "";
 	animation.combat.hit			= "player_damage_02";
-	animation.combat.dodge			= "dodge";
+	animation.combat.dodge			= "player_dodge_02";
 	animation.combat.death			= "player_dead_02";
 
 	return animation;

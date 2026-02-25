@@ -90,8 +90,8 @@ PlayerConfig InteriorPlayer::GetPlayerConfig()
 	config.dashMoveSpeed = 2.6f;			
 
 	// 基礎ステータス
-	config.life = 100.0f;						
-	config.maxLife = 100.0f;					
+	config.life = 200.0f;
+	config.maxLife = 200.0f;
 	config.startPos = VGet(0.0f, 0.0f, 0.0f);	
 
 	// 表示設定
@@ -122,12 +122,12 @@ PlayerAnimations InteriorPlayer::GetPlayerAnimation()
 	animation.attack.secondAttack	= "Nchange_attack_01";
 	animation.attack.thirdAttack	= "Nchange_attack_05";
 	animation.attack.fourthAttack	= "Nchange_attack_06";
-	//animation.attack.thirdAttack	= "Nchange_attack_02";
-	//animation.attack.fourthAttack	= "Nchange_attack_03";
 	animation.attack.fifthAttack	= "Nchange_attack_04";
-	animation.shoot.rightArmShoot	= "";
-	animation.shoot.leftArmShoot	= "";
-	animation.shoot.shootMove		= "";
+	animation.attack.firstSkill		= "";
+	animation.attack.secondSkill	= "";
+	animation.absorb.absorbReady	= "";
+	animation.absorb.absorbActive	= "";
+	animation.absorb.absorbEnd		= "";
 	animation.combat.transform		= "";
 	animation.combat.transCancel	= "player_cancell_00";
 	animation.combat.guard			= "";
@@ -174,7 +174,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		8.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		18.0f,						// 硬直フレーム
-		100.0f,						// ダメージ
+		20.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
@@ -192,7 +192,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		8.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		18.0f,						// 硬直フレーム
-		100.0f,						// ダメージ
+		30.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
@@ -210,7 +210,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		10.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		18.0f,						// 硬直フレーム
-		100.0f,						// ダメージ
+		50.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
@@ -228,7 +228,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		15.0f,						// 発生フレーム
 		12.0f,						// 持続フレーム
 		23.0f,						// 硬直フレーム
-		100.0f,						// ダメージ
+		50.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか

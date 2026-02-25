@@ -2,7 +2,9 @@
 
 #pragma once
 #include "appframe.h"
-#include "EnergyManager.h"
+
+  // 前方宣言
+class CharaBase;
 
 enum class COLLISION_TYPE
 {
@@ -54,8 +56,6 @@ struct AttackMovement
 	bool canMove;		// 移動可能フラグ
 };
 
-class CharaBase;  // 前方宣言
-
 class AttackBase
 {
 public:
@@ -72,14 +72,14 @@ public:
 	virtual bool ProcessStopAttack();	// 攻撃停止
 	void UpdateAttackState();			// 攻撃状態更新
 
+	// 攻撃中の移動処理
+	void UpdateAttackMove();				// 移動更新
+	virtual void ProcessAttackMovement();	// 移動処理
+
 	// 当たったキャラ管理
 	void AddHitCharas(std::shared_ptr<CharaBase> chara);		// 当たったキャラを追加
 	bool HasHitCharas(std::shared_ptr<CharaBase> chara)const;	// 当たったキャラを持っているかチェック
 	void ClearHitCharas();										// 当たったキャラリストクリア
-
-	// 攻撃中の移動処理
-	void UpdateAttackMove();				// 移動更新
-	virtual void ProcessAttackMovement();	// 移動処理
 
 	// デバッグ表示
 	void DrawAttackCollision();
@@ -152,7 +152,6 @@ protected:
 	AttackMovement _stcAttackMovement;	// 攻撃中の移動情報
 
 private:
-	std::shared_ptr<EnergyManager> _energyManager;	// エネルギーマネージャー
 	std::vector<std::shared_ptr<CharaBase>> _hitCharas;	// 当たったキャラを管理
 
 };

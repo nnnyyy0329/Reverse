@@ -161,6 +161,62 @@ void AttackBase::UpdateAttackState()
     }
 }
 
+// 攻撃中の移動更新
+void AttackBase::UpdateAttackMove()
+{
+    // 所有者キャラを取得
+    auto owner = GetOwner();
+    if(!owner){ return; }
+
+    // 移動速度が設定されており、現在の状態が指定された攻撃状態と一致するなら
+    if(_stcAttackCol.attackMoveSpeed > 0.0f && _eAttackState == _stcAttackCol.attackState)
+    {
+        // 攻撃中の移動処理
+        ProcessAttackMovement();
+    }
+}
+
+// 移動適用
+void AttackBase::ProcessAttackMovement()
+{
+    auto owner = GetOwner();
+    if(!owner) return;
+
+    // 所有者キャラから現在の向きを取得
+    VECTOR currentDir = owner->GetDir();
+
+    VECTOR moveDir;
+
+    // 攻撃方向が設定されている方を優先
+    if(VSize(_stcAttackCol.attackDir) > 0.0f)
+    {
+        moveDir = VNorm(_stcAttackCol.attackDir);
+    }
+    else
+    {
+        moveDir = VNorm(currentDir);
+    }
+
+    // 移動量計算
+    VECTOR vMove = VScale(moveDir, _stcAttackCol.attackMoveSpeed);
+
+    // 減衰処理
+    //vMove = VScale(vMove, ATTACK_MOVE_DECAY_RATE);
+
+    // キャラの位置を加算
+    VECTOR currentPos = owner->GetPos();
+    VECTOR newPos = VAdd(currentPos, vMove);
+    owner->SetPos(newPos);
+
+    // モデルの位置も更新
+    AnimManager* animManager = owner->GetAnimManager();
+    if(animManager != nullptr)
+    {
+        // モデルの位置を更新
+        MV1SetPosition(animManager->GetModelHandle(), newPos);
+    }
+}
+
 // カプセル攻撃データ設定
 void AttackBase::SetCapsuleAttackData
 (
@@ -244,65 +300,6 @@ void AttackBase::SetSphereAttackData
 	_eColType = COLLISION_TYPE::SPHERE; // コリジョンタイプを球に設定
 }
 
-// 攻撃コリジョン表示
-void AttackBase::DrawAttackCollision()
-{
-    // デバッグ用：攻撃判定の可視化
-    if(_stcAttackCol.isActive)
-    {
-        switch(_eColType)
-        {
-            // カプセル形状の描画（デバッグ用）
-            case COLLISION_TYPE::CAPSULE:
-            {
-                DrawCapsule3D
-                (
-					_stcAttackCol.attackColTop,     // 上部座標
-					_stcAttackCol.attackColBottom,  // 下部座標
-					_stcAttackCol.attackColR,       // 半径
-					8,                              // 分割数
-                    GetColor(255, 0, 0),
-                    GetColor(255, 0, 0),
-                    TRUE
-                );
-
-                break;
-            }
-
-            // 円形の描画（デバッグ用）
-            case COLLISION_TYPE::CIRCLE:
-            {
-                DrawCircle
-                (
-					static_cast<float>(_stcAttackCol.attackColTop.x),   // 中心X座標
-					static_cast<float>(_stcAttackCol.attackColTop.y),   // 中心Y座標
-					_stcAttackCol.attackColR,                           // 半径
-                    GetColor(0, 255, 0),
-                    TRUE
-                );
-
-                break;
-            }
-
-            // 球形の描画（デバッグ用）
-            case COLLISION_TYPE::SPHERE:
-            {
-                DrawSphere3D
-                (
-					_stcAttackCol.attackColTop, // 中心位置
-					_stcAttackCol.attackColR,   // 半径
-					8,                          // 分割数
-                    GetColor(0, 0, 255),
-                    GetColor(0, 0, 255),
-                    TRUE
-                );
-
-                break;
-            }
-        }
-    }
-}
-
 // 当たったキャラを追加
 void AttackBase::AddHitCharas(std::shared_ptr<CharaBase> chara)
 {
@@ -342,59 +339,62 @@ void AttackBase::ClearHitCharas()
     _hitCharas.clear();
 }
 
-
-// 攻撃中の移動更新
-void AttackBase::UpdateAttackMove()
+// 攻撃コリジョン表示
+void AttackBase::DrawAttackCollision()
 {
-    // 所有者キャラを取得
-    auto owner = GetOwner();
-    if(!owner){ return; }
+    // デバッグ用：攻撃判定の可視化
+    if(!_stcAttackCol.isActive){ return; }
 
-    // 移動速度が設定されており、現在の状態が指定された攻撃状態と一致するなら
-    if(_stcAttackCol.attackMoveSpeed > 0.0f && _eAttackState == _stcAttackCol.attackState)
+	// コリジョンタイプに応じて描画
+    switch(_eColType)
     {
-        // 攻撃中の移動処理
-        ProcessAttackMovement();
+        // カプセル形状の描画（デバッグ用）
+        case COLLISION_TYPE::CAPSULE:
+        {
+            DrawCapsule3D
+            (
+                _stcAttackCol.attackColTop,     // 上部座標
+                _stcAttackCol.attackColBottom,  // 下部座標
+                _stcAttackCol.attackColR,       // 半径
+                8,                              // 分割数
+                GetColor(255, 0, 0),
+                GetColor(255, 0, 0),
+                TRUE
+            );
+    
+            break;
+        }
+    
+        // 円形の描画（デバッグ用）
+        case COLLISION_TYPE::CIRCLE:
+        {
+            DrawCircle
+            (
+                static_cast<float>(_stcAttackCol.attackColTop.x),   // 中心X座標
+                static_cast<float>(_stcAttackCol.attackColTop.y),   // 中心Y座標
+                _stcAttackCol.attackColR,                           // 半径
+                GetColor(0, 255, 0),
+                TRUE
+            );
+    
+            break;
+        }
+    
+        // 球形の描画（デバッグ用）
+        case COLLISION_TYPE::SPHERE:
+        {
+            DrawSphere3D
+            (
+                _stcAttackCol.attackColTop, // 中心位置
+                _stcAttackCol.attackColR,   // 半径
+                8,                          // 分割数
+                GetColor(0, 0, 255),
+                GetColor(0, 0, 255),
+                TRUE
+            );
+    
+            break;
+        }
     }
 }
 
-// 移動適用
-void AttackBase::ProcessAttackMovement()
-{
-    auto owner = GetOwner();
-    if(!owner) return;
-
-    // 所有者キャラから現在の向きを取得
-    VECTOR currentDir = owner->GetDir();
-
-    VECTOR moveDir;
-
-	// 攻撃方向が設定されている方を優先
-    if(VSize(_stcAttackCol.attackDir) > 0.0f)
-    {
-        moveDir = VNorm(_stcAttackCol.attackDir);
-    }
-    else
-    {
-        moveDir = VNorm(currentDir);
-    }
-
-    // 移動量計算
-	VECTOR vMove = VScale(moveDir, _stcAttackCol.attackMoveSpeed);
-
-	// 減衰処理
-	//vMove = VScale(vMove, ATTACK_MOVE_DECAY_RATE);
-
-    // キャラの位置を加算
-    VECTOR currentPos = owner->GetPos();
-    VECTOR newPos = VAdd(currentPos, vMove);
-	owner->SetPos(newPos);
-
-	// モデルの位置も更新
-	AnimManager* animManager = owner->GetAnimManager();
-    if(animManager != nullptr)
-    {
-		// モデルの位置を更新
-        MV1SetPosition(animManager->GetModelHandle(), newPos);
-    }
-}

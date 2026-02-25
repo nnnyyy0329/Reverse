@@ -1,6 +1,7 @@
 #pragma once
 #include "appframe.h"
 #include "AnimManager.h"
+#include "GeometryUtility.h"
 
 class GameObjectBase
 {

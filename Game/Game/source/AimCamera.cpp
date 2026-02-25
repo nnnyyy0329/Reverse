@@ -3,7 +3,7 @@
 
 namespace AimCameraConfig
 {
-	constexpr float AIM_SENSITIVITY = 0.015f;	// エイム感度
+	constexpr float AIM_SENSITIVITY = 0.035f;	// エイム感度
 	constexpr float AIM_DISTANCE = 2000.0f;	// エイムカメラ距離
 	constexpr float AIM_ANGLE_LIMIT = 1.4f;	// エイム垂直角度制限
 }

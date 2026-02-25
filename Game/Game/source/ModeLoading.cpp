@@ -8,7 +8,7 @@ bool ModeLoading::Initialize()
 	_frameCount = 0;
 
 	_seHandle = LoadSoundMem("sound/SE/loading.mp3");
-	PlaySoundMem(_seHandle, DX_PLAYTYPE_BACK);
+	//PlaySoundMem(_seHandle, DX_PLAYTYPE_BACK);
 
 	// ÉäÉ\Å[ÉXÇÃìoò^
 	{

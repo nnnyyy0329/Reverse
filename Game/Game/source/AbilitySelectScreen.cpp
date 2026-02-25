@@ -63,10 +63,10 @@ bool AbilitySelectScreen::Process()
 
 bool AbilitySelectScreen::Render()
 {
-	if(!_bIsScreenActive){ return false; }
-
 	// 選択要素の表示
 	SelectRender();
+
+	if(!_bIsScreenActive){ return false; }
 
 	// 選択画面表示
 	SelectFrameRender();

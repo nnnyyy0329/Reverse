@@ -3,7 +3,8 @@
 #include "PlayerBase.h"
 #include "AttackManager.h"
 
-namespace
+// プレイヤーID定数
+namespace IdConstants
 {
 	constexpr int INTERIOR_PLAYER_ID = 1;	// 裏プレイヤーID
 	constexpr int SURFACE_PLAYER_ID = 2;	// 表プレイヤーID
@@ -426,10 +427,10 @@ bool PlayerBase::CanNextAttack()
 bool PlayerBase::IsAttacking()
 {
 	// 攻撃状態中かチェック
-	if(_playerState.attackState == PLAYER_ATTACK_STATE::FIRST_ATTACK ||
-		_playerState.attackState == PLAYER_ATTACK_STATE::SECOND_ATTACK ||
-		_playerState.attackState == PLAYER_ATTACK_STATE::THIRD_ATTACK ||
-		_playerState.attackState == PLAYER_ATTACK_STATE::FOURTH_ATTACK ||
+	if(_playerState.attackState == PLAYER_ATTACK_STATE::FIRST_ATTACK	||
+		_playerState.attackState == PLAYER_ATTACK_STATE::SECOND_ATTACK	||
+		_playerState.attackState == PLAYER_ATTACK_STATE::THIRD_ATTACK	||
+		_playerState.attackState == PLAYER_ATTACK_STATE::FOURTH_ATTACK	||
 		_playerState.attackState == PLAYER_ATTACK_STATE::FIFTH_ATTACK)
 	{
 		//_vMove = VGet(0, 0, 0);	// 攻撃中は移動不可
@@ -437,6 +438,13 @@ bool PlayerBase::IsAttacking()
 	}
 
 	return false;
+}
+
+// 攻撃入力があったかチェック
+bool PlayerBase::IsAttackInput()
+{
+	// 攻撃入力があるかチェック
+	return (_trg & PAD_INPUT_6) != 0;
 }
 
 // ヘルパー関数
@@ -462,12 +470,12 @@ int PlayerBase::GetInstanceId()
 	{
 		case CHARA_TYPE::INTERIOR_PLAYER: // 裏プレイヤー
 		{
-			return INTERIOR_PLAYER_ID;	// 裏プレイヤーID
+			return IdConstants::INTERIOR_PLAYER_ID;	// 裏プレイヤーID
 		}
 
 		case CHARA_TYPE::SURFACE_PLAYER: // 表プレイヤー
 		{
-			return SURFACE_PLAYER_ID;	// 表プレイヤーID
+			return IdConstants::SURFACE_PLAYER_ID;	// 表プレイヤーID
 		}
 
 		default:
