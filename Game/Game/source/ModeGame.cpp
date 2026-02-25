@@ -463,12 +463,11 @@ bool ModeGame::Render()
 
 			if(s_accumMs >= 500)
 			{
-				s_fps = (static_cast<float>(s_frameCount) * 1000.0f) / static_cast<float>(s_accumMs);
+				s_fps = (static_cast<int>(s_frameCount) * 1000.0f) / static_cast<float>(s_accumMs);
 				s_frameCount = 0;
 				s_accumMs = 0;
 			}
 		}
-
 		
 		DrawFormatString(20, 20, GetColor(255, 255, 255), "FPS: %d", static_cast<int>(s_fps + 0.5f));
 	}
