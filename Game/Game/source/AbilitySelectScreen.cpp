@@ -52,11 +52,11 @@ bool AbilitySelectScreen::Terminate()
 
 bool AbilitySelectScreen::Process()
 {
-	// 入力による画面表示
-	SelectScreenByInput();
-
 	// 入力による選択処理
 	SelectionByInput();
+
+	// 入力による画面表示
+	SelectScreenByInput();
 
 	return true;
 }
@@ -92,7 +92,7 @@ void AbilitySelectScreen::SelectionByInput()
 	if(!_bIsScreenActive){ return; }	// 選択画面が表示されていなかったら処理しない
 
 	// 左キーが押されたら
-	if(_inputManager->IsTrigger(INPUT_ACTION::MOVE_LEFT))
+	if(_inputManager->IsTrigger(INPUT_ACTION::LEFT))
 	{
 		_iCurrentSelection--;	// 左に移動
 
@@ -105,7 +105,7 @@ void AbilitySelectScreen::SelectionByInput()
 	}
 
 	// 右キーが押されたら
-	if(_inputManager->IsTrigger(INPUT_ACTION::MOVE_RIGHT))
+	if(_inputManager->IsTrigger(INPUT_ACTION::RIGHT))
 	{
 		_iCurrentSelection++;	// 右に移動
 
@@ -123,6 +123,8 @@ void AbilitySelectScreen::SelectionByInput()
 		_iSelectedAbility = _iCurrentSelection;	// 選択されたアビリティを保存
 		_bIsSelectComplete = true;				// 選択完了
 		_bIsScreenActive = false;				// 選択画面非表示
+
+		_inputManager->ResetInput();
 	}
 
 	// 点滅カウンターを進める

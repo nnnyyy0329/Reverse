@@ -14,7 +14,8 @@ InputManager* InputManager::GetNullInstance()
 
 InputManager* InputManager::GetInstance()
 {
-	if (_nullInstance == nullptr) {// インスタンスがなければ生成
+	if (_nullInstance == nullptr) 
+	{// インスタンスがなければ生成
 		_nullInstance = new InputManager();
 	}
 	return _nullInstance;// インスタンスを返す
@@ -24,11 +25,11 @@ void InputManager::Update()
 {
 	// パッド入力
 	int oldPad = _padKey;
-	_padKey = GetJoypadInputState(DX_INPUT_KEY_PAD1);
+	_padKey = GetJoypadInputState(DX_INPUT_PAD1);
 	_padTrg = (_padKey ^ oldPad) & _padKey;
 	_padRel = (_padKey ^ oldPad) & ~_padKey;
 
-	// アナログスティック
+	// アナログスティック、ハットスイッチ
 	DINPUT_JOYSTATE di;
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &di);
 	_analog.lx = static_cast<float>(di.X) / 1000.0f;
@@ -37,6 +38,26 @@ void InputManager::Update()
 	_analog.ry = static_cast<float>(di.Ry) / 1000.0f;
 	_analog.lz = static_cast<float>(di.Z) / 1000.0f;
 	_analog.rz = static_cast<float>(di.Rz) / 1000.0f;
+
+	_hat.oldAngle = _hat.angle;
+	_hat.angle = static_cast<int>(di.POV[0]);
+
+	// トリガー
+	bool prevLtHold = _trigger.ltHold;
+	bool prevRtHold = _trigger.rtHold;
+
+	_trigger.lt = static_cast<float>(di.Z) / 1000.0f;
+	_trigger.rt = static_cast<float>(-di.Z) / 1000.0f;
+	if (_trigger.lt < 0.0f) { _trigger.lt = 0.0f; }
+	if (_trigger.rt < 0.0f) { _trigger.rt = 0.0f; }
+
+	_trigger.ltHold = (_trigger.lt >= _triggerMin);
+	_trigger.rtHold = (_trigger.rt >= _triggerMin);
+
+	_trigger.ltTrg = (!prevLtHold && _trigger.ltHold);
+	_trigger.rtTrg = (!prevRtHold && _trigger.rtHold);
+	_trigger.ltRel = (prevLtHold && !_trigger.ltHold);
+	_trigger.rtRel = (prevRtHold && !_trigger.rtHold);
 
 	// キーボード入力
 	const int numActions = static_cast<int>(INPUT_ACTION::NUM_ACTIONS);
@@ -54,10 +75,49 @@ void InputManager::Update()
 	}
 }
 
+void InputManager::ResetInput()
+{
+	// パッド入力をリセット
+	_padKey = 0;
+	_padTrg = 0;
+	_padRel = 0;
+
+	// キーボード入力をリセット
+	const int numActions = static_cast<int>(INPUT_ACTION::NUM_ACTIONS);
+	for (int i = 0; i < numActions; ++i)
+	{
+		_bKeyHold[i] = false;
+		_bKeyTrg[i] = false;
+		_bKeyRel[i] = false;
+	}
+
+	// アナログスティックをリセット
+	_analog = AnalogState{};
+
+	// ハットスイッチをリセット
+	_hat = HatState{};
+
+	// トリガーをリセット
+	_trigger = TriggerButtonState{};
+}
+
 // 入力状況
 // パッドかキーボードどちらかが入力されていれば true を返す
 bool InputManager::IsHold(INPUT_ACTION action)
 {
+	switch (action)
+	{
+		// 項目選択はハットスイッチで判定
+		case INPUT_ACTION::UP:    return  _hat.IsUp();
+		case INPUT_ACTION::DOWN:  return  _hat.IsDown();
+		case INPUT_ACTION::LEFT:  return  _hat.IsLeft();
+		case INPUT_ACTION::RIGHT: return  _hat.IsRight();
+		// 攻撃はトリガーで判定
+		case INPUT_ACTION::ATTACK: return _trigger.rtHold;
+		case INPUT_ACTION::ABILITY: return _trigger.ltHold;
+		default: break;
+	}
+
 	int padCode = GetPadCode(action);
 	bool padHold = (padCode != 0) && ((_padKey & padCode) != 0);
 
@@ -68,6 +128,19 @@ bool InputManager::IsHold(INPUT_ACTION action)
 
 bool InputManager::IsTrigger(INPUT_ACTION action)
 {
+	switch (action)
+	{
+		// 項目選択はハットスイッチで判定
+		case INPUT_ACTION::UP:    return  _hat.IsUp() && !_hat.WasUp();
+		case INPUT_ACTION::DOWN:  return  _hat.IsDown() && !_hat.WasDown();
+		case INPUT_ACTION::LEFT:  return  _hat.IsLeft() && !_hat.WasLeft();
+		case INPUT_ACTION::RIGHT: return  _hat.IsRight() && !_hat.WasRight();
+		// 攻撃はトリガーで判定
+		case INPUT_ACTION::ATTACK: return _trigger.rtTrg;
+		case INPUT_ACTION::ABILITY: return _trigger.ltTrg;
+		default: break;
+	}
+
 	int padCode = GetPadCode(action);
 	bool padTrg = (padCode != 0) && ((_padTrg & padCode) != 0);
 
@@ -78,6 +151,14 @@ bool InputManager::IsTrigger(INPUT_ACTION action)
 
 bool InputManager::IsRelease(INPUT_ACTION action)
 {
+	switch (action)
+	{
+		// 攻撃はトリガーで判定
+		case INPUT_ACTION::ATTACK: return _trigger.rtRel;
+		case INPUT_ACTION::ABILITY: return _trigger.ltRel;
+		default: break;
+	}
+
 	int padCode = GetPadCode(action);
 	bool padRel = (padCode != 0) && ((_padRel & padCode) != 0);
 
@@ -97,11 +178,9 @@ int InputManager::GetPadCode(INPUT_ACTION action)
 		case INPUT_ACTION::MOVE_LEFT:   return PAD_INPUT_LEFT;
 		case INPUT_ACTION::MOVE_RIGHT:  return PAD_INPUT_RIGHT;
 		// アクション
-		case INPUT_ACTION::ATTACK:      return PAD_INPUT_6;// R1
-		case INPUT_ACTION::DODGE:       return PAD_INPUT_4;// X
-		case INPUT_ACTION::DASH:        return PAD_INPUT_9;// Lスティック押し込み
-		case INPUT_ACTION::ABILITY:     return PAD_INPUT_6;// R1
-		case INPUT_ACTION::TRANSFORM:   return PAD_INPUT_3;// Y
+		case INPUT_ACTION::DODGE:       return PAD_INPUT_3;// X
+		case INPUT_ACTION::DASH:        return PAD_INPUT_5;// L1
+		case INPUT_ACTION::TRANSFORM:   return PAD_INPUT_4;// Y
 		// システム
 		case INPUT_ACTION::MENU:        return PAD_INPUT_10;// START
 		case INPUT_ACTION::SELECT:      return PAD_INPUT_1;// A
