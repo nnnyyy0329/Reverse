@@ -120,8 +120,8 @@ PlayerAnimations InteriorPlayer::GetPlayerAnimation()
 	animation.movement.crouchWalk	= "";
 	animation.attack.firstAttack	= "Nchange_attack_00";
 	animation.attack.secondAttack	= "Nchange_attack_01";
-	animation.attack.thirdAttack	= "Nchange_attack_05";
-	animation.attack.fourthAttack	= "Nchange_attack_06";
+	animation.attack.thirdAttack	= "Nchange_attack_02";
+	animation.attack.fourthAttack	= "Nchange_attack_03";
 	animation.attack.fifthAttack	= "Nchange_attack_04";
 	animation.attack.firstSkill		= "";
 	animation.attack.secondSkill	= "";
@@ -133,7 +133,7 @@ PlayerAnimations InteriorPlayer::GetPlayerAnimation()
 	animation.combat.guard			= "";
 	animation.combat.hit			= "player_damage_00";
 	animation.combat.dodge			= "player_dodge_01";
-	animation.combat.death			= "player_dead_00";
+	animation.combat.death			= "player_dead_01";
 
 	return animation;
 }
@@ -194,7 +194,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		18.0f,						// 硬直フレーム
 		30.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
-		3.0f,						// 攻撃中の移動速度
+		0.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
 		"InteriorPlayerAttack5",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
@@ -212,7 +212,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		18.0f,						// 硬直フレーム
 		50.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
-		3.0f,						// 攻撃中の移動速度
+		5.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
 		"InteriorPlayerAttack5",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
@@ -230,7 +230,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		23.0f,						// 硬直フレーム
 		50.0f,						// ダメージ
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
-		3.0f,						// 攻撃中の移動速度
+		5.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
 		"InteriorPlayerAttack5",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
@@ -238,17 +238,17 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	};
 
 	// 第5攻撃
-	configs[4] = 
+	configs[4] =
 	{
 		{0.0f, 150.0f, 0.0f},		// コリジョン上部位置
 		{0.0f, 80.0f, 0.0f},		// コリジョン下部位置
 		35.0f,						// 半径
-		8.0f,						// 発生フレーム
-		12.0f,						// 持続フレーム
-		18.0f,						// 硬直フレーム
+		20.0f,						// 発生フレーム
+		20.0f,						// 持続フレーム
+		20.0f,						// 硬直フレーム
 		100.0f,						// ダメージ
-		ATTACK_STATE::ACTIVE,		// 攻撃状態
-		3.0f,						// 攻撃中の移動速度
+		ATTACK_STATE::RECOVERY,		// 攻撃状態
+		5.0f,						// 攻撃中の移動速度
 		true,						// 吹き飛ばし攻撃かどうか
 		"InteriorPlayerAttack5",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
