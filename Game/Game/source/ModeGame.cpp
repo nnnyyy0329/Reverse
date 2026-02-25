@@ -356,6 +356,9 @@ bool ModeGame::Render()
 {
 	base::Render();
 
+
+
+
 	// 3D基本設定
 	{
 		SetUseZBuffer3D(TRUE);
@@ -444,6 +447,30 @@ bool ModeGame::Render()
 		// プレイヤーコリジョン描画
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
 		activePlayer->CollisionRender();
+	}
+
+		// FPS表示（0.5秒ごとに更新して見やすくする）
+	{
+		static int s_frameCount = 0;
+		static unsigned long s_accumMs = 0;
+		static float s_fps = 0.0f;
+
+		const unsigned long stepMs = GetStepTm();
+		if(stepMs > 0)
+		{
+			s_frameCount++;
+			s_accumMs += stepMs;
+
+			if(s_accumMs >= 500)
+			{
+				s_fps = (static_cast<float>(s_frameCount) * 1000.0f) / static_cast<float>(s_accumMs);
+				s_frameCount = 0;
+				s_accumMs = 0;
+			}
+		}
+
+		
+		DrawFormatString(20, 20, GetColor(255, 255, 255), "FPS: %d", static_cast<int>(s_fps + 0.5f));
 	}
 
 	_energyUI->Render();

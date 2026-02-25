@@ -28,9 +28,24 @@ int WINAPI WinMain(
 		return 0;
 	}
 
+	// 60fps固定（1フレーム=約16.666ms）
+	const int targetFrameMs = 1000 / 60;
+	int frameStartMs = GetNowCount();
+
+
 	// 1フレームループを組む ----------------------------------------------------------
 	while (ProcessMessage() == 0)		// プログラムが終了するまでループ
 	{
+
+		const int nowMs = GetNowCount();
+		const int elapsedMs = nowMs - frameStartMs;
+		if(elapsedMs < targetFrameMs)
+		{
+			WaitTimer(targetFrameMs - elapsedMs);
+		}
+		frameStartMs = GetNowCount();
+
+
 		if (1 == CheckHitKey(KEY_INPUT_ESCAPE)) {// ESCキーで終了
 			break;
 		}
