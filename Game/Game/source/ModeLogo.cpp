@@ -61,10 +61,10 @@ bool ModeLogo::Terminate()
 
 bool ModeLogo::Process()
 {
-	const int trg = ApplicationMain::GetInstance()->GetTrg();
+	auto inputManager = InputManager::GetInstance();
 
-	// 何か押したらスキップ
-	if(trg != 0)
+	// Aボタンを押したらスキップ
+	if(inputManager->IsTrigger(INPUT_ACTION::SELECT))
 	{
 		_bNext = true;
 	}

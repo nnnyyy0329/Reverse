@@ -86,34 +86,18 @@ bool ModeGameOver::Process()
 	// これより下のモードの処理をスキップ
 	ModeServer::GetInstance()->SkipProcessUnderLayer();
 
-	const int trg = ApplicationMain::GetInstance()->GetTrg();
+	int trg = ApplicationMain::GetInstance()->GetTrg();
 
-	// ↑↓で選択(2択なのでトグルでもOKだが、Wrapで一般化)
-	if(trg & PAD_INPUT_UP)
-	{
-		_menuIndex = WrapMenuIndex(_menuIndex - 1);
-	}
-	if(trg & PAD_INPUT_DOWN)
-	{
-		_menuIndex = WrapMenuIndex(_menuIndex + 1);
-	}
+	if (trg & PAD_INPUT_10) {// spaceキー
+		// 現在のステージ番号からリスタート
+		ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
+		if (modeGame != nullptr)
+		{
+			modeGame->RestartCurrentStage();
+		}
 
-	// 決定
-	if(trg & PAD_INPUT_10)
-	{
-		if(_menuIndex == 0) // リトライ
-		{
-			ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
-			if(modeGame != nullptr)
-			{
-				modeGame->RestartCurrentStage();
-			}
-			ModeServer::GetInstance()->Del(this);
-		}
-		else // ゲーム終了
-		{
-			ExitGame();
-		}
+		// このモードを削除
+		ModeServer::GetInstance()->Del(this);
 	}
 
 	return true;
