@@ -89,7 +89,7 @@ void PlayerUnlockManager::CheckUnlockConditions()
 	for(auto& condition : _unlockConditions)
 	{
 		// すでに解放されている場合はスキップ
-		if(IsAbilityUnlocked(condition.unlockedAbility))
+		if(IsAbilityUnlocked(condition.unlockedAbility)) // 解放済み解放されているかチェック
 		{
 			continue;	// 解放済みならスキップ
 		}
@@ -97,7 +97,7 @@ void PlayerUnlockManager::CheckUnlockConditions()
 		int currentKillCount = GetKillCount(condition.requiredEnemyType);	// 現在の撃破数を取得
 
 		// 条件を満たしているかチェック
-		if(currentKillCount >= condition.requiredKillCount)
+		if(currentKillCount >= condition.requiredKillCount)	// キル数が必要数以上なら
 		{
 			// 条件を満たしているのでアビリティを解放
 			UnlockAbility(condition.unlockedAbility);
@@ -146,6 +146,7 @@ std::string PlayerUnlockManager::AbilityTypeToString(ABILITY_TYPE type) const
 {
 	switch(type)
 	{
+		case ABILITY_TYPE::NONE:			return "None";				// なし
 		case ABILITY_TYPE::SURFACE_PLAYER:	return "Surface Player";	// デフォルトで解放されている表プレイヤー
 		case ABILITY_TYPE::INTERIOR_PLAYER: return "Interior Player";	// タンク撃破で解放される裏プレイヤー
 		case ABILITY_TYPE::BULLET_PLAYER:	return "Bullet Player";		// 射撃型撃破で解放される弾プレイヤー

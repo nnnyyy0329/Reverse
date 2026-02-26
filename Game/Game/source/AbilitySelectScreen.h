@@ -3,6 +3,7 @@
 #include "AbilityBase.h" 
 
 class PlayerManager;
+class PlayerUnlockManager;
 
 class AbilitySelectScreen
 {
@@ -34,6 +35,7 @@ public:
 
 	// クラスセット
 	void SetPlayerManager(std::shared_ptr<PlayerManager> playerManager) { _playerManager = playerManager; }
+	void SetPlayerUnlockManager(std::shared_ptr<PlayerUnlockManager> unlockManager) { _playerUnlockManager = unlockManager; }
 
 	// 入力状態を設定する
 	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
@@ -48,7 +50,8 @@ public:
 	}
 
 protected:
-	std::shared_ptr<PlayerManager> _playerManager;	// プレイヤーマネージャー
+	std::shared_ptr<PlayerManager> _playerManager;				// プレイヤーマネージャー
+	std::shared_ptr<PlayerUnlockManager> _playerUnlockManager;	// プレイヤーアンロックマネージャー
 
 	// 表示用ハンドル
 	int _iHandle1;

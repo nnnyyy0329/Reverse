@@ -140,13 +140,14 @@ std::string PlayerBase::GetAttackStateString(PLAYER_ATTACK_STATE state) const
 	switch(state)
 	{
 		case PLAYER_ATTACK_STATE::NONE:					return "NONE";
-		case PLAYER_ATTACK_STATE::FIRST_ATTACK:			return "FIRST_ATTACK";		// 1段目攻撃
-		case PLAYER_ATTACK_STATE::SECOND_ATTACK:		return "SECOND_ATTACK";		// 2段目攻撃
-		case PLAYER_ATTACK_STATE::THIRD_ATTACK:			return "THIRD_ATTACK";		// 3段目攻撃
-		case PLAYER_ATTACK_STATE::FOURTH_ATTACK:		return "FOURTH_ATTACK";		// 4段目攻撃
-		case PLAYER_ATTACK_STATE::FIFTH_ATTACK:			return "FIFTH_ATTACK";		// 5段目攻撃
-		case PLAYER_ATTACK_STATE::FIRST_SKILL:			return "FIRST_SKILL";		// スキル1
-		case PLAYER_ATTACK_STATE::SECOND_SKILL:			return "SECOND_SKILL";		// スキル2
+		case PLAYER_ATTACK_STATE::FIRST_ATTACK:			return "FIRST_ATTACK";	// 1段目攻撃
+		case PLAYER_ATTACK_STATE::SECOND_ATTACK:		return "SECOND_ATTACK";	// 2段目攻撃
+		case PLAYER_ATTACK_STATE::THIRD_ATTACK:			return "THIRD_ATTACK";	// 3段目攻撃
+		case PLAYER_ATTACK_STATE::FOURTH_ATTACK:		return "FOURTH_ATTACK";	// 4段目攻撃
+		case PLAYER_ATTACK_STATE::FIFTH_ATTACK:			return "FIFTH_ATTACK";	// 5段目攻撃
+		case PLAYER_ATTACK_STATE::AREA_ATTACK:			return "AREA_ATTACK";	// 範囲攻撃
+		case PLAYER_ATTACK_STATE::FIRST_SKILL:			return "FIRST_SKILL";	// スキル1
+		case PLAYER_ATTACK_STATE::SECOND_SKILL:			return "SECOND_SKILL";	// スキル2
 		default:										return "UNKNOWN";
 	}
 }

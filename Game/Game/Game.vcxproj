@@ -163,6 +163,7 @@
     <ClCompile Include="source\DebugCamera.cpp" />
     <ClCompile Include="source\DodgeSystem.cpp" />
     <ClCompile Include="source\Enemy.cpp" />
+    <ClCompile Include="source\EnemyObserver.cpp" />
     <ClCompile Include="source\EnemyState.cpp" />
     <ClCompile Include="source\EnergyManager.cpp" />
     <ClCompile Include="source\EnergyUI.cpp" />

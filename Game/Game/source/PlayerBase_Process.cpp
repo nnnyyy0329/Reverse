@@ -28,10 +28,10 @@ void PlayerBase::ProcessMovePlayer()
 	_vOldPos = _vPos;	// 前フレームの位置を保存
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
-	if(IsAttacking()){ return; }				// 攻撃中は移動入力を受け付けない
-	if(IsDodging()){ return; }					// 回避中は移動入力を受け付けない
-	if(IsHitStop()){ return; }					// 被弾中は移動入力を受け付けない
-	if(IsDeath()){ return; }					// 死亡中は移動入力を受け付けない
+	if(IsAttacking()){ return; }	// 攻撃中は移動入力を受け付けない
+	if(IsDodging()){ return; }		// 回避中は移動入力を受け付けない
+	if(IsHitStop()){ return; }		// 被弾中は移動入力を受け付けない
+	if(IsDeath()){ return; }		// 死亡中は移動入力を受け付けない
 
 	bool isAiming = _cameraManager->IsAimMode();	// エイムモード中かどうか
 	bool isShooting = IsShooting();					// 発射中かどうか
@@ -360,11 +360,14 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.attackState)
 		{
-			case PLAYER_ATTACK_STATE::FIRST_ATTACK:			return _playerAnim.attack.firstAttack;		// 1段目攻撃
-			case PLAYER_ATTACK_STATE::SECOND_ATTACK:		return _playerAnim.attack.secondAttack;		// 2段目攻撃
-			case PLAYER_ATTACK_STATE::THIRD_ATTACK:			return _playerAnim.attack.thirdAttack;		// 3段目攻撃
-			case PLAYER_ATTACK_STATE::FOURTH_ATTACK:		return _playerAnim.attack.fourthAttack;		// 4段目攻撃
-			case PLAYER_ATTACK_STATE::FIFTH_ATTACK:			return _playerAnim.attack.fifthAttack;		// 5段目攻撃
+			case PLAYER_ATTACK_STATE::FIRST_ATTACK:		return _playerAnim.attack.firstAttack;		// 1段目攻撃
+			case PLAYER_ATTACK_STATE::SECOND_ATTACK:	return _playerAnim.attack.secondAttack;		// 2段目攻撃
+			case PLAYER_ATTACK_STATE::THIRD_ATTACK:		return _playerAnim.attack.thirdAttack;		// 3段目攻撃
+			case PLAYER_ATTACK_STATE::FOURTH_ATTACK:	return _playerAnim.attack.fourthAttack;		// 4段目攻撃
+			case PLAYER_ATTACK_STATE::FIFTH_ATTACK:		return _playerAnim.attack.fifthAttack;		// 5段目攻撃
+			case PLAYER_ATTACK_STATE::AREA_ATTACK:		return _playerAnim.attack.areaAttack;		// 範囲攻撃
+			case PLAYER_ATTACK_STATE::FIRST_SKILL:		return _playerAnim.attack.firstSkill;		// スキル1
+			case PLAYER_ATTACK_STATE::SECOND_SKILL:		return _playerAnim.attack.secondSkill;		// スキル2
 		}
 	}
 

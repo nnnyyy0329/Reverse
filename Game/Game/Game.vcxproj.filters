@@ -190,6 +190,9 @@
     <ClCompile Include="source\PlayerUnlockManager.cpp">
       <Filter>GameObject\CharaBase\Player\AbilityUnlocck</Filter>
     </ClCompile>
+    <ClCompile Include="source\EnemyObserver.cpp">
+      <Filter>GameObject\CharaBase\Enemy\Observer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -366,11 +369,11 @@
     <ClInclude Include="source\ModeScenario.h">
       <Filter>Mode\Scenario</Filter>
     </ClInclude>
-    <ClInclude Include="source\EnemyObserver.h">
-      <Filter>GameObject\CharaBase\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="source\PlayerUnlockManager.h">
       <Filter>GameObject\CharaBase\Player\AbilityUnlocck</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnemyObserver.h">
+      <Filter>GameObject\CharaBase\Enemy\Observer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -499,6 +502,9 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\Player\AbilityUnlocck">
       <UniqueIdentifier>{7ec35f5d-42cd-4084-8727-bb3727c1517e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Enemy\Observer">
+      <UniqueIdentifier>{397daf55-c625-4bf8-84f5-ca4526945ab1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

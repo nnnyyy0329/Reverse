@@ -1,16 +1,7 @@
 #pragma once
 #include "appframe.h"
-#include "EnemyFactory.h"
-
-// プレイヤーの種類
-enum class ABILITY_TYPE
-{
-	NONE,
-	SURFACE_PLAYER,
-	INTERIOR_PLAYER,
-	BULLET_PLAYER,
-	_EOT_,
-};
+#include "EnemyObserver.h"
+#include "AbilityBase.h"
 
 // プレイヤー解放条件
 struct UnlockCondition

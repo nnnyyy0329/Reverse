@@ -1,5 +1,6 @@
 #include "AbilitySelectScreen.h"
 #include "PlayerManager.h"
+#include "PlayerUnlockManager.h"
 
 namespace Render
 {
@@ -120,6 +121,23 @@ void AbilitySelectScreen::SelectionByInput()
 	// Yボタンが押されたら
 	if(_trg & PAD_INPUT_4)
 	{
+		// 選択肢のアビリティタイプの配列
+		ABILITY_TYPE abilities[3] = 
+		{
+			ABILITY_TYPE::SURFACE_PLAYER,	// 表プレイヤー
+			ABILITY_TYPE::BULLET_PLAYER,	// 弾プレイヤー
+			ABILITY_TYPE::INTERIOR_PLAYER	// 裏プレイヤー
+		};
+
+		// 現在選択されているアビリティを取得
+		ABILITY_TYPE selectedAbility = abilities[_iCurrentSelection];
+
+		// アビリティが解放されているかチェック
+		if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(selectedAbility))
+		{
+			return;
+		}
+
 		_iSelectedAbility = _iCurrentSelection;	// 選択されたアビリティを保存
 		_bIsSelectComplete = true;				// 選択完了
 		_bIsScreenActive = false;				// 選択画面非表示

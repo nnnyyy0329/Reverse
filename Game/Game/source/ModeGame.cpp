@@ -97,6 +97,9 @@ bool ModeGame::Initialize()
 	{
 		_playerUnlockManager = std::make_shared<PlayerUnlockManager>();
 		_playerUnlockManager->Initialize();
+
+		// 解放時のコールバックを設定
+		_playerUnlockManager->SetUnlockCallback([this](ABILITY_TYPE ability) {});
 	}
 
 	// ステージ初期化
@@ -260,7 +263,8 @@ bool ModeGame::Process()
 		_playerManager->SetCameraManager(_cameraManager);				// カメラマネージャーを設定
 		_playerManager->SetAbilitySelectScreen(_abilitySelectScreen);	// 能力選択画面を設定
 		_playerLifeBarUI->SetPlayerManager(_playerManager);
-		_abilitySelectScreen->SetPlayerManager(_playerManager);	
+		_abilitySelectScreen->SetPlayerManager(_playerManager);
+		_abilitySelectScreen->SetPlayerUnlockManager(_playerUnlockManager);
 
 		// 弾丸プレイヤーにカメラマネージャーを設定
 		auto bulletPlayer = std::dynamic_pointer_cast<BulletPlayer>(_playerManager->GetPlayerByType(PLAYER_TYPE::BULLET));
@@ -270,6 +274,7 @@ bool ModeGame::Process()
 	// オブジェクトの更新
 	{
 		_playerManager->Process();
+		_playerUnlockManager->Process();
 		_stage->Process();
 		_bulletManager->Process();
 		_dodgeSystem->Process();
@@ -436,6 +441,7 @@ bool ModeGame::Render()
 		_debugCamera->DebugRender();
 		_gameCamera->DebugRender();
 		_playerManager->DebugRender();
+		_playerUnlockManager->DebugRender();
 
 		// ライト情報
 		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());

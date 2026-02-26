@@ -51,6 +51,9 @@ public:
 	const std::vector<TRIGGERPOS>& GetTriggerList() const { return _triggerList; }
 	const std::vector<MODELPOS>& GetMoveAreaList() const { return _moveAreaList; }
 
+	// 非const敵リスト
+	std::vector<std::shared_ptr<Enemy>>& GetEnemies() { return _stageEnemies; }
+
 	// ステージ切り替え
 	int GetNextStageNumFromTrigger(const std::string& triggerName);// トリガー名から次のステージ番号を取得
 
