@@ -182,8 +182,12 @@ int InputManager::GetPadCode(INPUT_ACTION action)
 		case INPUT_ACTION::DASH:        return PAD_INPUT_5;// L1
 		case INPUT_ACTION::TRANSFORM:   return PAD_INPUT_4;// Y
 		// システム
-		case INPUT_ACTION::MENU:        return PAD_INPUT_10;// START
+		case INPUT_ACTION::MENU:        return PAD_INPUT_8;// START
 		case INPUT_ACTION::SELECT:      return PAD_INPUT_1;// A
+		// デバッグ用
+		case INPUT_ACTION::DEBUG1:      return PAD_INPUT_9;// 左スティック押し込み
+		case INPUT_ACTION::DEBUG2:      return PAD_INPUT_10;// 右スティック押し込み
+		case INPUT_ACTION::DEBUG3:      return PAD_INPUT_7;// BACK
 
 		default:						return 0;
 	}

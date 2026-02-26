@@ -44,7 +44,7 @@ bool ModeMenu::Process() {
 	}
 
 
-	// spaceキーでメニューを閉じる
+	// startでメニューを閉じる
 	bool close = false;
 	if (input->IsTrigger(INPUT_ACTION::MENU))
 	{
@@ -53,8 +53,8 @@ bool ModeMenu::Process() {
 	}
 
 	// 上下でカーソル移動をする
-	if (input->IsTrigger(INPUT_ACTION::MOVE_UP)) { _curPos--; _curAnimCnt = 0; }
-	if (input->IsTrigger(INPUT_ACTION::MOVE_DOWN)) { _curPos++; _curAnimCnt = 0; }
+	if (input->IsTrigger(INPUT_ACTION::UP)) { _curPos--; _curAnimCnt = 0; }
+	if (input->IsTrigger(INPUT_ACTION::DOWN)) { _curPos++; _curAnimCnt = 0; }
 
 
 
@@ -62,7 +62,7 @@ bool ModeMenu::Process() {
 	int itemNum = _menuItems.size();
 	_curPos = (_curPos + itemNum) % itemNum;
 
-	// zキーでアイテムのSelected()を呼ぶ
+	// AでアイテムのSelected()を呼ぶ
 	if (input->IsTrigger(INPUT_ACTION::SELECT))
 	{
 		int ret = _menuItems[_curPos]->Selected();

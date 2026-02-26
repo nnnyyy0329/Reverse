@@ -28,6 +28,11 @@ enum class INPUT_ACTION
 	MENU,
 	SELECT,
 
+	// デバッグ用
+	DEBUG1,
+	DEBUG2,
+	DEBUG3,
+
 	NUM_ACTIONS// アクション数(最後に置く)
 };
 

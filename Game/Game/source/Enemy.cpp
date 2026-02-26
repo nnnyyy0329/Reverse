@@ -5,7 +5,7 @@
 #include "StateCommon.h"
 #include "StageBase.h"
 
-namespace 
+namespace
 {
 	// コリジョン設定
 	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
@@ -62,11 +62,11 @@ Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
 	_searchTimer = 0;
 }
 
-Enemy::~Enemy() 
+Enemy::~Enemy()
 {
 }
 
-bool Enemy::Initialize() 
+bool Enemy::Initialize()
 {
 	// モデル読み込み
 	LoadEnemyModel();
@@ -82,12 +82,12 @@ bool Enemy::Initialize()
 	return true;
 }
 
-bool Enemy::Terminate() 
+bool Enemy::Terminate()
 {
 	return true;
 }
 
-bool Enemy::Process() 
+bool Enemy::Process()
 {
 	_vOldPos = _vPos;// 前フレームの位置を保存
 
@@ -115,11 +115,11 @@ bool Enemy::Process()
 	}
 
 	// ステート更新
-	if (_currentState) 
+	if (_currentState)
 	{
 		// ステート側でEnemyを制御
 		auto nextState = _currentState->Update(this);
-		if (nextState) 
+		if (nextState)
 		{
 			ChangeState(nextState);
 		}
@@ -149,7 +149,7 @@ bool Enemy::Process()
 	return true;
 }
 
-bool Enemy::Render() 
+bool Enemy::Render()
 {
 	// 基底クラスのRenderを呼び出し
 	CharaBase::Render();
@@ -160,7 +160,7 @@ bool Enemy::Render()
 	return true;
 }
 
-void Enemy::DebugRender() 
+void Enemy::DebugRender()
 {
 	// 索敵範囲を描画
 	{
@@ -168,20 +168,20 @@ void Enemy::DebugRender()
 		auto fVisionAngle = _enemyParam.fVisionAngle;// 索敵角度(半分)
 		unsigned int color = GetColor(0, 255, 0);// 緑
 		int segments = 16;// 扇形の分割数
-		DrawFan3D(_vPos, _vDir, fVisionRange, fVisionAngle, color, segments);
+		mymath::DrawFan3D(_vPos, _vDir, fVisionRange, fVisionAngle, color, segments);
 	}
 
 	// 接近中の各範囲の描画
 	{
-		if (_currentState && _currentState->IsChasing()) 
+		if (_currentState && _currentState->IsChasing())
 		{
 			// 攻撃可能範囲を描画
 			unsigned int attackColor = GetColor(255, 0, 0);// 赤
-			DrawCircle3D(_vPos, _enemyParam.fAttackRange, attackColor, 16);
+			mymath::DrawCircle3D(_vPos, _enemyParam.fAttackRange, attackColor, 16);
 
 			// 接近限界範囲を描画
 			unsigned int chaseColor = GetColor(255, 255, 0);// 黄
-			DrawCircle3D(_vPos, _enemyParam.fChaseLimitRange, chaseColor, 16);
+			mymath::DrawCircle3D(_vPos, _enemyParam.fChaseLimitRange, chaseColor, 16);
 		}
 	}
 
@@ -193,7 +193,7 @@ void Enemy::DebugRender()
 		VECTOR vMax = VAdd(_vPos, VGet(_fCollisionR, _fCollisionHeight, _fCollisionR));
 
 		// CheckCameraViewClip_Box：カメラの視界外ならTRUEを返す
-		if (CheckCameraViewClip_Box(vMin, vMax) == FALSE) 
+		if (CheckCameraViewClip_Box(vMin, vMax) == FALSE)
 		{// 映っている時だけ
 			VECTOR vScreenPos = ConvWorldPosToScreenPos(VAdd(_vPos, VGet(0.0f, DEBUG_TEXT_OFFSET_Y, 0.0f)));// 画面座標に変換(少し上に調整)
 			int x = static_cast<int>(vScreenPos.x);
@@ -215,7 +215,7 @@ void Enemy::DebugRender()
 	}
 }
 
-void Enemy::CollisionRender() 
+void Enemy::CollisionRender()
 {
 	CharaBase::CollisionRender();
 }
@@ -291,7 +291,7 @@ void Enemy::DrawLifeBar()
 	);
 
 	// 中身
-	if (lifeRatio > 0.0f) 
+	if (lifeRatio > 0.0f)
 	{// ライフがあるとき
 		// 画面上で表示する幅
 		int currentDrawW = static_cast<int>(drawW * lifeRatio);
@@ -310,89 +310,6 @@ void Enemy::DrawLifeBar()
 	}
 }
 
-
-
-void Enemy::DrawCircle3D(VECTOR vCenter, float fRadius, unsigned int color, int segments) 
-{
-	// 1区画当たりの角度(ラジアン)
-	auto step = DX_TWO_PI_F / static_cast<float>(segments);
-
-	// 最初の点を計算
-	VECTOR vPrevPos;
-	vPrevPos.x = vCenter.x + sinf(0.0f) * fRadius;
-	vPrevPos.y = vCenter.y;// 高さは中心と同じ
-	vPrevPos.z = vCenter.z + cosf(0.0f) * fRadius;
-
-	// 分割数分ループして点を計算し、線を描画していく
-	for (int i = 0; i <= segments; i++) 
-	{
-		auto angle = step * static_cast<float>(i);// 現在の角度を計算
-
-		// 次の点を計算
-		VECTOR vNextPos;
-		vNextPos.x = vCenter.x + sinf(angle) * fRadius;
-		vNextPos.y = vCenter.y;// 高さは中心と同じ
-		vNextPos.z = vCenter.z + cosf(angle) * fRadius;
-
-		// 前の点と次の点を結ぶ線を描画
-		DrawLine3D(vPrevPos, vNextPos, color);
-
-		vPrevPos = vNextPos;// 次のループのために点を進める
-	}
-}
-
-void Enemy::DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAngleDeg, unsigned int color, int segments)
-{
-	// 角度計算
-	auto halfAngleRad = fHalfAngleDeg * DEGREE_TO_RADIAN;// 半分の角度(ラジアン)
-	auto currentDirAngle = atan2f(vDir.x, vDir.z);// 向きベクトルから現在の角度を計算
-	auto startAngle = currentDirAngle - halfAngleRad;// 扇形の左端
-	auto totalAngle = halfAngleRad * 2.0f;// 扇形の全体の角度
-
-	// 左端と右端の境界線を描画
-	// 左端の座標計算
-	VECTOR vLeftEdge = VAdd(
-		vCenter,
-		VGet(sinf(startAngle) * fRadius, 0.0f, cosf(startAngle) * fRadius)// 
-	);
-	// 右端の座標計算(start + total)
-	auto endAngle = startAngle + totalAngle;
-	VECTOR vRightEdge = VAdd(
-		vCenter,
-		VGet(sinf(endAngle) * fRadius, 0.0f, cosf(endAngle) * fRadius)
-	);
-
-	// 中心から端への線
-	DrawLine3D(vCenter, vLeftEdge, color);
-	DrawLine3D(vCenter, vRightEdge, color);
-
-	// 扇形の弧(外周)を描画
-	VECTOR vPrevPoint = vLeftEdge;// 左端から開始
-	for (int i = 1; i <= segments; ++i) 
-	{
-		// 現在の割合(0.0 ~ 1.0)
-		auto ratio = static_cast<float>(i) / static_cast<float>(segments);
-
-		// 現在の角度
-		auto angle = startAngle + (totalAngle * ratio);
-
-		// 次の点を計算
-		VECTOR vNextPoint = VAdd(
-			vCenter,
-			VGet(sinf(angle) * fRadius, 0.0f, cosf(angle) * fRadius)
-		);
-
-		// 前の点と次の点を結ぶ線を描画
-		DrawLine3D(vPrevPoint, vNextPoint, color);
-
-		// 次のループのために点を進める
-		vPrevPoint = vNextPoint;
-	}
-
-}
-
-
-
 void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 {
 	if (!newState) { return; }
@@ -407,25 +324,25 @@ void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 		if (!canChange) { return; }// 変更不可
 	}
 
-	if (_currentState) 
+	if (_currentState)
 	{
 		_currentState->Exit(this);
 	}
 
 	_currentState = newState;
 
-	if (_currentState) 
+	if (_currentState)
 	{
 		_currentState->Enter(this);
 	}
 }
 
-void Enemy::SetEnemyParam(const EnemyParam& param) 
+void Enemy::SetEnemyParam(const EnemyParam& param)
 {
 	_enemyParam = param;
 }
 
-void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime) 
+void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime)
 {
 	auto bulletManager = _bulletManager.lock();// マネージャーが有効か確認
 	if (bulletManager)
@@ -438,7 +355,7 @@ void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpe
 void Enemy::StartAttack(const EnemyAttackSettings& settings)
 {
 
-	if (!_attackCollision) 
+	if (!_attackCollision)
 	{// 攻撃コリジョンがなければ作成
 		_attackCollision = std::make_shared<AttackBase>();
 		_attackCollision->Initialize();
@@ -470,7 +387,7 @@ void Enemy::StartAttack(const EnemyAttackSettings& settings)
 	AttackManager::GetInstance()->RegisterAttack(_attackCollision, ATTACK_OWNER_TYPE::ENEMY, settings.ownerId);
 }
 
-void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings) 
+void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings)
 {
 	if (!_attackCollision) { return; }
 
@@ -505,7 +422,7 @@ void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings)
 	);
 }
 
-void Enemy::StopAttack() 
+void Enemy::StopAttack()
 {
 	if (!_attackCollision) { return; }
 	// 攻撃停止
@@ -513,7 +430,7 @@ void Enemy::StopAttack()
 }
 
 void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
-{ 
+{
 	if (_fLife <= 0.0f) { return; }
 
 	// SE
@@ -638,10 +555,8 @@ void Enemy::SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg)
 	// 目標の角度
 	float targetY = atan2f(vTargetDir.x, vTargetDir.z);
 
-	// 角度差を計算
-	float diff = targetY - currentY;
-	while (diff <= -DX_PI_F) { diff += DX_TWO_PI_F; }
-	while (diff > DX_PI_F) { diff -= DX_TWO_PI_F; }
+	// 角度差を[-PI, PI]に正規化
+	float diff = mymath::WrapAngle(targetY - currentY);
 
 	// 1フレームあたりの回転量(ラジアン)
 	float step = turnSpeedDeg * DEGREE_TO_RADIAN;
@@ -714,7 +629,7 @@ bool Enemy::CheckLineOfSight(VECTOR vStart, VECTOR vEnd)
 			if (polyResult.HitNum > 0)
 			{
 				// 壁ポリゴンがあるかチェック
-				for(int i = 0; i < polyResult.HitNum; ++i)
+				for (int i = 0; i < polyResult.HitNum; ++i)
 				{
 					const MV1_COLL_RESULT_POLY& poly = polyResult.Dim[i];
 
@@ -798,15 +713,13 @@ bool Enemy::CheckInsideMoveArea(VECTOR vPos)
 
 bool Enemy::CorrectPosToMoveArea()
 {
-	// 初期位置方向へのベクトルを計算
-	VECTOR vToHome = VSub(_vHomePos, _vPos);
-	vToHome.y = 0.0f;
+	// 初期位置方向へのベクトルをY除去+正規化して取得
+	VECTOR vDir = mymath::FlattenVector(VSub(_vHomePos, _vPos));
 
-	float dist = VSize(vToHome);
+	// ゼロベクトルならほぼ初期位置
+	if (VSquareSize(vDir) < 0.0001f) { return false; }
 
-	if (dist < 0.01f) { return false; }// ほぼ初期位置
-
-	VECTOR vDir = VNorm(vToHome);
+	float dist = VSize(VSub(_vHomePos, _vPos));
 
 	// 初期位置方向へ少しづつ移動して、範囲内かチェック
 	const float correctStep = 5.0f;// 補正ステップ距離

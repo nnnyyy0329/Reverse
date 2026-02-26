@@ -86,19 +86,6 @@ public:
 	void UpdateDamageCombo();// 連続被ダメカウントを更新
 	void UpdateDamageComboTimer();// リセットタイマー更新
 
-
-
-
-
-	// AppFrameに移動予定
-	// DrawLine3Dを組み合わせて3D空間に円を描画する関数
-	// vCenter:中心座標, fRadius:半径, color:色, segment:分割数
-	void DrawCircle3D(VECTOR vCenter, float fRadius, unsigned int color, int segments);
-
-	// DrawLine3Dを組み合わせて3D空間に扇形を描画する関数
-	// vCenter:中心座標, vDir:基準の向きベクトル, fRadius:半径, fHalfAngleDeg:半角(度), color:色, segments:分割数
-	void DrawFan3D(VECTOR vCenter, VECTOR vDir, float fRadius, float fHalfAngleDeg, unsigned int color, int segments);
-
 	// 徐々に回転させる
 	void SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg);// 目標方向へ指定速度で回転
 

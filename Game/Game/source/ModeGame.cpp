@@ -192,30 +192,30 @@ bool ModeGame::Process()
 		_abilitySelectScreen->ResetSelection(); // 選択状態をリセット
 	}
 
-	// spaceキーでメニューを開く
-	//if (trg & PAD_INPUT_10)
-	//{
-	//	ModeMenu* modeMenu = new ModeMenu();
-	//	ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+	// startでメニューを開く
+	if (input->IsTrigger(INPUT_ACTION::MENU))
+	{
+		ModeMenu* modeMenu = new ModeMenu();
+		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 
-	//	modeMenu->SetCameraManager(_cameraManager);
+		modeMenu->SetCameraManager(_cameraManager);
 
-	//	// メニュー項目を作成
-	//	auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
-	//	auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
-	//	auto useCollision = new MenuItemUseCollision(this, "UseCollision");
-	//	auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+		// メニュー項目を作成
+		auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
+		auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
+		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
+		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
 
-	//	// カメラ情報を設定
-	//	debugCamera->SetCameraManagerMenu(_cameraManager);
-	//	debugCamera->SetDebugCameraMenu(_debugCamera);
-	//	debugCamera->SetGameCameraMenu(_gameCamera);
+		// カメラ情報を設定
+		debugCamera->SetCameraManagerMenu(_cameraManager);
+		debugCamera->SetDebugCameraMenu(_debugCamera);
+		debugCamera->SetGameCameraMenu(_gameCamera);
 
-	//	modeMenu->AddMenuItem(viewDebugInfo);
-	//	modeMenu->AddMenuItem(viewCollision);
-	//	modeMenu->AddMenuItem(useCollision);
-	//	modeMenu->AddMenuItem(debugCamera);
-	//}
+		modeMenu->AddMenuItem(viewDebugInfo);
+		modeMenu->AddMenuItem(viewCollision);
+		modeMenu->AddMenuItem(useCollision);
+		modeMenu->AddMenuItem(debugCamera);
+	}
 
 	// クラスセット
 	{

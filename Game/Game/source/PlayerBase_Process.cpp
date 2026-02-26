@@ -316,20 +316,22 @@ void PlayerBase::ProcessHit()
 // デバッグ処理
 void PlayerBase::ProcessDebug()
 {
-	//if(_trg & PAD_INPUT_4)
-	//{
-	//	_fLife -= 5.0f;
-	//}
+	auto im = InputManager::GetInstance();
 
-	//if(_trg & PAD_INPUT_2)
-	//{
-	//	EnergyManager::GetInstance()->ConsumeEnergy(10.0f);
-	//}
+	if (im->IsTrigger(INPUT_ACTION::DEBUG3))
+	{
+		_fLife -= 5.0f;
+	}
 
-	//if (_trg & PAD_INPUT_5)
-	//{
-	//	EnergyManager::GetInstance()->AddEnergy(100.0f);
-	//}
+	if (im->IsTrigger(INPUT_ACTION::DEBUG1))
+	{
+		EnergyManager::GetInstance()->ConsumeEnergy(10.0f);
+	}
+
+	if (im->IsTrigger(INPUT_ACTION::DEBUG2))
+	{
+		EnergyManager::GetInstance()->AddEnergy(100.0f);
+	}
 }
 
 // 被弾硬直中かチェック
