@@ -34,6 +34,7 @@ public:
 	virtual ShieldConfig GetShieldConfig() override;				// シールド設定を取得
 	virtual AttackConstants GetAttackConstants()const override;		// 攻撃定数を取得
 	virtual void GetAttackConfigs(AttackConfig configs[]) override;	// 攻撃設定を取得
+	virtual AreaAttackConfig GetAreaAttackConfig() override;		// 範囲攻撃設定を取得
 
 	// クラス設定
 	void SetBulletManager(std::shared_ptr<BulletManager>bulletManager){ _bulletManager = bulletManager; }	// マネージャーをセット

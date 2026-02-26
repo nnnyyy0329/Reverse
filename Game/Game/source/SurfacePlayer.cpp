@@ -233,19 +233,8 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 // 範囲攻撃の情報設定
 AreaAttackConfig SurfacePlayer::GetAreaAttackConfig()
 {
-	// 表プレイヤー用の範囲攻撃設定
+	// 表プレイヤーは範囲攻撃を行わない
 	AreaAttackConfig config;
-
-	config.centerOffset = { 0.0f, 0.0f, 0.0f };		// コリジョン中心位置オフセット
-	config.radius = 50.0f;							// 半径
-	config.height = 10.0f;							// 高さ
-	config.delay = 20.0f;							// 発生フレーム
-	config.duration = 30.0f;						// 持続フレーム
-	config.recovery = 30.0f;						// 硬直フレーム
-	config.damage = 30.0f;							// ダメージ
-	config.effectName = "";	// エフェクト名
-	config.effectOffset = ;	// エフェクト位置オフセット
-	config.soundName = "";			// サウンド名
 	return config;
 }
 

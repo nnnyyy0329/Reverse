@@ -380,6 +380,14 @@ AttackConstants BulletPlayer::GetAttackConstants()const
 	return constants;
 }
 
+// 弾プレイヤーの範囲攻撃設定
+AreaAttackConfig BulletPlayer::GetAreaAttackConfig()
+{
+	// 弾プレイヤーは範囲攻撃を行わない
+	AreaAttackConfig config;
+	return config;
+}
+
 // 弾プレイヤーの攻撃設定
 void BulletPlayer::GetAttackConfigs(AttackConfig configs[])
 {
