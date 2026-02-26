@@ -399,8 +399,6 @@ void PlayerManager::EndTransformCancel()
 		_activePlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);
 	}
 
-	_cameraManager->EndAimMode();	// エイムモード終了
-
 	_fTransformCancelTime = 0.0f;
 	_bIsTransformCanceling = false;
 }
@@ -467,7 +465,11 @@ void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPl
 			animManager->ChangeAnimationByName(waitAnimName, 0.5f, 1);
 		}
 	}
+
+	// プレイヤー切り替え時にエイムモードが終了していない場合があるため、強制的にエイムモードを終了する
+	_cameraManager->EndAimMode();
 }
+
 
 // デバッグ描画
 bool PlayerManager::DebugRender()

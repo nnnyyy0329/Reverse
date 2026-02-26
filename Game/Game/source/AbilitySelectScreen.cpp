@@ -149,7 +149,7 @@ void AbilitySelectScreen::SelectionByInput()
 	}
 
 	// デバッグ用の入力
-	if(_trg & KEY_INPUT_TAB)
+	if(InputManager::GetInstance()->IsTrigger(INPUT_ACTION::LEFT))
 	{
 		// デバッグ用の強制解放
 		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::INTERIOR_PLAYER);

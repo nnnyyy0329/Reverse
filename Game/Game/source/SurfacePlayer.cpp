@@ -303,20 +303,13 @@ void SurfacePlayer::ProcessAbsorbSystem()
 	ProcessChangeAbsorbMotion();
 
 	// 入力処理
-	_absorbAttackSystem->ProcessAbsorbInput(_key);	
+	_absorbAttackSystem->ProcessAbsorbInput();	
 
 	// 吸収システムの更新処理
 	_absorbAttackSystem->Process();
 
 	// 前フレームの吸収攻撃キーの状態を保存
 	_bWasAbsorbKeyPressed = IsAbsorbInput();
-}
-	// 吸収攻撃システムの処理
-	if(_absorbAttackSystem)
-	{
-		_absorbAttackSystem->ProcessAbsorbInput();	// 入力処理
-		_absorbAttackSystem->Process();					// 吸収システムの更新処理
-	}
 }
 
 // 吸収攻撃設定取得
@@ -453,7 +446,7 @@ void SurfacePlayer::CancelAbsorbReady()
 bool SurfacePlayer::IsAbsorbInput()const
 {
 	// 吸収攻撃の入力チェック
-	return (_key & PAD_INPUT_6) != 0;
+	return (InputManager::GetInstance()->IsHold(INPUT_ACTION::ATTACK)) != 0;
 }
 
 // 吸収アニメーション再生時間デバッグ表示
