@@ -217,11 +217,22 @@ struct PlayerState
 	PLAYER_ABSORB_STATE		absorbState;	// ‹zûUŒ‚ó‘Ô
 	PLAYER_COMBAT_STATE		combatState;	// “Áêó‘Ô
 
-	bool IsStateAttacking() const { return attackState   != PLAYER_ATTACK_STATE::NONE; }
-	bool IsStateMoving()	const { return movementState != PLAYER_MOVEMENT_STATE::NONE; }
-	bool IsStateShooting()	const { return shootState	 != PLAYER_SHOOT_STATE::NONE; }
-	bool IsStateAbsorbing()	const { return absorbState	 != PLAYER_ABSORB_STATE::NONE; }
-	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }
+	// ó‘Ôƒ`ƒFƒbƒNŠÖ”
+	bool IsStateAttacking() const { return attackState	 != PLAYER_ATTACK_STATE::NONE; }	// UŒ‚ó‘Ô‚©‚Ç‚¤‚©
+	bool IsStateMoving()	const { return movementState != PLAYER_MOVEMENT_STATE::NONE; }	// ˆÚ“®ó‘Ô‚©‚Ç‚¤‚©
+	bool IsStateShooting()	const { return shootState	 != PLAYER_SHOOT_STATE::NONE; }		// ”­Ëó‘Ô‚©‚Ç‚¤‚©
+	bool IsStateAbsorbing()	const { return absorbState	 != PLAYER_ABSORB_STATE::NONE; }	// ‹zûUŒ‚ó‘Ô‚©‚Ç‚¤‚©
+	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }	// “Áêó‘Ô‚©‚Ç‚¤‚©
+
+	// ó‘ÔƒŠƒZƒbƒgŠÖ”
+	void StateReset()
+	{
+		movementState = PLAYER_MOVEMENT_STATE::NONE;
+		attackState = PLAYER_ATTACK_STATE::NONE;
+		shootState = PLAYER_SHOOT_STATE::NONE;
+		absorbState = PLAYER_ABSORB_STATE::NONE;
+		combatState = PLAYER_COMBAT_STATE::NONE;
+	}
 };
 
 class PlayerBase : public CharaBase
@@ -378,7 +389,7 @@ protected:	// ’e”­ËŠÖŒW
 
 	virtual bool IsShooting()const{ return _playerState.shootState != PLAYER_SHOOT_STATE::NONE; }
 
-protected:
+protected:	// ‹zûUŒ‚ŠÖŒW
 
 	virtual void ProcessAbsorb(){};	// ‹zûUŒ‚‚Ì‰¼‘zŠÖ”
 

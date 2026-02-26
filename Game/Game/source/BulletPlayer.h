@@ -23,7 +23,6 @@ public:
 	void ShootBullet();															// 弾の発射
 	void ProcessAimMode(bool aimKey);											// エイムモードの処理
 	VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir);	// オフセット位置をワールド座標に変換
-
 	void DrawShootIntervalTime();												// 弾発射時間のデバッグ表示
 
 	// 純粋仮想関数のオーバーライド

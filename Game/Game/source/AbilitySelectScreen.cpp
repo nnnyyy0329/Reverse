@@ -146,6 +146,14 @@ void AbilitySelectScreen::SelectionByInput()
 		_trg &= ~PAD_INPUT_4;
 	}
 
+	// デバッグ用の入力
+	if(_trg & KEY_INPUT_TAB)
+	{
+		// デバッグ用の強制解放
+		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::INTERIOR_PLAYER);
+		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::BULLET_PLAYER);
+	}
+
 	// 点滅カウンターを進める
 	_iCursorCount++;
 }

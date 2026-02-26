@@ -145,6 +145,13 @@ void BulletPlayer::ProcessShoot()
 	// キーが離された
 	else
 	{
+		// 発射構えアニメーションが完了していない状態でキーが離されたら
+		if(!_bIsReadyCompleted && _bIsReadyCompleted)
+		{
+			// 発射状態をリセット
+			_playerState.shootState = PLAYER_SHOOT_STATE::NONE;	// 発射状態リセット
+		}
+
 		// 発射カウントが0になったら
 		if(_shootIntervalTimer <= 0.0f)
 		{

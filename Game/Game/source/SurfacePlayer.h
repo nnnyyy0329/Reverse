@@ -42,8 +42,38 @@ private:
 	void MakeAbsorbSystem();		// 吸収攻撃システム生成
 	void InitializeAbsorbSystem();	// 吸収攻撃システム初期化
 	void ProcessAbsorbSystem();		// 吸収攻撃システム処理
-
 	void AbsorbSystemDebugRender();	// 吸収攻撃システムデバッグ描画
+
+	/* 吸収攻撃のモーション管理用メンバ関数 */
+
+	// 吸収攻撃モーション切り替え条件処理
+	void ProcessChangeAbsorbMotion();
+
+	// 構え状態に移行
+	void StartAbsorbReadyState();
+
+	// 構えモーション終了時の処理
+	void ProcessAbsorbReadyCompleted();
+
+	// 吸収終了時の処理
+	void ProcessAbsorbFinish();
+
+	// 吸収停止処理
+	void StopAbsorb();
+
+	// 吸収構えキャンセル処理
+	void CancelAbsorbReady();
+
+	// 吸収攻撃の入力チェック
+	bool IsAbsorbInput()const;
+
+	// 吸収アニメーション再生時間デバッグ表示
+	void DebugDrawAbsorbAnimationTime();
+
+	/* 吸収攻撃のモーション管理用メンバ変数 */
+
+	bool _bIsAbsorbReadyCompleted = false;	// 吸収構えアニメーション完了フラグ
+	bool _bWasAbsorbKeyPressed = false;		// 前フレームで吸収攻撃キーが押されていたか
 
 protected:
 

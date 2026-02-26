@@ -341,8 +341,8 @@ void PlayerBase::EndAttackSequence()
 	PlayerState oldState = _playerState;
 
 	// 状態リセット
-	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
-	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;
+	_playerState.StateReset();									// 攻撃状態リセット
+	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 攻撃終了後は待機状態にする
 
 	_iComboCount = 0;				// コンボカウントリセット
 	_bCanCombo = false;				// コンボ不可にする
@@ -373,7 +373,8 @@ void PlayerBase::ReceiveAttackColData()
 	// 現在の攻撃インデックスを取得
 	int attackIndex = GetAttackIndexByStatus(_playerState.attackState);
 
-	if(attackIndex >= 0 && attackIndex < static_cast<int>(_attacks.size()))
+	// 攻撃インデックスが有効範囲内かチェック
+	if(attackIndex >= 0 && attackIndex < static_cast<int>(_attacks.size()))	// 番号が子クラスの攻撃番号の範囲内なら
 	{
 		// 攻撃コリジョン情報を取得
 		ATTACK_COLLISION attackCol = _attacks[attackIndex]->GetAttackCollision();
