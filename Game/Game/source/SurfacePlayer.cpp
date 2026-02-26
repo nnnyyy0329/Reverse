@@ -311,6 +311,13 @@ void SurfacePlayer::ProcessAbsorbSystem()
 	// 前フレームの吸収攻撃キーの状態を保存
 	_bWasAbsorbKeyPressed = IsAbsorbInput();
 }
+	// 吸収攻撃システムの処理
+	if(_absorbAttackSystem)
+	{
+		_absorbAttackSystem->ProcessAbsorbInput();	// 入力処理
+		_absorbAttackSystem->Process();					// 吸収システムの更新処理
+	}
+}
 
 // 吸収攻撃設定取得
 AbsorbConfig SurfacePlayer::GetAbsorbConfig()

@@ -302,19 +302,6 @@ public:
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
 
-	// 入力状態を設定する
-	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
-	{
-		_key = key;
-		_trg = trg;
-		_lx = lx;
-		_ly = ly;
-		_rx = rx;
-		_ry = ry;
-		_analogMin = analogMin;
-	}
-	int GetInput()const{ return _key; }
-
 	/*****ゲッターセッター*****/
 	VECTOR GetAttackColTop(){ return _vAttackColTop; }			// 攻撃コリジョン上部
 	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }	// 攻撃コリジョン下部
@@ -450,15 +437,6 @@ protected:
 	// 状態
 	PlayerState _playerState;		// 現在の状態
 	PlayerState _oldPlayerState;	// 前フレームの状態
-
-	// 入力関係
-	int _key = 0;
-	int _trg = 0;
-	float _lx = 0.0f;
-	float _ly = 0.0f;
-	float _rx = 0.0f;
-	float _ry = 0.0f;
-	float _analogMin = 0.0f;
 
 	// アクション関係変数
 	float _fVelY;			// Y方向の速度

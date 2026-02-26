@@ -63,12 +63,14 @@ void PlayerBase::CallProcessDodge()
 // ‰ñ”ðˆ—
 void PlayerBase::ProcessDodge()
 {
+	auto im = InputManager::GetInstance();
+
 	// ‰ñ”ð“ü—Í‚ª‚ ‚Á‚½‚ç‰ñ”ð‚ðŒÄ‚Ño‚·
 	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN)
 		&& StaminaManager::GetInstance()->CanDodge()
-		&& _trg & PAD_INPUT_3)
+		&& im->IsTrigger(INPUT_ACTION::DODGE))
 	{
 		// ‰ñ”ðŠJŽn
 		ProcessStartDodge();

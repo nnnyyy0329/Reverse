@@ -158,6 +158,7 @@
     <ClCompile Include="source\CFile\CFile.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="source\InputManager.cpp" />
     <ClCompile Include="source\math\mymath.cpp" />
     <ClCompile Include="source\Mode\ModeBase.cpp" />
     <ClCompile Include="source\Mode\ModeServer.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="source\CFile\CFile.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="source\InputManager.h" />
     <ClInclude Include="source\Manager\ComponentManager.h" />
     <ClInclude Include="source\math\mymath.h" />
     <ClInclude Include="source\memo.h">

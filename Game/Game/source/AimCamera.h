@@ -11,7 +11,7 @@ public:
 	~AimCamera();
 
 	void Initialize();																						// 初期化
-	void Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool isInput);	// 更新
+	void Process(InputManager* input, bool isInput);
 	void SetUp();																							// カメラセットアップ
 	void Render();																							// 描画
 	void DebugRender();																						// デバッグ描画

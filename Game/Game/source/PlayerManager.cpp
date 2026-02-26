@@ -79,17 +79,17 @@ bool PlayerManager::Process()
 	// アクティブプレイヤーの処理
 	if(_activePlayer)
 	{
+		auto im = InputManager::GetInstance();
+
 		// 変身中、または変身解除中、またはアビリティ選択画面がアクティブな場合
 		if(_bIsTransforming || _bIsTransformCanceling || isAbilityScreenActive)
 		{
 			// 入力を無効化
-			_activePlayer->SetInput(0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 		}
 		// それ以外の場合
 		else
 		{
 			// 入力をアクティブプレイヤーに渡す
-			_activePlayer->SetInput(_key, _trg, _lx, _ly, _rx, _ry, _analogMin);
 		}
 
 		_activePlayer->SetCameraManager(_cameraManager);

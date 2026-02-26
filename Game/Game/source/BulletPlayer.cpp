@@ -91,6 +91,9 @@ void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 // 発射間隔更新
 void BulletPlayer::ProcessShoot()
 {
+	auto im = InputManager::GetInstance();
+	bool putKey = im->IsHold(INPUT_ACTION::ATTACK);	// 発射キー
+	bool aimKey = im->IsHold(INPUT_ACTION::ABILITY);	// エイムキー
 	bool putKey = (_key & BulletPlayerConstants::SHOOT_INPUT_KEY) != 0;	// 発射キー
 
 	_cameraManager->StartAimMode();	// エイムモード開始

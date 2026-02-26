@@ -72,14 +72,19 @@ void PlayerBase::ProcessMovePlayer()
 // 入力に応じた移動処理
 void PlayerBase::ProcessInputMove()
 {
+	auto im = InputManager::GetInstance();
+
 	// ダッシュ入力があれば移動速度を上げる
-	if(_trg & PAD_INPUT_9)
+	if(im->IsTrigger(INPUT_ACTION::DASH))
 	{
 		_bIsDashInput = !_bIsDashInput;	// ダッシュ入力フラグをトグルする
 	}
 
+	const AnalogState& analog = im->GetAnalog();
+	float analogMin = im->GetAnalogMin();
+
 	// アナログ入力による移動
-	if(abs(_lx) > _analogMin || abs(_ly) > _analogMin)
+	if(abs(analog.lx) > analogMin || abs(analog.ly) > analogMin)
 	{
 		float currentCameraAngle;	// 現在のカメラの水平角度
 
@@ -123,8 +128,8 @@ void PlayerBase::ProcessInputMove()
 		// 移動量を計算
 		_vMove = VAdd
 		(
-			VScale(cameraForward, _ly),	// 前後移動
-			VScale(cameraRight, _lx)	// 左右移動
+			VScale(cameraForward, analog.ly),	// 前後移動
+			VScale(cameraRight, analog.lx)	// 左右移動
 		);
 
 		// 正規化
@@ -311,17 +316,19 @@ void PlayerBase::ProcessHit()
 // デバッグ処理
 void PlayerBase::ProcessDebug()
 {
-	if(_trg & PAD_INPUT_4)
+	auto im = InputManager::GetInstance();
+
+	if (im->IsTrigger(INPUT_ACTION::DEBUG3))
 	{
 		_fLife -= 5.0f;
 	}
 
-	if(_trg & PAD_INPUT_2)
+	if (im->IsTrigger(INPUT_ACTION::DEBUG1))
 	{
 		EnergyManager::GetInstance()->ConsumeEnergy(10.0f);
 	}
 
-	if (_trg & PAD_INPUT_5)
+	if (im->IsTrigger(INPUT_ACTION::DEBUG2))
 	{
 		EnergyManager::GetInstance()->AddEnergy(100.0f);
 	}

@@ -7,7 +7,7 @@ public:
 	DebugCamera();
 	virtual ~DebugCamera();
 
-	void Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool isInput);
+	void Process(InputManager* input, bool isInput);
 	void Render();
 	void DebugRender();
 
