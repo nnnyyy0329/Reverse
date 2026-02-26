@@ -168,6 +168,10 @@ StageBase::StageBase(int stageNum)
 		);
 	}
 
+
+
+
+
 	// プレイヤー初期位置
 	{
 		std::string playerObjName = "playermarker";
@@ -267,11 +271,14 @@ StageBase::~StageBase()
 	StopStageBGM();
 }
 
+
 void StageBase::Process()
 {
 	// マップモデルの更新
 	{
 	}
+
+
 
 	// 敵の更新
 	{

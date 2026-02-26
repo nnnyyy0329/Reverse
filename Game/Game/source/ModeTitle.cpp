@@ -149,7 +149,7 @@ bool ModeTitle::Render()
 		const int textY = 820;
 		const int lineGap = 70;
 
-		DrawMenuItem(textX, textY + 0 * lineGap, "スタート", _menuIndex == 0);
+		DrawMenuItem(textX, textY + 0 * lineGap, "スタート"  , _menuIndex == 0);
 		DrawMenuItem(textX, textY + 1 * lineGap, "オプション", _menuIndex == 1);
 		DrawMenuItem(textX, textY + 2 * lineGap, "ゲーム終了", _menuIndex == 2);
 

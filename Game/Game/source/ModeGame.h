@@ -153,4 +153,5 @@ private:
 	// ライトの位置、影響範囲、ライトの色
 	int AddPointLight(VECTOR vPos, float fRange, COLOR_F color);
 	void RemoveLight(int lightHandle);// 指定ライトを削除
+
 };

@@ -181,6 +181,9 @@
     <ClCompile Include="source\ModeScenario.cpp">
       <Filter>Mode\Scenario</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeLogo.cpp">
+      <Filter>Mode\Logo</Filter>
+    </ClCompile>
     <ClCompile Include="source\AbsorbAttack.cpp">
       <Filter>Attack\AbsorbAttack</Filter>
     </ClCompile>
@@ -369,6 +372,9 @@
     <ClInclude Include="source\ModeScenario.h">
       <Filter>Mode\Scenario</Filter>
     </ClInclude>
+    <ClInclude Include="source\ModeLogo.h">
+      <Filter>Mode\Logo</Filter>
+    </ClInclude>
     <ClInclude Include="source\PlayerUnlockManager.h">
       <Filter>GameObject\CharaBase\Player\AbilityUnlocck</Filter>
     </ClInclude>
@@ -505,6 +511,9 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\Enemy\Observer">
       <UniqueIdentifier>{397daf55-c625-4bf8-84f5-ca4526945ab1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Logo">
+      <UniqueIdentifier>{28138b02-a231-44be-9ae5-57353573190c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
