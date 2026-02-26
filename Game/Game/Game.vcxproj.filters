@@ -181,6 +181,9 @@
     <ClCompile Include="source\ModeScenario.cpp">
       <Filter>Mode\Scenario</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeLogo.cpp">
+      <Filter>Mode\Logo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -351,6 +354,9 @@
     <ClInclude Include="source\ModeScenario.h">
       <Filter>Mode\Scenario</Filter>
     </ClInclude>
+    <ClInclude Include="source\ModeLogo.h">
+      <Filter>Mode\Logo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -469,6 +475,9 @@
     </Filter>
     <Filter Include="Mode\Scenario">
       <UniqueIdentifier>{aaf8594f-ac6c-4a92-af50-939b60af057a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Logo">
+      <UniqueIdentifier>{28138b02-a231-44be-9ae5-57353573190c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

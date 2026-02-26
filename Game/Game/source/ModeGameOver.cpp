@@ -128,7 +128,7 @@ bool ModeGameOver::Render()
 	DrawBox(0, 0, 1920, 1080, GetColor(0, 0, 0), TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawFormatString(720, 260, GetColor(255, 0, 0), "===== GAME OVER =====");
+	DrawFormatString(720, 260, GetColor(255, 0, 0), "===== ‚¨‘O‚Ì•‰‚¯‚— =====");
 
 	// ƒƒjƒ…[
 	{

@@ -341,6 +341,7 @@ bool ModeGame::Process()
 		}
 	}
 
+
 	// エフェクト更新
 	EffectServer::GetInstance()->Update();
 

@@ -181,6 +181,7 @@
     <ClCompile Include="source\ModeGameOver.cpp" />
     <ClCompile Include="source\ModeGame_CheckHit.cpp" />
     <ClCompile Include="source\ModeLoading.cpp" />
+    <ClCompile Include="source\ModeLogo.cpp" />
     <ClCompile Include="source\ModeMenu.cpp" />
     <ClCompile Include="source\AbilityBase.cpp" />
     <ClCompile Include="source\AbilityManager.cpp" />
@@ -285,6 +286,7 @@
     <ClInclude Include="source\ModeGame.h" />
     <ClInclude Include="source\ModeGameOver.h" />
     <ClInclude Include="source\ModeLoading.h" />
+    <ClInclude Include="source\ModeLogo.h" />
     <ClInclude Include="source\ModeMenu.h" />
     <ClInclude Include="source\AbilityBase.h" />
     <ClInclude Include="source\AbilityManager.h" />

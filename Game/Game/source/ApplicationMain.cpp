@@ -3,7 +3,8 @@
 #include "ModeLoading.h"
 #include "ApplicationGlobal.h"
 
-#include "ModeTitle.h"
+#include "ModeLogo.h"
+
 
 
 // ŽÀ‘Ì
@@ -17,7 +18,7 @@ bool ApplicationMain::Initialize(HINSTANCE hInstance) {
 
 	// ƒ‚[ƒh‚Ì“o˜^
 	// ƒ^ƒCƒgƒ‹ƒ‚[ƒh‚ð“o˜^
-	ModeServer::GetInstance()->Add(new ModeTitle(), 100, "title");
+	ModeServer::GetInstance()->Add(new ModeLogo(), 100, "logo");
 
 	return true;
 }
