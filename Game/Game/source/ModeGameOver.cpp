@@ -128,8 +128,10 @@ bool ModeGameOver::Render()
 	DrawBox(0, 0, 1920, 1080, GetColor(0, 0, 0), TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawFormatString(720, 260, GetColor(255, 0, 0), "===== お前の負けｗ =====");
 
+	SetFontSize(48);
+	DrawFormatString(720, 260, GetColor(255, 0, 0), "===== お前の負けｗ =====");
+	SetFontSize(16);
 	// メニュー
 	{
 		const int textX = 760;
