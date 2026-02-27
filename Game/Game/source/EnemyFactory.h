@@ -10,15 +10,15 @@ namespace
 	constexpr auto DEFAULT_ENEMY_SPEED = 2.0f;// “G‚ÌˆÚ“®‘¬“x
 	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 20000.0f;// “G‚ÌÅ‘å‘Ì—Í
 
-	// Melee
-	constexpr auto MELEE_VISION_RANGE = 250.0f;// õ“G‹——£
-	constexpr auto MELEE_VISION_ANGLE = 60.0f;// ‰~‚Å‚Ìõ“G
-	constexpr auto MELEE_ATTACK_RANGE = 120.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
-	constexpr auto MELEE_CHASE_LIMIT_RANGE = 600.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ß‚ð‚â‚ß‚é‹——£
-	constexpr auto MELEE_IDLE_TIME = 120.0f;// ‘Ò‹@ŽžŠÔ
-	constexpr auto MELEE_MOVE_TIME = 180.0f;// œpœjŽžŠÔ
-	constexpr auto MELEE_DETECT_TIME = 60.0f;// ”­Œ©d’¼
-	constexpr auto MELEE_ATTACK_TIME = 180.0f;// UŒ‚ŽžŠÔ
+	// Normal Melee
+	constexpr auto NORMAL_VISION_RANGE = 250.0f;// õ“G‹——£
+	constexpr auto NORMAL_VISION_ANGLE = 60.0f;// ‰~‚Å‚Ìõ“G
+	constexpr auto NORMAL_ATTACK_RANGE = 100.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
+	constexpr auto NORMAL_CHASE_LIMIT_RANGE = 600.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ß‚ð‚â‚ß‚é‹——£
+	constexpr auto NORMAL_IDLE_TIME = 120.0f;// ‘Ò‹@ŽžŠÔ
+	constexpr auto NORMAL_MOVE_TIME = 180.0f;// œpœjŽžŠÔ
+	constexpr auto NORMAL_DETECT_TIME = 60.0f;// ”­Œ©d’¼
+	constexpr auto NORMAL_ATTACK_TIME = 180.0f;// UŒ‚ŽžŠÔ
 
 	// Ranged
 	constexpr auto RANGED_VISION_RANGE = 800.0f;// õ“G‹——£(L‚ß)
@@ -43,6 +43,7 @@ namespace
 // “G‚ÌŽí—Þ
 enum class EnemyType
 {
+	NORMAL,// ’Êí
 	MELEE,// ‹ßÚ
 	RANGED,// ‰“‹——£
 	TANK,// ƒ^ƒ“ƒN
@@ -63,19 +64,20 @@ public:
 
 		switch (type) 
 		{
+		case EnemyType::NORMAL:// ’ÊíŒ^
 		case EnemyType::MELEE:// ‹ßÚŒ^
 			// ƒ‚ƒfƒ‹–¼‚ðÝ’è
 			enemy->SetModelName("Melee");
 
 			param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
-			param.fVisionRange = MELEE_VISION_RANGE;
-			param.fVisionAngle = MELEE_VISION_ANGLE;
-			param.fAttackRange = MELEE_ATTACK_RANGE;
-			param.fChaseLimitRange = MELEE_CHASE_LIMIT_RANGE;
-			param.fIdleTime = MELEE_IDLE_TIME;
-			param.fMoveTime = MELEE_MOVE_TIME;
-			param.fDetectTime = MELEE_DETECT_TIME;
-			param.fAttackTime = MELEE_ATTACK_TIME;
+			param.fVisionRange = NORMAL_VISION_RANGE;
+			param.fVisionAngle = NORMAL_VISION_ANGLE;
+			param.fAttackRange = NORMAL_ATTACK_RANGE;
+			param.fChaseLimitRange = NORMAL_CHASE_LIMIT_RANGE;
+			param.fIdleTime = NORMAL_IDLE_TIME;
+			param.fMoveTime = NORMAL_MOVE_TIME;
+			param.fDetectTime = NORMAL_DETECT_TIME;
+			param.fAttackTime = NORMAL_ATTACK_TIME;
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 
 			// ‹¤’ÊƒXƒe[ƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ðÝ’è
@@ -161,6 +163,9 @@ public:
 		// ‰Šú‰»Œã‚É‰Šúó‘Ô‚ðÝ’è
 		switch (type) 
 		{
+			case EnemyType::NORMAL:
+			enemy->ChangeState(std::make_unique<Normal::Idle>());
+			break;
 		case EnemyType::MELEE:
 			enemy->ChangeState(std::make_unique<Melee::Idle>());
 			break;

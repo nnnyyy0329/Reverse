@@ -56,7 +56,7 @@ namespace
 	constexpr auto ATTACK_EFFECT_OFFSET_Y = 80.0f;		// 攻撃エフェクトYオフセット
 
 	// 攻撃コリジョン設定生成
-	EnemyAttackSettings MakeMeleeAttackSettings()
+	EnemyAttackSettings MakeNormalAttackSettings()
 	{
 		EnemyAttackSettings settings;
 		settings.colType = COLLISION_TYPE::CAPSULE;
@@ -72,7 +72,7 @@ namespace
 	}
 
 	// 定数として保存
-	const EnemyAttackSettings MELEE_ATTACK_SETTINGS = MakeMeleeAttackSettings();
+	const EnemyAttackSettings NORMAL_ATTACK_SETTINGS = MakeNormalAttackSettings();
 }
 
 namespace Normal
@@ -279,12 +279,55 @@ namespace Normal
 		// 攻撃開始距離チェック
 		if (targetInfo.fDist <= ATTACK_START_DISTANCE)
 		{
-			return std::make_shared<AttackCharge>();
+			return std::make_shared<AttackStart>();
 		}
 
 		// ターゲット方向へ回転・移動
 		RotateToTarget(owner, targetInfo.vDir, SMOOTH_ROTATE_SPEED);
 		MoveToTarget(owner, targetInfo.vDir, owner->GetEnemyParam().fMoveSpeed);
+
+		return nullptr;
+	}
+
+	// 攻撃ステート開始
+	void AttackStart::Enter(Enemy* owner)
+	{
+		// タイマー初期化
+		_fTimer = 0.0f;
+
+		// アニメーション設定
+	}
+
+	std::shared_ptr<EnemyState> AttackStart::Update(Enemy* owner)
+	{
+		// ターゲット情報取得
+		auto targetInfo = GetTargetInfo(owner);
+
+		// ターゲット存在チェック
+		if (!targetInfo.bExist)
+		{
+			return TransitionToLostNoTarget<LostTarget>(owner);
+		}
+
+		// タイマー更新
+		_fTimer++;
+
+		// 追跡限界距離チェック
+		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
+		if (result) { return result; }
+
+		// 移動可能範囲外チェック
+		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
+		if (areaResult) { return areaResult; }
+
+		if (targetInfo.fDist <= ATTACK_EXECUTE_DISTANCE)
+		{
+			return std::make_shared<AttackCharge>();
+		}
+
+		// ターゲット方向へ回転・移動
+		RotateToTarget(owner, targetInfo.vDir, SMOOTH_ROTATE_SPEED);
+		MoveToTarget(owner, targetInfo.vDir, ATTACK_APPROACH_SPEED);
 
 		return nullptr;
 	}
@@ -349,7 +392,7 @@ namespace Normal
 		SoundServer::GetInstance()->Play("SE_Melee_Attanck", DX_PLAYTYPE_BACK);
 
 		// 攻撃コリジョン生成
-		owner->StartAttack(MELEE_ATTACK_SETTINGS);
+		owner->StartAttack(NORMAL_ATTACK_SETTINGS);
 		_bHasCollision = true;
 	}
 
@@ -371,7 +414,7 @@ namespace Normal
 		// 攻撃コリジョン生成
 		if (_bHasCollision)
 		{
-			owner->UpdateAttackTransform(MELEE_ATTACK_SETTINGS);
+			owner->UpdateAttackTransform(NORMAL_ATTACK_SETTINGS);
 		}
 
 		// 攻撃実行時間終了チェック

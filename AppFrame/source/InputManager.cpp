@@ -105,17 +105,19 @@ void InputManager::ResetInput()
 // パッドかキーボードどちらかが入力されていれば true を返す
 bool InputManager::IsHold(INPUT_ACTION action)
 {
+	bool padSpecialHold = false;
+
 	switch (action)
 	{
 		// 項目選択はハットスイッチで判定
-		case INPUT_ACTION::UP:    return  _hat.IsUp();
-		case INPUT_ACTION::DOWN:  return  _hat.IsDown();
-		case INPUT_ACTION::LEFT:  return  _hat.IsLeft();
-		case INPUT_ACTION::RIGHT: return  _hat.IsRight();
+	case INPUT_ACTION::UP:      padSpecialHold = _hat.IsUp();    break;
+	case INPUT_ACTION::DOWN:    padSpecialHold = _hat.IsDown();  break;
+	case INPUT_ACTION::LEFT:    padSpecialHold = _hat.IsLeft();  break;
+	case INPUT_ACTION::RIGHT:   padSpecialHold = _hat.IsRight(); break;
 		// 攻撃はトリガーで判定
-		case INPUT_ACTION::ATTACK: return _trigger.rtHold;
-		case INPUT_ACTION::ABILITY: return _trigger.ltHold;
-		default: break;
+	case INPUT_ACTION::ATTACK:  padSpecialHold = _trigger.rtHold; break;
+	case INPUT_ACTION::ABILITY: padSpecialHold = _trigger.ltHold; break;
+	default: break;
 	}
 
 	int padCode = GetPadCode(action);
@@ -123,22 +125,24 @@ bool InputManager::IsHold(INPUT_ACTION action)
 
 	bool keyHold = _bKeyHold[static_cast<int>(action)];
 
-	return padHold || keyHold;
+	return padSpecialHold || padHold || keyHold;
 }
 
 bool InputManager::IsTrigger(INPUT_ACTION action)
 {
+	bool padSpecialTrg = false;
+
 	switch (action)
 	{
 		// 項目選択はハットスイッチで判定
-		case INPUT_ACTION::UP:    return  _hat.IsUp() && !_hat.WasUp();
-		case INPUT_ACTION::DOWN:  return  _hat.IsDown() && !_hat.WasDown();
-		case INPUT_ACTION::LEFT:  return  _hat.IsLeft() && !_hat.WasLeft();
-		case INPUT_ACTION::RIGHT: return  _hat.IsRight() && !_hat.WasRight();
+	case INPUT_ACTION::UP:    padSpecialTrg = _hat.IsUp() && !_hat.WasUp();    break;
+	case INPUT_ACTION::DOWN:  padSpecialTrg = _hat.IsDown() && !_hat.WasDown();  break;
+	case INPUT_ACTION::LEFT:  padSpecialTrg = _hat.IsLeft() && !_hat.WasLeft();  break;
+	case INPUT_ACTION::RIGHT: padSpecialTrg = _hat.IsRight() && !_hat.WasRight(); break;
 		// 攻撃はトリガーで判定
-		case INPUT_ACTION::ATTACK: return _trigger.rtTrg;
-		case INPUT_ACTION::ABILITY: return _trigger.ltTrg;
-		default: break;
+	case INPUT_ACTION::ATTACK:  padSpecialTrg = _trigger.rtTrg; break;
+	case INPUT_ACTION::ABILITY: padSpecialTrg = _trigger.ltTrg; break;
+	default: break;
 	}
 
 	int padCode = GetPadCode(action);
@@ -146,7 +150,7 @@ bool InputManager::IsTrigger(INPUT_ACTION action)
 
 	bool keyTrg = _bKeyTrg[static_cast<int>(action)];
 
-	return padTrg || keyTrg;
+	return padSpecialTrg || padTrg || keyTrg;
 }
 
 bool InputManager::IsRelease(INPUT_ACTION action)
@@ -209,9 +213,18 @@ int InputManager::GetKeyCode(INPUT_ACTION action)
 		case INPUT_ACTION::DASH:        return KEY_INPUT_LSHIFT;
 		case INPUT_ACTION::ABILITY:     return KEY_INPUT_W;
 		case INPUT_ACTION::TRANSFORM:   return KEY_INPUT_S;
+		// 項目選択
+		case INPUT_ACTION::UP:			return KEY_INPUT_UP;
+		case INPUT_ACTION::DOWN:		return KEY_INPUT_DOWN;
+		case INPUT_ACTION::LEFT:		return KEY_INPUT_LEFT;
+		case INPUT_ACTION::RIGHT:		return KEY_INPUT_RIGHT;
 		// システム
 		case INPUT_ACTION::MENU:        return KEY_INPUT_SPACE;
 		case INPUT_ACTION::SELECT:      return KEY_INPUT_Z;
+		// デバッグ用
+		case INPUT_ACTION::DEBUG1:      return KEY_INPUT_F1;
+		case INPUT_ACTION::DEBUG2:      return KEY_INPUT_F2;
+		case INPUT_ACTION::DEBUG3:      return KEY_INPUT_F3;
 
 		default:						return -1;
 	}

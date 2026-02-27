@@ -196,7 +196,9 @@
     <ClCompile Include="source\EnemyObserver.cpp">
       <Filter>GameObject\CharaBase\Enemy\Observer</Filter>
     </ClCompile>
-    <ClCompile Include="source\StateNormal.cpp" />
+    <ClCompile Include="source\StateNormal.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -382,7 +384,9 @@
     <ClInclude Include="source\EnemyObserver.h">
       <Filter>GameObject\CharaBase\Enemy\Observer</Filter>
     </ClInclude>
-    <ClInclude Include="source\StateNormal.h" />
+    <ClInclude Include="source\StateNormal.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">

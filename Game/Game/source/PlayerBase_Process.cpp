@@ -83,8 +83,18 @@ void PlayerBase::ProcessInputMove()
 	const AnalogState& analog = im->GetAnalog();
 	float analogMin = im->GetAnalogMin();
 
-	// アナログ入力による移動
-	if(abs(analog.lx) > analogMin || abs(analog.ly) > analogMin)
+	float digitalX = 0.0f;
+	float digitalY = 0.0f;
+	if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }
+	
+	// アナログ入力による移動、なければデジタル入力
+	float inputX = (abs(analog.lx) > analogMin) ? analog.lx : digitalX;
+	float inputY = (abs(analog.ly) > analogMin) ? analog.ly : digitalY;
+
+	if(inputX != 0.0f || inputY != 0.0f)
 	{
 		float currentCameraAngle;	// 現在のカメラの水平角度
 
@@ -128,8 +138,8 @@ void PlayerBase::ProcessInputMove()
 		// 移動量を計算
 		_vMove = VAdd
 		(
-			VScale(cameraForward, analog.ly),	// 前後移動
-			VScale(cameraRight, analog.lx)	// 左右移動
+			VScale(cameraForward, inputY),	// 前後移動
+			VScale(cameraRight, inputX)	// 左右移動
 		);
 
 		// 正規化

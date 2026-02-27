@@ -45,6 +45,16 @@ namespace Normal
 		bool IsChasing() override { return true; }
 	};
 
+	// 攻撃ステート開始
+	class AttackStart : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Normal:AttackStart"; }
+		bool IsChasing() override { return true; }
+	};
+
 	// 攻撃溜め
 	class AttackCharge : public EnemyState
 	{

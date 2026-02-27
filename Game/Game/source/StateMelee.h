@@ -44,16 +44,6 @@ namespace Melee
 		AttackType _eAttackType;
 	};
 
-	// UŒ‚—­‚ß(‚»‚Ìê‚ÅŒü‚«‚ğ’Ç])
-	class AttackCharge : public EnemyState
-	{
-	public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() override { return "Melee:AttackCharge"; }
-		//bool CanChangeState() override { return false; }
-	};
-
 	// “ËiUŒ‚—­‚ß
 	class RushCharge : public EnemyState
 	{
