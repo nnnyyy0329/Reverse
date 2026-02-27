@@ -4,6 +4,7 @@
 #include "ModeMenu.h"
 #include "ModeStageChange.h"
 #include "ModeGameOver.h"
+#include "ModeScenario.h"
 
 #include "CharaBase.h"
 #include "StageBase.h"
@@ -36,6 +37,7 @@
 #include "StaminaUI.h"
 
 #include "MenuItemBase.h"
+
 
 bool ModeGame::Initialize() 
 {
@@ -319,6 +321,9 @@ bool ModeGame::Process()
 		CheckHitPlayerTrigger(player);
 	}
 
+	
+
+
 	// ターゲット更新
 	{
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
@@ -334,6 +339,19 @@ bool ModeGame::Process()
 		}
 	}
 
+
+	//敵が全員死んだら時次のステージ行きたい
+
+	//{
+	//	if(_stage && _stage->IsAllEnemiesDefeated() && !_bScenarioAdded)
+	//	{
+	//		_bScenarioAdded = true;
+
+	//		auto modeScenario = new ModeScenario("Scenario_Clear", 180, 30);
+	//		ModeServer::GetInstance()->Add(modeScenario, 120, "scenario");
+	//		modeScenario->Show();
+	//	}
+	//}
 
 	// エフェクト更新
 	EffectServer::GetInstance()->Update();

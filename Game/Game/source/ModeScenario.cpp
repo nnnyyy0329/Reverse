@@ -1,153 +1,79 @@
 #include "ModeScenario.h"
-#include <DxLib.h>
+#include "ModeGame.h"
 
-ModeScenario::ModeScenario(const std::string& resourceName, int durationFrames, int fadeFrames)
-	: _resourceName(resourceName)
-	, _handle(-1)
-	, _state(State::Idle)
-	, _timer(0)
-	, _duration(durationFrames)
-	, _fadeFrames(fadeFrames > 0 ? fadeFrames : 1)
-	, _alpha(0)
-	, _x(0)
-	, _y(0)
-	, _scaleX(1.0f)
-	, _scaleY(1.0f)
-	, _visible(false)
-	, _autoClose(true)
+bool ModeScenario::Initialize()
 {
-	EnsureHandle();
-}
+	if(!base::Initialize()) { return false; }
 
-ModeScenario::~ModeScenario()
-{
-	// リソースは ResourceServer 側で管理する想定のためここでは何もしない
-}
+	_frameCount = 0;
+	_pageIndex = 0;
+	_bNext = false;
 
-void ModeScenario::EnsureHandle()
-{
-	auto rs = ResourceServer::GetInstance();
-	if(rs) {
-		_handle = rs->GetHandle(_resourceName);
-	}
-}
+	_textHandles[0] = ResourceServer::GetInstance()->GetHandle("GameStartText");
+	_textHandles[1] = ResourceServer::GetInstance()->GetHandle("GameStartText1");
 
-void ModeScenario::Show()
-{
-	if(_handle == -1) EnsureHandle();
-	_visible = true;
-	_state = State::FadingIn;
-	_timer = 0;
-	_alpha = 0;
-}
-
-void ModeScenario::Hide()
-{
-	_visible = false;
-	_state = State::Done;
-	_timer = 0;
-	_alpha = 0;
-}
-
-void ModeScenario::Skip()
-{
-	// 表示中ならフェードアウトへ
-	if(_state == State::FadingIn || _state == State::Showing) {
-		_state = State::FadingOut;
-		_timer = 0;
-	}
-}
-
-void ModeScenario::Update()
-{
-	if(!_visible) return;
-
-	// ハンドルがまだ取れていない場合は再取得を試みる
-	if(_handle == -1) EnsureHandle();
-
-	switch(_state)
-	{
-		case State::FadingIn:
-			_timer++;
-			_alpha = (_timer * 255) / _fadeFrames;
-			if(_alpha > 255) _alpha = 255;
-			if(_timer >= _fadeFrames) {
-				_state = State::Showing;
-				_timer = 0;
-			}
-			break;
-
-		case State::Showing:
-			_timer++;
-			// 自動でフェードアウトするのは _autoClose == true の場合のみ
-			if(_autoClose && _timer >= _duration) {
-				_state = State::FadingOut;
-				_timer = 0;
-			}
-			break;
-
-		case State::FadingOut:
-			_timer++;
-			_alpha = 255 - (_timer * 255) / _fadeFrames;
-			if(_alpha < 0) _alpha = 0;
-			if(_timer >= _fadeFrames) {
-				_state = State::Done;
-				_visible = false;
-				_timer = 0;
-			}
-			break;
-
-		default:
-			break;
-	}
-}
-
- bool ModeScenario::Render()
-{
-	if(!_visible) return false;
-	if(_handle == -1) return false; // ハンドルがないと描画不可
-
-	// アルファ描画
-	if(_alpha != 255) {
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, _alpha);
-	}
-
-	// サイズ取得 -> 拡縮して描画（丸め・負スケール反転対応）
-	int w = 0, h = 0;
-	if(GetGraphSize(_handle, &w, &h) == 0 && w > 0 && h > 0)
-	{
-		// 四捨五入で整数化
-		int dw = static_cast<int>(std::lroundf(w * _scaleX));
-		int dh = static_cast<int>(std::lroundf(h * _scaleY));
-
-		int x1 = _x;
-		int y1 = _y;
-		int x2 = _x + dw;
-		int y2 = _y + dh;
-
-		// 負の拡縮（反転）に対応するため座標を入れ替え
-		if(x1 > x2) std::swap(x1, x2);
-		if(y1 > y2) std::swap(y1, y2);
-
-		// 等倍なら高速パス
-		if(dw == w && dh == h) {
-			DrawGraph(_x, _y, _handle, TRUE);
-		}
-		else {
-			DrawExtendGraph(x1, y1, x2, y2, _handle, TRUE);
-		}
-	}
-	else {
-		DrawGraph(_x, _y, _handle, TRUE);
-	}
-
-	if(_alpha != 255) {
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	}
 	return true;
 }
 
-bool ModeScenario::IsFinished() const
+bool ModeScenario::Terminate()
 {
-	return _state == State::Done;
+	base::Terminate();
+	return true;
+}
+
+bool ModeScenario::Process()
+{
+	_frameCount++;
+
+	auto input = InputManager::GetInstance();
+
+	// 連打で一気に飛ばないように、数フレーム待つ（任意）
+	const int kInputWaitFrames = 10;
+	const bool canInput = (_frameCount >= kInputWaitFrames);
+
+	if(canInput && (input->IsTrigger(INPUT_ACTION::SELECT) || input->IsTrigger(INPUT_ACTION::ATTACK)))
+	{
+		_bNext = true;
+	}
+
+	if(_bNext)
+	{
+		_bNext = false;
+		_frameCount = 0;
+		_pageIndex++;
+
+		// 2枚終わったらゲームへ
+		if(_pageIndex >= 2)
+		{
+			ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
+			ModeServer::GetInstance()->Del(this);
+		}
+	}
+
+	return true;
+}
+
+bool ModeScenario::Render()
+{
+	ClearDrawScreen();
+
+	const int handle = (_pageIndex >= 0 && _pageIndex < 2) ? _textHandles[_pageIndex] : -1;
+	if(handle >= 0)
+	{
+		int w = 0;
+		int h = 0;
+		GetGraphSize(handle, &w, &h);
+
+		const int x = (1920 - w) / 2;
+		const int y = (1080 - h) / 2;
+
+		DrawGraph(x, y, handle, TRUE);
+	}
+
+	// 操作ガイド（任意）
+	SetFontSize(24);
+	DrawFormatString(60, 980, GetColor(255, 255, 255), "決定/攻撃で次へ");
+	SetFontSize(16);
+
+	return true;
 }

@@ -1,4 +1,5 @@
 #include "ModeLoading.h"
+#include "ModeScenario.h"
 #include "ModeGame.h"
 
 bool ModeLoading::Initialize() 
@@ -132,6 +133,14 @@ bool ModeLoading::Initialize()
 			rs->Register("iPlayerAttack", "sound/SE/iPlayerAttack/iPlayerAttack1.mp3", RESOURCE_TYPE::Sound, 1.0f);
 		}
 
+		// テキスト　セリフ　操作説明etc..
+		{
+			rs->Register("GameStartText",  "res/Graph/Text1.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText1", "res/Graph/Text2.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameSerif1",     "res/Graph/TextB.png", RESOURCE_TYPE::Graph, 1.0f);
+		}
+		
+
 		
 	}
 
@@ -169,7 +178,7 @@ bool ModeLoading::Terminate()
 {
 	base::Terminate();
 
-	ResourceServer::GetInstance()->Terminate();// リソースサーバーの終了
+	ResourceServer::GetInstance()->Terminate();  // リソースサーバーの終了
 
 	return true;
 }
@@ -178,20 +187,33 @@ bool ModeLoading::Process()
 {
 
 	_frameCount++;
-	// DEBUG: ロード完了してもゲームへ遷移しない（ローディング画面に留まる）
+	
+
+	//デバッグ用ローディング終わってもゲームに行かないコード
 	/*if(ResourceServer::GetInstance()->IsLoadComplete())
 	{
 		return true;
 	}*/
 
 	// ロードが完了かつ10フレーム経過後にゲームモードを追加
-	if (!_bIsAddGame && ResourceServer::GetInstance()->IsLoadComplete() && _frameCount >= 10) {
+	if(!_bIsAddGame && ResourceServer::GetInstance()->IsLoadComplete() && _frameCount >= 10)
+	{
 		StopSoundMem(_seHandle);
 		_bIsAddGame = true;
-		ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
+
+		ModeServer::GetInstance()->Add(new ModeScenario(), 1, "scenario");
+		ModeServer::GetInstance()->Del(this);
 	}
 	return true;
+
+	
 }
+
+
+
+
+
+
 
 bool ModeLoading::Render()
 {
