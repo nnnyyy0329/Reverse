@@ -190,6 +190,7 @@
     <ClCompile Include="source\ModeScenario.cpp" />
     <ClCompile Include="source\ModeStageChange.cpp" />
     <ClCompile Include="source\ModeTitle.cpp" />
+    <ClCompile Include="source\StateNormal.cpp" />
     <ClCompile Include="source\PlayerAbsorbAttackSystem.cpp" />
     <ClCompile Include="source\PlayerAttackSystem.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
@@ -299,6 +300,7 @@
     <ClInclude Include="source\ModeScenario.h" />
     <ClInclude Include="source\ModeStageChange.h" />
     <ClInclude Include="source\ModeTitle.h" />
+    <ClInclude Include="source\StateNormal.h" />
     <ClInclude Include="source\PlayerAbsorbAttackSystem.h" />
     <ClInclude Include="source\PlayerAttackSystem.h" />
     <ClInclude Include="source\PlayerBase.h" />

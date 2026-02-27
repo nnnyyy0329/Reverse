@@ -1,5 +1,6 @@
 #pragma once
 #include "EnemyState.h"
+#include "StateNormal.h"
 
 namespace Melee
 {
@@ -7,66 +8,21 @@ namespace Melee
 	bool IsTargetVisibleFan(Enemy* owner);
 
 	// 待機
-	class Idle : public EnemyState
-	{
-		public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() override { return "Melee:Idle"; }// 名前を返す(デバッグ用)
-		void UpdateSearch(Enemy* owner) override;
-
-	private:
-		bool _bFaceHome = false;// 初期位置方向を向く
-	};
-
-
-
-
-
+	using Idle = Normal::Idle;
 	// 徘徊
-	class Wander : public EnemyState
-	{
-		public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() override { return "Melee:Wander"; }
-		void UpdateSearch(Enemy* owner) override;
-
-	private:
-		bool _bFaseHome = false;
-	};
-
-
-
-
-
-	// 発見:見つけた瞬間の硬直
-	class Notice : public EnemyState
-	{
-		public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() override { return "Melee:Notice"; }
-	};
-
-
-
-
-
+	using Wander = Normal::Wander;
+	// 発見
+	using Notice = Normal::Notice;
 	// 接近
-	class Approach : public EnemyState
-	{
-		public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() override { return "Melee:Approach"; }
-		bool IsChasing() override { return true; }// 接近状態である
-
-	private:
-		bool _bHasChecked;// 対峙チェックをしたか
-	};
-
-
+	using Approach = Normal::Approach;
+	// 攻撃溜め
+	using AttackCharge = Normal::AttackCharge;
+	// 攻撃実行
+	using AttackExecute = Normal::AttackExecute;
+	// 攻撃後隙
+	using AttackRecovery = Normal::AttackRecovery;
+	// ターゲットを見失ったとき
+	using LostTarget = Normal::LostTarget;
 
 
 
@@ -95,30 +51,7 @@ namespace Melee
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() override { return "Melee:AttackCharge"; }
-		bool CanChangeState() override { return false; }
-	};
-
-	// 攻撃実行(ここで攻撃判定を出す)
-	class AttackExecute : public EnemyState
-	{
-		public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		void Exit(Enemy* owner) override;
-		const char* GetName() override { return "Melee:AttackExecute"; }
-		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
-
-	private:
-		bool _bHasCollision;// 攻撃コリジョンを出したか
-	};
-
-	// 攻撃後隙
-	class AttackRecovery : public EnemyState
-	{
-	public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() override { return "Melee:AttackRecovery"; }
+		//bool CanChangeState() override { return false; }
 	};
 
 	// 突進攻撃溜め
@@ -166,8 +99,6 @@ namespace Melee
 
 
 
-
-
 	// 対峙
 	class Confront : public EnemyState
 	{
@@ -183,40 +114,6 @@ namespace Melee
 
 
 
-
-
-	// ターゲットを見失ったとき
-	class LostTarget : public EnemyState
-	{
-	public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() override { return "Melee:LostTarget"; }
-		void UpdateSearch(Enemy* owner) override;
-
-	private:
-		enum class Phase
-		{
-			LOOK_AROUND,// 周囲を見渡す
-			TO_BASE,// 基準方向へ戻る
-			WAIT,// 帰還前に待機
-			RETURN_HOME// 帰還
-		};
-		Phase _ePhase;
-
-		VECTOR _vLookDir;// 見渡しの目標方向
-		VECTOR _vBaseDir;// 基準方向
-		float _fBaseAngle;// 基準角度
-		int _lookCnt;// 見渡し回数
-		float _fWaitTimer;// 待機タイマー
-
-		void SetNextLookDir();// 次の見渡し方向を設定
-	};
-
-
-
-
-
 	// 反撃
 	class CounterAttack : public EnemyState
 	{
@@ -225,7 +122,7 @@ namespace Melee
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		void Exit(Enemy* owner) override;
 		const char* GetName() override { return "Melee:CounterAttack"; }
-		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
+		//STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
 
 	private:
 		bool _bHasCollision;

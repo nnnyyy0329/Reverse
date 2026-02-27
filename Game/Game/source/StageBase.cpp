@@ -59,7 +59,7 @@ StageBase::StageBase(int stageNum)
 					modelPos.drawFrame = MV1SearchFrame(modelPos.modelHandle, name.c_str());
 
 					std::string collisionName = "UCX_" + name;
-					modelPos.collisionFrame = MV1SearchFrame(modelPos.modelHandle, name.c_str());
+					modelPos.collisionFrame = MV1SearchFrame(modelPos.modelHandle, collisionName.c_str());
 
 					MV1SetPosition(modelPos.modelHandle, modelPos.pos);
 					MV1SetRotationXYZ(modelPos.modelHandle, modelPos.rot);

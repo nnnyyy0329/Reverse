@@ -89,17 +89,12 @@ public:
 			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
 			enemy->SetAfterDamageStateSelector([](Enemy* e, int comboCnt)->std::shared_ptr<EnemyState>
 			{
-				if (!e->GetTarget())
+				if (e->GetTarget())
 				{
-					return std::make_shared<Melee::Idle>();
+					return std::make_shared<Melee::Approach>();
 				}
 
-				if (comboCnt >= 1)
-				{
-					return std::make_shared<Melee::CounterAttack>();
-				}
-
-				return std::make_shared<Melee::Approach>();
+				return std::make_shared<Melee::Idle>();
 			});
 
 			// ƒ_ƒEƒ“Œã‚Ì‘JˆÚæ‚ğŒˆ’è
