@@ -430,11 +430,7 @@ bool PlayerBase::CanNextAttack()
 bool PlayerBase::IsAttacking()
 {
 	// 攻撃状態中かチェック
-	if(_playerState.attackState == PLAYER_ATTACK_STATE::FIRST_ATTACK	||
-		_playerState.attackState == PLAYER_ATTACK_STATE::SECOND_ATTACK	||
-		_playerState.attackState == PLAYER_ATTACK_STATE::THIRD_ATTACK	||
-		_playerState.attackState == PLAYER_ATTACK_STATE::FOURTH_ATTACK	||
-		_playerState.attackState == PLAYER_ATTACK_STATE::FIFTH_ATTACK)
+	if(_playerState.IsStateAttacking())
 	{
 		_vMove = VGet(0, 0, 0);	// 攻撃中は移動不可
 		return true;

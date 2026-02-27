@@ -91,15 +91,12 @@ void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 // 発射間隔更新
 void BulletPlayer::ProcessShoot()
 {
-	//bool putKey = (_key & bulletConfig::SHOOT_INPUT_KEY) != 0;	// 発射キー
-	//ool aimKey = (_key & PAD_INPUT_5) != 0;	// エイムキー
-	auto im = InputManager::GetInstance();
-	bool putKey = im->IsHold(INPUT_ACTION::ATTACK);	// 発射キー
+	auto inputManager = InputManager::GetInstance();
 
 	_cameraManager->StartAimMode();	// エイムモード開始
 
 	// キーが押された
-	if(putKey)
+	if(inputManager->IsHold(INPUT_ACTION::ATTACK))
 	{
 		// 発射キーが新しく押され、発射カウントが残っていないなら
 		if(!_bWasShootKeyPressed && _shootIntervalTimer <= 0.0f)
@@ -176,7 +173,7 @@ void BulletPlayer::ProcessShoot()
 		if(_shootIntervalTimer <= 0.0f)
 		{
 			// 発射アニメーション完了後、キーが押されていたら
-			if (putKey)
+			if(inputManager->IsHold(INPUT_ACTION::ATTACK))
 			{
 				// 発射状態の設定
 				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;	// 発射状態リセット
@@ -202,7 +199,7 @@ void BulletPlayer::ProcessShoot()
 	}
 
 	// 前フレームのキー状態を保存
-	_bWasShootKeyPressed = putKey;
+	_bWasShootKeyPressed = inputManager->IsHold(INPUT_ACTION::ATTACK);
 }
 
 // 弾の発射

@@ -64,6 +64,9 @@ private:
 	// 吸収構えキャンセル処理
 	void CancelAbsorbReady();
 
+	// 吸収終了時に通常モーションに戻す処理
+	void ReturnNormalMotion();
+
 	// 吸収攻撃の入力チェック
 	bool IsAbsorbInput()const;
 
