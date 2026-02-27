@@ -132,16 +132,11 @@ PlayerAnimations SurfacePlayer::GetPlayerAnimation()
 	animation.movement.jumpDown		= "";
 	animation.movement.crouchWait	= "";
 	animation.movement.crouchWalk	= "";
-	//animation.attack.firstAttack	= "absorb_attack_00";
-	//animation.attack.secondAttack	= "absorb_attack_01";
-	//animation.attack.thirdAttack	= "absorb_attack_02";
-	//animation.attack.fourthAttack	= "";
-	//animation.attack.fifthAttack	= "";
 	animation.attack.firstSkill		= ""; 
 	animation.attack.secondSkill	= "";
-	animation.absorb.absorbReady	= "absorb_ready_00";
-	animation.absorb.absorbActive	= "absorb_active_00";
-	animation.absorb.absorbEnd		= "absorb_end_00";
+	animation.absorb.absorbReady	= "player_absorb_00";
+	animation.absorb.absorbActive	= "player_absorb_01";
+	animation.absorb.absorbEnd		= "player_absorb_02";
 	animation.combat.transform		= "player_change_00";
 	animation.combat.guard			= "";
 	animation.combat.hit			= "player_damage_00";
@@ -358,14 +353,11 @@ void SurfacePlayer::ProcessChangeAbsorbMotion()
 	// 吸収入力を続けているなら
 	else if(IsAbsorbing() && _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY)
 	{
-		AnimManager* animManager = GetAnimManager();
+		// まだ構えモーションが終了していないなら
+		if(!IsAnimationFinished()){ return; }
 
-		// 構えモーションが終了したかチェック
-		if(animManager->IsAnimationFinished())
-		{
-			// 構えモーション終了時の処理
-			ProcessAbsorbReadyCompleted();
-		}
+		// 構えモーション終了時の処理
+		ProcessAbsorbReadyCompleted();
 	}
 	// 吸収入力が終了しているなら
 	else if(!IsAbsorbInput() && _bWasAbsorbKeyPressed)
@@ -417,6 +409,13 @@ void SurfacePlayer::ProcessAbsorbFinish()
 		// 吸収構えキャンセル処理
 		CancelAbsorbReady();
 	}
+
+	//// どちらの場合もアニメーションが終了していたら通常モーションに戻す
+	//if(IsAnimationFinished())
+	//{
+	//	// 通常モーションに戻す処理
+	//	ProcessReturnNormalMotion();
+	//}
 }
 
 // 吸収停止処理
@@ -461,5 +460,5 @@ void SurfacePlayer::DebugDrawAbsorbAnimationTime()
 	std::string debugText = "AbsorbAnimTime: " + std::to_string(animManager->GetCurrentAnimTotalTime());
 
 	// 吸収攻撃のアニメーション再生時間をデバッグ表示
-	DrawFormatString(DRAW_OFFSET_X, DRAW_OFFSET_Y + 100, GetColor(255, 255, 255), debugText.c_str());
+	DrawFormatString(10, 350, GetColor(255, 255, 255), debugText.c_str());
 }

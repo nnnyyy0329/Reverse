@@ -239,6 +239,18 @@ void PlayerBase::ProcessPlayAnimation()
 	}
 }
 
+// 通常モーションに戻す処理
+void PlayerBase::ProcessReturnNormalMotion()
+{
+	// 攻撃状態と戦闘状態を通常に戻す
+	_playerState.StateReset();
+
+	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 移動状態は待機にする
+
+	// アニメーション再生処理
+	ProcessPlayAnimation();
+}
+
 // コリジョン位置更新処理
 void PlayerBase::ProcessCollisionPos()
 {
@@ -442,4 +454,17 @@ bool PlayerBase::HasStateChanged()const
 			_oldPlayerState.shootState    != _playerState.shootState	||	// 発射状態
 			_oldPlayerState.absorbState	  != _playerState.absorbState	||	// 吸収攻撃状態
 			_oldPlayerState.combatState   != _playerState.combatState);		// 戦闘状態
+}
+
+// アニメーションが終了したか
+bool PlayerBase::IsAnimationFinished()
+{
+	// アニメーションマネージャーの取得
+	AnimManager* animManager = GetAnimManager();
+
+	if(animManager)
+	{
+		// 現在のアニメーションが終了しているか
+		return animManager->IsAnimationFinished();
+	}
 }
