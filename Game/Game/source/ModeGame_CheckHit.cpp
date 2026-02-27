@@ -10,6 +10,7 @@
 #include "SurfacePlayer.h"
 #include "PlayerAbsorbAttackSystem.h" 
 #include "AbsorbAttack.h"
+#include "ModeTextBox.h"
 
 // プレベータようパラメータ
 namespace
@@ -692,17 +693,18 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 			MV1CollResultPolyDimTerminate(polyResult);
 
 			// トリガーに当たった場合の処理
-			if (hasHit)
+			if(hasHit)
 			{
-				// 次のステージ番号を取得
 				int nextStageNum = _stage->GetNextStageNumFromTrigger(trigger.name);
 
-				// ステージ切り替えリクエスト
-				RequestStageChange(nextStageNum);
+				auto* self = this;
+				auto modeTextBox = new ModeTextBox("GameSerif1", [self, nextStageNum]()
+					{
+						self->RequestStageChange(nextStageNum);
+					});
 
-				_currentStageNum = nextStageNum;// 現在のステージ番号を更新
-
-				return;// 一つのトリガーに当たったら処理を終了
+				ModeServer::GetInstance()->Add(modeTextBox, 200, "textbox");
+				return;
 			}
 		}
 		else
