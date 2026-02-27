@@ -242,8 +242,11 @@ void DodgeSystem::UpdateCharaCol(std::shared_ptr<CharaBase>chara, VECTOR& pos)
 {
 	if(chara == nullptr){ return; }
 
-	chara->SetCollisionTop(VAdd(pos, VGet(0, 70.0f, 0)));
-	chara->SetCollisionBottom(VAdd(pos, VGet(0, 10.0f, 0)));
+	VECTOR collisionTop = chara->GetCollisionTop();			// コリジョン上端取得
+	VECTOR collisionBottom = chara->GetCollisionBottom();	// コリジョン下端取得
+
+	chara->SetCollisionTop(VAdd(pos, collisionTop));		// コリジョン位置を更新
+	chara->SetCollisionBottom(VAdd(pos, collisionBottom));	// コリジョン位置を更新
 }
 
 // 無敵状態更新

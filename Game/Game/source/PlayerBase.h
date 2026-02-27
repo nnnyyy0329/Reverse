@@ -138,7 +138,7 @@ struct PlayerCombatAnimations
 // 統合アニメーション構造体
 struct PlayerAnimations
 {
-	PlayerMovementAnimations	movement;	// 基本構想
+	PlayerMovementAnimations	movement;	// 基本行動
 	PlayerAttackAnimations		attack;		// 攻撃
 	PlayerShootAnimations		shoot;		// 弾発射
 	PlayerAbsorbAnimations		absorb;		// 吸収攻撃
