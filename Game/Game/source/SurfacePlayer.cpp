@@ -350,8 +350,8 @@ void SurfacePlayer::ProcessChangeAbsorbMotion()
 		// 構え状態に移行
 		StartAbsorbReadyState();
 	}
-	// 吸収入力を続けているなら
-	else if(IsAbsorbing() && _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY)
+	// 構え状態で吸収入力を続けているなら
+	else if(_playerState.IsStateAbsorbing() && _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY) 
 	{
 		// まだ構えモーションが終了していないなら
 		if(!IsAnimationFinished()){ return; }
@@ -365,6 +365,9 @@ void SurfacePlayer::ProcessChangeAbsorbMotion()
 		// 吸収攻撃終了処理
 		ProcessAbsorbFinish();
 	}
+
+	// 吸収終了時に通常モーションに戻す処理
+	ReturnNormalMotion();
 }
 
 // 構え状態に移行
@@ -409,13 +412,6 @@ void SurfacePlayer::ProcessAbsorbFinish()
 		// 吸収構えキャンセル処理
 		CancelAbsorbReady();
 	}
-
-	//// どちらの場合もアニメーションが終了していたら通常モーションに戻す
-	//if(IsAnimationFinished())
-	//{
-	//	// 通常モーションに戻す処理
-	//	ProcessReturnNormalMotion();
-	//}
 }
 
 // 吸収停止処理
@@ -439,6 +435,21 @@ void SurfacePlayer::CancelAbsorbReady()
 
 	// アニメーション切り替え
 	ProcessPlayAnimation();
+}
+
+// 吸収終了時に通常モーションに戻す処理
+void SurfacePlayer::ReturnNormalMotion()
+{
+	// 吸収終了状態なら通常モーションに戻す
+	if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_END)
+	{
+		// どちらの場合もアニメーションが終了していたら通常モーションに戻す
+		if(IsAnimationFinished())
+		{
+			// 通常モーションに戻す処理
+			ProcessReturnNormalMotion();
+		}
+	}
 }
 
 // 吸収攻撃の入力チェック

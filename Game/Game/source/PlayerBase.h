@@ -382,8 +382,6 @@ protected:	// ‹zûUŒ‚ŠÖŒW
 
 	virtual void ProcessAbsorb(){};	// ‹zûUŒ‚‚Ì‰¼‘zŠÖ”
 
-	virtual bool IsAbsorbing()const{ return _playerState.absorbState != PLAYER_ABSORB_STATE::NONE; }
-
 protected:	// ‰ñ”ğŠÖŒW
 
 	std::shared_ptr<DodgeSystem> _dodgeSystem;		// ‰ñ”ğƒVƒXƒeƒ€

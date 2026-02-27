@@ -83,7 +83,9 @@ void AbilitySelectScreen::SelectScreenByInput()
 
 	if(im->IsTrigger(INPUT_ACTION::TRANSFORM))
 	{
-		_bIsScreenActive = !_bIsScreenActive;
+		_bIsScreenActive = !_bIsScreenActive;	// 画面表示切り替え
+
+		_iCursorCount = 0;	// カウンターリセット
 	}
 }
 
@@ -145,15 +147,17 @@ void AbilitySelectScreen::SelectionByInput()
 		_bIsSelectComplete = true;				// 選択完了
 		_bIsScreenActive = false;				// 選択画面非表示
 
+		// 入力をリセット
 		im->ResetInput();
 	}
 
 	// デバッグ用の入力
-	if(InputManager::GetInstance()->IsTrigger(INPUT_ACTION::LEFT))
+	// 選択画面が有効なときに左十字ボタンを押すと変身できるようになる
+	if(InputManager::GetInstance()->IsTrigger(INPUT_ACTION::LEFT))	
 	{
 		// デバッグ用の強制解放
-		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::INTERIOR_PLAYER);
-		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::BULLET_PLAYER);
+		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::INTERIOR_PLAYER);	// 裏プレイヤー解放
+		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::BULLET_PLAYER);		// 弾プレイヤー解放
 	}
 
 	// 点滅カウンターを進める
