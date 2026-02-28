@@ -16,6 +16,7 @@ public:
 	virtual bool Process();	
 	virtual bool Render();	
 
+	// 共通関数のオーバーライド
 	virtual void DebugRender()override;																		// デバッグ情報描画
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo) override;	// 被ダメージ処理
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
@@ -45,7 +46,7 @@ private:
 	void AbsorbSystemDebugRender();	// 吸収攻撃システムデバッグ描画
 
 	/* 吸収攻撃のモーション管理用メンバ関数 */
-
+	
 	// 吸収攻撃モーション切り替え条件処理
 	void ProcessChangeAbsorbMotion();
 

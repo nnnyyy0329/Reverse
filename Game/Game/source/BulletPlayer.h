@@ -15,15 +15,16 @@ public:
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
 
+	// 共通関数のオーバーライド
 	virtual void DebugRender()override;																		// デバッグ描画
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo) override;	// 被ダメージ処理
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
 
-	void ProcessShoot()override;												// 基底クラスの弾発射関数のオーバーライド
-	void ShootBullet();															// 弾の発射
-	void ProcessAimMode(bool aimKey);											// エイムモードの処理
-	VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir);	// オフセット位置をワールド座標に変換
-	void DrawShootIntervalTime();												// 弾発射時間のデバッグ表示
+	// オフセット位置をワールド座標に変換
+	VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir);	
+
+	// 弾発射時間のデバッグ表示
+	void DrawShootIntervalTime();												
 
 	// 純粋仮想関数のオーバーライド
 	virtual PlayerConfig GetPlayerConfig() override;				// 設定を取得
@@ -38,6 +39,22 @@ public:
 	// クラス設定
 	void SetBulletManager(std::shared_ptr<BulletManager>bulletManager){ _bulletManager = bulletManager; }	// マネージャーをセット
 	void SetCameraManager(std::shared_ptr<CameraManager>cameraManager){ _cameraManager = cameraManager; }	// カメラマネージャーをセット
+
+private:
+	// 基底クラスの弾発射関数のオーバーライド
+	void ProcessShoot()override;
+
+	// 弾発射の入力処理
+	void ShootInput();
+
+	// 弾の発射
+	void ShootBullet();
+
+	// エイムモードの処理
+	void ProcessAimMode(bool aimKey);
+
+	// 弾発射入力チェック
+	bool IsShootInput()const;
 
 protected:
 	std::weak_ptr<BulletManager>_bulletManager;

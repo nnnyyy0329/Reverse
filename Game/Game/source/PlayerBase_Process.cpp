@@ -70,8 +70,9 @@ void PlayerBase::ProcessInputMove()
 {
 	auto im = InputManager::GetInstance();
 
-	// ダッシュ入力があれば移動速度を上げる
-	if(im->IsTrigger(INPUT_ACTION::DASH))
+	// ダッシュ入力があればフラグを変える
+	if(im->IsTrigger(INPUT_ACTION::DASH) &&
+		im->IsTrigger(INPUT_ACTION::SELECT))
 	{
 		_bIsDashInput = !_bIsDashInput;	// ダッシュ入力フラグをトグルする
 	}
@@ -236,7 +237,7 @@ void PlayerBase::ProcessPlayAnimation()
 	if(animManager == nullptr){ return; }
 
 	const char* animName = GetCurrentAnimationName();	// 現在のステータスに応じたアニメーション名を取得
-	float blendTime = 5.0f;								// ブレンド時間
+	float blendTime = 2.5f;								// ブレンド時間
 	int loopCnt = GetLoopCount();						// ループカウント
 	if(animName != nullptr)
 	{
