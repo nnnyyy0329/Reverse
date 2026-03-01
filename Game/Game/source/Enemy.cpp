@@ -36,6 +36,10 @@ namespace
 
 	// 連続被ダメ管理
 	constexpr auto DAMAGE_COMBO_RESET_TIME = 90.0f;// この時間内に再ヒットしなければリセット
+
+	// 重力
+	constexpr float GRAVITY = -0.98f;// 重力加速度
+	constexpr float MAX_FALL_SPEED = -20.0f;// 最大落下速度
 }
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
@@ -120,6 +124,21 @@ bool Enemy::Process()
 		{
 			ChangeState(nextState);
 		}
+	}
+
+	// 重力処理
+	{
+		if (!_bIsStanding)
+		{
+			_fVelY += GRAVITY;
+			if (_fVelY < MAX_FALL_SPEED) { _fVelY = MAX_FALL_SPEED; }
+		}
+		else
+		{
+			_fVelY = 0.0f;
+		}
+		_bIsStanding = false;// 毎フレームリセット
+		_vMove.y += _fVelY;
 	}
 
 	_vPos = VAdd(_vPos, _vMove);// 位置更新
