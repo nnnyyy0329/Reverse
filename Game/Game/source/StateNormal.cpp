@@ -10,18 +10,18 @@ namespace
 	constexpr auto ATTACK_COLLISION_HEIGHT = 60.0f;		// 攻撃コリジョン高さ
 	constexpr auto ATTACK_COLLISION_RADIUS = 40.0f;		// 攻撃コリジョン半径
 	constexpr auto ATTACK_DELAY = 10.0f;				// 攻撃発生遅延
-	constexpr auto ATTACK_DURATION = 15.0f;				// 攻撃持続時間
+	constexpr auto ATTACK_DURATION = 10.0f;				// 攻撃持続時間
 	constexpr auto ATTACK_DAMAGE = 20.0f;				// 攻撃ダメージ量
 
 	// 距離判定用定数
 	constexpr auto ATTACK_START_DISTANCE = 200.0f;		// 攻撃開始距離
-	constexpr auto ATTACK_EXECUTE_DISTANCE = 100.0f;	// 攻撃実行可能距離
+	constexpr auto ATTACK_EXECUTE_DISTANCE = 80.0f;		// 攻撃実行可能距離
 	constexpr auto LOST_NEARBY_HOME = 10.0f;			// 帰還完了判定距離
 
 	// 時間制御用定数
 	constexpr auto ATTACK_CHARGE_TIME = 40.0f;			// 攻撃溜め時間
 	constexpr auto ATTACK_EXECUTE_TIME = 90.0f;			// 攻撃実行時間
-	constexpr auto ATTACK_RECOVERY_TIME = 60.0f;		// 攻撃後隙時間
+	constexpr auto ATTACK_RECOVERY_TIME = 90.0f;		// 攻撃後隙時間
 	constexpr auto LOST_WAIT_TIME = 60.0f;				// 帰還前の待機時間
 
 	// 速度制御用定数
