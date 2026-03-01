@@ -37,6 +37,8 @@ public:
 	void SetPlayerManager(std::shared_ptr<PlayerManager> playerManager) { _playerManager = playerManager; }
 	void SetPlayerUnlockManager(std::shared_ptr<PlayerUnlockManager> unlockManager) { _playerUnlockManager = unlockManager; }
 
+private:
+
 protected:
 	std::shared_ptr<PlayerManager> _playerManager;				// プレイヤーマネージャー
 	std::shared_ptr<PlayerUnlockManager> _playerUnlockManager;	// プレイヤーアンロックマネージャー

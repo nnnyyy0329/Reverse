@@ -208,7 +208,7 @@ void PlayerBase::ProcessAttackReaction(int attackIndex)
 	GetAttackConfigs(configs.data());
 
 	// 有効な攻撃インデックスかチェック
-	if(attackIndex >= 0 && attackIndex < static_cast<int>(configs.size()))
+	if((attackIndex >= 0) && (attackIndex < static_cast<int>(configs.size())))
 	{
 		// 攻撃エフェクト処理
 		ProcessAttackEffect(attackIndex, configs);
@@ -265,7 +265,7 @@ void PlayerBase::ProcessBranchAttack()
 	// 現在の状態に応じて攻撃処理を分岐
 	int currentAttackIndex = GetAttackIndexByStatus(_playerState.attackState);
 
-	if(currentAttackIndex >= 0 && currentAttackIndex < (static_cast<int>(_attacks.size())))
+	if((currentAttackIndex >= 0) && (currentAttackIndex < (static_cast<int>(_attacks.size()))))
 	{
 		// 汎用コンボ処理
 		ProcessComboAttack(currentAttackIndex);
@@ -376,7 +376,7 @@ void PlayerBase::ReceiveAttackColData()
 	int attackIndex = GetAttackIndexByStatus(_playerState.attackState);
 
 	// 攻撃インデックスが有効範囲内かチェック
-	if(attackIndex >= 0 && attackIndex < static_cast<int>(_attacks.size()))	// 番号が子クラスの攻撃番号の範囲内なら
+	if((attackIndex >= 0) && (attackIndex < static_cast<int>(_attacks.size())))	// 番号が子クラスの攻撃番号の範囲内なら
 	{
 		// 攻撃コリジョン情報を取得
 		ATTACK_COLLISION attackCol = _attacks[attackIndex]->GetAttackCollision();

@@ -8,12 +8,6 @@ namespace
 	constexpr float consumeShootEnergy = 10.0f;	// 発射に消費するエネルギー
 }
 
-// 入力キー定数
-namespace BulletPlayerConstants
-{
-	constexpr int SHOOT_INPUT_KEY = PAD_INPUT_6;	// 弾発射の入力キー
-}
-
 // 弾発射設定
 namespace bulletConfig
 {
@@ -192,8 +186,7 @@ void BulletPlayer::ShootInput()
 				PlayerState oldState = _playerState;
 
 				// 状態リセット
-				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
-				_playerState.movementState = PLAYER_MOVEMENT_STATE::NONE;
+				_playerState.StateReset();
 
 				_bIsReadyCompleted = false; // 構えアニメーション完了フラグをリセット
 

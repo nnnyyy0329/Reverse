@@ -215,7 +215,7 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 	if(targetType == PLAYER_TYPE::SURFACE)
 	{
 		// ‘¦Ø‚è‘Ö‚¦
-		//SwitchPlayerImmediate(targetType);
+		SwitchPlayerImmediate(targetType);
 
 		return;
 	}

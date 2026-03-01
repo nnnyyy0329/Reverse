@@ -95,7 +95,8 @@ void AbilitySelectScreen::SelectionByInput()
 	if(_bIsSelectComplete){ return; }	// 選択完了していたら処理しない
 	if(!_bIsScreenActive){ return; }	// 選択画面が表示されていなかったら処理しない
 
-	auto im = InputManager::GetInstance();
+	auto im = InputManager::GetInstance();	// 入力クラス
+	bool inputProcessed = false;			// 入力が処理されたか
 
 	// 左キーが押されたら
 	if(im->IsTrigger(INPUT_ACTION::LEFT))
@@ -108,6 +109,8 @@ void AbilitySelectScreen::SelectionByInput()
 			// 一番右に移動
 			_iCurrentSelection = MAX_SELECT;
 		}
+
+		inputProcessed = true;	// 入力された
 	}
 
 	// 右キーが押されたら
@@ -121,6 +124,8 @@ void AbilitySelectScreen::SelectionByInput()
 			// 一番左に移動
 			_iCurrentSelection = MIN_SELECT;
 		}
+
+		inputProcessed = true;	// 入力された
 	}
 
 	// Zキーで決定
@@ -149,19 +154,29 @@ void AbilitySelectScreen::SelectionByInput()
 
 		// 入力をリセット
 		im->ResetInput();
+		inputProcessed = true;	// 入力された
 	}
 
 	// デバッグ用の入力
 	// 選択画面が有効なときに左十字ボタンを押すと変身できるようになる
-	if(InputManager::GetInstance()->IsTrigger(INPUT_ACTION::LEFT))	
-	{
-		// デバッグ用の強制解放
-		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::INTERIOR_PLAYER);	// 裏プレイヤー解放
-		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::BULLET_PLAYER);		// 弾プレイヤー解放
-	}
+	//if(InputManager::GetInstance()->IsTrigger(INPUT_ACTION::DEBUG1))
+	//{
+		if(_playerUnlockManager)
+		{
+			// デバッグ用の強制解放
+			_playerUnlockManager->ForceUnlock(ABILITY_TYPE::INTERIOR_PLAYER);	// 裏プレイヤー解放
+			_playerUnlockManager->ForceUnlock(ABILITY_TYPE::BULLET_PLAYER);		// 弾プレイヤー解放
+		}
+
+		inputProcessed = true;	// 入力された
+	//}
 
 	// 点滅カウンターを進める
-	_iCursorCount++;
+	// 入力が処理された場合のみ点滅カウンターを進める
+	if(inputProcessed || _bIsScreenActive)
+	{
+		_iCursorCount++;
+	}
 }
 
 // 選択要素の表示
