@@ -139,7 +139,11 @@ namespace Normal
 		// ŽžŠÔŒo‰ßƒ`ƒFƒbƒN
 		if (_fTimer >= _fTargetTimer)
 		{
-			return std::make_shared<Wander>();
+			if (owner->GetEnemyParam().bTransToWander)
+			{// true‚È‚çœpœj‚Ö‘JˆÚ
+				return std::make_shared<Wander>();
+			}
+			_fTimer = 0.0f;// ‘Ò‹@‚ðŒp‘±‚·‚é
 		}
 
 		return nullptr;

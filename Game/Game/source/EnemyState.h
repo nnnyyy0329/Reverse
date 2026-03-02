@@ -33,6 +33,8 @@ struct EnemyParam
 
 	float fMaxLife = 100.0f;// 最大体力
 
+	bool bTransToWander = true;// 徘徊へ遷移するかどうか
+
 	// 共通ステートのアニメーション名
 	const char* animDamage = "Damage";
 	const char* animDead = "Dead";

@@ -54,7 +54,7 @@ class EnemyFactory
 {
 public:
 	// 敵の種類、座標を指定して敵を作成する
-	static std::shared_ptr<Enemy> CreateEnemy(EnemyType type, VECTOR pos) 
+	static std::shared_ptr<Enemy> CreateEnemy(EnemyType type, VECTOR pos, bool bTransToWander = true) 
 	{
 		auto enemy = std::make_shared<Enemy>();
 
@@ -79,6 +79,7 @@ public:
 			param.fDetectTime = NORMAL_DETECT_TIME;
 			param.fAttackTime = NORMAL_ATTACK_TIME;
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+			param.bTransToWander = bTransToWander;
 
 			// 共通ステートのアニメーション名を設定
 			param.animDamage = "enemy_damage_00";

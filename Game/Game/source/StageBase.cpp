@@ -92,7 +92,7 @@ StageBase::StageBase(int stageNum)
 				if (name == "S_Enemy00")
 				{
 					_stageEnemies.push_back(
-						EnemyFactory::CreateEnemy(EnemyType::NORMAL, pos)
+						EnemyFactory::CreateEnemy(EnemyType::NORMAL, pos, false)
 					);
 					_totalEnemyCnt++;// 敵を追加したらカウントアップ
 				}
@@ -339,20 +339,6 @@ void StageBase::DebugRender()
 		DrawFormatString(x, y, GetColor(255, 255, 0), "残り敵数 : %d", GetCurrentEnemyCnt()); y += size;
 		DrawFormatString(x, y, GetColor(255, 255, 0), "全滅判定 : %s", IsAllEnemiesDefeated() ? "True" : "False"); y += size;
 	}
-
-	// トリガー情報
-	{
-		for (auto& trig : _triggerList) {
-			MV1DrawModel(trig.modelHandle);
-		}
-	}
-
-	// 敵の移動可能範囲
-	{
-		for (auto& area : _moveAreaList) {
-			MV1DrawModel(area.modelHandle);
-		}
-	}
 }
 
 void StageBase::CollisionRender()
@@ -368,6 +354,20 @@ void StageBase::CollisionRender()
 	{
 		for (auto& enemy : _stageEnemies) {
 			enemy->CollisionRender();
+		}
+	}
+
+	// トリガー情報
+	{
+		for (auto& trig : _triggerList) {
+			MV1DrawModel(trig.modelHandle);
+		}
+	}
+
+	// 敵の移動可能範囲
+	{
+		for (auto& area : _moveAreaList) {
+			MV1DrawModel(area.modelHandle);
 		}
 	}
 }
