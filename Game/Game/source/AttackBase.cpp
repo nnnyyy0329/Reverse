@@ -3,14 +3,15 @@
 #include "AttackBase.h"
 #include "CharaBase.h"
 
-namespace AttackMoveConstants
+namespace MoveConstants
 {
 	constexpr float ATTACK_MOVE_DECAY_RATE = 0.9f; // 攻撃中の移動減衰率
 }
 
-namespace AttackDirAdjustConstants
+namespace DirAdjustConstants
 {
-
+	constexpr float INTERP_CLAMP = 1.0f;        // 補間速度の上限
+	constexpr float ROTATE_DIVISOR = 150.0f;    // 回転速度の割る量
 }
 
 AttackBase::AttackBase()
@@ -43,7 +44,6 @@ AttackBase::AttackBase()
     _eAttackState = ATTACK_STATE::INACTIVE;
 
 	// 向き調整の初期化
-	_dirAdjustSpeed = 0.0f;
 	_canDirAdjust = false;
 }
 
@@ -69,6 +69,9 @@ bool AttackBase::Process()
 
     // 攻撃中の移動更新
     UpdateAttackMove();
+
+	// 攻撃中の向き調整更新
+	UpdateAttackDirAdjust();
 
     return true;
 }
@@ -229,7 +232,7 @@ void AttackBase::ProcessAttackMovement()
 // 向き調整更新
 void AttackBase::UpdateAttackDirAdjust()
 {
-	if(!_canDirAdjust){ return; }   // 向き調整が可能な場合のみ処理
+    if(!_canDirAdjust){ return; }   // 向き調整が可能な場合のみ処理
 
 	auto owner = GetOwner();
 	if(!owner){ return; }
@@ -244,18 +247,82 @@ void AttackBase::UpdateAttackDirAdjust()
 		// カメラ基準で入力方向を計算
         VECTOR inputDir = CalculateInputDir(analog);
 
-        // 滑らかに向き調整
+        // 現在の向き
 		VECTOR currentDir = owner->GetDir();
-        VECTOR newDir = VNorm(VAdd(currentDir, VScale(inputDir, _dirAdjustSpeed)));
 
-		// キャラの向きを更新
-		owner->SetDir(newDir);
+        // 内積で角度計算
+		float dot = VDot(currentDir, inputDir);     // 内積を計算
+
+        // クランプ
+        dot = std::max
+        (
+			-DirAdjustConstants::INTERP_CLAMP,              // 下限
+			std::min(DirAdjustConstants::INTERP_CLAMP, dot) // 上限
+        );
+
+		float angleDiff = acos(dot);    // 角度差を計算
+
+        // 回転速度
+		const float MAX_ROTATE_PER_FRAME = 
+            DX_PI_F / DirAdjustConstants::ROTATE_DIVISOR;   // フレームごとの最大回転角度を定数で定義
+
+        // 最大回転角度を制限
+        if(angleDiff > MAX_ROTATE_PER_FRAME)
+        {
+            // 制限角度で補間
+			float interp = MAX_ROTATE_PER_FRAME / angleDiff; // 線形補間で新しい向きを計算
+
+			// 現在の向きと入力方向を補間して新しい向きを計算
+            VECTOR newDir = VNorm(VAdd
+            (
+				VScale(currentDir, 1.0f - interp),   // 現在の向きの影響
+				VScale(inputDir, interp)             // 入力方向の影響
+            ));
+
+			// 新しい向きを所有者に設定
+            owner->SetDir(newDir);
+        }
+		// 角度差が小さい場合は直接入力方向を設定
+        else
+        {
+            // 角度差が小さい場合は直接設定
+            owner->SetDir(inputDir);
+        }
     }
 }
 
 // 入力方向計算関数
 VECTOR AttackBase::CalculateInputDir(const AnalogState& analog)
 {
+	auto owner = GetOwner();
+	if(!owner){ return VGet(0.0f, 0.0f, 0.0f); }
+
+	float inputX = -analog.lx;   // 左スティックのX軸入力
+	float inputY = -analog.ly;   // 左スティックのY軸入力
+
+    // 所有者の向きを基準にする
+	VECTOR ownerDir = owner->GetDir();
+    float currentAngle = atan2(ownerDir.z, ownerDir.x);
+
+    // カメラ基準のベクトル計算
+    VECTOR cameraForward = VGet(cos(currentAngle), 0.0f, sin(currentAngle));
+    VECTOR cameraRight=VGet(cos(currentAngle + DX_PI_F / 2.0f), 0.0f, sin(currentAngle + DX_PI_F / 2.0f));
+
+    // 入力方向計算
+    VECTOR inputDir = VAdd
+    (
+        VScale(cameraForward, inputY),  // 前後移動
+        VScale(cameraRight, inputX)     // 左右移動
+    );
+
+    // 正規化
+    float len = VSize(inputDir);
+    if(len > 0.0f)
+    {
+		// 入力方向を正規化して返す
+        return VScale(inputDir, 1.0f / len);
+    }
+
     return VGet(0, 0, 0);
 }
 
@@ -340,6 +407,12 @@ void AttackBase::SetSphereAttackData
 	_stcAttackCol.isHit = hit;                              // ヒットフラグ
 
 	_eColType = COLLISION_TYPE::SPHERE; // コリジョンタイプを球に設定
+}
+
+// 向き調整データ設定
+void AttackBase::SetDirAdjustData(bool canAdjust)
+{
+    _canDirAdjust = canAdjust;      // 向き調整可能フラグ
 }
 
 // 当たったキャラを追加

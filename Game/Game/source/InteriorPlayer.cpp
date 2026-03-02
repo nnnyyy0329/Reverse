@@ -2,17 +2,29 @@
 
 #include "InteriorPlayer.h"
 
-namespace
+// 基礎ステータス定数 
+namespace BaseConstants
 {
 	// 基礎ステータス定数
 	constexpr float GRAVITY = -0.6f;		// 重力加速度
 	constexpr float DEFAULT_LIFE = 100.0f;	// デフォルト体力
 	constexpr float MAX_LIFE = 100.0f;		// 最大体力
+}
 
+// 表示用定数
+namespace DrawConfig
+{
 	// 表示用定数
 	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
 	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
 	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
+}
+
+// 攻撃判定のパラメーター
+namespace InteriorAttackConstants
+{
+	constexpr float ATTACK_OFFSET_SCALE = 100.0f;	// 攻撃判定オフセット倍率
+	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;		// 裏プレイヤー用コンボカウント
 }
 
 InteriorPlayer::InteriorPlayer()
@@ -156,8 +168,8 @@ AttackConstants InteriorPlayer::GetAttackConstants()const
 	// InteriorPlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.attackOffsetScale = 80.0f;	// 攻撃判定オフセット倍率	
-	constants.interiorMaxComboCount = 5;	// 裏プレイヤー用コンボカウント
+	constants.attackOffsetScale = InteriorAttackConstants::ATTACK_OFFSET_SCALE;				// 攻撃判定オフセット倍率	
+	constants.interiorMaxComboCount = InteriorAttackConstants::INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
 
 	return constants;
 }
@@ -253,6 +265,40 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		"InteriorPlayerAttack5",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
 		"iPlayerAttack",			// サウンド名
+	};
+}
+
+// 攻撃方向補正の情報設定
+void InteriorPlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[5])
+{
+	// 第1攻撃
+	configs[0] = 
+	{
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第2攻撃
+	configs[1] =
+	{
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第4攻撃
+	configs[3] =
+	{
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第5攻撃
+	configs[4] =
+	{
+		true,	// 向き調整が可能かどうか
 	};
 }
 

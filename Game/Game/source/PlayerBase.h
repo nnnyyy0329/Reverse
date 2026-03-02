@@ -66,6 +66,12 @@ struct AttackConfig
 	std::string soundName;		// サウンド名
 };
 
+// 攻撃向き設定データ構造体
+struct AttackDirAdjustConfig
+{
+	bool canDirAdjust;	// 向き調整が可能かどうか
+};
+
 // 範囲攻撃設定データ構造体
 struct AreaAttackConfig
 {
@@ -252,7 +258,6 @@ public:
 	// 共通初期化
 	void InitializePlayerConfig(PlayerConfig& config);			// プレイヤー設定初期化
 	void InitializeHitConfig(const VECTOR& attackDirection);	// 被弾設定初期化
-	void InitializeAttackData();								// 攻撃データ初期化
 	void InitializeDodgeData();									// 回避データ初期化
 	void InitializeShieldData();								// シールドデータ初期化
 	void InitializeState();										// 状態初期化
@@ -331,14 +336,21 @@ public:
 	
 protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
-	virtual AttackConstants GetAttackConstants()const = 0;		// 攻撃定数を取得
-	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;	// 攻撃設定を取得
+	virtual AttackConstants GetAttackConstants()const = 0;					// 攻撃定数を取得
+	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;				// 攻撃設定を取得
+	virtual void GetDirAdjustConfigs(AttackDirAdjustConfig configs[]) = 0;	// 攻撃向き調整設定を取得
 
 	virtual AreaAttackConfig GetAreaAttackConfig() = 0;			// 範囲攻撃設定を取得
 
 	// 攻撃システム
 	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
 	std::vector<PLAYER_ATTACK_STATE> _attackStatuses;	// 攻撃状態配列
+
+	// 攻撃関連の初期化関数
+	void InitializeAttackData();						// 攻撃データ初期化
+	void InitializeAttackConfigs(int maxComboCount);	// 攻撃設定配列初期化
+	void CreateDynamicAttackData(int maxComboCount);	// 動的攻撃データ作成
+	void SetAttackStatusData(int maxComboCount);		// 攻撃状態を攻撃配列に入れる
 
 	// PlayerBase_Attack.cppで定義
 	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数

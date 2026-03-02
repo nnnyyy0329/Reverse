@@ -401,6 +401,12 @@ AreaAttackConfig BulletPlayer::GetAreaAttackConfig()
 	return config;
 }
 
+// 弾プレイヤーの攻撃方向補正設定
+void BulletPlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[])
+{
+	// 弾プレイヤーは攻撃を行わない
+}
+
 // 弾プレイヤーの攻撃設定
 void BulletPlayer::GetAttackConfigs(AttackConfig configs[])
 {

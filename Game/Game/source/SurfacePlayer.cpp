@@ -229,6 +229,28 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 	};
 }
 
+// 攻撃方向補正の情報設定
+void SurfacePlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[3])
+{
+	// 第1攻撃
+	configs[0] = 
+	{ 
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第2攻撃
+	configs[1] = 
+	{ 
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第3攻撃
+	configs[2] = 
+	{ 
+		true,	// 向き調整が可能かどうか
+	};
+}
+
 // 範囲攻撃の情報設定
 AreaAttackConfig SurfacePlayer::GetAreaAttackConfig()
 {
@@ -350,9 +372,18 @@ void SurfacePlayer::ProcessChangeAbsorbMotion()
 		// 構え状態に移行
 		StartAbsorbReadyState();
 	}
-	// 構え状態で吸収入力を続けているなら
+	// 構え状態なら
 	else if(_playerState.IsStateAbsorbing() && _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY) 
 	{
+		// 構え状態中で入力が続いていないなら
+		if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY && !IsAbsorbInput())
+		{
+			// 吸収構えキャンセル処理
+			StopAbsorb();
+
+			return;
+		}
+
 		// まだ構えモーションが終了していないなら
 		if(!IsAnimationFinished()){ return; }
 
