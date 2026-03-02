@@ -475,6 +475,13 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	// 通常のダメージ処理
 	_fLife -= fDamage;
 
+	// 吹っ飛びフラグがtrueならDownステートへ遷移
+	if (attackInfo.canKnockback)
+	{
+		ChangeState(std::make_unique<Common::Down>());
+		return;
+	}
+
 	// 死亡判定
 	if (IsDead())
 	{
@@ -490,13 +497,6 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COL
 	COLOR_F red = GetColorF(1.0f, 0.0f, 0.0f, 1.0f);
 	MV1SetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0, red);
 	_bIsColorChanged = true;
-
-	// 吹っ飛びフラグがtrueならDownステートへ遷移
-	if (attackInfo.canKnockback)
-	{
-		ChangeState(std::make_unique<Common::Down>());
-		return;
-	}
 
 	// 中断されないアクション中はDamageステートへ遷移しない
 	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::HIGH)

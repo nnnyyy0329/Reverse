@@ -3,12 +3,13 @@
 #include "StateMelee.h"
 #include "StateRanged.h"
 #include "StateTank.h"
+#include "StateCommon.h"
 #include <memory>
 
 namespace 
 {
 	constexpr auto DEFAULT_ENEMY_SPEED = 2.0f;// “G‚ÌˆÚ“®‘¬“x
-	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 20000.0f;// “G‚ÌÅ‘å‘Ì—Í
+	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 200.0f;// “G‚ÌÅ‘å‘Ì—Í
 
 	// Normal Melee
 	constexpr auto NORMAL_VISION_RANGE = 250.0f;// õ“G‹——£
@@ -103,6 +104,11 @@ public:
 			// ƒ_ƒEƒ“Œã‚Ì‘JˆÚæ‚ðŒˆ’è
 			enemy->SetAfterDownStateSelector([](Enemy* e)->std::shared_ptr<EnemyState>
 			{
+				if (e->IsDead())
+				{
+					return std::make_shared<Common::Dead>();
+				}
+
 				if (e->GetTarget())
 				{
 					return std::make_shared<Melee::Approach>();
