@@ -1,5 +1,6 @@
 #include "GeometryUtility.h"
 
+// ”Ä—pŒvZŠÖ”
 namespace GeometryUtility
 {
 	// ‘ÎÛ‚ª‘O•û‚É‚ ‚é‚©‚Ç‚¤‚©‚ğ”»’è‚·‚é

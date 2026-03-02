@@ -27,28 +27,40 @@ void PlayerBase::InitializeAttackData()
 		return;
 	}
 
-	// 攻撃設定取得
-	std::vector<AttackConfig>configs(maxComboCount);	
-	GetAttackConfigs(configs.data());
+	// 攻撃設定配列初期化
+	InitializeAttackConfigs(maxComboCount);
 
+	// 動的攻撃データ作成
+	CreateDynamicAttackData(maxComboCount);
+
+	// 攻撃状態を攻撃配列に入れる
+	SetAttackStatusData(maxComboCount);
+}
+
+// 攻撃設定配列初期化
+void PlayerBase::InitializeAttackConfigs(int maxComboCount)
+{
 	// 攻撃配列とステータス配列を初期化
 	_attacks.clear();
 	_attackStatuses.clear();
 
-	// 攻撃状態の定義
-	std::vector<PLAYER_ATTACK_STATE> statuses =
-	{
-		PLAYER_ATTACK_STATE::FIRST_ATTACK,
-		PLAYER_ATTACK_STATE::SECOND_ATTACK,
-		PLAYER_ATTACK_STATE::THIRD_ATTACK,
-		PLAYER_ATTACK_STATE::FOURTH_ATTACK,
-		PLAYER_ATTACK_STATE::FIFTH_ATTACK
-	};
+}
 
-	// 動的に攻撃データを作成
+// 動的攻撃データ作成
+void PlayerBase::CreateDynamicAttackData(int maxComboCount)
+{
+	// 攻撃設定取得
+	std::vector<AttackConfig>configs(maxComboCount);
+	GetAttackConfigs(configs.data());
+
+	// 攻撃向き調整設定取得
+	std::vector<AttackDirAdjustConfig> dirAdjustConfigs(maxComboCount);
+	GetDirAdjustConfigs(dirAdjustConfigs.data());
+
+	// コンボカウント回数分ループ
 	for(int i = 0; i < maxComboCount; ++i)
 	{
-		auto attack = std::make_shared<AttackBase>();
+		auto attack = std::make_shared<AttackBase>();	// 攻撃オブジェクト作成
 
 		// 攻撃配列に追加
 		attack->SetCapsuleAttackData
@@ -67,7 +79,32 @@ void PlayerBase::InitializeAttackData()
 			configs[i].canKnockback		// 吹き飛ばし攻撃かどうか
 		);
 
+		// 向き調整データ設定
+		attack->SetDirAdjustData
+		(
+			dirAdjustConfigs[i].canDirAdjust
+		);
+
 		_attacks.push_back(attack);
+	}
+}
+
+// 攻撃状態を攻撃配列に入れる
+void PlayerBase::SetAttackStatusData(int maxComboCount)
+{
+	// 攻撃状態の定義
+	std::vector<PLAYER_ATTACK_STATE> statuses =
+	{
+		PLAYER_ATTACK_STATE::FIRST_ATTACK,
+		PLAYER_ATTACK_STATE::SECOND_ATTACK,
+		PLAYER_ATTACK_STATE::THIRD_ATTACK,
+		PLAYER_ATTACK_STATE::FOURTH_ATTACK,
+		PLAYER_ATTACK_STATE::FIFTH_ATTACK
+	};
+
+	// コンボカウント回数分ループ
+	for(int i = 0; i < maxComboCount; ++i)
+	{
 		_attackStatuses.push_back(statuses[i]);
 	}
 }
@@ -208,7 +245,7 @@ void PlayerBase::ProcessAttackReaction(int attackIndex)
 	GetAttackConfigs(configs.data());
 
 	// 有効な攻撃インデックスかチェック
-	if(attackIndex >= 0 && attackIndex < static_cast<int>(configs.size()))
+	if((attackIndex >= 0) && (attackIndex < static_cast<int>(configs.size())))
 	{
 		// 攻撃エフェクト処理
 		ProcessAttackEffect(attackIndex, configs);
@@ -265,7 +302,7 @@ void PlayerBase::ProcessBranchAttack()
 	// 現在の状態に応じて攻撃処理を分岐
 	int currentAttackIndex = GetAttackIndexByStatus(_playerState.attackState);
 
-	if(currentAttackIndex >= 0 && currentAttackIndex < (static_cast<int>(_attacks.size())))
+	if((currentAttackIndex >= 0) && (currentAttackIndex < (static_cast<int>(_attacks.size()))))
 	{
 		// 汎用コンボ処理
 		ProcessComboAttack(currentAttackIndex);
@@ -376,7 +413,7 @@ void PlayerBase::ReceiveAttackColData()
 	int attackIndex = GetAttackIndexByStatus(_playerState.attackState);
 
 	// 攻撃インデックスが有効範囲内かチェック
-	if(attackIndex >= 0 && attackIndex < static_cast<int>(_attacks.size()))	// 番号が子クラスの攻撃番号の範囲内なら
+	if((attackIndex >= 0) && (attackIndex < static_cast<int>(_attacks.size())))	// 番号が子クラスの攻撃番号の範囲内なら
 	{
 		// 攻撃コリジョン情報を取得
 		ATTACK_COLLISION attackCol = _attacks[attackIndex]->GetAttackCollision();
@@ -430,11 +467,7 @@ bool PlayerBase::CanNextAttack()
 bool PlayerBase::IsAttacking()
 {
 	// 攻撃状態中かチェック
-	if(_playerState.attackState == PLAYER_ATTACK_STATE::FIRST_ATTACK	||
-		_playerState.attackState == PLAYER_ATTACK_STATE::SECOND_ATTACK	||
-		_playerState.attackState == PLAYER_ATTACK_STATE::THIRD_ATTACK	||
-		_playerState.attackState == PLAYER_ATTACK_STATE::FOURTH_ATTACK	||
-		_playerState.attackState == PLAYER_ATTACK_STATE::FIFTH_ATTACK)
+	if(_playerState.IsStateAttacking())
 	{
 		_vMove = VGet(0, 0, 0);	// 攻撃中は移動不可
 		return true;

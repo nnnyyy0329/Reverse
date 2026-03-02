@@ -132,16 +132,11 @@ PlayerAnimations SurfacePlayer::GetPlayerAnimation()
 	animation.movement.jumpDown		= "";
 	animation.movement.crouchWait	= "";
 	animation.movement.crouchWalk	= "";
-	//animation.attack.firstAttack	= "absorb_attack_00";
-	//animation.attack.secondAttack	= "absorb_attack_01";
-	//animation.attack.thirdAttack	= "absorb_attack_02";
-	//animation.attack.fourthAttack	= "";
-	//animation.attack.fifthAttack	= "";
 	animation.attack.firstSkill		= ""; 
 	animation.attack.secondSkill	= "";
-	animation.absorb.absorbReady	= "absorb_ready_00";
-	animation.absorb.absorbActive	= "absorb_active_00";
-	animation.absorb.absorbEnd		= "absorb_end_00";
+	animation.absorb.absorbReady	= "player_absorb_00";
+	animation.absorb.absorbActive	= "player_absorb_01";
+	animation.absorb.absorbEnd		= "player_absorb_02";
 	animation.combat.transform		= "player_change_00";
 	animation.combat.guard			= "";
 	animation.combat.hit			= "player_damage_00";
@@ -231,6 +226,28 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		"SurfacePlayerAttack3",	// エフェクト名
 		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
 		"iPlayerAttack",		// サウンド名
+	};
+}
+
+// 攻撃方向補正の情報設定
+void SurfacePlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[3])
+{
+	// 第1攻撃
+	configs[0] = 
+	{ 
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第2攻撃
+	configs[1] = 
+	{ 
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第3攻撃
+	configs[2] = 
+	{ 
+		true,	// 向き調整が可能かどうか
 	};
 }
 
@@ -355,17 +372,23 @@ void SurfacePlayer::ProcessChangeAbsorbMotion()
 		// 構え状態に移行
 		StartAbsorbReadyState();
 	}
-	// 吸収入力を続けているなら
-	else if(IsAbsorbing() && _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY)
+	// 構え状態なら
+	else if(_playerState.IsStateAbsorbing() && _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY) 
 	{
-		AnimManager* animManager = GetAnimManager();
-
-		// 構えモーションが終了したかチェック
-		if(animManager->IsAnimationFinished())
+		// 構え状態中で入力が続いていないなら
+		if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY && !IsAbsorbInput())
 		{
-			// 構えモーション終了時の処理
-			ProcessAbsorbReadyCompleted();
+			// 吸収構えキャンセル処理
+			StopAbsorb();
+
+			return;
 		}
+
+		// まだ構えモーションが終了していないなら
+		if(!IsAnimationFinished()){ return; }
+
+		// 構えモーション終了時の処理
+		ProcessAbsorbReadyCompleted();
 	}
 	// 吸収入力が終了しているなら
 	else if(!IsAbsorbInput() && _bWasAbsorbKeyPressed)
@@ -373,6 +396,9 @@ void SurfacePlayer::ProcessChangeAbsorbMotion()
 		// 吸収攻撃終了処理
 		ProcessAbsorbFinish();
 	}
+
+	// 吸収終了時に通常モーションに戻す処理
+	ReturnNormalMotion();
 }
 
 // 構え状態に移行
@@ -442,11 +468,26 @@ void SurfacePlayer::CancelAbsorbReady()
 	ProcessPlayAnimation();
 }
 
+// 吸収終了時に通常モーションに戻す処理
+void SurfacePlayer::ReturnNormalMotion()
+{
+	// 吸収終了状態なら通常モーションに戻す
+	if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_END)
+	{
+		// どちらの場合もアニメーションが終了していたら通常モーションに戻す
+		if(IsAnimationFinished())
+		{
+			// 通常モーションに戻す処理
+			ProcessReturnNormalMotion();
+		}
+	}
+}
+
 // 吸収攻撃の入力チェック
 bool SurfacePlayer::IsAbsorbInput()const
 {
 	// 吸収攻撃の入力チェック
-	return (InputManager::GetInstance()->IsHold(INPUT_ACTION::ATTACK)) != 0;
+	return (InputManager::GetInstance()->IsHold(INPUT_ACTION::ABILITY)) != 0;
 }
 
 // 吸収アニメーション再生時間デバッグ表示
@@ -461,5 +502,5 @@ void SurfacePlayer::DebugDrawAbsorbAnimationTime()
 	std::string debugText = "AbsorbAnimTime: " + std::to_string(animManager->GetCurrentAnimTotalTime());
 
 	// 吸収攻撃のアニメーション再生時間をデバッグ表示
-	DrawFormatString(DRAW_OFFSET_X, DRAW_OFFSET_Y + 100, GetColor(255, 255, 255), debugText.c_str());
+	DrawFormatString(10, 350, GetColor(255, 255, 255), debugText.c_str());
 }

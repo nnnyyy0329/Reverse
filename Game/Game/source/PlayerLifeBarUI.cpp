@@ -5,7 +5,7 @@ namespace
 {
 	// 画像表示用
 	constexpr int DRAW_BAR_FRAME_X = 216;
-	constexpr int DRAW_BAR_FRAME_Y = 930;
+	constexpr int DRAW_BAR_FRAME_Y = 1000;
 	constexpr int DRAW_OFFSET_X = 6;
 	constexpr int DRAW_OFFSET_Y = 6;
 }
@@ -25,6 +25,7 @@ PlayerLifeBarUI::PlayerLifeBarUI()
 
 PlayerLifeBarUI::~PlayerLifeBarUI()
 {
+	// 画像の解放
 	DeleteGraph(_iLifeBar);
 	DeleteGraph(_iLifeBarFrame);
 }
@@ -64,6 +65,7 @@ bool PlayerLifeBarUI::Render()
 // ライフバーフレーム描画
 void PlayerLifeBarUI::LifeBarRenderFrame()
 {
+	// ライフバーのフレーム描画
 	DrawGraph(_drawLifeBarFrameX, _drawLifeBarFrameY, _iLifeBarFrame, TRUE);
 }
 

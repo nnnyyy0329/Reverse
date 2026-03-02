@@ -747,6 +747,8 @@ void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::
 	// 吸収攻撃コリジョン情報を取得
 	const AbsorbConfig& config = absorbSystem->GetAbsorbConfig();
 
+	if(!config.isActive){ return; }	// 吸収攻撃が有効でない場合は当たらない
+
 	// 扇形データを取得
 	SectorData sectorData;
 

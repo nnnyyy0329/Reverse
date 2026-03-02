@@ -183,7 +183,7 @@ int InputManager::GetPadCode(INPUT_ACTION action)
 		case INPUT_ACTION::MOVE_RIGHT:  return PAD_INPUT_RIGHT;
 		// アクション
 		case INPUT_ACTION::DODGE:       return PAD_INPUT_3;// X
-		case INPUT_ACTION::DASH:        return PAD_INPUT_5;// L1
+		case INPUT_ACTION::DASH:        return PAD_INPUT_1;// A
 		case INPUT_ACTION::TRANSFORM:   return PAD_INPUT_4;// Y
 		// システム
 		case INPUT_ACTION::MENU:        return PAD_INPUT_8;// START
@@ -208,10 +208,10 @@ int InputManager::GetKeyCode(INPUT_ACTION action)
 		case INPUT_ACTION::MOVE_LEFT:   return KEY_INPUT_LEFT;
 		case INPUT_ACTION::MOVE_RIGHT:  return KEY_INPUT_RIGHT;
 		// アクション
-		case INPUT_ACTION::ATTACK:      return KEY_INPUT_A;
-		case INPUT_ACTION::DODGE:       return KEY_INPUT_D;
-		case INPUT_ACTION::DASH:        return KEY_INPUT_LSHIFT;
-		case INPUT_ACTION::ABILITY:     return KEY_INPUT_W;
+		case INPUT_ACTION::ATTACK:      return KEY_INPUT_Z;
+		case INPUT_ACTION::DODGE:       return KEY_INPUT_X;
+		case INPUT_ACTION::DASH:        return KEY_INPUT_C;
+		case INPUT_ACTION::ABILITY:     return KEY_INPUT_A;
 		case INPUT_ACTION::TRANSFORM:   return KEY_INPUT_S;
 		// 項目選択
 		case INPUT_ACTION::UP:			return KEY_INPUT_UP;
@@ -220,7 +220,7 @@ int InputManager::GetKeyCode(INPUT_ACTION action)
 		case INPUT_ACTION::RIGHT:		return KEY_INPUT_RIGHT;
 		// システム
 		case INPUT_ACTION::MENU:        return KEY_INPUT_SPACE;
-		case INPUT_ACTION::SELECT:      return KEY_INPUT_Z;
+		case INPUT_ACTION::SELECT:      return KEY_INPUT_Q;
 		// デバッグ用
 		case INPUT_ACTION::DEBUG1:      return KEY_INPUT_F1;
 		case INPUT_ACTION::DEBUG2:      return KEY_INPUT_F2;
