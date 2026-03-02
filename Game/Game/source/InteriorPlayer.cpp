@@ -190,9 +190,6 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
-		"InteriorPlayerAttack5",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
-		"iPlayerAttack",			// サウンド名
 	};
 
 	// 第2攻撃
@@ -208,9 +205,6 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		0.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
-		"InteriorPlayerAttack5",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
-		"iPlayerAttack",			// サウンド名
 	};
 
 	// 第3攻撃
@@ -226,9 +220,6 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		5.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
-		"InteriorPlayerAttack5",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
-		"iPlayerAttack",			// サウンド名
 	};
 
 	// 第4攻撃
@@ -244,9 +235,6 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		5.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
-		"InteriorPlayerAttack5",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
-		"iPlayerAttack",			// サウンド名
 	};
 
 	// 第5攻撃
@@ -262,9 +250,6 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		ATTACK_STATE::RECOVERY,		// 攻撃状態
 		5.0f,						// 攻撃中の移動速度
 		true,						// 吹き飛ばし攻撃かどうか
-		"InteriorPlayerAttack5",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
-		"iPlayerAttack",			// サウンド名
 	};
 }
 
@@ -302,6 +287,55 @@ void InteriorPlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[5])
 	};
 }
 
+// 演出設定
+AttackEffectConfig InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig configs[5])
+{
+	// 裏プレイヤー用の演出設定
+	AttackEffectConfig config;
+
+	// 第1攻撃
+	configs[0] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	// 第2攻撃
+	configs[1] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	// 第4攻撃
+	configs[3] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	// 第5攻撃
+	configs[4] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	return config;
+}
+
 // 範囲攻撃の情報設定
 AreaAttackConfig InteriorPlayer::GetAreaAttackConfig()
 {
@@ -316,9 +350,6 @@ AreaAttackConfig InteriorPlayer::GetAreaAttackConfig()
 	config.recovery = 30.0f;						// 硬直フレーム
 	config.damage = 40.0f;							// ダメージ
 	config.isHit = false;							// ヒットフラグ
-	config.effectName = "";							// エフェクト名
-	config.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// エフェクト位置オフセット
-	config.soundName = "";							// サウンド名
 
 	return config;
 }

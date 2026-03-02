@@ -393,12 +393,10 @@ AttackConstants BulletPlayer::GetAttackConstants()const
 	return constants;
 }
 
-// 弾プレイヤーの範囲攻撃設定
-AreaAttackConfig BulletPlayer::GetAreaAttackConfig()
+// 弾プレイヤーの攻撃設定
+void BulletPlayer::GetAttackConfigs(AttackConfig configs[])
 {
-	// 弾プレイヤーは範囲攻撃を行わない
-	AreaAttackConfig config;
-	return config;
+	// 弾プレイヤーは攻撃を行わない
 }
 
 // 弾プレイヤーの攻撃方向補正設定
@@ -407,10 +405,25 @@ void BulletPlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[])
 	// 弾プレイヤーは攻撃を行わない
 }
 
-// 弾プレイヤーの攻撃設定
-void BulletPlayer::GetAttackConfigs(AttackConfig configs[])
+// 弾プレイヤーの演出設定
+AttackEffectConfig BulletPlayer::GetAttackEffectConfig(AttackEffectConfig  configs[])
 {
-	// 弾プレイヤーは攻撃を行わない
+	// 弾プレイヤーは攻撃を行わないため、デフォルトの設定を返す
+	AttackEffectConfig config;
+
+	config.effectName = "";							// ダメージエフェクト名
+	config.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// ダメージエフェクト位置オフセット
+	config.soundName = "";							// ダメージサウンド名
+
+	return config;
+}
+
+// 弾プレイヤーの範囲攻撃設定
+AreaAttackConfig BulletPlayer::GetAreaAttackConfig()
+{
+	// 弾プレイヤーは範囲攻撃を行わない
+	AreaAttackConfig config;
+	return config;
 }
 
 // 回避設定データ構造体

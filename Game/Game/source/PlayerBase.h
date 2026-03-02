@@ -61,9 +61,6 @@ struct AttackConfig
 	ATTACK_STATE attackState;	// 攻撃状態
 	float attackMoveSpeed;		// 攻撃中の移動速度
 	bool canKnockback;			// 吹き飛ばし攻撃かどうか
-	std::string effectName;		// エフェクト名
-	VECTOR effectOffset;		// エフェクト位置オフセット
-	std::string soundName;		// サウンド名
 };
 
 // 攻撃向き設定データ構造体
@@ -83,10 +80,15 @@ struct AreaAttackConfig
 	float recovery;				// 硬直
 	float damage;				// ダメージ
 	bool isHit;					// ヒットフラグ
+};
+
+// 攻撃の演出関連構造体
+struct AttackEffectConfig
+{
 	std::string effectName;		// エフェクト名
 	VECTOR effectOffset;		// エフェクト位置オフセット
 	std::string soundName;		// サウンド名
-};
+};;
 
 // 基本移動アニメーション構造体
 struct PlayerMovementAnimations
@@ -302,9 +304,9 @@ public:
 	bool HasStateChanged()const;
 
 	// 各プレイヤー固有の設定を取得
-	virtual PlayerConfig GetPlayerConfig() = 0;			// プレイヤー設定を取得	
-	virtual PlayerAnimations GetPlayerAnimation() = 0;	// プレイヤーアニメーション名データを取得
-	virtual RenderConfig GetRenderConfig() = 0;			// 表示設定データを取得
+	virtual PlayerConfig GetPlayerConfig() = 0;											// プレイヤー設定を取得	
+	virtual PlayerAnimations GetPlayerAnimation() = 0;									// プレイヤーアニメーション名データを取得
+	virtual RenderConfig GetRenderConfig() = 0;											// 表示設定データを取得
 
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
@@ -336,11 +338,11 @@ public:
 	
 protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
-	virtual AttackConstants GetAttackConstants()const = 0;					// 攻撃定数を取得
-	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;				// 攻撃設定を取得
-	virtual void GetDirAdjustConfigs(AttackDirAdjustConfig configs[]) = 0;	// 攻撃向き調整設定を取得
-
-	virtual AreaAttackConfig GetAreaAttackConfig() = 0;			// 範囲攻撃設定を取得
+	virtual AttackConstants GetAttackConstants()const = 0;								// 攻撃定数を取得
+	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;							// 攻撃設定を取得
+	virtual void GetDirAdjustConfigs(AttackDirAdjustConfig configs[]) = 0;				// 攻撃向き調整設定を取得
+	virtual AreaAttackConfig GetAreaAttackConfig() = 0;									// 範囲攻撃設定を取得
+	virtual AttackEffectConfig GetAttackEffectConfig(AttackEffectConfig configs[]) = 0;	// 演出設定を取得
 
 	// 攻撃システム
 	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
@@ -365,17 +367,17 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 
 	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
 	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);				// 攻撃開始処理
-	void ProcessAttackReaction(int attackIndex);									// 攻撃反応処理
-	void ProcessAttackEffect(int attackIndex, std::vector<AttackConfig> configs);	// 攻撃エフェクト処理
-	void ProcessAttackSound(int attackIndex, std::vector<AttackConfig> configs);	// 攻撃サウンド処理
-	void ProcessComboAttack(int attackIndex);										// コンボ攻撃処理
-	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);					// 攻撃終了処理
-	void EndAttackSequence();														// 攻撃課程修了
-	void ProcessNextAttack(int currentIndex);										// 次の攻撃処理
-	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_ATTACK_STATE status);		// 状態に対応する攻撃を取得
-	int GetInstanceId();															// ID取得関数
-	int GetAttackIndexByStatus(PLAYER_ATTACK_STATE status);							// 状態から攻撃インデックスを取得
-	int GetMaxComboCount()const;													// 最大コンボ数取得
+	void ProcessAttackReaction(int attackIndex);										// 攻撃反応処理
+	void ProcessAttackEffect(int attackIndex, std::vector<AttackEffectConfig> configs);	// 攻撃エフェクト処理
+	void ProcessAttackSound(int attackIndex, std::vector<AttackEffectConfig> configs);	// 攻撃サウンド処理
+	void ProcessComboAttack(int attackIndex);											// コンボ攻撃処理
+	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);						// 攻撃終了処理
+	void EndAttackSequence();															// 攻撃課程修了
+	void ProcessNextAttack(int currentIndex);											// 次の攻撃処理
+	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_ATTACK_STATE status);			// 状態に対応する攻撃を取得
+	int GetInstanceId();																// ID取得関数
+	int GetAttackIndexByStatus(PLAYER_ATTACK_STATE status);								// 状態から攻撃インデックスを取得
+	int GetMaxComboCount()const;														// 最大コンボ数取得
 
 	// 攻撃コリジョン情報の受け取り用
 	VECTOR _vAttackColTop;
