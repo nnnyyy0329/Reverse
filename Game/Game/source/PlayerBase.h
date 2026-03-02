@@ -138,7 +138,7 @@ struct PlayerCombatAnimations
 // 統合アニメーション構造体
 struct PlayerAnimations
 {
-	PlayerMovementAnimations	movement;	// 基本構想
+	PlayerMovementAnimations	movement;	// 基本行動
 	PlayerAttackAnimations		attack;		// 攻撃
 	PlayerShootAnimations		shoot;		// 弾発射
 	PlayerAbsorbAnimations		absorb;		// 吸収攻撃
@@ -259,15 +259,17 @@ public:
 	void InitializeAnimation();									// アニメーション初期化
 
 	// 共通処理
-	void CallProcess();				// Process呼び出し用関数
-	void ProcessMovePlayer();		// 移動処理
-	void ProcessInputMove();		// 移動入力処理
-	void ProcessCollisionPos();		// コリジョン位置更新処理
-	void ProcessStatusAnimation();	// 状態別アニメーション処理
-	void ProcessPlayAnimation();	// アニメーション処理
-	void ProcessHit();				// 被弾処理
-	void ProcessDebug();			// デバッグ処理
-	bool IsHitStop();				// 被弾硬直中かチェック
+	void CallProcess();					// Process呼び出し用関数
+	void ProcessMovePlayer();			// 移動処理
+	void ProcessInputMove();			// 移動入力処理
+	void ProcessCollisionPos();			// コリジョン位置更新処理
+	void ProcessStatusAnimation();		// 状態別アニメーション処理
+	void ProcessPlayAnimation();		// アニメーション処理
+	void ProcessReturnNormalMotion();	// 通常モーションに戻す処理
+	void ProcessHit();					// 被弾処理
+	void ProcessDebug();				// デバッグ処理
+	bool IsHitStop();					// 被弾硬直中かチェック
+	bool IsAnimationFinished();			// アニメーションが終了したかの処理
 
 	// デバッグ描画共通
 	void DebugRender();				// デバッグ情報描画
@@ -327,7 +329,7 @@ public:
 	PLAYER_COMBAT_STATE GetCombatState()const{ return _playerState.combatState; }		// 特殊状態取得
 	void SetCombatState(PLAYER_COMBAT_STATE state){ _playerState.combatState = state; }	// 特殊状態設定
 	
-protected:	// 攻撃関係
+protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
 	virtual AttackConstants GetAttackConstants()const = 0;		// 攻撃定数を取得
 	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;	// 攻撃設定を取得
@@ -370,19 +372,17 @@ protected:	// 攻撃関係
 	bool _bCanCombo;	// コンボ可能フラグ
 	int _iComboCount;	// コンボカウント
 
-protected:	// 弾発射関係
+protected:	// 弾発射関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 	
 	virtual void ProcessShoot(){};	// 発射処理の仮想関数
 
 	virtual bool IsShooting()const{ return _playerState.shootState != PLAYER_SHOOT_STATE::NONE; }
 
-protected:	// 吸収攻撃関係
+protected:	// 吸収攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
 	virtual void ProcessAbsorb(){};	// 吸収攻撃の仮想関数
 
-	virtual bool IsAbsorbing()const{ return _playerState.absorbState != PLAYER_ABSORB_STATE::NONE; }
-
-protected:	// 回避関係
+protected:	// 回避関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
 	std::shared_ptr<DodgeSystem> _dodgeSystem;		// 回避システム
 
@@ -398,7 +398,7 @@ protected:	// 回避関係
 	// 各プレイヤー固有の回避設定を取得
 	virtual DodgeConfig GetDodgeConfig() = 0;
 
-protected: 	// シールド関係
+protected: 	// シールド関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
 	std::shared_ptr<PlayerShieldSystem> _shieldSystem;	// シールドシステム
 
@@ -411,7 +411,8 @@ protected: 	// シールド関係
 	// 各プレイヤー固有のシールド設定取得（純粋仮想関数）
 	virtual ShieldConfig GetShieldConfig() = 0;
 
-protected:	// 死亡関係
+protected:	// 死亡関係 --- 今後クラスで分ける予定 ------------------------------------------------------
+
 	void CallDeath();				// 死亡関係関係関数呼び出し
 	void ProcessDeath();			// 死亡処理
 	void CheckDeathAnimFinished();	// 死亡アニメーションが再生し終わったか
@@ -463,6 +464,9 @@ protected:
 
 
 
+
+
+// まだ未使用のクラスたち
 class PlayerInput
 {
 public:

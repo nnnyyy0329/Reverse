@@ -19,11 +19,8 @@ inline ABILITY_TYPE ConvertSelectionToAbility(int selection)
 	switch(selection)
 	{
 		case 0:		return ABILITY_TYPE::SURFACE_PLAYER;
-
 		case 1:		return ABILITY_TYPE::BULLET_PLAYER;
 		case 2:		return ABILITY_TYPE::INTERIOR_PLAYER;
-		//case 1:		return ABILITY_TYPE::INTERIOR_PLAYER;
-		//case 2:		return ABILITY_TYPE::BULLET_PLAYER;
 
 		default:	return ABILITY_TYPE::NONE;
 	}
