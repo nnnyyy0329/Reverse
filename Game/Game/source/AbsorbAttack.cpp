@@ -66,6 +66,9 @@ bool AbsorbAttack::ProcessStartAttack()
 	// 基底クラスの攻撃開始処理
 	AttackBase::ProcessStartAttack();
 
+	// 吸収攻撃の開始処理
+	_stcAbsorbConfig.isActive = true;
+
 	return true;
 }
 
@@ -265,6 +268,8 @@ void AbsorbAttack::DebugRender()
 // 吸収範囲の扇形描画
 void AbsorbAttack::DrawAbsorbRange(const VECTOR& ownerPos, const VECTOR& ownerDir)
 {
+	if(!_stcAbsorbConfig.isActive){ return; }	// 吸収攻撃がアクティブでない場合は描画しない
+
 	// 扇形データ設定
 	SectorData sectorData;
 

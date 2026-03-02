@@ -143,7 +143,7 @@ PlayerAnimations InteriorPlayer::GetPlayerAnimation()
 	animation.combat.transform		= "";
 	animation.combat.transCancel	= "player_cancell_00";
 	animation.combat.guard			= "";
-	animation.combat.hit			= "player_damage_00";
+	animation.combat.hit			= "player_damage_01";
 	animation.combat.dodge			= "player_dodge_01";
 	animation.combat.death			= "player_dead_01";
 
