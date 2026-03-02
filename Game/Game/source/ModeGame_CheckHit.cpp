@@ -41,12 +41,8 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 
 	// キャラのカプセル半径と高さを取得
 	float capsuleRadius = chara->GetCollisionR();
-	//const float constDefaultRadius = 1.0f;
-	//if (capsuleRadius <= 0.0f) { capsuleRadius = constDefaultRadius; }
 
 	float capsuleHeight = chara->GetCollisionHeight();
-	//const float constDefaultHeight = 100.0f;
-	//if (capsuleHeight <= 0.0f) { capsuleHeight = constDefaultHeight; }
 
 	// ステップ移動(すり抜け防止)
 	// カプセル半径*2の距離ごとに移動を分割して判定を行う
@@ -333,24 +329,22 @@ void ModeGame::CheckCollisionCharaChara(std::shared_ptr<CharaBase> chara1, std::
 	VECTOR vChara2Center = VAdd(vChara2Bottom, VScale(VSub(vChara2Top, vChara2Bottom), 0.5f));
 
 	// キャラ1からキャラ2への方向ベクトルを計算(XZ平面のみ)
-	VECTOR vDir = VSub(vChara2Center, vChara1Center);
-	vDir.y = 0.0f; // Y軸は無視
+	VECTOR vDirNorm = mymath::FlattenVector(VSub(vChara2Center, vChara1Center));
 
-	// 方向ベクトルの長さを計算
-	float fDist = VSize(vDir);
+	// 方向ベクトルの長さを計算(Y除去前の元ベクトルから)
+	VECTOR vDirRaw = VSub(vChara2Center, vChara1Center);
+	vDirRaw.y = 0.0f;
+	float fDist = VSize(vDirRaw);
 
 	// 距離がほぼ0の場合はラムダムな方向に押し出す
 	const float constMinDistance = 0.001f;
 	if (fDist < constMinDistance)
 	{
 		// ランダムな角度を生成
-		float fRandAngle = static_cast<float>(GetRand(359)) * DX_PI_F / 180.0f;
-		vDir = VGet(sinf(fRandAngle), 0.0f, cosf(fRandAngle));
-		fDist = 1.0f;// 正規化のために1に
+		float fRandAngle = mymath::RandomRange(0.0f, DX_TWO_PI_F);
+		vDirNorm = VGet(sinf(fRandAngle), 0.0f, cosf(fRandAngle));
+		fDist = 1.0f;
 	}
-
-	// 方向ベクトルを正規化
-	VECTOR vDirNorm = VScale(vDir, 1.0f / fDist);
 
 	// 必要な押し出し距離を計算
 	// 両方のカプセル半径の合計から現在の距離を引く
@@ -392,7 +386,7 @@ void ModeGame::CheckCollisionCameraMap()
 	const float conMinCamDist = 0.001f;
 	if (fCamDist < conMinCamDist) { return; }// 距離が近すぎる場合は処理しない
 
-	VECTOR vDir = VScale(vToCam, 1.0f / fCamDist);
+	VECTOR vDir = VNorm(vToCam);
 
 	// 球を使った当たり判定
 	const float fCamRad = 10.0f;// 半径
@@ -751,9 +745,6 @@ void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::
 	// 吸収攻撃コリジョン情報を取得
 	const AbsorbConfig& config = absorbSystem->GetAbsorbConfig();
 
-	// 攻撃所有者が自分に攻撃している場合は当たらない
-	//if(OwnerIsAbsorbingOwner(owner)){ return; }
-
 	// 扇形データを取得
 	SectorData sectorData;
 
@@ -766,6 +757,8 @@ void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::
 	// GeometryUtilityを使用して扇形内判定
 	if(GeometryUtility::IsInSector(chara->GetPos(), sectorData))
 	{
+		if(!config.isActive){ return; }	// 吸収攻撃が有効でない場合は当たらない
+
 		// プレイヤーの吸収システムの更新呼び出し
 		absorbSystem->ProcessAbsorb();
 	}

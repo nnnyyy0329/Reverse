@@ -23,31 +23,9 @@ public:
 	virtual int DispSizeH() { return 1080; }
 
 	static	ApplicationBase	*GetInstance() { return _lpInstance; }
-	virtual int GetKey() { return _gKey; }
-	virtual int GetTrg() { return _gTrg; }
-
-	// アナログスティック対応用
-	struct AnalogStickState {
-		float lx = 0.0f;
-		float ly = 0.0f;
-		float lz = 0.0f;
-		float rx = 0.0f;
-		float ry = 0.0f;
-		float rz = 0.0f;
-	};
-	virtual AnalogStickState GetAnalog() const { return _analog; }
-	virtual float GetAnalogMin() const { return _analogMin; }
-
-
 
 protected:
 	static	ApplicationBase	*_lpInstance;
-
-	int		_gKey, _gTrg;
-
-	// アナログスティック対応用
-	AnalogStickState _analog;
-	float _analogMin = 0.3f;// アナログ閾値
 
 	ModeServer* _serverMode;
 

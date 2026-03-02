@@ -46,12 +46,6 @@ bool CameraManager::Process()
 // カメラ切り替え
 void CameraManager::SwitchCamera()
 {
-	if(_trg & PAD_INPUT_4)
-	{
-		// デバッグカメラ使用フラグ切り替え
-		//_bIsUseDebugCamera = !_bIsUseDebugCamera;
-	}
-
 	if(!IsAimMode())
 	{
 		// カメラタイプ切り替え
@@ -71,6 +65,8 @@ void CameraManager::SwitchCamera()
 // カメラ処理切り替え
 void CameraManager::SwitchCameraProcess()
 {
+	auto im = InputManager::GetInstance();
+
 	// カメラタイプによる処理分岐
 	switch(_eCameraType)
 	{
@@ -79,7 +75,7 @@ void CameraManager::SwitchCameraProcess()
 		{
 			if(_gameCamera)
 			{
-				_gameCamera->Process(_key, _trg, _lx, _ly, _rx, _ry, _analogMin, false);
+				_gameCamera->Process(im, false);
 			}
 
 			break;
@@ -93,9 +89,9 @@ void CameraManager::SwitchCameraProcess()
 				bool isInput = false;
 
 				// 押している間は入力を有効にする
-				if(_key & PAD_INPUT_2){ isInput = true; }
+				isInput = im->IsHold(INPUT_ACTION::DODGE);
 
-				_debugCamera->Process(_key, _trg, _lx, _ly, _rx, _ry, _analogMin, isInput);
+				_debugCamera->Process(im, isInput);
 			}
 
 			break;
@@ -106,7 +102,7 @@ void CameraManager::SwitchCameraProcess()
 		{
 			if(_aimCamera)
 			{
-				_aimCamera->Process(_key, _trg, _lx, _ly, _rx, _ry, _analogMin, true);
+				_aimCamera->Process(im, true);
 			}
 
 			break;

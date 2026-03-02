@@ -81,20 +81,20 @@ bool ModeTitle::Terminate()
 
 bool ModeTitle::Process() 
 {
-	const int trg = ApplicationMain::GetInstance()->GetTrg();
+	InputManager* input = InputManager::GetInstance();
 
 	// ↑↓で選択
-	if(trg & PAD_INPUT_UP)
+	if (input->IsTrigger(INPUT_ACTION::MOVE_UP))
 	{
 		_menuIndex = WrapMenuIndex(_menuIndex - 1);
 	}
-	if(trg & PAD_INPUT_DOWN)
+	if (input->IsTrigger(INPUT_ACTION::MOVE_DOWN))
 	{
 		_menuIndex = WrapMenuIndex(_menuIndex + 1);
 	}
 
 	// 決定
-	if(trg & PAD_INPUT_10)
+	if (input->IsTrigger(INPUT_ACTION::SELECT))
 	{
 		switch(_menuIndex)
 		{
@@ -149,7 +149,7 @@ bool ModeTitle::Render()
 		const int textY = 820;
 		const int lineGap = 70;
 
-		DrawMenuItem(textX, textY + 0 * lineGap, "スタート", _menuIndex == 0);
+		DrawMenuItem(textX, textY + 0 * lineGap, "スタート"  , _menuIndex == 0);
 		DrawMenuItem(textX, textY + 1 * lineGap, "オプション", _menuIndex == 1);
 		DrawMenuItem(textX, textY + 2 * lineGap, "ゲーム終了", _menuIndex == 2);
 

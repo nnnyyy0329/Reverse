@@ -99,6 +99,7 @@
     <ClCompile Include="source\ScenarioBase.cpp">
       <Filter>Senario</Filter>
     </ClCompile>
+    <ClCompile Include="source\InputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\CFile\CFile.h">
@@ -166,5 +167,6 @@
     <ClInclude Include="source\ScenarioBase.h">
       <Filter>Senario</Filter>
     </ClInclude>
+    <ClInclude Include="source\InputManager.h" />
   </ItemGroup>
 </Project>

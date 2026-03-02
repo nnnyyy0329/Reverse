@@ -66,6 +66,22 @@ struct AttackConfig
 	std::string soundName;		// サウンド名
 };
 
+// 範囲攻撃設定データ構造体
+struct AreaAttackConfig
+{
+	VECTOR centerOffset;		// コリジョン中心位置オフセット
+	float radius;				// 半径
+	float height;				// 高さ
+	float delay;				// 発生
+	float duration;				// 持続
+	float recovery;				// 硬直
+	float damage;				// ダメージ
+	bool isHit;					// ヒットフラグ
+	std::string effectName;		// エフェクト名
+	VECTOR effectOffset;		// エフェクト位置オフセット
+	std::string soundName;		// サウンド名
+};
+
 // 基本移動アニメーション構造体
 struct PlayerMovementAnimations
 {
@@ -81,13 +97,14 @@ struct PlayerMovementAnimations
 // 攻撃アニメーション構造体
 struct PlayerAttackAnimations
 {
-	const char* firstAttack;		// 1段目攻撃
-	const char* secondAttack;		// 2段目攻撃
-	const char* thirdAttack;		// 3段目攻撃
-	const char* fourthAttack;		// 4段目攻撃
-	const char* fifthAttack;		// 5段目攻撃
-	const char* firstSkill;			// スキル1
-	const char* secondSkill;		// スキル2
+	const char* firstAttack;	// 1段目攻撃
+	const char* secondAttack;	// 2段目攻撃
+	const char* thirdAttack;	// 3段目攻撃
+	const char* fourthAttack;	// 4段目攻撃
+	const char* fifthAttack;	// 5段目攻撃
+	const char* areaAttack;		// 範囲攻撃
+	const char* firstSkill;		// スキル1
+	const char* secondSkill;	// スキル2
 };
 
 // 弾発射アニメーション構造体
@@ -151,6 +168,7 @@ enum class PLAYER_ATTACK_STATE
 	THIRD_ATTACK,		// 3段目攻撃
 	FOURTH_ATTACK,		// 4段目攻撃
 	FIFTH_ATTACK,		// 5段目攻撃
+	AREA_ATTACK,		// 範囲攻撃
 	FIRST_SKILL,		// スキル1
 	SECOND_SKILL,		// スキル2
 	_EOT_,
@@ -199,11 +217,22 @@ struct PlayerState
 	PLAYER_ABSORB_STATE		absorbState;	// 吸収攻撃状態
 	PLAYER_COMBAT_STATE		combatState;	// 特殊状態
 
-	bool IsStateAttacking() const { return attackState   != PLAYER_ATTACK_STATE::NONE; }
-	bool IsStateMoving()	const { return movementState != PLAYER_MOVEMENT_STATE::NONE; }
-	bool IsStateShooting()	const { return shootState	 != PLAYER_SHOOT_STATE::NONE; }
-	bool IsStateAbsorbing()	const { return absorbState	 != PLAYER_ABSORB_STATE::NONE; }
-	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }
+	// 状態チェック関数
+	bool IsStateAttacking() const { return attackState	 != PLAYER_ATTACK_STATE::NONE; }	// 攻撃状態かどうか
+	bool IsStateMoving()	const { return movementState != PLAYER_MOVEMENT_STATE::NONE; }	// 移動状態かどうか
+	bool IsStateShooting()	const { return shootState	 != PLAYER_SHOOT_STATE::NONE; }		// 発射状態かどうか
+	bool IsStateAbsorbing()	const { return absorbState	 != PLAYER_ABSORB_STATE::NONE; }	// 吸収攻撃状態かどうか
+	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }	// 特殊状態かどうか
+
+	// 状態リセット関数
+	void StateReset()
+	{
+		movementState = PLAYER_MOVEMENT_STATE::NONE;
+		attackState = PLAYER_ATTACK_STATE::NONE;
+		shootState = PLAYER_SHOOT_STATE::NONE;
+		absorbState = PLAYER_ABSORB_STATE::NONE;
+		combatState = PLAYER_COMBAT_STATE::NONE;
+	}
 };
 
 class PlayerBase : public CharaBase
@@ -273,19 +302,6 @@ public:
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
 
-	// 入力状態を設定する
-	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
-	{
-		_key = key;
-		_trg = trg;
-		_lx = lx;
-		_ly = ly;
-		_rx = rx;
-		_ry = ry;
-		_analogMin = analogMin;
-	}
-	int GetInput()const{ return _key; }
-
 	/*****ゲッターセッター*****/
 	VECTOR GetAttackColTop(){ return _vAttackColTop; }			// 攻撃コリジョン上部
 	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }	// 攻撃コリジョン下部
@@ -315,6 +331,8 @@ protected:	// 攻撃関係
 
 	virtual AttackConstants GetAttackConstants()const = 0;		// 攻撃定数を取得
 	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;	// 攻撃設定を取得
+
+	virtual AreaAttackConfig GetAreaAttackConfig() = 0;			// 範囲攻撃設定を取得
 
 	// 攻撃システム
 	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
@@ -358,7 +376,7 @@ protected:	// 弾発射関係
 
 	virtual bool IsShooting()const{ return _playerState.shootState != PLAYER_SHOOT_STATE::NONE; }
 
-protected:
+protected:	// 吸収攻撃関係
 
 	virtual void ProcessAbsorb(){};	// 吸収攻撃の仮想関数
 
@@ -419,15 +437,6 @@ protected:
 	// 状態
 	PlayerState _playerState;		// 現在の状態
 	PlayerState _oldPlayerState;	// 前フレームの状態
-
-	// 入力関係
-	int _key = 0;
-	int _trg = 0;
-	float _lx = 0.0f;
-	float _ly = 0.0f;
-	float _rx = 0.0f;
-	float _ry = 0.0f;
-	float _analogMin = 0.0f;
 
 	// アクション関係変数
 	float _fVelY;			// Y方向の速度

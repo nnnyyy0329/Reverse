@@ -5,15 +5,8 @@ float EnemyState::CalcRandomRangeTime(float fBaseTime, float fRange)
 {
 	if (fRange < 0.0f) { fRange = 0.0f; }
 
-	// 中央を0とするため、範囲の2倍を整数で計算
-	int iRange = static_cast<int>(fRange * 2.0f);
-
-	// 0 ~ iRange から fRange を引いて -fRange ~ +fRange にする
-	float fOffset = 0.0f;
-	if (fRange > 0)
-	{
-		fOffset = static_cast<float>(GetRand(iRange)) - fRange;
-	}
+	// RandomRangeで[-fRange, +fRange]のランダムオフセットを生成
+	float fOffset = (fRange > 0.0f) ? mymath::RandomRange(-fRange, fRange) : 0.0f;
 
 	float fResult = fBaseTime + fOffset;
 	if (fResult < 0.0f) { fResult = 0.0f; }
@@ -31,18 +24,11 @@ TargetInfo EnemyState::GetTargetInfo(Enemy* owner)
 	if (info.bExist)
 	{
 		// ターゲットへのベクトル計算
-		info.vToTarget = VSub(info.target->GetPos(), owner->GetPos());	
+		info.vToTarget = VSub(info.target->GetPos(), owner->GetPos());
 		info.fDist = VSize(info.vToTarget);
 
-		// 方向ベクトル計算
-		if (info.fDist > 0.0f)
-		{
-			info.vDir = VScale(info.vToTarget, 1.0f / info.fDist);
-		}
-		else
-		{
-			info.vDir = VGet(0.0f, 0.0f, 0.0f);
-		}
+		// 方向ベクトル計算(FlattenVectorでY除去+正規化)
+		info.vDir = mymath::FlattenVector(info.vToTarget);
 	}
 	else
 	{

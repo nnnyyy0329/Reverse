@@ -29,7 +29,7 @@ int MenuItemUseCollision::Selected()
 	mdGame->SetDebugUseCollision(!mdGame->GetDebugUseCollision());
 	return 0;
 }
-
+ 
 
 
 // MenuDebugCamera

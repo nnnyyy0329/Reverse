@@ -6,6 +6,7 @@
 // 前方宣言
 class PlayerBase;
 class PlayerManager;
+class PlayerUnlockManager;
 
 class AttackBase;
 //class ShieldBase;
@@ -83,6 +84,7 @@ protected:
 	std::shared_ptr<DodgeSystem>		_dodgeSystem;			// 回避システム
 	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;	// 能力選択画面
 	//std::shared_ptr<Item>               _item;                  //　アイテム
+	std::shared_ptr<PlayerUnlockManager>_playerUnlockManager;	// プレイヤーアンロックマネージャー
 
 	// 管理関連
 	std::shared_ptr<PlayerManager>		_playerManager;			// プレイヤーマネージャー
@@ -151,4 +153,5 @@ private:
 	// ライトの位置、影響範囲、ライトの色
 	int AddPointLight(VECTOR vPos, float fRange, COLOR_F color);
 	void RemoveLight(int lightHandle);// 指定ライトを削除
+
 };

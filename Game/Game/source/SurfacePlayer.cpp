@@ -22,6 +22,10 @@ SurfacePlayer::SurfacePlayer()
 
 	// 吸収攻撃システムの生成
 	MakeAbsorbSystem();
+
+	// 吸収攻撃のモーション管理用変数の初期化
+	_bIsAbsorbReadyCompleted = false;	// 吸収構えアニメーションが完了したかどうか
+	_bWasAbsorbKeyPressed = false;		// 前フレームで吸収攻撃キーが押されていたかどうか
 }
 
 SurfacePlayer::~SurfacePlayer()
@@ -133,7 +137,7 @@ PlayerAnimations SurfacePlayer::GetPlayerAnimation()
 	//animation.attack.thirdAttack	= "absorb_attack_02";
 	//animation.attack.fourthAttack	= "";
 	//animation.attack.fifthAttack	= "";
-	animation.attack.firstSkill		= "";
+	animation.attack.firstSkill		= ""; 
 	animation.attack.secondSkill	= "";
 	animation.absorb.absorbReady	= "absorb_ready_00";
 	animation.absorb.absorbActive	= "absorb_active_00";
@@ -230,6 +234,14 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 	};
 }
 
+// 範囲攻撃の情報設定
+AreaAttackConfig SurfacePlayer::GetAreaAttackConfig()
+{
+	// 表プレイヤーは範囲攻撃を行わない
+	AreaAttackConfig config;
+	return config;
+}
+
 // 回避設定データ構造体
 DodgeConfig SurfacePlayer::GetDodgeConfig()
 {
@@ -285,12 +297,19 @@ void SurfacePlayer::InitializeAbsorbSystem()
 // 吸収攻撃システムの更新
 void SurfacePlayer::ProcessAbsorbSystem()
 {
-	// 吸収攻撃システムの処理
-	if(_absorbAttackSystem)
-	{
-		_absorbAttackSystem->ProcessAbsorbInput(_key);	// 入力処理
-		_absorbAttackSystem->Process();					// 吸収システムの更新処理
-	}
+	if(!_absorbAttackSystem) { return; }
+
+	// 吸収攻撃モーションの切り替え条件処理
+	ProcessChangeAbsorbMotion();
+
+	// 入力処理
+	_absorbAttackSystem->ProcessAbsorbInput();	
+
+	// 吸収システムの更新処理
+	_absorbAttackSystem->Process();
+
+	// 前フレームの吸収攻撃キーの状態を保存
+	_bWasAbsorbKeyPressed = IsAbsorbInput();
 }
 
 // 吸収攻撃設定取得
@@ -322,4 +341,125 @@ void SurfacePlayer::AbsorbSystemDebugRender()
 	{
 		_absorbAttackSystem->DebugRender();
 	}
+
+	// 吸収アニメーション再生時間のデバッグ表示
+	DebugDrawAbsorbAnimationTime();
+}
+
+// 吸収攻撃モーション切り替え条件処理
+void SurfacePlayer::ProcessChangeAbsorbMotion()
+{
+	// 吸収入力開始
+	if(IsAbsorbInput() && !_bWasAbsorbKeyPressed)
+	{
+		// 構え状態に移行
+		StartAbsorbReadyState();
+	}
+	// 吸収入力を続けているなら
+	else if(IsAbsorbing() && _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY)
+	{
+		AnimManager* animManager = GetAnimManager();
+
+		// 構えモーションが終了したかチェック
+		if(animManager->IsAnimationFinished())
+		{
+			// 構えモーション終了時の処理
+			ProcessAbsorbReadyCompleted();
+		}
+	}
+	// 吸収入力が終了しているなら
+	else if(!IsAbsorbInput() && _bWasAbsorbKeyPressed)
+	{
+		// 吸収攻撃終了処理
+		ProcessAbsorbFinish();
+	}
+}
+
+// 構え状態に移行
+void SurfacePlayer::StartAbsorbReadyState()
+{
+	// 吸収構え状態に移行
+	_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_READY;	// 状態を吸収構えに設定
+	_bIsAbsorbReadyCompleted = false;								// 吸収構えアニメーション完了フラグをリセット
+
+	// アニメーション切り替え
+	ProcessPlayAnimation();
+}
+
+// 構えモーション終了時の処理
+void SurfacePlayer::ProcessAbsorbReadyCompleted()
+{
+	// 構えモーション終了
+	_bIsAbsorbReadyCompleted = true;
+
+	// 吸収攻撃開始
+	_absorbAttackSystem->StartAbsorbAttack();
+
+	// 吸収状態をアクティブにする
+	_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_ACTIVE;
+
+	// アニメーション切り替え
+	ProcessPlayAnimation();
+}
+
+// 吸収終了処理
+void SurfacePlayer::ProcessAbsorbFinish()
+{
+	// 押していて吸収が始まっていたら停止
+	if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_ACTIVE)
+	{
+		// 吸収攻撃停止処理
+		StopAbsorb();
+	}
+	// 構え状態で押していて、吸収が始まっていなかったらキャンセル
+	else if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY)
+	{
+		// 吸収構えキャンセル処理
+		CancelAbsorbReady();
+	}
+}
+
+// 吸収停止処理
+void SurfacePlayer::StopAbsorb()
+{
+	// 吸収攻撃停止処理
+	_absorbAttackSystem->StopAbsorbAttack();
+
+	// 状態を吸収終了にする
+	_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_END;
+
+	// アニメーション切り替え
+	ProcessPlayAnimation();
+}
+
+// 吸収構えキャンセル処理
+void SurfacePlayer::CancelAbsorbReady()
+{
+	// 状態を吸収終了にする
+	_playerState.absorbState = PLAYER_ABSORB_STATE::NONE;
+
+	// アニメーション切り替え
+	ProcessPlayAnimation();
+}
+
+// 吸収攻撃の入力チェック
+bool SurfacePlayer::IsAbsorbInput()const
+{
+	// 吸収攻撃の入力チェック
+	return (InputManager::GetInstance()->IsHold(INPUT_ACTION::ATTACK)) != 0;
+}
+
+// 吸収アニメーション再生時間デバッグ表示
+void SurfacePlayer::DebugDrawAbsorbAnimationTime()
+{
+	if(!_absorbAttackSystem) { return; }
+
+	AnimManager* animManager = GetAnimManager();
+	if(!animManager) { return; }
+
+	// 吸収アニメーション再生時間のデバッグ表示
+	std::string debugText = "AbsorbAnimTime: " + std::to_string(animManager->GetCurrentAnimTotalTime());
+
+	// 吸収攻撃のアニメーション再生時間をデバッグ表示
+	DrawFormatString(DRAW_OFFSET_X, DRAW_OFFSET_Y + 100, GetColor(255, 255, 255), debugText.c_str());
 }

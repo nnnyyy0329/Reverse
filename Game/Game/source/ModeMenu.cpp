@@ -25,12 +25,7 @@ bool ModeMenu::Terminate() {
 
 bool ModeMenu::Process() {
 	base::Process();
-	int key = ApplicationMain::GetInstance()->GetKey();
-	int trg = ApplicationMain::GetInstance()->GetTrg();
-
-	auto analog = ApplicationMain::GetInstance()->GetAnalog();
-	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
-
+	InputManager* input = InputManager::GetInstance();
 
 	// このモードより下のレイヤーはProcess()を呼ばない
 	ModeServer::GetInstance()->SkipProcessUnderLayer();
@@ -40,7 +35,6 @@ bool ModeMenu::Process() {
 		// デバッグカメラがONならProcess()を呼ぶ
 		if(_cameraManager->GetIsUseDebugCamera())
 		{
-			_cameraManager->SetInput(key, trg, analog.lx, analog.ly, analog.rx, analog.ry, analogMin);
 			_cameraManager->Process();
 		}
 	}
@@ -50,17 +44,17 @@ bool ModeMenu::Process() {
 	}
 
 
-	// spaceキーでメニューを閉じる
+	// startでメニューを閉じる
 	bool close = false;
-	if (trg & PAD_INPUT_10)
+	if (input->IsTrigger(INPUT_ACTION::MENU))
 	{
 		_cameraManager->SetIsUseDebugCamera(false); // デバッグカメラOFFにする
 		close = true;
 	}
 
 	// 上下でカーソル移動をする
-	if (trg & PAD_INPUT_UP) { _curPos--; _curAnimCnt = 0; }
-	if (trg & PAD_INPUT_DOWN) { _curPos++; _curAnimCnt = 0; }
+	if (input->IsTrigger(INPUT_ACTION::UP)) { _curPos--; _curAnimCnt = 0; }
+	if (input->IsTrigger(INPUT_ACTION::DOWN)) { _curPos++; _curAnimCnt = 0; }
 
 
 
@@ -68,8 +62,8 @@ bool ModeMenu::Process() {
 	int itemNum = _menuItems.size();
 	_curPos = (_curPos + itemNum) % itemNum;
 
-	// zキーでアイテムのSelected()を呼ぶ
-	if (trg & PAD_INPUT_1)
+	// AでアイテムのSelected()を呼ぶ
+	if (input->IsTrigger(INPUT_ACTION::SELECT))
 	{
 		int ret = _menuItems[_curPos]->Selected();
 

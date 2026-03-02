@@ -29,6 +29,7 @@
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
 #include "BulletPlayer.h"
+#include "PlayerUnlockManager.h"
 
 #include "EnergyUI.h"
 #include "PlayerLifeBarUI.h"
@@ -90,6 +91,15 @@ bool ModeGame::Initialize()
 		bulletPlayer->Initialize();
 		_playerManager->RegisterPlayer(PLAYER_TYPE::BULLET, bulletPlayer);
 		bulletPlayer->SetBulletManager(_bulletManager);
+	}
+
+	// プレイヤーアンロックマネージャー初期化
+	{
+		_playerUnlockManager = std::make_shared<PlayerUnlockManager>();
+		_playerUnlockManager->Initialize();
+
+		// 解放時のコールバックを設定
+		_playerUnlockManager->SetUnlockCallback([this](ABILITY_TYPE ability) {});
 	}
 
 	// ステージ初期化
@@ -168,35 +178,8 @@ bool ModeGame::Process()
 {
 	base::Process();
 	
-	int key = ApplicationMain::GetInstance()->GetKey();
-	int trg = ApplicationMain::GetInstance()->GetTrg();
-	auto analog = ApplicationMain::GetInstance()->GetAnalog();
-	float lx = analog.lx;
-	float ly = analog.ly;
-	float lz = analog.lz;
-	float rx = analog.rx;
-	float ry = analog.ry;
-	float rz = analog.rz;
-	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
- 
-	/// 入力取得
-	{
-		// プレイヤーマネージャーに入力状態を渡す
-		if(_playerManager)
-		{
-			_playerManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
-		}
-		// カメラマネージャーに入力状態を渡す
-		if(_cameraManager)
-		{
-			_cameraManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
-		}
-		// 能力選択画面に入力状態を渡す
-		if(_abilitySelectScreen)
-		{
-			_abilitySelectScreen->SetInput(key, trg, lx, ly, rx, ry, analogMin);
-		}
-	}
+	// InputManagerから入力を取得
+	InputManager* input = InputManager::GetInstance();
 
 	// ゲームオーバーチェック
 	{
@@ -219,8 +202,8 @@ bool ModeGame::Process()
 		_abilitySelectScreen->ResetSelection(); // 選択状態をリセット
 	}
 
-	// spaceキーでメニューを開く
-	if (trg & PAD_INPUT_10)
+	// startでメニューを開く
+	if (input->IsTrigger(INPUT_ACTION::MENU))
 	{
 		ModeMenu* modeMenu = new ModeMenu();
 		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
@@ -253,7 +236,8 @@ bool ModeGame::Process()
 		_playerManager->SetCameraManager(_cameraManager);				// カメラマネージャーを設定
 		_playerManager->SetAbilitySelectScreen(_abilitySelectScreen);	// 能力選択画面を設定
 		_playerLifeBarUI->SetPlayerManager(_playerManager);
-		_abilitySelectScreen->SetPlayerManager(_playerManager);	
+		_abilitySelectScreen->SetPlayerManager(_playerManager);
+		_abilitySelectScreen->SetPlayerUnlockManager(_playerUnlockManager);
 
 		// 弾丸プレイヤーにカメラマネージャーを設定
 		auto bulletPlayer = std::dynamic_pointer_cast<BulletPlayer>(_playerManager->GetPlayerByType(PLAYER_TYPE::BULLET));
@@ -263,6 +247,7 @@ bool ModeGame::Process()
 	// オブジェクトの更新
 	{
 		_playerManager->Process();
+		_playerUnlockManager->Process();
 		_stage->Process();
 		_bulletManager->Process();
 		_dodgeSystem->Process();
@@ -349,6 +334,7 @@ bool ModeGame::Process()
 		}
 	}
 
+
 	// エフェクト更新
 	EffectServer::GetInstance()->Update();
 
@@ -363,6 +349,9 @@ bool ModeGame::Process()
 bool ModeGame::Render() 
 {
 	base::Render();
+
+
+
 
 	// 3D基本設定
 	{
@@ -429,6 +418,7 @@ bool ModeGame::Render()
 		_debugCamera->DebugRender();
 		_gameCamera->DebugRender();
 		_playerManager->DebugRender();
+		_playerUnlockManager->DebugRender();
 
 		// ライト情報
 		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());
@@ -452,6 +442,29 @@ bool ModeGame::Render()
 		// プレイヤーコリジョン描画
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
 		activePlayer->CollisionRender();
+	}
+
+		// FPS表示（0.5秒ごとに更新して見やすくする）
+	{
+		static int s_frameCount = 0;
+		static unsigned long s_accumMs = 0;
+		static float s_fps = 0.0f;
+
+		const unsigned long stepMs = GetStepTm();
+		if(stepMs > 0)
+		{
+			s_frameCount++;
+			s_accumMs += stepMs;
+
+			if(s_accumMs >= 500)
+			{
+				s_fps = (static_cast<int>(s_frameCount) * 1000.0f) / static_cast<float>(s_accumMs);
+				s_frameCount = 0;
+				s_accumMs = 0;
+			}
+		}
+		
+		DrawFormatString(20, 20, GetColor(255, 255, 255), "FPS: %d", static_cast<int>(s_fps + 0.5f));
 	}
 
 	_energyUI->Render();

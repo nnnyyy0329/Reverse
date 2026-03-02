@@ -30,7 +30,7 @@ public:
 	void StopAbsorbAttack();
 
 	// ‹zûUŒ‚‚Ì“ü—Íˆ—
-	void ProcessAbsorbInput(int key);
+	void ProcessAbsorbInput();
 
 	// ‹zû‚ÌXVˆ—
 	void ProcessAbsorb();

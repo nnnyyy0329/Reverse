@@ -163,6 +163,7 @@
     <ClCompile Include="source\DebugCamera.cpp" />
     <ClCompile Include="source\DodgeSystem.cpp" />
     <ClCompile Include="source\Enemy.cpp" />
+    <ClCompile Include="source\EnemyObserver.cpp" />
     <ClCompile Include="source\EnemyState.cpp" />
     <ClCompile Include="source\EnergyManager.cpp" />
     <ClCompile Include="source\EnergyUI.cpp" />
@@ -182,12 +183,14 @@
     <ClCompile Include="source\ModeGameOver.cpp" />
     <ClCompile Include="source\ModeGame_CheckHit.cpp" />
     <ClCompile Include="source\ModeLoading.cpp" />
+    <ClCompile Include="source\ModeLogo.cpp" />
     <ClCompile Include="source\ModeMenu.cpp" />
     <ClCompile Include="source\AbilityBase.cpp" />
     <ClCompile Include="source\AbilityManager.cpp" />
     <ClCompile Include="source\ModeScenario.cpp" />
     <ClCompile Include="source\ModeStageChange.cpp" />
     <ClCompile Include="source\ModeTitle.cpp" />
+    <ClCompile Include="source\StateNormal.cpp" />
     <ClCompile Include="source\PlayerAbsorbAttackSystem.cpp" />
     <ClCompile Include="source\PlayerAttackSystem.cpp" />
     <ClCompile Include="source\PlayerBase.cpp" />
@@ -224,6 +227,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="source\PlayerUnlockManager.cpp" />
     <ClCompile Include="source\ShieldBase.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -264,6 +268,7 @@
     <ClInclude Include="source\Enemy.h" />
     <ClInclude Include="source\EnemyAttackSettings.h" />
     <ClInclude Include="source\EnemyFactory.h" />
+    <ClInclude Include="source\EnemyObserver.h" />
     <ClInclude Include="source\EnemyState.h" />
     <ClInclude Include="source\EnemyState_impl.h" />
     <ClInclude Include="source\EnergyManager.h" />
@@ -288,12 +293,14 @@
     <ClInclude Include="source\ModeGame.h" />
     <ClInclude Include="source\ModeGameOver.h" />
     <ClInclude Include="source\ModeLoading.h" />
+    <ClInclude Include="source\ModeLogo.h" />
     <ClInclude Include="source\ModeMenu.h" />
     <ClInclude Include="source\AbilityBase.h" />
     <ClInclude Include="source\AbilityManager.h" />
     <ClInclude Include="source\ModeScenario.h" />
     <ClInclude Include="source\ModeStageChange.h" />
     <ClInclude Include="source\ModeTitle.h" />
+    <ClInclude Include="source\StateNormal.h" />
     <ClInclude Include="source\PlayerAbsorbAttackSystem.h" />
     <ClInclude Include="source\PlayerAttackSystem.h" />
     <ClInclude Include="source\PlayerBase.h" />
@@ -324,6 +331,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="source\PlayerUnlockManager.h" />
     <ClInclude Include="source\ShieldBase.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>

@@ -23,7 +23,6 @@ public:
 	void ShootBullet();															// 弾の発射
 	void ProcessAimMode(bool aimKey);											// エイムモードの処理
 	VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir);	// オフセット位置をワールド座標に変換
-
 	void DrawShootIntervalTime();												// 弾発射時間のデバッグ表示
 
 	// 純粋仮想関数のオーバーライド
@@ -34,6 +33,7 @@ public:
 	virtual ShieldConfig GetShieldConfig() override;				// シールド設定を取得
 	virtual AttackConstants GetAttackConstants()const override;		// 攻撃定数を取得
 	virtual void GetAttackConfigs(AttackConfig configs[]) override;	// 攻撃設定を取得
+	virtual AreaAttackConfig GetAreaAttackConfig() override;		// 範囲攻撃設定を取得
 
 	// クラス設定
 	void SetBulletManager(std::shared_ptr<BulletManager>bulletManager){ _bulletManager = bulletManager; }	// マネージャーをセット

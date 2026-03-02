@@ -28,10 +28,10 @@ void PlayerBase::ProcessMovePlayer()
 	_vOldPos = _vPos;	// 前フレームの位置を保存
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
-	if(IsAttacking()){ return; }				// 攻撃中は移動入力を受け付けない
-	if(IsDodging()){ return; }					// 回避中は移動入力を受け付けない
-	if(IsHitStop()){ return; }					// 被弾中は移動入力を受け付けない
-	if(IsDeath()){ return; }					// 死亡中は移動入力を受け付けない
+	if(IsAttacking()){ return; }	// 攻撃中は移動入力を受け付けない
+	if(IsDodging()){ return; }		// 回避中は移動入力を受け付けない
+	if(IsHitStop()){ return; }		// 被弾中は移動入力を受け付けない
+	if(IsDeath()){ return; }		// 死亡中は移動入力を受け付けない
 
 	bool isAiming = _cameraManager->IsAimMode();	// エイムモード中かどうか
 	bool isShooting = IsShooting();					// 発射中かどうか
@@ -72,14 +72,29 @@ void PlayerBase::ProcessMovePlayer()
 // 入力に応じた移動処理
 void PlayerBase::ProcessInputMove()
 {
+	auto im = InputManager::GetInstance();
+
 	// ダッシュ入力があれば移動速度を上げる
-	if(_trg & PAD_INPUT_9)
+	if(im->IsTrigger(INPUT_ACTION::DASH))
 	{
 		_bIsDashInput = !_bIsDashInput;	// ダッシュ入力フラグをトグルする
 	}
 
-	// アナログ入力による移動
-	if(abs(_lx) > _analogMin || abs(_ly) > _analogMin)
+	const AnalogState& analog = im->GetAnalog();
+	float analogMin = im->GetAnalogMin();
+
+	float digitalX = 0.0f;
+	float digitalY = 0.0f;
+	if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }
+	
+	// アナログ入力による移動、なければデジタル入力
+	float inputX = (abs(analog.lx) > analogMin) ? analog.lx : digitalX;
+	float inputY = (abs(analog.ly) > analogMin) ? analog.ly : digitalY;
+
+	if(inputX != 0.0f || inputY != 0.0f)
 	{
 		float currentCameraAngle;	// 現在のカメラの水平角度
 
@@ -123,8 +138,8 @@ void PlayerBase::ProcessInputMove()
 		// 移動量を計算
 		_vMove = VAdd
 		(
-			VScale(cameraForward, _ly),	// 前後移動
-			VScale(cameraRight, _lx)	// 左右移動
+			VScale(cameraForward, inputY),	// 前後移動
+			VScale(cameraRight, inputX)	// 左右移動
 		);
 
 		// 正規化
@@ -311,17 +326,19 @@ void PlayerBase::ProcessHit()
 // デバッグ処理
 void PlayerBase::ProcessDebug()
 {
-	if(_trg & PAD_INPUT_4)
+	auto im = InputManager::GetInstance();
+
+	if (im->IsTrigger(INPUT_ACTION::DEBUG3))
 	{
 		_fLife -= 5.0f;
 	}
 
-	if(_trg & PAD_INPUT_2)
+	if (im->IsTrigger(INPUT_ACTION::DEBUG1))
 	{
 		EnergyManager::GetInstance()->ConsumeEnergy(10.0f);
 	}
 
-	if (_trg & PAD_INPUT_5)
+	if (im->IsTrigger(INPUT_ACTION::DEBUG2))
 	{
 		EnergyManager::GetInstance()->AddEnergy(100.0f);
 	}
@@ -360,11 +377,14 @@ const char* PlayerBase::GetCurrentAnimationName() const
 	{
 		switch(_playerState.attackState)
 		{
-			case PLAYER_ATTACK_STATE::FIRST_ATTACK:			return _playerAnim.attack.firstAttack;		// 1段目攻撃
-			case PLAYER_ATTACK_STATE::SECOND_ATTACK:		return _playerAnim.attack.secondAttack;		// 2段目攻撃
-			case PLAYER_ATTACK_STATE::THIRD_ATTACK:			return _playerAnim.attack.thirdAttack;		// 3段目攻撃
-			case PLAYER_ATTACK_STATE::FOURTH_ATTACK:		return _playerAnim.attack.fourthAttack;		// 4段目攻撃
-			case PLAYER_ATTACK_STATE::FIFTH_ATTACK:			return _playerAnim.attack.fifthAttack;		// 5段目攻撃
+			case PLAYER_ATTACK_STATE::FIRST_ATTACK:		return _playerAnim.attack.firstAttack;		// 1段目攻撃
+			case PLAYER_ATTACK_STATE::SECOND_ATTACK:	return _playerAnim.attack.secondAttack;		// 2段目攻撃
+			case PLAYER_ATTACK_STATE::THIRD_ATTACK:		return _playerAnim.attack.thirdAttack;		// 3段目攻撃
+			case PLAYER_ATTACK_STATE::FOURTH_ATTACK:	return _playerAnim.attack.fourthAttack;		// 4段目攻撃
+			case PLAYER_ATTACK_STATE::FIFTH_ATTACK:		return _playerAnim.attack.fifthAttack;		// 5段目攻撃
+			case PLAYER_ATTACK_STATE::AREA_ATTACK:		return _playerAnim.attack.areaAttack;		// 範囲攻撃
+			case PLAYER_ATTACK_STATE::FIRST_SKILL:		return _playerAnim.attack.firstSkill;		// スキル1
+			case PLAYER_ATTACK_STATE::SECOND_SKILL:		return _playerAnim.attack.secondSkill;		// スキル2
 		}
 	}
 

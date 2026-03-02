@@ -1,5 +1,6 @@
 #include "AbilitySelectScreen.h"
 #include "PlayerManager.h"
+#include "PlayerUnlockManager.h"
 
 namespace Render
 {
@@ -78,8 +79,9 @@ bool AbilitySelectScreen::Render()
 void AbilitySelectScreen::SelectScreenByInput()
 {
 	//if(!IsSelectActiveByPlayerType()){ return; }	// プレイヤータイプに応じて選択可能かどうか
+	auto im = InputManager::GetInstance();
 
-	if(_trg & PAD_INPUT_4)
+	if(im->IsTrigger(INPUT_ACTION::TRANSFORM))
 	{
 		_bIsScreenActive = !_bIsScreenActive;
 	}
@@ -91,8 +93,10 @@ void AbilitySelectScreen::SelectionByInput()
 	if(_bIsSelectComplete){ return; }	// 選択完了していたら処理しない
 	if(!_bIsScreenActive){ return; }	// 選択画面が表示されていなかったら処理しない
 
+	auto im = InputManager::GetInstance();
+
 	// 左キーが押されたら
-	if(_trg & PAD_INPUT_LEFT)
+	if(im->IsTrigger(INPUT_ACTION::LEFT))
 	{
 		_iCurrentSelection--;	// 左に移動
 
@@ -105,7 +109,7 @@ void AbilitySelectScreen::SelectionByInput()
 	}
 
 	// 右キーが押されたら
-	if(_trg & PAD_INPUT_RIGHT)
+	if(im->IsTrigger(INPUT_ACTION::RIGHT))
 	{
 		_iCurrentSelection++;	// 右に移動
 
@@ -117,15 +121,39 @@ void AbilitySelectScreen::SelectionByInput()
 		}
 	}
 
-	// Yボタンが押されたら
-	if(_trg & PAD_INPUT_4)
+	// Zキーで決定
+	if(im->IsTrigger(INPUT_ACTION::TRANSFORM))
 	{
+		// 選択肢のアビリティタイプの配列
+		ABILITY_TYPE abilities[3] = 
+		{
+			ABILITY_TYPE::SURFACE_PLAYER,	// 表プレイヤー
+			ABILITY_TYPE::BULLET_PLAYER,	// 弾プレイヤー
+			ABILITY_TYPE::INTERIOR_PLAYER	// 裏プレイヤー
+		};
+
+		// 現在選択されているアビリティを取得
+		ABILITY_TYPE selectedAbility = abilities[_iCurrentSelection];
+
+		// アビリティが解放されているかチェック
+		if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(selectedAbility))
+		{
+			return;
+		}
+
 		_iSelectedAbility = _iCurrentSelection;	// 選択されたアビリティを保存
 		_bIsSelectComplete = true;				// 選択完了
 		_bIsScreenActive = false;				// 選択画面非表示
 
-		// 選択完了後は入力をリセットしておく
-		_trg &= ~PAD_INPUT_4;
+		im->ResetInput();
+	}
+
+	// デバッグ用の入力
+	if(InputManager::GetInstance()->IsTrigger(INPUT_ACTION::LEFT))
+	{
+		// デバッグ用の強制解放
+		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::INTERIOR_PLAYER);
+		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::BULLET_PLAYER);
 	}
 
 	// 点滅カウンターを進める

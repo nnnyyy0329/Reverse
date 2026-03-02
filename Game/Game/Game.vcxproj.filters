@@ -181,11 +181,23 @@
     <ClCompile Include="source\ModeScenario.cpp">
       <Filter>Mode\Scenario</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeLogo.cpp">
+      <Filter>Mode\Logo</Filter>
+    </ClCompile>
     <ClCompile Include="source\AbsorbAttack.cpp">
       <Filter>Attack\AbsorbAttack</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerAbsorbAttackSystem.cpp">
       <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\AbsorbAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PlayerUnlockManager.cpp">
+      <Filter>GameObject\CharaBase\Player\AbilityUnlocck</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EnemyObserver.cpp">
+      <Filter>GameObject\CharaBase\Enemy\Observer</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StateNormal.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -363,6 +375,18 @@
     <ClInclude Include="source\ModeScenario.h">
       <Filter>Mode\Scenario</Filter>
     </ClInclude>
+    <ClInclude Include="source\ModeLogo.h">
+      <Filter>Mode\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PlayerUnlockManager.h">
+      <Filter>GameObject\CharaBase\Player\AbilityUnlocck</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EnemyObserver.h">
+      <Filter>GameObject\CharaBase\Enemy\Observer</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateNormal.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -487,6 +511,15 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\PlayerBase\PlayerSystem\AbsorbAttack">
       <UniqueIdentifier>{2cba8d52-2bd9-4b51-83ea-6c48e8109eab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Player\AbilityUnlocck">
+      <UniqueIdentifier>{7ec35f5d-42cd-4084-8727-bb3727c1517e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Enemy\Observer">
+      <UniqueIdentifier>{397daf55-c625-4bf8-84f5-ca4526945ab1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Logo">
+      <UniqueIdentifier>{28138b02-a231-44be-9ae5-57353573190c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

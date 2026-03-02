@@ -8,6 +8,12 @@ namespace
 	constexpr float consumeShootEnergy = 10.0f;	// 発射に消費するエネルギー
 }
 
+// 入力キー定数
+namespace BulletPlayerConstants
+{
+	constexpr int SHOOT_INPUT_KEY = PAD_INPUT_6;	// 弾発射の入力キー
+}
+
 // 弾発射設定
 namespace bulletConfig
 {
@@ -16,8 +22,6 @@ namespace bulletConfig
 	constexpr float RADIUS = 10.0f;
 	constexpr float SPEED = 15.0f;
 	constexpr float LIFE_TIME = 120.0f;
-
-	constexpr bool SHOOT_INPUT_KEY = PAD_INPUT_6;
 }
 
 BulletPlayer::BulletPlayer()
@@ -87,13 +91,12 @@ void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 // 発射間隔更新
 void BulletPlayer::ProcessShoot()
 {
-	bool putKey = (_key & bulletConfig::SHOOT_INPUT_KEY) != 0;	// 発射キー
-	//bool aimKey = (_key & PAD_INPUT_5) != 0;	// エイムキー
+	//bool putKey = (_key & bulletConfig::SHOOT_INPUT_KEY) != 0;	// 発射キー
+	//ool aimKey = (_key & PAD_INPUT_5) != 0;	// エイムキー
+	auto im = InputManager::GetInstance();
+	bool putKey = im->IsHold(INPUT_ACTION::ATTACK);	// 発射キー
 
 	_cameraManager->StartAimMode();	// エイムモード開始
-
-	// エイムモードの制御
-	//ProcessAimMode(aimKey);
 
 	// キーが押された
 	if(putKey)
@@ -145,6 +148,13 @@ void BulletPlayer::ProcessShoot()
 	// キーが離された
 	else
 	{
+		// 発射構えアニメーションが完了していない状態でキーが離されたら
+		if(!_bIsReadyCompleted && _bIsReadyCompleted)
+		{
+			// 発射状態をリセット
+			_playerState.shootState = PLAYER_SHOOT_STATE::NONE;	// 発射状態リセット
+		}
+
 		// 発射カウントが0になったら
 		if(_shootIntervalTimer <= 0.0f)
 		{
@@ -166,7 +176,7 @@ void BulletPlayer::ProcessShoot()
 		if(_shootIntervalTimer <= 0.0f)
 		{
 			// 発射アニメーション完了後、キーが押されていたら
-			if(putKey)
+			if (putKey)
 			{
 				// 発射状態の設定
 				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;	// 発射状態リセット
@@ -378,6 +388,14 @@ AttackConstants BulletPlayer::GetAttackConstants()const
 	constants.interiorMaxComboCount = 0;
 
 	return constants;
+}
+
+// 弾プレイヤーの範囲攻撃設定
+AreaAttackConfig BulletPlayer::GetAreaAttackConfig()
+{
+	// 弾プレイヤーは範囲攻撃を行わない
+	AreaAttackConfig config;
+	return config;
 }
 
 // 弾プレイヤーの攻撃設定

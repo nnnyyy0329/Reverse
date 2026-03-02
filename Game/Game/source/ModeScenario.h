@@ -12,9 +12,9 @@ public:
 	void Hide();					// 即時非表示（フェードアウトは Skip() を使う）
 	void Skip();					// 即時スキップ（フェードアウトへ移行）
 	void Update();					// 毎フレーム更新（Process 内から呼ぶ）
-	virtual bool Render()override;// 描画（Render 内から呼ぶ）
+	virtual bool Render()override;  // 描画（Render 内から呼ぶ）
 
-	bool IsFinished() const;    // 完全に終了（表示完了して非表示になった）
+	bool IsFinished() const;        // 完全に終了（表示完了して非表示になった）
 	int  GetHandle() const { return _handle; }
 
 	// 表示配置など

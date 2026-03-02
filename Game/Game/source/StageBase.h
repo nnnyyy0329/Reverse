@@ -51,6 +51,9 @@ public:
 	const std::vector<TRIGGERPOS>& GetTriggerList() const { return _triggerList; }
 	const std::vector<MODELPOS>& GetMoveAreaList() const { return _moveAreaList; }
 
+	// 非const敵リスト
+	std::vector<std::shared_ptr<Enemy>>& GetEnemies() { return _stageEnemies; }
+
 	// ステージ切り替え
 	int GetNextStageNumFromTrigger(const std::string& triggerName);// トリガー名から次のステージ番号を取得
 
@@ -74,6 +77,8 @@ public:
 	VECTOR GetPlayerStartPos() { return _vPlayerStartPos; }
 	VECTOR GetPlayerStartRot() { return _vPlayerStartRot; }
 
+
+
 protected:
 	std::map<std::string, int> _mapModelHandle;// マップモデル用ハンドル(名前、モデルハンドル)
 	std::vector<std::shared_ptr<Enemy>> _stageEnemies;// ステージ内の敵リスト
@@ -90,7 +95,6 @@ protected:
 
 	// BGM関連
 	std::string _currentBGMName;// 再生中のBGM名
-
 	// プレイヤー初期位置
 	VECTOR _vPlayerStartPos;
 	VECTOR _vPlayerStartRot;

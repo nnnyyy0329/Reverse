@@ -92,7 +92,7 @@ StageBase::StageBase(int stageNum)
 				if (name == "S_Enemy00")
 				{
 					_stageEnemies.push_back(
-						EnemyFactory::CreateEnemy(EnemyType::MELEE, pos)
+						EnemyFactory::CreateEnemy(EnemyType::NORMAL, pos)
 					);
 					_totalEnemyCnt++;// 敵を追加したらカウントアップ
 				}
@@ -167,6 +167,10 @@ StageBase::StageBase(int stageNum)
 			}
 		);
 	}
+
+
+
+
 
 	// プレイヤー初期位置
 	{
@@ -267,11 +271,14 @@ StageBase::~StageBase()
 	StopStageBGM();
 }
 
+
 void StageBase::Process()
 {
 	// マップモデルの更新
 	{
 	}
+
+
 
 	// 敵の更新
 	{

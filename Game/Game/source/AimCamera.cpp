@@ -44,9 +44,14 @@ void AimCamera::Initialize()
 
 }
 
-void AimCamera::Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool isInput)
+void AimCamera::Process(InputManager* input, bool isInput)
 {
 	if(!_isAiming){ return; }
+
+	const AnalogState& analog = input->GetAnalog();
+	float analogMin = input->GetAnalogMin();
+	float rx = analog.rx;
+	float ry = analog.ry;
 
 	// ƒGƒCƒ€ƒJƒƒ‰‘€ì
 	if(isInput)
