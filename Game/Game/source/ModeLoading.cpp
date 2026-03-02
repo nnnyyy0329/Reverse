@@ -110,9 +110,10 @@ bool ModeLoading::Initialize()
 			rs->Register("Enemy_Area", "res/stage/json/Enemy_Area.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ステージ2のモデル
-			rs->Register("stage2_floor_1", "res/stage/stage2_floor_1.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("stage2_wall_1", "res/stage/stage2_wall_1.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("S_portal_0", "res/stage/S_portal_0.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_MERGED_BigB", "res/stage/json/SM_MERGED_BigB.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_walltypeZ", "res/stage/json/SM_walltypeZ.mv1", RESOURCE_TYPE::Model, 1.0f);
+			// ポータル
+			rs->Register("S_Portal_1to2", "res/stage/json/S_Portal_1to2.mv1", RESOURCE_TYPE::Model, 1.0f);
 		}
 
 		// 音関連

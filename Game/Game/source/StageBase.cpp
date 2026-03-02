@@ -17,10 +17,10 @@ StageBase::StageBase(int stageNum)
 	switch (_stageNum) 
 	{
 	case 1:
-		path = "res/stage/json/"; jsonFile = "stage_01.json"; jsonObjName = "res";
+		path = "res/stage/json/"; jsonFile = "stage_00.json"; jsonObjName = "res";
 		break;
 	case 2:
-		path = "res/stage/"; jsonFile = "try_stage_1.json"; jsonObjName = "res";
+		path = "res/stage/json/"; jsonFile = "stage_01.json"; jsonObjName = "res";
 		break;
 	}
 
@@ -89,24 +89,24 @@ StageBase::StageBase(int stageNum)
 			[&](const std::string& name, const VECTOR& pos, const VECTOR& rot, const VECTOR& scale)
 			{
 				// –¼‘O‚É‰‚¶‚Ä“G‚ğ¶¬
-				if (name == "S_Enemy00")
+				if (name == "S_EnemyNA")// œpœj‚È‚µ’Êí
 				{
 					_stageEnemies.push_back(
-						EnemyFactory::CreateEnemy(EnemyType::NORMAL, pos, false)
+						EnemyFactory::CreateEnemy(EnemyType::NORMAL, pos, rot, false)
 					);
 					_totalEnemyCnt++;// “G‚ğ’Ç‰Á‚µ‚½‚çƒJƒEƒ“ƒgƒAƒbƒv
 				}
-				else if (name == "S_MarkerB")
+				else if (name == "S_EnemyNB")// œpœj‚ ‚è’Êí
 				{
 					_stageEnemies.push_back(
-						EnemyFactory::CreateEnemy(EnemyType::RANGED, pos)
+						EnemyFactory::CreateEnemy(EnemyType::NORMAL, pos, rot)
 					);
 					_totalEnemyCnt++;
 				}
-				else if (name == "S_MarkerC")
+				else if (name == "S_EnemyS")// ‰“‹——£
 				{
 					_stageEnemies.push_back(
-						EnemyFactory::CreateEnemy(EnemyType::TANK, pos)
+						EnemyFactory::CreateEnemy(EnemyType::RANGED, pos, rot)
 					);
 					_totalEnemyCnt++;
 				}

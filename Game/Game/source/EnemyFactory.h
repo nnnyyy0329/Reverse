@@ -54,7 +54,7 @@ class EnemyFactory
 {
 public:
 	// “G‚Ìí—ŞAÀ•W‚ğw’è‚µ‚Ä“G‚ğì¬‚·‚é
-	static std::shared_ptr<Enemy> CreateEnemy(EnemyType type, VECTOR pos, bool bTransToWander = true) 
+	static std::shared_ptr<Enemy> CreateEnemy(EnemyType type, VECTOR pos, VECTOR rot, bool bTransToWander = true) 
 	{
 		auto enemy = std::make_shared<Enemy>();
 
@@ -177,6 +177,9 @@ public:
 			enemy->ChangeState(std::make_unique<Tank::Idle>());
 			break;
 		}
+
+		VECTOR vDir = VGet(sinf(rot.y), 0.0f, cosf(rot.y));
+		enemy->SetDir(vDir);
 
 		return enemy;// ì¬‚µ‚½“G‚ğ•Ô‚·
 	}
