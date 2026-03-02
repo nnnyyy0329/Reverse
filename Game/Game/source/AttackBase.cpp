@@ -3,9 +3,14 @@
 #include "AttackBase.h"
 #include "CharaBase.h"
 
-namespace
+namespace AttackMoveConstants
 {
 	constexpr float ATTACK_MOVE_DECAY_RATE = 0.9f; // 攻撃中の移動減衰率
+}
+
+namespace AttackDirAdjustConstants
+{
+
 }
 
 AttackBase::AttackBase()
@@ -36,6 +41,10 @@ AttackBase::AttackBase()
     // コリジョンタイプ
     _eColType = COLLISION_TYPE::NONE;
     _eAttackState = ATTACK_STATE::INACTIVE;
+
+	// 向き調整の初期化
+	_dirAdjustSpeed = 0.0f;
+	_canDirAdjust = false;
 }
 
 AttackBase::~AttackBase()
@@ -215,6 +224,39 @@ void AttackBase::ProcessAttackMovement()
         // モデルの位置を更新
         MV1SetPosition(animManager->GetModelHandle(), newPos);
     }
+}
+
+// 向き調整更新
+void AttackBase::UpdateAttackDirAdjust()
+{
+	if(!_canDirAdjust){ return; }   // 向き調整が可能な場合のみ処理
+
+	auto owner = GetOwner();
+	if(!owner){ return; }
+
+	// 入力マネージャーーから移動入力を取得
+	auto im = InputManager::GetInstance();
+	const auto& analog = im->GetAnalog();
+
+    // 入力があるなら向き調整
+    if(abs(analog.lx)>im->GetAnalogMin() || abs(analog.ly)>im->GetAnalogMin())
+    {
+		// カメラ基準で入力方向を計算
+        VECTOR inputDir = CalculateInputDir(analog);
+
+        // 滑らかに向き調整
+		VECTOR currentDir = owner->GetDir();
+        VECTOR newDir = VNorm(VAdd(currentDir, VScale(inputDir, _dirAdjustSpeed)));
+
+		// キャラの向きを更新
+		owner->SetDir(newDir);
+    }
+}
+
+// 入力方向計算関数
+VECTOR AttackBase::CalculateInputDir(const AnalogState& analog)
+{
+
 }
 
 // カプセル攻撃データ設定

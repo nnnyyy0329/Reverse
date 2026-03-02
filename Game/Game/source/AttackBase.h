@@ -76,6 +76,9 @@ public:
 	void UpdateAttackMove();				// 移動更新
 	virtual void ProcessAttackMovement();	// 移動処理
 
+	// 攻撃の向き調整処理
+	void UpdateAttackDirAdjust();	// 向き調整更新
+
 	// 当たったキャラ管理
 	void AddHitCharas(std::shared_ptr<CharaBase> chara);		// 当たったキャラを追加
 	bool HasHitCharas(std::shared_ptr<CharaBase> chara)const;	// 当たったキャラを持っているかチェック
@@ -126,6 +129,13 @@ public:
 		bool hit		// ヒットフラグ
 	);
 
+	// 向き調整データ設定
+	void SetDirAdjustData
+	(
+		float adjustSpeed, 
+		bool canAdjust
+	);
+
 	// ゲッターセッター
 	COLLISION_TYPE GetCollisionType() const { return _eColType; }			// コリジョンタイプ取得
 	ATTACK_COLLISION GetAttackCollision() const { return _stcAttackCol; }	// 攻撃コリジョン情報取得
@@ -151,8 +161,15 @@ protected:
 	ATTACK_COLLISION _stcAttackCol;		// 攻撃コリジョン情報
 	AttackMovement _stcAttackMovement;	// 攻撃中の移動情報
 
+	// 攻撃時の向き調整関係
+	float _dirAdjustSpeed;	// 向き調整速度
+	bool _canDirAdjust;		// 向き調整可能フラグ
+
 private:
 	std::vector<std::shared_ptr<CharaBase>> _hitCharas;	// 当たったキャラを管理
+
+	// 入力方向計算関数
+	VECTOR CalculateInputDir(const AnalogState& analog);
 
 };
 
