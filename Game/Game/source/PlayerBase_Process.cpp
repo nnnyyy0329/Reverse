@@ -32,6 +32,7 @@ void PlayerBase::ProcessMovePlayer()
 	if(IsDodging()){ return; }		// 回避中は移動入力を受け付けない
 	if(IsHitStop()){ return; }		// 被弾中は移動入力を受け付けない
 	if(IsDeath()){ return; }		// 死亡中は移動入力を受け付けない
+	if(_playerState.IsStateAbsorbing()){ return; }	// 吸収攻撃中は移動入力を受け付けない
 
 	bool isAiming = _cameraManager->IsAimMode();	// エイムモード中かどうか
 	bool isShooting = IsShooting();					// 発射中かどうか
@@ -39,11 +40,6 @@ void PlayerBase::ProcessMovePlayer()
 
 	// 移動処理
 	{
-		//if(_key & PAD_INPUT_DOWN) { _vMove.z = 1; }
-		//if(_key & PAD_INPUT_UP) { _vMove.z = -1; }
-		//if(_key & PAD_INPUT_LEFT) { _vMove.x = 1; }
-		//if(_key & PAD_INPUT_RIGHT) { _vMove.x = -1; }
-		
 		// しゃがみ中かどうかで移動速度を変える
 		if(_bIsCrouching)
 		{
@@ -74,8 +70,9 @@ void PlayerBase::ProcessInputMove()
 {
 	auto im = InputManager::GetInstance();
 
-	// ダッシュ入力があれば移動速度を上げる
-	if(im->IsTrigger(INPUT_ACTION::DASH))
+	// ダッシュ入力があればフラグを変える
+	if(im->IsTrigger(INPUT_ACTION::DASH) &&
+		im->IsTrigger(INPUT_ACTION::SELECT))
 	{
 		_bIsDashInput = !_bIsDashInput;	// ダッシュ入力フラグをトグルする
 	}
@@ -85,10 +82,10 @@ void PlayerBase::ProcessInputMove()
 
 	float digitalX = 0.0f;
 	float digitalY = 0.0f;
-	if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
-	if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
-	if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
-	if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }
+	//if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
+	//if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
+	//if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
+	//if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }
 	
 	// アナログ入力による移動、なければデジタル入力
 	float inputX = (abs(analog.lx) > analogMin) ? analog.lx : digitalX;
@@ -240,13 +237,25 @@ void PlayerBase::ProcessPlayAnimation()
 	if(animManager == nullptr){ return; }
 
 	const char* animName = GetCurrentAnimationName();	// 現在のステータスに応じたアニメーション名を取得
-	float blendTime = 5.0f;								// ブレンド時間
+	float blendTime = 2.5f;								// ブレンド時間
 	int loopCnt = GetLoopCount();						// ループカウント
 	if(animName != nullptr)
 	{
 		// アニメーションの切り替え
 		animManager->ChangeAnimationByName(animName, blendTime, loopCnt);
 	}
+}
+
+// 通常モーションに戻す処理
+void PlayerBase::ProcessReturnNormalMotion()
+{
+	// 攻撃状態と戦闘状態を通常に戻す
+	_playerState.StateReset();
+
+	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 移動状態は待機にする
+
+	// アニメーション再生処理
+	ProcessPlayAnimation();
 }
 
 // コリジョン位置更新処理
@@ -285,7 +294,9 @@ void PlayerBase::ProcessHit()
 	{
 		PlayerState oldStatus = _playerState; // 古いステータスを保存
 
-		_playerState.combatState = PLAYER_COMBAT_STATE::NONE;		// 戦闘状態を通常に変更
+		// ステータスを通常にリセット
+		_playerState.StateReset();
+
 		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// ステータスを待機に変更
 
 		_fHitSpeed = 0.0f;											// 吹き飛び速度を0にする
@@ -335,7 +346,7 @@ void PlayerBase::ProcessDebug()
 
 	if (im->IsTrigger(INPUT_ACTION::DEBUG1))
 	{
-		EnergyManager::GetInstance()->ConsumeEnergy(10.0f);
+		EnergyManager::GetInstance()->ConsumeEnergy(50.0f);
 	}
 
 	if (im->IsTrigger(INPUT_ACTION::DEBUG2))
@@ -452,4 +463,17 @@ bool PlayerBase::HasStateChanged()const
 			_oldPlayerState.shootState    != _playerState.shootState	||	// 発射状態
 			_oldPlayerState.absorbState	  != _playerState.absorbState	||	// 吸収攻撃状態
 			_oldPlayerState.combatState   != _playerState.combatState);		// 戦闘状態
+}
+
+// アニメーションが終了したか
+bool PlayerBase::IsAnimationFinished()
+{
+	// アニメーションマネージャーの取得
+	AnimManager* animManager = GetAnimManager();
+
+	if(animManager)
+	{
+		// 現在のアニメーションが終了しているか
+		return animManager->IsAnimationFinished();
+	}
 }

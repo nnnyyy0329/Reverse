@@ -8,12 +8,6 @@ namespace
 	constexpr float consumeShootEnergy = 10.0f;	// 発射に消費するエネルギー
 }
 
-// 入力キー定数
-namespace BulletPlayerConstants
-{
-	constexpr int SHOOT_INPUT_KEY = PAD_INPUT_6;	// 弾発射の入力キー
-}
-
 // 弾発射設定
 namespace bulletConfig
 {
@@ -91,15 +85,21 @@ void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 // 発射間隔更新
 void BulletPlayer::ProcessShoot()
 {
-	//bool putKey = (_key & bulletConfig::SHOOT_INPUT_KEY) != 0;	// 発射キー
-	//ool aimKey = (_key & PAD_INPUT_5) != 0;	// エイムキー
-	auto im = InputManager::GetInstance();
-	bool putKey = im->IsHold(INPUT_ACTION::ATTACK);	// 発射キー
+	// エイムモード開始
+	_cameraManager->StartAimMode();
 
-	_cameraManager->StartAimMode();	// エイムモード開始
+	// 弾発射の入力処理
+	ShootInput();
 
+	// 前フレームのキー状態を保存
+	_bWasShootKeyPressed = IsShootInput();
+}
+
+// 弾発射の入力処理
+void BulletPlayer::ShootInput()
+{
 	// キーが押された
-	if(putKey)
+	if(IsShootInput())
 	{
 		// 発射キーが新しく押され、発射カウントが残っていないなら
 		if(!_bWasShootKeyPressed && _shootIntervalTimer <= 0.0f)
@@ -115,11 +115,9 @@ void BulletPlayer::ProcessShoot()
 		else if(_playerState.shootState == PLAYER_SHOOT_STATE::SHOOT_READY && !_bIsReadyCompleted)
 		{
 			// アニメーションが完了したかチェック
-			AnimManager* animManager = GetAnimManager();
-			if(animManager->IsAnimationFinished())
-			{
-				_bIsReadyCompleted = true; // 構えアニメーション完了フラグを立てる
-			}
+			if(!IsAnimationFinished()){ return; }
+
+			_bIsReadyCompleted = true; // 構えアニメーション完了フラグを立てる
 		}
 		// 発射構え状態が完了している、または既に構え完了状態で継続押下していて、発射カウントが0なら、
 		else if((_bIsReadyCompleted || _bWasShootKeyPressed) && _shootIntervalTimer <= 0.0f)
@@ -176,7 +174,7 @@ void BulletPlayer::ProcessShoot()
 		if(_shootIntervalTimer <= 0.0f)
 		{
 			// 発射アニメーション完了後、キーが押されていたら
-			if (putKey)
+			if(IsShootInput())
 			{
 				// 発射状態の設定
 				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;	// 発射状態リセット
@@ -188,8 +186,7 @@ void BulletPlayer::ProcessShoot()
 				PlayerState oldState = _playerState;
 
 				// 状態リセット
-				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
-				_playerState.movementState = PLAYER_MOVEMENT_STATE::NONE;
+				_playerState.StateReset();
 
 				_bIsReadyCompleted = false; // 構えアニメーション完了フラグをリセット
 
@@ -200,9 +197,6 @@ void BulletPlayer::ProcessShoot()
 			}
 		}
 	}
-
-	// 前フレームのキー状態を保存
-	_bWasShootKeyPressed = putKey;
 }
 
 // 弾の発射
@@ -276,6 +270,15 @@ void BulletPlayer::ProcessAimMode(bool aimKey)
 			_cameraManager->EndAimMode();	// エイムモード終了
 		}
 	}
+}
+
+// 弾発射入力チェック
+bool BulletPlayer::IsShootInput()const
+{
+	auto inputManager = InputManager::GetInstance();
+
+	// 攻撃ボタンが押されたか
+	return (inputManager->IsHold(INPUT_ACTION::ATTACK));
 }
 
 // オフセット位置をワールド座標に変換

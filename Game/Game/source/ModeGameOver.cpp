@@ -86,19 +86,19 @@ bool ModeGameOver::Process()
 	// これより下のモードの処理をスキップ
 	ModeServer::GetInstance()->SkipProcessUnderLayer();
 
-	//int trg = ApplicationMain::GetInstance()->GetTrg();
+	auto inputManager = InputManager::GetInstance();
 
-	//if (trg & PAD_INPUT_10) {// spaceキー
-	//	// 現在のステージ番号からリスタート
-	//	ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
-	//	if (modeGame != nullptr)
-	//	{
-	//		modeGame->RestartCurrentStage();
-	//	}
+	if(inputManager->IsTrigger(INPUT_ACTION::ABILITY)) {// zキー Aボタン
+		// 現在のステージ番号からリスタート
+		ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
+		if (modeGame != nullptr)
+		{
+			modeGame->RestartCurrentStage();
+		}
 
-	//	// このモードを削除
-	//	ModeServer::GetInstance()->Del(this);
-	//}
+		// このモードを削除
+		ModeServer::GetInstance()->Del(this);
+	}
 
 	return true;
 }

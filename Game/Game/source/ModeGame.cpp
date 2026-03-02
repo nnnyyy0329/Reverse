@@ -23,7 +23,9 @@
 
 #include "DodgeSystem.h"
 //#include "ShieldBase.h"
+
 #include "AbilitySelectScreen.h"
+#include "AbilitySelectManager.h"
 
 #include "PlayerManager.h"
 #include "SurfacePlayer.h"
@@ -127,10 +129,13 @@ bool ModeGame::Initialize()
 		enemy->SetStage(_stage);
 	}
 
-	// 能力選択画面初期化
+	// 能力選択関連クラス初期化
 	{
 		_abilitySelectScreen = std::make_shared<AbilitySelectScreen>();
 		_abilitySelectScreen->Initialize();
+
+		_abilitySelectManager = std::make_shared<AbilitySelectManager>();
+		_abilitySelectManager->Initialize();
 	}
 
 	// UI初期化
@@ -195,12 +200,7 @@ bool ModeGame::Process()
 	}
 
 	// 能力選択画面のデバッグ関数
-	if(_abilitySelectScreen && _abilitySelectScreen->GetIsSelectComplete())
-	{
-		ABILITY_TYPE selectedAbility = _abilitySelectScreen->GetSelectedAbility();
-		_playerManager->SwitchPlayerByAbility(selectedAbility);
-		_abilitySelectScreen->ResetSelection(); // 選択状態をリセット
-	}
+	
 
 	// startでメニューを開く
 	if (input->IsTrigger(INPUT_ACTION::MENU))
@@ -233,11 +233,17 @@ bool ModeGame::Process()
 		_cameraManager->SetGameCamera(_gameCamera);
 		_cameraManager->SetDebugCamera(_debugCamera);
 		_cameraManager->SetAimCamera(_aimCamera);
+
 		_playerManager->SetCameraManager(_cameraManager);				// カメラマネージャーを設定
 		_playerManager->SetAbilitySelectScreen(_abilitySelectScreen);	// 能力選択画面を設定
+
 		_playerLifeBarUI->SetPlayerManager(_playerManager);
+
 		_abilitySelectScreen->SetPlayerManager(_playerManager);
 		_abilitySelectScreen->SetPlayerUnlockManager(_playerUnlockManager);
+
+		_abilitySelectManager->SetAbilitySelectScreen(_abilitySelectScreen);
+		_abilitySelectManager->SetPlayerManager(_playerManager);
 
 		// 弾丸プレイヤーにカメラマネージャーを設定
 		auto bulletPlayer = std::dynamic_pointer_cast<BulletPlayer>(_playerManager->GetPlayerByType(PLAYER_TYPE::BULLET));
@@ -255,6 +261,7 @@ bool ModeGame::Process()
 		_playerLifeBarUI->Process();
 		_staminaUI->Process();
 		_abilitySelectScreen->Process();
+		_abilitySelectManager->Process();
 		//_shieldBase->Process();
 
 		AttackManager::GetInstance()->Process();

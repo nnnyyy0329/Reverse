@@ -31,6 +31,7 @@ class StaminaUI;
 //class Item;
 
 class AbilitySelectScreen;
+class AbilitySelectManager;
 
 class PlayerAbsorbAttackSystem;
 
@@ -76,21 +77,22 @@ public:
 protected:
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される
-	std::shared_ptr<StageBase>			_stage;					// ステージ
-	std::shared_ptr<GameCamera>			_gameCamera;			// ゲームカメラ
-	std::shared_ptr<DebugCamera>		_debugCamera;			// デバッグカメラ
-	std::shared_ptr<AimCamera>			_aimCamera;				// エイムカメラ
+	std::shared_ptr<StageBase>				_stage;					// ステージ
+	std::shared_ptr<GameCamera>				_gameCamera;			// ゲームカメラ
+	std::shared_ptr<DebugCamera>			_debugCamera;			// デバッグカメラ
+	std::shared_ptr<AimCamera>				_aimCamera;				// エイムカメラ
 	///std::shared_ptr<ShieldBase>			_shieldBase;			// シールドベース
-	std::shared_ptr<DodgeSystem>		_dodgeSystem;			// 回避システム
-	std::shared_ptr<AbilitySelectScreen>_abilitySelectScreen;	// 能力選択画面
-	//std::shared_ptr<Item>               _item;                  //　アイテム
-	std::shared_ptr<PlayerUnlockManager>_playerUnlockManager;	// プレイヤーアンロックマネージャー
+	std::shared_ptr<DodgeSystem>			_dodgeSystem;			// 回避システム
+	std::shared_ptr<AbilitySelectScreen>	_abilitySelectScreen;	// 能力選択画面
+	std::shared_ptr<AbilitySelectManager>	_abilitySelectManager;	// 能力選択マネージャー
+	//std::shared_ptr<Item>					_item;                  //　アイテム
+	std::shared_ptr<PlayerUnlockManager>	_playerUnlockManager;	// プレイヤーアンロックマネージャー
 
 	// 管理関連
-	std::shared_ptr<PlayerManager>		_playerManager;			// プレイヤーマネージャー
-	std::shared_ptr<CameraManager>		_cameraManager;			// カメラマネージャー
-	std::shared_ptr<BulletManager>		_bulletManager;			// 弾マネージャー
-	std::shared_ptr<LightManager>		_lightManager;			// ライトマネージャー 
+	std::shared_ptr<PlayerManager>	_playerManager;			// プレイヤーマネージャー
+	std::shared_ptr<CameraManager>	_cameraManager;			// カメラマネージャー
+	std::shared_ptr<BulletManager>	_bulletManager;			// 弾マネージャー
+	std::shared_ptr<LightManager>	_lightManager;			// ライトマネージャー 
 
 	// UI関連
 	std::shared_ptr<EnergyUI>			_energyUI;				// エネルギーUI

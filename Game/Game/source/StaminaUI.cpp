@@ -48,10 +48,10 @@ bool StaminaUI::Render()
 	SetUseZBuffer3D(FALSE);
 
 	// スタミナフレーム表示関数
-	StaminaFrameRender();
+	//StaminaFrameRender();
 
 	// スタミナゲージ表示関数
-	GaugeRatioCalculation();
+	//GaugeRatioCalculation();
 
 	// Zバッファ有効化
 	SetUseZBuffer3D(TRUE);

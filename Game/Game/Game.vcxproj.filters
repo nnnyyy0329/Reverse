@@ -199,6 +199,9 @@
     <ClCompile Include="source\StateNormal.cpp">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClCompile>
+    <ClCompile Include="source\AbilitySelectManager.cpp">
+      <Filter>Ability\Select</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -386,6 +389,9 @@
     </ClInclude>
     <ClInclude Include="source\StateNormal.h">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AbilitySelectManager.h">
+      <Filter>Ability\Select</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
