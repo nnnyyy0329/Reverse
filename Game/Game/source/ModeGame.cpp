@@ -458,6 +458,21 @@ bool ModeGame::Render()
 		_cameraManager->SwitchCameraDebugRender();
 	}
 	
+	// 敵残数表示
+	{
+		if(_stage)
+		{
+			const int current = _stage->GetCurrentEnemyCnt();
+			const int total = _stage->GetTotalEnemyCnt();
+
+			SetFontSize(24);
+			DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
+			SetFontSize(16);
+		}
+	}
+
+
+
 	// コリジョンの描画
 	if (_bViewCollision)
 	{
