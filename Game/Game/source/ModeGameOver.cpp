@@ -114,7 +114,7 @@ bool ModeGameOver::Render()
 
 
 	SetFontSize(48);
-	DrawFormatString(720, 260, GetColor(255, 0, 0), "===== ‚¨‘O‚Ì•‰‚¯‚— =====");
+	DrawFormatString(720, 260, GetColor(255, 0, 0), "===== GAME OVER =====");
 	SetFontSize(16);
 	// ƒƒjƒ…[
 	{
