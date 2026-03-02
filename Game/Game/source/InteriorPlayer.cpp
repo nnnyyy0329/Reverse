@@ -2,17 +2,29 @@
 
 #include "InteriorPlayer.h"
 
-namespace
+// 基礎ステータス定数 
+namespace BaseConstants
 {
 	// 基礎ステータス定数
 	constexpr float GRAVITY = -0.6f;		// 重力加速度
 	constexpr float DEFAULT_LIFE = 100.0f;	// デフォルト体力
 	constexpr float MAX_LIFE = 100.0f;		// 最大体力
+}
 
+// 表示用定数
+namespace DrawConfig
+{
 	// 表示用定数
 	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
 	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
 	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
+}
+
+// 攻撃判定のパラメーター
+namespace InteriorAttackConstants
+{
+	constexpr float ATTACK_OFFSET_SCALE = 100.0f;	// 攻撃判定オフセット倍率
+	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;		// 裏プレイヤー用コンボカウント
 }
 
 InteriorPlayer::InteriorPlayer()
@@ -131,7 +143,7 @@ PlayerAnimations InteriorPlayer::GetPlayerAnimation()
 	animation.combat.transform		= "";
 	animation.combat.transCancel	= "player_cancell_00";
 	animation.combat.guard			= "";
-	animation.combat.hit			= "player_damage_00";
+	animation.combat.hit			= "player_damage_01";
 	animation.combat.dodge			= "player_dodge_01";
 	animation.combat.death			= "player_dead_01";
 
@@ -156,8 +168,8 @@ AttackConstants InteriorPlayer::GetAttackConstants()const
 	// InteriorPlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.attackOffsetScale = 80.0f;	// 攻撃判定オフセット倍率	
-	constants.interiorMaxComboCount = 5;	// 裏プレイヤー用コンボカウント
+	constants.attackOffsetScale = InteriorAttackConstants::ATTACK_OFFSET_SCALE;				// 攻撃判定オフセット倍率	
+	constants.interiorMaxComboCount = InteriorAttackConstants::INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
 
 	return constants;
 }
@@ -178,9 +190,6 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		3.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
-		"InteriorPlayerAttack5",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
-		"iPlayerAttack",			// サウンド名
 	};
 
 	// 第2攻撃
@@ -196,9 +205,6 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		0.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
-		"InteriorPlayerAttack5",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
-		"iPlayerAttack",			// サウンド名
 	};
 
 	// 第3攻撃
@@ -214,9 +220,6 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		5.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
-		"InteriorPlayerAttack5",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
-		"iPlayerAttack",			// サウンド名
 	};
 
 	// 第4攻撃
@@ -232,9 +235,6 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		ATTACK_STATE::ACTIVE,		// 攻撃状態
 		5.0f,						// 攻撃中の移動速度
 		false,						// 吹き飛ばし攻撃かどうか
-		"InteriorPlayerAttack5",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
-		"iPlayerAttack",			// サウンド名
 	};
 
 	// 第5攻撃
@@ -250,10 +250,90 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		ATTACK_STATE::RECOVERY,		// 攻撃状態
 		5.0f,						// 攻撃中の移動速度
 		true,						// 吹き飛ばし攻撃かどうか
-		"InteriorPlayerAttack5",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},		// エフェクト位置オフセット
-		"iPlayerAttack",			// サウンド名
 	};
+}
+
+// 攻撃方向補正の情報設定
+void InteriorPlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[5])
+{
+	// 第1攻撃
+	configs[0] = 
+	{
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第2攻撃
+	configs[1] =
+	{
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第4攻撃
+	configs[3] =
+	{
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第5攻撃
+	configs[4] =
+	{
+		true,	// 向き調整が可能かどうか
+	};
+}
+
+// 演出設定
+AttackEffectConfig InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig configs[5])
+{
+	// 裏プレイヤー用の演出設定
+	AttackEffectConfig config;
+
+	// 第1攻撃
+	configs[0] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	// 第2攻撃
+	configs[1] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	// 第4攻撃
+	configs[3] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	// 第5攻撃
+	configs[4] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	return config;
 }
 
 // 範囲攻撃の情報設定
@@ -270,9 +350,6 @@ AreaAttackConfig InteriorPlayer::GetAreaAttackConfig()
 	config.recovery = 30.0f;						// 硬直フレーム
 	config.damage = 40.0f;							// ダメージ
 	config.isHit = false;							// ヒットフラグ
-	config.effectName = "";							// エフェクト名
-	config.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// エフェクト位置オフセット
-	config.soundName = "";							// サウンド名
 
 	return config;
 }

@@ -76,7 +76,7 @@ void PlayerBase::ProcessDodge()
 		ProcessStartDodge();
 
 		// 回避開始時にスタミナを消費
-		StaminaManager::GetInstance()->ConsumeStamina(DODGE_STAMINA_COST);
+		//StaminaManager::GetInstance()->ConsumeStamina(DODGE_STAMINA_COST);
 	}
 }
 

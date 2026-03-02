@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\AbilitySelectManager.cpp" />
     <ClCompile Include="source\AbilitySelectScreen.cpp" />
     <ClCompile Include="source\AbsorbAttack.cpp" />
     <ClCompile Include="source\AimCamera.cpp" />
@@ -250,6 +251,7 @@
     <ClCompile Include="source\SurfacePlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\AbilitySelectManager.h" />
     <ClInclude Include="source\AbilitySelectScreen.h" />
     <ClInclude Include="source\AbsorbAttack.h" />
     <ClInclude Include="source\AimCamera.h" />

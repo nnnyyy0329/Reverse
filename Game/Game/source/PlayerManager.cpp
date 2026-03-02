@@ -57,44 +57,20 @@ bool PlayerManager::Terminate()
 bool PlayerManager::Process()
 {
 	// 変身処理
-	ProcessTransform();
+	UpdateTransform();
 
 	// 変身解除処理
-	ProcessTransformCancel();
+	UpdateTransformCancel();
 
 	// 能力選択画面がアクティブかチェック
 	bool isAbilityScreenActive = false;
-	if(_abilitySelectScreen)
-	{
-		isAbilityScreenActive = _abilitySelectScreen->GetIsScreenActive();
-	}
+	CheckAbilityScreenActive(isAbilityScreenActive);
 
-	// 変身中でなければプレイヤー切り替え処理
-	if(!_bIsTransforming && !isAbilityScreenActive)
-	{
-		// エネルギーによるプレイヤー切り替え
-		SwitchPlayerByEnergy();
-	}
+	// 変身中でなければ自動切り替えなどの処理
+	ProcessAutoSwitch(isAbilityScreenActive);
 
 	// アクティブプレイヤーの処理
-	if(_activePlayer)
-	{
-		auto im = InputManager::GetInstance();
-
-		// 変身中、または変身解除中、またはアビリティ選択画面がアクティブな場合
-		if(_bIsTransforming || _bIsTransformCanceling || isAbilityScreenActive)
-		{
-			// 入力を無効化
-		}
-		// それ以外の場合
-		else
-		{
-			// 入力をアクティブプレイヤーに渡す
-		}
-
-		_activePlayer->SetCameraManager(_cameraManager);
-		_activePlayer->Process();
-	}
+	ProcessActivePlayer(isAbilityScreenActive);
 
 	return true;
 }
@@ -105,6 +81,34 @@ bool PlayerManager::Render()
 	if(_activePlayer)
 	{
 		_activePlayer->Render();
+	}
+
+	return true;
+}
+
+// デバッグ処理
+bool PlayerManager::DebugProcess()
+{
+
+
+	return true;
+}
+
+// デバッグ描画
+bool PlayerManager::DebugRender()
+{
+	// 変身時間の描画
+	if(_bIsTransforming)
+	{
+		std::string debugText = "Transforming: " + std::to_string(_fTransformTime) + " / " + std::to_string(_fTransformMaxTime);
+		DrawString(10, 310, debugText.c_str(), GetColor(255, 255, 255));
+	}
+
+	// 変身解除時間の描画
+	if(_bIsTransformCanceling)
+	{
+		std::string debugText = "Transform Canceling: " + std::to_string(_fTransformCancelTime) + " / " + std::to_string(_fTransformCancelMaxTime);
+		DrawString(10, 330, debugText.c_str(), GetColor(255, 255, 255));
 	}
 
 	return true;
@@ -176,7 +180,7 @@ void PlayerManager:: SwitchPlayerByEnergy()
 	if(_eActivePlayerType != PLAYER_TYPE::SURFACE && !energyManager->CanKeepSwitchPlayer())
 	{
 		// 強制的に表プレイヤーに切り替え
-		//SwitchPlayer(PLAYER_TYPE::SURFACE);
+		SwitchPlayer(PLAYER_TYPE::SURFACE);
 
 		// 変身中なら変身を中断して解除開始
 		if(_bIsTransforming)
@@ -211,13 +215,13 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 	if(targetType == PLAYER_TYPE::SURFACE)
 	{
 		// 即時切り替え
-		//SwitchPlayerImmediate(targetType);
+		SwitchPlayerImmediate(targetType);
 
 		return;
 	}
 
-	_eTransformTarget = targetType;
-	_fTransformTime = 0.0f;
+	_eTransformTarget = targetType;	// 変身先のプレイヤーをセット
+	_fTransformTime = 0.0f;			// 変身時間リセット
 
 	// 変身ステートの適応
 	if(_activePlayer)
@@ -225,60 +229,68 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 		_activePlayer->SetCombatState(PLAYER_COMBAT_STATE::TRANSFORM);
 	}
 
-	// アニメーションマネージャーの取得
-	auto* animManager = _activePlayer->GetAnimManager();
-	if(!animManager){ return; }	// アニメーションマネージャーがないならスキップ
+	// 変身アニメーション再生
+	PlayerAnimations playerAnim = _activePlayer->GetPlayerAnimation();	// プレイヤーのアニメーションデータを取得
+	PlayTransConnectionAnim(playerAnim.combat.transform);				// 再生処理
 
-	// 変身アニメーションの再生
-	PlayerAnimations playerAnims = _activePlayer->GetPlayerAnimation();	// プレイヤーのアニメーションデータを取得
-	const char* transformAnimName = playerAnims.combat.transform;		// 変身アニメーション名を取得
-	if(transformAnimName != nullptr)
-	{
-		// 変身アニメーションの再生
-		animManager->ChangeAnimationByName(transformAnimName, 0.0f, 1);	// アニメーション変更
-		_fTransformMaxTime = animManager->GetCurrentAnimTotalTime();	// 変身アニメーションの再生時間を変身時間に設定
-	}
-
-	_bIsTransforming = true;
+	_bIsTransforming = true;	// 変身フラグ有効
 }
 
 // 即時変身
 void PlayerManager::SwitchPlayerImmediate(PLAYER_TYPE targetType)
 {
 	auto player = _players.find(targetType);
-	if(player == _players.end()){ return; }
+	if(player == _players.end()){ return; }	// プレイヤーが存在しないなら
+	
+	if(_eActivePlayerType == targetType){ return; }	// 現在のタイプと次のタイプが一致しないならスキップ
 
-	if(_eActivePlayerType == targetType){ return; }
-
-	PlayerBase* oldPlayer = _activePlayer;
-	PlayerBase* newPlayer = player->second.get();
+	PlayerBase* oldPlayer = _activePlayer;			// 古いプレイヤー
+	PlayerBase* newPlayer = player->second.get();	// 新しいプレイヤー
 
 	// プレイヤーを切り替え
-	_activePlayer = newPlayer;
-	_activePlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);
-	_eActivePlayerType = targetType;
+	_activePlayer = newPlayer;									// 有効プレイヤーを新しいプレイヤーにする
+	_activePlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);	// 特殊状態をリセット
+	_eActivePlayerType = targetType;							// アクティブプレイヤータイプを変更
 
 	// 状態の引き継ぎ
 	if(_bEnableStateTransfer && oldPlayer && newPlayer)
 	{
+		// 位置と状態の引き継ぎ
 		TransferPlayerState(oldPlayer, newPlayer);
 	}
 }
 
 // 変身処理
-void PlayerManager::ProcessTransform()
+void PlayerManager::UpdateTransform()
 {
 	if(!_bIsTransforming){ return; }	// 変身中でなければ何もしない
 
-	_fTransformTime += 1.0f;	// 変身時間を更新
+	// 変身タイマー更新処理
+	UpdateTransformTime();
+
+	// 変身時間による変身終了処理
+	TransformFinishByTime();
 
 	// 変身時間が最大を超えたら変身終了
-	if(_fTransformTime >= _fTransformMaxTime && _eActivePlayerType != _eTransformTarget)
+	if(_fTransformTime >= _fTransformMaxTime)
+	{
+		// 変身終了
+		EndTransform();
+	}
+}
+
+// 変身時間による変身終了処理
+void PlayerManager::TransformFinishByTime()
+{
+	// 変身時間が最大を超えいて、現在のタイプと変身先のタイプが不一致なら変身終了
+	if((_fTransformTime >= _fTransformMaxTime) && (_eActivePlayerType != _eTransformTarget))
 	{
 		// プレイヤー切り替え
 		PlayerBase* oldPlayer = _activePlayer;				// 古いプレイヤー
 		auto newPlayer = _players.find(_eTransformTarget);	// 新しいプレイヤー
-		if(newPlayer!= _players.end())
+
+		// 存在チェック
+		if(newPlayer != _players.end())
 		{
 			_activePlayer = newPlayer->second.get();	// 新しいアクティブプレイヤーに設定
 			_eActivePlayerType = _eTransformTarget;		// アクティブプレイヤータイプを更新
@@ -290,13 +302,6 @@ void PlayerManager::ProcessTransform()
 				TransferPlayerState(oldPlayer, _activePlayer);
 			}
 		}
-	}
-
-	// 変身時間が最大を超えたら変身終了
-	if(_fTransformTime >= _fTransformMaxTime)
-	{
-		// 変身終了
-		EndTransform();
 	}
 }
 
@@ -329,59 +334,35 @@ void PlayerManager::StartTransformCancel()
 		_activePlayer->SetCombatState(PLAYER_COMBAT_STATE::TRANS_CANCEL); 
 	}
 
-	// アニメーションマネージャーの取得
-	auto* animManager = _activePlayer->GetAnimManager();
-	if(!animManager){ return; }	// アニメーションマネージャーがないならスキップ
-
-	// 変身アニメーションの再生
-	PlayerAnimations playerAnims = _activePlayer->GetPlayerAnimation();	// プレイヤーのアニメーションデータを取得
-	const char* transformAnimName = playerAnims.combat.transCancel;		// 変身アニメーション名を取得
-	if(transformAnimName != nullptr)
-	{
-		// 変身アニメーションの再生
-		animManager->ChangeAnimationByName(transformAnimName, 0.0f, 1);		// アニメーション変更
-		_fTransformCancelMaxTime = animManager->GetCurrentAnimTotalTime();	// 変身アニメーション再生時間を変身時間に設定
-	}
+	// 変身解除アニメーション再生
+	PlayerAnimations playerAnim = _activePlayer->GetPlayerAnimation();	// プレイヤーのアニメーションデータを取得
+	PlayTransConnectionAnim(playerAnim.combat.transCancel);				// 再生処理
 
 	_bIsTransformCanceling = true;
 }
 
 // 変身解除処理
-void PlayerManager::ProcessTransformCancel()
+void PlayerManager::UpdateTransformCancel()
 {
 	if(!_bIsTransformCanceling){ return; }
 
-	_fTransformCancelTime += 1.0f;	// 変身解除時間を更新
+	// 変身解除タイマー更新処理
+	UpdateTransformCancelTime();
 
+	// 時間によるプレイヤー切り替え処理
+	SwitchPlayerByTime();
+}
+
+// 時間によるプレイヤー切り替え処理
+void PlayerManager::SwitchPlayerByTime()
+{
 	// 変身解除時間が最大を超えたら表プレイヤーに切り替え
 	if(_fTransformCancelTime >= _fTransformCancelMaxTime)
 	{
-		//// アクティブプレイヤーが表プレイヤー以外なら
-		//if(_eActivePlayerType != PLAYER_TYPE::SURFACE)
-		//{
-		//	// プレイヤー切り替え
-		//	PlayerBase* oldPlayer = _activePlayer;				// 古いプレイヤー
-		//	auto newPlayer = _players.find(_eTransformTarget);	// 新しいプレイヤー
-		//	if(newPlayer != _players.end())
-		//	{
-		//		_activePlayer = newPlayer->second.get();	// 新しいアクティブプレイヤーに設定
-		//		_eActivePlayerType = _eTransformTarget;		// アクティブプレイヤータイプを更新
-
-		//		// 状態の引き継ぎ
-		//		if(_bEnableStateTransfer && oldPlayer && _activePlayer)
-		//		{
-		//			// 位置と状態の引き継ぎ
-		//			TransferPlayerState(oldPlayer, _activePlayer);
-		//		}
-		//	}
-
-		//	// プレイヤー切り替え
-		//	SwitchPlayer(PLAYER_TYPE::SURFACE);
-		//}
-
 		// 表プレイヤーに即座に切り替え
 		if(_eActivePlayerType != PLAYER_TYPE::SURFACE)
 		{
+			// 即時変身
 			SwitchPlayerImmediate(PLAYER_TYPE::SURFACE);
 		}
 
@@ -453,40 +434,86 @@ void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPl
 	newPlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);
 	newPlayer->SetMovementState(PLAYER_MOVEMENT_STATE::WAIT);
 
-	// 待機アニメーションにリセットする
-	auto* animManager = newPlayer->GetAnimManager();
-	if(animManager)
-	{
-		PlayerAnimations playerAnims = newPlayer->GetPlayerAnimation();	// プレイヤーのアニメーションデータを取得
-		const char* waitAnimName = playerAnims.movement.wait;			// 待機アニメーション名を取得
-		if(waitAnimName != nullptr)
-		{
-			// 待機アニメーションの再生
-			animManager->ChangeAnimationByName(waitAnimName, 0.5f, 1);
-		}
-	}
+	// 待機アニメーション再生
+	PlayerAnimations playerAnim = _activePlayer->GetPlayerAnimation();	// プレイヤーのアニメーションデータを取得
+	PlayTransConnectionAnim(playerAnim.movement.wait);					// 再生処理
 
 	// プレイヤー切り替え時にエイムモードが終了していない場合があるため、強制的にエイムモードを終了する
 	_cameraManager->EndAimMode();
 }
 
-
-// デバッグ描画
-bool PlayerManager::DebugRender()
+// 変身タイマー更新処理
+void PlayerManager::UpdateTransformTime()
 {
-	// 変身時間の描画
-	if(_bIsTransforming)
+	_fTransformTime += 1.0f;	// 変身時間を更新
+}
+
+// 変身解除タイマー更新処理
+void PlayerManager::UpdateTransformCancelTime()
+{
+	_fTransformCancelTime += 1.0f;	// 変身解除時間を更新
+}
+
+// 変身関連アニメーション再生関数
+void PlayerManager::PlayTransConnectionAnim(const char* animName)
+{
+	if(!_activePlayer) { return; }
+
+	// アニメーションマネージャーの取得
+	auto* animManager = _activePlayer->GetAnimManager();	// 有効なプレイヤーからアニメ管理クラス取得
+	if(!animManager){ return; }								// アニメ管理クラスがないならスキップ
+
+	if(animName != nullptr)
 	{
-		std::string debugText = "Transforming: " + std::to_string(_fTransformTime) + " / " + std::to_string(_fTransformMaxTime);
-		DxLib::DrawString(10, 310, debugText.c_str(), DxLib::GetColor(255, 255, 255));
+		// 変身アニメーションの再生
+		animManager->ChangeAnimationByName(animName, 0.0f, 1);			// アニメーション変更
+		_fTransformMaxTime = animManager->GetCurrentAnimTotalTime();	// 変身アニメーションの再生時間を変身時間に設定
+	}
+}
+
+// 能力選択画面が存在するかをチェック
+void PlayerManager::CheckAbilityScreenActive(bool& isAbilityScreenActive)
+{
+	isAbilityScreenActive = false; // 存在するかのフラグ
+
+	// 能力選択画面クラス有効チェック
+	if(_abilitySelectScreen)
+	{
+		// 有効なら存在を有効にする
+		isAbilityScreenActive = _abilitySelectScreen->GetIsScreenActive();
+	}
+}
+
+// 自動切り替え系（エネルギーによる強制切り替えなど）をまとめる
+void PlayerManager::ProcessAutoSwitch(bool isAbilityScreenActive)
+{
+	// 変身中でなければプレイヤー切り替え処理
+	if(!_bIsTransforming && !isAbilityScreenActive)
+	{
+		// エネルギーによるプレイヤー切り替え
+		SwitchPlayerByEnergy();
+	}
+}
+
+// アクティブプレイヤーへの処理
+void PlayerManager::ProcessActivePlayer(bool isAbilityScreenActive)
+{
+	if(!_activePlayer) { return; }
+
+	auto im = InputManager::GetInstance();
+
+	// 変身中、または変身解除中、またはアビリティ選択画面がアクティブな場合
+	if(_bIsTransforming || _bIsTransformCanceling || isAbilityScreenActive)
+	{
+		// ここで入力の停止処理を追加
+
+	}
+	else
+	{
+		// ここで入力をアクティブプレイヤーに渡す
+
 	}
 
-	// 変身解除時間の描画
-	if(_bIsTransformCanceling)
-	{
-		std::string debugText = "Transform Canceling: " + std::to_string(_fTransformCancelTime) + " / " + std::to_string(_fTransformCancelMaxTime);
-		DxLib::DrawString(10, 330, debugText.c_str(), DxLib::GetColor(255, 255, 255));
-	}
-
-	return true;
+	_activePlayer->SetCameraManager(_cameraManager);	// アクティブプレイヤーにカメラマネージャーをセット
+	_activePlayer->Process();							// アクティブプレイヤーの処理を行う
 }
