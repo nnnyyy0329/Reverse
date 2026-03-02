@@ -728,7 +728,7 @@ void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<CharaBase> player, std::shar
 	if(!absorbSystemConst) { return; }
 
 	// 吸収攻撃がアクティブかチェック
-	if(!absorbSystemConst->IsAbsorbAttacking()){ return; }
+	if(!absorbSystemConst->IsAbsorbActive()){ return; }
 
 	// 非 cons tにキャスト
 	PlayerAbsorbAttackSystem* absorbSystem = const_cast<PlayerAbsorbAttackSystem*>(absorbSystemConst);

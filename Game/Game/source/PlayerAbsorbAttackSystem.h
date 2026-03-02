@@ -39,7 +39,7 @@ public:
 	bool CanStartAbsorbAttack() const;
 
 	// 吸収攻撃がアクティブかどうか
-	bool IsAbsorbAttacking() const;	
+	bool IsAbsorbActive() const;
 
 private:
 	// 吸収攻撃クラスインスタンスの作成

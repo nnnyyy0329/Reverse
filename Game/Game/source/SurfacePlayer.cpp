@@ -515,6 +515,16 @@ bool SurfacePlayer::IsAbsorbInput()const
 	return (InputManager::GetInstance()->IsHold(INPUT_ACTION::ABILITY)) != 0;
 }
 
+// 吸収攻撃がアクティブかどうか
+bool SurfacePlayer::IsAbsorbActive() const
+{
+	if(!_absorbAttackSystem) { return false; }
+
+	// 吸収攻撃システムに吸収がアクティブかどうかを問い合わせる
+	return _absorbAttackSystem->IsAbsorbActive();
+}
+
+
 // 吸収アニメーション再生時間デバッグ表示
 void SurfacePlayer::DebugDrawAbsorbAnimationTime()
 {
