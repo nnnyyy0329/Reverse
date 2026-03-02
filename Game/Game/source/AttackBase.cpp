@@ -242,22 +242,21 @@ void AttackBase::UpdateAttackDirAdjust()
     if(abs(analog.lx)>im->GetAnalogMin() || abs(analog.ly)>im->GetAnalogMin())
     {
 		// カメラ基準で入力方向を計算
-        VECTOR inputDir = CalculateInputDir(analog);
+       // VECTOR inputDir = CalculateInputDir(analog);
 
         // 滑らかに向き調整
-		VECTOR currentDir = owner->GetDir();
-        VECTOR newDir = VNorm(VAdd(currentDir, VScale(inputDir, _dirAdjustSpeed)));
+		//VECTOR currentDir = owner->GetDir();
+        //VECTOR newDir = VNorm(VAdd(currentDir, VScale(inputDir, _dirAdjustSpeed)));
 
 		// キャラの向きを更新
-		owner->SetDir(newDir);
+		//owner->SetDir(newDir);
     }
 }
 
 // 入力方向計算関数
-VECTOR AttackBase::CalculateInputDir(const AnalogState& analog)
-{
-
-}
+//VECTOR AttackBase::CalculateInputDir(const AnalogState& analog)
+//{
+//}
 
 // カプセル攻撃データ設定
 void AttackBase::SetCapsuleAttackData

@@ -7,6 +7,7 @@
 #include "Bullet.h"
 #include "DodgeSystem.h"
 #include "GameCamera.h"
+#include "PlayerManager.h"
 #include "SurfacePlayer.h"
 #include "PlayerAbsorbAttackSystem.h" 
 #include "AbsorbAttack.h"
@@ -450,6 +451,17 @@ void ModeGame::CheckCollisionCameraMap()
 		// 注視点から新しいカメラ位置を計算
 		vCamPos = VAdd(vCamTarget, VScale(vDir, fNewDist));
 		_gameCamera->SetVPos(vCamPos);
+	}
+
+	// キャラクターとカメラの距離チェック（近接時のフェードアウトフラグ更新）
+	{
+		const float fNearCameraDist = 100.0f;// フェードアウト判定距離（1m相当）
+		auto activePlayer = _playerManager->GetActivePlayerShared();
+		if (activePlayer)
+		{
+			float fCharCamDist = VSize(VSub(_gameCamera->GetVPos(), activePlayer->GetPos()));
+			_gameCamera->SetIsCharNearCamera(fCharCamDist <= fNearCameraDist);
+		}
 	}
 }
 

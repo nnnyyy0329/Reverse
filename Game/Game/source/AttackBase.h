@@ -169,7 +169,7 @@ private:
 	std::vector<std::shared_ptr<CharaBase>> _hitCharas;	// “–‚½‚Á‚½ƒLƒƒƒ‰‚ğŠÇ—
 
 	// “ü—Í•ûŒüŒvZŠÖ”
-	VECTOR CalculateInputDir(const AnalogState& analog);
+	//VECTOR CalculateInputDir(const AnalogState& analog);
 
 };
 

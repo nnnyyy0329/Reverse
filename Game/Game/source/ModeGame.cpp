@@ -106,7 +106,7 @@ bool ModeGame::Initialize()
 
 	// ステージ初期化
 	_currentStageNum = 1;
-	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
+	_stage = std::make_shared<StageBase>(_currentStageNum);
 
 	// カメラ初期化
 	{

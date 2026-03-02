@@ -1,7 +1,13 @@
 ﻿// 担当 : 成田
 
 #include "PlayerBase.h"
-#include "CameraManager.h" 
+#include "CameraManager.h"
+
+namespace
+{
+	// 向き補間速度（1.0f で即時、0.0f で補間なし）
+	constexpr float DIR_SMOOTH_SPEED = 0.15f;
+}
 
 // 共通関数呼び出し
 void PlayerBase::CallProcess()
@@ -201,7 +207,22 @@ void PlayerBase::ProcessStatusAnimation()
 			// エイム中でなければ移動方向を向く
 			if(!isAiming)
 			{
-				_vDir = _vMove;	// 移動方向を向く
+				// 現在の向きがゼロベクトルなら即座に設定
+				if(VSize(_vDir) < 0.001f)
+				{
+					_vDir = _vMove;
+				}
+				else
+				{
+					// 現在角度と目標角度を取得して最短回転で Lerp する
+					float currentAngle = atan2f(_vDir.x * -1.0f, _vDir.z * -1.0f);
+					float targetAngle  = atan2f(_vMove.x * -1.0f, _vMove.z * -1.0f);
+					float diff = targetAngle - currentAngle;
+					while(diff >  DX_PI_F) diff -= 2.0f * DX_PI_F;
+					while(diff < -DX_PI_F) diff += 2.0f * DX_PI_F;
+					float newAngle = currentAngle + diff * DIR_SMOOTH_SPEED;
+					_vDir = VGet(-sinf(newAngle), 0.0f, -cosf(newAngle));
+				}
 			}
 
 			_playerState.movementState = PLAYER_MOVEMENT_STATE::RUN;	// 走行
@@ -211,7 +232,22 @@ void PlayerBase::ProcessStatusAnimation()
 			// エイム中でなければ移動方向を向く
 			if(!isAiming)
 			{
-				_vDir = _vMove;	// 移動方向を向く
+				// 現在の向きがゼロベクトルなら即座に設定
+				if(VSize(_vDir) < 0.001f)
+				{
+					_vDir = _vMove;
+				}
+				else
+				{
+					// 現在角度と目標角度を取得して最短回転で Lerp する
+					float currentAngle = atan2f(_vDir.x * -1.0f, _vDir.z * -1.0f);
+					float targetAngle  = atan2f(_vMove.x * -1.0f, _vMove.z * -1.0f);
+					float diff = targetAngle - currentAngle;
+					while(diff >  DX_PI_F) diff -= 2.0f * DX_PI_F;
+					while(diff < -DX_PI_F) diff += 2.0f * DX_PI_F;
+					float newAngle = currentAngle + diff * DIR_SMOOTH_SPEED;
+					_vDir = VGet(-sinf(newAngle), 0.0f, -cosf(newAngle));
+				}
 			}
 
 			_playerState.movementState = PLAYER_MOVEMENT_STATE::WALK;	// 歩行
