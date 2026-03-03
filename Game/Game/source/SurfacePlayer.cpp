@@ -415,7 +415,7 @@ void SurfacePlayer::ProcessChangeAbsorbMotion()
 		}
 
 		// まだ構えモーションが終了していないなら
-		if(!IsAnimationFinished()){ return; }
+		if(!IsAnimationFinishedConst()){ return; }
 
 		// 構えモーション終了時の処理
 		ProcessAbsorbReadyCompleted();
@@ -502,7 +502,7 @@ void SurfacePlayer::ReturnNormalMotion()
 	if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_END)
 	{
 		// どちらの場合もアニメーションが終了していたら通常モーションに戻す
-		if(IsAnimationFinished())
+		if(IsAnimationFinishedConst())
 		{
 			// 通常モーションに戻す処理
 			ProcessReturnNormalMotion();
@@ -530,7 +530,7 @@ bool SurfacePlayer::IsAbsorbActive() const
 bool SurfacePlayer::IsInputInAbsorbFinishState()const
 {
 	// 吸収終了状態中に入力がされたかどうか
-	return (IsAbsorbInput() && IsAbsorbEndState() && !IsAnimationFinished());
+	return (IsAbsorbInput() && IsAbsorbEndState() && !IsAnimationFinishedConst());
 }
 
 // 吸収終了状態かどうか
@@ -545,6 +545,7 @@ void SurfacePlayer::DebugDrawAbsorbAnimationTime()
 {
 	if(!_absorbAttackSystem) { return; }
 
+	// アニメーションマネージャーを取得
 	AnimManager* animManager = GetAnimManager();
 	if(!animManager) { return; }
 

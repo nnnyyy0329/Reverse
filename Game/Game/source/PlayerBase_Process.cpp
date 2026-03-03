@@ -81,10 +81,10 @@ void PlayerBase::ProcessInputMove()
 
 	float digitalX = 0.0f;
 	float digitalY = 0.0f;
-	//if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
-	//if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
-	//if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
-	//if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }
 	
 	// アナログ入力による移動、なければデジタル入力
 	float inputX = (abs(analog.lx) > analogMin) ? analog.lx : digitalX;
@@ -465,7 +465,7 @@ bool PlayerBase::HasStateChanged()const
 }
 
 // アニメーションが終了したか
-bool PlayerBase::IsAnimationFinished()const
+bool PlayerBase::IsAnimationFinishedConst()const
 {
 	// アニメーションマネージャーの取得
 	const AnimManager* animManager = GetAnimManagerConst();

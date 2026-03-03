@@ -115,7 +115,7 @@ void BulletPlayer::ShootInput()
 		else if(_playerState.shootState == PLAYER_SHOOT_STATE::SHOOT_READY && !_bIsReadyCompleted)
 		{
 			// アニメーションが完了したかチェック
-			if(!IsAnimationFinished()){ return; }
+			if(!IsAnimationFinishedConst()){ return; }
 
 			_bIsReadyCompleted = true; // 構えアニメーション完了フラグを立てる
 		}
