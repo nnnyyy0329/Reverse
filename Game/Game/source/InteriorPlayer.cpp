@@ -168,7 +168,6 @@ AttackConstants InteriorPlayer::GetAttackConstants()const
 	// InteriorPlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.attackOffsetScale = InteriorAttackConstants::ATTACK_OFFSET_SCALE;				// 攻撃判定オフセット倍率	
 	constants.interiorMaxComboCount = InteriorAttackConstants::INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
 
 	return constants;
@@ -253,8 +252,62 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	};
 }
 
+// 攻撃コリジョンオフセットの情報設定
+void InteriorPlayer::GetAttackColOffsetConfigs(AttackColOffset configs[5])
+{
+	// 第1攻撃
+	configs[0] =
+	{
+		{0.0f, 0.0f, 0.0f},	// コリジョン上部位置オフセット
+		{0.0f, 0.0f, 0.0f},	// コリジョン下部位置オフセット
+		0.0f,				// コリジョン半径オフセット
+		85.0f,				// 方向スケール
+		true,				// 所有者の向きを基準とするか
+	};
+
+	// 第2攻撃
+	configs[1] =
+	{
+		{0.0f, 0.0f, 0.0f},	// コリジョン上部位置オフセット
+		{0.0f, 0.0f, 0.0f},	// コリジョン下部位置オフセット
+		0.0f,				// コリジョン半径オフセット
+		85.0f,				// 方向スケール
+		true,				// 所有者の向きを基準とするか
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{
+		{0.0f, 0.0f, 0.0f},	// コリジョン上部位置オフセット
+		{0.0f, 0.0f, 0.0f},	// コリジョン下部位置オフセット
+		0.0f,				// コリジョン半径オフセット
+		85.0f,				// 方向スケール
+		true,				// 所有者の向きを基準とするか
+	};
+
+	// 第4攻撃
+	configs[3] =
+	{
+		{0.0f, 0.0f, 0.0f},	// コリジョン上部位置オフセット
+		{0.0f, 0.0f, 0.0f},	// コリジョン下部位置オフセット
+		0.0f,				// コリジョン半径オフセット
+		85.0f,				// 方向スケール
+		true,				// 所有者の向きを基準とするか
+	};
+
+	// 第5攻撃
+	configs[4] =
+	{
+		{0.0f, 0.0f, 0.0f},	// コリジョン上部位置オフセット
+		{0.0f, 0.0f, 0.0f},	// コリジョン下部位置オフセット
+		0.0f,				// コリジョン半径オフセット
+		85.0f,				// 方向スケール
+		true,				// 所有者の向きを基準とするか
+	};
+}
+
 // 攻撃方向補正の情報設定
-void InteriorPlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[5])
+void InteriorPlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[5])
 {
 	// 第1攻撃
 	configs[0] = 

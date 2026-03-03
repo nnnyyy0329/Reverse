@@ -386,10 +386,6 @@ AttackConstants BulletPlayer::GetAttackConstants()const
 
 	AttackConstants constants;
 
-	constants.attackOffsetScale = 0.0f;
-	constants.surfaceMaxComboCount = 0;
-	constants.interiorMaxComboCount = 0;
-
 	return constants;
 }
 
@@ -399,8 +395,14 @@ void BulletPlayer::GetAttackConfigs(AttackConfig configs[])
 	// 弾プレイヤーは攻撃を行わない
 }
 
+// 弾プレイヤーの攻撃コリジョンオフセット設定
+void BulletPlayer::GetAttackColOffsetConfigs(AttackColOffset configs[])
+{
+	// 弾プレイヤーは攻撃を行わない
+}
+
 // 弾プレイヤーの攻撃方向補正設定
-void BulletPlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[])
+void BulletPlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[])
 {
 	// 弾プレイヤーは攻撃を行わない
 }

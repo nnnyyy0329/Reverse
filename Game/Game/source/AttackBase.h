@@ -86,8 +86,11 @@ public:
 	void UpdateAttackMove();				// 移動更新
 	virtual void ProcessAttackMovement();	// 移動処理
 
-	// 攻撃コリジョンの位置更新処理
-	void UpdateAttackCollisionPos();		// 攻撃コリジョンの位置更新
+	// 攻撃コリジョンの位置更新
+	void UpdateAttackColPos();	
+
+	// 攻撃コリジョンの位置計算
+	VECTOR CalculateAttackColPos(const VECTOR& basePos, const VECTOR& offset, const VECTOR& direction);	
 
 	// 攻撃の向き調整処理
 	void UpdateAttackDirAdjust();	// 向き調整更新
@@ -146,10 +149,7 @@ public:
 	void SetCollisionOffset(const AttackColOffset& offset);
 
 	// 向き調整データ設定
-	void SetDirAdjustData
-	(
-		bool canAdjust
-	);
+	void SetDirAdjustData(bool canAdjust);
 
 	// ゲッターセッター
 	COLLISION_TYPE GetCollisionType() const { return _eColType; }			// コリジョンタイプ取得

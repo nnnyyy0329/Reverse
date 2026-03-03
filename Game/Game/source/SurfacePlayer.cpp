@@ -164,8 +164,6 @@ AttackConstants SurfacePlayer::GetAttackConstants()const
 	// SurfacePlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.attackOffsetScale = 85.0f;	// 攻撃判定オフセット倍率	
-	//constants.surfaceMaxComboCount = 3;		// 表プレイヤー用コンボカウント
 	constants.surfaceMaxComboCount = 0;		// 表プレイヤー用コンボカウント
 
 	return constants;
@@ -220,8 +218,42 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 	};
 }
 
+// 攻撃コリジョンオフセットの情報設定
+void SurfacePlayer::GetAttackColOffsetConfigs(AttackColOffset configs[3])
+{
+	// 第1攻撃
+	configs[0] = 
+	{ 
+		{0.0f, 85.0f, 0.0f},	// コリジョン上部位置オフセット
+		{0.0f, 0.0f, 0.0f},		// コリジョン下部位置オフセット
+		0.0f,					// コリジョン半径オフセット
+		0.0f,					// 方向スケール
+		true,					// 所有者の向きを基準とするか
+	};
+
+	// 第2攻撃
+	configs[1] = 
+	{ 
+		{0.0f, 85.0f, 0.0f},	// コリジョン上部位置オフセット
+		{0.0f, 0.0f, 0.0f},		// コリジョン下部位置オフセット
+		0.0f,					// コリジョン半径オフセット
+		0.0f,					// 方向スケール
+		true,					// 所有者の向きを基準とするか
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{ 
+		{0.0f, 85.0f, 0.0f},	// コリジョン上部位置オフセット
+		{0.0f, 0.0f, 0.0f},		// コリジョン下部位置オフセット
+		0.0f,					// コリジョン半径オフセット
+		0.0f,					// 方向スケール
+		true,					// 所有者の向きを基準とするか
+	};
+}
+
 // 攻撃方向補正の情報設定
-void SurfacePlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[3])
+void SurfacePlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[3])
 {
 	// 第1攻撃
 	configs[0] = 

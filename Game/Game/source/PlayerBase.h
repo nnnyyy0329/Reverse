@@ -43,7 +43,6 @@ struct RenderConfig
 // 攻撃定数構造体
 struct AttackConstants
 {
-	float attackOffsetScale;	// 攻撃判定オフセット倍率
 	int surfaceMaxComboCount;	// 表プレイヤー用コンボカウント
 	int interiorMaxComboCount;	// 裏プレイヤー用コンボカウント
 };
@@ -344,7 +343,8 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 
 	virtual AttackConstants GetAttackConstants()const = 0;								// 攻撃定数を取得
 	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;							// 攻撃設定を取得
-	virtual void GetDirAdjustConfigs(AttackDirAdjustConfig configs[]) = 0;				// 攻撃向き調整設定を取得
+	virtual void GetAttackColOffsetConfigs(AttackColOffset configs[]) = 0;				// 攻撃コリジョンオフセット設定を取得
+	virtual void GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]) = 0;		// 攻撃向き調整設定を取得
 	virtual AreaAttackConfig GetAreaAttackConfig() = 0;									// 範囲攻撃設定を取得
 	virtual AttackEffectConfig GetAttackEffectConfig(AttackEffectConfig configs[]) = 0;	// 演出設定を取得
 
@@ -355,12 +355,15 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	// 攻撃関連の初期化関数
 	void InitializeAttackData();						// 攻撃データ初期化
 	void InitializeAttackConfigs(int maxComboCount);	// 攻撃設定配列初期化
-	void CreateDynamicAttackData(int maxComboCount);	// 動的攻撃データ作成
 	void SetAttackStatusData(int maxComboCount);		// 攻撃状態を攻撃配列に入れる
+	void CreateAttackData(int maxComboCount);			// 攻撃コリジョンデータ作成	
+	void SetAttackColData(AttackConfig config, std::shared_ptr<AttackBase> attack);				// 攻撃コリジョン情報設定
+	void SetAttackOffsetData(AttackColOffset config, std::shared_ptr<AttackBase> attack);		// 攻撃オフセット情報設定
+	void SetDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃向き調整情報設定
 
 	// PlayerBase_Attack.cppで定義
 	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数
-	void ProcessAttackColPos();		// コリジョン位置の更新処理
+	//void ProcessAttackColPos();		// コリジョン位置の更新処理
 	void ProcessAttack();			// 攻撃処理
 	void ProcessBranchAttack();		// 攻撃分岐処理
 	void ReceiveAttackColData();	// 攻撃コリジョンの情報受け取り関数
@@ -369,9 +372,10 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	bool IsAttacking();				// 攻撃中かチェック
 	bool IsAttackInput();			// 攻撃入力があるかチェック
 
-	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
+	//void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
 	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);				// 攻撃開始処理
 	void ProcessAttackReaction(int attackIndex);										// 攻撃反応処理
+	void ProcessAttackRegister(std::shared_ptr<AttackBase> attack);						// 攻撃登録処理
 	void ProcessAttackEffect(int attackIndex, std::vector<AttackEffectConfig> configs);	// 攻撃エフェクト処理
 	void ProcessAttackSound(int attackIndex, std::vector<AttackEffectConfig> configs);	// 攻撃サウンド処理
 	void ProcessComboAttack(int attackIndex);											// コンボ攻撃処理
