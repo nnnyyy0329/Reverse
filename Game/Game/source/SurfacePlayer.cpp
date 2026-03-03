@@ -391,6 +391,11 @@ void SurfacePlayer::AbsorbSystemDebugRender()
 // 吸収攻撃モーション切り替え条件処理
 void SurfacePlayer::ProcessChangeAbsorbMotion()
 {
+	// 吸収終了時に通常モーションに戻す処理
+	ReturnNormalMotion();
+
+	if(IsInputInAbsorbFinishState()){ return; }	// 吸収終了状態での入力は無視
+
 	// 吸収入力開始
 	if(IsAbsorbInput() && !_bWasAbsorbKeyPressed)
 	{
@@ -421,9 +426,6 @@ void SurfacePlayer::ProcessChangeAbsorbMotion()
 		// 吸収攻撃終了処理
 		ProcessAbsorbFinish();
 	}
-
-	// 吸収終了時に通常モーションに戻す処理
-	ReturnNormalMotion();
 }
 
 // 構え状態に移行
@@ -524,6 +526,19 @@ bool SurfacePlayer::IsAbsorbActive() const
 	return _absorbAttackSystem->IsAbsorbActive();
 }
 
+// 吸収終了状態中に入力がされたかどうか
+bool SurfacePlayer::IsInputInAbsorbFinishState()const
+{
+	// 吸収終了状態中に入力がされたかどうか
+	return (IsAbsorbInput() && IsAbsorbEndState() && !IsAnimationFinished());
+}
+
+// 吸収終了状態かどうか
+bool SurfacePlayer::IsAbsorbEndState()const
+{
+	// 吸収終了状態かどうか
+	return _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_END;
+}
 
 // 吸収アニメーション再生時間デバッグ表示
 void SurfacePlayer::DebugDrawAbsorbAnimationTime()

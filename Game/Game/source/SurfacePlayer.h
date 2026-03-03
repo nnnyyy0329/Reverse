@@ -70,15 +70,18 @@ private:
 	// 吸収終了時に通常モーションに戻す処理
 	void ReturnNormalMotion();
 
-	// 吸収攻撃の入力処理
-	void AbsorbInput();
-
 	// 吸収攻撃の入力チェック
 	bool IsAbsorbInput()const;
 
 	// 吸収攻撃がアクティブかどうか
 	bool IsAbsorbActive() const;
 
+	// 吸収終了状態中に入力がされたかどうか
+	bool IsInputInAbsorbFinishState()const;
+
+	// 吸収状態が終了状態かどうか
+	bool IsAbsorbEndState()const;
+	
 	// 吸収アニメーション再生時間デバッグ表示
 	void DebugDrawAbsorbAnimationTime();
 

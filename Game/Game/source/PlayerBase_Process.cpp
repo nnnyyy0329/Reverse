@@ -465,14 +465,14 @@ bool PlayerBase::HasStateChanged()const
 }
 
 // アニメーションが終了したか
-bool PlayerBase::IsAnimationFinished()
+bool PlayerBase::IsAnimationFinished()const
 {
 	// アニメーションマネージャーの取得
-	AnimManager* animManager = GetAnimManager();
+	const AnimManager* animManager = GetAnimManagerConst();
 
 	if(animManager)
 	{
 		// 現在のアニメーションが終了しているか
-		return animManager->IsAnimationFinished();
+		return animManager->IsAnimationFinishedConst();
 	}
 }

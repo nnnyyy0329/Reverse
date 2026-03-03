@@ -276,7 +276,7 @@ public:
 	void ProcessHit();					// 被弾処理
 	void ProcessDebug();				// デバッグ処理
 	bool IsHitStop();					// 被弾硬直中かチェック
-	bool IsAnimationFinished();			// アニメーションが終了したかの処理
+	bool IsAnimationFinished()const;	// アニメーションが終了したかの処理
 
 	// デバッグ描画共通
 	void DebugRender();				// デバッグ情報描画
@@ -450,16 +450,16 @@ protected:
 	RenderConfig		_renderConfig;	// 表示設定データ
 
 	// 状態
-	PlayerState _playerState;		// 現在の状態
-	PlayerState _oldPlayerState;	// 前フレームの状態
+	PlayerState			_playerState;		// 現在の状態
+	PlayerState			_oldPlayerState;	// 前フレームの状態
 
 	// アクション関係変数
-	float _fVelY;			// Y方向の速度
-	bool _bIsDashInput;		// ダッシュ入力があるかどうか
-	bool _bIsJumping;		// ジャンプ中かどうか
-	bool _bIsStanding;		// 着地しているかどうか
-	bool _bIsCrouching;		// しゃがんでいるかどうか
-	bool _bIsStartCrouch;	// しゃがみ開始フラグ
+	float	_fVelY;				// Y方向の速度
+	bool	_bIsDashInput;		// ダッシュ入力があるかどうか
+	bool	_bIsJumping;		// ジャンプ中かどうか
+	bool	_bIsStanding;		// 着地しているかどうか
+	bool	_bIsCrouching;		// しゃがんでいるかどうか
+	bool	_bIsStartCrouch;	// しゃがみ開始フラグ
 
 	// 表示用オフセット
 	int _iDrawSizeOffset;	// ずらす大きさ
@@ -467,10 +467,10 @@ protected:
 	int _iDrawOffsetY;
 
 	// 被弾情報
-	VECTOR _vHitDir;		// 被弾方向
-	float _fHitSpeed;		// 被弾速度
-	float _fHitSpeedDecay;	// 被弾速度減衰
-	float _fHitTime;		// 被弾時間
+	VECTOR	_vHitDir;			// 被弾方向
+	float	_fHitSpeed;			// 被弾速度
+	float	_fHitSpeedDecay;	// 被弾速度減衰
+	float	_fHitTime;			// 被弾時間
 
 	// カメラ角度
 	float _cameraAngle;

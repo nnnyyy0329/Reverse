@@ -78,7 +78,7 @@ bool PlayerAbsorbAttackSystem::Process()
 	_absorbAttack->Process();
 
 	// ó‘ÔXVˆ—
-	ProcessAbsorbAttackState();
+	//ProcessAbsorbAttackState();
 
 	return true;
 }

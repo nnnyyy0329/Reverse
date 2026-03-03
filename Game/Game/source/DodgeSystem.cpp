@@ -1,8 +1,7 @@
 #include "DodgeSystem.h"
 
-namespace
+namespace DodgeContants
 {
-	constexpr float ZERO = 0.0f;		// ゼロ
 	constexpr float TIME_STEP = 1.0f;	// タイムステップ
 }
 
@@ -11,8 +10,8 @@ DodgeSystem::DodgeSystem()
 	_eDodgeChara = DODGE_CHARA::NONE;		// 回避キャラ初期化
 	_eDodgeState = DODGE_STATE::INACTIVE;	// 回避状態初期化
 
-	_currentTime = ZERO;		// 経過時間
-	_invincibleTime = ZERO;		// 無敵経過時間
+	_currentTime = 0.0f;		// 経過時間
+	_invincibleTime = 0.0f;		// 無敵経過時間
 	_bIsDodging = false;		// 回避中フラグ
 	_bIsInvincible = false;		// 無敵状態フラグ
 
@@ -68,7 +67,7 @@ bool DodgeSystem::SetDodgeConfig
 	_stcDodgeConfig.dodgeMoveSpeed = dodgeMoveSpeed;			// 回避移動速度
 
 	_eDodgeState = DODGE_STATE::INACTIVE;	// 回避状態初期化
-	_currentTime = ZERO;					// 経過時間初期化
+	_currentTime = 0.0f;					// 経過時間初期化
 
 	return true;
 }
@@ -121,8 +120,8 @@ void DodgeSystem::StartDodge()
 		_eDodgeState = DODGE_STATE::STARTUP;	// 回避状態を開始に設定
 		_bIsDodging = true;						// 回避中フラグを立てる
 		_bIsInvincible = false;					// 無敵状態フラグを下ろす
-		_currentTime = ZERO;					// 経過時間リセット
-		_invincibleTime = ZERO;					// 無敵経過時間リセット
+		_currentTime = 0.0f;					// 経過時間リセット
+		_invincibleTime = 0.0f;					// 無敵経過時間リセット
 	}
 }
 
@@ -148,15 +147,15 @@ void DodgeSystem::UpdateDodgeState()
 	{
 		case DODGE_STATE::STARTUP:	// 開始
 		{	
-			_currentTime += TIME_STEP;	// 経過時間を進める
+			_currentTime += DodgeContants::TIME_STEP;	// 経過時間を進める
 
 			// 開始時間を超えたら実行中に移行
 			if(_currentTime >= _stcDodgeConfig.startTime)
 			{
 				_eDodgeState = DODGE_STATE::ACTIVE;	// 回避状態を実行中に設定
 				_bIsInvincible = true;				// 無敵状態フラグを立てる
-				_currentTime = ZERO;				// 経過時間リセット
-				_invincibleTime = ZERO;				// 無敵経過時間リセット
+				_currentTime = 0.0f;				// 経過時間リセット
+				_invincibleTime = 0.0f;				// 無敵経過時間リセット
 
 				// キャラタイプ別の追加処理
 				if((_eDodgeChara == DODGE_CHARA::SURFACE_PLAYER && chara ||
@@ -172,7 +171,7 @@ void DodgeSystem::UpdateDodgeState()
 
 		case DODGE_STATE::ACTIVE:	// 実行中
 		{
-			_currentTime += TIME_STEP;	// 経過時間を進める
+			_currentTime += DodgeContants::TIME_STEP;	// 経過時間を進める
 
 			// 回避中キャラの回避位置更新
 			auto chara = _currentDodgeChara.lock();
@@ -182,7 +181,7 @@ void DodgeSystem::UpdateDodgeState()
 			if(_currentTime >= _stcDodgeConfig.activeTime)
 			{
 				_eDodgeState = DODGE_STATE::RECOVERY;	// 回避状態を終了硬直に設定
-				_currentTime = ZERO;					// 経過時間リセット
+				_currentTime = 0.0f;					// 経過時間リセット
 			}
 
 			break;
@@ -190,7 +189,7 @@ void DodgeSystem::UpdateDodgeState()
 
 		case DODGE_STATE::RECOVERY:	// 終了硬直
 		{
-			_currentTime += TIME_STEP;	// 経過時間を進める
+			_currentTime += DodgeContants::TIME_STEP;	// 経過時間を進める
 
 			// 硬直時間を超えたら非アクティブに移行
 			if(_currentTime >= _stcDodgeConfig.recoveryTime)
@@ -199,8 +198,8 @@ void DodgeSystem::UpdateDodgeState()
 				_eDodgeChara = DODGE_CHARA::NONE;		// 回避キャラ設定リセット
 				_bIsDodging = false;					// 回避中フラグを下ろす
 				_bIsInvincible = false;					// 無敵状態フラグを下ろす
-				_currentTime = ZERO;					// 経過時間リセット
-				_invincibleTime = ZERO;					// 無敵経過時間リセット
+				_currentTime = 0.0f;					// 経過時間リセット
+				_invincibleTime = 0.0f;					// 無敵経過時間リセット
 				_currentDodgeChara.reset();				// 回避中のキャラリセット
 			}
 
@@ -216,7 +215,7 @@ void DodgeSystem::UpdateDodgePos(std::shared_ptr<CharaBase>chara)
 	if(!IsDodging()){ return; }		// 回避中でなければ処理しない
 
 	VECTOR vDir = chara->GetDir();										// キャラの向き取得
-	VECTOR dodgeDir = VGet(vDir.x, ZERO, vDir.z);						// 水平方向の回避方向ベクトル計算
+	VECTOR dodgeDir = VGet(vDir.x, 0.0f, vDir.z);						// 水平方向の回避方向ベクトル計算
 	VECTOR normDir = VNorm(dodgeDir);									// 正規化
 	VECTOR dodgeMove = VScale(normDir, _stcDodgeConfig.dodgeMoveSpeed);	// 回避移動ベクトル計算
 
@@ -253,13 +252,13 @@ void DodgeSystem::UpdateInvincible()
 	if(_bIsInvincible)
 	{
 		// 無敵経過時間を進める
-		_invincibleTime += TIME_STEP;
+		_invincibleTime += DodgeContants::TIME_STEP;
 
 		// 無敵持続時間を超えたら無敵状態解除
 		if(_invincibleTime >= _stcDodgeConfig.invincibleDuration)
 		{
 			_bIsInvincible = false;
-			_invincibleTime = ZERO;
+			_invincibleTime = 0.0f;
 		}
 	}
 }
@@ -303,7 +302,7 @@ bool DodgeSystem::IsCharacterInvincible(std::shared_ptr<CharaBase> chara) const
 void DodgeSystem::DebugRender()
 {
 	// 無敵時間の表示
-	if(_invincibleTime > ZERO)
+	if(_invincibleTime > 0.0f)
 	{
 		char buffer[256];
 		sprintf_s(buffer, "Invincible Time: %3.2f / %3.2f", _invincibleTime, _stcDodgeConfig.invincibleDuration);
