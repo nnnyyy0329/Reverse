@@ -16,7 +16,7 @@ public:
 
 	// 共通関数のオーバーライド
 	virtual void DebugRender()override;																		// デバッグ描画
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo) override;	// 被ダメージ処理
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;	// 被ダメージ処理
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
 
 	// 純粋仮想関数のオーバーライド

@@ -70,7 +70,7 @@ void CharaBase::CollisionRender()
 }
 
 // UŒ‚‚É‚æ‚é”íƒ_ƒ[ƒWˆ—
-void CharaBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
+void CharaBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
 	if (_fLife <= 0.0f) return;	// ‘Ì—Í‚ª0‚È‚ç–³Œø
 

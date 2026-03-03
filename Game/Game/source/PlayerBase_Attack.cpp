@@ -131,7 +131,7 @@ void PlayerBase::UpdateAttackColPos
 	if(!attack) return;
 
 	// 攻撃コリジョン情報を取得
-	const ATTACK_COLLISION& col = attack->GetAttackCollision();
+	const AttackCollision& col = attack->GetAttackCollision();
 
 	// コリジョン位置を更新
 	attack->SetCapsuleAttackData
@@ -422,7 +422,7 @@ void PlayerBase::ReceiveAttackColData()
 	if((attackIndex >= 0) && (attackIndex < static_cast<int>(_attacks.size())))	// 番号が子クラスの攻撃番号の範囲内なら
 	{
 		// 攻撃コリジョン情報を取得
-		ATTACK_COLLISION attackCol = _attacks[attackIndex]->GetAttackCollision();
+		AttackCollision attackCol = _attacks[attackIndex]->GetAttackCollision();
 
 		// コリジョン情報を入れる
 		_vAttackColTop = attackCol.attackColTop;

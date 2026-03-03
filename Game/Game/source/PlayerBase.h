@@ -254,7 +254,7 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
-	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)override;	// 被ダメージ処理
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)override;	// 被ダメージ処理
 	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾での被ダメージ処理
 
 	// 共通初期化

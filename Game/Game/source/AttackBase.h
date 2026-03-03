@@ -27,8 +27,8 @@ enum class ATTACK_STATE
 	_EOT_,
 };
 
-// 攻撃コリジョン情報
-struct ATTACK_COLLISION
+// 攻撃コリジョン情報構造体
+struct AttackCollision
 {
 	VECTOR attackColTop;		// カプセル攻撃コリジョンの上部
 	VECTOR attackColBottom;		// カプセル攻撃コリジョンの下部
@@ -46,7 +46,17 @@ struct ATTACK_COLLISION
 	bool canKnockback;			// 吹き飛ばし攻撃かどうか
 };
 
-// 攻撃移動情報
+// 攻撃コリジョンオフセット情報構造体
+struct AttackColOffset
+{
+	VECTOR offsetTop;		// カプセル攻撃コリジョンの上部オフセット
+	VECTOR offsetBottom;	// カプセル攻撃コリジョンの下部オフセット
+	float radiusOffset;     // 半径オフセット
+	float directionScale;   // 方向スケール
+	bool useOwnerDirection; // 所有者の向きを基準とするか
+};
+
+// 攻撃移動情報構造体
 struct AttackMovement
 {
 	VECTOR moveDir;		// 移動方向
@@ -75,6 +85,9 @@ public:
 	// 攻撃中の移動処理
 	void UpdateAttackMove();				// 移動更新
 	virtual void ProcessAttackMovement();	// 移動処理
+
+	// 攻撃コリジョンの位置更新処理
+	void UpdateAttackCollisionPos();		// 攻撃コリジョンの位置更新
 
 	// 攻撃の向き調整処理
 	void UpdateAttackDirAdjust();	// 向き調整更新
@@ -129,6 +142,9 @@ public:
 		bool hit		// ヒットフラグ
 	);
 
+	// 攻撃コリジョンオフセット設定
+	void SetCollisionOffset(const AttackColOffset& offset);
+
 	// 向き調整データ設定
 	void SetDirAdjustData
 	(
@@ -137,7 +153,7 @@ public:
 
 	// ゲッターセッター
 	COLLISION_TYPE GetCollisionType() const { return _eColType; }			// コリジョンタイプ取得
-	ATTACK_COLLISION GetAttackCollision() const { return _stcAttackCol; }	// 攻撃コリジョン情報取得
+	AttackCollision GetAttackCollision() const { return _stcAttackCol; }	// 攻撃コリジョン情報取得
 	ATTACK_STATE GetAttackState() const { return _eAttackState; }			// 攻撃状態取得
 
 	bool GetHitFlag() const { return _stcAttackCol.isHit; }		// ヒットフラグ取得
@@ -157,8 +173,9 @@ protected:
 	ATTACK_STATE _eAttackState;		// 攻撃状態
 
 	// 攻撃情報関係
-	ATTACK_COLLISION _stcAttackCol;		// 攻撃コリジョン情報
-	AttackMovement _stcAttackMovement;	// 攻撃中の移動情報
+	AttackCollision		_stcAttackCol;		// 攻撃コリジョン情報
+	AttackColOffset		_stcColOffset;		// 攻撃コリジョンオフセット情報
+	AttackMovement		_stcAttackMovement;	// 攻撃中の移動情報
 
 	// 攻撃時の向き調整関係
 	float _dirAdjustSpeed;	// 向き調整速度

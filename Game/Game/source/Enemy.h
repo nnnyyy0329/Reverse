@@ -50,7 +50,7 @@ public:
 	void StopAttack();// UŒ‚‚Ì’â~
 
 	// ”íƒ_ƒ[ƒWˆ—
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo) override;
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;
 
 	// €–S”»’è
 	bool IsDead();

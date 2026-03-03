@@ -70,6 +70,9 @@ bool AttackBase::Process()
     // 攻撃中の移動更新
     UpdateAttackMove();
 
+	// 攻撃コリジョンの位置更新
+	UpdateAttackCollisionPos();
+
 	// 攻撃中の向き調整更新
 	UpdateAttackDirAdjust();
 
@@ -227,6 +230,19 @@ void AttackBase::ProcessAttackMovement()
         // モデルの位置を更新
         MV1SetPosition(animManager->GetModelHandle(), newPos);
     }
+}
+
+// 攻撃コリジョンの位置更新
+void AttackBase::UpdateAttackCollisionPos()
+{
+    auto owner = GetOwner();
+    if(!owner){ return; }
+
+    // 攻撃コリジョンの位置を所有者キャラの位置に合わせる
+    VECTOR ownerPos = owner->GetPos();
+    VECTOR colOffset = VGet(0.0f, 0.0f, 0.0f); // コリジョンのオフセット（必要に応じて調整）
+    _stcAttackCol.attackColTop = VAdd(ownerPos, colOffset);
+    _stcAttackCol.attackColBottom = VAdd(ownerPos, colOffset);
 }
 
 // 向き調整更新

@@ -534,7 +534,7 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 	}
 
 	// 攻撃コリジョン情報を取得
-	const ATTACK_COLLISION& col = attack->GetAttackCollision();
+	const AttackCollision& col = attack->GetAttackCollision();
 
 	// 当たり判定
 	if(HitCheck_Capsule_Capsule
@@ -711,7 +711,6 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 			MV1CollResultPolyDimTerminate(polyResult);
 		}
 	}
-
 }
 
 // 吸収攻撃の当たり判定チェック関数
@@ -724,17 +723,14 @@ void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<CharaBase> player, std::shar
 	if(!surfacePlayer){ return; }
 
 	// 吸収攻撃システムを取得
-	const PlayerAbsorbAttackSystem* absorbSystemConst = surfacePlayer->GetAbsorbAttackSystem();
+	PlayerAbsorbAttackSystem* absorbSystemConst = surfacePlayer->GetAbsorbAttackSystem();
 	if(!absorbSystemConst) { return; }
 
 	// 吸収攻撃がアクティブかチェック
 	if(!absorbSystemConst->IsAbsorbActive()){ return; }
 
-	// 非 cons tにキャスト
-	PlayerAbsorbAttackSystem* absorbSystem = const_cast<PlayerAbsorbAttackSystem*>(absorbSystemConst);
-
 	// 吸収の所有者を渡して判定
-	CheckHitCharaAbsorbAttack(enemy, surfacePlayer, absorbSystem);
+	CheckHitCharaAbsorbAttack(enemy, surfacePlayer, absorbSystemConst);
 }
 
 // キャラと吸収攻撃の当たり判定

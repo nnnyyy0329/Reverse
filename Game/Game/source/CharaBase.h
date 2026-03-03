@@ -71,7 +71,7 @@ public:
 	void SetCharaType(CHARA_TYPE eType) { _eCharaType = eType; }	// キャラタイプ
 
 	// 被ダメージ処理
-	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo);	// 攻撃による被ダメージ処理
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo);	// 攻撃による被ダメージ処理
 	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE eType);										// 弾による被ダメージ処理
 
 protected:

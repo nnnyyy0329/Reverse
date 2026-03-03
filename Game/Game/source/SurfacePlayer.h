@@ -18,7 +18,7 @@ public:
 
 	// 共通関数のオーバーライド
 	virtual void DebugRender()override;																		// デバッグ情報描画
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo) override;	// 被ダメージ処理
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;	// 被ダメージ処理
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
 
 	// 純粋仮想関数のオーバーライド
@@ -32,7 +32,8 @@ public:
 	virtual void					GetDirAdjustConfigs(AttackDirAdjustConfig configs[3])	override;	// 攻撃方向補正設定を取得
 	virtual AreaAttackConfig		GetAreaAttackConfig()									override;	// 範囲攻撃設定を取得
 	virtual AttackEffectConfig		GetAttackEffectConfig(AttackEffectConfig configs[3])	override;	// 演出設定を取得
-	const PlayerAbsorbAttackSystem* GetAbsorbAttackSystem()const;	// 吸収攻撃システム取得
+	const PlayerAbsorbAttackSystem* GetAbsorbAttackSystemConst()const;	// 吸収攻撃システム取得
+	PlayerAbsorbAttackSystem* GetAbsorbAttackSystem();					// 非const版
 
 	/*****ゲッターセッター*****/
 

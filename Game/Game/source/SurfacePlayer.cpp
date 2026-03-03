@@ -79,7 +79,7 @@ void SurfacePlayer::DebugRender()
 }
 
 // 被ダメージ処理
-void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
+void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
 	// 基底クラスの被ダメージ処理呼び出し
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
@@ -371,7 +371,13 @@ AbsorbConfig SurfacePlayer::GetAbsorbConfig()
 }
 
 // 吸収攻撃システム取得
-const PlayerAbsorbAttackSystem* SurfacePlayer::GetAbsorbAttackSystem()const
+const PlayerAbsorbAttackSystem* SurfacePlayer::GetAbsorbAttackSystemConst()const
+{
+	return _absorbAttackSystem.get();
+}
+
+// 非const版
+PlayerAbsorbAttackSystem* SurfacePlayer::GetAbsorbAttackSystem()
 {
 	return _absorbAttackSystem.get();
 }
