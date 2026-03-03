@@ -288,6 +288,19 @@ bool AnimManager::IsAnimationFinished()
 	return currentAnim->bIsFinished;
 }
 
+bool AnimManager::IsAnimationFinishedConst()const
+{
+	// アクティブなアニメーションがない場合はtrueを返す
+	if (_activeAnims.empty())
+	{
+		return true;
+	}
+
+	// 最新のアニメーションの終了状態を確認
+	const AnimationData* currentAnim = _activeAnims.back();
+	return currentAnim->bIsFinished;
+}
+
 // アニメーションの総再生時間を取得
 float AnimManager::GetCurrentAnimTotalTime()
 {

@@ -43,7 +43,6 @@ struct RenderConfig
 // 攻撃定数構造体
 struct AttackConstants
 {
-	float attackOffsetScale;	// 攻撃判定オフセット倍率
 	int surfaceMaxComboCount;	// 表プレイヤー用コンボカウント
 	int interiorMaxComboCount;	// 裏プレイヤー用コンボカウント
 };
@@ -61,9 +60,6 @@ struct AttackConfig
 	ATTACK_STATE attackState;	// 攻撃状態
 	float attackMoveSpeed;		// 攻撃中の移動速度
 	bool canKnockback;			// 吹き飛ばし攻撃かどうか
-	std::string effectName;		// エフェクト名
-	VECTOR effectOffset;		// エフェクト位置オフセット
-	std::string soundName;		// サウンド名
 };
 
 // 攻撃向き設定データ構造体
@@ -83,10 +79,15 @@ struct AreaAttackConfig
 	float recovery;				// 硬直
 	float damage;				// ダメージ
 	bool isHit;					// ヒットフラグ
+};
+
+// 攻撃の演出関連構造体
+struct AttackEffectConfig
+{
 	std::string effectName;		// エフェクト名
 	VECTOR effectOffset;		// エフェクト位置オフセット
 	std::string soundName;		// サウンド名
-};
+};;
 
 // 基本移動アニメーション構造体
 struct PlayerMovementAnimations
@@ -252,7 +253,7 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
-	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)override;	// 被ダメージ処理
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)override;	// 被ダメージ処理
 	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾での被ダメージ処理
 
 	// 共通初期化
@@ -264,17 +265,17 @@ public:
 	void InitializeAnimation();									// アニメーション初期化
 
 	// 共通処理
-	void CallProcess();					// Process呼び出し用関数
-	void ProcessMovePlayer();			// 移動処理
-	void ProcessInputMove();			// 移動入力処理
-	void ProcessCollisionPos();			// コリジョン位置更新処理
-	void ProcessStatusAnimation();		// 状態別アニメーション処理
-	void ProcessPlayAnimation();		// アニメーション処理
-	void ProcessReturnNormalMotion();	// 通常モーションに戻す処理
-	void ProcessHit();					// 被弾処理
-	void ProcessDebug();				// デバッグ処理
-	bool IsHitStop();					// 被弾硬直中かチェック
-	bool IsAnimationFinished();			// アニメーションが終了したかの処理
+	void CallProcess();						// Process呼び出し用関数
+	void ProcessMovePlayer();				// 移動処理
+	void ProcessInputMove();				// 移動入力処理
+	void ProcessCollisionPos();				// コリジョン位置更新処理
+	void ProcessStatusAnimation();			// 状態別アニメーション処理
+	void ProcessPlayAnimation();			// アニメーション処理
+	void ProcessReturnNormalMotion();		// 通常モーションに戻す処理
+	void ProcessHit();						// 被弾処理
+	void ProcessDebug();					// デバッグ処理
+	bool IsHitStop();						// 被弾硬直中かチェック
+	bool IsAnimationFinishedConst()const;	// アニメーションが終了したかの処理
 
 	// デバッグ描画共通
 	void DebugRender();				// デバッグ情報描画
@@ -302,9 +303,9 @@ public:
 	bool HasStateChanged()const;
 
 	// 各プレイヤー固有の設定を取得
-	virtual PlayerConfig GetPlayerConfig() = 0;			// プレイヤー設定を取得	
-	virtual PlayerAnimations GetPlayerAnimation() = 0;	// プレイヤーアニメーション名データを取得
-	virtual RenderConfig GetRenderConfig() = 0;			// 表示設定データを取得
+	virtual PlayerConfig GetPlayerConfig() = 0;											// プレイヤー設定を取得	
+	virtual PlayerAnimations GetPlayerAnimation() = 0;									// プレイヤーアニメーション名データを取得
+	virtual RenderConfig GetRenderConfig() = 0;											// 表示設定データを取得
 
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
@@ -333,14 +334,19 @@ public:
 
 	PLAYER_COMBAT_STATE GetCombatState()const{ return _playerState.combatState; }		// 特殊状態取得
 	void SetCombatState(PLAYER_COMBAT_STATE state){ _playerState.combatState = state; }	// 特殊状態設定
+
+
+	// プレイヤーの動作関連コンポーネントクラスを実装予定
+	// それぞれのシステムはユニークポインタで管理して実装する
 	
 protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
-	virtual AttackConstants GetAttackConstants()const = 0;					// 攻撃定数を取得
-	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;				// 攻撃設定を取得
-	virtual void GetDirAdjustConfigs(AttackDirAdjustConfig configs[]) = 0;	// 攻撃向き調整設定を取得
-
-	virtual AreaAttackConfig GetAreaAttackConfig() = 0;			// 範囲攻撃設定を取得
+	virtual AttackConstants GetAttackConstants()const = 0;								// 攻撃定数を取得
+	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;							// 攻撃設定を取得
+	virtual void GetAttackColOffsetConfigs(AttackColOffset configs[]) = 0;				// 攻撃コリジョンオフセット設定を取得
+	virtual void GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]) = 0;		// 攻撃向き調整設定を取得
+	virtual AreaAttackConfig GetAreaAttackConfig() = 0;									// 範囲攻撃設定を取得
+	virtual AttackEffectConfig GetAttackEffectConfig(AttackEffectConfig configs[]) = 0;	// 演出設定を取得
 
 	// 攻撃システム
 	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
@@ -349,12 +355,15 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	// 攻撃関連の初期化関数
 	void InitializeAttackData();						// 攻撃データ初期化
 	void InitializeAttackConfigs(int maxComboCount);	// 攻撃設定配列初期化
-	void CreateDynamicAttackData(int maxComboCount);	// 動的攻撃データ作成
 	void SetAttackStatusData(int maxComboCount);		// 攻撃状態を攻撃配列に入れる
+	void CreateAttackData(int maxComboCount);			// 攻撃コリジョンデータ作成	
+	void SetAttackColData(AttackConfig config, std::shared_ptr<AttackBase> attack);				// 攻撃コリジョン情報設定
+	void SetAttackOffsetData(AttackColOffset config, std::shared_ptr<AttackBase> attack);		// 攻撃オフセット情報設定
+	void SetDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃向き調整情報設定
 
 	// PlayerBase_Attack.cppで定義
 	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数
-	void ProcessAttackColPos();		// コリジョン位置の更新処理
+	//void ProcessAttackColPos();		// コリジョン位置の更新処理
 	void ProcessAttack();			// 攻撃処理
 	void ProcessBranchAttack();		// 攻撃分岐処理
 	void ReceiveAttackColData();	// 攻撃コリジョンの情報受け取り関数
@@ -363,19 +372,20 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	bool IsAttacking();				// 攻撃中かチェック
 	bool IsAttackInput();			// 攻撃入力があるかチェック
 
-	void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
+	//void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
 	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);				// 攻撃開始処理
-	void ProcessAttackReaction(int attackIndex);									// 攻撃反応処理
-	void ProcessAttackEffect(int attackIndex, std::vector<AttackConfig> configs);	// 攻撃エフェクト処理
-	void ProcessAttackSound(int attackIndex, std::vector<AttackConfig> configs);	// 攻撃サウンド処理
-	void ProcessComboAttack(int attackIndex);										// コンボ攻撃処理
-	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);					// 攻撃終了処理
-	void EndAttackSequence();														// 攻撃課程修了
-	void ProcessNextAttack(int currentIndex);										// 次の攻撃処理
-	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_ATTACK_STATE status);		// 状態に対応する攻撃を取得
-	int GetInstanceId();															// ID取得関数
-	int GetAttackIndexByStatus(PLAYER_ATTACK_STATE status);							// 状態から攻撃インデックスを取得
-	int GetMaxComboCount()const;													// 最大コンボ数取得
+	void ProcessAttackReaction(int attackIndex);										// 攻撃反応処理
+	void ProcessAttackRegister(std::shared_ptr<AttackBase> attack);						// 攻撃登録処理
+	void ProcessAttackEffect(int attackIndex, std::vector<AttackEffectConfig> configs);	// 攻撃エフェクト処理
+	void ProcessAttackSound(int attackIndex, std::vector<AttackEffectConfig> configs);	// 攻撃サウンド処理
+	void ProcessComboAttack(int attackIndex);											// コンボ攻撃処理
+	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);						// 攻撃終了処理
+	void EndAttackSequence();															// 攻撃課程修了
+	void ProcessNextAttack(int currentIndex);											// 次の攻撃処理
+	std::shared_ptr<AttackBase> GetAttackByStatus(PLAYER_ATTACK_STATE status);			// 状態に対応する攻撃を取得
+	int GetInstanceId();																// ID取得関数
+	int GetAttackIndexByStatus(PLAYER_ATTACK_STATE status);								// 状態から攻撃インデックスを取得
+	int GetMaxComboCount()const;														// 最大コンボ数取得
 
 	// 攻撃コリジョン情報の受け取り用
 	VECTOR _vAttackColTop;
@@ -448,16 +458,16 @@ protected:
 	RenderConfig		_renderConfig;	// 表示設定データ
 
 	// 状態
-	PlayerState _playerState;		// 現在の状態
-	PlayerState _oldPlayerState;	// 前フレームの状態
+	PlayerState			_playerState;		// 現在の状態
+	PlayerState			_oldPlayerState;	// 前フレームの状態
 
 	// アクション関係変数
-	float _fVelY;			// Y方向の速度
-	bool _bIsDashInput;		// ダッシュ入力があるかどうか
-	bool _bIsJumping;		// ジャンプ中かどうか
-	bool _bIsStanding;		// 着地しているかどうか
-	bool _bIsCrouching;		// しゃがんでいるかどうか
-	bool _bIsStartCrouch;	// しゃがみ開始フラグ
+	float	_fVelY;				// Y方向の速度
+	bool	_bIsDashInput;		// ダッシュ入力があるかどうか
+	bool	_bIsJumping;		// ジャンプ中かどうか
+	bool	_bIsStanding;		// 着地しているかどうか
+	bool	_bIsCrouching;		// しゃがんでいるかどうか
+	bool	_bIsStartCrouch;	// しゃがみ開始フラグ
 
 	// 表示用オフセット
 	int _iDrawSizeOffset;	// ずらす大きさ
@@ -465,10 +475,10 @@ protected:
 	int _iDrawOffsetY;
 
 	// 被弾情報
-	VECTOR _vHitDir;		// 被弾方向
-	float _fHitSpeed;		// 被弾速度
-	float _fHitSpeedDecay;	// 被弾速度減衰
-	float _fHitTime;		// 被弾時間
+	VECTOR	_vHitDir;			// 被弾方向
+	float	_fHitSpeed;			// 被弾速度
+	float	_fHitSpeedDecay;	// 被弾速度減衰
+	float	_fHitTime;			// 被弾時間
 
 	// カメラ角度
 	float _cameraAngle;

@@ -43,6 +43,9 @@
     <Filter Include="Senario\Title">
       <UniqueIdentifier>{e0dede67-086b-455a-aa2a-31f47b89e628}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Manager\Input">
+      <UniqueIdentifier>{8777042d-11c4-47a3-9507-7b0749d4b0cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\CFile\CFile.cpp">
@@ -97,6 +100,12 @@
       <Filter>Server\Sound</Filter>
     </ClCompile>
     <ClCompile Include="source\InputManager.cpp" />
+    <ClCompile Include="source\ScenarioBase.cpp">
+      <Filter>Senario</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InputManager.cpp">
+      <Filter>Manager\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\CFile\CFile.h">
@@ -162,5 +171,11 @@
       <Filter>Server\Sound</Filter>
     </ClInclude>
     <ClInclude Include="source\InputManager.h" />
+    <ClInclude Include="source\ScenarioBase.h">
+      <Filter>Senario</Filter>
+    </ClInclude>
+    <ClInclude Include="source\InputManager.h">
+      <Filter>Manager\Input</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

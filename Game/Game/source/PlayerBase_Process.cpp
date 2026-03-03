@@ -71,8 +71,7 @@ void PlayerBase::ProcessInputMove()
 	auto im = InputManager::GetInstance();
 
 	// ダッシュ入力があればフラグを変える
-	if(im->IsTrigger(INPUT_ACTION::DASH) &&
-		im->IsTrigger(INPUT_ACTION::SELECT))
+	if(im->IsTrigger(INPUT_ACTION::DASH))
 	{
 		_bIsDashInput = !_bIsDashInput;	// ダッシュ入力フラグをトグルする
 	}
@@ -82,10 +81,10 @@ void PlayerBase::ProcessInputMove()
 
 	float digitalX = 0.0f;
 	float digitalY = 0.0f;
-	//if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
-	//if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
-	//if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
-	//if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }
 	
 	// アナログ入力による移動、なければデジタル入力
 	float inputX = (abs(analog.lx) > analogMin) ? analog.lx : digitalX;
@@ -466,14 +465,14 @@ bool PlayerBase::HasStateChanged()const
 }
 
 // アニメーションが終了したか
-bool PlayerBase::IsAnimationFinished()
+bool PlayerBase::IsAnimationFinishedConst()const
 {
 	// アニメーションマネージャーの取得
-	AnimManager* animManager = GetAnimManager();
+	const AnimManager* animManager = GetAnimManagerConst();
 
 	if(animManager)
 	{
 		// 現在のアニメーションが終了しているか
-		return animManager->IsAnimationFinished();
+		return animManager->IsAnimationFinishedConst();
 	}
 }

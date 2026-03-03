@@ -79,7 +79,7 @@ void SurfacePlayer::DebugRender()
 }
 
 // 被ダメージ処理
-void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
+void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
 	// 基底クラスの被ダメージ処理呼び出し
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
@@ -164,8 +164,6 @@ AttackConstants SurfacePlayer::GetAttackConstants()const
 	// SurfacePlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.attackOffsetScale = 85.0f;	// 攻撃判定オフセット倍率	
-	//constants.surfaceMaxComboCount = 3;		// 表プレイヤー用コンボカウント
 	constants.surfaceMaxComboCount = 0;		// 表プレイヤー用コンボカウント
 
 	return constants;
@@ -187,9 +185,6 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
 		false,					// 吹き飛ばし攻撃かどうか
-		"SurfacePlayerAttack1",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		"sPlayerFirstAttack",	// サウンド名
 	};	
 
 	// 第2攻撃
@@ -205,9 +200,6 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
 		false,					// 吹き飛ばし攻撃かどうか
-		"SurfacePlayerAttack1",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		"sPlayerFirstAttack",		// サウンド名
 	};
 
 	// 第3攻撃
@@ -223,14 +215,36 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
 		false,					// 吹き飛ばし攻撃かどうか
-		"SurfacePlayerAttack3",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		"iPlayerAttack",		// サウンド名
+	};
+}
+
+// 攻撃コリジョンオフセットの情報設定
+void SurfacePlayer::GetAttackColOffsetConfigs(AttackColOffset configs[3])
+{
+	// 第1攻撃
+	configs[0] = 
+	{ 
+		0.0f,					// 方向スケール
+		true,					// 所有者の向きを基準とするか
+	};
+
+	// 第2攻撃
+	configs[1] = 
+	{ 
+		0.0f,					// 方向スケール
+		true,					// 所有者の向きを基準とするか
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{ 
+		0.0f,					// 方向スケール
+		true,					// 所有者の向きを基準とするか
 	};
 }
 
 // 攻撃方向補正の情報設定
-void SurfacePlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[3])
+void SurfacePlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[3])
 {
 	// 第1攻撃
 	configs[0] = 
@@ -249,6 +263,40 @@ void SurfacePlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[3])
 	{ 
 		true,	// 向き調整が可能かどうか
 	};
+}
+
+// 表プレイヤーの演出設定
+AttackEffectConfig SurfacePlayer::GetAttackEffectConfig(AttackEffectConfig configs[3])
+{
+	// 表プレイヤー用の演出設定
+	AttackEffectConfig config;
+
+	// 第1攻撃
+	configs[0] =
+	{
+		config.effectName = "SurfacePlayerAttack1",		// ダメージエフェクト名
+		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
+		config.soundName = "sPlayerFirstAttack",		// ダメージサウンド名
+	};
+
+	// 第2攻撃
+	configs[1] =
+	{
+		config.effectName = "SurfacePlayerAttack1",		// ダメージエフェクト名
+		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
+		config.soundName = "sPlayerFirstAttack",		// ダメージサウンド名
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{
+		config.effectName = "SurfacePlayerAttack3",		// ダメージエフェクト名
+		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
+		config.soundName = "iPlayerFirstAttack",		// ダメージサウンド名
+	};
+
+
+	return config;
 }
 
 // 範囲攻撃の情報設定
@@ -346,7 +394,13 @@ AbsorbConfig SurfacePlayer::GetAbsorbConfig()
 }
 
 // 吸収攻撃システム取得
-const PlayerAbsorbAttackSystem* SurfacePlayer::GetAbsorbAttackSystem()const
+const PlayerAbsorbAttackSystem* SurfacePlayer::GetAbsorbAttackSystemConst()const
+{
+	return _absorbAttackSystem.get();
+}
+
+// 非const版
+PlayerAbsorbAttackSystem* SurfacePlayer::GetAbsorbAttackSystem()
 {
 	return _absorbAttackSystem.get();
 }
@@ -366,6 +420,11 @@ void SurfacePlayer::AbsorbSystemDebugRender()
 // 吸収攻撃モーション切り替え条件処理
 void SurfacePlayer::ProcessChangeAbsorbMotion()
 {
+	// 吸収終了時に通常モーションに戻す処理
+	ReturnNormalMotion();
+
+	if(IsInputInAbsorbFinishState()){ return; }	// 吸収終了状態での入力は無視
+
 	// 吸収入力開始
 	if(IsAbsorbInput() && !_bWasAbsorbKeyPressed)
 	{
@@ -385,7 +444,7 @@ void SurfacePlayer::ProcessChangeAbsorbMotion()
 		}
 
 		// まだ構えモーションが終了していないなら
-		if(!IsAnimationFinished()){ return; }
+		if(!IsAnimationFinishedConst()){ return; }
 
 		// 構えモーション終了時の処理
 		ProcessAbsorbReadyCompleted();
@@ -396,9 +455,6 @@ void SurfacePlayer::ProcessChangeAbsorbMotion()
 		// 吸収攻撃終了処理
 		ProcessAbsorbFinish();
 	}
-
-	// 吸収終了時に通常モーションに戻す処理
-	ReturnNormalMotion();
 }
 
 // 構え状態に移行
@@ -475,7 +531,7 @@ void SurfacePlayer::ReturnNormalMotion()
 	if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_END)
 	{
 		// どちらの場合もアニメーションが終了していたら通常モーションに戻す
-		if(IsAnimationFinished())
+		if(IsAnimationFinishedConst())
 		{
 			// 通常モーションに戻す処理
 			ProcessReturnNormalMotion();
@@ -490,11 +546,35 @@ bool SurfacePlayer::IsAbsorbInput()const
 	return (InputManager::GetInstance()->IsHold(INPUT_ACTION::ABILITY)) != 0;
 }
 
+// 吸収攻撃がアクティブかどうか
+bool SurfacePlayer::IsAbsorbActive() const
+{
+	if(!_absorbAttackSystem) { return false; }
+
+	// 吸収攻撃システムに吸収がアクティブかどうかを問い合わせる
+	return _absorbAttackSystem->IsAbsorbActive();
+}
+
+// 吸収終了状態中に入力がされたかどうか
+bool SurfacePlayer::IsInputInAbsorbFinishState()const
+{
+	// 吸収終了状態中に入力がされたかどうか
+	return (IsAbsorbInput() && IsAbsorbEndState() && !IsAnimationFinishedConst());
+}
+
+// 吸収終了状態かどうか
+bool SurfacePlayer::IsAbsorbEndState()const
+{
+	// 吸収終了状態かどうか
+	return _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_END;
+}
+
 // 吸収アニメーション再生時間デバッグ表示
 void SurfacePlayer::DebugDrawAbsorbAnimationTime()
 {
 	if(!_absorbAttackSystem) { return; }
 
+	// アニメーションマネージャーを取得
 	AnimManager* animManager = GetAnimManager();
 	if(!animManager) { return; }
 

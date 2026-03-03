@@ -69,7 +69,7 @@ void BulletPlayer::DebugRender()
 }
 
 // 被ダメージ処理
-void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
+void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
 	// 基底クラスの被ダメージ処理を呼び出す
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
@@ -115,7 +115,7 @@ void BulletPlayer::ShootInput()
 		else if(_playerState.shootState == PLAYER_SHOOT_STATE::SHOOT_READY && !_bIsReadyCompleted)
 		{
 			// アニメーションが完了したかチェック
-			if(!IsAnimationFinished()){ return; }
+			if(!IsAnimationFinishedConst()){ return; }
 
 			_bIsReadyCompleted = true; // 構えアニメーション完了フラグを立てる
 		}
@@ -386,11 +386,38 @@ AttackConstants BulletPlayer::GetAttackConstants()const
 
 	AttackConstants constants;
 
-	constants.attackOffsetScale = 0.0f;
-	constants.surfaceMaxComboCount = 0;
-	constants.interiorMaxComboCount = 0;
-
 	return constants;
+}
+
+// 弾プレイヤーの攻撃設定
+void BulletPlayer::GetAttackConfigs(AttackConfig configs[])
+{
+	// 弾プレイヤーは攻撃を行わない
+}
+
+// 弾プレイヤーの攻撃コリジョンオフセット設定
+void BulletPlayer::GetAttackColOffsetConfigs(AttackColOffset configs[])
+{
+	// 弾プレイヤーは攻撃を行わない
+}
+
+// 弾プレイヤーの攻撃方向補正設定
+void BulletPlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[])
+{
+	// 弾プレイヤーは攻撃を行わない
+}
+
+// 弾プレイヤーの演出設定
+AttackEffectConfig BulletPlayer::GetAttackEffectConfig(AttackEffectConfig  configs[])
+{
+	// 弾プレイヤーは攻撃を行わないため、デフォルトの設定を返す
+	AttackEffectConfig config;
+
+	config.effectName = "";							// ダメージエフェクト名
+	config.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// ダメージエフェクト位置オフセット
+	config.soundName = "";							// ダメージサウンド名
+
+	return config;
 }
 
 // 弾プレイヤーの範囲攻撃設定
@@ -399,18 +426,6 @@ AreaAttackConfig BulletPlayer::GetAreaAttackConfig()
 	// 弾プレイヤーは範囲攻撃を行わない
 	AreaAttackConfig config;
 	return config;
-}
-
-// 弾プレイヤーの攻撃方向補正設定
-void BulletPlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[])
-{
-	// 弾プレイヤーは攻撃を行わない
-}
-
-// 弾プレイヤーの攻撃設定
-void BulletPlayer::GetAttackConfigs(AttackConfig configs[])
-{
-	// 弾プレイヤーは攻撃を行わない
 }
 
 // 回避設定データ構造体
