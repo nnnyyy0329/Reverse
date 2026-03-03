@@ -224,9 +224,6 @@ void SurfacePlayer::GetAttackColOffsetConfigs(AttackColOffset configs[3])
 	// 第1攻撃
 	configs[0] = 
 	{ 
-		{0.0f, 85.0f, 0.0f},	// コリジョン上部位置オフセット
-		{0.0f, 0.0f, 0.0f},		// コリジョン下部位置オフセット
-		0.0f,					// コリジョン半径オフセット
 		0.0f,					// 方向スケール
 		true,					// 所有者の向きを基準とするか
 	};
@@ -234,9 +231,6 @@ void SurfacePlayer::GetAttackColOffsetConfigs(AttackColOffset configs[3])
 	// 第2攻撃
 	configs[1] = 
 	{ 
-		{0.0f, 85.0f, 0.0f},	// コリジョン上部位置オフセット
-		{0.0f, 0.0f, 0.0f},		// コリジョン下部位置オフセット
-		0.0f,					// コリジョン半径オフセット
 		0.0f,					// 方向スケール
 		true,					// 所有者の向きを基準とするか
 	};
@@ -244,9 +238,6 @@ void SurfacePlayer::GetAttackColOffsetConfigs(AttackColOffset configs[3])
 	// 第3攻撃
 	configs[2] =
 	{ 
-		{0.0f, 85.0f, 0.0f},	// コリジョン上部位置オフセット
-		{0.0f, 0.0f, 0.0f},		// コリジョン下部位置オフセット
-		0.0f,					// コリジョン半径オフセット
 		0.0f,					// 方向スケール
 		true,					// 所有者の向きを基準とするか
 	};

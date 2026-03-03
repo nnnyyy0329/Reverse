@@ -49,9 +49,6 @@ struct AttackCollision
 // 攻撃コリジョンオフセット情報構造体
 struct AttackColOffset
 {
-	VECTOR offsetTop;		// カプセル攻撃コリジョンの上部オフセット
-	VECTOR offsetBottom;	// カプセル攻撃コリジョンの下部オフセット
-	float radiusOffset;     // 半径オフセット
 	float directionScale;   // 方向スケール
 	bool useOwnerDirection; // 所有者の向きを基準とするか
 };
@@ -89,7 +86,7 @@ public:
 	// 攻撃コリジョンの位置更新
 	void UpdateAttackColPos();	
 
-	// 攻撃コリジョンの位置計算
+	// 攻撃コリジョンの位置計算(コリジョン上下のオフセットを入れる場合の計算用関数).未使用
 	VECTOR CalculateAttackColPos(const VECTOR& basePos, const VECTOR& offset, const VECTOR& direction);	
 
 	// 攻撃の向き調整処理

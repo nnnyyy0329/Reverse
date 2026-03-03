@@ -44,9 +44,6 @@ AttackBase::AttackBase()
 	_stcAttackMovement.canMove = false;
 
 	// 攻撃コリジョンオフセットの初期化
-	_stcColOffset.offsetTop = VGet(0.0f, 0.0f, 0.0f);
-	_stcColOffset.offsetBottom = VGet(0.0f, 0.0f, 0.0f);
-	_stcColOffset.radiusOffset = 0.0f;
 	_stcColOffset.directionScale = 1.0f;
 	_stcColOffset.useOwnerDirection = true;
 
@@ -249,28 +246,28 @@ void AttackBase::UpdateAttackColPos()
     VECTOR ownerPos = owner->GetPos();
     VECTOR ownerDir = owner->GetDir();
 
-	// オフセットを適応して攻撃コリジョンの位置を更新
+    // 前方オフセット計算
+    VECTOR dirNorm = VNorm(ownerDir);
+    VECTOR forwardOffset = VScale(dirNorm, _stcColOffset.directionScale);
+    VECTOR basePos = VAdd(ownerPos, forwardOffset);
+
+	// コリジョンタイプに応じて攻撃コリジョンの位置を更新
     switch(_eColType)
     {
-        case COLLISION_TYPE::CAPSULE:
+		case COLLISION_TYPE::CAPSULE: // カプセルの場合
         {
-            // カプセル攻撃コリジョン上部の計算
-            _stcAttackCol.attackColTop = CalculateAttackColPos
-            (
-                ownerPos, _stcColOffset.offsetTop, ownerDir
-            );
-
-			// カプセル攻撃コリジョン下部の計算
-            _stcAttackCol.attackColBottom = CalculateAttackColPos
-            (
-                ownerPos, _stcColOffset.offsetBottom, ownerDir
-            );
+			// AttackConfigで設定された攻撃コリジョンの値で位置を計算
+            _stcAttackCol.attackColTop = VAdd(basePos, _stcAttackCol.attackColTop);
+            _stcAttackCol.attackColBottom = VAdd(basePos, _stcAttackCol.attackColBottom);
 
             break;
-		}
-        case COLLISION_TYPE::CIRCLE:
-        case COLLISION_TYPE::SPHERE:
+        }
+
+        case COLLISION_TYPE::CIRCLE: // 円の場合
+		case COLLISION_TYPE::SPHERE: // 球の場合
         {
+            // 未使用
+
             break;
         }
     }
