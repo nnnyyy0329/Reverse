@@ -16,11 +16,14 @@ StageBase::StageBase(int stageNum)
 	std::string path, jsonFile, jsonObjName;
 	switch (_stageNum) 
 	{
+	case 0:
+		path = "res/stage/json/"; jsonFile = "stage_00.json"; jsonObjName = "res";
+		break;
 	case 1:
 		path = "res/stage/json/"; jsonFile = "stage_01.json"; jsonObjName = "res";
 		break;
 	case 2:
-		path = "res/stage/"; jsonFile = "try_stage_1.json"; jsonObjName = "res";
+		path = "res/stage/json/"; jsonFile = "stage_02.json"; jsonObjName = "res";
 		break;
 	}
 
@@ -89,24 +92,24 @@ StageBase::StageBase(int stageNum)
 			[&](const std::string& name, const VECTOR& pos, const VECTOR& rot, const VECTOR& scale)
 			{
 				// 名前に応じて敵を生成
-				if (name == "S_Enemy00")
+				if (name == "S_EnemyNA")// 徘徊なし通常
 				{
 					_stageEnemies.push_back(
-						EnemyFactory::CreateEnemy(EnemyType::NORMAL, pos)
+						EnemyFactory::CreateEnemy(EnemyType::NORMAL, pos, rot, false)
 					);
 					_totalEnemyCnt++;// 敵を追加したらカウントアップ
 				}
-				else if (name == "S_MarkerB")
+				else if (name == "S_EnemyNB")// 徘徊あり通常
 				{
 					_stageEnemies.push_back(
-						EnemyFactory::CreateEnemy(EnemyType::RANGED, pos)
+						EnemyFactory::CreateEnemy(EnemyType::NORMAL, pos, rot)
 					);
 					_totalEnemyCnt++;
 				}
-				else if (name == "S_MarkerC")
+				else if (name == "S_EnemyS")// 遠距離
 				{
 					_stageEnemies.push_back(
-						EnemyFactory::CreateEnemy(EnemyType::TANK, pos)
+						EnemyFactory::CreateEnemy(EnemyType::RANGED, pos, rot)
 					);
 					_totalEnemyCnt++;
 				}
@@ -339,20 +342,6 @@ void StageBase::DebugRender()
 		DrawFormatString(x, y, GetColor(255, 255, 0), "残り敵数 : %d", GetCurrentEnemyCnt()); y += size;
 		DrawFormatString(x, y, GetColor(255, 255, 0), "全滅判定 : %s", IsAllEnemiesDefeated() ? "True" : "False"); y += size;
 	}
-
-	// トリガー情報
-	{
-		for (auto& trig : _triggerList) {
-			MV1DrawModel(trig.modelHandle);
-		}
-	}
-
-	// 敵の移動可能範囲
-	{
-		for (auto& area : _moveAreaList) {
-			MV1DrawModel(area.modelHandle);
-		}
-	}
 }
 
 void StageBase::CollisionRender()
@@ -370,6 +359,20 @@ void StageBase::CollisionRender()
 			enemy->CollisionRender();
 		}
 	}
+
+	// トリガー情報
+	{
+		for (auto& trig : _triggerList) {
+			MV1DrawModel(trig.modelHandle);
+		}
+	}
+
+	// 敵の移動可能範囲
+	{
+		for (auto& area : _moveAreaList) {
+			MV1DrawModel(area.modelHandle);
+		}
+	}
 }
 
 void StageBase::LoadStageDataFromJson(
@@ -382,6 +385,13 @@ void StageBase::LoadStageDataFromJson(
 	std::ifstream file(filePath);
 	nlohmann::json json;
 	file >> json;
+
+	// キーが存在しない場合はスキップ
+	if (!json.contains(objName))
+	{
+		return;
+	}
+
 	nlohmann::json stage = json.at(objName);
 
 	// ループ処理
@@ -419,11 +429,11 @@ void StageBase::LoadStageDataFromJson(
 int StageBase::GetNextStageNumFromTrigger(const std::string& triggerName)
 {
 	// トリガー名に応じて次のステージ番号を判定
-	if (triggerName.find("portal_1") != std::string::npos)
+	if (triggerName.find("S_Portal_0to1") != std::string::npos)
 	{
 		return 1;
 	}
-	else if (triggerName.find("S_Portal_0to1") != std::string::npos)
+	else if(triggerName.find("S_Portal_1to2") != std::string::npos)
 	{
 		return 2;
 	}

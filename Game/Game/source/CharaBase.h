@@ -74,6 +74,8 @@ public:
 	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo);	// 攻撃による被ダメージ処理
 	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE eType);										// 弾による被ダメージ処理
 
+	void SetIsStanding(bool b) { _bIsStanding = b; }
+
 protected:
 	// キャラカプセルの当たり判定用
 	VECTOR _vCollisionTop;		// 当たり判定の上端
@@ -96,5 +98,9 @@ protected:
 
 	// キャラタイプ
 	CHARA_TYPE _eCharaType;
+
+	// 重力関連(テスト)
+	float _fVelY = 0.0f;// 重力による落下速度
+	bool _bIsStanding = false;// 接地フラグ
 };
 

@@ -16,7 +16,7 @@ namespace
 	// 時間制御用定数
 	constexpr auto WANDER_LOOK_MIN_TIME = 60.0f;		// 徘徊時の最小視線停止時間
 	constexpr auto WANDER_LOOK_RANDOM_TIME = 60.0f;		// 徘徊時の視線停止ランダム追加時間
-	constexpr auto SHOT_CHARGE_TIME = 60.0f;			// 射撃溜め時間
+	constexpr auto SHOT_CHARGE_TIME = 90.0f;			// 射撃溜め時間
 	constexpr auto SHOT_EXECUTE_TIME = 30.0f;			// 射撃実行時間
 	constexpr auto SHOT_RECOVERY_TIME = 60.0f;			// 射撃後隙時間
 	constexpr auto SHOT_INTERVAL_TIME = 90.0f;			// 射撃間隔時間
@@ -41,6 +41,7 @@ namespace
 	constexpr auto ANIM_LOOP_COUNT = 0;					// アニメーションループ回数(0=無限)
 	constexpr auto ANIM_PLAY_COUNT = 1;					// アニメーション再生回数
 	constexpr auto ANIM_SPEED_NORMAL = 1.0f;			// アニメーション再生速度(通常)
+	constexpr float ANIM_SPEED_HALF = 0.5f;				// アニメーション再生速度(半分)
 
 	// 弾設定用定数
 	constexpr auto BULLET_SPEED = 15.0f;				// 弾速度
@@ -91,6 +92,11 @@ namespace Ranged
 		_fTargetTimer = CalcRandomRangeTime(owner->GetEnemyParam().fIdleTime, IDLE_TIME_RANGE);
 
 		// ここでアニメーション設定
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			animManager->ChangeAnimationByName("Senemy_idle_00", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
+		}
 	}
 
 	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner)
@@ -325,7 +331,13 @@ namespace Ranged
 	{
 		// タイマー初期化
 		_fTimer = 0.0f;
+
 		// ここでアニメーション設定
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			animManager->ChangeAnimationByName("Senemy_attack_00", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
+		}
 	}
 
 	std::shared_ptr<EnemyState> ShotCharge::Update(Enemy* owner)
@@ -359,6 +371,12 @@ namespace Ranged
 		_bHasShot = false;
 
 		// ここでアニメーション設定
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			animManager->ChangeAnimationByName("Senemy_attack_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+		}
+
 	}
 
 	std::shared_ptr<EnemyState> ShotExecute::Update(Enemy* owner)
@@ -581,11 +599,6 @@ namespace Ranged
 					_ePhase = Phase::RETURN_HOME;
 
 					// アニメーション設定
-					AnimManager* animManager = owner->GetAnimManager();
-					if (animManager)
-					{
-						animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
-					}
 				}
 			}
 			else

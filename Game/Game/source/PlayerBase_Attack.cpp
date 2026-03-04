@@ -27,28 +27,40 @@ void PlayerBase::InitializeAttackData()
 		return;
 	}
 
-	// 攻撃設定取得
-	std::vector<AttackConfig>configs(maxComboCount);	
-	GetAttackConfigs(configs.data());
+	// 攻撃設定配列初期化
+	InitializeAttackConfigs(maxComboCount);
 
+	// 動的攻撃データ作成
+	CreateDynamicAttackData(maxComboCount);
+
+	// 攻撃状態を攻撃配列に入れる
+	SetAttackStatusData(maxComboCount);
+}
+
+// 攻撃設定配列初期化
+void PlayerBase::InitializeAttackConfigs(int maxComboCount)
+{
 	// 攻撃配列とステータス配列を初期化
 	_attacks.clear();
 	_attackStatuses.clear();
 
-	// 攻撃状態の定義
-	std::vector<PLAYER_ATTACK_STATE> statuses =
-	{
-		PLAYER_ATTACK_STATE::FIRST_ATTACK,
-		PLAYER_ATTACK_STATE::SECOND_ATTACK,
-		PLAYER_ATTACK_STATE::THIRD_ATTACK,
-		PLAYER_ATTACK_STATE::FOURTH_ATTACK,
-		PLAYER_ATTACK_STATE::FIFTH_ATTACK
-	};
+}
 
-	// 動的に攻撃データを作成
+// 動的攻撃データ作成
+void PlayerBase::CreateDynamicAttackData(int maxComboCount)
+{
+	// 攻撃設定取得
+	std::vector<AttackConfig>configs(maxComboCount);
+	GetAttackConfigs(configs.data());
+
+	// 攻撃向き調整設定取得
+	std::vector<AttackDirAdjustConfig> dirAdjustConfigs(maxComboCount);
+	GetDirAdjustConfigs(dirAdjustConfigs.data());
+
+	// コンボカウント回数分ループ
 	for(int i = 0; i < maxComboCount; ++i)
 	{
-		auto attack = std::make_shared<AttackBase>();
+		auto attack = std::make_shared<AttackBase>();	// 攻撃オブジェクト作成
 
 		// 攻撃配列に追加
 		attack->SetCapsuleAttackData
@@ -67,7 +79,32 @@ void PlayerBase::InitializeAttackData()
 			configs[i].canKnockback		// 吹き飛ばし攻撃かどうか
 		);
 
+		// 向き調整データ設定
+		attack->SetDirAdjustData
+		(
+			dirAdjustConfigs[i].canDirAdjust
+		);
+
 		_attacks.push_back(attack);
+	}
+}
+
+// 攻撃状態を攻撃配列に入れる
+void PlayerBase::SetAttackStatusData(int maxComboCount)
+{
+	// 攻撃状態の定義
+	std::vector<PLAYER_ATTACK_STATE> statuses =
+	{
+		PLAYER_ATTACK_STATE::FIRST_ATTACK,
+		PLAYER_ATTACK_STATE::SECOND_ATTACK,
+		PLAYER_ATTACK_STATE::THIRD_ATTACK,
+		PLAYER_ATTACK_STATE::FOURTH_ATTACK,
+		PLAYER_ATTACK_STATE::FIFTH_ATTACK
+	};
+
+	// コンボカウント回数分ループ
+	for(int i = 0; i < maxComboCount; ++i)
+	{
 		_attackStatuses.push_back(statuses[i]);
 	}
 }
@@ -207,22 +244,26 @@ void PlayerBase::ProcessAttackReaction(int attackIndex)
 	std::vector<AttackConfig> configs(maxComboCount);
 	GetAttackConfigs(configs.data());
 
+	// 演出設定取得
+	std::vector<AttackEffectConfig> effectConfigs(maxComboCount);
+	GetAttackEffectConfig(effectConfigs.data());
+
 	// 有効な攻撃インデックスかチェック
 	if((attackIndex >= 0) && (attackIndex < static_cast<int>(configs.size())))
 	{
 		// 攻撃エフェクト処理
-		ProcessAttackEffect(attackIndex, configs);
+		ProcessAttackEffect(attackIndex, effectConfigs);
 
 		// 攻撃サウンド処理
-		ProcessAttackSound(attackIndex, configs);
+		ProcessAttackSound(attackIndex, effectConfigs);
 	}
 }
 
 // 攻撃エフェクト処理
-void PlayerBase::ProcessAttackEffect(int attackIndex, std::vector<AttackConfig> configs)
+void PlayerBase::ProcessAttackEffect(int attackIndex, std::vector<AttackEffectConfig> configs)
 {
 	// 攻撃設定からエフェクト名とオフセットを取得
-	AttackConfig& config = configs[attackIndex];
+	AttackEffectConfig& config = configs[attackIndex];
 
 	// エフェクト名が空でない場合のみ
 	if(!config.effectName.empty())
@@ -238,6 +279,8 @@ void PlayerBase::ProcessAttackEffect(int attackIndex, std::vector<AttackConfig> 
 			config.effectOffset.y,													// Y成分
 			config.effectOffset.x * dirNorm.z + config.effectOffset.z * dirNorm.x	// Z成分
 		);
+
+		// エフェクト位置を更新
 		effectPos = VAdd(_vPos, rotatedOffset);
 
 		// エフェクト再生
@@ -246,10 +289,10 @@ void PlayerBase::ProcessAttackEffect(int attackIndex, std::vector<AttackConfig> 
 }
 
 // 攻撃サウンド処理
-void PlayerBase::ProcessAttackSound(int attackIndex, std::vector<AttackConfig> configs)
+void PlayerBase::ProcessAttackSound(int attackIndex, std::vector<AttackEffectConfig> configs)
 {
 	// 攻撃設定からサウンド名を取得
-	AttackConfig& config = configs[attackIndex];
+	AttackEffectConfig& config = configs[attackIndex];
 
 	// サウンド名が空でない場合のみ
 	if(!config.soundName.empty())

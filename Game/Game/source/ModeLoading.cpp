@@ -49,7 +49,7 @@ bool ModeLoading::Initialize()
 		{
 			// モデル
 			rs->Register("Melee", "res/Enemy/SK_enemy_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("Ranged", "res/Enemy/toki_teki_ver006.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("Ranged", "res/Enemy/SK_enemy_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
 			rs->Register("LifeBar", "res/GameUI/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
@@ -110,9 +110,12 @@ bool ModeLoading::Initialize()
 			rs->Register("Enemy_Area", "res/stage/json/Enemy_Area.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ステージ2のモデル
-			rs->Register("stage2_floor_1", "res/stage/stage2_floor_1.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("stage2_wall_1", "res/stage/stage2_wall_1.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("S_portal_0", "res/stage/S_portal_0.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_MERGED_BigB", "res/stage/json/SM_MERGED_BigB.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_walltypeZ", "res/stage/json/SM_walltypeZ.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_MERGED_BigD", "res/stage/json/SM_MERGED_BigD.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_MERGED_locker", "res/stage/json/SM_MERGED_locker.mv1", RESOURCE_TYPE::Model, 1.0f);
+			// ポータル
+			rs->Register("S_Portal_1to2", "res/stage/json/S_Portal_1to2.mv1", RESOURCE_TYPE::Model, 1.0f);
 		}
 
 		// 音関連

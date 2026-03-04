@@ -132,7 +132,6 @@ public:
 	// Œü‚«’²®ƒf[ƒ^İ’è
 	void SetDirAdjustData
 	(
-		float adjustSpeed, 
 		bool canAdjust
 	);
 

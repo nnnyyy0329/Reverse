@@ -289,11 +289,11 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 	// 接地状態に応じた座標補正
 	if (isGrounded)
 	{
-		// 現在の高さよりも高い床があればY座標を補正
-		if (highestGroundY > vProcessPos.y)
-		{
-			vProcessPos.y = highestGroundY;
-		}
+		// 床のY座標をキャラの足元に合わせる
+		vProcessPos.y = highestGroundY;
+
+		// 接地フラグを立てる
+		chara->SetIsStanding(true);
 	}
 
 	// 座標のみを反映(カプセル位置は各クラスで更新)
@@ -744,6 +744,8 @@ void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::
 
 	// 吸収攻撃コリジョン情報を取得
 	const AbsorbConfig& config = absorbSystem->GetAbsorbConfig();
+
+	if(!config.isActive){ return; }	// 吸収攻撃が有効でない場合は当たらない
 
 	// 扇形データを取得
 	SectorData sectorData;

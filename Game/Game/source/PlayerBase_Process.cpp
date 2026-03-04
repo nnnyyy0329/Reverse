@@ -71,8 +71,7 @@ void PlayerBase::ProcessInputMove()
 	auto im = InputManager::GetInstance();
 
 	// ダッシュ入力があればフラグを変える
-	if(im->IsTrigger(INPUT_ACTION::DASH) &&
-		im->IsTrigger(INPUT_ACTION::SELECT))
+	if(im->IsTrigger(INPUT_ACTION::DASH))
 	{
 		_bIsDashInput = !_bIsDashInput;	// ダッシュ入力フラグをトグルする
 	}

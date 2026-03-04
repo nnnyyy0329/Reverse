@@ -187,9 +187,6 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
 		false,					// 吹き飛ばし攻撃かどうか
-		"SurfacePlayerAttack1",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		"sPlayerFirstAttack",	// サウンド名
 	};	
 
 	// 第2攻撃
@@ -205,9 +202,6 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
 		false,					// 吹き飛ばし攻撃かどうか
-		"SurfacePlayerAttack1",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		"sPlayerFirstAttack",		// サウンド名
 	};
 
 	// 第3攻撃
@@ -223,10 +217,63 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		3.0f,					// 攻撃中の移動速度
 		false,					// 吹き飛ばし攻撃かどうか
-		"SurfacePlayerAttack3",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-		"iPlayerAttack",		// サウンド名
 	};
+}
+
+// 攻撃方向補正の情報設定
+void SurfacePlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[3])
+{
+	// 第1攻撃
+	configs[0] = 
+	{ 
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第2攻撃
+	configs[1] = 
+	{ 
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第3攻撃
+	configs[2] = 
+	{ 
+		true,	// 向き調整が可能かどうか
+	};
+}
+
+// 表プレイヤーの演出設定
+AttackEffectConfig SurfacePlayer::GetAttackEffectConfig(AttackEffectConfig configs[3])
+{
+	// 表プレイヤー用の演出設定
+	AttackEffectConfig config;
+
+	// 第1攻撃
+	configs[0] =
+	{
+		config.effectName = "SurfacePlayerAttack1",		// ダメージエフェクト名
+		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
+		config.soundName = "sPlayerFirstAttack",		// ダメージサウンド名
+	};
+
+	// 第2攻撃
+	configs[1] =
+	{
+		config.effectName = "SurfacePlayerAttack1",		// ダメージエフェクト名
+		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
+		config.soundName = "sPlayerFirstAttack",		// ダメージサウンド名
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{
+		config.effectName = "SurfacePlayerAttack3",		// ダメージエフェクト名
+		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
+		config.soundName = "iPlayerFirstAttack",		// ダメージサウンド名
+	};
+
+
+	return config;
 }
 
 // 範囲攻撃の情報設定
@@ -350,9 +397,18 @@ void SurfacePlayer::ProcessChangeAbsorbMotion()
 		// 構え状態に移行
 		StartAbsorbReadyState();
 	}
-	// 構え状態で吸収入力を続けているなら
+	// 構え状態なら
 	else if(_playerState.IsStateAbsorbing() && _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY) 
 	{
+		// 構え状態中で入力が続いていないなら
+		if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY && !IsAbsorbInput())
+		{
+			// 吸収構えキャンセル処理
+			StopAbsorb();
+
+			return;
+		}
+
 		// まだ構えモーションが終了していないなら
 		if(!IsAnimationFinished()){ return; }
 

@@ -182,8 +182,8 @@ int InputManager::GetPadCode(INPUT_ACTION action)
 		case INPUT_ACTION::MOVE_LEFT:   return PAD_INPUT_LEFT;
 		case INPUT_ACTION::MOVE_RIGHT:  return PAD_INPUT_RIGHT;
 		// アクション
-		case INPUT_ACTION::DODGE:       return PAD_INPUT_3;// X
-		case INPUT_ACTION::DASH:        return PAD_INPUT_1;// A
+		case INPUT_ACTION::DODGE:       return PAD_INPUT_6;// X
+		case INPUT_ACTION::DASH:        return PAD_INPUT_5;// A
 		case INPUT_ACTION::TRANSFORM:   return PAD_INPUT_4;// Y
 		// システム
 		case INPUT_ACTION::MENU:        return PAD_INPUT_8;// START
