@@ -49,6 +49,10 @@ AttackBase::AttackBase()
 
 	// 向き調整の初期化
 	_canDirAdjust = false;
+
+	// 元の攻撃コリジョン位置の初期化
+	_originalColTop = VGet(0.0f, 0.0f, 0.0f);
+	_originalColBottom = VGet(0.0f, 0.0f, 0.0f);
 }
 
 AttackBase::~AttackBase()
@@ -257,8 +261,8 @@ void AttackBase::UpdateAttackColPos()
 		case COLLISION_TYPE::CAPSULE: // カプセルの場合
         {
 			// AttackConfigで設定された攻撃コリジョンの値で位置を計算
-            _stcAttackCol.attackColTop = VAdd(basePos, _stcAttackCol.attackColTop);
-            _stcAttackCol.attackColBottom = VAdd(basePos, _stcAttackCol.attackColBottom);
+            _stcAttackCol.attackColTop = VAdd(basePos, _originalColTop);
+            _stcAttackCol.attackColBottom = VAdd(basePos, _originalColBottom);
 
             break;
         }
@@ -420,6 +424,10 @@ void AttackBase::SetCapsuleAttackData
 	bool canKnockback
 )
 {
+	_originalColTop = top;          // 元のコリジョン上部位置を保存
+	_originalColBottom = bottom;    // 元のコリジョン下部位置を保存
+
+	// 攻撃コリジョン情報を設定
 	_stcAttackCol.attackColTop = top;                   // カプセル上部
 	_stcAttackCol.attackColBottom = bottom;             // カプセル下部
 	_stcAttackCol.attackColR = radius;                  // 半径
