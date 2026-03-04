@@ -38,7 +38,6 @@ struct EnemyParam
 	// 共通ステートのアニメーション名
 	const char* animDamage = "Damage";
 	const char* animDead = "Dead";
-	const char* animStun = "Stun";
 	const char* animDown = "Down";
 };
 

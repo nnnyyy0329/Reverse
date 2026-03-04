@@ -83,10 +83,9 @@ public:
 			param.bTransToWander = bTransToWander;
 
 			// 共通ステートのアニメーション名を設定
-			param.animDamage = "enemy_damage_00";
-			param.animDead = "enemy_dead_00";
-			param.animStun = "Melee_Stun";
-			param.animDown = "enemy_dead_01";
+			param.animDamage = "Nenemy_damage_00";
+			param.animDead = "Nenemy_dead_00";
+			param.animDown = "Nenemy_damagge_01";
 
 			enemy->SetEnemyParam(param);// パラメータ設定
 
@@ -133,10 +132,9 @@ public:
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 
 			// 共通ステートのアニメーション名を設定
-			param.animDamage = "enemy_damage00_00";
-			param.animDead = "enemy_dead_00";
-			param.animStun = "Ranged_Stun";
-			param.animDown = "enemy_damage01_00";
+			param.animDamage = "Senemy_damage_00";
+			param.animDead = "None";
+			param.animDown = "None";
 
 			enemy->SetEnemyParam(param);
 

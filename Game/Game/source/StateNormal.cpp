@@ -121,7 +121,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -168,7 +168,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 
 		// ƒ‰ƒ“ƒ_ƒ€•ûŒü‚ÖŒü‚©‚¤
@@ -222,7 +222,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_look_00", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -257,7 +257,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -345,7 +345,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_NORMAL);
+			animManager->ChangeAnimationByName("Nenemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_NORMAL);
 		}
 	}
 
@@ -450,7 +450,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -494,7 +494,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_miss_00", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -566,7 +566,7 @@ namespace Normal
 				AnimManager* animManager = owner->GetAnimManager();
 				if (animManager)
 				{
-					animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+					animManager->ChangeAnimationByName("Nenemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 				}
 			}
 		}

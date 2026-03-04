@@ -16,11 +16,14 @@ StageBase::StageBase(int stageNum)
 	std::string path, jsonFile, jsonObjName;
 	switch (_stageNum) 
 	{
-	case 1:
+	case 0:
 		path = "res/stage/json/"; jsonFile = "stage_00.json"; jsonObjName = "res";
 		break;
-	case 2:
+	case 1:
 		path = "res/stage/json/"; jsonFile = "stage_01.json"; jsonObjName = "res";
+		break;
+	case 2:
+		path = "res/stage/json/"; jsonFile = "stage_02.json"; jsonObjName = "res";
 		break;
 	}
 
@@ -382,6 +385,13 @@ void StageBase::LoadStageDataFromJson(
 	std::ifstream file(filePath);
 	nlohmann::json json;
 	file >> json;
+
+	// キーが存在しない場合はスキップ
+	if (!json.contains(objName))
+	{
+		return;
+	}
+
 	nlohmann::json stage = json.at(objName);
 
 	// ループ処理
@@ -419,11 +429,11 @@ void StageBase::LoadStageDataFromJson(
 int StageBase::GetNextStageNumFromTrigger(const std::string& triggerName)
 {
 	// トリガー名に応じて次のステージ番号を判定
-	if (triggerName.find("portal_1") != std::string::npos)
+	if (triggerName.find("S_Portal_0to1") != std::string::npos)
 	{
 		return 1;
 	}
-	else if (triggerName.find("S_Portal_0to1") != std::string::npos)
+	else if(triggerName.find("S_Portal_1to2") != std::string::npos)
 	{
 		return 2;
 	}
