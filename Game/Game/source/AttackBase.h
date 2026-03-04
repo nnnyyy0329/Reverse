@@ -184,5 +184,9 @@ private:
 	// 入力方向計算関数
 	VECTOR CalculateInputDir(const AnalogState& analog);
 
+	// 元の攻撃コリジョン位置を保存する変数
+	VECTOR _originalColTop;
+	VECTOR _originalColBottom;
+
 };
 

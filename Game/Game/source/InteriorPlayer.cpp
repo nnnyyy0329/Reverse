@@ -178,8 +178,8 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	// 第1攻撃
 	configs[0] = 
 	{
-		{0.0f, 20.0f, 0.0f},	// コリジョン上部位置
-		{0.0f, 100.0f, 0.0f}, 	// コリジョン下部位置
+		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 20.0f, 0.0f}, 	// コリジョン下部位置
 		40.0f,					// 半径
 		8.0f,					// 発生フレーム
 		12.0f,					// 持続フレーム
@@ -193,8 +193,8 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	// 第2攻撃
 	configs[1] = 
 	{
-		{0.0f, 20.0f, 0.0f},	// コリジョン上部位置
-		{0.0f, 100.0f, 0.0f},	// コリジョン下部位置
+		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 20.0f, 0.0f},	// コリジョン下部位置
 		40.0f,					// 半径
 		8.0f,					// 発生フレーム
 		12.0f,					// 持続フレーム
@@ -241,11 +241,11 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
 		{0.0f, 10.0f, 0.0f},	// コリジョン下部位置
 		40.0f,					// 半径
-		20.0f,					// 発生フレーム
-		20.0f,					// 持続フレーム
-		20.0f,					// 硬直フレーム
+		30.0f,					// 発生フレーム
+		30.0f,					// 持続フレーム
+		0.0f,					// 硬直フレーム
 		100.0f,					// ダメージ
-		ATTACK_STATE::RECOVERY,	// 攻撃状態
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
 		15.0f,					// 攻撃中の移動速度
 		true,					// 吹き飛ばし攻撃かどうか
 	};
