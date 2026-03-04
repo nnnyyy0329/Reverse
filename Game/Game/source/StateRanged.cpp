@@ -314,10 +314,10 @@ namespace Ranged
 		{
 			MoveToTarget(owner, targetInfo.vDir, APPROACH_SPEED);
 		}
-		else if (targetInfo.fDist < SHOT_RANGE_MIN)
+		/*else if (targetInfo.fDist < SHOT_RANGE_MIN)
 		{
 			MoveToTarget(owner, targetInfo.vDir, -RETREAT_SPEED);
-		}
+		}*/
 		else
 		{
 			StopMove(owner);
@@ -420,14 +420,15 @@ namespace Ranged
 			RotateToTarget(owner, targetInfo.vDir, SMOOTH_ROTATE_SPEED);
 
 			// ターゲットが近い場合は後退
-			if (targetInfo.fDist < RETREAT_TRIGGER_DISTANCE)
+			/*if (targetInfo.fDist < RETREAT_TRIGGER_DISTANCE)
 			{
 				MoveToTarget(owner, targetInfo.vDir, -RETREAT_SPEED);
 			}
 			else
 			{
 				StopMove(owner);
-			}
+			}*/
+			StopMove(owner);
 		}
 		else
 		{
@@ -450,6 +451,11 @@ namespace Ranged
 		_fTimer = 0.0f;
 
 		// ここでアニメーション設定
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			animManager->ChangeAnimationByName("Senemy_idle_00", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
+		}
 	}
 
 	std::shared_ptr<EnemyState> ShotRecovery::Update(Enemy* owner)
@@ -466,14 +472,15 @@ namespace Ranged
 			RotateToTarget(owner, targetInfo.vDir, SMOOTH_ROTATE_SPEED);
 
 			// ターゲットが近い場合は後退
-			if (targetInfo.fDist < RETREAT_TRIGGER_DISTANCE)
+			/*if (targetInfo.fDist < RETREAT_TRIGGER_DISTANCE)
 			{
 				MoveToTarget(owner, targetInfo.vDir, -RETREAT_SPEED);
 			}
 			else
 			{
 				StopMove(owner);
-			}
+			}*/
+			StopMove(owner);
 		}
 		else
 		{
@@ -527,14 +534,15 @@ namespace Ranged
 		RotateToTarget(owner, targetInfo.vDir, SMOOTH_ROTATE_SPEED);
 
 		// ターゲットが近づいてきた場合は後退
-		if (targetInfo.fDist < RETREAT_TRIGGER_DISTANCE)
+		/*if (targetInfo.fDist < RETREAT_TRIGGER_DISTANCE)
 		{
 			MoveToTarget(owner, targetInfo.vDir, -RETREAT_SPEED);
 		}
 		else
 		{
 			StopMove(owner);
-		}
+		}*/
+		StopMove(owner);
 
 		// 射撃間隔時間終了チェック
 		if (_fTimer >= _fTargetTimer)
