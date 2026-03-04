@@ -352,6 +352,11 @@ void PlayerBase::ProcessDebug()
 	{
 		EnergyManager::GetInstance()->AddEnergy(100.0f);
 	}
+
+	if(im->IsTrigger(INPUT_ACTION::DASH))
+	{
+		_cameraManager->StartCameraShake(5.0f, 15.0f);
+	}
 }
 
 // 被弾硬直中かチェック

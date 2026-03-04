@@ -1,5 +1,6 @@
 #include "GameCamera.h"
 #include "PlayerBase.h"
+#include "CameraShakeSystem.h"
 
 namespace
 {
@@ -20,9 +21,8 @@ GameCamera::GameCamera()
 	_angleH = 0.0f;
 	_angleV = 0.0f;
 
-	//_posOffset = VGet(0.0f, 0.0f, 0.0f);
-	//_targetOffset = VGet(0.0f, 100.0f, 0.0f);
 	_targetOffset = VGet(0.0f, 150.0f, 0.0f);
+	_baseOffset = VGet(0.0f, 0.0f, 0.0f);
 }
 
 void GameCamera::Process(InputManager* input, bool isInput)
@@ -37,6 +37,9 @@ void GameCamera::Process(InputManager* input, bool isInput)
 
 	// カメラ位置の更新
 	UpdateCameraPos();
+
+	// カメラシェイクオフセットの設定処理
+	SetShakeOffset();
 
 	// カメラ操作処理
 	ControlCamera(rx, ry, analogMin);
@@ -63,6 +66,23 @@ void GameCamera::DebugRender()
 
 	// 座標系表示
 	DrawFormatString(x, y, GetColor(255, 255, 255), "GameCamera Pos: (%3.2f, %3.2f, %3.2f)", _vPos.x, _vPos.y, _vPos.z);
+}
+
+// カメラシェイクオフセットの設定処理
+void GameCamera::SetShakeOffset()
+{
+	// 振動オフセットを取得
+	VECTOR shakeOffset = VGet(0.0f, 0.0f, 0.0f);
+
+	// カメラシェイクシステムが存在し、振動中であればオフセットを取得
+	if(_cameraShakeSystem && _cameraShakeSystem->IsShaking())
+	{
+		// カメラシェイクオフセットを取得
+		shakeOffset = _cameraShakeSystem->GetShakeOffset();
+	}
+
+	// 振動オフセットを適用したカメラ位置を計算
+	VECTOR finalCameraPos = VAdd(_baseOffset, shakeOffset);
 }
 
 // 更新処理
@@ -104,7 +124,10 @@ void GameCamera::UpdateCameraPos()
 	auto z = cos(_angleH) * r;
 
 	// 3.相対位置をターゲットの座標に足してカメラの絶対座標を計算
-	_vPos = VAdd(_vTarget, VGet(x, y, z));
+	_baseOffset = VAdd(_vTarget, VGet(x, y, z));
+
+	// カメラ位置を更新
+	_vPos = _baseOffset;
 }
 
 // カメラ操作処理

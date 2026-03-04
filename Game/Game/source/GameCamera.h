@@ -2,7 +2,9 @@
 #include "appframe.h"
 
 class PlayerBase;
+class CameraShakeSystem;
 
+// ゲームカメラクラス
 class GameCamera
 {
 public:
@@ -14,6 +16,7 @@ public:
 	void DebugRender();
 
 	void SetUp();												// カメラ設定
+	void SetShakeOffset();										// カメラシェイクオフセット設定
 	void UpdateCamera();										// カメラの更新処理	
 	void UpdateCameraPos();										// カメラ位置の更新
 	void ControlCamera(float rx, float ry, float analogMin);	// カメラ操作処理
@@ -28,16 +31,23 @@ public:
 	// ターゲットを設定する関数
 	void SetTarget(std::shared_ptr<PlayerBase> target);
 
+	// カメラシェイクシステムを設定する関数
+	void SetCameraShakeSystem(std::shared_ptr<CameraShakeSystem> cameraShakeSystem) { _cameraShakeSystem = cameraShakeSystem; }
+
 protected:
+	// カメラシェイクシステム
+	std::shared_ptr<CameraShakeSystem> _cameraShakeSystem;	
+
+	// ターゲットとなるゲームオブジェクト
+	std::shared_ptr<PlayerBase> _targetObject;
+
 	VECTOR _vPos;
 	VECTOR _vTarget;		// 注視点
 	float _nearClip;		// 描画する手前の距離
 	float _farClip;			// 描画する奥の距離
 	VECTOR _posOffset;		// カメラ位置のオフセット
 	VECTOR _targetOffset;	// 注視点のオフセット
-
-	// ターゲットとなるゲームオブジェクト
-	std::shared_ptr<PlayerBase> _targetObject;
+	VECTOR _baseOffset;		// カメラの基準オフセット
 
 	float _distance;	// 注視点からカメラまでの距離
 	float _angleH;		// 水平方向の角度(ラジアン)

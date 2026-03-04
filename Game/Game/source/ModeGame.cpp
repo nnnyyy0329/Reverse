@@ -343,6 +343,22 @@ bool ModeGame::Process()
 		CheckHitPlayerTrigger(player);
 	}
 
+	// ターゲット更新
+	{
+		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
+
+		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
+		_aimCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
+		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
+
+		// 敵にターゲットのプレイヤーを設定
+		for (const auto& enemy : _stage->GetEnemies()) 
+		{
+			enemy->SetTarget(activePlayer);
+		}
+	}
+
+
 	// エフェクト更新
 	EffectServer::GetInstance()->Update();
 

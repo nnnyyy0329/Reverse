@@ -5,6 +5,7 @@ class PlayerBase;
 class GameCamera;
 class DebugCamera;
 class AimCamera;
+class CameraShakeSystem;
 
 enum class CAMERA_TYPE
 {
@@ -38,6 +39,16 @@ class CameraManager
 	bool IsAimMode()const;			// エイムモード中か
 	VECTOR GetAimDirection()const;	// エイム方向取得
 
+	// カメラシェイク関連
+	void MakeCameraShakeSystemInstance();					// カメラシェイクシステムインスタンス生成
+	void SetCameraSystemInstanceToCamera();					// カメラシェイクシステムインスタンスをカメラに設定
+	void ProcessCameraShakeSystem();						// カメラシェイクシステム更新
+	void StartCameraShake(float magnitude, float duration);	// カメラシェイク開始
+	void StopCameraShake();									// カメラシェイク停止
+	bool IsCameraShaking() const;							// カメラがシェイク中かどうか
+
+	void DebugRenderCameraShakeSystem();	// カメラシェイクシステムデバッグ描画
+
 	// ゲッターセッター
 	CAMERA_TYPE GetCameraType()const { return _eCameraType; }
 
@@ -51,9 +62,10 @@ class CameraManager
 	void SetIsUseDebugCamera(bool bIsUse) { _bIsUseDebugCamera = bIsUse; }	// デバッグカメラ使用フラグ設定
 
 protected:
-	std::shared_ptr<GameCamera> _gameCamera;
-	std::shared_ptr<DebugCamera> _debugCamera;
-	std::shared_ptr<AimCamera> _aimCamera;
+	std::shared_ptr<GameCamera>			_gameCamera;		// ゲームカメラ
+	std::shared_ptr<DebugCamera>		_debugCamera;		// デバッグカメラ
+	std::shared_ptr<AimCamera>			_aimCamera;			// エイムカメラ
+	std::shared_ptr<CameraShakeSystem>	_cameraShakeSystem;	// カメラシェイクシステム
 
 	CAMERA_TYPE _eCameraType;		// 現在のカメラタイプ
 	CAMERA_TYPE _ePrevCameraType;	// 前回のカメラタイプ
