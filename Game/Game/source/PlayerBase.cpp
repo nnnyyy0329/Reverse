@@ -83,6 +83,9 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	int modelHandle = ResourceServer::GetInstance()->GetHandle(config.modelName);
 	_animManager.SetModelHandle(modelHandle);
 
+	_vPos = VGet(0, 0, 0);	// 位置の初期化
+	_vDir = VGet(0, 0, -1);	// 向きの初期化
+
 	// 位置の初期化
 	_fMoveSpeed = 0.0f;			// 移動速度
 	_fDirSpeed = 0.0f;			// 回転速度

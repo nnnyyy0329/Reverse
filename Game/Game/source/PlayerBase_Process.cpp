@@ -81,10 +81,10 @@ void PlayerBase::ProcessInputMove()
 
 	float digitalX = 0.0f;
 	float digitalY = 0.0f;
-	if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
+	/*if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
 	if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
 	if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
-	if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }*/
 	
 	// アナログ入力による移動、なければデジタル入力
 	float inputX = (abs(analog.lx) > analogMin) ? analog.lx : digitalX;
@@ -115,8 +115,8 @@ void PlayerBase::ProcessInputMove()
 			case CAMERA_TYPE::GAME_CAMERA: // ゲームカメラ
 			{
 				// カメラの向いている方向のベクトル
-				cameraForward = VGet(cos(currentCameraAngle), 0.0f, sin(currentCameraAngle));
-				cameraRight = VGet(cos(currentCameraAngle + DX_PI_F / 2.0f), 0.0f, sin(currentCameraAngle + DX_PI_F / 2.0f));
+				cameraForward = VGet(-sin(currentCameraAngle), 0.0f, -cos(currentCameraAngle));
+				cameraRight = VGet(cos(currentCameraAngle), 0.0f, -sin(currentCameraAngle));
 
 				break;
 			}
@@ -134,8 +134,8 @@ void PlayerBase::ProcessInputMove()
 		// 移動量を計算
 		_vMove = VAdd
 		(
-			VScale(cameraForward, inputY),	// 前後移動
-			VScale(cameraRight, inputX)	// 左右移動
+			VScale(cameraForward, inputX),	// 前後移動
+			VScale(cameraRight, inputY)	// 左右移動
 		);
 
 		// 正規化
