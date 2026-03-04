@@ -39,11 +39,14 @@ bool ModeLoading::Initialize()
 
 			// “G
 			// ‹¤’Ê
-			rs->Register("En_Damage", "effect/Enemy_Damage_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			// ‹ß‹——£
-			rs->Register("Melee_Attack", "effect/NEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("En_Damage", "effect/Enemy_Damage_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("En_Damage02", "effect/en_damage_test.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("En_Dead02", "effect/en_dead_test.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			// ˆê”Ê
+			rs->Register("Normal_Attack", "effect/NEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("Normal_Attack02", "effect/en_attack_test.efkefc", RESOURCE_TYPE::Effect, 20.0f);
 			// ‰“‹——£
-			rs->Register("Ranged_Attack", "effect/SEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("Ranged_Attack", "effect/SEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
 		}
 
 		// “GŠÖ˜A

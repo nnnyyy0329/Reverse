@@ -455,6 +455,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackColl
 	// エフェクト
 	VECTOR efPos = VAdd(_vPos, VGet(0.0f, DAMAGE_EFFECT_OFFSET_Y, 0.0f));
 	EffectServer::GetInstance()->Play("En_Damage", efPos);
+	EffectServer::GetInstance()->Play("En_Damage02", efPos);
 
 	// 現在のステートが最優先の場合、ダメージのみ受付
 	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::TOP)

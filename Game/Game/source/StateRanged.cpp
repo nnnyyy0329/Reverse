@@ -17,11 +17,13 @@ namespace
 	constexpr auto WANDER_LOOK_MIN_TIME = 60.0f;		// 徘徊時の最小視線停止時間
 	constexpr auto WANDER_LOOK_RANDOM_TIME = 60.0f;		// 徘徊時の視線停止ランダム追加時間
 	constexpr auto SHOT_CHARGE_TIME = 90.0f;			// 射撃溜め時間
-	constexpr auto SHOT_EXECUTE_TIME = 30.0f;			// 射撃実行時間
+	constexpr auto SHOT_EXECUTE_TIME = 55.0f;			// 射撃実行時間
 	constexpr auto SHOT_RECOVERY_TIME = 60.0f;			// 射撃後隙時間
 	constexpr auto SHOT_INTERVAL_TIME = 90.0f;			// 射撃間隔時間
 
 	constexpr auto LOST_LOOK_MIN_TIME = 60.0f;			// 方向あたりの最低見渡し時間
+
+	constexpr float SHOT_BULLET_TIME = 35.0f;// 実際に弾が発射される時間(アニメーション準拠)
 
 	constexpr auto BLEND_FRAME = 1.0f;					// アニメーションブレンドフレーム数
 
@@ -336,7 +338,7 @@ namespace Ranged
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Senemy_attack_00", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
+			animManager->ChangeAnimationByName("Senemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_HALF);
 		}
 	}
 
@@ -369,12 +371,13 @@ namespace Ranged
 		// タイマー初期化
 		_fTimer = 0.0f;
 		_bHasShot = false;
+		_fShotTimer = 0.0f;
 
 		// ここでアニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Senemy_attack_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Senemy_attack_01", BLEND_FRAME, ANIM_PLAY_COUNT);
 		}
 
 	}
@@ -383,34 +386,38 @@ namespace Ranged
 	{
 		// タイマー更新
 		_fTimer++;
+		_fShotTimer++;
 
 		// ターゲット情報取得
 		auto targetInfo = GetTargetInfo(owner);
 
 		// 弾発射処理(一回のみ)
-		if (!_bHasShot && targetInfo.bExist)
+		if (_fShotTimer >= SHOT_BULLET_TIME)
 		{
-			// 弾発射位置計算
-			VECTOR vOwnerPos = owner->GetPos();
-			VECTOR vDir = owner->GetDir();
+			if (!_bHasShot && targetInfo.bExist)
+			{
+				// 弾発射位置計算
+				VECTOR vOwnerPos = owner->GetPos();
+				VECTOR vDir = owner->GetDir();
 
-			VECTOR vSpawnPos = VAdd(vOwnerPos, VGet(0.0f, BULLET_SPAWN_OFFSET_Y, 0.0f));
-			vSpawnPos = VAdd(vSpawnPos, VScale(vDir, BULLET_SPAWN_OFFSET_Z));
+				VECTOR vSpawnPos = VAdd(vOwnerPos, VGet(0.0f, BULLET_SPAWN_OFFSET_Y, 0.0f));
+				vSpawnPos = VAdd(vSpawnPos, VScale(vDir, BULLET_SPAWN_OFFSET_Z));
 
-			// ターゲットへの方向計算
-			VECTOR vToTarget = VSub(targetInfo.target->GetPos(), vSpawnPos);
-			VECTOR vBulletDir = VNorm(vToTarget);
+				// ターゲットへの方向計算
+				VECTOR vToTarget = VSub(targetInfo.target->GetPos(), vSpawnPos);
+				VECTOR vBulletDir = VNorm(vToTarget);
 
-			// 弾発射
-			owner->SpawnBullet(
-				vSpawnPos,
-				vBulletDir,
-				BULLET_RADIUS,
-				BULLET_SPEED,
-				BULLET_LIFETIME
-			);
+				// 弾発射
+				owner->SpawnBullet(
+					vSpawnPos,
+					vBulletDir,
+					BULLET_RADIUS,
+					BULLET_SPEED,
+					BULLET_LIFETIME
+				);
 
-			_bHasShot = true;
+				_bHasShot = true;
+			}
 		}
 
 		// ターゲットが存在する場合
