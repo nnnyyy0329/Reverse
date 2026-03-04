@@ -3,7 +3,7 @@
 
 namespace
 {
-	constexpr auto ROTATE_SPEED = 0.02f;	// 回転速度
+	constexpr auto ROTATE_SPEED = 0.035f;	// 回転速度
 	constexpr auto ANGLE_V_LIMIT = 1.50f;	// 垂直角度制限(真上、真下の反転防止。85度)
 }
 
@@ -16,7 +16,7 @@ GameCamera::GameCamera()
 	_nearClip = 1.f;
 	_farClip = 5000.f;
 
-	_distance = 450.0f;
+	_distance = -450.0f;
 	_angleH = 0.0f;
 	_angleV = 0.0f;
 
@@ -100,8 +100,8 @@ void GameCamera::UpdateCameraPos()
 	auto r = cos(_angleV) * _distance;
 
 	// 2.水平平面上での位置(x,z)を計算
-	auto x = cos(_angleH) * r;
-	auto z = sin(_angleH) * r;
+	auto x = sin(_angleH) * r;
+	auto z = cos(_angleH) * r;
 
 	// 3.相対位置をターゲットの座標に足してカメラの絶対座標を計算
 	_vPos = VAdd(_vTarget, VGet(x, y, z));
@@ -112,9 +112,16 @@ void GameCamera::ControlCamera(float rx, float ry, float analogMin)
 {
 	// カメラの回転
 	{
-		if(abs(rx) > analogMin) _angleH -= rx * ROTATE_SPEED;
-		if(abs(ry) > analogMin) {
-			_angleV += ry * ROTATE_SPEED;
+		// 水平回転
+		if(abs(rx) > analogMin)
+		{
+			_angleH += rx * ROTATE_SPEED; // 右スティックのX軸で水平回転
+		}
+
+		// 垂直回転
+		if(abs(ry) > analogMin) 
+		{
+			_angleV -= ry * ROTATE_SPEED; // 右スティックのY軸で垂直回転
 
 			// 垂直角度制限
 			if(_angleV > ANGLE_V_LIMIT) _angleV = ANGLE_V_LIMIT;

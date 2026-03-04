@@ -199,6 +199,9 @@
     <ClCompile Include="source\StateNormal.cpp">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeTextBox.cpp">
+      <Filter>Mode\ModeTextBox</Filter>
+    </ClCompile>
     <ClCompile Include="source\AbilitySelectManager.cpp">
       <Filter>Ability\Select</Filter>
     </ClCompile>
@@ -390,6 +393,9 @@
     <ClInclude Include="source\StateNormal.h">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClInclude>
+    <ClInclude Include="source\ModeTextBox.h">
+      <Filter>Mode\ModeTextBox</Filter>
+    </ClInclude>
     <ClInclude Include="source\AbilitySelectManager.h">
       <Filter>Ability\Select</Filter>
     </ClInclude>
@@ -526,6 +532,9 @@
     </Filter>
     <Filter Include="Mode\Logo">
       <UniqueIdentifier>{28138b02-a231-44be-9ae5-57353573190c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\ModeTextBox">
+      <UniqueIdentifier>{7569f880-1bfa-403d-a4e0-3b44f6293292}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

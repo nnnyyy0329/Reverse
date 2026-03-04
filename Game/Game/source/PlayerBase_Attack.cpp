@@ -13,9 +13,6 @@ namespace IdConstants
 // 攻撃コリジョンの設定
 void PlayerBase::InitializeAttackData()
 {
-	// 子クラスから攻撃定数と設定を取得
-	AttackConstants constants = GetAttackConstants();	// 攻撃定数取得
-
 	// キャラタイプに応じた最大コンボ数を取得
 	int maxComboCount = GetMaxComboCount();
 
@@ -30,11 +27,11 @@ void PlayerBase::InitializeAttackData()
 	// 攻撃設定配列初期化
 	InitializeAttackConfigs(maxComboCount);
 
-	// 動的攻撃データ作成
-	CreateDynamicAttackData(maxComboCount);
-
 	// 攻撃状態を攻撃配列に入れる
 	SetAttackStatusData(maxComboCount);
+
+	// 攻撃コリジョンデータ作成
+	CreateAttackData(maxComboCount);
 }
 
 // 攻撃設定配列初期化
@@ -43,50 +40,6 @@ void PlayerBase::InitializeAttackConfigs(int maxComboCount)
 	// 攻撃配列とステータス配列を初期化
 	_attacks.clear();
 	_attackStatuses.clear();
-
-}
-
-// 動的攻撃データ作成
-void PlayerBase::CreateDynamicAttackData(int maxComboCount)
-{
-	// 攻撃設定取得
-	std::vector<AttackConfig>configs(maxComboCount);
-	GetAttackConfigs(configs.data());
-
-	// 攻撃向き調整設定取得
-	std::vector<AttackDirAdjustConfig> dirAdjustConfigs(maxComboCount);
-	GetDirAdjustConfigs(dirAdjustConfigs.data());
-
-	// コンボカウント回数分ループ
-	for(int i = 0; i < maxComboCount; ++i)
-	{
-		auto attack = std::make_shared<AttackBase>();	// 攻撃オブジェクト作成
-
-		// 攻撃配列に追加
-		attack->SetCapsuleAttackData
-		(
-			configs[i].topOffset,       // 上部
-			configs[i].bottomOffset,    // 下部
-			configs[i].radius,			// 半径
-			_vMove,						// 攻撃方向
-			configs[i].delay,           // 発生フレーム
-			configs[i].duration,        // 持続フレーム
-			configs[i].recovery,        // 硬直フレーム
-			configs[i].damage,          // ダメージ
-			false,						// ヒットフラグ
-			configs[i].attackState,		// 攻撃状態
-			configs[i].attackMoveSpeed,	// 攻撃中の移動速度
-			configs[i].canKnockback		// 吹き飛ばし攻撃かどうか
-		);
-
-		// 向き調整データ設定
-		attack->SetDirAdjustData
-		(
-			dirAdjustConfigs[i].canDirAdjust
-		);
-
-		_attacks.push_back(attack);
-	}
 }
 
 // 攻撃状態を攻撃配列に入れる
@@ -109,6 +62,79 @@ void PlayerBase::SetAttackStatusData(int maxComboCount)
 	}
 }
 
+// 攻撃コリジョンデータ作成
+void PlayerBase::CreateAttackData(int maxComboCount)
+{	
+	// 攻撃設定取得
+	std::vector<AttackConfig>configs(maxComboCount);
+	GetAttackConfigs(configs.data());
+
+	// 攻撃オフセット設定取得
+	std::vector<AttackColOffset>offsets(maxComboCount);
+	GetAttackColOffsetConfigs(offsets.data());
+
+	// 向き調整設定取得
+	std::vector<AttackDirAdjustConfig>dirAdjusts(maxComboCount);
+	GetAttackDirAdjustConfigs(dirAdjusts.data());
+
+	// コンボカウント回数分ループ
+	for(int i = 0; i < maxComboCount; ++i)
+	{
+		auto attack = std::make_shared<AttackBase>();	// 攻撃オブジェクト作成
+
+		// 攻撃コリジョンデータ設定
+		SetAttackColData(configs[i], attack);
+
+		// 攻撃オフセットデータ設定
+		SetAttackOffsetData(offsets[i], attack);
+
+		// 向き調整データ設定
+		SetDirAdjustData(dirAdjusts[i], attack);
+
+		// 攻撃配列に攻撃オブジェクトを追加
+		_attacks.push_back(attack);
+	}
+}
+
+// 攻撃コリジョンデータ設定
+void PlayerBase::SetAttackColData(AttackConfig config, std::shared_ptr<AttackBase> attack)
+{
+	if(!attack) return;
+
+	attack->SetCapsuleAttackData
+	(
+		config.topOffset,			// 上部
+		config.bottomOffset,		// 下部
+		config.radius,				// 半径
+		_vMove,						// 攻撃方向
+		config.delay,				// 発生フレーム
+		config.duration,			// 持続フレーム
+		config.recovery,			// 硬直フレーム
+		config.damage,				// ダメージ
+		false,						// ヒットフラグ
+		config.attackState,			// 攻撃状態
+		config.attackMoveSpeed,		// 攻撃中の移動速度
+		config.canKnockback			// 吹き飛ばし攻撃かどうか
+	);
+}
+
+// 攻撃オフセットデータ作成
+void PlayerBase::SetAttackOffsetData(AttackColOffset config, std::shared_ptr<AttackBase> attack)
+{
+	if(!attack) return;
+
+	attack->SetCollisionOffset(config);
+}
+
+// 向き調整データ作成
+void PlayerBase::SetDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack)
+{
+	if(!attack) return;
+
+	// 向き調整データ設定
+	attack->SetDirAdjustData(config.canDirAdjust);	// 攻撃中の移動速度が0より大きい場合は向き調整を有効にする
+}
+
 // 攻撃Process呼び出し用関数
 void PlayerBase::CallProcessAttack()
 {
@@ -119,57 +145,57 @@ void PlayerBase::CallProcessAttack()
 	ProcessBranchAttack();
 }
 
-// 攻撃のコリジョン位置更新
-void PlayerBase::UpdateAttackColPos
-(
-	std::shared_ptr<AttackBase> attack,
-	VECTOR& topOffset,
-	VECTOR& bottomOffset, 
-	VECTOR& baseOffset
-)
-{
-	if(!attack) return;
-
-	// 攻撃コリジョン情報を取得
-	const ATTACK_COLLISION& col = attack->GetAttackCollision();
-
-	// コリジョン位置を更新
-	attack->SetCapsuleAttackData
-	(
-		VAdd(baseOffset, topOffset),	// 上部
-		VAdd(baseOffset, bottomOffset),	// 下部
-		col.attackColR,					// 半径
-		col.attackDir,					// 攻撃方向
-		col.attackDelay,				// 発生遅延
-		col.attackDuration,				// 持続時間
-		col.recovery, 					// 後隙
-		col.damage, 					// ダメージ
-		col.isHit,						// ヒットフラグ
-		col.attackState,				// 攻撃状態
-		col.attackMoveSpeed,			// 攻撃中の移動速度
-		col.canKnockback				// 吹き飛ばし攻撃かどうか
-	);
-}
-
-// コリジョン位置の更新関数
-void PlayerBase::ProcessAttackColPos()
-{
-	// 子クラスから攻撃定数と設定を取得
-	AttackConstants constants = GetAttackConstants();	// 攻撃定数取得
-	std::vector<AttackConfig> configs(_attacks.size());	// 攻撃設定取得
-	GetAttackConfigs(configs.data());					// 攻撃設定取得
-
-	// 判定を前方にずらす
-	VECTOR dirNorm = VNorm(_vDir);
-	VECTOR attackOffset = VScale(dirNorm, constants.attackOffsetScale);
-	VECTOR colOffset = VAdd(_vPos, attackOffset);
-
-	// 攻撃配列から各攻撃のコリジョン位置を更新
-	for(size_t i = 0; i < _attacks.size(); ++i)
-	{
-		UpdateAttackColPos(_attacks[i], configs[i].topOffset, configs[i].bottomOffset, colOffset);
-	}
-}
+//// 攻撃のコリジョン位置更新
+//void PlayerBase::UpdateAttackColPos
+//(
+//	std::shared_ptr<AttackBase> attack,
+//	VECTOR& topOffset,
+//	VECTOR& bottomOffset, 
+//	VECTOR& baseOffset
+//)
+//{
+//	if(!attack) return;
+//
+//	// 攻撃コリジョン情報を取得
+//	const AttackCollision& col = attack->GetAttackCollision();
+//
+//	// コリジョン位置を更新
+//	attack->SetCapsuleAttackData
+//	(
+//		VAdd(baseOffset, topOffset),	// 上部
+//		VAdd(baseOffset, bottomOffset),	// 下部
+//		col.attackColR,					// 半径
+//		col.attackDir,					// 攻撃方向
+//		col.attackDelay,				// 発生遅延
+//		col.attackDuration,				// 持続時間
+//		col.recovery, 					// 後隙
+//		col.damage, 					// ダメージ
+//		col.isHit,						// ヒットフラグ
+//		col.attackState,				// 攻撃状態
+//		col.attackMoveSpeed,			// 攻撃中の移動速度
+//		col.canKnockback				// 吹き飛ばし攻撃かどうか
+//	);
+//}
+//
+//// コリジョン位置の更新関数
+//void PlayerBase::ProcessAttackColPos()
+//{
+//	// 子クラスから攻撃定数と設定を取得
+//	AttackConstants constants = GetAttackConstants();	// 攻撃定数取得
+//	std::vector<AttackConfig> configs(_attacks.size());	// 攻撃設定取得
+//	GetAttackConfigs(configs.data());					// 攻撃設定取得
+//
+//	// 判定を前方にずらす
+//	VECTOR dirNorm = VNorm(_vDir);
+//	VECTOR attackOffset = VScale(dirNorm, constants.attackOffsetScale);
+//	VECTOR colOffset = VAdd(_vPos, attackOffset);
+//
+//	// 攻撃配列から各攻撃のコリジョン位置を更新
+//	for(size_t i = 0; i < _attacks.size(); ++i)
+//	{
+//		UpdateAttackColPos(_attacks[i], configs[i].topOffset, configs[i].bottomOffset, colOffset);
+//	}
+//}
 
 // 攻撃処理
 void PlayerBase::ProcessAttack()
@@ -192,7 +218,7 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 	attack->SetOwner(shared_from_this());
 
 	// コリジョン位置更新処理
-	ProcessAttackColPos();	
+	//ProcessAttackColPos();	
 
 	// 攻撃判定受け取り関数
 	ReceiveAttackColData();		
@@ -207,28 +233,8 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 	// -1しているのは攻撃開始処理内で攻撃状態が更新されるため、次の攻撃状態を渡すため
 	ProcessAttackReaction(comboCount - 1);	// 攻撃反応処理
 
-	// AttackManagerに登録
-	std::shared_ptr<AttackBase> attackPtr = attack;
-	if(attackPtr != nullptr)
-	{
-		// プレイヤーごとに情報を変えて登録する
-		switch(_eCharaType)
-		{
-			case CHARA_TYPE::SURFACE_PLAYER:
-			{
-				// 表プレイヤーとして登録
-				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::SURFACE_PLAYER, GetInstanceId());
-				break;
-			}
-
-			case CHARA_TYPE::INTERIOR_PLAYER:
-			{
-				// 裏プレイヤーとして登録
-				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::INTERIOR_PLAYER, GetInstanceId());
-				break;
-			}
-		}
-	}
+	// 攻撃登録処理
+	ProcessAttackRegister(attack);
 
 	_iComboCount = comboCount;	// コンボカウント設定
 	_bCanCombo = false;			// コンボフラグ初期化
@@ -256,6 +262,33 @@ void PlayerBase::ProcessAttackReaction(int attackIndex)
 
 		// 攻撃サウンド処理
 		ProcessAttackSound(attackIndex, effectConfigs);
+	}
+}
+
+// 攻撃登録処理
+void PlayerBase::ProcessAttackRegister(std::shared_ptr<AttackBase> attack)
+{
+	// AttackManagerに登録
+	std::shared_ptr<AttackBase> attackPtr = attack;
+	if(attackPtr != nullptr)
+	{
+		// プレイヤーごとに情報を変えて登録する
+		switch(_eCharaType)
+		{
+			case CHARA_TYPE::SURFACE_PLAYER: // 表プレイヤー
+			{
+				// 表プレイヤーとして登録
+				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::SURFACE_PLAYER, GetInstanceId());
+				break;
+			}
+
+			case CHARA_TYPE::INTERIOR_PLAYER: // 裏プレイヤー
+			{
+				// 裏プレイヤーとして登録
+				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::INTERIOR_PLAYER, GetInstanceId());
+				break;
+			}
+		}
 	}
 }
 
@@ -422,7 +455,7 @@ void PlayerBase::ReceiveAttackColData()
 	if((attackIndex >= 0) && (attackIndex < static_cast<int>(_attacks.size())))	// 番号が子クラスの攻撃番号の範囲内なら
 	{
 		// 攻撃コリジョン情報を取得
-		ATTACK_COLLISION attackCol = _attacks[attackIndex]->GetAttackCollision();
+		AttackCollision attackCol = _attacks[attackIndex]->GetAttackCollision();
 
 		// コリジョン情報を入れる
 		_vAttackColTop = attackCol.attackColTop;

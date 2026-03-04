@@ -99,6 +99,7 @@
     <ClCompile Include="source\Server\SoundVoice.cpp">
       <Filter>Server\Sound</Filter>
     </ClCompile>
+    <ClCompile Include="source\InputManager.cpp" />
     <ClCompile Include="source\ScenarioBase.cpp">
       <Filter>Senario</Filter>
     </ClCompile>
@@ -169,6 +170,7 @@
     <ClInclude Include="source\Server\SoundVoice.h">
       <Filter>Server\Sound</Filter>
     </ClInclude>
+    <ClInclude Include="source\InputManager.h" />
     <ClInclude Include="source\ScenarioBase.h">
       <Filter>Senario</Filter>
     </ClInclude>

@@ -83,10 +83,10 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	int modelHandle = ResourceServer::GetInstance()->GetHandle(config.modelName);
 	_animManager.SetModelHandle(modelHandle);
 
-	// 位置の初期化
-	_vPos = config.startPos;
-	_vDir = VGet(0, 0, -1);
+	_vPos = VGet(0, 0, 0);	// 位置の初期化
+	_vDir = VGet(0, 0, -1);	// 向きの初期化
 
+	// 位置の初期化
 	_fMoveSpeed = 0.0f;			// 移動速度
 	_fDirSpeed = 0.0f;			// 回転速度
 	_fLife = config.life;		// 体力
@@ -226,7 +226,7 @@ bool PlayerBase::Render()
 }
 
 // 被ダメージ処理
-void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
+void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
 	// 親クラスの被ダメージ処理呼び出し
 	CharaBase::ApplyDamage(fDamage, eType, attackInfo);

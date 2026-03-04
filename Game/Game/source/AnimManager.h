@@ -29,6 +29,7 @@ public:
 
 	// アニメーションが終了したか
 	bool IsAnimationFinished();
+	bool IsAnimationFinishedConst()const;// const版
 
 	// 現在のアニメーション番号
 	int GetCurrentAnimIndex() { return _currentAnimIndex; }

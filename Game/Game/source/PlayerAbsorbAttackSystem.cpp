@@ -57,7 +57,7 @@ bool PlayerAbsorbAttackSystem::Terminate()
 	if(!_bIsInitialized){ return false; }	// ‰Šú‰»‚³‚ê‚Ä‚¢‚È‚¢ê‡‚Í‰½‚à‚µ‚È‚¢
 
 	// UŒ‚’†‚È‚ç’âŽ~
-	if(IsAbsorbAttacking())
+	if(IsAbsorbActive())
 	{
 		StopAbsorbAttack();
 	}
@@ -78,7 +78,7 @@ bool PlayerAbsorbAttackSystem::Process()
 	_absorbAttack->Process();
 
 	// ó‘ÔXVˆ—
-	ProcessAbsorbAttackState();
+	//ProcessAbsorbAttackState();
 
 	return true;
 }
@@ -141,7 +141,7 @@ void PlayerAbsorbAttackSystem::StopAbsorbAttack()
 // ‹zŽûUŒ‚‚ÌXVˆ—
 void PlayerAbsorbAttackSystem::ProcessAbsorb()
 {
-	if(!IsAbsorbAttacking()){ return; }	// UŒ‚ƒIƒuƒWƒFƒNƒg‚ª‚È‚¢ê‡‚ÍƒXƒLƒbƒv
+	if(!IsAbsorbActive()){ return; }	// UŒ‚ƒIƒuƒWƒFƒNƒg‚ª‚È‚¢ê‡‚ÍƒXƒLƒbƒv
 
 	auto owner = _owner.lock();
 	if(!owner){ return; }	// Š—LŽÒ‚ª‚¢‚È‚¢ê‡‚ÍƒXƒLƒbƒv
@@ -162,17 +162,11 @@ void PlayerAbsorbAttackSystem::ProcessAbsorbInput()
 	}
 
 	// ’·‰Ÿ‚µˆ—
-	if(IsAbsorbAttacking())
+	if(IsAbsorbActive())
 	{
 		bool isInputActive = im->IsHold(INPUT_ACTION::ABILITY);	// “ü—Í‚ª‚ ‚é‚©‚Ç‚¤‚©
 		_absorbAttack->ProcessAbsorbByInput(isInputActive);		// “ü—Í‚É‚æ‚é‹zŽûˆ—
 	}
-}
-
-// ‹zŽûUŒ‚‚Ìó‘ÔXV
-void PlayerAbsorbAttackSystem::ProcessAbsorbAttackState()
-{
-	
 }
 
 // ‹zŽûUŒ‚‚ðŠJŽn‚Å‚«‚é‚©‚Ç‚¤‚©
@@ -181,14 +175,14 @@ bool PlayerAbsorbAttackSystem::CanStartAbsorbAttack() const
 	auto owner = _owner.lock();
 	if(!owner){ return false; }	// Š—LŽÒ‚ª‚¢‚È‚¢ê‡‚ÍUŒ‚ŠJŽn‚Å‚«‚È‚¢‚Æ”»’f
 
-	return !IsAbsorbAttacking();	// ‹zŽûUŒ‚’†‚Å‚È‚¢ê‡‚ÉUŒ‚ŠJŽn‚Å‚«‚é‚Æ”»’f
+	return !IsAbsorbActive();	// ‹zŽûUŒ‚’†‚Å‚È‚¢ê‡‚ÉUŒ‚ŠJŽn‚Å‚«‚é‚Æ”»’f
 }
 
 // ‹zŽûUŒ‚’†‚©‚Ç‚¤‚©
-bool PlayerAbsorbAttackSystem::IsAbsorbAttacking() const
+bool PlayerAbsorbAttackSystem::IsAbsorbActive() const
 {
 	if(!_absorbAttack){ return false; }	// UŒ‚ƒIƒuƒWƒFƒNƒg‚ª‚È‚¢ê‡‚ÍƒXƒLƒbƒv
 
-	// ‹zŽûUŒ‚‚ªƒAƒNƒeƒBƒuó‘Ô‚Å‚ ‚éê‡‚É‹zŽûUŒ‚’†‚Æ”»’f
+	// UŒ‚ƒIƒuƒWƒFƒNƒg‚ÉUŒ‚ó‘Ô‚ð–â‚¢‡‚í‚¹
 	return _absorbAttack->IsAbsorbActive();
 }

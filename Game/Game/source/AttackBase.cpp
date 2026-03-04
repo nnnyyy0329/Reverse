@@ -16,6 +16,10 @@ namespace DirAdjustConstants
 
 AttackBase::AttackBase()
 {    
+    // コリジョンタイプ
+    _eColType = COLLISION_TYPE::NONE;
+    _eAttackState = ATTACK_STATE::INACTIVE;
+
     // 攻撃コリジョンの初期化
     _stcAttackCol.attackColTop = VGet(0.0f, 0.0f, 0.0f);
     _stcAttackCol.attackColBottom = VGet(0.0f, 0.0f, 0.0f);
@@ -39,9 +43,9 @@ AttackBase::AttackBase()
 	_stcAttackMovement.decayRate = 0.0f;
 	_stcAttackMovement.canMove = false;
 
-    // コリジョンタイプ
-    _eColType = COLLISION_TYPE::NONE;
-    _eAttackState = ATTACK_STATE::INACTIVE;
+	// 攻撃コリジョンオフセットの初期化
+	_stcColOffset.directionScale = 1.0f;
+	_stcColOffset.useOwnerDirection = true;
 
 	// 向き調整の初期化
 	_canDirAdjust = false;
@@ -69,6 +73,9 @@ bool AttackBase::Process()
 
     // 攻撃中の移動更新
     UpdateAttackMove();
+
+	// 攻撃コリジョンの位置更新
+    UpdateAttackColPos();
 
 	// 攻撃中の向き調整更新
 	UpdateAttackDirAdjust();
@@ -226,6 +233,76 @@ void AttackBase::ProcessAttackMovement()
     {
         // モデルの位置を更新
         MV1SetPosition(animManager->GetModelHandle(), newPos);
+    }
+}
+
+// 攻撃コリジョンの位置更新
+void AttackBase::UpdateAttackColPos()
+{
+    auto owner = GetOwner();
+    if(!owner){ return; }
+
+	// 所有者の位置と向きを取得
+    VECTOR ownerPos = owner->GetPos();
+    VECTOR ownerDir = owner->GetDir();
+
+    // 前方オフセット計算
+    VECTOR dirNorm = VNorm(ownerDir);
+    VECTOR forwardOffset = VScale(dirNorm, _stcColOffset.directionScale);
+    VECTOR basePos = VAdd(ownerPos, forwardOffset);
+
+	// コリジョンタイプに応じて攻撃コリジョンの位置を更新
+    switch(_eColType)
+    {
+		case COLLISION_TYPE::CAPSULE: // カプセルの場合
+        {
+			// AttackConfigで設定された攻撃コリジョンの値で位置を計算
+            _stcAttackCol.attackColTop = VAdd(basePos, _stcAttackCol.attackColTop);
+            _stcAttackCol.attackColBottom = VAdd(basePos, _stcAttackCol.attackColBottom);
+
+            break;
+        }
+
+        case COLLISION_TYPE::CIRCLE: // 円の場合
+		case COLLISION_TYPE::SPHERE: // 球の場合
+        {
+            // 未使用
+
+            break;
+        }
+    }
+}
+
+// 攻撃コリジョンの位置計算
+VECTOR AttackBase::CalculateAttackColPos(const VECTOR& basePos, const VECTOR& offset, const VECTOR& direction)
+{
+    // 所有者の向きを基準としない場合
+	if(!_stcColOffset.useOwnerDirection)
+    {
+		// 単純なオフセット計算
+		return VAdd(basePos, offset);
+    }
+    // 所有者の向きを基準とする場合
+    else
+    {
+		// 所有者の向きを考慮したオフセット計算
+		VECTOR dirNorm = VNorm(direction);
+        VECTOR rotatedOffset = VGet
+        (
+            offset.x * dirNorm.x - offset.z * dirNorm.z,    // X軸オフセットの回転
+            offset.y,                                       // Y軸オフセットはそのまま
+            offset.x * dirNorm.z + offset.z * dirNorm.x     // Z軸オフセットの回転
+		);
+
+		// 方向スケールを適用
+        if(_stcColOffset.directionScale != 0.0f)
+        {
+			VECTOR dirScale = VScale(dirNorm, _stcColOffset.directionScale);
+			rotatedOffset = VAdd(rotatedOffset, dirScale);
+		}
+
+		// 最終的な位置を計算して返す
+		return VAdd(basePos, rotatedOffset);
     }
 }
 
@@ -407,6 +484,12 @@ void AttackBase::SetSphereAttackData
 	_stcAttackCol.isHit = hit;                              // ヒットフラグ
 
 	_eColType = COLLISION_TYPE::SPHERE; // コリジョンタイプを球に設定
+}
+
+// 攻撃コリジョンオフセット設定
+void AttackBase::SetCollisionOffset(const AttackColOffset& offset)
+{
+    _stcColOffset = offset;  // コリジョンオフセット情報を保存
 }
 
 // 向き調整データ設定

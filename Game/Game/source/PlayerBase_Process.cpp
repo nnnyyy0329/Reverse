@@ -81,10 +81,10 @@ void PlayerBase::ProcessInputMove()
 
 	float digitalX = 0.0f;
 	float digitalY = 0.0f;
-	//if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
-	//if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
-	//if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
-	//if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }
+	/*if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }*/
 	
 	// アナログ入力による移動、なければデジタル入力
 	float inputX = (abs(analog.lx) > analogMin) ? analog.lx : digitalX;
@@ -115,8 +115,8 @@ void PlayerBase::ProcessInputMove()
 			case CAMERA_TYPE::GAME_CAMERA: // ゲームカメラ
 			{
 				// カメラの向いている方向のベクトル
-				cameraForward = VGet(cos(currentCameraAngle), 0.0f, sin(currentCameraAngle));
-				cameraRight = VGet(cos(currentCameraAngle + DX_PI_F / 2.0f), 0.0f, sin(currentCameraAngle + DX_PI_F / 2.0f));
+				cameraForward = VGet(-sin(currentCameraAngle), 0.0f, -cos(currentCameraAngle));
+				cameraRight = VGet(cos(currentCameraAngle), 0.0f, -sin(currentCameraAngle));
 
 				break;
 			}
@@ -465,14 +465,14 @@ bool PlayerBase::HasStateChanged()const
 }
 
 // アニメーションが終了したか
-bool PlayerBase::IsAnimationFinished()
+bool PlayerBase::IsAnimationFinishedConst()const
 {
 	// アニメーションマネージャーの取得
-	AnimManager* animManager = GetAnimManager();
+	const AnimManager* animManager = GetAnimManagerConst();
 
 	if(animManager)
 	{
 		// 現在のアニメーションが終了しているか
-		return animManager->IsAnimationFinished();
+		return animManager->IsAnimationFinishedConst();
 	}
 }

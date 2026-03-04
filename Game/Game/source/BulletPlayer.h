@@ -17,7 +17,7 @@ public:
 
 	// 共通関数のオーバーライド
 	virtual void DebugRender()override;																		// デバッグ描画
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo) override;	// 被ダメージ処理
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;	// 被ダメージ処理
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
 
 	// オフセット位置をワールド座標に変換
@@ -27,16 +27,17 @@ public:
 	void DrawShootIntervalTime();												
 
 	// 純粋仮想関数のオーバーライド
-	virtual PlayerConfig		GetPlayerConfig()										override;	// 設定を取得
-	virtual PlayerAnimations	GetPlayerAnimation()									override;	// アニメーション設定を取得
-	virtual RenderConfig		GetRenderConfig()										override;	// 描画設定を取得
-	virtual DodgeConfig			GetDodgeConfig()										override;	// 回避設定を取得
-	virtual ShieldConfig		GetShieldConfig()										override;	// シールド設定を取得
-	virtual AttackConstants		GetAttackConstants()const								override;	// 攻撃定数を取得
-	virtual void				GetAttackConfigs(AttackConfig configs[])				override;	// 攻撃設定を取得
-	virtual void				GetDirAdjustConfigs(AttackDirAdjustConfig configs[])	override;	// 攻撃方向補正設定を取得
-	virtual AttackEffectConfig	GetAttackEffectConfig(AttackEffectConfig configs[])		override;	// 演出設定を取得
-	virtual AreaAttackConfig	GetAreaAttackConfig()									override;	// 範囲攻撃設定を取得
+	virtual PlayerConfig		GetPlayerConfig()											override;	// 設定を取得
+	virtual PlayerAnimations	GetPlayerAnimation()										override;	// アニメーション設定を取得
+	virtual RenderConfig		GetRenderConfig()											override;	// 描画設定を取得
+	virtual DodgeConfig			GetDodgeConfig()											override;	// 回避設定を取得
+	virtual ShieldConfig		GetShieldConfig()											override;	// シールド設定を取得
+	virtual AttackConstants		GetAttackConstants()const									override;	// 攻撃定数を取得
+	virtual void				GetAttackConfigs(AttackConfig configs[])					override;	// 攻撃設定を取得
+	virtual void				GetAttackColOffsetConfigs(AttackColOffset configs[])		override;	// 攻撃コリジョンオフセット設定を取得
+	virtual void				GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[])	override;	// 攻撃方向補正設定を取得
+	virtual AttackEffectConfig	GetAttackEffectConfig(AttackEffectConfig configs[])			override;	// 演出設定を取得
+	virtual AreaAttackConfig	GetAreaAttackConfig()										override;	// 範囲攻撃設定を取得
 
 	// クラス設定
 	void SetBulletManager(std::shared_ptr<BulletManager>bulletManager){ _bulletManager = bulletManager; }	// マネージャーをセット

@@ -162,7 +162,6 @@
     <ClCompile Include="source\math\mymath.cpp" />
     <ClCompile Include="source\Mode\ModeBase.cpp" />
     <ClCompile Include="source\Mode\ModeServer.cpp" />
-    <ClCompile Include="source\ScenarioBase.cpp" />
     <ClCompile Include="source\Server\EffectServer.cpp" />
     <ClCompile Include="source\Server\ResourceServer.cpp" />
     <ClCompile Include="source\Server\SoundBase.cpp" />
@@ -194,7 +193,6 @@
     </ClInclude>
     <ClInclude Include="source\Mode\ModeBase.h" />
     <ClInclude Include="source\Mode\ModeServer.h" />
-    <ClInclude Include="source\ScenarioBase.h" />
     <ClInclude Include="source\Server\EffectServer.h" />
     <ClInclude Include="source\Server\ResourceServer.h" />
     <ClInclude Include="source\Server\SoundBase.h" />

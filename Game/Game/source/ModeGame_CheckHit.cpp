@@ -10,6 +10,7 @@
 #include "SurfacePlayer.h"
 #include "PlayerAbsorbAttackSystem.h" 
 #include "AbsorbAttack.h"
+#include "ModeTextBox.h"
 
 // プレベータようパラメータ
 namespace
@@ -534,7 +535,7 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 	}
 
 	// 攻撃コリジョン情報を取得
-	const ATTACK_COLLISION& col = attack->GetAttackCollision();
+	const AttackCollision& col = attack->GetAttackCollision();
 
 	// 当たり判定
 	if(HitCheck_Capsule_Capsule
@@ -692,17 +693,18 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 			MV1CollResultPolyDimTerminate(polyResult);
 
 			// トリガーに当たった場合の処理
-			if (hasHit)
+			if(hasHit)
 			{
-				// 次のステージ番号を取得
 				int nextStageNum = _stage->GetNextStageNumFromTrigger(trigger.name);
 
-				// ステージ切り替えリクエスト
-				RequestStageChange(nextStageNum);
+				auto* self = this;
+				auto modeTextBox = new ModeTextBox("GameSerif1", [self, nextStageNum]()
+					{
+						self->RequestStageChange(nextStageNum);
+					});
 
-				_currentStageNum = nextStageNum;// 現在のステージ番号を更新
-
-				return;// 一つのトリガーに当たったら処理を終了
+				ModeServer::GetInstance()->Add(modeTextBox, 200, "textbox");
+				return;
 			}
 		}
 		else
@@ -711,7 +713,6 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 			MV1CollResultPolyDimTerminate(polyResult);
 		}
 	}
-
 }
 
 // 吸収攻撃の当たり判定チェック関数
@@ -724,17 +725,14 @@ void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<CharaBase> player, std::shar
 	if(!surfacePlayer){ return; }
 
 	// 吸収攻撃システムを取得
-	const PlayerAbsorbAttackSystem* absorbSystemConst = surfacePlayer->GetAbsorbAttackSystem();
+	PlayerAbsorbAttackSystem* absorbSystemConst = surfacePlayer->GetAbsorbAttackSystem();
 	if(!absorbSystemConst) { return; }
 
 	// 吸収攻撃がアクティブかチェック
-	if(!absorbSystemConst->IsAbsorbAttacking()){ return; }
-
-	// 非 cons tにキャスト
-	PlayerAbsorbAttackSystem* absorbSystem = const_cast<PlayerAbsorbAttackSystem*>(absorbSystemConst);
+	if(!absorbSystemConst->IsAbsorbActive()){ return; }
 
 	// 吸収の所有者を渡して判定
-	CheckHitCharaAbsorbAttack(enemy, surfacePlayer, absorbSystem);
+	CheckHitCharaAbsorbAttack(enemy, surfacePlayer, absorbSystemConst);
 }
 
 // キャラと吸収攻撃の当たり判定

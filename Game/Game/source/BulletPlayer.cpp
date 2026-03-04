@@ -69,7 +69,7 @@ void BulletPlayer::DebugRender()
 }
 
 // 被ダメージ処理
-void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
+void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
 	// 基底クラスの被ダメージ処理を呼び出す
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
@@ -115,7 +115,7 @@ void BulletPlayer::ShootInput()
 		else if(_playerState.shootState == PLAYER_SHOOT_STATE::SHOOT_READY && !_bIsReadyCompleted)
 		{
 			// アニメーションが完了したかチェック
-			if(!IsAnimationFinished()){ return; }
+			if(!IsAnimationFinishedConst()){ return; }
 
 			_bIsReadyCompleted = true; // 構えアニメーション完了フラグを立てる
 		}
@@ -327,7 +327,6 @@ PlayerConfig BulletPlayer::GetPlayerConfig()
 	// 基礎ステータス
 	config.life = 200.0f;
 	config.maxLife = 200.0f;
-	config.startPos = VGet(0.0f, 0.0f, 0.0f);
 
 	// 表示設定
 	config.drawSizeOffset = 16;
@@ -386,10 +385,6 @@ AttackConstants BulletPlayer::GetAttackConstants()const
 
 	AttackConstants constants;
 
-	constants.attackOffsetScale = 0.0f;
-	constants.surfaceMaxComboCount = 0;
-	constants.interiorMaxComboCount = 0;
-
 	return constants;
 }
 
@@ -399,8 +394,14 @@ void BulletPlayer::GetAttackConfigs(AttackConfig configs[])
 	// 弾プレイヤーは攻撃を行わない
 }
 
+// 弾プレイヤーの攻撃コリジョンオフセット設定
+void BulletPlayer::GetAttackColOffsetConfigs(AttackColOffset configs[])
+{
+	// 弾プレイヤーは攻撃を行わない
+}
+
 // 弾プレイヤーの攻撃方向補正設定
-void BulletPlayer::GetDirAdjustConfigs(AttackDirAdjustConfig configs[])
+void BulletPlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[])
 {
 	// 弾プレイヤーは攻撃を行わない
 }

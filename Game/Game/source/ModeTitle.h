@@ -1,6 +1,6 @@
 #pragma once
 #include "appframe.h"
-#include "ScenarioBase.h"
+
 
 //‘O•ûéŒ¾
 class ScenarioBase;
