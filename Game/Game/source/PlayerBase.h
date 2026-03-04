@@ -22,7 +22,6 @@ struct PlayerConfig
 	// 基礎ステータス
 	float life;			// 体力
 	float maxLife;		// 最大体力
-	VECTOR startPos;	// 開始位置
 
 	// 表示設定
 	int drawSizeOffset;	// 描画サイズオフセット
@@ -281,6 +280,7 @@ public:
 	void DebugRender();				// デバッグ情報描画
 	void DrawBaseData();			// 基本データ表示
 	void DrawCoordinate();			// 座標表示
+	void DrawDirection();			// 向き表示
 	void DrawStatus	();				// ステータス表示
 	void DrawParameter();			// パラメーター表示
 	void DrawColPos	();				// コリジョン位置表示

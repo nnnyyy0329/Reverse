@@ -327,7 +327,6 @@ PlayerConfig BulletPlayer::GetPlayerConfig()
 	// 基礎ステータス
 	config.life = 200.0f;
 	config.maxLife = 200.0f;
-	config.startPos = VGet(0.0f, 0.0f, 0.0f);
 
 	// 表示設定
 	config.drawSizeOffset = 16;

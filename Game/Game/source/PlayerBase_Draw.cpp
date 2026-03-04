@@ -12,6 +12,7 @@ void PlayerBase::DebugRender()
 
 	DrawBaseData();		// 基礎情報表示
 	DrawCoordinate();	// 座標関係の表示
+	DrawDirection();	// 向き表示
 	DrawStatus();		// ステータスを表示
 	DrawParameter();	// パラメーター表示
 	DrawColPos();		// コリジョン情報表示
@@ -36,6 +37,15 @@ void PlayerBase::DrawCoordinate()
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 
 	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,"pos = (%5.2f, %5.2f, %5.2f)", _vPos.x, _vPos.y, _vPos.z);
+	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
+}
+
+// 向きの表示
+void PlayerBase::DrawDirection()
+{
+	auto color = GetColor(_renderConfig.debugColor.r, _renderConfig.debugColor.g, _renderConfig.debugColor.b);
+
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,"dir = (%5.2f, %5.2f, %5.2f)", _vDir.x, _vDir.y, _vDir.z);
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 }
 

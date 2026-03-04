@@ -84,9 +84,6 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	_animManager.SetModelHandle(modelHandle);
 
 	// ˆÊ’u‚Ì‰Šú‰»
-	_vPos = config.startPos;
-	_vDir = VGet(0, 0, -1);
-
 	_fMoveSpeed = 0.0f;			// ˆÚ“®‘¬“x
 	_fDirSpeed = 0.0f;			// ‰ñ“]‘¬“x
 	_fLife = config.life;		// ‘Ì—Í

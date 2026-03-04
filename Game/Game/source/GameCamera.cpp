@@ -3,7 +3,7 @@
 
 namespace
 {
-	constexpr auto ROTATE_SPEED = 0.02f;	// âÒì]ë¨ìx
+	constexpr auto ROTATE_SPEED = 0.05f;	// âÒì]ë¨ìx
 	constexpr auto ANGLE_V_LIMIT = 1.50f;	// êÇíºäpìxêßå¿(ê^è„ÅAê^â∫ÇÃîΩì]ñhé~ÅB85ìx)
 }
 
@@ -16,7 +16,7 @@ GameCamera::GameCamera()
 	_nearClip = 1.f;
 	_farClip = 5000.f;
 
-	_distance = 450.0f;
+	_distance = -450.0f;
 	_angleH = 0.0f;
 	_angleV = 0.0f;
 
