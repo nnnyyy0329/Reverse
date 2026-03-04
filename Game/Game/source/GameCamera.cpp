@@ -83,6 +83,9 @@ void GameCamera::SetShakeOffset()
 
 	// 振動オフセットを適用したカメラ位置を計算
 	VECTOR finalCameraPos = VAdd(_baseOffset, shakeOffset);
+
+	// カメラ位置を更新
+	_vPos = finalCameraPos;
 }
 
 // 更新処理
