@@ -10,18 +10,18 @@ namespace
 	constexpr auto ATTACK_COLLISION_HEIGHT = 60.0f;		// UŒ‚ƒRƒŠƒWƒ‡ƒ“‚‚³
 	constexpr auto ATTACK_COLLISION_RADIUS = 40.0f;		// UŒ‚ƒRƒŠƒWƒ‡ƒ“”¼Œa
 	constexpr auto ATTACK_DELAY = 10.0f;				// UŒ‚”­¶’x‰„
-	constexpr auto ATTACK_DURATION = 15.0f;				// UŒ‚Ž‘±ŽžŠÔ
+	constexpr auto ATTACK_DURATION = 10.0f;				// UŒ‚Ž‘±ŽžŠÔ
 	constexpr auto ATTACK_DAMAGE = 20.0f;				// UŒ‚ƒ_ƒ[ƒW—Ê
 
 	// ‹——£”»’è—p’è”
 	constexpr auto ATTACK_START_DISTANCE = 200.0f;		// UŒ‚ŠJŽn‹——£
-	constexpr auto ATTACK_EXECUTE_DISTANCE = 100.0f;	// UŒ‚ŽÀs‰Â”\‹——£
+	constexpr auto ATTACK_EXECUTE_DISTANCE = 80.0f;		// UŒ‚ŽÀs‰Â”\‹——£
 	constexpr auto LOST_NEARBY_HOME = 10.0f;			// ‹AŠÒŠ®—¹”»’è‹——£
 
 	// ŽžŠÔ§Œä—p’è”
 	constexpr auto ATTACK_CHARGE_TIME = 40.0f;			// UŒ‚—­‚ßŽžŠÔ
 	constexpr auto ATTACK_EXECUTE_TIME = 90.0f;			// UŒ‚ŽÀsŽžŠÔ
-	constexpr auto ATTACK_RECOVERY_TIME = 60.0f;		// UŒ‚ŒãŒ„ŽžŠÔ
+	constexpr auto ATTACK_RECOVERY_TIME = 90.0f;		// UŒ‚ŒãŒ„ŽžŠÔ
 	constexpr auto LOST_WAIT_TIME = 60.0f;				// ‹AŠÒ‘O‚Ì‘Ò‹@ŽžŠÔ
 
 	// ‘¬“x§Œä—p’è”
@@ -121,7 +121,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -139,7 +139,11 @@ namespace Normal
 		// ŽžŠÔŒo‰ßƒ`ƒFƒbƒN
 		if (_fTimer >= _fTargetTimer)
 		{
-			return std::make_shared<Wander>();
+			if (owner->GetEnemyParam().bTransToWander)
+			{// true‚È‚çœpœj‚Ö‘JˆÚ
+				return std::make_shared<Wander>();
+			}
+			_fTimer = 0.0f;// ‘Ò‹@‚ðŒp‘±‚·‚é
 		}
 
 		return nullptr;
@@ -164,7 +168,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 
 		// ƒ‰ƒ“ƒ_ƒ€•ûŒü‚ÖŒü‚©‚¤
@@ -218,7 +222,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_look_00", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -253,7 +257,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -341,7 +345,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_NORMAL);
+			animManager->ChangeAnimationByName("Nenemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_NORMAL);
 		}
 	}
 
@@ -446,7 +450,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -490,7 +494,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_miss_00", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -562,7 +566,7 @@ namespace Normal
 				AnimManager* animManager = owner->GetAnimManager();
 				if (animManager)
 				{
-					animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+					animManager->ChangeAnimationByName("Nenemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 				}
 			}
 		}

@@ -3,12 +3,13 @@
 #include "StateMelee.h"
 #include "StateRanged.h"
 #include "StateTank.h"
+#include "StateCommon.h"
 #include <memory>
 
 namespace 
 {
 	constexpr auto DEFAULT_ENEMY_SPEED = 2.0f;// 敵の移動速度
-	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 20000.0f;// 敵の最大体力
+	constexpr auto DEFAULT_ENEMY_MAX_LIFE = 200.0f;// 敵の最大体力
 
 	// Normal Melee
 	constexpr auto NORMAL_VISION_RANGE = 250.0f;// 索敵距離
@@ -54,7 +55,7 @@ class EnemyFactory
 {
 public:
 	// 敵の種類、座標を指定して敵を作成する
-	static std::shared_ptr<Enemy> CreateEnemy(EnemyType type, VECTOR pos) 
+	static std::shared_ptr<Enemy> CreateEnemy(EnemyType type, VECTOR pos, VECTOR rot, bool bTransToWander = true) 
 	{
 		auto enemy = std::make_shared<Enemy>();
 
@@ -79,12 +80,12 @@ public:
 			param.fDetectTime = NORMAL_DETECT_TIME;
 			param.fAttackTime = NORMAL_ATTACK_TIME;
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+			param.bTransToWander = bTransToWander;
 
 			// 共通ステートのアニメーション名を設定
-			param.animDamage = "enemy_damage_00";
-			param.animDead = "enemy_dead_00";
-			param.animStun = "Melee_Stun";
-			param.animDown = "enemy_dead_01";
+			param.animDamage = "Nenemy_damage_00";
+			param.animDead = "Nenemy_dead_00";
+			param.animDown = "Nenemy_damagge_01";
 
 			enemy->SetEnemyParam(param);// パラメータ設定
 
@@ -102,6 +103,11 @@ public:
 			// ダウン後の遷移先を決定
 			enemy->SetAfterDownStateSelector([](Enemy* e)->std::shared_ptr<EnemyState>
 			{
+				if (e->IsDead())
+				{
+					return std::make_shared<Common::Dead>();
+				}
+
 				if (e->GetTarget())
 				{
 					return std::make_shared<Melee::Approach>();
@@ -126,10 +132,9 @@ public:
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 
 			// 共通ステートのアニメーション名を設定
-			param.animDamage = "enemy_damage00_00";
-			param.animDead = "enemy_dead_00";
-			param.animStun = "Ranged_Stun";
-			param.animDown = "enemy_damage01_00";
+			param.animDamage = "Senemy_damage_00";
+			param.animDead = "None";
+			param.animDown = "None";
 
 			enemy->SetEnemyParam(param);
 
@@ -176,6 +181,9 @@ public:
 			enemy->ChangeState(std::make_unique<Tank::Idle>());
 			break;
 		}
+
+		VECTOR vDir = VGet(sinf(rot.y), 0.0f, cosf(rot.y));
+		enemy->SetDir(vDir);
 
 		return enemy;// 作成した敵を返す
 	}

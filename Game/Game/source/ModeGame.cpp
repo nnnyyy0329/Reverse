@@ -107,7 +107,7 @@ bool ModeGame::Initialize()
 	}
 
 	// ステージ初期化
-	_currentStageNum = 1;
+	_currentStageNum = 0;
 	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
 
 	// カメラ初期化
@@ -252,6 +252,21 @@ bool ModeGame::Process()
 		if(bulletPlayer){ bulletPlayer->SetCameraManager(_cameraManager); }
 	}
 
+	// ターゲット更新
+	{
+		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
+
+		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
+		_aimCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
+		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
+
+		// 敵にターゲットのプレイヤーを設定
+		for (const auto& enemy : _stage->GetEnemies())
+		{
+			enemy->SetTarget(activePlayer);
+		}
+	}
+
 	// オブジェクトの更新
 	{
 		_playerManager->Process();
@@ -327,38 +342,6 @@ bool ModeGame::Process()
 		// トリガー
 		CheckHitPlayerTrigger(player);
 	}
-
-	
-
-
-	// ターゲット更新
-	{
-		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
-
-		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
-		_aimCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
-		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
-
-		// 敵にターゲットのプレイヤーを設定
-		for (const auto& enemy : _stage->GetEnemies()) 
-		{
-			enemy->SetTarget(activePlayer);
-		}
-	}
-
-
-	//敵が全員死んだら時次のステージ行きたい
-
-	//{
-	//	if(_stage && _stage->IsAllEnemiesDefeated() && !_bScenarioAdded)
-	//	{
-	//		_bScenarioAdded = true;
-
-	//		auto modeScenario = new ModeScenario("Scenario_Clear", 180, 30);
-	//		ModeServer::GetInstance()->Add(modeScenario, 120, "scenario");
-	//		modeScenario->Show();
-	//	}
-	//}
 
 	// エフェクト更新
 	EffectServer::GetInstance()->Update();
