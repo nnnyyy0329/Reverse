@@ -256,7 +256,7 @@ void AttackBase::UpdateAttackDirAdjust()
 // 入力方向計算関数
 VECTOR AttackBase::CalculateInputDir(const AnalogState& analog)
 {
-
+    return VGet(0, 0, 0);
 }
 
 // カプセル攻撃データ設定
