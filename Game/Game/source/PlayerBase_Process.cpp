@@ -134,8 +134,8 @@ void PlayerBase::ProcessInputMove()
 		// 移動量を計算
 		_vMove = VAdd
 		(
-			VScale(cameraForward, inputX),	// 前後移動
-			VScale(cameraRight, inputY)	// 左右移動
+			VScale(cameraForward, inputY),	// 前後移動
+			VScale(cameraRight, inputX)	// 左右移動
 		);
 
 		// 正規化

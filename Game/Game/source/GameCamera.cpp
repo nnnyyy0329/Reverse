@@ -115,13 +115,13 @@ void GameCamera::ControlCamera(float rx, float ry, float analogMin)
 		// 水平回転
 		if(abs(rx) > analogMin)
 		{
-			_angleH -= rx * ROTATE_SPEED; // 右スティックのX軸で水平回転
+			_angleH += rx * ROTATE_SPEED; // 右スティックのX軸で水平回転
 		}
 
 		// 垂直回転
 		if(abs(ry) > analogMin) 
 		{
-			_angleV += ry * ROTATE_SPEED; // 右スティックのY軸で垂直回転
+			_angleV -= ry * ROTATE_SPEED; // 右スティックのY軸で垂直回転
 
 			// 垂直角度制限
 			if(_angleV > ANGLE_V_LIMIT) _angleV = ANGLE_V_LIMIT;
