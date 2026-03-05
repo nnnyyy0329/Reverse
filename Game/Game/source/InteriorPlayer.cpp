@@ -240,7 +240,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	{
 		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
 		{0.0f, 10.0f, 0.0f},	// コリジョン下部位置
-		90.0f,					// 半径
+		80.0f,					// 半径
 		30.0f,					// 発生フレーム
 		30.0f,					// 持続フレーム
 		0.0f,					// 硬直フレーム
@@ -402,7 +402,7 @@ DodgeConfig InteriorPlayer::GetDodgeConfig()
 	config.startTime = 1.0f;			// 開始時間
 	config.activeTime = 30.0f;			// アクティブ時間
 	config.recoveryTime = 10.0f;		// 硬直時間
-	config.dodgeMoveSpeed = 11.0f;		// 移動速度
+	config.dodgeMoveSpeed = 9.0f;		// 移動速度
 
 	return config;
 }
