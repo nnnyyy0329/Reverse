@@ -84,8 +84,11 @@ struct AreaAttackConfig
 // 攻撃の演出関連構造体
 struct AttackEffectConfig
 {
+	// エフェクト
 	std::string effectName;		// エフェクト名
 	VECTOR effectOffset;		// エフェクト位置オフセット
+
+	// サウンド
 	std::string soundName;		// サウンド名
 };
 

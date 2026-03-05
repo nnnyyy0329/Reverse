@@ -279,6 +279,7 @@ void PlayerBase::ProcessAttackRegister(std::shared_ptr<AttackBase> attack)
 			{
 				// •\ƒvƒŒƒCƒ„[‚Æ‚µ‚Ä“o˜^
 				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::SURFACE_PLAYER, GetInstanceId());
+
 				break;
 			}
 
@@ -286,6 +287,7 @@ void PlayerBase::ProcessAttackRegister(std::shared_ptr<AttackBase> attack)
 			{
 				// — ƒvƒŒƒCƒ„[‚Æ‚µ‚Ä“o˜^
 				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::INTERIOR_PLAYER, GetInstanceId());
+
 				break;
 			}
 		}

@@ -1,24 +1,28 @@
 #include "Bullet.h"
 
 Bullet::Bullet() 
-	: _lifeTimer(0),
-	_eShooterType(CHARA_TYPE::NONE),
-	_eBulletType(BULLET_TYPE::NONE)
 {
+	_eCharaType = CHARA_TYPE::BULLET;
+	_eBulletType = BULLET_TYPE::NONE;
 }
 
-Bullet::~Bullet() {
+Bullet::~Bullet() 
+{
+
 }
 
-bool Bullet::Initialize() {
+bool Bullet::Initialize() 
+{
 	return true;
 }
 
-bool Bullet::Terminate() {
+bool Bullet::Terminate() 
+{
 	return true;
 }
 
-bool Bullet::Process() {
+bool Bullet::Process() 
+{
 	// 移動処理
 	_vOldPos = _vPos;// 前フレームの位置を保存
 	_vPos = VAdd(_vPos, _vMove);// 位置更新
@@ -32,7 +36,8 @@ bool Bullet::Process() {
 	return true;// 生存している
 }
 
-bool Bullet::Render() {
+bool Bullet::Render()
+{
 	// 当たり判定のsphereを描画
 	// 中心座標、半径、分割数、ディフューズ、スペキュラ、塗りつぶすか
 	DrawSphere3D(
@@ -42,13 +47,18 @@ bool Bullet::Render() {
 	return true;
 }
 
-void Bullet::DebugRender() {
+void Bullet::DebugRender()
+{
+
 }
 
-void Bullet::CollisionRender() {
+void Bullet::CollisionRender() 
+{
+
 }
 
-void Bullet::Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE charType, BULLET_TYPE bulletType) {
+void Bullet::Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE charType, BULLET_TYPE bulletType)
+{
 	_vPos = vStartPos;
 	_vOldPos = vStartPos;// 前フレームの位置も初期化
 
@@ -60,25 +70,4 @@ void Bullet::Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed
 	_eBulletType = bulletType;
 
 	_vMove = VScale(_vDir, _fMoveSpeed);// 移動量を設定
-}
-
-void Bullet::Activate(const BulletConfig& config)
-{
-#if 1
-	Activate(config.vStartPos, config.vDir, config.fRadius, config.fSpeed, config.lifeTime, config.charaType, config.bulletType);
-
-#else
-	_vPos = config.vStartPos;
-	_vOldPos = config.vStartPos;// 前フレームの位置も初期化
-
-	_vDir = VNorm(config.vDir);// 向きを正規化
-	_fCollisionR = config.fRadius;
-	_fMoveSpeed = config.fSpeed;
-	_lifeTimer = config.lifeTime;
-	_eShooterType = config.charaType;
-	_eBulletType = config.bulletType;
-
-	_vMove = VScale(_vDir, _fMoveSpeed);// 移動量を設定
-
-#endif
 }
