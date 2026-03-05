@@ -240,7 +240,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	{
 		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
 		{0.0f, 10.0f, 0.0f},	// コリジョン下部位置
-		40.0f,					// 半径
+		90.0f,					// 半径
 		30.0f,					// 発生フレーム
 		30.0f,					// 持続フレーム
 		0.0f,					// 硬直フレーム
@@ -285,7 +285,7 @@ void InteriorPlayer::GetAttackColOffsetConfigs(AttackColOffset configs[5])
 	// 第5攻撃
 	configs[4] =
 	{
-		100.0f,				// 方向スケール
+		75.0f,				// 方向スケール
 		true,				// 所有者の向きを基準とするか
 	};
 }
