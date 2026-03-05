@@ -97,6 +97,7 @@ namespace Ranged
 
 	private:
 		bool _bHasShot;
+		float _fShotTimer = 0.0f;// ÀÛ‚É’e‚ğ”­Ë‚·‚éŠÔ
 	};
 
 	// ËŒ‚ŒãŒ„

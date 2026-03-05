@@ -2,15 +2,17 @@
 #include "GameCamera.h"
 #include "DebugCamera.h"
 #include "AimCamera.h"
+#include "CameraShakeSystem.h"
 
 CameraManager::CameraManager()
 {
 	_eCameraType = CAMERA_TYPE::GAME_CAMERA;	// 初期タイプはゲームカメラ
 	_ePrevCameraType = CAMERA_TYPE::NONE;		// 前回のカメラタイプ初期化
 
-	_gameCamera = nullptr;	// ゲームカメラ初期化
-	_debugCamera = nullptr;	// デバッグカメラ初期化
-	_aimCamera = nullptr;	// エイムカメラ初期化
+	_gameCamera			= nullptr;	// ゲームカメラ初期化
+	_debugCamera		= nullptr;	// デバッグカメラ初期化
+	_aimCamera			= nullptr;	// エイムカメラ初期化
+	_cameraShakeSystem	= nullptr;	// カメラシェイクシステム初期化	
 
 	_bIsUseDebugCamera = false;	// デバッグカメラ使用フラグ初期化
 }
@@ -24,6 +26,9 @@ CameraManager::~CameraManager()
 
 bool CameraManager::Initialize()
 {
+	// カメラシェイクシステムインスタンス生成
+	MakeCameraShakeSystemInstance();
+
 	return true;
 }
 
@@ -39,6 +44,12 @@ bool CameraManager::Process()
 
 	// カメラ処理切り替え
 	SwitchCameraProcess();
+
+	// カメラシェイクシステムをカメラに設定
+	SetCameraSystemInstanceToCamera();
+
+	// カメラシェイクシステム更新
+	ProcessCameraShakeSystem();
 
 	return true;
 }
@@ -218,6 +229,9 @@ void CameraManager::SwitchCameraDebugRender()
 	//	}
 	//}
 
+	// カメラシェイクシステムのデバッグ描画
+	DebugRenderCameraShakeSystem();
+
 	int x = 400;
 	int y = 90;
 	// デバッグカメラ使用フラグ表示
@@ -317,5 +331,112 @@ void CameraManager::SetPlayer(std::shared_ptr<PlayerBase> player)
 	if(_aimCamera)
 	{
 		_aimCamera->SetTarget(player);	// エイムカメラにターゲット設定
+	}
+}
+
+// カメラシェイクシステムインスタンス生成
+void CameraManager::MakeCameraShakeSystemInstance()
+{
+	if(!_cameraShakeSystem)
+	{
+		_cameraShakeSystem = std::make_shared<CameraShakeSystem>();	// カメラシェイクシステムインスタンス生成
+		_cameraShakeSystem->Initialize();							// カメラシェイクシステム初期化
+	}
+}
+
+// カメラシェイクシステムインスタンスをカメラに設定
+void CameraManager::SetCameraSystemInstanceToCamera()
+{
+	if(!_cameraShakeSystem){ return; }
+
+	// ゲームカメラにカメラシェイクシステムを設定
+	switch(_eCameraType)
+	{
+		case CAMERA_TYPE::GAME_CAMERA: // ゲームカメラ
+		{
+			if(_gameCamera)
+			{
+				// ゲームカメラにカメラシェイクシステムを設定
+				_gameCamera->SetCameraShakeSystem(_cameraShakeSystem);
+			}
+
+			break;
+		}
+
+		case CAMERA_TYPE::DEBUG_CAMERA: // デバッグカメラ
+		{
+			if(_debugCamera)
+			{
+				// デバッグカメラにカメラシェイクシステムを設定
+				//_debugCamera->SetCameraShakeSystem(_cameraShakeSystem);
+			}
+
+			break;
+		}
+
+		case CAMERA_TYPE::AIM_CAMERA: // エイムカメラ
+		{
+			if(_aimCamera)
+			{
+				// エイムカメラにカメラシェイクシステムを設定
+				//_aimCamera->SetCameraShakeSystem(_cameraShakeSystem);
+			}
+
+			break;
+		}
+
+		default:
+			break;
+	}
+}
+
+// カメラシェイクシステム更新
+void CameraManager::ProcessCameraShakeSystem()
+{
+	if(_cameraShakeSystem)
+	{
+		// カメラシェイクシステム更新
+		_cameraShakeSystem->Process();	
+	}
+}
+
+// カメラシェイク開始
+void CameraManager::StartCameraShake(float magnitude, float duration)
+{
+	if(_cameraShakeSystem)
+	{
+		// カメラシェイク開始
+		_cameraShakeSystem->StartShake(magnitude, duration);	
+	}
+}
+
+// カメラシェイク停止
+void CameraManager::StopCameraShake()
+{
+	if(_cameraShakeSystem)
+	{
+		// カメラシェイク停止
+		_cameraShakeSystem->StopShake();	
+	}
+}
+
+// カメラがシェイク中かどうか
+bool CameraManager::IsCameraShaking() const
+{
+	if(_cameraShakeSystem)
+	{
+		// カメラがシェイク中かどうか
+		return _cameraShakeSystem->IsShaking();	
+	}
+
+	return false;
+}
+
+// カメラシェイクシステムデバッグ描画
+void CameraManager::DebugRenderCameraShakeSystem()
+{
+	if(_cameraShakeSystem)
+	{
+		_cameraShakeSystem->DebugRender();	// カメラシェイクシステムデバッグ描画
 	}
 }

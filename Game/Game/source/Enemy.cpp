@@ -455,6 +455,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackColl
 	// エフェクト
 	VECTOR efPos = VAdd(_vPos, VGet(0.0f, DAMAGE_EFFECT_OFFSET_Y, 0.0f));
 	EffectServer::GetInstance()->Play("En_Damage", efPos);
+	EffectServer::GetInstance()->Play("En_Damage02", efPos);
 
 	// 現在のステートが最優先の場合、ダメージのみ受付
 	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::TOP)
@@ -608,42 +609,21 @@ bool Enemy::CheckLineOfSight(VECTOR vStart, VECTOR vEnd)
 	{
 		if (obj.collisionFrame == -1 || obj.modelHandle <= 0) { continue; }
 
-		// 線分と全ポリゴンの当たり判定を取得
-		MV1_COLL_RESULT_POLY_DIM polyResult = MV1CollCheck_Capsule(
+		// 線分と最初にヒットしたポリゴンを取得
+		MV1_COLL_RESULT_POLY result = MV1CollCheck_Line(
 			obj.modelHandle,
 			obj.collisionFrame,
 			vStart,
-			vEnd,
-			SIGHT_CHECK_RADIUS
+			vEnd
 		);
 
-		if (polyResult.HitNum > 0)
+		if (result.HitFlag != 0)
 		{
-			for (int i = 0; i < polyResult.HitNum; ++i)
+			// 法線のY成分で壁判定
+			if (result.Normal.y < WALL_NORMAL_THRESHOLD)
 			{
-				const MV1_COLL_RESULT_POLY& poly = polyResult.Dim[i];
-
-				// 法線のY成分で壁判定
-				if (poly.Normal.y < WALL_NORMAL_THRESHOLD)
-				{
-					// 視線が壁ポリゴンと交差するかチェック
-					HITRESULT_LINE hitResult = HitCheck_Line_Triangle(
-						vStart,
-						vEnd,
-						poly.Position[0],
-						poly.Position[1],
-						poly.Position[2]
-					);
-
-					if (hitResult.HitFlag != 0)
-					{
-						MV1CollResultPolyDimTerminate(polyResult);
-						return false;// 壁に遮られている
-					}
-				}
+				return false;// 壁に遮られている
 			}
-
-			MV1CollResultPolyDimTerminate(polyResult);
 		}
 	}
 

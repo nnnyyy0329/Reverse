@@ -160,6 +160,7 @@
     <ClCompile Include="source\BulletManager.cpp" />
     <ClCompile Include="source\BulletPlayer.cpp" />
     <ClCompile Include="source\CameraManager.cpp" />
+    <ClCompile Include="source\CameraShakeSystem.cpp" />
     <ClCompile Include="source\CharaBase.cpp" />
     <ClCompile Include="source\DebugCamera.cpp" />
     <ClCompile Include="source\DodgeSystem.cpp" />
@@ -265,6 +266,7 @@
     <ClInclude Include="source\BulletManager.h" />
     <ClInclude Include="source\BulletPlayer.h" />
     <ClInclude Include="source\CameraManager.h" />
+    <ClInclude Include="source\CameraShakeSystem.h" />
     <ClInclude Include="source\CharaBase.h" />
     <ClInclude Include="source\DebugCamera.h" />
     <ClInclude Include="source\DodgeSystem.h" />

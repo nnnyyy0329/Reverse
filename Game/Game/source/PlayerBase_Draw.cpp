@@ -66,7 +66,7 @@ void PlayerBase::DrawParameter()
 {
 	auto color = GetColor(_renderConfig.debugColor.r, _renderConfig.debugColor.g, _renderConfig.debugColor.b);
 
-	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,"Player Life: %.2f/%.2f", _fLife, _fMaxLife);
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,"Player Life: %3.2f/%3.2f", _fLife, _fMaxLife);
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 }
 
@@ -79,15 +79,15 @@ void PlayerBase::DrawColPos()
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 
 	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,
-		"  Top     = (%5.2f, %5.2f, %5.2f)", _vCollisionTop.x, _vCollisionTop.y, _vCollisionTop.z);
+		"  Top     = (%4.2f, %4.2f, %4.2f)", _vCollisionTop.x, _vCollisionTop.y, _vCollisionTop.z);
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 	
 	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,
-		"  Bottom  = (%5.2f, %5.2f, %5.2f)", _vCollisionBottom.x, _vCollisionBottom.y, _vCollisionBottom.z);
+		"  Bottom  = (%4.2f, %4.2f, %4.2f)", _vCollisionBottom.x, _vCollisionBottom.y, _vCollisionBottom.z);
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 
 	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,
-		"  Radius  = %5.2f", _fCollisionR);
+		"  Radius  = %3.2f", _fCollisionR);
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 }
 

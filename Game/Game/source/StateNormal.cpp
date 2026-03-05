@@ -53,7 +53,7 @@ namespace
 	constexpr auto ANIM_SPEED_NORMAL = 1.0f;			// アニメーション再生速度(通常)
 
 	// エフェクト関連
-	constexpr auto ATTACK_EFFECT_OFFSET_Y = 80.0f;		// 攻撃エフェクトYオフセット
+	constexpr auto ATTACK_EFFECT_OFFSET_Y = 100.0f;		// 攻撃エフェクトYオフセット
 
 	// 攻撃コリジョン設定生成
 	EnemyAttackSettings MakeNormalAttackSettings()
@@ -384,7 +384,8 @@ namespace Normal
 		// エフェクト
 		{
 			VECTOR efPos = VAdd(owner->GetPos(), VGet(0.0f, ATTACK_EFFECT_OFFSET_Y, 0.0f));
-			auto handle = EffectServer::GetInstance()->Play("Melee_Attack", efPos);
+			auto handle = EffectServer::GetInstance()->Play("Normal_Attack", efPos);
+			EffectServer::GetInstance()->Play("Normal_Attack02", efPos);
 
 			VECTOR dir = owner->GetDir();
 			float rotY = atan2f(dir.x, dir.z);
