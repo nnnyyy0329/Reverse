@@ -19,7 +19,7 @@ namespace
 	constexpr float playerBulletDamage = 50.0f;
 }
 
-// キャラとマップの当たり判定
+// キャラとマップの当たり判定と押し出し
 void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 {
 	if (!chara || !_stage) { return; }
@@ -28,96 +28,91 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 	const auto& mapObjList = _stage->GetMapModelPosList();
 	if (mapObjList.empty()) { return; }
 
-	// 移動前後の座標を取得
-	VECTOR vOldPos = chara->GetOldPos();
-	VECTOR vCurrentPos = chara->GetPos();
-	VECTOR vTotalMove = VSub(vCurrentPos, vOldPos);// 総移動ベクトル
-	float moveLength = VSize(vTotalMove);// 移動距離
+	// 前フレームの位置から現在位置への移動ベクトルを計算
+	// すり抜け防止のため、移動量をステップ分割
+	VECTOR oldPos = chara->GetOldPos();
+	VECTOR currentPos = chara->GetPos();
+	VECTOR totalMove = VSub(currentPos, oldPos);
+	float moveLength = VSize(totalMove);
 
-	// 移動量が微小な場合は処理をスキップ
-	const float constMinMoveThreshold = 0.001f;
-	if (moveLength < constMinMoveThreshold) { return; }
+	// 移動量がほぼ0なら判定処理自体をスキップ
+	const float minMoveThreshold = 0.001f;
+	if (moveLength < minMoveThreshold) { return; }
 
-	VECTOR vMoveDir = VNorm(vTotalMove);// 移動方向の正規化ベクトル
+	VECTOR moveDir = VNorm(totalMove);
 
-	// キャラのカプセル半径と高さを取得
+	// キャラのカプセルを取得
 	float capsuleRadius = chara->GetCollisionR();
-
 	float capsuleHeight = chara->GetCollisionHeight();
 
-	// ステップ移動(すり抜け防止)
-	// カプセル半径を上限としてステップ幅を決定する
-	const float stepLength = capsuleRadius;
+	// ステップ移動の幅設定(カプセル半径の30%ごとに区切って移動)
+	const float stepLength = capsuleRadius * 0.3f;
 
-	// _vPosはキャラの足元座標
-	VECTOR vProcessPos = vOldPos;
+	// 判定に使う足元の座標
+	VECTOR processPos = oldPos;
 
 	// カプセル位置を足元基準で計算
 	// Bottom = 足元 + 半径（カプセルの下端の球の中心）
 	// Top = 足元 + (高さ - 半径)（カプセルの上端の球の中心）
-	VECTOR vCapsuleBottom = VAdd(vOldPos, VGet(0.0f, capsuleRadius, 0.0f));
-	VECTOR vCapsuleTop = VAdd(vOldPos, VGet(0.0f, capsuleHeight - capsuleRadius, 0.0f));
+	VECTOR capsuleBottom = VAdd(oldPos, VGet(0.0f, capsuleRadius, 0.0f));
+	VECTOR capsuleTop = VAdd(oldPos, VGet(0.0f, capsuleHeight - capsuleRadius, 0.0f));
 
 	// 接地情報の初期化
 	bool isGrounded = false;
-	const float constInitGroundY = -9999.0f;
-	float highestGroundY = constInitGroundY;// 最も高い床のY座標
+	const float initGroundY = -9999.0f;
+	float highestGroundY = initGroundY;// 最も高い床のY座標
 
-	// ステップ移動の進行状況を管理
-	float movedDistance = 0.0f;// 移動済み距離
+	// ループ管理用変数
+	float movedDist = 0.0f;// 今回のフレームで移動した距離
 	int stepCnt = 0;// ステップカウンタ(無限ループ防止)
-	const int constMaxSteps = 512;// 最大ステップ数
+	const int maxSteps = 512;// 最大ステップ分割数
 
-	const float constDetectionMargin = 100.0f;// 少し広めに
-	const float detectionRadius = capsuleRadius + constDetectionMargin;// 半径に加算する
+	// 毎ステップごとのポリゴン検索範囲
+	const float detectionMargin = 100.0f;// 少し広めに
+	const float detectionRadius = capsuleRadius + detectionMargin;// 半径に加算する
 
-	// メインループ:移動をステップごとに処理
-	while (movedDistance < moveLength && stepCnt < constMaxSteps)
+	// メインループ : 移動距離分を少しづつ加算して判定
+	while (movedDist < moveLength && stepCnt < maxSteps)
 	{
-		// 残りの移動距離を計算
-		float remainingDist = moveLength - movedDistance;
+		// 今回のステップで進む距離を決定
+		float remainingDist = moveLength - movedDist;
 		if (remainingDist <= 0.0f) { break; }
-
-		// 今回のステップで移動する距離を決定(残り距離と上限の小さいほう)
 		float currentStepDist = (remainingDist < stepLength) ? remainingDist : stepLength;
-		VECTOR vStepMove = VScale(vMoveDir, currentStepDist);
 
-		// 座標とカプセル位置をステップ分だけ移動
-		vProcessPos = VAdd(vProcessPos, vStepMove);
-		vCapsuleTop = VAdd(vCapsuleTop, vStepMove);
-		vCapsuleBottom = VAdd(vCapsuleBottom, vStepMove);
+		// 座標、カプセルを1ステップ分移動させる
+		VECTOR vStepMove = VScale(moveDir, currentStepDist);
+		processPos = VAdd(processPos, vStepMove);
+		capsuleTop = VAdd(capsuleTop, vStepMove);
+		capsuleBottom = VAdd(capsuleBottom, vStepMove);
 
-		// 1:周囲のポリゴンを取得
-		// 球範囲でポリゴンを取得して壁と床に分類
+		// 1.周囲のポリゴンを取得して壁と床に分類
 		std::vector<MV1_COLL_RESULT_POLY> wallPolygons;// 壁ポリゴンリスト
 		std::vector<MV1_COLL_RESULT_POLY> floorPolygons;// 床ポリゴンリスト
 
-		// 検出範囲の中心をカプセルの中心に設定
-		VECTOR vDetectionCenter = VAdd(vProcessPos, VGet(0.0f, capsuleHeight * 0.5f, 0.0f));
+		// 検出球の中心をカプセルの中心に設定
+		VECTOR detectionCenter = VAdd(processPos, VGet(0.0f, capsuleHeight * 0.5f, 0.0f));
 
-		// 全マップモデルを走査
 		for (const auto& obj : mapObjList)
 		{
 			// コリジョンフレームがない、またはハンドルが無効
 			if (obj.collisionFrame == -1 || obj.modelHandle <= 0) { continue; }
 
-			// 球範囲内にあるモデルのポリゴンを取得
+			// キャラ周辺のポリゴンを検出
 			MV1_COLL_RESULT_POLY_DIM polyResult = MV1CollCheck_Sphere(
 				obj.modelHandle,
 				obj.collisionFrame,
-				vDetectionCenter,
+				detectionCenter,
 				detectionRadius
 			);
 
-			// 取得したポリゴンを壁と床に分類
-			const float constWallThreshold = 0.2f;// 壁判定の閾値
+			const float wallThreshold = 0.2f;// 壁判定の閾値
 			for (int i = 0; i < polyResult.HitNum; ++i)
 			{
 				const MV1_COLL_RESULT_POLY& poly = polyResult.Dim[i];
 
 				// 法線のY成分で壁と床を判定
-				// Y成分が0.2以下なら壁、それ以上なら床
-				if (poly.Normal.y < constWallThreshold)
+				// Y成分がwallThreshold以下なら壁、それ以上なら床
+				if (poly.Normal.y < wallThreshold)
 				{
 					wallPolygons.push_back(poly);
 				}
@@ -131,139 +126,68 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 			MV1CollResultPolyDimTerminate(polyResult);
 		}
 
-		// 2:壁との衝突処理
+		// 2:壁との衝突処理(押し出し)
 		if (!wallPolygons.empty())
 		{
-			// 押し出しループ
-			// 最大16回までループしてすべての壁との衝突を解消する
-			const int constMaxResolveLoop = 16;
-			for (int loop = 0; loop < constMaxResolveLoop; ++loop)
+			// 角で複数の壁と接触している場合を考慮して、ループで何度も押し出し処理を行う
+			const int maxResolveLoop = 32;
+			for (int loop = 0; loop < maxResolveLoop; ++loop)
 			{
-				bool allSeparated = true;// 全ての壁から離れたか
-				VECTOR vTotalPush = VGet(0.0f, 0.0f, 0.0f);// 今回のループでの総押し出しベクトル
+				bool allSeparated = true;// 全ての壁から抜け出せたか
 
-				// 全ての壁ポリゴンをチェック
 				for (const auto& wall : wallPolygons)
 				{
 					// カプセルと三角形ポリゴンの当たり判定
+					// 直前のポリゴンで押し出された最新の座標で判定
 					if (!HitCheck_Capsule_Triangle(
-						vCapsuleTop, vCapsuleBottom, capsuleRadius,
+						capsuleTop, capsuleBottom, capsuleRadius,
 						wall.Position[0], wall.Position[1], wall.Position[2]))
 					{
-						continue;// この壁とは衝突していない
+						continue;
 					}
 
-					allSeparated = false;// まだ壁と接触している
+					allSeparated = false;// まだ壁に当たっている
 
-					// 壁の法線からXZ平面成分を抽出
-					VECTOR vWallNormXZ = VGet(wall.Normal.x, 0.0f, wall.Normal.z);
-					float normLen = VSize(vWallNormXZ);
+					// 壁の法線からXZ平面の向きを取得
+					VECTOR wallNormXZ = VGet(wall.Normal.x, 0.0f, wall.Normal.z);
+					float normLen = VSize(wallNormXZ);
+					if (normLen < 0.0001f) { continue; }
+					wallNormXZ = VScale(wallNormXZ, 1.0f / normLen);// 正規化
 
-					// 法線が無効な場合はスキップ
-					const float constMinNormalLen = 0.0001f;
-					if (normLen < constMinNormalLen) { continue; }
+					// コリジョンフレームの法線が内向きのため、逆方向へ押し出す
+					// 小さい距離で何度も押し出し
+					const float pushDist = 1.0f;
+					VECTOR push = VScale(wallNormXZ, -pushDist);
 
-					// 正規化
-					vWallNormXZ = VScale(vWallNormXZ, 1.0f / normLen);
-
-					// 壁からの押し出し処理
-					// 正規化された法線方向に少しずつ押し出す
-					const float constPushDistance = 1.0f;
-					VECTOR vPush = VScale(vWallNormXZ, -constPushDistance);
-
-					// 総押し出しベクトルに加算
-					vTotalPush = VAdd(vTotalPush, vPush);
-				}
-
-				// 総押し出しベクトルを一度に適用
-				if (VSize(vTotalPush) > 0.0001f)
-				{
-					vProcessPos = VAdd(vProcessPos, vTotalPush);
-					vCapsuleTop = VAdd(vCapsuleTop, vTotalPush);
-					vCapsuleBottom = VAdd(vCapsuleBottom, vTotalPush);
+					// 計算した押し出しベクトルを即座に反映
+					processPos = VAdd(processPos, push);
+					capsuleTop = VAdd(capsuleTop, push);
+					capsuleBottom = VAdd(capsuleBottom, push);
 				}
 
 				// 全ての壁から離れたらループ終了
-				if (allSeparated)
-				{
-					break;
-				}
-			}
-
-			// まだ壁に接触している場合、スライド移動をする
-			bool bHasCollision = false;
-			VECTOR vSlideMove = vStepMove;// 移動ベクトルを初期値とする
-
-			//壁との衝突をチェック
-			for (const auto& wall : wallPolygons)
-			{
-				// カプセルと三角形ポリゴンの当たり判定
-				if (HitCheck_Capsule_Triangle(
-					vCapsuleTop, vCapsuleBottom, capsuleRadius,
-					wall.Position[0], wall.Position[1], wall.Position[2]))
-				{
-					bHasCollision = true;
-
-					// 壁の法線からXZ平面成分を抽出
-					VECTOR vWallNormXZ = VGet(wall.Normal.x, 0.0f, wall.Normal.z);
-					float normLen = VSize(vWallNormXZ);
-
-					// 法線が無効な場合はスキップ
-					const float constMinNormalLen = 0.0001f;
-					if (normLen < constMinNormalLen) { continue; }
-
-					// 正規化
-					vWallNormXZ = VScale(vWallNormXZ, 1.0f / normLen);
-
-					// 壁法線との内積を計算
-					float dotProduct = VDot(vMoveDir, vWallNormXZ);
-
-					// 壁に向かっている場合のみ、その法線成分を除去
-					if (dotProduct < 0.0f)
-					{
-						float stepDot = VDot(vSlideMove, vWallNormXZ);
-						vSlideMove = VSub(vSlideMove, VScale(vWallNormXZ, stepDot));
-						vSlideMove.y = 0.0f;
-					}
-				}
-			}
-
-			// スライド移動を適用
-			const float minSlideThreshold = 0.0001f;
-			if (bHasCollision)
-			{
-				VECTOR vSlideDelta = VSub(vSlideMove, vStepMove);
-				if (VSize(vSlideDelta) > minSlideThreshold)
-				{
-					vProcessPos = VAdd(vProcessPos, vSlideDelta);
-					vCapsuleTop = VAdd(vCapsuleTop, vSlideDelta);
-					vCapsuleBottom = VAdd(vCapsuleBottom, vSlideDelta);
-				}
+				if (allSeparated){ break; }
 			}
 		}
 
 		// 3:床との接地判定
 		if (!floorPolygons.empty())
 		{
-			// 足元から少し下の範囲をチェック
-			const float constCheckRange = capsuleRadius * 2.0f;
-			VECTOR vLineStart = VAdd(vCapsuleBottom, VGet(0.0f, -constCheckRange, 0.0f));// 足元から下方向へ
-			VECTOR vLineEnd = vCapsuleBottom;// 足元の球の中心
+			// 足元の球の中心から線分を真下に伸ばす
+			const float checkRange = capsuleRadius * 2.0f;
+			VECTOR lineStart = VAdd(capsuleBottom, VGet(0.0f, -checkRange, 0.0f));
+			VECTOR lineEnd = capsuleBottom;
 
-			// 全ての床ポリゴンをチェック
 			for (const auto& floor : floorPolygons)
 			{
 				// 線分と三角形ポリゴンの当たり判定
 				HITRESULT_LINE hitResult = HitCheck_Line_Triangle(
-					vLineStart, vLineEnd,
+					lineStart, lineEnd,
 					floor.Position[0], floor.Position[1], floor.Position[2]);
 
-				if (hitResult.HitFlag == 0)
-				{
-					continue;// この床とは交差していない
-				}
+				if (hitResult.HitFlag == 0) { continue; }
 
-				// 実際の交差点のY座標を使用
+				// 交差点のY座標を取得
 				float floorY = hitResult.Position.y;
 
 				// 最も高い床のY座標を記録
@@ -276,22 +200,20 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 		}
 
 		// 進行状況を更新
-		movedDistance += currentStepDist;
+		movedDist += currentStepDist;
 		++stepCnt;
 	}
 
-	// 接地状態に応じた座標補正
+	// 設置処理の反映と最終座標の更新
 	if (isGrounded)
 	{
-		// 床のY座標をキャラの足元に合わせる
-		vProcessPos.y = highestGroundY;
-
-		// 接地フラグを立てる
+		// キャラのY座標を床の高さに合わせる
+		processPos.y = highestGroundY;
 		chara->SetIsStanding(true);
 	}
 
 	// 座標のみを反映(カプセル位置は各クラスで更新)
-	chara->SetPos(vProcessPos);
+	chara->SetPos(processPos);
 }
 
 // キャラ同士の当たり判定
