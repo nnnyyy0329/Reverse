@@ -364,7 +364,7 @@ void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpe
 	if (bulletManager)
 	{
 		// タイプを設定して、発射リクエストをする
-		bulletManager->Shoot(vStartPos, vDir, fRadius, fSpeed, lifeTime, _eCharaType);
+		bulletManager->Shoot(vStartPos, vDir, fRadius, fSpeed, lifeTime, _eCharaType, BULLET_TYPE::NORMAL);
 	}
 }
 

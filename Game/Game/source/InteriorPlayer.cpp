@@ -406,12 +406,3 @@ DodgeConfig InteriorPlayer::GetDodgeConfig()
 
 	return config;
 }
-
-// シールド設定を取得
-ShieldConfig InteriorPlayer::GetShieldConfig()
-{
-	// デフォルトの設定を返す
-	ShieldConfig config = {};
-
-	return config;
-}

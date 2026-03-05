@@ -89,7 +89,7 @@ void PlayerBase::CreateAttackData(int maxComboCount)
 		SetAttackOffsetData(offsets[i], attack);
 
 		// 向き調整データ設定
-		SetDirAdjustData(dirAdjusts[i], attack);
+		SetCanDirAdjustData(dirAdjusts[i], attack);
 
 		// 攻撃配列に攻撃オブジェクトを追加
 		_attacks.push_back(attack);
@@ -127,7 +127,7 @@ void PlayerBase::SetAttackOffsetData(AttackColOffset config, std::shared_ptr<Att
 }
 
 // 向き調整データ作成
-void PlayerBase::SetDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack)
+void PlayerBase::SetCanDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack)
 {
 	if(!attack) return;
 

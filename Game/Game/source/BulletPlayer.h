@@ -1,9 +1,11 @@
 #pragma once
 #include "PlayerBase.h"
 
+// 前方宣言
 class BulletManager;
 class CameraManager;
 
+// 弾発射プレイヤー
 class BulletPlayer : public PlayerBase
 {
 public:
@@ -20,9 +22,6 @@ public:
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;	// 被ダメージ処理
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
 
-	// オフセット位置をワールド座標に変換
-	VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir);	
-
 	// 弾発射時間のデバッグ表示
 	void DrawShootIntervalTime();												
 
@@ -31,13 +30,7 @@ public:
 	virtual PlayerAnimations	GetPlayerAnimation()										override;	// アニメーション設定を取得
 	virtual RenderConfig		GetRenderConfig()											override;	// 描画設定を取得
 	virtual DodgeConfig			GetDodgeConfig()											override;	// 回避設定を取得
-	virtual ShieldConfig		GetShieldConfig()											override;	// シールド設定を取得
-	virtual AttackConstants		GetAttackConstants()const									override;	// 攻撃定数を取得
-	virtual void				GetAttackConfigs(AttackConfig configs[])					override;	// 攻撃設定を取得
-	virtual void				GetAttackColOffsetConfigs(AttackColOffset configs[])		override;	// 攻撃コリジョンオフセット設定を取得
-	virtual void				GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[])	override;	// 攻撃方向補正設定を取得
-	virtual AttackEffectConfig	GetAttackEffectConfig(AttackEffectConfig configs[])			override;	// 演出設定を取得
-	virtual AreaAttackConfig	GetAreaAttackConfig()										override;	// 範囲攻撃設定を取得
+	//virtual BulletConfig		GetBulletConfig()											override;	// 弾発射設定を取得
 
 	// クラス設定
 	void SetBulletManager(std::shared_ptr<BulletManager>bulletManager){ _bulletManager = bulletManager; }	// マネージャーをセット
@@ -56,8 +49,23 @@ private:
 	// エイムモードの処理
 	void ProcessAimMode(bool aimKey);
 
+	// オフセット位置をワールド座標に変換
+	VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir);
+
+	// 発射位置オフセットの取得
+	VECTOR GetShootOffset()const;
+
+	// エイム中かどうかで発射方向を決める
+	VECTOR GetShootDirection()const;
+
 	// 弾発射入力チェック
 	bool IsShootInput()const;
+
+	// 弾の種類切り替え入力チェック
+	bool IsChangeBulletTypeInput()const;
+
+	// 発射間隔がマイナスかどうか
+	bool IsShootIntervalNegative()const;
 
 protected:
 	std::weak_ptr<BulletManager>_bulletManager;

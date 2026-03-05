@@ -8,7 +8,7 @@ namespace AbsorbConstants
 	constexpr float DEFAULT_ABSORB_RATE			= 0.5f;				// デフォルトの吸収率
 	constexpr float DEFAULT_ENERGY_ABSORB_RATE	= 0.5f;				// デフォルトのエネルギー吸収率
 	constexpr float DEFAULT_HP_ABSORB_RATE		= 0.5f;				// デフォルトのHP吸収率
-	constexpr float DEFAULT_ABSORB_RANGE		= 50.0f;			// デフォルトの吸収範囲
+	constexpr float DEFAULT_ABSORB_RANGE		= 75.0f;			// デフォルトの吸収範囲
 	constexpr float DEFAULT_ABSORB_ANGLE		= DX_PI_F / 3.0f;	// デフォルトの吸収範囲の角度（60度）
 	constexpr int DEFAULT_ABSORB_DIVISION		= 16;				// デフォルトの吸収範囲の分割数
 }
@@ -56,6 +56,9 @@ bool AbsorbAttack::Process()
 
 	// 吸収タイマーの更新
 	ProcessDecrementTimer();
+
+	// 基底攻撃クラスの入力による向き回転処理	
+	UpdateAttackDirAdjust();
 
 	return true;
 }

@@ -168,143 +168,144 @@ AttackConstants SurfacePlayer::GetAttackConstants()const
 	return constants;
 }
 
-// 攻撃判定の情報設定
-void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
-{
-	// 第1攻撃
-	configs[0] = 
-	{ 
-		{0.0f, 90.0f, 0.0f},	// コリジョン上部位置
-		{0.0f, 50.0f, 0.0f},	// コリジョン下部位置
-		30.0f,					// 半径
-		20.0f,					// 発生フレーム
-		25.0f,					// 持続フレーム
-		20.0f,					// 硬直フレーム
-		10.0f,					// ダメージ
-		ATTACK_STATE::ACTIVE,	// 攻撃状態
-		3.0f,					// 攻撃中の移動速度
-		false,					// 吹き飛ばし攻撃かどうか
-	};	
-
-	// 第2攻撃
-	configs[1] = 
-	{ 
-		{0.0f, 80.0f, 0.0f},	// コリジョン上部位置
-		{0.0f, 10.0f, 0.0f},  	// コリジョン下部位置
-		40.0f,					// 半径
-		20.0f,					// 発生フレーム
-		15.0f,					// 持続フレーム
-		20.0f,					// 硬直フレーム
-		10.0f,					// ダメージ
-		ATTACK_STATE::ACTIVE,	// 攻撃状態
-		3.0f,					// 攻撃中の移動速度
-		false,					// 吹き飛ばし攻撃かどうか
-	};
-
-	// 第3攻撃
-	configs[2] =
-	{ 
-		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
-		{0.0f, 0.0f, 0.0f},		// コリジョン下部位置
-		25.0f,					// 半径
-		20.0f,					// 発生フレーム
-		25.0f,					// 持続フレーム
-		20.0f,					// 硬直フレーム
-		20.0f,					// ダメージ
-		ATTACK_STATE::ACTIVE,	// 攻撃状態
-		3.0f,					// 攻撃中の移動速度
-		false,					// 吹き飛ばし攻撃かどうか
-	};
-}
-
-// 攻撃コリジョンオフセットの情報設定
-void SurfacePlayer::GetAttackColOffsetConfigs(AttackColOffset configs[3])
-{
-	// 第1攻撃
-	configs[0] = 
-	{ 
-		0.0f,					// 方向スケール
-		true,					// 所有者の向きを基準とするか
-	};
-
-	// 第2攻撃
-	configs[1] = 
-	{ 
-		0.0f,					// 方向スケール
-		true,					// 所有者の向きを基準とするか
-	};
-
-	// 第3攻撃
-	configs[2] =
-	{ 
-		0.0f,					// 方向スケール
-		true,					// 所有者の向きを基準とするか
-	};
-}
-
-// 攻撃方向補正の情報設定
-void SurfacePlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[3])
-{
-	// 第1攻撃
-	configs[0] = 
-	{ 
-		true,	// 向き調整が可能かどうか
-	};
-
-	// 第2攻撃
-	configs[1] = 
-	{ 
-		true,	// 向き調整が可能かどうか
-	};
-
-	// 第3攻撃
-	configs[2] = 
-	{ 
-		true,	// 向き調整が可能かどうか
-	};
-}
-
-// 表プレイヤーの演出設定
-AttackEffectConfig SurfacePlayer::GetAttackEffectConfig(AttackEffectConfig configs[3])
-{
-	// 表プレイヤー用の演出設定
-	AttackEffectConfig config;
-
-	// 第1攻撃
-	configs[0] =
-	{
-		config.effectName = "SurfacePlayerAttack1",		// ダメージエフェクト名
-		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
-		config.soundName = "sPlayerFirstAttack",		// ダメージサウンド名
-	};
-
-	// 第2攻撃
-	configs[1] =
-	{
-		config.effectName = "SurfacePlayerAttack1",		// ダメージエフェクト名
-		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
-		config.soundName = "sPlayerFirstAttack",		// ダメージサウンド名
-	};
-
-	// 第3攻撃
-	configs[2] =
-	{
-		config.effectName = "SurfacePlayerAttack3",		// ダメージエフェクト名
-		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
-		config.soundName = "iPlayerFirstAttack",		// ダメージサウンド名
-	};
-
-
-	return config;
-}
-
-// 範囲攻撃の情報設定
-AreaAttackConfig SurfacePlayer::GetAreaAttackConfig()
-{
-	// 表プレイヤーは範囲攻撃を行わない
-	AreaAttackConfig config;
-	return config;
-}
+/* 現在未使用の攻撃情報仮想関数の定義 */
+//// 攻撃判定の情報設定
+//void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
+//{
+//	// 第1攻撃
+//	configs[0] = 
+//	{ 
+//		{0.0f, 90.0f, 0.0f},	// コリジョン上部位置
+//		{0.0f, 50.0f, 0.0f},	// コリジョン下部位置
+//		30.0f,					// 半径
+//		20.0f,					// 発生フレーム
+//		25.0f,					// 持続フレーム
+//		20.0f,					// 硬直フレーム
+//		10.0f,					// ダメージ
+//		ATTACK_STATE::ACTIVE,	// 攻撃状態
+//		3.0f,					// 攻撃中の移動速度
+//		false,					// 吹き飛ばし攻撃かどうか
+//	};	
+//
+//	// 第2攻撃
+//	configs[1] = 
+//	{ 
+//		{0.0f, 80.0f, 0.0f},	// コリジョン上部位置
+//		{0.0f, 10.0f, 0.0f},  	// コリジョン下部位置
+//		40.0f,					// 半径
+//		20.0f,					// 発生フレーム
+//		15.0f,					// 持続フレーム
+//		20.0f,					// 硬直フレーム
+//		10.0f,					// ダメージ
+//		ATTACK_STATE::ACTIVE,	// 攻撃状態
+//		3.0f,					// 攻撃中の移動速度
+//		false,					// 吹き飛ばし攻撃かどうか
+//	};
+//
+//	// 第3攻撃
+//	configs[2] =
+//	{ 
+//		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
+//		{0.0f, 0.0f, 0.0f},		// コリジョン下部位置
+//		25.0f,					// 半径
+//		20.0f,					// 発生フレーム
+//		25.0f,					// 持続フレーム
+//		20.0f,					// 硬直フレーム
+//		20.0f,					// ダメージ
+//		ATTACK_STATE::ACTIVE,	// 攻撃状態
+//		3.0f,					// 攻撃中の移動速度
+//		false,					// 吹き飛ばし攻撃かどうか
+//	};
+//}
+//
+//// 攻撃コリジョンオフセットの情報設定
+//void SurfacePlayer::GetAttackColOffsetConfigs(AttackColOffset configs[3])
+//{
+//	// 第1攻撃
+//	configs[0] = 
+//	{ 
+//		0.0f,					// 方向スケール
+//		true,					// 所有者の向きを基準とするか
+//	};
+//
+//	// 第2攻撃
+//	configs[1] = 
+//	{ 
+//		0.0f,					// 方向スケール
+//		true,					// 所有者の向きを基準とするか
+//	};
+//
+//	// 第3攻撃
+//	configs[2] =
+//	{ 
+//		0.0f,					// 方向スケール
+//		true,					// 所有者の向きを基準とするか
+//	};
+//}
+//
+//// 攻撃方向補正の情報設定
+//void SurfacePlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[3])
+//{
+//	// 第1攻撃
+//	configs[0] = 
+//	{ 
+//		true,	// 向き調整が可能かどうか
+//	};
+//
+//	// 第2攻撃
+//	configs[1] = 
+//	{ 
+//		true,	// 向き調整が可能かどうか
+//	};
+//
+//	// 第3攻撃
+//	configs[2] = 
+//	{ 
+//		true,	// 向き調整が可能かどうか
+//	};
+//}
+//
+//// 表プレイヤーの演出設定
+//AttackEffectConfig SurfacePlayer::GetAttackEffectConfig(AttackEffectConfig configs[3])
+//{
+//	// 表プレイヤー用の演出設定
+//	AttackEffectConfig config;
+//
+//	// 第1攻撃
+//	configs[0] =
+//	{
+//		config.effectName = "SurfacePlayerAttack1",		// ダメージエフェクト名
+//		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
+//		config.soundName = "sPlayerFirstAttack",		// ダメージサウンド名
+//	};
+//
+//	// 第2攻撃
+//	configs[1] =
+//	{
+//		config.effectName = "SurfacePlayerAttack1",		// ダメージエフェクト名
+//		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
+//		config.soundName = "sPlayerFirstAttack",		// ダメージサウンド名
+//	};
+//
+//	// 第3攻撃
+//	configs[2] =
+//	{
+//		config.effectName = "SurfacePlayerAttack3",		// ダメージエフェクト名
+//		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
+//		config.soundName = "iPlayerFirstAttack",		// ダメージサウンド名
+//	};
+//
+//
+//	return config;
+//}
+//
+//// 範囲攻撃の情報設定
+//AreaAttackConfig SurfacePlayer::GetAreaAttackConfig()
+//{
+//	// 表プレイヤーは範囲攻撃を行わない
+//	AreaAttackConfig config;
+//	return config;
+//}
 
 // 回避設定データ構造体
 DodgeConfig SurfacePlayer::GetDodgeConfig()
@@ -316,7 +317,7 @@ DodgeConfig SurfacePlayer::GetDodgeConfig()
 	config.invincibleDuration = 20.0f;	// 無敵時間
 	config.startTime = 25.0f;			// 開始時間
 	config.activeTime = 30.0f;			// アクティブ時間
-	config.recoveryTime = 25.0f;			// 硬直時間
+	config.recoveryTime = 25.0f;		// 硬直時間
 	config.dodgeMoveSpeed = 12.0f;		// 移動速度
 
 	return config;
@@ -462,7 +463,7 @@ void SurfacePlayer::StartAbsorbReadyState()
 	// 吸収構え状態に移行
 	_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_READY;	// 状態を吸収構えに設定
 	_bIsAbsorbReadyCompleted = false;								// 吸収構えアニメーション完了フラグをリセット
-
+	
 	// アニメーション切り替え
 	ProcessPlayAnimation();
 }

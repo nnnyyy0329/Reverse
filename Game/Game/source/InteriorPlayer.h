@@ -3,6 +3,7 @@
 #pragma once
 #include "PlayerBase.h"
 
+// 裏プレイヤー
 class InteriorPlayer : public PlayerBase
 {
 public:
@@ -24,7 +25,6 @@ public:
 	virtual PlayerAnimations	GetPlayerAnimation()										override;	// アニメーション設定を取得
 	virtual RenderConfig		GetRenderConfig()											override;	// 描画設定を取得
 	virtual DodgeConfig			GetDodgeConfig()											override;	// 回避設定を取得
-	virtual ShieldConfig		GetShieldConfig()											override;	// シールド設定を取得
 	virtual AttackConstants		GetAttackConstants()const									override;	// 攻撃定数を取得
 	virtual void				GetAttackConfigs(AttackConfig configs[5])					override;	// 攻撃設定を取得
 	virtual void				GetAttackColOffsetConfigs(AttackColOffset configs[5])		override;	// 攻撃コリジョンオフセット設定を取得

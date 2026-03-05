@@ -14,7 +14,7 @@ public:
 	const std::list<std::shared_ptr<Bullet>>& GetBullets() const { return _bullets; } // 弾のリスト取得
 
 	// 弾の発射リクエスト
-	void Shoot(VECTOR startPos, VECTOR dir, float radius, float speed, int lifeTime, CHARA_TYPE type);
+	void Shoot(VECTOR startPos, VECTOR dir, float radius, float speed, int lifeTime, CHARA_TYPE charType, BULLET_TYPE bulletType);
 
 	void RemoveBullet(std::shared_ptr<Bullet> bullet);// 当たった弾を削除
 

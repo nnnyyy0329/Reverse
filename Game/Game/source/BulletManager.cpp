@@ -32,9 +32,9 @@ void BulletManager::Render() {
 	}
 }
 
-void BulletManager::Shoot(VECTOR startPos, VECTOR dir, float radius, float speed, int lifeTime, CHARA_TYPE type) {
+void BulletManager::Shoot(VECTOR startPos, VECTOR dir, float radius, float speed, int lifeTime, CHARA_TYPE charType, BULLET_TYPE bulletType) {
 	auto bullet = std::make_shared<Bullet>();
-	bullet->Activate(startPos, dir, radius, speed, lifeTime, type);// î≠éÀê›íË
+	bullet->Activate(startPos, dir, radius, speed, lifeTime, charType, bulletType);// î≠éÀê›íË
 	_bullets.push_back(bullet);// ÉäÉXÉgÇ…í«â¡
 }
 

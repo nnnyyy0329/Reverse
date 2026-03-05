@@ -28,13 +28,16 @@ public:
 	virtual DodgeConfig				GetDodgeConfig()											override;	// 回避設定を取得
 	virtual ShieldConfig			GetShieldConfig()											override;	// シールド設定を取得
 	virtual AttackConstants			GetAttackConstants()const									override;	// 攻撃定数を取得
-	virtual void					GetAttackConfigs(AttackConfig configs[3])					override;	// 攻撃設定を取得
-	virtual void					GetAttackColOffsetConfigs(AttackColOffset configs[3])		override;	// 攻撃コリジョンオフセット設定を取得
-	virtual void					GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[3])	override;	// 攻撃方向補正設定を取得
-	virtual AreaAttackConfig		GetAreaAttackConfig()										override;	// 範囲攻撃設定を取得
-	virtual AttackEffectConfig		GetAttackEffectConfig(AttackEffectConfig configs[3])		override;	// 演出設定を取得
 	const PlayerAbsorbAttackSystem* GetAbsorbAttackSystemConst()const;	// 吸収攻撃システム取得
 	PlayerAbsorbAttackSystem* GetAbsorbAttackSystem();					// 非const版
+
+	/* 現在未使用の攻撃情報仮想関数 */
+	//virtual void					GetAttackConfigs(AttackConfig configs[3])					override;	// 攻撃設定を取得
+	//virtual void					GetAttackColOffsetConfigs(AttackColOffset configs[3])		override;	// 攻撃コリジョンオフセット設定を取得
+	//virtual void					GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[3])	override;	// 攻撃方向補正設定を取得
+	//virtual AreaAttackConfig		GetAreaAttackConfig()										override;	// 範囲攻撃設定を取得
+	//virtual AttackEffectConfig		GetAttackEffectConfig(AttackEffectConfig configs[3])		override;	// 演出設定を取得
+
 
 	/*****ゲッターセッター*****/
 

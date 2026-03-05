@@ -2,7 +2,8 @@
 
 Bullet::Bullet() 
 	: _lifeTimer(0),
-	_eShooterType(CHARA_TYPE::NONE)
+	_eShooterType(CHARA_TYPE::NONE),
+	_eBulletType(BULLET_TYPE::NONE)
 {
 }
 
@@ -47,7 +48,7 @@ void Bullet::DebugRender() {
 void Bullet::CollisionRender() {
 }
 
-void Bullet::Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE type) {
+void Bullet::Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE charType, BULLET_TYPE bulletType) {
 	_vPos = vStartPos;
 	_vOldPos = vStartPos;// 前フレームの位置も初期化
 
@@ -55,7 +56,29 @@ void Bullet::Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed
 	_fCollisionR = fRadius;
 	_fMoveSpeed = fSpeed;
 	_lifeTimer = lifeTime;
-	_eShooterType = type;
+	_eShooterType = charType;
+	_eBulletType = bulletType;
 
 	_vMove = VScale(_vDir, _fMoveSpeed);// 移動量を設定
+}
+
+void Bullet::Activate(const BulletConfig& config)
+{
+#if 1
+	Activate(config.vStartPos, config.vDir, config.fRadius, config.fSpeed, config.lifeTime, config.charaType, config.bulletType);
+
+#else
+	_vPos = config.vStartPos;
+	_vOldPos = config.vStartPos;// 前フレームの位置も初期化
+
+	_vDir = VNorm(config.vDir);// 向きを正規化
+	_fCollisionR = config.fRadius;
+	_fMoveSpeed = config.fSpeed;
+	_lifeTimer = config.lifeTime;
+	_eShooterType = config.charaType;
+	_eBulletType = config.bulletType;
+
+	_vMove = VScale(_vDir, _fMoveSpeed);// 移動量を設定
+
+#endif
 }

@@ -1,6 +1,27 @@
 #pragma once
 #include "CharaBase.h"
 
+// ’e‚Ìí—Ş‚ğŠÇ—‚·‚é‚½‚ß‚Ì—ñ‹“Œ^
+enum class BULLET_TYPE
+{
+	NONE,
+	NORMAL,		// ’Êí’e
+	PIERCING,	// ŠÑ’Ê’e
+	_EOT_,
+};
+
+// ’e‚Ìî•ñ\‘¢‘Ì
+struct BulletConfig
+{
+	VECTOR vStartPos;		// ”­ËˆÊ’u
+	VECTOR vDir;			// ”­Ë•ûŒü
+	float fRadius;			// “–‚½‚è”»’è‚Ì”¼Œa
+	float fSpeed;			// ˆÚ“®‘¬“x
+	int lifeTime;			// õ–½
+	CHARA_TYPE charaType;	// ”­ËÒ‚ÌƒLƒƒƒ‰ƒ^ƒCƒv
+	BULLET_TYPE bulletType;	// ’e‚Ìí—Ş
+};
+
 class Bullet : public CharaBase
 {
 public:
@@ -15,12 +36,16 @@ public:
 	virtual void CollisionRender(); // ƒRƒŠƒWƒ‡ƒ“•`‰æ
 
 	// ’e‚Ì”­Ëˆ—
-	void Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE type);
+	void Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE charaType, BULLET_TYPE bulletType);
+	void Activate(const BulletConfig& config);
 
 	CHARA_TYPE GetShooterType() const { return _eShooterType; }// ’e‚Ì”­ËÒ‚ğæ“¾
 
 protected:
+	BulletConfig _config;// ’e‚Ìî•ñ\‘¢‘Ì
+
 	int _lifeTimer;// ’e‚Ìõ–½(ƒtƒŒ[ƒ€)
 	CHARA_TYPE _eShooterType;// ’N‚ª”­Ë‚µ‚½’e‚©
+	BULLET_TYPE _eBulletType;// ’e‚Ìí—Ş
 };
 
