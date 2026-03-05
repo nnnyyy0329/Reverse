@@ -27,7 +27,7 @@ namespace
 	// 速度制御用定数
 	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;			// スムーズ回転速度
 	constexpr auto ATTACK_APPROACH_SPEED = 2.0f;		// 攻撃開始時の接近速度
-	constexpr auto ATTACK_EXECUTE_SPEED = 2.5f;			// 攻撃実行時の前進速度
+	constexpr auto ATTACK_EXECUTE_SPEED = 1.5f;			// 攻撃実行時の前進速度
 	constexpr auto LOST_ROTATE_SPEED = 1.5f;			// 見渡し回転速度
 
 	// 時間ランダム幅定数
