@@ -208,6 +208,7 @@
     <ClCompile Include="source\CameraShakeSystem.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
+    <ClCompile Include="source\Pathfinding.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -405,6 +406,7 @@
     <ClInclude Include="source\CameraShakeSystem.h">
       <Filter>Camera</Filter>
     </ClInclude>
+    <ClInclude Include="source\Pathfinding.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">

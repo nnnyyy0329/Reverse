@@ -46,8 +46,8 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 	float capsuleHeight = chara->GetCollisionHeight();
 
 	// ステップ移動(すり抜け防止)
-	// カプセル半径*2の距離ごとに移動を分割して判定を行う
-	const float stepLength = capsuleRadius * 2.0f;
+	// カプセル半径を上限としてステップ幅を決定する
+	const float stepLength = capsuleRadius;
 
 	// _vPosはキャラの足元座標
 	VECTOR vProcessPos = vOldPos;
@@ -66,7 +66,10 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 	// ステップ移動の進行状況を管理
 	float movedDistance = 0.0f;// 移動済み距離
 	int stepCnt = 0;// ステップカウンタ(無限ループ防止)
-	const int constMaxSteps = 256;// 最大ステップ数
+	const int constMaxSteps = 512;// 最大ステップ数
+
+	const float constDetectionMargin = 100.0f;// 少し広めに
+	const float detectionRadius = capsuleRadius + constDetectionMargin;// 半径に加算する
 
 	// メインループ:移動をステップごとに処理
 	while (movedDistance < moveLength && stepCnt < constMaxSteps)
@@ -90,8 +93,6 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 		std::vector<MV1_COLL_RESULT_POLY> floorPolygons;// 床ポリゴンリスト
 
 		// 検出範囲の中心をカプセルの中心に設定
-		const float constDetectionMargin = 100.0f;// 少し広めに
-		const float detectionRadius = capsuleRadius + constDetectionMargin;// 半径に加算する
 		VECTOR vDetectionCenter = VAdd(vProcessPos, VGet(0.0f, capsuleHeight * 0.5f, 0.0f));
 
 		// 全マップモデルを走査
@@ -133,8 +134,6 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 		// 2:壁との衝突処理
 		if (!wallPolygons.empty())
 		{
-			bool hasSlided = false;// スライド移動を適用したか
-
 			// 押し出しループ
 			// 最大16回までループしてすべての壁との衝突を解消する
 			const int constMaxResolveLoop = 16;
@@ -170,7 +169,7 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 					// 壁からの押し出し処理
 					// 正規化された法線方向に少しずつ押し出す
 					const float constPushDistance = 1.0f;
-					VECTOR vPush = VScale(vWallNormXZ, constPushDistance);
+					VECTOR vPush = VScale(vWallNormXZ, -constPushDistance);
 
 					// 総押し出しベクトルに加算
 					vTotalPush = VAdd(vTotalPush, vPush);
@@ -191,9 +190,9 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 				}
 			}
 
-			// スライド移動処理を押し出し処理の後に実行
+			// まだ壁に接触している場合、スライド移動をする
 			bool bHasCollision = false;
-			VECTOR vSlideMove = VGet(0.0f, 0.0f, 0.0f);
+			VECTOR vSlideMove = vStepMove;// 移動ベクトルを初期値とする
 
 			//壁との衝突をチェック
 			for (const auto& wall : wallPolygons)
@@ -211,41 +210,35 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 
 					// 法線が無効な場合はスキップ
 					const float constMinNormalLen = 0.0001f;
-					if (normLen < constMinNormalLen)
-					{
-						continue;
-					}
+					if (normLen < constMinNormalLen) { continue; }
 
 					// 正規化
 					vWallNormXZ = VScale(vWallNormXZ, 1.0f / normLen);
 
-					// 移動ベクトルを壁に沿ってスライドさせる
 					// 壁法線との内積を計算
-					float dotProduct = VDot(vStepMove, vWallNormXZ);
+					float dotProduct = VDot(vMoveDir, vWallNormXZ);
 
-					// 壁に向かっている場合のみスライド処理
+					// 壁に向かっている場合のみ、その法線成分を除去
 					if (dotProduct < 0.0f)
 					{
-						// 壁方向の成分を除去してスライドベクトルを計算
-						VECTOR vSlide = VSub(vStepMove, VScale(vWallNormXZ, dotProduct));
-						vSlide.y = 0.0f; // 水平方向のみに制限
-
-						// スライドベクトルが有効な場合のみ保存
-						if (VSize(vSlide) > VSize(vSlideMove))
-						{
-							vSlideMove = vSlide;
-						}
+						float stepDot = VDot(vSlideMove, vWallNormXZ);
+						vSlideMove = VSub(vSlideMove, VScale(vWallNormXZ, stepDot));
+						vSlideMove.y = 0.0f;
 					}
 				}
 			}
 
 			// スライド移動を適用
-			const float constMinSlideThreshold = 0.0001f;
-			if (bHasCollision && VSize(vSlideMove) > constMinSlideThreshold)
+			const float minSlideThreshold = 0.0001f;
+			if (bHasCollision)
 			{
-				vProcessPos = VAdd(vProcessPos, vSlideMove);
-				vCapsuleTop = VAdd(vCapsuleTop, vSlideMove);
-				vCapsuleBottom = VAdd(vCapsuleBottom, vSlideMove);
+				VECTOR vSlideDelta = VSub(vSlideMove, vStepMove);
+				if (VSize(vSlideDelta) > minSlideThreshold)
+				{
+					vProcessPos = VAdd(vProcessPos, vSlideDelta);
+					vCapsuleTop = VAdd(vCapsuleTop, vSlideDelta);
+					vCapsuleBottom = VAdd(vCapsuleBottom, vSlideDelta);
+				}
 			}
 		}
 
