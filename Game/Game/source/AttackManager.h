@@ -25,8 +25,16 @@ struct ATTACK_INFO
 class AttackManager
 {
 public:
-	AttackManager();
-	virtual ~AttackManager();
+
+	// シングルトン
+	static AttackManager* GetInstance()	// インスタンス取得
+	{
+		// 静的ローカル変数シングルトン
+		static AttackManager instance;
+		return &instance;
+	}
+	static void CreateInstance();	// インスタンス作成
+	static void DestroyInstance();	// インスタンス破棄
 
 	bool Initialize();		// 初期化
 	bool Terminate();		// 終了
@@ -62,25 +70,20 @@ public:
 	ATTACK_OWNER_TYPE GetAttackOwnerType(std::shared_ptr<AttackBase> attack) const;	// 攻撃の所有者を取得
 	int GetAttackOwnerId(std::shared_ptr<AttackBase> attack) const;					// 攻撃の所有者IDを取得
 
-	// シングルトン
-	static AttackManager* GetInstance()	// インスタンス取得
-	{
-		// 静的ローカル変数シングルトン
-		static AttackManager instance;
+private:
 
-		return &instance;
-	}
-	static void CreateInstance();	// インスタンス作成
-	static void DestroyInstance();	// インスタンス破棄
+	// シングルトン用コンストラクタ、デストラクタ
+	AttackManager();
+	virtual ~AttackManager();
+
+	// シングルトン用メンバ
+	static AttackManager* _instance;
 
 protected:
 	std::vector<std::weak_ptr<AttackBase>> _dodgeHitAttacks;	// 回避にヒットした攻撃リスト
 	std::vector<ATTACK_INFO> _registeredAttacks;				// 登録された攻撃リスト
 
 	int _frameCounter;	// フレームカウンタ
-
-	// シングルトン用メンバ
-	static AttackManager* _instance;
 
 };
 

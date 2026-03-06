@@ -42,9 +42,8 @@ bool Bullet::Process()
 {
 	if(!IsBulletAlive()){ return false; }	// 弾の生存時間が残っていないならスキップ
 
-	// 移動処理
-	_vOldPos = _vPos;// 前フレームの位置を保存
-	_vPos = VAdd(_vPos, _vMove);// 位置更新
+	// 弾の移動処理
+	MoveBullet();
 
 	// 生存時間の減算処理
 	DecrementLifeTime();
@@ -54,23 +53,42 @@ bool Bullet::Process()
 
 bool Bullet::Render()
 {
-	// 当たり判定のsphereを描画
-	// 中心座標、半径、分割数、ディフューズ、スペキュラ、塗りつぶすか
-	DrawSphere3D(
-		_vPos, _fCollisionR, 8, GetColor(0, 255, 255), GetColor(255, 255, 255), FALSE
-	);
+	// 当たり判定の描画
+	CollisionRender();
 
 	return true;
 }
 
 void Bullet::DebugRender()
 {
-	
+	// 当たり判定の描画
+	CollisionRender();
 }
 
+// 当たり判定の描画
 void Bullet::CollisionRender() 
 {
+	// 当たり判定のsphereを描画
+	DrawSphere3D
+	(
+		_vPos, 
+		_fCollisionR,
+		8, 
+		GetColor(0, 255, 255), 
+		GetColor(255, 255, 255),
+		FALSE
+	);
 
+	//// 当たり判定のsphereを描画
+	//DrawSphere3D
+	//(
+	//	_vPos, 
+	//	_stcBulletConfig.radius,
+	//	8, 
+	//	GetColor(0, 255, 255), 
+	//	GetColor(255, 255, 255),
+	//	FALSE
+	//);
 }
 
 void Bullet::Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE charType, BULLET_TYPE bulletType)
@@ -120,6 +138,50 @@ void Bullet::SetCoordinateConfig(const BulletConfig& config)
 	_vOldPos	= config.startPos;				// 1フレーム前の位置
 	_vDir		= VNorm(config.dir);			// 向きの正規化
 	_vMove		= VScale(_vDir, config.speed);	// 移動量の計算
+}
+
+// ヒット時の演出処理
+void Bullet::PlayEffect(const BulletEffectConfig& config)
+{
+	// エフェクト再生処理
+	PlayBulletEffect(config);
+
+	// サウンド再生処理
+	PlayBulletSound(config);
+}
+// エフェクト再生処理
+void Bullet::PlayBulletEffect(const BulletEffectConfig& config)
+{
+	// エフェクト名が空でない場合のみ
+	if(!config.effectName.empty())
+	{
+		// エフェクト再生位置を計算
+		VECTOR effectPos = VAdd(_vPos, config.effectOffset);
+
+		// エフェクト再生
+		EffectServer::GetInstance()->Play(config.effectName, effectPos);
+	}
+}
+	
+// サウンド再生処理
+void Bullet::PlayBulletSound(const BulletEffectConfig& config)
+{
+	// サウンド名が空でない場合のみ
+	if(!config.soundName.empty())
+	{
+		// サウンド再生
+		SoundServer::GetInstance()->Play(config.soundName, DX_PLAYTYPE_BACK);
+	}
+}
+
+// 弾の移動処理
+void Bullet::MoveBullet()
+{
+	// 前フレームの位置を保存
+	_vOldPos = _vPos;
+
+	// 位置更新
+	_vPos = VAdd(_vPos, _vMove);
 }
 
 // 弾の生存時間の減算処理

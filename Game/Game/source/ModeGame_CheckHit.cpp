@@ -3,8 +3,8 @@
 #include "StageBase.h"
 #include "AttackBase.h"
 #include "AttackManager.h"
-#include "BulletManager.h"
 #include "Bullet.h"
+#include "BulletManager.h"
 #include "DodgeSystem.h"
 #include "GameCamera.h"
 #include "SurfacePlayer.h"
@@ -500,8 +500,7 @@ void ModeGame::CheckActiveAttack(std::shared_ptr<CharaBase> chara)
 	if(chara == nullptr) { return; }
 
 	// AttackManagerから全てのアクティブな攻撃を取得
-	auto* attackManager = AttackManager::GetInstance();
-	auto activeAttacks = attackManager->GetAllActiveAttacks();
+	auto activeAttacks = _attackManager->GetAllActiveAttacks();
 
 	// 各攻撃と当たり判定
 	for(auto& attack : activeAttacks)

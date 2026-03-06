@@ -21,6 +21,7 @@ struct BulletConfig
 	float damage;			// ダメージ量
 	float speed;			// 移動速度
 	int lifeTime;			// 寿命
+	bool isHit = false;		// ヒットしたか(初期化しておく)
 };
 
 // 弾の演出関係の構造体
@@ -47,7 +48,7 @@ public:
 	virtual bool Render();		// 描画
 
 	virtual void DebugRender();		// デバッグ描画
-	virtual void CollisionRender(); // コリジョン描画
+	void CollisionRender();			// コリジョン描画
 
 	// 弾の発射処理
 	void Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE charaType, BULLET_TYPE bulletType);
@@ -64,11 +65,24 @@ public:
 	// 位置関係の情報設定
 	void SetCoordinateConfig(const BulletConfig& config);
 
+	// ヒット時の演出処理
+	void PlayEffect(const BulletEffectConfig& effectConfig);
+
+	// エフェクト再生処理
+	void PlayBulletEffect(const BulletEffectConfig& effectConfig);
+
+	// サウンド再生処理
+	void PlayBulletSound(const BulletEffectConfig& effectConfig);
+
 	// ゲッターセッター
 	CHARA_TYPE GetShooterType() const { return _eShooterType; }	// 弾の発射者を取得
 	BULLET_TYPE GetBulletType() const { return _eBulletType; }	// 弾の種類を取得
 
 private:
+
+	// 弾の移動処理
+	void MoveBullet();
+
 	// 弾の生存時間の減算処理
 	void DecrementLifeTime();
 

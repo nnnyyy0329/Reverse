@@ -5,6 +5,26 @@
 // シングルトン用メンバ初期化
 AttackManager* AttackManager::_instance = nullptr;
 
+// インスタンス作成
+void AttackManager::CreateInstance()
+{
+	if(_instance == nullptr)
+	{
+		_instance = new AttackManager();	// インスタンス作成
+		_instance->Initialize();			// 初期化
+	}
+}
+
+// インスタンス破棄
+void AttackManager::DestroyInstance()
+{
+	if(_instance != nullptr)
+	{
+		_instance->Terminate();	// 終了
+		delete _instance;		// インスタンス破棄
+	}
+}
+
 AttackManager::AttackManager()
 {
 	_frameCounter = 0;			// フレームカウンタ初期化
@@ -72,7 +92,7 @@ void AttackManager::CollisionRender()
 		auto attack = attackInfo.attack.lock();			// 攻撃情報の取得
 
 		if (attack == nullptr) { continue; }	// 無効な攻撃はスキップ
-		attack->Render();					// 攻撃描画処理
+		attack->Render();						// 攻撃描画処理
 	}
 }
 
@@ -105,7 +125,7 @@ void AttackManager::UnregisterAttack(std::shared_ptr<AttackBase> attack)
 	// 通常のforループで削除対象を探す
 	for(auto attacks = _registeredAttacks.begin(); attacks != _registeredAttacks.end();)
 	{
-		// weak_ptrが無効になっているかチェック
+		// 攻撃オブジェクトが無効かチェック
 		if(attacks->attack.expired())
 		{
 			// 無効な攻撃は削除
@@ -145,7 +165,8 @@ void AttackManager::UnregisterAttackByOwner(int ownerId)
 			// 一致した攻撃を削除
 			attacks = _registeredAttacks.erase(attacks);
 		}
-		else // 一致しないなら
+		// 一致しないなら
+		else 
 		{
 			// 次の要素へ
 			++attacks;
@@ -169,12 +190,13 @@ void AttackManager::CleanupInvalidAttacks()
 		// 削除フラグ
 		bool shouldRemove = false;	
 
-		// weak_ptrが無効になっているかチェック
+		// 攻撃オブジェクトが無効かチェック
 		if(attacks->attack.expired())
 		{
 			shouldRemove = true;
 		}
-		else // 有効な場合
+		// 有効な場合
+		else 
 		{
 			// 攻撃状態をチェック
 			auto attack = attacks->attack.lock();
@@ -192,7 +214,8 @@ void AttackManager::CleanupInvalidAttacks()
 			// 攻撃を削除
 			attacks = _registeredAttacks.erase(attacks);
 		}
-		else // 削除が不要な場合
+		// 削除が不要な場合
+		else 
 		{
 			// 次の要素へ
 			++attacks;
@@ -238,6 +261,7 @@ bool AttackManager::IsDodgeHitAttack(std::shared_ptr<AttackBase> attack) const
 	// 回避にヒットした攻撃リストを走査
 	for(auto& registeredAttack : _dodgeHitAttacks)
 	{
+		// 攻撃オブジェクトが一致するかチェック
 		if(!registeredAttack.expired() && registeredAttack.lock() == attack)
 		{
 			return true;
@@ -263,12 +287,13 @@ void AttackManager::CleanupDodgeHitAttacks()
 		// 削除フラグ
 		bool shouldRemove = false;	
 
-		// weak_ptrが無効になっているかチェック
+		// 攻撃オブジェクトが無効かチェック
 		if(attacks->expired())
 		{
 			shouldRemove = true;
 		}
-		else // 有効な場合
+		// 有効な場合
+		else 
 		{
 			// 攻撃状態をチェック
 			auto attack = attacks->lock();
@@ -286,7 +311,8 @@ void AttackManager::CleanupDodgeHitAttacks()
 			// 攻撃を削除
 			attacks = _dodgeHitAttacks.erase(attacks);
 		}
-		else // 削除が不要な場合
+		// 削除が不要な場合
+		else 
 		{
 			// 次の要素へ
 			++attacks;
@@ -382,6 +408,7 @@ int AttackManager::GetActiveAttackCount() const
 			// 攻撃状態がACTIVEならカウンタを増やす
 			if(attack->GetAttackState() == ATTACK_STATE::ACTIVE)
 			{
+				// カウントを増やす
 				count++;
 			}
 		}
@@ -426,25 +453,4 @@ int AttackManager::GetAttackOwnerId(std::shared_ptr<AttackBase> attack) const
 	}
 
 	return -1;
-}
-
-// インスタンス作成
-void AttackManager::CreateInstance()
-{
-	if(_instance == nullptr)
-	{
-		_instance = new AttackManager();	// インスタンス作成
-		_instance->Initialize();			// 初期化
-	}
-}
-
-// インスタンス破棄
-void AttackManager::DestroyInstance()
-{
-	if(_instance != nullptr)
-	{
-		_instance->Terminate();	// 終了
-
-		delete _instance;		// インスタンス破棄
-	}
 }
