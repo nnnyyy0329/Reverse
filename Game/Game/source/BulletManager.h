@@ -68,6 +68,9 @@ public:
 	// 無効な弾の削除
 	void CleanupInvalidBullets();	
 
+	// 弾が登録済みかチェック
+	bool IsBulletRegistered(std::shared_ptr<Bullet> bullet) const;
+
 
 	/* 弾の回避関連 */
 
@@ -79,6 +82,15 @@ public:
 
 	// 回避済みかチェック
 	bool IsDodgeBullet(std::shared_ptr<Bullet> bullet)const;	
+
+
+	/* 弾設定関連 */
+
+	// 登録済み弾の情報を更新
+	bool UpdateBulletConfig(std::shared_ptr<Bullet> bullet, const BulletConfig& newConfig);
+
+	// 登録済み弾のエフェクト設定を更新
+	bool UpdateBulletEffectConfig(std::shared_ptr<Bullet> bullet, const BulletEffectConfig& newConfig);
 
 
 	/* 情報取得関連 */

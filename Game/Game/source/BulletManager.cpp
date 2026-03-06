@@ -248,6 +248,26 @@ void BulletManager::CleanupInvalidBullets()
 	}
 }
 
+// ’e‚ª“o˜^Ï‚İ‚©ƒ`ƒFƒbƒN
+bool BulletManager::IsBulletRegistered(std::shared_ptr<Bullet> bullet) const
+{
+	if(!bullet) { return false; }
+
+	// “o˜^‚³‚ê‚½’e‚ğ‘–¸
+	for(const auto& info : _registerBullets)
+	{
+		// ’e‚ª—LŒø‚È‚ç
+		if(!info.bullet.expired() && info.bullet.lock() == bullet)
+		{
+			// “o˜^Ï‚İ
+			return true;
+		}
+	}
+
+	// –¢“o˜^
+	return false;
+}
+
 
 /* ’e‚Ì‰ñ”ğŠÖ˜A */
 
@@ -285,6 +305,32 @@ bool BulletManager::IsDodgeBullet(std::shared_ptr<Bullet> bullet)const
 
 	// ‰ñ”ğ‚µ‚Ä‚¢‚È‚¢’e
 	return false;
+}
+
+
+/* ’eİ’èŠÖ˜A */
+
+bool BulletManager::UpdateBulletConfig(std::shared_ptr<Bullet> bullet, const BulletConfig& newConfig)
+{
+	if(!bullet || !IsBulletRegistered(bullet)) { return false; }	// “o˜^Ï‚İ‚¶‚á‚È‚¢‚È‚çƒXƒLƒbƒv
+
+	// ’e‚ÌŠî–{î•ñ‚ğİ’è
+	bullet->SetBulletConfig(newConfig);
+
+	// ’e‚ÌˆÊ’uŠÖŒW‚Ìî•ñİ’è
+	bullet->SetCoordinateConfig(newConfig);
+
+	return true;
+}
+
+bool BulletManager::UpdateBulletEffectConfig(std::shared_ptr<Bullet> bullet, const BulletEffectConfig& newConfig)
+{
+	if(!bullet || !IsBulletRegistered(bullet)) { return false; }	// “o˜^Ï‚İ‚¶‚á‚È‚¢‚È‚çƒXƒLƒbƒv
+
+	// ’e‚Ì‰‰oî•ñİ’è
+	bullet->SetEffectConfig(newConfig);
+
+	return true;
 }
 
 
