@@ -3,6 +3,8 @@
 
 class Enemy;
 
+namespace Pathfinding { class Manager; }
+
 class StageBase
 {
 public:
@@ -77,7 +79,7 @@ public:
 	VECTOR GetPlayerStartPos() { return _vPlayerStartPos; }
 	VECTOR GetPlayerStartRot() { return _vPlayerStartRot; }
 
-
+	Pathfinding::Manager* GetPathfindingManager() { return _pathfindingManager.get(); }
 
 protected:
 	std::map<std::string, int> _mapModelHandle;// マップモデル用ハンドル(名前、モデルハンドル)
@@ -98,5 +100,8 @@ protected:
 	// プレイヤー初期位置
 	VECTOR _vPlayerStartPos;
 	VECTOR _vPlayerStartRot;
+
+	// 経路探索マネージャー
+	std::unique_ptr<Pathfinding::Manager> _pathfindingManager;
 };
 

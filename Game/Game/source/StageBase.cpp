@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "EnemyFactory.h"
 #include "ModeGame.h"
+#include "PathfindingManager.h"
 
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -13,11 +14,14 @@ StageBase::StageBase(int stageNum)
 	, _vPlayerStartPos(VGet(0.0f, 0.0f, 0.0f))
 	, _vPlayerStartRot(VGet(0.0f, 0.0f, 0.0f))
 {
+
+	_pathfindingManager = std::make_unique<Pathfinding::Manager>();
+
 	std::string path, jsonFile, jsonObjName;
 	switch (_stageNum) 
 	{
 	case 0:
-		path = "res/stage/json/"; jsonFile = "stage_00.json"; jsonObjName = "res";
+		path = "res/stage/json/"; jsonFile = "test.json"; jsonObjName = "res";
 		break;
 	case 1:
 		path = "res/stage/json/"; jsonFile = "stage_01.json"; jsonObjName = "res";
@@ -113,6 +117,13 @@ StageBase::StageBase(int stageNum)
 					);
 					_totalEnemyCnt++;
 				}
+				else if (name == "S_EnemyP")// Tank
+				{
+					_stageEnemies.push_back(
+						EnemyFactory::CreateEnemy(EnemyType::TANK, pos, rot)
+					);
+					_totalEnemyCnt++;
+				}
 			}
 		);
 	}
@@ -170,10 +181,6 @@ StageBase::StageBase(int stageNum)
 			}
 		);
 	}
-
-
-
-
 
 	// プレイヤー初期位置
 	{
@@ -255,6 +262,28 @@ StageBase::StageBase(int stageNum)
 		);
 	}
 
+	// ウェイポイント
+	{
+		std::string wpObjName = "WP";
+
+		LoadStageDataFromJson(
+			path + jsonFile,
+			wpObjName,
+			[&](const std::string& name, const VECTOR& pos, const VECTOR& rot, const VECTOR& scale)
+			{
+				if (name == "Sphere")
+				{
+					// 現在の登録数をIDとして付与して追加
+					int nextId = static_cast<int>(_pathfindingManager->GetWaypoints().size());
+					_pathfindingManager->AddWaypoint(nextId, pos);
+				}
+			}
+		);
+
+		// ウェイポイント同士のつながりを構築
+		_pathfindingManager->BuildWaypointLinks(1.0f, this);
+	}
+
 	// BGM
 	switch (_stageNum)
 	{
@@ -267,6 +296,9 @@ StageBase::StageBase(int stageNum)
 	}
 	PlayStageBGM();
 
+	// StageBase.cpp コンストラクタ末尾
+	int wpCount = _pathfindingManager->GetWaypoints().size();
+	printfDx("Loaded Waypoints: %d\n", wpCount); // 画面左上に表示（DxLibの場合）
 }
 
 StageBase::~StageBase()

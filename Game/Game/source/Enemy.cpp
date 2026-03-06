@@ -4,6 +4,7 @@
 #include "AttackManager.h"
 #include "StateCommon.h"
 #include "StageBase.h"
+#include "PathfindingManager.h"
 
 namespace
 {
@@ -40,6 +41,10 @@ namespace
 	// 重力
 	constexpr float GRAVITY = -0.98f;// 重力加速度
 	constexpr float MAX_FALL_SPEED = -20.0f;// 最大落下速度
+
+	// 経路探索
+	constexpr float PATH_UPDATE_INTERVAL = 30.0f;// ルートを再計算する間隔(フレーム)
+	constexpr float WAYPOINT_REACHED_DIST = 20.0f;// ウェイポイント到達したと見なす距離
 }
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
@@ -735,4 +740,100 @@ void Enemy::UpdateDamageComboTimer()
 			_damageComboCnt = 0;// 時間切れでリセット
 		}
 	}
+}
+
+void Enemy::UpdatePath(VECTOR vTarget)
+{
+	auto stage = _stage.lock();
+	if (!stage) { return; }
+
+	// 一定間隔で更新する(重さ対策)
+	_fPathUpdateTimer -= 1.0f;
+	if (_fPathUpdateTimer > 0.0f) { return; }
+	// タイマーリセット
+	_fPathUpdateTimer = PATH_UPDATE_INTERVAL;
+
+	auto pathManager = stage->GetPathfindingManager();
+	if (!pathManager) return;
+
+	// 直接ターゲットが見えているなら、探索せずに直接向かう
+	if (!pathManager->CheckCapsuleLineObstacle(_vPos, vTarget, COLLISION_RADIUS, stage.get()))
+	{
+		_currentPath.clear();
+		_currentPath.push_back(vTarget);
+		_currentPathIndex = 0;
+		return;
+	}
+
+	// 現在向かっているウェイポイントを記憶
+	VECTOR vOldTargetWp;
+	bool bIsHeadingToWp = false;
+
+	// 最後の要素(ターゲット座標)以外の、ウェイポイントに向かっている途中かチェック
+	if (HasPath() && _currentPathIndex < _currentPath.size() - 1)
+	{
+		vOldTargetWp = _currentPath[_currentPathIndex];
+		bIsHeadingToWp = true;
+	}
+
+	// スタート地点の決定
+	int startId = -1;
+	if (bIsHeadingToWp)
+	{
+		// 現在向かっているポイントを次の探索のスタート地点にする
+		startId = pathManager->GetNearestWaypoint(vOldTargetWp, COLLISION_RADIUS, stage.get());
+	}
+	else
+	{
+		startId = pathManager->GetNearestWaypoint(_vPos, COLLISION_RADIUS, stage.get());
+	}
+
+	int goalId = pathManager->GetNearestWaypoint(vTarget, COLLISION_RADIUS, stage.get());
+
+	if (startId != -1 && goalId != -1)
+	{
+		// A*アルゴリズムでルートを取得
+		_currentPath = pathManager->FindPath(startId, goalId);
+		_currentPathIndex = 0;
+
+		// 最後に実際のターゲット座標を付け足して、接近するようにする
+		if (!_currentPath.empty())
+		{
+			_currentPath.push_back(vTarget);
+		}
+	}
+}
+
+VECTOR Enemy::GetNextWaypoint()
+{
+	// ルートがない、または最後まで到達している場合は現在地を返す
+	if (_currentPath.empty() || _currentPathIndex >= _currentPath.size()) { return _vPos; }
+
+	VECTOR nextPos = _currentPath[_currentPathIndex];
+
+	// 平面上の距離で到達判定を行う
+	VECTOR vToNext = VSub(nextPos, _vPos);
+	vToNext.y = 0.0f;// Y成分を無視
+
+	float dist = VSize(vToNext);
+
+	// 次のポイントに十分近づいたら、さらに次のポイントへ
+	if(dist < WAYPOINT_REACHED_DIST)
+	{
+		_currentPathIndex++;
+
+		if (_currentPathIndex < _currentPath.size())
+		{
+			nextPos = _currentPath[_currentPathIndex];
+		}
+	}
+
+	return nextPos;
+}
+
+void Enemy::ClearPath()
+{
+	_currentPath.clear();
+	_currentPathIndex = 0;
+	_fPathUpdateTimer = 0.0f;
 }

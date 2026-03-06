@@ -105,7 +105,7 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 				detectionRadius
 			);
 
-			const float wallThreshold = 0.2f;// •Ç”»’è‚Ìè‡’l
+			const float wallThreshold = 0.3f;// •Ç”»’è‚Ìè‡’l
 			for (int i = 0; i < polyResult.HitNum; ++i)
 			{
 				const MV1_COLL_RESULT_POLY& poly = polyResult.Dim[i];

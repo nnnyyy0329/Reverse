@@ -74,6 +74,7 @@ public:
 
 	// 索敵の障害物チェック
 	void SetStage(std::shared_ptr<StageBase> stage) { _stage = stage; }// ステージ参照をセット
+	std::shared_ptr<StageBase> GetStage() { return _stage.lock(); }
 	bool CheckLineOfSight(VECTOR vStart, VECTOR vEnd);// 視線が通っているか(障害物チェック)
 
 	// 移動可能範囲チェック
@@ -88,6 +89,12 @@ public:
 
 	// 徐々に回転させる
 	void SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg);// 目標方向へ指定速度で回転
+
+	// 経路探索関連
+	void UpdatePath(VECTOR vTargetPos);// 目標座標へ向かうルートを計算、更新する
+	VECTOR GetNextWaypoint();// 次に向かうべき座標を取得
+	void ClearPath();// 記憶しているルートをクリア
+	bool HasPath() { return !_currentPath.empty(); }// ルートを持っているかどうか
 
 protected:
 
@@ -126,6 +133,11 @@ protected:
 	float _fDamageComboResetTimer = 0.0f;// リセットタイマー
 
 	bool _bIsOutSideMoveArea = false;// エリア外へ移動しようとしたか
+
+	// 経路記憶用
+	std::vector<VECTOR> _currentPath;// 現在の経路座標リスト
+	int _currentPathIndex = 0;// 現在向かっている経路のインデックス
+	float _fPathUpdateTimer = 0.0f;//経路再計算用タイマー
 
 private:
 	void LoadEnemyModel();// モデルを名前に応じて読み込む
