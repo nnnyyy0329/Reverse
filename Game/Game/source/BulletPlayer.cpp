@@ -1,5 +1,4 @@
 #include "BulletPlayer.h"
-#include "BulletManager.h"
 #include "CameraManager.h"
 
 // プレベータようパラメータ
@@ -14,6 +13,7 @@ namespace bulletConfig
 	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);
 	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);
 	constexpr float RADIUS = 10.0f;
+	constexpr float DAMAGE = 10.0f;
 	constexpr float SPEED = 15.0f;
 	constexpr float LIFE_TIME = 120.0f;
 }
@@ -163,22 +163,39 @@ DodgeConfig BulletPlayer::GetDodgeConfig()
 	return config;
 }
 
-//// 弾発射設定データ構造体
-//BulletConfig BulletPlayer::GetBulletConfig()
-//{
-//	// 弾プレイヤー用の弾発射設定
-//	BulletConfig config;
-//
-//	config.vStartPos	= VGet(0.0f, 0.0f, 0.0f);	// 発射位置はプレイヤーの位置から計算するため、初期値はゼロ
-//	config.vDir			= VGet(0.0f, 0.0f, 0.0f);	// 発射方向もプレイヤーの向きから計算するため、初期値はゼロ
-//	config.fRadius		= 0.0f;						// 当たり判定の半径
-//	config.fSpeed		= 0.0f;						// 移動速度
-//	config.lifeTime		= 0.0f;						// 寿命(フレーム)
-//	config.charaType	= _eCharaType;				// 発射者のキャラタイプ
-//	config.bulletType	= BULLET_TYPE::NORMAL;		// 弾の種類
-//
-//	return config;
-//}
+// 弾発射設定
+BulletConfig BulletPlayer::GetBulletConfig()
+{
+	// 発射位置をワールド座標に変換
+	VECTOR worldOffset = TransOffsetToWorld(GetShootOffset(), GetShootDirection());
+
+	// 弾プレイヤー用の弾発射設定
+	BulletConfig config;
+
+	config.bulletType	= BULLET_TYPE::NORMAL;			// 弾のタイプ
+	config.charType		= CHARA_TYPE::BULLET_PLAYER;	// キャラタイプ
+	config.startPos		= VAdd(_vPos, worldOffset);		// 発射開始位置
+	config.dir			= GetShootDirection();			// エイムカメラの向いてる方向
+	config.radius		= bulletConfig::RADIUS;			// 弾の半径
+	config.damage		= bulletConfig::DAMAGE;			// 弾のダメージ
+	config.speed		= bulletConfig::SPEED;			// 弾のスピード
+	config.lifeTime		= bulletConfig::LIFE_TIME;		// 弾の自然消滅時間
+
+	return config;
+}
+
+// 弾演出設定
+BulletEffectConfig BulletPlayer::GetBulletEffectConfig()
+{
+	// 弾プレイヤー用の弾演出設定
+	BulletEffectConfig config;
+
+	config.effectName = "";							// エフェクトの名前
+	config.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// エフェクトの発生位置オフセット
+	config.soundName = "";							// サウンドの名前
+
+	return config;
+}
 
 // 弾発射カウント表示関数
 void BulletPlayer::DrawShootIntervalTime()
@@ -311,24 +328,27 @@ void BulletPlayer::ShootInput()
 // 弾の発射
 void BulletPlayer::ShootBullet()
 {
-	// 弾管理クラスの有効確認
-	auto bulletManager = _bulletManager.lock();
-	if(!bulletManager){ return; }
+	//// 弾管理クラスの有効確認
+	//auto bulletManager = _bulletManager.lock();
+	//if(!bulletManager){ return; }
 
-	// 発射位置をワールド座標に変換
-	VECTOR worldOffset = TransOffsetToWorld(GetShootOffset(), GetShootDirection());
+	//// 発射位置をワールド座標に変換
+	//VECTOR worldOffset = TransOffsetToWorld(GetShootOffset(), GetShootDirection());
 
-	// 弾情報設定
-	bulletManager->Shoot
-	(
-		VAdd(_vPos, worldOffset),
-		GetShootDirection(),
-		bulletConfig::RADIUS,
-		bulletConfig::SPEED,
-		bulletConfig::LIFE_TIME,
-		_eCharaType,
-		BULLET_TYPE::NORMAL
-	);
+	//// 弾情報設定
+	//bulletManager->Shoot
+	//(
+	//	VAdd(_vPos, worldOffset),
+	//	GetShootDirection(),
+	//	bulletConfig::RADIUS,
+	//	bulletConfig::SPEED,
+	//	bulletConfig::LIFE_TIME,
+	//	_eCharaType,
+	//	BULLET_TYPE::NORMAL
+	//);
+
+	auto bullet = BulletManager::GetInstance();
+	bullet->Shoot(GetBulletConfig(), GetBulletEffectConfig(), BULLET_OWNER_TYPE::BULLET_PLAYER);
 
 	// 発射時にエネルギー消費
 	EnergyManager* energyManager = EnergyManager::GetInstance();

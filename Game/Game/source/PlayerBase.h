@@ -3,9 +3,9 @@
 #pragma once
 #include "CharaBase.h"
 #include "AttackBase.h"
-#include "DodgeSystem.h"
-//#include "BulletManager.h"
 //#include "ShieldBase.h"
+#include "DodgeSystem.h"
+#include "BulletManager.h"
 #include "PlayerShieldSystem.h"
 
 // ‘O•ûéŒ¾
@@ -400,7 +400,8 @@ protected:	// UŒ‚ŠÖŒW --- ¡ŒãƒNƒ‰ƒX‚Å•ª‚¯‚é—\’è ------------------------------
 
 protected:	// ’e”­ËŠÖŒW --- ¡ŒãƒNƒ‰ƒX‚Å•ª‚¯‚é—\’è ------------------------------------------------------
 	
-	//virtual BulletConfig GetBulletConfig(){};	// ’e”­Ëİ’è‚ğæ“¾
+	virtual BulletConfig GetBulletConfig(){ return BulletConfig{}; }					// ’e”­Ëİ’è‚ğæ“¾
+	virtual BulletEffectConfig GetBulletEffectConfig(){ return BulletEffectConfig{}; }	// ’e‰‰oİ’è‚Ìæ“¾
 
 	virtual void ProcessShoot(){};	// ”­Ëˆ—‚Ì‰¼‘zŠÖ”
 

@@ -51,10 +51,6 @@ bool ModeGame::Initialize()
 		_playerManager = std::make_shared<PlayerManager>();
 		_playerManager->Initialize();
 
-		// BulletManagerの初期化
-		_bulletManager = std::make_shared<BulletManager>();
-		_bulletManager->Initialize();
-
 		// LightManagerの初期化
 		_lightManager = std::make_shared<LightManager>();
 		_lightManager->Initialize();
@@ -94,7 +90,6 @@ bool ModeGame::Initialize()
 		bulletPlayer->SetDodgeSystem(_dodgeSystem);
 		bulletPlayer->Initialize();
 		_playerManager->RegisterPlayer(PLAYER_TYPE::BULLET, bulletPlayer);
-		bulletPlayer->SetBulletManager(_bulletManager);
 	}
 
 	// プレイヤーアンロックマネージャー初期化
@@ -128,7 +123,6 @@ bool ModeGame::Initialize()
 	for (const auto& enemy : _stage->GetEnemies())
 	{
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
-		enemy->SetBulletManager(_bulletManager);
 		enemy->SetStage(_stage);
 	}
 
@@ -273,7 +267,6 @@ bool ModeGame::Process()
 		_playerManager->Process();
 		_playerUnlockManager->Process();
 		_stage->Process();
-		_bulletManager->Process();
 		_dodgeSystem->Process();
 		_energyUI->Process();
 		_playerLifeBarUI->Process();
@@ -282,7 +275,9 @@ bool ModeGame::Process()
 		_abilitySelectManager->Process();
 		//_shieldBase->Process();
 
+		// シングルトンインスタンスの更新
 		AttackManager::GetInstance()->Process();
+		BulletManager::GetInstance()->Process();
 		StaminaManager::GetInstance()->Process();
 	}
 
@@ -407,12 +402,13 @@ bool ModeGame::Render()
 	{
 		_stage->Render();
 		_playerManager->Render();
-		_bulletManager->Render();
 		_energyUI->Render();
 		_playerLifeBarUI->Render();
 		_staminaUI->Render();
 		//_item->Render();
 		_abilitySelectScreen->Render();
+
+		BulletManager::GetInstance()->Render();
 	}
 
 	// コリジョンの描画
@@ -438,7 +434,6 @@ bool ModeGame::Render()
 		}
 
 		_stage->DebugRender();
-		AttackManager::GetInstance()->DebugRender();
 		_dodgeSystem->DebugRender();
 		_debugCamera->DebugRender();
 		_gameCamera->DebugRender();
@@ -448,7 +443,8 @@ bool ModeGame::Render()
 		// ライト情報
 		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());
 
-		//AttackManager::GetInstance()->DebugRender();
+		AttackManager::GetInstance()->DebugRender();
+		BulletManager::GetInstance()->DebugRender();
 		EnergyManager::GetInstance()->DebugRender();
 
 		// プレイヤーデバッグ情報
@@ -615,13 +611,12 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 	for (const auto& enemy : _stage->GetEnemies())
 	{
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
-		enemy->SetBulletManager(_bulletManager);
 		enemy->SetStage(_stage);
 	}
 
 	// オブジェクトのクリア
 	{
-		_bulletManager->ClearAllBullets();
+		BulletManager::GetInstance()->ClearAllBullets();
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
 
@@ -640,7 +635,6 @@ void ModeGame::RestartCurrentStage()
 		for (const auto& enemy : _stage->GetEnemies())
 		{
 			enemy->SetTarget(_playerManager->GetActivePlayerShared());
-			enemy->SetBulletManager(_bulletManager);
 			enemy->SetStage(_stage);
 		}
 	}
@@ -661,7 +655,7 @@ void ModeGame::RestartCurrentStage()
 
 	// オブジェクトのクリア
 	{
-		_bulletManager->ClearAllBullets();
+		BulletManager::GetInstance()->ClearAllBullets();
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
 }

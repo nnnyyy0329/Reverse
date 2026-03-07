@@ -91,7 +91,6 @@ protected:
 	// 管理関連
 	std::shared_ptr<PlayerManager>	_playerManager;			// プレイヤーマネージャー
 	std::shared_ptr<CameraManager>	_cameraManager;			// カメラマネージャー
-	std::shared_ptr<BulletManager>	_bulletManager;			// 弾マネージャー
 	std::shared_ptr<LightManager>	_lightManager;			// ライトマネージャー 
 
 	// UI関連
@@ -104,6 +103,7 @@ protected:
 
 	// シングルトン取得
 	AttackManager* _attackManager = nullptr;
+	BulletManager* _bulletManager = nullptr;
 	EnergyManager* _energyManager = nullptr;
 
 	// デバッグ用

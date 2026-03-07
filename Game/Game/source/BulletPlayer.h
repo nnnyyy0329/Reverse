@@ -2,7 +2,6 @@
 #include "PlayerBase.h"
 
 // 前方宣言
-class BulletManager;
 class CameraManager;
 
 // 弾発射プレイヤー
@@ -26,14 +25,14 @@ public:
 	void DrawShootIntervalTime();												
 
 	// 純粋仮想関数のオーバーライド
-	virtual PlayerConfig		GetPlayerConfig()											override;	// 設定を取得
-	virtual PlayerAnimations	GetPlayerAnimation()										override;	// アニメーション設定を取得
-	virtual RenderConfig		GetRenderConfig()											override;	// 描画設定を取得
-	virtual DodgeConfig			GetDodgeConfig()											override;	// 回避設定を取得
-	//virtual BulletConfig		GetBulletConfig()											override;	// 弾発射設定を取得
+	virtual PlayerConfig		GetPlayerConfig()		override;	// 設定を取得
+	virtual PlayerAnimations	GetPlayerAnimation()	override;	// アニメーション設定を取得
+	virtual RenderConfig		GetRenderConfig()		override;	// 描画設定を取得
+	virtual DodgeConfig			GetDodgeConfig()		override;	// 回避設定を取得
+	virtual BulletConfig		GetBulletConfig()		override;	// 弾発射設定を取得
+	virtual BulletEffectConfig	GetBulletEffectConfig()	override;	// 弾演出設定を取得
 
 	// クラス設定
-	void SetBulletManager(std::shared_ptr<BulletManager>bulletManager){ _bulletManager = bulletManager; }	// マネージャーをセット
 	void SetCameraManager(std::shared_ptr<CameraManager>cameraManager){ _cameraManager = cameraManager; }	// カメラマネージャーをセット
 
 private:
