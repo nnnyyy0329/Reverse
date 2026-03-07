@@ -56,6 +56,9 @@ public:
 	// ’e‚ğ—LŒø‰»‚·‚é
 	void ActivateBullet(const BulletConfig& config, const BulletEffectConfig& effectConfig);
 
+	// ’e‚ğ—LŒø‰»‚·‚é(‰‰o–Ê‚Ìˆø”‚È‚µ)
+	void ActivateBulletSimple(const BulletConfig& config);
+
 	// ’eî•ñ‚Ìİ’è
 	void SetBulletConfig(const BulletConfig& config);
 

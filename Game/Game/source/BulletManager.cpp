@@ -135,6 +135,25 @@ std::shared_ptr<Bullet> BulletManager::Shoot(const BulletConfig& bulletConfig, c
 	return bullet;
 }
 
+// 弾の発射(演出面の引数なし版)
+std::shared_ptr<Bullet> BulletManager::ShootSimple(const BulletConfig& bulletConfig, BULLET_OWNER_TYPE ownerType)
+{
+	// 弾を生成
+	auto bullet = std::make_shared<Bullet>();
+
+	// BulletConfigをコピーして所有者をキャラタイプに変換
+	BulletConfig modifiedConfig = bulletConfig;
+	modifiedConfig.charType = ConvertOwnerTypeToCharType(ownerType);	// 変換
+
+	// 弾を発射
+	bullet->ActivateBulletSimple(modifiedConfig);
+
+	// 弾を登録
+	RegisterBullet(bullet, ownerType);
+
+	return bullet;
+}
+
 // 所有者をキャラタイプに変換
 CHARA_TYPE BulletManager::ConvertOwnerTypeToCharType(BULLET_OWNER_TYPE ownerType)
 {

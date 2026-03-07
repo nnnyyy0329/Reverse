@@ -47,6 +47,9 @@ public:
 	// 弾の発射
 	std::shared_ptr<Bullet>Shoot(const BulletConfig& bConfig, const BulletEffectConfig& bEffectConfig, BULLET_OWNER_TYPE ownerType);
 
+	// 弾の発射(演出面の引数なし版)
+	std::shared_ptr<Bullet>ShootSimple(const BulletConfig& bConfig, BULLET_OWNER_TYPE ownerType);
+
 	// 所有者をキャラタイプに変換
 	CHARA_TYPE ConvertOwnerTypeToCharType(BULLET_OWNER_TYPE ownerType);
 

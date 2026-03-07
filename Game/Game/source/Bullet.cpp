@@ -107,16 +107,26 @@ void Bullet::Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed
 }
 
 // ’e‚ğ—LŒø‰»‚·‚é
-void Bullet::ActivateBullet(const BulletConfig& bConfig, const BulletEffectConfig& bEffectConfig)
+void Bullet::ActivateBullet(const BulletConfig& bulletConfig, const BulletEffectConfig& bulletEffectConfig)
 {
 	// ’eî•ñ‚Ìİ’è
-	SetBulletConfig(bConfig);
+	SetBulletConfig(bulletConfig);
 
 	// ’e‚Ì‰‰oŠÖ˜A‚Ìî•ñİ’è
-	SetEffectConfig(bEffectConfig);
+	SetEffectConfig(bulletEffectConfig);
 
 	// ‘¼‚Ìî•ñİ’è
-	SetCoordinateConfig(bConfig);
+	SetCoordinateConfig(bulletConfig);
+}
+
+// ’e‚ğ—LŒø‰»‚·‚é(‰‰o–Ê‚Ìˆø”‚È‚µ)
+void Bullet::ActivateBulletSimple(const BulletConfig& config)
+{
+	// ’eî•ñ‚Ìİ’è
+	SetBulletConfig(config);
+
+	// ‘¼‚Ìî•ñİ’è
+	SetCoordinateConfig(config);
 }
 
 // ’eî•ñ‚Ìİ’è
