@@ -29,6 +29,9 @@ namespace Pathfinding
 		// A*アルゴリズムでスタートからゴールまでの最短ルートの座標リストを計算
 		std::vector<VECTOR> FindPath(int startId, int goalId);
 
+		// 経路を滑らかにする
+		std::vector<VECTOR> SmoothPath(const std::vector<VECTOR>& path, float capRad, const StageBase* stage);
+
 		// 指定した座標から一番近いウェイポイントのIDを取得
 		int GetNearestWaypoint(VECTOR pos, float capRad, const StageBase* stage);
 

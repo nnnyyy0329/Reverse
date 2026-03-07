@@ -342,6 +342,7 @@ namespace Normal
 		// タイマー初期化
 		_fTimer = 0.0f;
 
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{

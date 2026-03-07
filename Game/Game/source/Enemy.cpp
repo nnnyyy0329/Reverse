@@ -194,7 +194,7 @@ void Enemy::DebugRender()
 
 	// 接近中の各範囲の描画
 	{
-		if (_currentState && _currentState->IsChasing())
+		if (_currentState /*&& _currentState->IsChasing()*/)
 		{
 			// 攻撃可能範囲を描画
 			unsigned int attackColor = GetColor(255, 0, 0);// 赤
@@ -604,10 +604,14 @@ void Enemy::SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg)
 bool Enemy::CheckLineOfSight(VECTOR vStart, VECTOR vEnd)
 {
 	auto stage = _stage.lock();
-	if (!stage) { return false; }
+	if (!stage) { return true; }
 
 	const auto& mapObjList = stage->GetMapModelPosList();
 	if (mapObjList.empty()) { return true; }
+
+	float yOffset = 50.0f;
+	vStart.y += yOffset;
+	vEnd.y += yOffset;
 
 	// 全マップモデルを走査
 	for (const auto& obj : mapObjList)
@@ -757,7 +761,7 @@ void Enemy::UpdatePath(VECTOR vTarget)
 	if (!pathManager) return;
 
 	// 直接ターゲットが見えているなら、探索せずに直接向かう
-	if (!pathManager->CheckCapsuleLineObstacle(_vPos, vTarget, COLLISION_RADIUS, stage.get()))
+	if (!pathManager->CheckCapsuleLineObstacle(_vPos, vTarget, 5.0f, stage.get()))
 	{
 		_currentPath.clear();
 		_currentPath.push_back(vTarget);
@@ -800,6 +804,11 @@ void Enemy::UpdatePath(VECTOR vTarget)
 		if (!_currentPath.empty())
 		{
 			_currentPath.push_back(vTarget);
+
+			// スムージングを実行
+			_currentPath = pathManager->SmoothPath(_currentPath, COLLISION_RADIUS, stage.get());
+
+			_currentPathIndex = 0;
 		}
 	}
 }
@@ -836,4 +845,15 @@ void Enemy::ClearPath()
 	_currentPath.clear();
 	_currentPathIndex = 0;
 	_fPathUpdateTimer = 0.0f;
+}
+
+bool Enemy::IsVisible(VECTOR vTargetPos, float checkRad)
+{
+	auto stage = _stage.lock();
+	if (!stage) { return false; }
+
+	auto pathManager = stage->GetPathfindingManager();
+	if (!pathManager) { return false; }
+
+	return !pathManager->CheckCapsuleLineObstacle(_vPos, vTargetPos, checkRad, stage.get());
 }

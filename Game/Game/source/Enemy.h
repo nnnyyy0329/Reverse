@@ -95,6 +95,7 @@ public:
 	VECTOR GetNextWaypoint();// 次に向かうべき座標を取得
 	void ClearPath();// 記憶しているルートをクリア
 	bool HasPath() { return !_currentPath.empty(); }// ルートを持っているかどうか
+	bool IsVisible(VECTOR vTargetPos, float checkRad = 5.0f);
 
 protected:
 

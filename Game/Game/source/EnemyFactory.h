@@ -31,9 +31,11 @@ namespace
 	constexpr auto RANGED_DETECT_TIME = 60.0f;// 発見硬直
 
 	// Tank
-	constexpr auto TANK_ATTACK_RANGE = 150.0f;// これ以内なら攻撃する距離
+	constexpr auto TANK_ATTACK_RANGE = 500.0f;// 攻撃ステートに入る距離
+	constexpr auto TANK_ATTACK_LIMIT_RAMGE = 550.0f;// これ以上離れたら接近ステートへ
 	constexpr auto TANK_DETECT_TIME = 120.0f;// 発見硬直
-	constexpr auto TANK_MOVE_SPEED = 1.5f;// 移動速度
+	constexpr auto TANK_MOVE_SPEED = 5.0f;// 移動速度
+	constexpr auto TANK_IDLE_TIME = 120.0f;// 待機時間
 }
 
 // 敵の種類
@@ -143,8 +145,10 @@ public:
 
 			param.fMoveSpeed = TANK_MOVE_SPEED;
 			param.fAttackRange = TANK_ATTACK_RANGE;
+			param.fChaseLimitRange = TANK_ATTACK_LIMIT_RAMGE;
 			param.fDetectTime = TANK_DETECT_TIME;
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+			param.fIdleTime = TANK_IDLE_TIME;
 
 			// 共通ステートのアニメーション名を設定
 			param.animDamage = "Nenemy_damage_00";

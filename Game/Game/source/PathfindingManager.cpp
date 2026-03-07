@@ -253,3 +253,41 @@ namespace Pathfinding
 		return path;
 	}
 }
+
+// ルートの中で、間に壁がないポイントを削除して直線化する
+std::vector<VECTOR> Pathfinding::Manager::SmoothPath(const std::vector<VECTOR>& path, float capRad, const StageBase* stage)
+{
+	// スタートとゴールのみなら処理しない
+	if (path.size() <= 2) { return path; }
+
+	std::vector<VECTOR> smoothPath;
+	smoothPath.push_back(path[0]);// まずスタート地点を追加
+
+	int currentIndex = 0;
+
+	// ルートの最後まで繰り返す
+	while (currentIndex < path.size() - 1)
+	{
+		int nextIndex = currentIndex + 1;// デフォはすぐ次のポイント
+
+		// 現在のポイントから一番遠い直接行けるポイントを探す(逆順)
+		for (int i = static_cast<int>(path.size()) - 1; i > currentIndex + 1; --i)
+		{
+			// 間に壁がないかチェック
+			if (!CheckCapsuleLineObstacle(path[currentIndex], path[i], capRad, stage))
+			{
+				// 壁がなければ、そのポイントまでショトカ
+				nextIndex = i;
+				break;
+			}
+		}
+
+		// ショトカ先のポイントを確定ルートに追加
+		smoothPath.push_back(path[nextIndex]);
+
+		// 現在地をショトカ先に更新、先を探す
+		currentIndex = nextIndex;
+	}
+
+	return smoothPath;
+}
