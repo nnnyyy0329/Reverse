@@ -21,13 +21,13 @@ StageBase::StageBase(int stageNum)
 	switch (_stageNum) 
 	{
 	case 0:
-		path = "res/stage/json/"; jsonFile = "test.json"; jsonObjName = "res";
+		path = "res/stage/json/"; jsonFile = "stage_00.json"; jsonObjName = "res";
 		break;
 	case 1:
 		path = "res/stage/json/"; jsonFile = "stage_01.json"; jsonObjName = "res";
 		break;
 	case 2:
-		path = "res/stage/json/"; jsonFile = "stage_02.json"; jsonObjName = "res";
+		path = "res/stage/json/"; jsonFile = "test.json"; jsonObjName = "res";
 		break;
 	}
 

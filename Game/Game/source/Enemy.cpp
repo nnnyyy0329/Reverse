@@ -19,6 +19,7 @@ namespace
 	// ライフバー表示設定
 	constexpr auto LIFEBAR_HEAD_OFFSET_Y = 100.0f;// ライフバーの表示位置オフセット
 	constexpr auto LIFEBAR_WORLD_WIDTH = 80.0f;// ライフバーのワールド上の幅
+	constexpr auto LIFEBAR_MAX_DIST = 1000.0f;// ライフバーを表示する最大距離
 
 	// デバッグ表示設定
 	constexpr auto DEBUG_TEXT_OFFSET_Y = 150.0f;// デバッグテキスト表示位置オフセット
@@ -254,6 +255,9 @@ void Enemy::DrawLifeBar()
 
 	// カメラから敵までの距離
 	auto dist = VSize(VSub(vHeadPos, vCamPos));
+
+	// 距離が遠い場合は非表示
+	if (dist > LIFEBAR_MAX_DIST) { return; }
 
 	// 画面上の座標に変換
 	VECTOR vPos2D = ConvWorldPosToScreenPos(vHeadPos);
