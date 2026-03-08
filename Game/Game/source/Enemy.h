@@ -25,6 +25,9 @@ public:
 	VECTOR GetHomePos() { return _vHomePos; }
 	void SetHomePos(VECTOR pos) { _vHomePos = pos; }
 
+	VECTOR GetHomeDir() { return _vHomeDir; }
+	void SetHomeDir(VECTOR dir) { _vHomeDir = dir; }
+
 	bool CanRemove() { return _bCanRemove; }// delete‰Â”\‚©
 
 	const EnemyParam& GetEnemyParam() const { return _enemyParam; }
@@ -100,6 +103,7 @@ public:
 protected:
 
 	VECTOR _vHomePos;// “G‚Ì‰ŠúˆÊ’u
+	VECTOR _vHomeDir;// “G‚Ì‰ŠúŒü‚«
 
 	std::shared_ptr<CharaBase> _targetPlayer;// Ú‹ß—p
 

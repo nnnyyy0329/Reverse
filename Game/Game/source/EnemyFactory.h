@@ -184,6 +184,7 @@ public:
 
 		VECTOR vDir = VGet(sinf(rot.y), 0.0f, cosf(rot.y));
 		enemy->SetDir(vDir);
+		enemy->SetHomeDir(vDir);
 
 		return enemy;// ì¬‚µ‚½“G‚ğ•Ô‚·
 	}
