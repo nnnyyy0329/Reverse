@@ -358,14 +358,20 @@ void Enemy::SetEnemyParam(const EnemyParam& param)
 	_enemyParam = param;
 }
 
-void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime)
+//void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime)
+//{
+//	auto bulletManager = _bulletManager.lock();// マネージャーが有効か確認
+//	if (bulletManager)
+//	{
+//		// タイプを設定して、発射リクエストをする
+//		bulletManager->Shoot(vStartPos, vDir, fRadius, fSpeed, lifeTime, _eCharaType, BULLET_TYPE::NORMAL);
+//	}
+//}
+
+void Enemy::SpawnBullet(const BulletConfig& bulletConfig)
 {
-	auto bulletManager = _bulletManager.lock();// マネージャーが有効か確認
-	if (bulletManager)
-	{
-		// タイプを設定して、発射リクエストをする
-		bulletManager->Shoot(vStartPos, vDir, fRadius, fSpeed, lifeTime, _eCharaType, BULLET_TYPE::NORMAL);
-	}
+	// タイプを設定して、発射リクエストをする
+	BulletManager::GetInstance()->ShootSimple(bulletConfig, BULLET_OWNER_TYPE::ENEMY);
 }
 
 void Enemy::StartAttack(const EnemyAttackSettings& settings)

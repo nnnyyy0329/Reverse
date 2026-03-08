@@ -355,7 +355,7 @@ void PlayerBase::ProcessDebug()
 
 	if(im->IsTrigger(INPUT_ACTION::DASH))
 	{
-		_cameraManager->StartCameraShake(5.0f, 15.0f);
+		//_cameraManager->StartCameraShake(5.0f, 15.0f);
 	}
 }
 

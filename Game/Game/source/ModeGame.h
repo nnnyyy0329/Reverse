@@ -103,7 +103,6 @@ protected:
 
 	// シングルトン取得
 	AttackManager* _attackManager = nullptr;
-	BulletManager* _bulletManager = nullptr;
 	EnergyManager* _energyManager = nullptr;
 
 	// デバッグ用
@@ -143,6 +142,12 @@ private:
 	
 	// 攻撃所有者が自分に攻撃しているかどうか(吸収攻撃用)
 	bool OwnerIsAbsorbingOwner		(std::shared_ptr<CharaBase>owner);
+
+	// 弾の所有者が自分に対して攻撃しているか
+	bool IsSameOwnerBullet			(CHARA_TYPE targetType, CHARA_TYPE bulletShooterType);
+
+	// キャラがプレイヤーかどうか
+	bool IsPlayerCharacter			(CHARA_TYPE charaType);
 
 
 	// ライト関連

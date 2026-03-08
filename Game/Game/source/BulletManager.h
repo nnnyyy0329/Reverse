@@ -13,7 +13,7 @@ enum class BULLET_OWNER_TYPE
 // 弾情報構造体
 struct BULLET_INFO
 {
-	std::weak_ptr<Bullet> bullet;	// 弾オブジェクト
+	std::shared_ptr<Bullet> bullet;	// 弾オブジェクト
 	BULLET_OWNER_TYPE ownerType;	// 所有者タイプ
 };
 

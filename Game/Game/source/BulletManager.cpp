@@ -58,6 +58,9 @@ void BulletManager::DebugRender()
 
 	// 登録された弾の数の描画
 	DrawFormatString(10, 250, GetColor(255, 255, 255), "Registered Bullets: %d", registeredCount);
+
+	// コリジョン描画
+	CollisionRender();
 }
 
 void BulletManager::CollisionRender()
@@ -65,14 +68,10 @@ void BulletManager::CollisionRender()
 	// 登録された弾のコリジョン描画
 	for(auto& bulletInfo : _registerBullets)
 	{
-		if(bulletInfo.bullet.expired()) { continue; }
-		auto bullet = bulletInfo.bullet.lock();	// 有効チェック
+		if(!bulletInfo.bullet) { continue; }	// nullptrチェック
 
-		if(bullet) 
-		{
-			// 有効ならコリジョン描画
-			bullet->CollisionRender();
-		}
+		// 有効ならコリジョン描画
+		bulletInfo.bullet->CollisionRender();
 	}
 }
 
@@ -85,14 +84,10 @@ void BulletManager::UpdateBullet()
 	// 登録された弾の更新
 	for(auto& bulletInfo : _registerBullets)
 	{
-		if(bulletInfo.bullet.expired()) { continue; }
-		auto bullet = bulletInfo.bullet.lock();	// 有効チェック
-
-		if(bullet)
-		{
-			// 有効なら更新
-			bullet->Process();
-		}
+		if(!bulletInfo.bullet) { continue; }	// nullptrチェック
+		
+		// 有効なら更新
+		bulletInfo.bullet->Process();
 	}
 
 	// 無効な弾のクリーンアップ
@@ -105,14 +100,10 @@ void BulletManager::RenderBullet()
 	// 登録された弾の描画
 	for(auto& bulletInfo : _registerBullets)
 	{
-		if(bulletInfo.bullet.expired()) { continue; }
-		auto bullet = bulletInfo.bullet.lock();	// 有効チェック
+		if(!bulletInfo.bullet) { continue; }	// nullptrチェック
 
-		if(bullet) 
-		{
-			// 有効なら描画
-			bullet->Render();
-		}
+		// 有効なら描画
+		bulletInfo.bullet->Render();
 	}
 }
 
@@ -124,7 +115,7 @@ std::shared_ptr<Bullet> BulletManager::Shoot(const BulletConfig& bulletConfig, c
 
 	// BulletConfigをコピーして所有者をキャラタイプに変換
 	BulletConfig modifiedConfig = bulletConfig;
-	modifiedConfig.charType = ConvertOwnerTypeToCharType(ownerType);	// 変換
+	modifiedConfig.shooterType = ConvertOwnerTypeToCharType(ownerType);	// 変換
 
 	// 弾を発射
 	bullet->ActivateBullet(modifiedConfig, bEffectConfig);
@@ -143,7 +134,7 @@ std::shared_ptr<Bullet> BulletManager::ShootSimple(const BulletConfig& bulletCon
 
 	// BulletConfigをコピーして所有者をキャラタイプに変換
 	BulletConfig modifiedConfig = bulletConfig;
-	modifiedConfig.charType = ConvertOwnerTypeToCharType(ownerType);	// 変換
+	modifiedConfig.shooterType = ConvertOwnerTypeToCharType(ownerType);	// 変換
 
 	// 弾を発射
 	bullet->ActivateBulletSimple(modifiedConfig);
@@ -209,7 +200,7 @@ void BulletManager::RemoveBullet(std::shared_ptr<Bullet> bullet)
 	for(auto bullets = _registerBullets.begin(); bullets != _registerBullets.end(); ++bullets)
 	{
 		// 弾が有効なら
-		if(!bullets->bullet.expired() && bullets->bullet.lock() == bullet)
+		if(bullets->bullet && bullets->bullet == bullet)
 		{
 			// 登録された弾から削除
 			_registerBullets.erase(bullets);
@@ -253,12 +244,21 @@ void BulletManager::CleanupInvalidBullets()
 	// 登録された弾を走査
 	for(auto bullets = _registerBullets.begin(); bullets != _registerBullets.end();)
 	{
-		// 弾が無効なら
-		if(bullets->bullet.expired())
+		bool shouldRemove = false;	// 削除すべきか
+
+		// 弾がnullまたは生存時間が尽きた場合削除
+		if(!bullets->bullet || !bullets->bullet->IsBulletAlive())
 		{
+			shouldRemove = true;
+		}
+
+		// 削除すべきなら
+		if(shouldRemove)
+		{
+			// 削除
 			bullets = _registerBullets.erase(bullets);
 		}
-		// 弾が有効なら
+		// 削除しないべきなら
 		else
 		{
 			// 次の弾を調べる
@@ -276,7 +276,7 @@ bool BulletManager::IsBulletRegistered(std::shared_ptr<Bullet> bullet) const
 	for(const auto& info : _registerBullets)
 	{
 		// 弾が有効なら
-		if(!info.bullet.expired() && info.bullet.lock() == bullet)
+		if(info.bullet && info.bullet == bullet)
 		{
 			// 登録済み
 			return true;
@@ -363,15 +363,10 @@ std::vector<std::shared_ptr<Bullet>> BulletManager::GetBulletsByOwnerType(BULLET
 	for(auto& info : _registerBullets)
 	{
 		// タイプが一致していて、弾が有効かチェック
-		if(info.ownerType == ownerType && !info.bullet.expired())
+		if(info.ownerType == ownerType && info.bullet)
 		{
-			auto bullet = info.bullet.lock();	// 有効かチェック
-
-			if(bullet) 
-			{
-				// 弾の数を取得
-				result.push_back(bullet);
-			}
+			// 弾を追加
+			result.push_back(info.bullet);
 		}
 	}
 
@@ -388,15 +383,10 @@ std::vector<std::shared_ptr<Bullet>> BulletManager::GetAllBullets()const
 	for(auto& info : _registerBullets)
 	{
 		// 弾が有効なら
-		if(!info.bullet.expired())
+		if(info.bullet)
 		{
-			auto bullet = info.bullet.lock();	// 有効かチェック
-
-			if(bullet)
-			{
-				// 弾の数を取得
-				result.push_back(bullet);
-			}
+			// 弾を追加
+			result.push_back(info.bullet);
 		}
 	}
 
@@ -413,7 +403,7 @@ BULLET_OWNER_TYPE BulletManager::GetBulletOwnerType(std::shared_ptr<Bullet> bull
 	for(auto& info : _registerBullets)
 	{
 		// 弾が有効なら
-		if(!info.bullet.expired() && info.bullet.lock() == bullet)
+		if(info.bullet && info.bullet == bullet)
 		{
 			// 所有者のタイプを返す
 			return info.ownerType;

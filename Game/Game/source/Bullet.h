@@ -14,7 +14,7 @@ enum class BULLET_TYPE
 struct BulletConfig
 {
 	BULLET_TYPE bulletType;	// 弾の種類
-	CHARA_TYPE charType;	// 発射者のキャラタイプ
+	CHARA_TYPE shooterType;	// 発射者のキャラタイプ
 	VECTOR startPos;		// 発射位置
 	VECTOR dir;				// 発射方向
 	float radius;			// 当たり判定の半径
@@ -77,7 +77,18 @@ public:
 	// サウンド再生処理
 	void PlayBulletSound(const BulletEffectConfig& effectConfig);
 
-	// ゲッターセッター
+	// 弾の生存時間が残っているか
+	bool IsBulletAlive()const;
+
+
+	/* ゲッターセッター */
+
+	// 情報設定
+	const BulletConfig& GetBulletConfig() const { return _stcBulletConfig; }
+
+	// エフェクト設定
+	const BulletEffectConfig& GetBulletEffectConfig() const { return _stcEffectConfig; }
+
 	CHARA_TYPE GetShooterType() const { return _eShooterType; }	// 弾の発射者を取得
 	BULLET_TYPE GetBulletType() const { return _eBulletType; }	// 弾の種類を取得
 
@@ -89,10 +100,6 @@ private:
 	// 弾の生存時間の減算処理
 	void DecrementLifeTime();
 
-	// 弾の生存時間が残っているか
-	bool IsBulletAlive()const;
-
-
 protected:
 
 	// 弾の情報構造体
@@ -103,8 +110,5 @@ protected:
 
 	CHARA_TYPE _eShooterType;	// 誰が発射した弾か
 	BULLET_TYPE _eBulletType;	// 弾の種類
-
-	int _lifeTimer;	// 弾の寿命
-
 };
 

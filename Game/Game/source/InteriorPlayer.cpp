@@ -402,7 +402,7 @@ DodgeConfig InteriorPlayer::GetDodgeConfig()
 	config.startTime = 1.0f;			// 開始時間
 	config.activeTime = 30.0f;			// アクティブ時間
 	config.recoveryTime = 10.0f;		// 硬直時間
-	config.dodgeMoveSpeed = 9.0f;		// 移動速度
+	config.dodgeMoveSpeed = 11.0f;		// 移動速度
 
 	return config;
 }

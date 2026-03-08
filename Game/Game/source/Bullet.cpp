@@ -11,7 +11,7 @@ Bullet::Bullet()
 	_eBulletType = BULLET_TYPE::NONE;
 
 	_stcBulletConfig.bulletType		= BULLET_TYPE::NONE;
-	_stcBulletConfig.charType		= CHARA_TYPE::BULLET;
+	_stcBulletConfig.shooterType	= CHARA_TYPE::BULLET;
 	_stcBulletConfig.startPos		= VGet(0.0f, 0.0f, 0.0f);
 	_stcBulletConfig.dir			= VGet(0.0f, 0.0f, 0.0f);
 	_stcBulletConfig.radius			= 0.0f;
@@ -72,38 +72,12 @@ void Bullet::CollisionRender()
 	DrawSphere3D
 	(
 		_vPos, 
-		_fCollisionR,
+		_stcBulletConfig.radius,
 		8, 
 		GetColor(0, 255, 255), 
 		GetColor(255, 255, 255),
 		FALSE
 	);
-
-	//// 当たり判定のsphereを描画
-	//DrawSphere3D
-	//(
-	//	_vPos, 
-	//	_stcBulletConfig.radius,
-	//	8, 
-	//	GetColor(0, 255, 255), 
-	//	GetColor(255, 255, 255),
-	//	FALSE
-	//);
-}
-
-void Bullet::Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE charType, BULLET_TYPE bulletType)
-{
-	_vPos = vStartPos;
-	_vOldPos = vStartPos;// 前フレームの位置も初期化
-
-	_vDir = VNorm(vDir);// 向きを正規化
-	_fCollisionR = fRadius;
-	_fMoveSpeed = fSpeed;
-	_lifeTimer = lifeTime;
-	_eShooterType = charType;
-	_eBulletType = bulletType;
-
-	_vMove = VScale(_vDir, _fMoveSpeed);// 移動量を設定
 }
 
 // 弾を有効化する
@@ -133,6 +107,11 @@ void Bullet::ActivateBulletSimple(const BulletConfig& config)
 void Bullet::SetBulletConfig(const BulletConfig& config)
 {
 	_stcBulletConfig = config;	// 情報の設定
+
+	// 必要な情報を受け取る
+	_eBulletType = config.bulletType;	// 弾のタイプ
+	_eShooterType = config.shooterType;	// 所有者タイプ
+	_fCollisionR = config.radius;		// 弾半径
 }
 
 // 弾の演出関連の情報設定
@@ -148,6 +127,7 @@ void Bullet::SetCoordinateConfig(const BulletConfig& config)
 	_vOldPos	= config.startPos;				// 1フレーム前の位置
 	_vDir		= VNorm(config.dir);			// 向きの正規化
 	_vMove		= VScale(_vDir, config.speed);	// 移動量の計算
+	_fMoveSpeed = config.speed;
 }
 
 // ヒット時の演出処理
@@ -197,14 +177,14 @@ void Bullet::MoveBullet()
 // 弾の生存時間の減算処理
 void Bullet::DecrementLifeTime()
 {
-	_lifeTimer--;	// 時間を減らす
+	_stcBulletConfig.lifeTime--;	// 時間を減らす
 }
 
 // 弾の生存時間が残っているか
 bool Bullet::IsBulletAlive()const
 {
 	// 	// 生存時間が残っているなら
-	if(_lifeTimer > 0) 
+	if(_stcBulletConfig.lifeTime > 0)
 	{
 		return true;	// リストから削除する
 	}

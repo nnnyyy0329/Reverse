@@ -3,8 +3,9 @@
 #include "CharaBase.h"
 #include "EnemyState.h"
 #include "EnemyAttackSettings.h"
+#include "BulletManager.h"
 
-class BulletManager;
+//class BulletManager;
 class AttackBase;
 class StageBase;
 
@@ -41,8 +42,9 @@ public:
 	void ChangeState(std::shared_ptr<EnemyState> newState);
 
 	// 弾関連
-	void SetBulletManager(std::shared_ptr<BulletManager> bulletManager) { _bulletManager = bulletManager; }// マネージャーをセット
-	void SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime);// 発射リクエストをする
+	//void SetBulletManager(std::shared_ptr<BulletManager> bulletManager) { _bulletManager = bulletManager; }// マネージャーをセット
+	//void SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime);// 発射リクエストをする
+	void SpawnBullet(const BulletConfig& bulletConfig);// 発射リクエストをする
 
 	// 攻撃コリジョン関連(ステート側で呼び出し)
 	void StartAttack(const EnemyAttackSettings& settings);// 攻撃の開始
@@ -98,7 +100,7 @@ protected:
 	std::shared_ptr<EnemyState> _currentState;
 	EnemyParam _enemyParam;
 
-	std::weak_ptr<BulletManager> _bulletManager;// マネージャーの参照を持つ(modegameが所有)
+	//std::weak_ptr<BulletManager> _bulletManager;// マネージャーの参照を持つ(modegameが所有)
 
 	std::shared_ptr<AttackBase> _attackCollision;// 攻撃コリジョン
 

@@ -461,28 +461,45 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 
 	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
 
-	const auto& bullets = _bulletManager->GetBullets();// 弾のリストを取得
+	auto bulletManager = BulletManager::GetInstance();
+	if(bulletManager == nullptr){ return; }
+
+	auto bullets = bulletManager->GetAllBullets();	// 登録された弾の取得
 
 	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
 
 	// 全弾ループ
-	for(const auto& bullet : bullets)
+	for(auto& bullet : bullets)
 	{
 		if(!bullet) { continue; }
 
-		// キャラと弾のタイプが同じなら無視する
-		if(bullet->GetShooterType() == myType) { continue; }
+		// 登録されていない弾をスキップ
+		if(!bulletManager->IsBulletRegistered(bullet)){ continue; }
+
+		// 弾の発射者タイプを取得
+		CHARA_TYPE bulletShooterType = bullet->GetShooterType();
+
+		// 弾の設定情報を取得
+		const BulletConfig& bulletConfig = bullet->GetBulletConfig();
 
 		// 当たり判定
 		if(HitCheck_Capsule_Sphere(
 			chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
-			bullet->GetPos(), bullet->GetCollisionR()
+			bullet->GetPos(), bulletConfig.radius
 		))
 		{
+			// 同一所有者の弾かチェック
+			if(IsSameOwnerBullet(myType, bulletShooterType))
+			{
+				continue; // 同じ所有者の弾はスキップ
+			}
+
 			// 当たった
 
-			// ダメージ処理とか
-			chara->ApplyDamageByBullet(playerBulletDamage, bullet->GetShooterType());
+			// 弾の設定からダメージを取得
+			float damage = bulletConfig.damage;
+			chara->ApplyDamageByBullet(damage, bullet->GetShooterType());
+
 			deadBullets.push_back(bullet);// 削除リストに追加
 		}
 	}
@@ -490,8 +507,40 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 	// 全ての判定が終わった後に、まとめて削除する
 	for(const auto& deadBullet : deadBullets)
 	{
-		_bulletManager->RemoveBullet(deadBullet);
+		bulletManager->RemoveBullet(deadBullet);
 	}
+}
+
+// 同一所有者の弾かどうかを判定
+bool ModeGame::IsSameOwnerBullet(CHARA_TYPE targetType, CHARA_TYPE bulletShooterType)
+{
+	// プレイヤー系キャラの場合
+	if(IsPlayerCharacter(targetType) && IsPlayerCharacter(bulletShooterType))
+	{
+		return true; // プレイヤー同士の弾は当たらない
+	}
+
+	// 敵キャラの場合
+	if(targetType == CHARA_TYPE::ENEMY && bulletShooterType == CHARA_TYPE::ENEMY)
+	{
+		return true; // 敵同士の弾は当たらない
+	}
+
+	// 完全に同じタイプの場合
+	if(targetType == bulletShooterType)
+	{
+		return true;
+	}
+
+	return false; // 異なる所有者
+}
+
+// プレイヤー系キャラかどうかを判定
+bool ModeGame::IsPlayerCharacter(CHARA_TYPE charaType)
+{
+	return (charaType == CHARA_TYPE::SURFACE_PLAYER ||
+			charaType == CHARA_TYPE::INTERIOR_PLAYER ||
+			charaType == CHARA_TYPE::BULLET_PLAYER);
 }
 
 // キャラと攻撃コリジョンの当たり判定

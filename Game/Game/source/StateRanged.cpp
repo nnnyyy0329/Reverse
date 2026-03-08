@@ -52,6 +52,8 @@ namespace
 	constexpr auto BULLET_SPAWN_OFFSET_Y = 100.0f;		// 弾発射Y座標オフセット
 	constexpr auto BULLET_SPAWN_OFFSET_Z = 50.0f;		// 弾発射前方オフセット
 
+	constexpr auto BULLET_DAMAGE = 10.0f;				// 弾ダメージ
+
 	// 時間ランダム幅定数
 	constexpr auto IDLE_TIME_RANGE = 30.0f;				// 待機時間のランダム幅
 	constexpr auto NOTICE_TIME_RANGE = 10.0f;			// 発見硬直のランダム幅
@@ -396,25 +398,27 @@ namespace Ranged
 		{
 			if (!_bHasShot && targetInfo.bExist)
 			{
-				// 弾発射位置計算
-				VECTOR vOwnerPos = owner->GetPos();
-				VECTOR vDir = owner->GetDir();
+				//// 弾発射位置計算
+				//VECTOR vOwnerPos = owner->GetPos();
+				//VECTOR vDir = owner->GetDir();
 
-				VECTOR vSpawnPos = VAdd(vOwnerPos, VGet(0.0f, BULLET_SPAWN_OFFSET_Y, 0.0f));
-				vSpawnPos = VAdd(vSpawnPos, VScale(vDir, BULLET_SPAWN_OFFSET_Z));
+				//VECTOR vSpawnPos = VAdd(vOwnerPos, VGet(0.0f, BULLET_SPAWN_OFFSET_Y, 0.0f));
+				//vSpawnPos = VAdd(vSpawnPos, VScale(vDir, BULLET_SPAWN_OFFSET_Z));
 
-				// ターゲットへの方向計算
-				VECTOR vToTarget = VSub(targetInfo.target->GetPos(), vSpawnPos);
-				VECTOR vBulletDir = VNorm(vToTarget);
+				//// ターゲットへの方向計算
+				//VECTOR vToTarget = VSub(targetInfo.target->GetPos(), vSpawnPos);
+				//VECTOR vBulletDir = VNorm(vToTarget);
 
-				// 弾発射
-				owner->SpawnBullet(
-					vSpawnPos,
-					vBulletDir,
-					BULLET_RADIUS,
-					BULLET_SPEED,
-					BULLET_LIFETIME
-				);
+				//// 弾発射
+				//owner->SpawnBullet(
+				//	vSpawnPos,
+				//	vBulletDir,
+				//	BULLET_RADIUS,
+				//	BULLET_SPEED,
+				//	BULLET_LIFETIME
+				//);
+
+				owner->SpawnBullet(GetBulletConfig(owner));
 
 				_bHasShot = true;
 			}
@@ -449,6 +453,38 @@ namespace Ranged
 		}
 
 		return nullptr;
+	}
+
+	// 弾の情報設定
+	BulletConfig ShotExecute::GetBulletConfig(Enemy* owner)
+	{
+		auto targetInfo = GetTargetInfo(owner);
+
+		// 弾発射位置計算
+		VECTOR vOwnerPos = owner->GetPos();
+		VECTOR vDir = owner->GetDir();
+
+		VECTOR vSpawnPos = VAdd(vOwnerPos, VGet(0.0f, BULLET_SPAWN_OFFSET_Y, 0.0f));
+		vSpawnPos = VAdd(vSpawnPos, VScale(vDir, BULLET_SPAWN_OFFSET_Z));
+
+		// ターゲットへの方向計算
+		VECTOR vToTarget = VSub(targetInfo.target->GetPos(), vSpawnPos);
+		VECTOR vBulletDir = VNorm(vToTarget);
+
+		// 弾の情報
+		BulletConfig config;
+
+		// 情報設定
+		config.bulletType = BULLET_TYPE::NORMAL;
+		config.shooterType = CHARA_TYPE::ENEMY;
+		config.startPos = vSpawnPos;
+		config.dir = vBulletDir;
+		config.radius = BULLET_RADIUS;
+		config.damage = BULLET_DAMAGE;
+		config.speed = BULLET_SPEED;
+		config.lifeTime = BULLET_LIFETIME;
+
+		return config;
 	}
 
 	// 射撃後隙

@@ -1,5 +1,6 @@
 #pragma once
 #include "EnemyState.h"
+#include "BulletManager.h"
 
 namespace Ranged
 {
@@ -91,7 +92,8 @@ namespace Ranged
 	{
 	public:
 		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;	
+		BulletConfig GetBulletConfig(Enemy* owner);
 		const char* GetName() override { return "Ranged:ShotExecute"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
 

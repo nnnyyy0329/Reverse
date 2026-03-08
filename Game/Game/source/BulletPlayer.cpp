@@ -12,7 +12,7 @@ namespace bulletConfig
 {
 	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);
 	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);
-	constexpr float RADIUS = 10.0f;
+	constexpr float RADIUS = 50.0f;
 	constexpr float DAMAGE = 10.0f;
 	constexpr float SPEED = 15.0f;
 	constexpr float LIFE_TIME = 120.0f;
@@ -173,7 +173,7 @@ BulletConfig BulletPlayer::GetBulletConfig()
 	BulletConfig config;
 
 	config.bulletType	= BULLET_TYPE::NORMAL;			// 弾のタイプ
-	config.charType		= CHARA_TYPE::BULLET_PLAYER;	// キャラタイプ
+	config.shooterType	= CHARA_TYPE::BULLET_PLAYER;	// キャラタイプ
 	config.startPos		= VAdd(_vPos, worldOffset);		// 発射開始位置
 	config.dir			= GetShootDirection();			// エイムカメラの向いてる方向
 	config.radius		= bulletConfig::RADIUS;			// 弾の半径
