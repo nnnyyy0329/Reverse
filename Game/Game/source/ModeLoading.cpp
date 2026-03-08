@@ -137,6 +137,11 @@ bool ModeLoading::Initialize()
 			// プレイヤーの攻撃
 			rs->Register("sPlayerFirstAttack", "sound/SE/sPlayerFirstAttack/sPlayerFirstAttack1.mp3", RESOURCE_TYPE::Sound, 1.0f);
 			rs->Register("iPlayerAttack", "sound/SE/iPlayerAttack/iPlayerAttack1.mp3", RESOURCE_TYPE::Sound, 1.0f);
+
+			// プレイヤー変身
+			rs->Register("ChangePower", "sound/SE/changePlayer/knuckleSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("ChangeBlaster", "sound/SE/changePlayer/blasterSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
+
 		}
 
 		// テキスト　セリフ　操作説明etc..
