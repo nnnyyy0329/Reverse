@@ -337,6 +337,9 @@ bool ModeGame::Process()
 
 		// トリガー
 		CheckHitPlayerTrigger(player);
+
+		// 弾とマップ
+		CheckHitBulletMap();
 	}
 
 	// ターゲット更新

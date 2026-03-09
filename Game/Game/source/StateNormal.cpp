@@ -385,13 +385,13 @@ namespace Normal
 		// エフェクト
 		{
 			VECTOR efPos = VAdd(owner->GetPos(), VGet(0.0f, ATTACK_EFFECT_OFFSET_Y, 0.0f));
-			auto handle = EffectServer::GetInstance()->Play("Normal_Attack", efPos);
+			//auto handle = EffectServer::GetInstance()->Play("Normal_Attack", efPos);
 			EffectServer::GetInstance()->Play("Normal_Attack02", efPos);
 
 			VECTOR dir = owner->GetDir();
 			float rotY = atan2f(dir.x, dir.z);
 			VECTOR rotation = VGet(0.0f, rotY, 0.0f);
-			EffectServer::GetInstance()->SetRot(handle, rotation);
+			//EffectServer::GetInstance()->SetRot(handle, rotation);
 		}
 
 		// SE

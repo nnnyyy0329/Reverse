@@ -119,6 +119,7 @@ private:
 	void CheckCollisionCameraMap();// カメラとマップの当たり判定
 	void CheckHitCharaBullet	(std::shared_ptr<CharaBase> chara);// キャラと弾の当たり判定
 	void CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player);// プレイヤーとトリガーの当たり判定
+	void CheckHitBulletMap();// 弾とマップの当たり判定
 
 
 

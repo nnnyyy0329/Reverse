@@ -426,6 +426,68 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 	}
 }
 
+// 弾とマップの当たり判定
+void ModeGame::CheckHitBulletMap()
+{
+	auto bulletManager = BulletManager::GetInstance();
+	if (bulletManager == nullptr) { return; }
+
+	const auto& mapObjList = _stage->GetMapModelPosList();
+	if (mapObjList.empty()) { return; }
+
+	auto bullets = bulletManager->GetAllBullets();
+
+	std::vector<std::shared_ptr<Bullet>> deadBullets;
+
+	for (auto& bullet : bullets)
+	{
+		if (!bullet) { continue; }
+
+		if (!bulletManager->IsBulletRegistered(bullet)) { continue; }
+
+		const BulletConfig& bulletConfig = bullet->GetBulletConfig();
+
+		for (auto& obj : mapObjList)
+		{
+			if (obj.collisionFrame == -1 || obj.modelHandle <= 0) { continue; }
+
+			MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_Sphere(
+				obj.modelHandle,
+				obj.collisionFrame,
+				bullet->GetPos(),
+				bulletConfig.radius
+			);
+
+			const float wallThreshold = 0.3f;
+			bool hitWall = false;
+
+			for(int i = 0; i < result.HitNum; ++i)
+			{
+				const MV1_COLL_RESULT_POLY& poly = result.Dim[i];
+
+				if (poly.Normal.y < wallThreshold)
+				{
+					hitWall = true;
+					break;
+				}
+			}
+
+			MV1CollResultPolyDimTerminate(result);
+
+			if (hitWall)
+			{
+				deadBullets.push_back(bullet);
+				break;
+			}
+		}
+	}
+
+	for (const auto& deadBUllets : deadBullets)
+	{
+		bulletManager->RemoveBullet(deadBUllets);
+	}
+}
+
 // 同一所有者の弾かどうかを判定
 bool ModeGame::IsSameOwnerBullet(CHARA_TYPE targetType, CHARA_TYPE bulletShooterType)
 {
