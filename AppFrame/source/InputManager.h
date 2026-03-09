@@ -84,9 +84,7 @@ class InputManager
 {
 public:
 	// シングルトンインスタンス取得
-	static InputManager* GetInstance();
-
-	static InputManager* GetNullInstance();
+	static InputManager& GetInstance();
 
 	void Update();
 

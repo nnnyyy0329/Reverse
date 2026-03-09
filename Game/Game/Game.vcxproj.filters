@@ -211,6 +211,7 @@
     <ClCompile Include="source\PathfindingManager.cpp">
       <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
     </ClCompile>
+    <ClCompile Include="source\CameraBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -411,6 +412,7 @@
     <ClInclude Include="source\PathfindingManager.h">
       <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
     </ClInclude>
+    <ClInclude Include="source\CameraBase.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
