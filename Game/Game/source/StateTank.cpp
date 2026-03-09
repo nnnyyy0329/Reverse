@@ -44,8 +44,8 @@ namespace
 	constexpr auto CHARGE_ATTACK_RANGE = 500.0f;// 突進を試みる距離
 	constexpr auto CHARAGE_JUDGE_INTERVAL = 30.0f;// 突進判定を行う間隔(フレーム)
 	constexpr auto NORMAL_ATTACK_RANGE = 150.0f;// 通常攻撃を試みる距離
-	constexpr auto CHARGE_ATTACK_PROB = 1.0f;// 突進の発生確率(0.0〜1.0)
-	constexpr auto THIRD_ATTACK_PROB = 1.0f;// 三段目攻撃の発生確率(0.0〜1.0)
+	constexpr auto CHARGE_ATTACK_PROB = 4.0f;// 突進の発生確率(0.0〜1.0)
+	constexpr auto THIRD_ATTACK_PROB = 4.0f;// 三段目攻撃の発生確率(0.0〜1.0)
 
 	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;// スムーズ回転速度
 	constexpr auto FAST_ROTATE_SPEED = 10.0f;// 高速回転速度
@@ -248,7 +248,7 @@ namespace Tank
 				{
 					// 突進攻撃 : 遷移時点のターゲット座標を渡す
 					// ターゲット位置の少し先まで
-					VECTOR vOvershoot = VAdd(targetInfo.target->GetPos(), VScale(targetInfo.vDir, 100.0f));
+					VECTOR vOvershoot = VAdd(targetInfo.target->GetPos(), VScale(targetInfo.vDir, 50.0f));
 					StopMove(owner);
 					return std::make_shared<Tank::ChargePrepare>(vOvershoot);
 				}
