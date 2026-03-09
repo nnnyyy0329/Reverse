@@ -31,10 +31,19 @@ namespace GeometryUtility
 	// 2つのベクトル間の角度を取得（度数法）
 	float GetAngleDeg(const VECTOR& vec1, const VECTOR& vec2);
 
+
+	/* 扇形 */
+
 	// 扇形内にいるかチェック
 	bool IsInSector(const VECTOR& targetPos, const SectorData& sectorData);
 
 	// 扇形の描画用の点を計算
 	void DrawSector(const SectorData& sectorData, int division, int fillColor, int lineColor);
+
+
+	/* 変換 */
+
+	// ローカル座標のオフセットをワールド座標に変換する
+	VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir);						
 }
 

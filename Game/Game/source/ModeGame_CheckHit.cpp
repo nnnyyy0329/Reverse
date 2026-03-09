@@ -6,7 +6,9 @@
 #include "Bullet.h"
 #include "BulletManager.h"
 #include "DodgeSystem.h"
+#include "CameraManager.h"
 #include "GameCamera.h"
+#include "PlayerBase.h"
 #include "SurfacePlayer.h"
 #include "PlayerAbsorbAttackSystem.h" 
 #include "AbsorbAttack.h"
@@ -521,7 +523,8 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		// ヒットしたキャラを登録
 		attack->AddHitCharas(chara);
 
-		//EffectServer::GetInstance()->Play("SurfacePlayerAttackHit1", chara->GetPos());
+		// カメラの振動	
+
 
 		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
 		auto charaType = chara->GetCharaType();							// キャラのタイプ取得

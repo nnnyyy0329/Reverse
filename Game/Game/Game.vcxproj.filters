@@ -211,6 +211,9 @@
     <ClCompile Include="source\PathfindingManager.cpp">
       <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
     </ClCompile>
+    <ClCompile Include="source\AttackEffectSystem.cpp">
+      <Filter>Attack\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -411,6 +414,9 @@
     <ClInclude Include="source\PathfindingManager.h">
       <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
     </ClInclude>
+    <ClInclude Include="source\AttackEffectSystem.h">
+      <Filter>Attack\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -550,6 +556,9 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\Enemy\A%2a">
       <UniqueIdentifier>{0c4e6ac5-25ac-4ace-a1c4-93a3b99f7c4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Attack\System">
+      <UniqueIdentifier>{326a01b9-9c72-4633-8585-c04bb0a5bff6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

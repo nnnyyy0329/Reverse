@@ -2,6 +2,7 @@
 
 #pragma once
 #include "appframe.h"
+#include "GeometryUtility.h"
 
   // 前方宣言
 class CharaBase;
@@ -62,6 +63,13 @@ struct AttackMovement
 	float decayRate;	// 減衰率
 	bool canMove;		// 移動可能フラグ
 };
+
+//// 攻撃演出情報構造体
+//struct AttackEffect
+//{
+//	std::string effectName;	// エフェクト名
+//	VECTOR effectOffset;	// エフェクト位置オフセット
+//};
 
 class AttackBase
 {

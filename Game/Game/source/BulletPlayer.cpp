@@ -1,10 +1,11 @@
 #include "BulletPlayer.h"
 #include "CameraManager.h"
 
-// プレベータようパラメータ
-namespace
+// 弾発射に関する定数
+namespace BulletConstants
 {
-	constexpr float consumeShootEnergy = 10.0f;	// 発射に消費するエネルギー
+	constexpr float CONSUME_NORMAL_BULLET_ENERGY = 7.5f;	// 通常弾のエネルギー消費量
+	constexpr float CONSUME_PIERCING_BULLET_ENERGY = 10.0f;	// 貫通弾のエネルギー消費量
 }
 
 // 弾発射設定
@@ -167,7 +168,8 @@ DodgeConfig BulletPlayer::GetDodgeConfig()
 BulletConfig BulletPlayer::GetBulletConfig()
 {
 	// オフセット値をワールド座標に変換
-	VECTOR worldOffset = TransOffsetToWorld(GetShootOffset(), GetShootDirection());
+	VECTOR worldOffset = GeometryUtility::TransOffsetToWorld(GetShootOffset(), GetShootDirection());
+	
 
 	// 弾プレイヤー用の弾発射設定
 	BulletConfig config;
@@ -329,13 +331,15 @@ void BulletPlayer::ShootInput()
 void BulletPlayer::ShootBullet()
 {
 	auto bullet = BulletManager::GetInstance();
+
+	// 弾の発射
 	bullet->Shoot(GetBulletConfig(), GetBulletEffectConfig(), BULLET_OWNER_TYPE::BULLET_PLAYER);
 
 	// 発射時にエネルギー消費
 	EnergyManager* energyManager = EnergyManager::GetInstance();
 	if(energyManager)
 	{
-		energyManager->ConsumeEnergy(consumeShootEnergy);
+		energyManager->ConsumeEnergy(BulletConstants::CONSUME_NORMAL_BULLET_ENERGY);
 	}
 
 	_bIsShootFromRightArm = !_bIsShootFromRightArm; // 右腕と左腕の切り替え
