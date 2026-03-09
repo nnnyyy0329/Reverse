@@ -303,23 +303,17 @@ void PlayerBase::ProcessAttackEffect(int attackIndex, std::vector<AttackEffectCo
 	// エフェクト名が空でない場合のみ
 	if(!config.effectName.empty())
 	{
+		// オフセット値をワールド座標に変換
+		VECTOR worldOffset = TransOffsetToWorld(config.effectOffset, _vDir);
+
 		// エフェクト再生位置を計算
-		VECTOR effectPos = VAdd(_vPos, config.effectOffset);
+		VECTOR effectPos = VAdd(_vPos, worldOffset);
+		auto handle = EffectServer::GetInstance()->Play(config.effectName, effectPos);
 
-		// 攻撃方向に応じてオフセットを回転
 		VECTOR dirNorm = VNorm(_vDir);
-		VECTOR rotatedOffset = VGet
-		(
-			config.effectOffset.x * dirNorm.x - config.effectOffset.z * dirNorm.z,	// X成分
-			config.effectOffset.y,													// Y成分
-			config.effectOffset.x * dirNorm.z + config.effectOffset.z * dirNorm.x	// Z成分
-		);
-
-		// エフェクト位置を更新
-		effectPos = VAdd(_vPos, rotatedOffset);
-
-		// エフェクト再生
-		EffectServer::GetInstance()->Play(config.effectName, effectPos);
+		float rotY = atan2f(dirNorm.x, dirNorm.z);
+		VECTOR rotation = VGet(0.0f, rotY, 0.0f);
+		EffectServer::GetInstance()->SetRot(handle, rotation);
 	}
 }
 

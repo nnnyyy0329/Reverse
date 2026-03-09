@@ -436,9 +436,10 @@ void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPl
 {
 	if(!oldPlayer || !newPlayer) return;
 
-	// 位置と向きの引き継ぎ
+	// 位置と向きと古い位置の引き継ぎ
 	newPlayer->SetPos(oldPlayer->GetPos());
 	newPlayer->SetDir(oldPlayer->GetDir());
+	newPlayer->SetOldPos(oldPlayer->GetOldPos());
 
 	// ステータスの引き継ぎ
 	newPlayer->SetLife(oldPlayer->GetLife());

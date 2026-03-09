@@ -17,7 +17,7 @@ GameCamera::GameCamera()
 	_nearClip = 1.f;
 	_farClip = 5000.f;
 
-	_distance = -450.0f;
+	_distance = -350.0f;
 	_angleH = 0.0f;
 	_angleV = 0.0f;
 

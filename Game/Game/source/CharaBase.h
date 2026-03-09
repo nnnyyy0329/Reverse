@@ -73,6 +73,7 @@ public:
 	// 被ダメージ処理
 	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo);	// 攻撃による被ダメージ処理
 	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE eType);										// 弾による被ダメージ処理
+	virtual VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir);						// ローカル座標のオフセットをワールド座標に変換する
 
 	void SetIsStanding(bool b) { _bIsStanding = b; }
 

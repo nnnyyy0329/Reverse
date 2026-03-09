@@ -516,7 +516,7 @@ void ModeGame::InitializeLights()
 
 	// ライトを追加
 	// test
-	AddPointLight(VGet(0.0f, 500.0f, 0.0f), 1000.0f, GetColorF(1.0f, 1.0f, 1.0f, 0.0f));
+	AddPointLight(VGet(0.0f, 1000.0f, 0.0f), 1500.0f, GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void ModeGame::ProcessLights()
@@ -601,11 +601,11 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 	// 新しいステージを設定
 	_stage = newStage;
 
-	// プレイヤーの位置をリセット
-	VECTOR vStartPos = VGet(0.0f, 0.0f, 0.0f);
+	//// プレイヤーの位置をリセット
+	//VECTOR vStartPos = VGet(0.0f, 0.0f, 0.0f);
 
-	auto activePlayer = _playerManager->GetActivePlayerShared();
-	activePlayer->SetPos(vStartPos);
+	//auto activePlayer = _playerManager->GetActivePlayerShared();
+	//activePlayer->SetPos(vStartPos);
 
 	// 敵の再設定
 	for (const auto& enemy : _stage->GetEnemies())

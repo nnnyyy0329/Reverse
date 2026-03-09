@@ -49,7 +49,7 @@ private:
 	void ProcessAimMode(bool aimKey);
 
 	// オフセット位置をワールド座標に変換
-	VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir);
+	//VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir);
 
 	// 発射位置オフセットの取得
 	VECTOR GetShootOffset()const;

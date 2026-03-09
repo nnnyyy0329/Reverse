@@ -333,41 +333,41 @@ AttackEffectConfig InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig conf
 	// 第1攻撃
 	configs[0] =
 	{
-		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
-		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.effectName = "InteriorPlayerAttack_123",	// エフェクト名
+		config.effectOffset = { 150.0f, 0.0f, 0.0f },	// エフェクト位置オフセット
 		config.soundName = "iPlayerAttack",				// サウンド名
 	};
 
 	// 第2攻撃
 	configs[1] =
 	{
-		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
-		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.effectName = "InteriorPlayerAttack_123",	// エフェクト名
+		config.effectOffset = { 0.0f, 150.0f, 0.0f },	// エフェクト位置オフセット
 		config.soundName = "iPlayerAttack",				// サウンド名
 	};
 
 	// 第3攻撃
 	configs[2] =
 	{
-		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
-		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.effectName = "InteriorPlayerAttack_123",	// エフェクト名
+		config.effectOffset = { 0.0f, 0.0f, 150.0f },	// エフェクト位置オフセット
 		config.soundName = "iPlayerAttack",				// サウンド名
 	};
 
 	// 第4攻撃
 	configs[3] =
 	{
-		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
-		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
-		config.soundName = "iPlayerAttack",				// サウンド名
+		config.effectName = "InteriorPlayerFourthAttack",	// エフェクト名
+		config.effectOffset = { 0.0f, 150.0f, 0.0f },		// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",					// サウンド名
 	};
 
 	// 第5攻撃
 	configs[4] =
 	{
-		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
-		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
-		config.soundName = "iPlayerAttack",				// サウンド名
+		config.effectName = "InteriorPlayerFifthAttack",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },		// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",					// サウンド名
 	};
 
 	return config;

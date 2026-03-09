@@ -12,8 +12,8 @@ namespace bulletConfig
 {
 	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);
 	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);
-	constexpr float RADIUS = 50.0f;
-	constexpr float DAMAGE = 10.0f;
+	constexpr float RADIUS = 20.0f;
+	constexpr float DAMAGE = 50.0f;
 	constexpr float SPEED = 15.0f;
 	constexpr float LIFE_TIME = 120.0f;
 }
@@ -166,7 +166,7 @@ DodgeConfig BulletPlayer::GetDodgeConfig()
 // 弾発射設定
 BulletConfig BulletPlayer::GetBulletConfig()
 {
-	// 発射位置をワールド座標に変換
+	// オフセット値をワールド座標に変換
 	VECTOR worldOffset = TransOffsetToWorld(GetShootOffset(), GetShootDirection());
 
 	// 弾プレイヤー用の弾発射設定
@@ -385,37 +385,37 @@ void BulletPlayer::ProcessAimMode(bool aimKey)
 	}
 }
 
-// オフセット位置をワールド座標に変換
-VECTOR BulletPlayer::TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir)
-{
-	// プレイヤーの向きベクトルの正規化
-	VECTOR dirNorm = VNorm(playerDir);
-
-	// 上ベクトル設定
-	VECTOR upVec = VGet(0.0f, 1.0f, 0.0f);
-
-	// 外積で右ベクトルを計算
-	VECTOR rightVec = VCross(upVec, dirNorm);
-
-	// 右ベクトルの正規化
-	rightVec = VNorm(rightVec);
-
-	// ワールド座標に変換
-	VECTOR worldPos = VAdd
-	(
-		// 右ベクトルと上ベクトルの合成位置
-		VAdd
-		(
-			VScale(rightVec, offset.x),
-			VScale(upVec, offset.y)
-		),
-
-		// 前方向ベクトルのスケーリング位置
-		VScale(dirNorm, offset.z)
-	);
-
-	return worldPos;
-}
+//// オフセット位置をワールド座標に変換
+//VECTOR BulletPlayer::TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir)
+//{
+//	// プレイヤーの向きベクトルの正規化
+//	VECTOR dirNorm = VNorm(playerDir);
+//
+//	// 上ベクトル設定
+//	VECTOR upVec = VGet(0.0f, 1.0f, 0.0f);
+//
+//	// 外積で右ベクトルを計算
+//	VECTOR rightVec = VCross(upVec, dirNorm);
+//
+//	// 右ベクトルの正規化
+//	rightVec = VNorm(rightVec);
+//
+//	// ワールド座標に変換
+//	VECTOR worldPos = VAdd
+//	(
+//		// 右ベクトルと上ベクトルの合成位置
+//		VAdd
+//		(
+//			VScale(rightVec, offset.x),
+//			VScale(upVec, offset.y)
+//		),
+//
+//		// 前方向ベクトルのスケーリング位置
+//		VScale(dirNorm, offset.z)
+//	);
+//
+//	return worldPos;
+//}
 
 // 発射位置オフセットの取得
 VECTOR BulletPlayer::GetShootOffset()const
