@@ -50,9 +50,6 @@ public:
 	virtual void DebugRender();		// デバッグ描画
 	void CollisionRender();			// コリジョン描画
 
-	// 弾の発射処理
-	void Activate(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime, CHARA_TYPE charaType, BULLET_TYPE bulletType);
-
 	// 弾を有効化する
 	void ActivateBullet(const BulletConfig& config, const BulletEffectConfig& effectConfig);
 

@@ -445,13 +445,12 @@ void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPl
 
 	// 新しいプレイヤーの状態をリセット
 	newPlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);
-	newPlayer->SetMovementState(PLAYER_MOVEMENT_STATE::WAIT);
 
 	// 待機アニメーション再生
 	PlayerAnimations playerAnim = _activePlayer->GetPlayerAnimation();	// プレイヤーのアニメーションデータを取得
 	PlayTransConnectionAnim(playerAnim.movement.wait);					// 再生処理
 
-	// プレイヤー切り替え時にエイムモードが終了していない場合があるため、強制的にエイムモードを終了する
+	// プレイヤー切り替え時に、強制的にエイムモードを終了する
 	_cameraManager->EndAimMode();
 }
 
@@ -479,7 +478,7 @@ void PlayerManager::PlayTransConnectionAnim(const char* animName)
 	if(animName != nullptr)
 	{
 		// 変身アニメーションの再生
-		animManager->ChangeAnimationByName(animName, 0.0f, 1);			// アニメーション変更
+		animManager->ChangeAnimationByName(animName, 1.0f, 1);			// アニメーション変更
 		_fTransformMaxTime = animManager->GetCurrentAnimTotalTime();	// 変身アニメーションの再生時間を変身時間に設定
 	}
 }
