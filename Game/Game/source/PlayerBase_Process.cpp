@@ -73,16 +73,16 @@ void PlayerBase::ProcessMovePlayer()
 // 入力に応じた移動処理
 void PlayerBase::ProcessInputMove()
 {
-	auto im = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	// ダッシュ入力があればフラグを変える
-	if(im->IsTrigger(INPUT_ACTION::DASH))
+	if(im.IsTrigger(INPUT_ACTION::DASH))
 	{
 		_bIsDashInput = !_bIsDashInput;	// ダッシュ入力フラグをトグルする
 	}
 
-	const AnalogState& analog = im->GetAnalog();
-	float analogMin = im->GetAnalogMin();
+	const AnalogState& analog = im.GetAnalog();
+	float analogMin = im.GetAnalogMin();
 
 	float digitalX = 0.0f;
 	float digitalY = 0.0f;
@@ -114,33 +114,14 @@ void PlayerBase::ProcessInputMove()
 		VECTOR cameraForward;	// カメラの向いている方向のベクトル
 		VECTOR cameraRight;		// カメラの右方向のベクトル
 
-		// カメラタイプによってベクトルを変える
-		switch(_cameraManager->GetCameraType())
-		{
-			case CAMERA_TYPE::GAME_CAMERA: // ゲームカメラ
-			{
-				// カメラの向いている方向のベクトル
-				cameraForward = VGet(-sin(currentCameraAngle), 0.0f, -cos(currentCameraAngle));
-				cameraRight = VGet(cos(currentCameraAngle), 0.0f, -sin(currentCameraAngle));
-
-				break;
-			}
-
-			case CAMERA_TYPE::AIM_CAMERA: // エイムカメラ
-			{
-				// カメラの向いている方向のベクトル
-				cameraForward = VGet(-sin(currentCameraAngle), 0.0f, -cos(currentCameraAngle));
-				cameraRight = VGet(cos(currentCameraAngle), 0.0f, -sin(currentCameraAngle));
-
-				break;
-			}
-		}
+		cameraForward = VGet(sinf(currentCameraAngle), 0.0f, -cosf(currentCameraAngle));
+		cameraRight = VGet(cosf(currentCameraAngle), 0.0f, sinf(currentCameraAngle));
 
 		// 移動量を計算
 		_vMove = VAdd
 		(
-			VScale(cameraForward, inputY),	// 前後移動
-			VScale(cameraRight, inputX)	// 左右移動
+			VScale(cameraForward, -inputY),// 前後移動
+			VScale(cameraRight, -inputX)// 左右移動
 		);
 
 		// 正規化
@@ -341,24 +322,24 @@ void PlayerBase::ProcessHit()
 // デバッグ処理
 void PlayerBase::ProcessDebug()
 {
-	auto im = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
-	if (im->IsTrigger(INPUT_ACTION::DEBUG3))
+	if (im.IsTrigger(INPUT_ACTION::DEBUG3))
 	{
 		_fLife -= 5.0f;
 	}
 
-	if (im->IsTrigger(INPUT_ACTION::DEBUG1))
+	if (im.IsTrigger(INPUT_ACTION::DEBUG1))
 	{
 		EnergyManager::GetInstance()->ConsumeEnergy(50.0f);
 	}
 
-	if (im->IsTrigger(INPUT_ACTION::DEBUG2))
+	if (im.IsTrigger(INPUT_ACTION::DEBUG2))
 	{
 		EnergyManager::GetInstance()->AddEnergy(100.0f);
 	}
 
-	if(im->IsTrigger(INPUT_ACTION::DASH))
+	if(im.IsTrigger(INPUT_ACTION::DASH))
 	{
 		//_cameraManager->StartCameraShake(5.0f, 15.0f);
 	}

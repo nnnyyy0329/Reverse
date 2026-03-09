@@ -319,11 +319,11 @@ void AttackBase::UpdateAttackDirAdjust()
 	if(!owner){ return; }
 
 	// 入力マネージャーーから移動入力を取得
-	auto im = InputManager::GetInstance();
-	const auto& analog = im->GetAnalog();
+	auto& im = InputManager::GetInstance();
+	AnalogState analog = im.GetAnalog();
 
     // 入力があるなら向き調整
-    if(abs(analog.lx)>im->GetAnalogMin() || abs(analog.ly)>im->GetAnalogMin())
+    if(abs(analog.lx)>im.GetAnalogMin() || abs(analog.ly)>im.GetAnalogMin())
     {
 		// カメラ基準で入力方向を計算
         VECTOR inputDir = CalculateInputDir(analog);

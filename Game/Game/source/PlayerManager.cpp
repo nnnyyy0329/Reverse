@@ -512,7 +512,7 @@ void PlayerManager::ProcessActivePlayer(bool isAbilityScreenActive)
 {
 	if(!_activePlayer) { return; }
 
-	auto im = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	// 変身中、または変身解除中、またはアビリティ選択画面がアクティブな場合
 	if(_bIsTransforming || _bIsTransformCanceling || isAbilityScreenActive)

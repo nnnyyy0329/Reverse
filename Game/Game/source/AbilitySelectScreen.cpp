@@ -82,9 +82,9 @@ bool AbilitySelectScreen::Render()
 void AbilitySelectScreen::SelectScreenByInput()
 {
 	//if(!IsSelectActiveByPlayerType()){ return; }	// プレイヤータイプに応じて選択可能かどうか
-	auto im = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
-	if(im->IsTrigger(INPUT_ACTION::TRANSFORM))
+	if(im.IsTrigger(INPUT_ACTION::TRANSFORM))
 	{
 		// 状態による分岐
 		switch(_selectionState)
@@ -128,10 +128,10 @@ void AbilitySelectScreen::SelectionByInput()
 {
 	if(_selectionState != SelectionState::SELECTING){ return; }	// 選択中でないときは処理しない
 
-	auto im = InputManager::GetInstance();	// 入力クラス
+	auto& im = InputManager::GetInstance();
 
 	// 左キーが押されたら
-	if(im->IsTrigger(INPUT_ACTION::LEFT))
+	if(im.IsTrigger(INPUT_ACTION::LEFT))
 	{
 		_iCurrentSelection--;	// 左に移動
 
@@ -144,7 +144,7 @@ void AbilitySelectScreen::SelectionByInput()
 	}
 
 	// 右キーが押されたら
-	if(im->IsTrigger(INPUT_ACTION::RIGHT))
+	if(im.IsTrigger(INPUT_ACTION::RIGHT))
 	{
 		_iCurrentSelection++;	// 右に移動
 
@@ -157,7 +157,7 @@ void AbilitySelectScreen::SelectionByInput()
 	}
 
 	/// 決定キーが押されたら
-	if(im->IsTrigger(INPUT_ACTION::TRANSFORM))
+	if(im.IsTrigger(INPUT_ACTION::TRANSFORM))
 	{
 		// 選択肢のアビリティタイプの配列
 		ABILITY_TYPE abilities[3] = 
@@ -180,7 +180,7 @@ void AbilitySelectScreen::SelectionByInput()
 		_selectionState = SelectionState::SELECT_COMPLETED;	// 選択確定状態に移行
 
 		// 入力をリセット
-		im->ResetInput();
+		im.ResetInput();
 	}
 
 	// デバッグ用の入力

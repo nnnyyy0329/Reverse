@@ -2,8 +2,6 @@
 #include "ModeGame.h"
 #include "ModeMenu.h"
 #include "CameraManager.h"
-#include "GameCamera.h"
-#include "DebugCamera.h"
 
 int MenuItemViewDebugInfo::Selected()
 {
@@ -35,44 +33,27 @@ int MenuItemUseCollision::Selected()
 // MenuDebugCamera
 MenuDebugCamera::MenuDebugCamera(void* param, std::string text)
 	: MenuItemBase(param, text)
-	, __cameraManager(nullptr)
-	, __debugCamera(nullptr)
-	, __gameCamera(nullptr)
+	, _cameraManager(nullptr)
 {
 }
 
 void MenuDebugCamera::SetCameraManagerMenu(std::shared_ptr<CameraManager> cameraManager)
 {
-	__cameraManager = cameraManager;
-}
-
-void MenuDebugCamera::SetGameCameraMenu(std::shared_ptr<GameCamera> gameCamera)
-{
-	__gameCamera = gameCamera;
-}
-
-void MenuDebugCamera::SetDebugCameraMenu(std::shared_ptr<DebugCamera> debugCamera)
-{
-	__debugCamera = debugCamera;
+	_cameraManager = cameraManager;
 }
 
 int MenuDebugCamera::Selected()
 {
-	// カメラ情報の設定
-	if (__debugCamera && __gameCamera && __cameraManager)
+	if (!_cameraManager) { return 0; }
+
+	// デバッグカメラを有効化
+	_cameraManager->SetIsUseDebugCamera(true);
+
+	// メニュー側に通知
+	auto* modeMenu = dynamic_cast<ModeMenu*>(ModeServer::GetInstance()->Get("menu"));
+	if (modeMenu)
 	{
-		// ゲームカメラの現在位置と注視点をデバッグカメラに設定
-		__debugCamera->SetInfo(__gameCamera->GetVPos(), __gameCamera->GetVTarget());
-
-		// デバッグカメラを有効化
-		__cameraManager->SetIsUseDebugCamera(true);
-
-		// ModeMenuにもデバッグカメラ使用を通知
-		auto* modeMenu = dynamic_cast<ModeMenu*>(ModeServer::GetInstance()->Get("menu"));
-		if (modeMenu)
-		{
-			modeMenu->SetUseDebugCamera(true);
-		}
+		modeMenu->SetUseDebugCamera(true);
 	}
 
 	return 0;

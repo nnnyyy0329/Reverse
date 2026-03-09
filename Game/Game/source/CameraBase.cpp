@@ -4,6 +4,7 @@ CameraBase::CameraBase()
 {
 	_vPos = VGet(0.0f, 0.0f, 0.0f);
 	_vTarget = VGet(0.0f, 0.0f, 0.0f);
+	_vPosOffset = VGet(0.0f, 0.0f, 0.0f);
 	_fNearClip = 0.0f;
 	_fFarClip = 0.0f;
 	_fDistance = 0.0f;
@@ -23,21 +24,16 @@ void CameraBase::SetUp()
 // スティック操作で角度を変えた後に呼ぶ
 void CameraBase::UpdatePosFromAngle()
 {
-	/*
-	* 球面座標系から直交座標系へ変換
-	* Y軸(高さ) = 距離 * sin(垂直角度)
-	* 水平半径  = 距離 * cos(垂直角度)
-	* X軸 = 水平半径 * cos(水平角度)
-	* Z軸 = 水平半径 * sin(水平角度)
-	*/
+	// x = -sin(H) * r
+	// z =  cos(H) * r
 
 	// 1.高さ(y)と水平面でのターゲットまでの距離(r)を計算
-	float y = sin(_fAngleV) * _fDistance;
-	float r = cos(_fAngleV) * _fDistance;
+	float y = sinf(_fAngleV) * _fDistance;
+	float r = cosf(_fAngleV) * _fDistance;
 
 	// 2.水平平面上での位置(x,z)を計算
-	float x = cos(_fAngleH) * r;
-	float z = sin(_fAngleH) * r;
+	float x = -sinf(_fAngleH) * r;
+	float z = cosf(_fAngleH) * r;
 
 	// 3.相対位置をターゲットの座標に足してカメラの絶対座標を計算
 	_vPos = VAdd(_vTarget, VGet(x, y, z));
@@ -61,7 +57,7 @@ void CameraBase::CalcAngleFromPos()
 
 	// 水平角度(atan2)
 	// x,zから角度(ラジアン)を計算
-	_fAngleH = atan2f(diff.z, diff.x);
+	_fAngleH = atan2f(-diff.z, diff.x);
 
 	// 垂直角度(asin)
 	// 斜辺(距離)に対する高さ(y)の割合から角度を計算

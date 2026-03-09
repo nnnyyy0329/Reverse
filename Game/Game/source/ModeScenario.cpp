@@ -25,13 +25,13 @@ bool ModeScenario::Process()
 {
 	_frameCount++;
 
-	auto input = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	// 連打で一気に飛ばないように、数フレーム待つ（任意）
 	const int kInputWaitFrames = 10;
 	const bool canInput = (_frameCount >= kInputWaitFrames);
 
-	if(canInput && (input->IsTrigger(INPUT_ACTION::SELECT) || input->IsTrigger(INPUT_ACTION::ATTACK)))
+	if(canInput && (im.IsTrigger(INPUT_ACTION::SELECT) || im.IsTrigger(INPUT_ACTION::ATTACK)))
 	{
 		_bNext = true;
 	}

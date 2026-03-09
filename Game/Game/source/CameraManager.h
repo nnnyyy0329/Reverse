@@ -45,8 +45,7 @@ class CameraManager
 	VECTOR GetAimDirection();// エイム方向取得
 
 	// デバッグカメラ関連
-	void SetIsUseDebugCamera(bool isUse) { _bIsUseDebugCamera = isUse; }
-	bool GetIsUseDebugCamera() { return _bIsUseDebugCamera; }
+	void SetIsUseDebugCamera(bool isUse);
 
 	// カメラシェイク関連
 	void StartCameraShake(float magnitude, float duration);
@@ -55,9 +54,12 @@ class CameraManager
 
 	float GetCurrentCameraAngleH();
 
-protected:
-	void ChangeActiveCamera(CAMERA_TYPE type);
+	// アクティブカメラの情報
+	VECTOR GetActiveCameraPos();
+	VECTOR GetActiveCameraTarget();
+	void SetActiveCameraPos(const VECTOR& pos);
 
+protected:
 	// カメラインスタンスはマネージャーが管理
 	std::unique_ptr<GameCamera> _gameCamera;
 	std::unique_ptr<DebugCamera> _debugCamera;
@@ -69,6 +71,5 @@ protected:
 
 	CAMERA_TYPE _eCameraType;
 	CAMERA_TYPE _ePrevCameraType;
-	bool _bIsUseDebugCamera;
 };
 

@@ -450,10 +450,10 @@ VECTOR BulletPlayer::GetShootDirection()const
 // 弾発射入力チェック
 bool BulletPlayer::IsShootInput()const
 {
-	auto inputManager = InputManager::GetInstance();
+	auto& inputManager = InputManager::GetInstance();
 
 	// 攻撃ボタンが押されたか
-	return (inputManager->IsHold(INPUT_ACTION::ATTACK));
+	return (inputManager.IsHold(INPUT_ACTION::ATTACK));
 }
 
 // カウントが0より少ないかどうが

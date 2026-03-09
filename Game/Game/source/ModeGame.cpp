@@ -12,9 +12,6 @@
 //#include "Item.h"
 
 #include "CameraManager.h"
-#include "GameCamera.h"
-#include "DebugCamera.h"
-#include "AimCamera.h"
 
 #include "BulletManager.h"
 #include "AttackManager.h"
@@ -109,14 +106,7 @@ bool ModeGame::Initialize()
 	{
 		_cameraManager = std::make_shared<CameraManager>();
 		_cameraManager->Initialize();
-
-		_gameCamera = std::make_shared<GameCamera>();
-		_gameCamera->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
-
-		_debugCamera = std::make_shared<DebugCamera>();
-
-		_aimCamera = std::make_shared<AimCamera>();
-		_aimCamera->SetTarget(_playerManager->GetActivePlayerShared());
+		_cameraManager->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
 	}
 
 	// 敵設定
@@ -181,7 +171,7 @@ bool ModeGame::Process()
 	base::Process();
 	
 	// InputManagerから入力を取得
-	InputManager* input = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	// ゲームオーバーチェック
 	{
@@ -200,7 +190,7 @@ bool ModeGame::Process()
 	
 
 	// startでメニューを開く
-	if (input->IsTrigger(INPUT_ACTION::MENU))
+	if (im.IsTrigger(INPUT_ACTION::MENU))
 	{
 		ModeMenu* modeMenu = new ModeMenu();
 		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
@@ -213,10 +203,8 @@ bool ModeGame::Process()
 		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
 		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
 
-		// カメラ情報を設定
+		// デバッグカメラ切り替え
 		debugCamera->SetCameraManagerMenu(_cameraManager);
-		debugCamera->SetDebugCameraMenu(_debugCamera);
-		debugCamera->SetGameCameraMenu(_gameCamera);
 
 		modeMenu->AddMenuItem(viewDebugInfo);
 		modeMenu->AddMenuItem(viewCollision);
@@ -226,10 +214,8 @@ bool ModeGame::Process()
 
 	// クラスセット
 	{
-		_cameraManager->SetPlayer(_playerManager->GetActivePlayerShared());	// アクティブプレイヤーを設定
-		_cameraManager->SetGameCamera(_gameCamera);
-		_cameraManager->SetDebugCamera(_debugCamera);
-		_cameraManager->SetAimCamera(_aimCamera);
+		// アクティブプレイヤーをカメラマネージャーに設定
+		_cameraManager->SetTarget(_playerManager->GetActivePlayerShared());
 
 		_playerManager->SetCameraManager(_cameraManager);				// カメラマネージャーを設定
 		_playerManager->SetAbilitySelectScreen(_abilitySelectScreen);	// 能力選択画面を設定
@@ -251,11 +237,10 @@ bool ModeGame::Process()
 	{
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
 
-		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
-		_aimCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
-		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
+		// プレイヤーにカメラの水平角度を設定
+		activePlayer->SetCameraAngle(_cameraManager->GetCurrentCameraAngleH());
 
-		// 敵にターゲットのプレイヤーを設定
+		// 敵にアクティブプレイヤーを設定
 		for (const auto& enemy : _stage->GetEnemies())
 		{
 			enemy->SetTarget(activePlayer);
@@ -342,22 +327,6 @@ bool ModeGame::Process()
 		CheckHitBulletMap();
 	}
 
-	// ターゲット更新
-	{
-		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
-
-		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
-		_aimCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
-		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
-
-		// 敵にターゲットのプレイヤーを設定
-		for (const auto& enemy : _stage->GetEnemies()) 
-		{
-			enemy->SetTarget(activePlayer);
-		}
-	}
-
-
 	// エフェクト更新
 	EffectServer::GetInstance()->Update();
 
@@ -372,9 +341,6 @@ bool ModeGame::Process()
 bool ModeGame::Render() 
 {
 	base::Render();
-
-
-
 
 	// 3D基本設定
 	{
@@ -398,7 +364,7 @@ bool ModeGame::Render()
 
 	// カメラ設定
 	{
-		_cameraManager->SwitchCameraSetUp();
+		_cameraManager->SetUp();
 	}
 	
 	// オブジェクトの描画
@@ -438,8 +404,7 @@ bool ModeGame::Render()
 
 		_stage->DebugRender();
 		_dodgeSystem->DebugRender();
-		_debugCamera->DebugRender();
-		_gameCamera->DebugRender();
+		_cameraManager->DebugRender();
 		_playerManager->DebugRender();
 		_playerUnlockManager->DebugRender();
 
@@ -453,8 +418,6 @@ bool ModeGame::Render()
 		// プレイヤーデバッグ情報
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
 		activePlayer->DebugRender();
-
-		_cameraManager->SwitchCameraDebugRender();
 	}
 	
 	// 敵残数表示
@@ -507,7 +470,7 @@ bool ModeGame::Render()
 	}
 
 	_energyUI->Render();
-	_cameraManager->SwitchCameraRender();
+	_cameraManager->Render();
 
 	return true;
 }

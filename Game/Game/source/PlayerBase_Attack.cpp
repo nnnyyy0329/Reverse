@@ -353,7 +353,7 @@ void PlayerBase::ProcessBranchAttack()
 // 汎用コンボ攻撃処理
 void PlayerBase::ProcessComboAttack(int attackIndex)
 {
-	auto im = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	auto currentAttack = _attacks[attackIndex];
 	ATTACK_STATE state = currentAttack->GetAttackState();
@@ -374,7 +374,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 			_bCanCombo = true;
 
 			// 次の攻撃入力があれば次の攻撃へ
-			if(im->IsTrigger(INPUT_ACTION::ATTACK) && CanNextAttack())
+			if(im.IsTrigger(INPUT_ACTION::ATTACK) && CanNextAttack())
 			{
 				//ProcessNextAttack(attackIndex);
 			}
@@ -384,7 +384,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 		case ATTACK_STATE::RECOVERY:	// 硬直中
 		{
 			// 次の攻撃入力があれば次の攻撃へ
-			if(im->IsTrigger(INPUT_ACTION::ATTACK) && CanNextAttack())
+			if(im.IsTrigger(INPUT_ACTION::ATTACK) && CanNextAttack())
 			{
 				ProcessNextAttack(attackIndex);
 			}
@@ -476,14 +476,14 @@ void PlayerBase::ReceiveAttackColData()
 // 攻撃を開始できるかチェック
 bool PlayerBase::IsStartAttack()
 {
-	auto im = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	// 攻撃入力チェック
 	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||	// 待機か
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||	// 歩きか
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN) &&	// 走りで
 		_playerState.attackState   == PLAYER_ATTACK_STATE::NONE	  &&	// 攻撃状態ではなく
-		im->IsTrigger(INPUT_ACTION::ATTACK))												// 入力があるなら
+		im.IsTrigger(INPUT_ACTION::ATTACK))												// 入力があるなら
 	{
 		return true;
 	}
@@ -520,10 +520,10 @@ bool PlayerBase::IsAttacking()
 // 攻撃入力があったかチェック
 bool PlayerBase::IsAttackInput()
 {
-	auto im = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	// 攻撃入力があるかチェック
-	return im->IsHold(INPUT_ACTION::ATTACK) != 0;
+	return im.IsHold(INPUT_ACTION::ATTACK) != 0;
 }
 
 // ヘルパー関数

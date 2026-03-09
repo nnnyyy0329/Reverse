@@ -86,9 +86,9 @@ bool ModeGameOver::Process()
 	// これより下のモードの処理をスキップ
 	ModeServer::GetInstance()->SkipProcessUnderLayer();
 
-	auto inputManager = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
-	if(inputManager->IsTrigger(INPUT_ACTION::ABILITY)) {// zキー Aボタン
+	if(im.IsTrigger(INPUT_ACTION::ABILITY)) {// zキー Aボタン
 		// 現在のステージ番号からリスタート
 		ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
 		if (modeGame != nullptr)

@@ -11,11 +11,11 @@ DebugCamera::DebugCamera()
 {
 	_vPos = VGet(0.0f, 0.0f, -100.0f);
 	_vTarget = VGet(0.0f, 0.0f, 0.0f);
-	_distance = 100.0f;
-	_angleH = 0.0f;
-	_angleV = 0.0f;
-	_nearClip = 2.0f;
-	_farClip = 50000.0f;
+	_fDistance = 100.0f;
+	_fAngleH = 0.0f;
+	_fAngleV = 0.0f;
+	_fNearClip = 2.0f;
+	_fFarClip = 50000.0f;
 
 	CalcAngleFromPos();// 初期座標から角度などを計算しておく
 }
@@ -26,32 +26,34 @@ DebugCamera::~DebugCamera()
 
 // 左スティック:ターゲットの移動(ボタン同時押し(B)で高さ変更、ズーム)
 // 右スティック:カメラの回転
-void DebugCamera::Process(InputManager* input, bool isInput)
+void DebugCamera::Process()
 {
-	const AnalogState& analog = input->GetAnalog();
-	float analogMin = input->GetAnalogMin();
-	float rx = analog.rx;
-	float ry = analog.ry;
+	auto& im = InputManager::GetInstance();
+	const AnalogState& analog = im.GetAnalog();
+	float analogMin = im.GetAnalogMin();
 	float lx = analog.lx;
 	float ly = analog.ly;
-
-	bool bIsPut = input->IsHold(INPUT_ACTION::DODGE);
+	float rx = analog.rx;
+	float ry = analog.ry;
+	bool bIsPut = im.IsHold(INPUT_ACTION::DODGE);
 
 	// カメラの回転
 	{
-		if (abs(rx) > analogMin) _angleH -= rx * ROTATE_SPEED;
-		if (abs(ry) > analogMin) {
-			_angleV += ry * ROTATE_SPEED;
+		if (abs(rx) > analogMin) { _fAngleH -= rx * ROTATE_SPEED; }
+		if (abs(ry) > analogMin) 
+		{
+			_fAngleV += ry * ROTATE_SPEED;
 
 			// 垂直角度制限
-			if (_angleV > ANGLE_V_LIMIT) _angleV = ANGLE_V_LIMIT;
-			if (_angleV < -ANGLE_V_LIMIT) _angleV = -ANGLE_V_LIMIT;
+			if (_fAngleV > ANGLE_V_LIMIT) _fAngleV = ANGLE_V_LIMIT;
+			if (_fAngleV < -ANGLE_V_LIMIT) _fAngleV = -ANGLE_V_LIMIT;
 		}
 	}
 
 	// ターゲットの移動
 	{
-		if (abs(lx) > analogMin || abs(ly) > analogMin) {
+		if (abs(lx) > analogMin || abs(ly) > analogMin) 
+		{
 
 			// ボタン同時押し中(B)
 			if (bIsPut)
@@ -60,15 +62,15 @@ void DebugCamera::Process(InputManager* input, bool isInput)
 				_vTarget.y -= ly * MOVE_SPEED;
 
 				// ズームイン・アウト
-				_distance += lx * ZOOM_SPEED;
-				if (_distance < 1.0f) _distance = 1.0f;// 最小距離制限
+				_fDistance += lx * ZOOM_SPEED;
+				if (_fDistance < 1.0f) { _fDistance = 1.0f; }// 最小距離制限
 			}
 			else // 通常時
 			{
 				// カメラの向いている方向のベクトル
 				// Y成分は無視してXZ平面上のベクトルにする
-				VECTOR vForward = VGet(cos(_angleH), 0.0f, sin(_angleH));
-				VECTOR vRight = VGet(cos(_angleH + DX_PI_F / 2.0f), 0.0f, sin(_angleH + DX_PI_F / 2));
+				VECTOR vForward = VGet(cos(_fAngleH), 0.0f, sin(_fAngleH));
+				VECTOR vRight = VGet(cos(_fAngleH + DX_PI_F / 2.0f), 0.0f, sin(_fAngleH + DX_PI_F / 2));
 
 				// 移動量を計算
 				VECTOR vMove = VAdd(
@@ -120,64 +122,9 @@ void DebugCamera::DebugRender()
 	DrawFormatString(x, y, GetColor(255, 255, 255), "DebugCamera Pos: (%3.2f, %3.2f, %3.2f)", _vPos.x, _vPos.y, _vPos.z);
 }
 
-void DebugCamera::SetUp()
-{
-	SetCameraPositionAndTarget_UpVecY(_vPos, _vTarget);// カメラ位置と注視点の設定
-	SetCameraNearFar(_nearClip, _farClip);// カメラからどれだけ離れた距離からどこまで描画するかを設定
-}
-
 void DebugCamera::SetInfo(VECTOR vPos, VECTOR vTarget)
 {
 	_vPos = vPos;
 	_vTarget = vTarget;
 	CalcAngleFromPos();// セットされた座標から角度と距離を再計算
-}
-
-// 角度と距離からカメラの座標を計算
-// スティック操作で角度を変えた後に呼ぶ
-void DebugCamera::UpdatePosFromAngle()
-{
-	/*
-	* 球面座標系から直交座標系へ変換
-	* Y軸(高さ) = 距離 * sin(垂直角度)
-	* 水平半径  = 距離 * cos(垂直角度)
-	* X軸 = 水平半径 * cos(水平角度)
-	* Z軸 = 水平半径 * sin(水平角度)
-	*/
-
-	// 1.高さ(y)と水平面でのターゲットまでの距離(r)を計算
-	auto y = sin(_angleV) * _distance;
-	auto r = cos(_angleV) * _distance;
-
-	// 2.水平平面上での位置(x,z)を計算
-	auto x = cos(_angleH) * r;
-	auto z = sin(_angleH) * r;
-
-	// 3.相対位置をターゲットの座標に足してカメラの絶対座標を計算
-	_vPos = VAdd(_vTarget, VGet(x, y, z));
-}
-
-// ターゲットの座標とカメラの座標から角度と距離を計算
-// 初期化時や外部からカメラ位置を変更した後に呼ぶ
-void DebugCamera::CalcAngleFromPos()
-{
-	VECTOR vDiff = VSub(_vPos, _vTarget);// ターゲットからカメラへのベクトル
-
-	// 距離
-	_distance = VSize(vDiff);
-	if (_distance < 0.001f) {// ゼロ除算防止
-		_distance = 0.001f;
-		_angleH = 0.0f;
-		_angleV = 0.0f;
-		return;// 距離がほぼ0なら計算しない
-
-	}
-
-	// 水平角度(atan2)
-	// x,zから角度(ラジアン)を計算
-	_angleH = atan2f(vDiff.z, vDiff.x);
-
-	// 垂直角度(asin)
-	// 斜辺(距離)に対する高さ(y)の割合から角度を計算
-	_angleV = asinf(vDiff.y / _distance);
 }

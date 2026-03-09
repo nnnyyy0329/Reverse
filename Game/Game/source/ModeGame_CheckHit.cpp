@@ -6,7 +6,7 @@
 #include "Bullet.h"
 #include "BulletManager.h"
 #include "DodgeSystem.h"
-#include "GameCamera.h"
+#include "CameraManager.h"
 #include "SurfacePlayer.h"
 #include "PlayerAbsorbAttackSystem.h" 
 #include "AbsorbAttack.h"
@@ -286,15 +286,18 @@ void ModeGame::CheckCollisionCharaChara(std::shared_ptr<CharaBase> chara1, std::
 // カメラとマップの当たり判定
 void ModeGame::CheckCollisionCameraMap()
 {
-	if (!_gameCamera || !_stage) { return; }
+	if (!_cameraManager || !_stage) { return; }
+
+	// ゲームカメラ以外は処理しない
+	if (_cameraManager->GetCameraType() != CAMERA_TYPE::GAME_CAMERA) { return; }
 
 	// ステージの全マップモデルを取得
 	const auto& mapObjList = _stage->GetMapModelPosList();
 	if (mapObjList.empty()) { return; }
 
 	// 元のカメラ情報を取得
-	VECTOR vCamPos = _gameCamera->GetVPos();
-	VECTOR vCamTarget = _gameCamera->GetVTarget();
+	VECTOR vCamPos = _cameraManager->GetActiveCameraPos();
+	VECTOR vCamTarget = _cameraManager->GetActiveCameraTarget();
 
 	// 注視点からカメラへのベクトル
 	VECTOR vToCam = VSub(vCamPos, vCamTarget);
@@ -365,7 +368,7 @@ void ModeGame::CheckCollisionCameraMap()
 
 		// 注視点から新しいカメラ位置を計算
 		vCamPos = VAdd(vCamTarget, VScale(vDir, fNewDist));
-		_gameCamera->SetVPos(vCamPos);
+		_cameraManager->SetActiveCameraPos(vCamPos);
 	}
 }
 
