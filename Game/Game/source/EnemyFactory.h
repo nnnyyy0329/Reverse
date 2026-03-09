@@ -31,14 +31,11 @@ namespace
 	constexpr auto RANGED_DETECT_TIME = 60.0f;// 発見硬直
 
 	// Tank
-	constexpr auto TANK_VISION_RANGE = 300.0f;// 索敵距離
-	constexpr auto TANK_VISION_ANGLE = 180.0f;// 索敵角度
-	constexpr auto TANK_ATTACK_RANGE = 150.0f;// これ以内なら攻撃する距離
-	constexpr auto TANK_CHASE_LIMIT_RANGE = 700.0f;// これ以上離れたら接近をやめる距離
-	constexpr auto TANK_IDLE_TIME = 150.0f;;// 待機時間
-	constexpr auto TANK_MOVE_TIME = 120.0f;// 徘徊時間
+	constexpr auto TANK_ATTACK_RANGE = 500.0f;// 攻撃ステートに入る距離
+	constexpr auto TANK_ATTACK_LIMIT_RAMGE = 550.0f;// これ以上離れたら接近ステートへ
 	constexpr auto TANK_DETECT_TIME = 120.0f;// 発見硬直
-	constexpr auto TANK_MOVE_SPEED = 1.5f;// 移動速度
+	constexpr auto TANK_MOVE_SPEED = 5.0f;// 移動速度
+	constexpr auto TANK_IDLE_TIME = 120.0f;// 待機時間
 }
 
 // 敵の種類
@@ -147,14 +144,17 @@ public:
 			enemy->SetModelName("Melee");
 
 			param.fMoveSpeed = TANK_MOVE_SPEED;
-			param.fVisionRange = TANK_VISION_RANGE;
-			param.fVisionAngle = TANK_VISION_ANGLE;
 			param.fAttackRange = TANK_ATTACK_RANGE;
-			param.fChaseLimitRange = TANK_CHASE_LIMIT_RANGE;
-			param.fIdleTime = TANK_IDLE_TIME;
-			param.fMoveTime = TANK_MOVE_TIME;
+			param.fChaseLimitRange = TANK_ATTACK_LIMIT_RAMGE;
 			param.fDetectTime = TANK_DETECT_TIME;
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+			param.fIdleTime = TANK_IDLE_TIME;
+
+			// 共通ステートのアニメーション名を設定
+			param.animDamage = "Nenemy_damage_00";
+			param.animDead = "Nenemy_dead_00";
+			param.animDown = "Nenemy_damagge_01";
+
 			enemy->SetEnemyParam(param);
 
 			// 被ダメ後の遷移先を決定
@@ -184,6 +184,7 @@ public:
 
 		VECTOR vDir = VGet(sinf(rot.y), 0.0f, cosf(rot.y));
 		enemy->SetDir(vDir);
+		enemy->SetHomeDir(vDir);
 
 		return enemy;// 作成した敵を返す
 	}

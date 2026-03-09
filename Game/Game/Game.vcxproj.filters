@@ -208,6 +208,9 @@
     <ClCompile Include="source\CameraShakeSystem.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
+    <ClCompile Include="source\PathfindingManager.cpp">
+      <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -405,6 +408,9 @@
     <ClInclude Include="source\CameraShakeSystem.h">
       <Filter>Camera</Filter>
     </ClInclude>
+    <ClInclude Include="source\PathfindingManager.h">
+      <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -541,6 +547,9 @@
     </Filter>
     <Filter Include="Mode\ModeTextBox">
       <UniqueIdentifier>{7569f880-1bfa-403d-a4e0-3b44f6293292}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\CharaBase\Enemy\A%2a">
+      <UniqueIdentifier>{0c4e6ac5-25ac-4ace-a1c4-93a3b99f7c4d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -139,7 +139,9 @@ namespace Common
 		// 死亡時間経過チェック
 		if (_fTimer >= DEAD_TIME) 
 		{
-			EffectServer::GetInstance()->Play("En_Dead", owner->GetPos());
+			// エフェクト
+			EffectServer::GetInstance()->Play("En_Dead02", owner->GetPos());
+
 			owner->EnableRemove();// オブジェクト削除可能設定
 		}
 

@@ -27,7 +27,7 @@ namespace
 	// 速度制御用定数
 	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;			// スムーズ回転速度
 	constexpr auto ATTACK_APPROACH_SPEED = 2.0f;		// 攻撃開始時の接近速度
-	constexpr auto ATTACK_EXECUTE_SPEED = 2.5f;			// 攻撃実行時の前進速度
+	constexpr auto ATTACK_EXECUTE_SPEED = 1.5f;			// 攻撃実行時の前進速度
 	constexpr auto LOST_ROTATE_SPEED = 1.5f;			// 見渡し回転速度
 
 	// 時間ランダム幅定数
@@ -342,6 +342,7 @@ namespace Normal
 		// タイマー初期化
 		_fTimer = 0.0f;
 
+		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
@@ -571,7 +572,7 @@ namespace Normal
 				}
 			}
 		}
-		else// RETURN_HOME
+		else if (_ePhase == Phase::RETURN_HOME)
 		{
 			// 初期位置への距離計算
 			VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
@@ -579,13 +580,32 @@ namespace Normal
 
 			if (dist <= LOST_NEARBY_HOME)
 			{
-				return std::make_shared<Idle>();
+				_ePhase = Phase::SET_DIR;
 			}
 
 			// 初期位置方向へ移動
 			VECTOR vDir = mymath::FlattenVector(vToHome);
 			RotateToTarget(owner, vDir, SMOOTH_ROTATE_SPEED);
 			MoveToTarget(owner, vDir, owner->GetEnemyParam().fMoveSpeed);
+		}
+		else// SET_DIR
+		{
+			StopMove(owner);
+
+			VECTOR vHomeDir = owner->GetHomeDir();
+			RotateToTarget(owner, vHomeDir, SMOOTH_ROTATE_SPEED);
+
+			// 初期向きへの到達判定
+			VECTOR vCurrentDir = owner->GetDir();
+			float dot = VDot(vCurrentDir, vHomeDir);
+			if (dot > 1.0f) { dot = 1.0f; }
+			if (dot < -1.0f) { dot = -1.0f; }
+			float diffDeg = acosf(dot) * RADIAN_TO_DEGREE;
+
+			if(diffDeg <= LOST_LOOK_ARRIVE_THRESHOLD)
+			{
+				return std::make_shared<Idle>();
+			}
 		}
 
 		return nullptr;

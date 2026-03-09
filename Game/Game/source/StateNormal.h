@@ -101,7 +101,8 @@ namespace Normal
 			LOOK_AROUND,// 周囲を見渡す
 			TO_BASE,// 基準方向へ戻る
 			WAIT,// 帰還前に待機
-			RETURN_HOME// 帰還
+			RETURN_HOME,// 帰還
+			SET_DIR// 初期向きへ向きなおす
 		};
 		Phase _ePhase;
 
