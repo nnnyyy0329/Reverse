@@ -340,9 +340,9 @@ void InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig config[5])
 		"iPlayerAttack",			// サウンド名
 		
 		/* カメラシェイク */
-		false,						// カメラシェイクを有効にするか
-		0.0f,						// カメラ振動の強さ
-		0.0f,						// カメラ振動の持続時間
+		true,						// カメラシェイクを有効にするか
+		3.0f,						// カメラ振動の強さ
+		5.0f,						// カメラ振動の持続時間
 
 		/* ヒットストップ */
 		false,						// ヒットストップを有効にするか
@@ -362,9 +362,9 @@ void InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig config[5])
 		"iPlayerAttack",			// サウンド名
 
 		/* カメラシェイク */
-		false,						// カメラシェイクを有効にするか
-		0.0f,						// カメラ振動の強さ
-		0.0f,						// カメラ振動の持続時間
+		true,						// カメラシェイクを有効にするか
+		3.0f,						// カメラ振動の強さ
+		5.0f,						// カメラ振動の持続時間
 
 		/* ヒットストップ */
 		false,						// ヒットストップを有効にするか
@@ -384,9 +384,9 @@ void InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig config[5])
 		"iPlayerAttack",			// サウンド名
 
 		/* カメラシェイク */
-		false,						// カメラシェイクを有効にするか
-		0.0f,						// カメラ振動の強さ
-		0.0f,						// カメラ振動の持続時間
+		true,						// カメラシェイクを有効にするか
+		3.0f,						// カメラ振動の強さ
+		5.0f,						// カメラ振動の持続時間
 
 		/* ヒットストップ */
 		false,						// ヒットストップを有効にするか
@@ -406,9 +406,9 @@ void InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig config[5])
 		"iPlayerAttack",				// サウンド名
 
 		/* カメラシェイク */
-		false,							// カメラシェイクを有効にするか
-		0.0f,							// カメラ振動の強さ
-		0.0f,							// カメラ振動の持続時間
+		true,							// カメラシェイクを有効にするか
+		3.0f,							// カメラ振動の強さ
+		5.0f,							// カメラ振動の持続時間
 
 		/* ヒットストップ */
 		false,							// ヒットストップを有効にするか
@@ -428,9 +428,9 @@ void InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig config[5])
 		"iPlayerAttack",				// サウンド名
 
 		/* カメラシェイク */
-		false,							// カメラシェイクを有効にするか
-		0.0f,							// カメラ振動の強さ
-		0.0f,							// カメラ振動の持続時間
+		true,							// カメラシェイクを有効にするか
+		15.0f,							// カメラ振動の強さ
+		10.0f,							// カメラ振動の持続時間
 
 		/* ヒットストップ */
 		false,							// ヒットストップを有効にするか

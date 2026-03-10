@@ -153,6 +153,9 @@ void PlayerBase::SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<
 
 	// 攻撃エフェクトデータ設定
 	_attackEffectConfigs.push_back(config);
+
+	// 攻撃オブジェクトに攻撃エフェクトデータ設定
+	attack->SetAttackEffectConfig(config);
 }
 
 // 攻撃Process呼び出し用関数
@@ -211,27 +214,6 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 // 攻撃の反応処理
 void PlayerBase::ProcessAttackReaction(int attackIndex)
 {
-	//// キャラタイプに応じた最大コンボ数を取得
-	//int maxComboCount = GetMaxComboCount();
-
-	//// 攻撃設定取得
-	//std::vector<AttackConfig> configs(maxComboCount);
-	//GetAttackConfigs(configs.data());
-
-	//// 演出設定取得
-	//std::vector<AttackEffectConfig> effectConfigs(maxComboCount);
-	//GetAttackEffectConfig(effectConfigs.data());
-
-	//// 有効な攻撃インデックスかチェック
-	//if((attackIndex >= 0) && (attackIndex < static_cast<int>(configs.size())))
-	//{
-	//	// 攻撃エフェクト処理
-	//	ProcessAttackEffect(attackIndex, effectConfigs);
-
-	//	// 攻撃サウンド処理
-	//	ProcessAttackSound(attackIndex, effectConfigs);
-	//}
-
 	// 有効な攻撃インデックスかチェック
 	if((attackIndex >= 0) && (attackIndex < static_cast<int>(_attackEffectConfigs.size())))
 	{
