@@ -30,6 +30,8 @@ public:
 	float GetAngleV() { return _fAngleV; }
 	// セッター
 	void SetPos(const VECTOR& pos) { _vPos = pos; }
+	void SetAngleH(float angleH) { _fAngleH = angleH; }
+	void SetAngleV(float angleV) { _fAngleV = angleV; }
 
 protected:
 	void UpdatePosFromAngle();// 角度と距離から座標を計算

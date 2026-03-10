@@ -29,7 +29,6 @@ public:
 	// エイムカメラ更新
 	void UpdateAimCamera();// エイムカメラ更新
 	void ControlAimCamera();// エイムカメラ操作
-	void CalculateAimDirection();// エイム方向計算
 	void DrawAimCursor();// エイムカーソル描画
 
 protected:

@@ -78,7 +78,7 @@ void PlayerBase::ProcessInputMove()
 	// ダッシュ入力があればフラグを変える
 	if(im.IsTrigger(INPUT_ACTION::DASH))
 	{
-		_bIsDashInput = !_bIsDashInput;	// ダッシュ入力フラグをトグルする
+		_bIsDashInput = !_bIsDashInput;// ダッシュ入力フラグをトグルする
 	}
 
 	const AnalogState& analog = im.GetAnalog();
@@ -86,10 +86,6 @@ void PlayerBase::ProcessInputMove()
 
 	float digitalX = 0.0f;
 	float digitalY = 0.0f;
-	/*if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
-	if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
-	if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
-	if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }*/
 	
 	// アナログ入力による移動、なければデジタル入力
 	float inputX = (abs(analog.lx) > analogMin) ? analog.lx : digitalX;
@@ -97,9 +93,8 @@ void PlayerBase::ProcessInputMove()
 
 	if(inputX != 0.0f || inputY != 0.0f)
 	{
-		float currentCameraAngle;	// 現在のカメラの水平角度
+		float currentCameraAngle;// 現在のカメラの水平角度
 
-		// カメラマネージャーがあれば
 		if(_cameraManager)
 		{
 			// 現在のカメラの水平角度を取得して移動方向を変換する
@@ -111,17 +106,19 @@ void PlayerBase::ProcessInputMove()
 			currentCameraAngle = _cameraAngle;
 		}
 
-		VECTOR cameraForward;	// カメラの向いている方向のベクトル
-		VECTOR cameraRight;		// カメラの右方向のベクトル
+		VECTOR cameraForward;// カメラの向いている方向のベクトル
+		VECTOR cameraRight;	// カメラの右方向のベクトル
 
-		cameraForward = VGet(sinf(currentCameraAngle), 0.0f, -cosf(currentCameraAngle));
-		cameraRight = VGet(cosf(currentCameraAngle), 0.0f, sinf(currentCameraAngle));
+		// XZ平面における前方ベクトル
+		cameraForward = VGet(sinf(currentCameraAngle), 0.0f, cosf(currentCameraAngle));
+		// 前方ベクトルから時計回りに90度回した右方向ベクトル
+		cameraRight = VGet(cosf(currentCameraAngle), 0.0f, -sinf(currentCameraAngle));
 
 		// 移動量を計算
 		_vMove = VAdd
 		(
 			VScale(cameraForward, -inputY),// 前後移動
-			VScale(cameraRight, -inputX)// 左右移動
+			VScale(cameraRight, inputX)// 左右移動
 		);
 
 		// 正規化

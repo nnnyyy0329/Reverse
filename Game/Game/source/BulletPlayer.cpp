@@ -49,6 +49,33 @@ bool BulletPlayer::Process()
 {
 	PlayerBase::Process();
 
+	if (_cameraManager && _cameraManager->IsAimMode())
+	{
+		// カメラマネージャーから現在のエイム方向を取得
+		VECTOR aimDir = _cameraManager->GetAimDirection();
+
+		// Y軸成分を無視して水平にする
+		VECTOR aimDirHorizontal = VGet(aimDir.x, 0.0f, aimDir.z);
+
+		// 正規化してプレイヤーの向きにセットする
+		if (VSquareSize(aimDirHorizontal) > 0.0f)
+		{
+			aimDirHorizontal = VNorm(aimDirHorizontal);
+
+			SetDir(aimDirHorizontal);
+		}
+	}
+	else
+	{
+		// 通常移動時
+		float moveSquare = VSquareSize(_vMove);
+		if (moveSquare > 0.0f)
+		{
+			SetDir(VNorm(_vMove));
+		}
+	}
+
+
 	return true;
 }
 

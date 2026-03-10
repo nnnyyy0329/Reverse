@@ -38,18 +38,6 @@ void GameCamera::DebugRender()
 	DrawFormatString(x, y + 40, GetColor(255, 255, 255), "AngleH: %3.2f  AngleV: %3.2f  Dist: %3.2f", _fAngleH, _fAngleV, _fDistance);
 }
 
-// カメラ切り替え時にプレイヤーの向きからカメラ角度を初期化
-void GameCamera::OnEnter()
-{
-	if (!_targetObject) { return; }
-
-	VECTOR playerDir = _targetObject->GetDir();
-
-	_fAngleH = atan2f(playerDir.x, -playerDir.z);
-
-	UpdateCamera();
-}
-
 void GameCamera::SetTarget(std::shared_ptr<PlayerBase> target)
 {
 	_targetObject = target;
@@ -70,15 +58,22 @@ void GameCamera::ApplyShake(const VECTOR& shakeOffset)
 	_vTarget = VAdd(_vTarget, shakeOffset);
 }
 
-// 注視点をプレイヤーに追従させる
+// 注視点から後方へdistanceだけ離れた位置にカメラを配置する
 void GameCamera::UpdateCamera()
 {
 	if (!_targetObject) { return; }
 
+	// 注視点を決定
 	_vTarget = VAdd(_targetObject->GetPos(), _vPosOffset);
 
-	// 角度、距離から座標を計算
-	UpdatePosFromAngle();
+	// 角度から前方ベクトルを計算
+	float cosV = cos(_fAngleV);
+	float sinV = sin(_fAngleV);
+	float cosH = cos(_fAngleH);
+	float sinH = sin(_fAngleH);
+	VECTOR forward = VGet(cosV * sinH, sinV, cosV * cosH);
+
+	_vPos = VSub(_vTarget, VScale(forward, _fDistance));
 }
 
 // スティック入力でカメラ角度を更新
@@ -95,13 +90,13 @@ void GameCamera::ControlCamera()
 		// 水平回転
 		if(abs(rx) > analogMin)
 		{
-			_fAngleH -= rx * ROTATE_SPEED;// 右スティックのX軸で水平回転
+			_fAngleH += rx * ROTATE_SPEED;// 右スティックのX軸で水平回転
 		}
 
 		// 垂直回転
 		if(abs(ry) > analogMin) 
 		{
-			_fAngleV += ry * ROTATE_SPEED;// 右スティックのY軸で垂直回転
+			_fAngleV -= ry * ROTATE_SPEED;// 右スティックのY軸で垂直回転
 
 			// 垂直角度制限
 			if(_fAngleV > ANGLE_V_LIMIT) _fAngleV = ANGLE_V_LIMIT;

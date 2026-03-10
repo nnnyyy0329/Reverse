@@ -10,9 +10,7 @@ public:
 	virtual ~GameCamera() {};
 
 	void Process() override;
-	void DebugRender() override;
-
-	void OnEnter() override;	
+	void DebugRender() override;	
 
 	void SetTarget(std::shared_ptr<PlayerBase> target) override;
 

@@ -96,9 +96,15 @@ void CameraManager::SetCameraType(CAMERA_TYPE type)
 {
 	if (_eCameraType == type) { return; }
 
+	// 切り替え前のカメラの角度を保存
+	float prevAngleH = 0.0f;
+	float prevAngleV = 0.0f;
+
 	// 前のカメラの終了処理
 	if (_pActiveCamera) 
 	{
+		prevAngleH = _pActiveCamera->GetAngleH();
+		prevAngleV = _pActiveCamera->GetAngleV();
 		_pActiveCamera->OnExit();
 	}
 
@@ -118,6 +124,10 @@ void CameraManager::SetCameraType(CAMERA_TYPE type)
 	// 新しいカメラの開始処理
 	if (_pActiveCamera) 
 	{
+		// 前のカメラの角度を引き継ぐ
+		_pActiveCamera->SetAngleH(prevAngleH);
+		_pActiveCamera->SetAngleV(prevAngleV);
+
 		_pActiveCamera->OnEnter();
 		_pActiveCamera->SetUp();
 	}
@@ -130,6 +140,8 @@ void CameraManager::StartAimMode()
 
 void CameraManager::EndAimMode()
 {
+	if (!IsAimMode()) { return; }
+
 	SetCameraType(_ePrevCameraType);
 }
 
