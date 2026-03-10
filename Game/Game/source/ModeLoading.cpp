@@ -142,15 +142,26 @@ bool ModeLoading::Initialize()
 
 		}
 
-		// テキスト　セリフ　操作説明etc..
+		// シナリオ　
 		{
-			rs->Register("GameStartText",  "res/Graph/Text1.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("GameStartText1", "res/Graph/Text2.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("GameSerif1",     "res/Graph/TextB.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText ",  "res/Senario/story1.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText1",  "res/Senario/story2.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText2",  "res/Senario/story3.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText3",  "res/Senario/story4.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText4",  "res/Senario/story5.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText5",  "res/Senario/story6.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText6",  "res/Senario/story7.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText7",  "res/Senario/story8.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText8",  "res/Senario/story9.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText9",  "res/Senario/story10.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText10", "res/Senario/story11.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText11", "res/Senario/story12.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 		
+	    //　テキストボックス　
+		{
 
-		
+		}
 	}
 
 	// リソースのロード開始

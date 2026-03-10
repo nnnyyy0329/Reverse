@@ -27,6 +27,14 @@ public:
 	int GetCallPerFrame() { return _callPerFrame; }
 	int GetCallOfCount() { return _callOfCount; }
 
+	// --- フェード共通処理 ---
+	void StartFade(int inFrames, int holdFrames, int outFrames);
+	void AdvanceFade();
+	int GetFadeAlpha() const;
+	bool IsFadeActive() const;
+	bool IsFadeFinished() const;
+
+	
 
 private:
 	friend	ModeServer;
@@ -50,6 +58,15 @@ private:
 	// CallPerFrame / CallOfCount用
 	int		_callPerFrame, _callPerFrame_cnt;
 	int		_callOfCount;
+
+
+
+	// --- フェード用メンバ ---
+	bool	_fadeActive = false;
+	int		_fadeFrame = 0;
+	int		_fadeInFrames = 0;
+	int		_fadeHoldFrames = 0;
+	int		_fadeOutFrames = 0;
 
 };
 

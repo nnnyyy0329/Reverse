@@ -26,5 +26,6 @@ private:
 	
 	bool _bIsAddLoading = false;
 
+
 	int _menuIndex;
 };

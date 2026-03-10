@@ -43,6 +43,7 @@
 
 bool ModeGame::Initialize() 
 {
+	StartFade(200, 90, 30);
 	if (!base::Initialize()) { return false; }
 
 	// Manager初期化
@@ -179,7 +180,7 @@ bool ModeGame::Terminate()
 bool ModeGame::Process()
 {
 	base::Process();
-	
+	AdvanceFade();
 	// InputManagerから入力を取得
 	InputManager* input = InputManager::GetInstance();
 
@@ -368,6 +369,8 @@ bool ModeGame::Process()
 
 bool ModeGame::Render() 
 {
+
+
 	base::Render();
 
 
@@ -506,6 +509,16 @@ bool ModeGame::Render()
 	_energyUI->Render();
 	_cameraManager->SwitchCameraRender();
 
+	{
+		const int a = GetFadeAlpha(); // 0..255, 0=暗/255=明（StartFadeで in を与えた場合）
+		const int overlayAlpha = std::max(0, std::min(255, 255 - a)); // 0->255 の黒オーバーレイ
+		if(overlayAlpha > 0)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, overlayAlpha);
+			DrawBox(0, 0, 1920, 1080, GetColor(0, 0, 0), TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
+	}
 	return true;
 }
 

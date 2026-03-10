@@ -7,6 +7,7 @@
 namespace
 {
 	constexpr int MENU_COUNT = 3;
+	
 
 	void DrawMenuItem(int x, int y, const char* text, bool selected)
 	{
@@ -69,6 +70,8 @@ bool ModeTitle::Initialize()
 	_frameCount = 0;
 
 	_menuIndex = 0;
+	
+	StartFade(30, 90, 30);
 
 	return true;
 }
@@ -81,6 +84,9 @@ bool ModeTitle::Terminate()
 
 bool ModeTitle::Process() 
 {
+	// フェードの内部カウンタを進める
+	AdvanceFade();
+
 	InputManager* input = InputManager::GetInstance();
 
 	// ↑↓で選択
@@ -128,6 +134,8 @@ bool ModeTitle::Render()
 {
 	ClearDrawScreen();
 
+	
+
 	// タイトル画像
 	{
 		int w, h;
@@ -140,7 +148,12 @@ bool ModeTitle::Render()
 		int x = (1920 - scaledW) / 2;
 		int y = (1080 - scaledH) / 2;
 
+		
+		const int a = GetFadeAlpha();
+
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, a);
 		DrawExtendGraph(x, y, x + scaledW, y + scaledH, _titleHandle, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
 	// メニュー
