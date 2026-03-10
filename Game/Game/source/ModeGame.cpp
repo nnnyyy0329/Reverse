@@ -43,7 +43,8 @@
 
 bool ModeGame::Initialize() 
 {
-	StartFade(200, 90, 30);
+	//StartFade(200, 90, 30);
+
 	if (!base::Initialize()) { return false; }
 
 	// Manager初期化
@@ -483,7 +484,7 @@ bool ModeGame::Render()
 		activePlayer->CollisionRender();
 	}
 
-		// FPS表示（0.5秒ごとに更新して見やすくする）
+	// FPS表示（0.5秒ごとに更新して見やすくする）
 	{
 		static int s_frameCount = 0;
 		static unsigned long s_accumMs = 0;
@@ -509,6 +510,8 @@ bool ModeGame::Render()
 	_energyUI->Render();
 	_cameraManager->SwitchCameraRender();
 
+
+	// フェード処理
 	{
 		const int a = GetFadeAlpha(); // 0..255, 0=暗/255=明（StartFadeで in を与えた場合）
 		const int overlayAlpha = std::max(0, std::min(255, 255 - a)); // 0->255 の黒オーバーレイ
@@ -519,6 +522,8 @@ bool ModeGame::Render()
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
 	}
+
+
 	return true;
 }
 

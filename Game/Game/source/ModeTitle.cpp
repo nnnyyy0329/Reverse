@@ -100,7 +100,7 @@ bool ModeTitle::Process()
 	}
 
 	// 決定
-	if (input->IsTrigger(INPUT_ACTION::SELECT))
+	if (input->IsTrigger(INPUT_ACTION::SKIP))
 	{
 		switch(_menuIndex)
 		{

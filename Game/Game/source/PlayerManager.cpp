@@ -225,7 +225,6 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 	{
 		// ƒTƒEƒ“ƒhÄ¶
 		SoundServer::GetInstance()->Play("ChangePower", DX_PLAYTYPE_BACK);
-
 	}
 	else if(targetType == PLAYER_TYPE::BULLET)
 	{

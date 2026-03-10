@@ -494,10 +494,7 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 	}
 
 	// 回避済みの攻撃かチェック
-	if(_attackManager->IsDodgeHitAttack(attack))
-	{
-		return;
-	}
+	if(_attackManager->IsDodgeHitAttack(attack)){ return; }
 
 	// 攻撃コリジョン情報を取得
 	const AttackCollision& col = attack->GetAttackCollision();

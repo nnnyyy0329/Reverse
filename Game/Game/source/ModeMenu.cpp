@@ -63,7 +63,7 @@ bool ModeMenu::Process() {
 	_curPos = (_curPos + itemNum) % itemNum;
 
 	// A‚ÅƒAƒCƒeƒ€‚ÌSelected()‚ðŒÄ‚Ô
-	if (input->IsTrigger(INPUT_ACTION::SELECT))
+	if (input->IsTrigger(INPUT_ACTION::SKIP))
 	{
 		int ret = _menuItems[_curPos]->Selected();
 
