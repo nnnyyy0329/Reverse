@@ -168,145 +168,6 @@ AttackConstants SurfacePlayer::GetAttackConstants()const
 	return constants;
 }
 
-/* 現在未使用の攻撃情報仮想関数の定義 */
-//// 攻撃判定の情報設定
-//void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
-//{
-//	// 第1攻撃
-//	configs[0] = 
-//	{ 
-//		{0.0f, 90.0f, 0.0f},	// コリジョン上部位置
-//		{0.0f, 50.0f, 0.0f},	// コリジョン下部位置
-//		30.0f,					// 半径
-//		20.0f,					// 発生フレーム
-//		25.0f,					// 持続フレーム
-//		20.0f,					// 硬直フレーム
-//		10.0f,					// ダメージ
-//		ATTACK_STATE::ACTIVE,	// 攻撃状態
-//		3.0f,					// 攻撃中の移動速度
-//		false,					// 吹き飛ばし攻撃かどうか
-//	};	
-//
-//	// 第2攻撃
-//	configs[1] = 
-//	{ 
-//		{0.0f, 80.0f, 0.0f},	// コリジョン上部位置
-//		{0.0f, 10.0f, 0.0f},  	// コリジョン下部位置
-//		40.0f,					// 半径
-//		20.0f,					// 発生フレーム
-//		15.0f,					// 持続フレーム
-//		20.0f,					// 硬直フレーム
-//		10.0f,					// ダメージ
-//		ATTACK_STATE::ACTIVE,	// 攻撃状態
-//		3.0f,					// 攻撃中の移動速度
-//		false,					// 吹き飛ばし攻撃かどうか
-//	};
-//
-//	// 第3攻撃
-//	configs[2] =
-//	{ 
-//		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
-//		{0.0f, 0.0f, 0.0f},		// コリジョン下部位置
-//		25.0f,					// 半径
-//		20.0f,					// 発生フレーム
-//		25.0f,					// 持続フレーム
-//		20.0f,					// 硬直フレーム
-//		20.0f,					// ダメージ
-//		ATTACK_STATE::ACTIVE,	// 攻撃状態
-//		3.0f,					// 攻撃中の移動速度
-//		false,					// 吹き飛ばし攻撃かどうか
-//	};
-//}
-//
-//// 攻撃コリジョンオフセットの情報設定
-//void SurfacePlayer::GetAttackColOffsetConfigs(AttackColOffset configs[3])
-//{
-//	// 第1攻撃
-//	configs[0] = 
-//	{ 
-//		0.0f,					// 方向スケール
-//		true,					// 所有者の向きを基準とするか
-//	};
-//
-//	// 第2攻撃
-//	configs[1] = 
-//	{ 
-//		0.0f,					// 方向スケール
-//		true,					// 所有者の向きを基準とするか
-//	};
-//
-//	// 第3攻撃
-//	configs[2] =
-//	{ 
-//		0.0f,					// 方向スケール
-//		true,					// 所有者の向きを基準とするか
-//	};
-//}
-//
-//// 攻撃方向補正の情報設定
-//void SurfacePlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[3])
-//{
-//	// 第1攻撃
-//	configs[0] = 
-//	{ 
-//		true,	// 向き調整が可能かどうか
-//	};
-//
-//	// 第2攻撃
-//	configs[1] = 
-//	{ 
-//		true,	// 向き調整が可能かどうか
-//	};
-//
-//	// 第3攻撃
-//	configs[2] = 
-//	{ 
-//		true,	// 向き調整が可能かどうか
-//	};
-//}
-//
-//// 表プレイヤーの演出設定
-//AttackEffectConfig SurfacePlayer::GetAttackEffectConfig(AttackEffectConfig configs[3])
-//{
-//	// 表プレイヤー用の演出設定
-//	AttackEffectConfig config;
-//
-//	// 第1攻撃
-//	configs[0] =
-//	{
-//		config.effectName = "SurfacePlayerAttack1",		// ダメージエフェクト名
-//		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
-//		config.soundName = "sPlayerFirstAttack",		// ダメージサウンド名
-//	};
-//
-//	// 第2攻撃
-//	configs[1] =
-//	{
-//		config.effectName = "SurfacePlayerAttack1",		// ダメージエフェクト名
-//		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
-//		config.soundName = "sPlayerFirstAttack",		// ダメージサウンド名
-//	};
-//
-//	// 第3攻撃
-//	configs[2] =
-//	{
-//		config.effectName = "SurfacePlayerAttack3",		// ダメージエフェクト名
-//		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
-//		config.soundName = "iPlayerFirstAttack",		// ダメージサウンド名
-//	};
-//
-//
-//	return config;
-//}
-//
-//// 範囲攻撃の情報設定
-//AreaAttackConfig SurfacePlayer::GetAreaAttackConfig()
-//{
-//	// 表プレイヤーは範囲攻撃を行わない
-//	AreaAttackConfig config;
-//	return config;
-//}
-
 // 回避設定データ構造体
 DodgeConfig SurfacePlayer::GetDodgeConfig()
 {
@@ -345,24 +206,26 @@ ShieldConfig SurfacePlayer::GetShieldConfig()
 // 吸収攻撃システムの初期化
 void SurfacePlayer::MakeAbsorbSystem()
 {
+	// 吸収攻撃システムの生成
 	_absorbAttackSystem = std::make_unique<PlayerAbsorbAttackSystem>();
 }
 
 // 吸収攻撃システムの初期化
 void SurfacePlayer::InitializeAbsorbSystem()
 {
-	// 吸収システムの初期化
-	if(_absorbAttackSystem)
-	{
-		_absorbAttackSystem->Initialize(shared_from_this());		// 所有者を設定して初期化
-		_absorbAttackSystem->SetAbsorbConfig(GetAbsorbConfig());	// 吸収攻撃の設定を取得して設定
-	}
+	if(!_absorbAttackSystem) { return; }
+
+	// 所有者を設定して初期化
+	_absorbAttackSystem->Initialize(shared_from_this());		
+
+	// 吸収攻撃の設定を取得して設定
+	_absorbAttackSystem->SetAbsorbConfig(GetAbsorbConfig());	
 }
 
 // 吸収攻撃システムの更新
 void SurfacePlayer::ProcessAbsorbSystem()
 {
-	if(!_absorbAttackSystem) { return; }
+	if(!_absorbAttackSystem){ return; }
 
 	// 吸収攻撃モーションの切り替え条件処理
 	ProcessChangeAbsorbMotion();
@@ -386,7 +249,7 @@ AbsorbConfig SurfacePlayer::GetAbsorbConfig()
 	config.energyAbsorbRate = 10.0f;					// エネルギー吸収率
 	config.hpAbsorbRate = 10.0f;						// HP吸収率
 	config.absorbRange = 120.0f;						// 吸収範囲
-	config.absorbAngle = DX_PI_F / 2.0f;				// 90度の扇形(ラジアン)
+	config.absorbAngle = DX_PI_F / 2.0f;				// 90度の扇形
 	config.absorbDivision = 10;							// 滑らかな描画用
 	config.absorbEffectName = "SurfacePlayerAbsorb";	// 吸収エフェクト名
 

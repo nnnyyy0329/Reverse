@@ -225,7 +225,6 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 	{
 		// サウンド再生
 		SoundServer::GetInstance()->Play("ChangePower", DX_PLAYTYPE_BACK);
-
 	}
 	else if(targetType == PLAYER_TYPE::BULLET)
 	{
@@ -436,9 +435,10 @@ void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPl
 {
 	if(!oldPlayer || !newPlayer) return;
 
-	// 位置と向きの引き継ぎ
+	// 位置と向きと古い位置の引き継ぎ
 	newPlayer->SetPos(oldPlayer->GetPos());
 	newPlayer->SetDir(oldPlayer->GetDir());
+	newPlayer->SetOldPos(oldPlayer->GetOldPos());
 
 	// ステータスの引き継ぎ
 	newPlayer->SetLife(oldPlayer->GetLife());

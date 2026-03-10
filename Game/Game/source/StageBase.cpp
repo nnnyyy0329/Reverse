@@ -308,6 +308,10 @@ void StageBase::Process()
 {
 	// マップモデルの更新
 	{
+		if(IsAllEnemiesDefeated())
+		{
+			_triggerList.clear();
+		}
 	}
 
 

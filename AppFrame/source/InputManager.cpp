@@ -163,23 +163,26 @@ int InputManager::GetPadCode(INPUT_ACTION action)
 	switch (action)
 	{
 		// 移動(デジタル方向キー)
-		case INPUT_ACTION::MOVE_UP:     return PAD_INPUT_UP;
-		case INPUT_ACTION::MOVE_DOWN:   return PAD_INPUT_DOWN;
-		case INPUT_ACTION::MOVE_LEFT:   return PAD_INPUT_LEFT;
-		case INPUT_ACTION::MOVE_RIGHT:  return PAD_INPUT_RIGHT;
+		case INPUT_ACTION::MOVE_UP:			return PAD_INPUT_UP;
+		case INPUT_ACTION::MOVE_DOWN:		return PAD_INPUT_DOWN;
+		case INPUT_ACTION::MOVE_LEFT:		return PAD_INPUT_LEFT;
+		case INPUT_ACTION::MOVE_RIGHT:		return PAD_INPUT_RIGHT;
 		// アクション
-		case INPUT_ACTION::DODGE:       return PAD_INPUT_6;// X
-		case INPUT_ACTION::DASH:        return PAD_INPUT_5;// A
-		case INPUT_ACTION::TRANSFORM:   return PAD_INPUT_4;// Y
+		case INPUT_ACTION::DODGE:			return PAD_INPUT_6;// RB
+		case INPUT_ACTION::DASH:			return PAD_INPUT_5;// LB
+		case INPUT_ACTION::TRANSFORM:		return PAD_INPUT_4;// Y
 		// システム
-		case INPUT_ACTION::MENU:        return PAD_INPUT_8;// START
-		case INPUT_ACTION::SELECT:      return PAD_INPUT_1;// A
+		case INPUT_ACTION::MENU:			return PAD_INPUT_8;// START
+		case INPUT_ACTION::SELECT_POWER:	return PAD_INPUT_2;// B
+		case INPUT_ACTION::SELECT_BULLET:	return PAD_INPUT_3;// X
+		// アウトシステム関連
+		case INPUT_ACTION::SKIP:			return PAD_INPUT_1;// A
 		// デバッグ用
-		case INPUT_ACTION::DEBUG1:      return PAD_INPUT_9;// 左スティック押し込み
-		case INPUT_ACTION::DEBUG2:      return PAD_INPUT_10;// 右スティック押し込み
-		case INPUT_ACTION::DEBUG3:      return PAD_INPUT_7;// BACK
+		case INPUT_ACTION::DEBUG1:			return PAD_INPUT_9;// 左スティック押し込み
+		case INPUT_ACTION::DEBUG2:			return PAD_INPUT_10;// 右スティック押し込み
+		case INPUT_ACTION::DEBUG3:			return PAD_INPUT_7;// BACK
 
-		default:						return 0;
+		default:							return 0;
 	}
 }
 
@@ -189,29 +192,30 @@ int InputManager::GetKeyCode(INPUT_ACTION action)
 	switch (action)
 	{
 		// 移動
-		case INPUT_ACTION::MOVE_UP:     return KEY_INPUT_UP;
-		case INPUT_ACTION::MOVE_DOWN:   return KEY_INPUT_DOWN;
-		case INPUT_ACTION::MOVE_LEFT:   return KEY_INPUT_LEFT;
-		case INPUT_ACTION::MOVE_RIGHT:  return KEY_INPUT_RIGHT;
+		case INPUT_ACTION::MOVE_UP:			return KEY_INPUT_UP;
+		case INPUT_ACTION::MOVE_DOWN:		return KEY_INPUT_DOWN;
+		case INPUT_ACTION::MOVE_LEFT:		return KEY_INPUT_LEFT;
+		case INPUT_ACTION::MOVE_RIGHT:		return KEY_INPUT_RIGHT;
 		// アクション
-		case INPUT_ACTION::ATTACK:      return KEY_INPUT_Z;
-		case INPUT_ACTION::DODGE:       return KEY_INPUT_X;
-		case INPUT_ACTION::DASH:        return KEY_INPUT_C;
-		case INPUT_ACTION::ABILITY:     return KEY_INPUT_A;
-		case INPUT_ACTION::TRANSFORM:   return KEY_INPUT_S;
+		case INPUT_ACTION::ATTACK:			return KEY_INPUT_Z;
+		case INPUT_ACTION::DODGE:			return KEY_INPUT_X;
+		case INPUT_ACTION::DASH:			return KEY_INPUT_C;
+		case INPUT_ACTION::ABILITY:			return KEY_INPUT_A;
+		case INPUT_ACTION::TRANSFORM:		return KEY_INPUT_E;
 		// 項目選択
-		case INPUT_ACTION::UP:			return KEY_INPUT_UP;
-		case INPUT_ACTION::DOWN:		return KEY_INPUT_DOWN;
-		case INPUT_ACTION::LEFT:		return KEY_INPUT_LEFT;
-		case INPUT_ACTION::RIGHT:		return KEY_INPUT_RIGHT;
+		case INPUT_ACTION::UP:				return KEY_INPUT_UP;
+		case INPUT_ACTION::DOWN:			return KEY_INPUT_DOWN;
+		case INPUT_ACTION::LEFT:			return KEY_INPUT_LEFT;
+		case INPUT_ACTION::RIGHT:			return KEY_INPUT_RIGHT;
 		// システム
-		case INPUT_ACTION::MENU:        return KEY_INPUT_SPACE;
-		case INPUT_ACTION::SELECT:      return KEY_INPUT_Q;
+		case INPUT_ACTION::MENU:			return KEY_INPUT_SPACE;
+		case INPUT_ACTION::SELECT_POWER:	return KEY_INPUT_D;
+		case INPUT_ACTION::SELECT_BULLET:	return KEY_INPUT_S;
 		// デバッグ用
-		case INPUT_ACTION::DEBUG1:      return KEY_INPUT_F1;
-		case INPUT_ACTION::DEBUG2:      return KEY_INPUT_F2;
-		case INPUT_ACTION::DEBUG3:      return KEY_INPUT_F3;
+		case INPUT_ACTION::DEBUG1:			return KEY_INPUT_F1;
+		case INPUT_ACTION::DEBUG2:			return KEY_INPUT_F2;
+		case INPUT_ACTION::DEBUG3:			return KEY_INPUT_F3;
 
-		default:						return -1;
+		default:							return -1;
 	}
 }

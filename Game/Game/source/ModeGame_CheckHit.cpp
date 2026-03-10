@@ -7,6 +7,7 @@
 #include "BulletManager.h"
 #include "DodgeSystem.h"
 #include "CameraManager.h"
+#include "PlayerBase.h"
 #include "SurfacePlayer.h"
 #include "PlayerAbsorbAttackSystem.h" 
 #include "AbsorbAttack.h"
@@ -557,10 +558,7 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 	}
 
 	// 回避済みの攻撃かチェック
-	if(_attackManager->IsDodgeHitAttack(attack))
-	{
-		return;
-	}
+	if(_attackManager->IsDodgeHitAttack(attack)){ return; }
 
 	// 攻撃コリジョン情報を取得
 	const AttackCollision& col = attack->GetAttackCollision();
@@ -583,16 +581,24 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 			return;
 		}
 
-		// ヒットしたキャラを登録
-		attack->AddHitCharas(chara);
-
-		//EffectServer::GetInstance()->Play("SurfacePlayerAttackHit1", chara->GetPos());
-
 		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
 		auto charaType = chara->GetCharaType();							// キャラのタイプ取得
 
 		// 自分に攻撃しているかどうか
-		if(OwnerIsAttackingOwner(charaType, ownerType)){ return; }
+		if(OwnerIsAttackingOwner(charaType, ownerType)) { return; }
+
+		// ヒットしたキャラを登録
+		attack->AddHitCharas(chara);
+
+		// 攻撃のエフェクト設定からカメラシェイクの情報を取得
+		const AttackEffectConfig& effectConfig = attack->GetAttackEffectConfig();
+
+		// カメラの振動
+		if(!IsPlayerCharacter(charaType) && effectConfig.isActiveCameraShake)
+		{
+			// マグニチュードと持続時間を設定して振動開始
+			_cameraManager->StartCameraShake(effectConfig.cameraShakeMagnitude, effectConfig.cameraShakeDuration);
+		}
 		
 		// ダメージ処理
 		float damage = attack->GetDamage();			// ダメージ取得

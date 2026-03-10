@@ -214,6 +214,9 @@
     <ClCompile Include="source\CameraShakeSystem.cpp">
       <Filter>Camera\Addon</Filter>
     </ClCompile>
+    <ClCompile Include="source\AttackEffectSystem.cpp">
+      <Filter>Attack\System</Filter>
+    </ClCompile>
     <ClCompile Include="source\ICameraAddon.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -418,6 +421,9 @@
     <ClInclude Include="source\CameraShakeSystem.h">
       <Filter>Camera\Addon</Filter>
     </ClInclude>
+    <ClInclude Include="source\AttackEffectSystem.h">
+      <Filter>Attack\System</Filter>
+    </ClInclude>
     <ClInclude Include="source\ICameraAddon.h" />
   </ItemGroup>
   <ItemGroup>
@@ -558,6 +564,9 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\Enemy\A%2a">
       <UniqueIdentifier>{0c4e6ac5-25ac-4ace-a1c4-93a3b99f7c4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Attack\System">
+      <UniqueIdentifier>{326a01b9-9c72-4633-8585-c04bb0a5bff6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Camera\Manager">
       <UniqueIdentifier>{c9d6516b-d942-4da6-aefd-7e3e96874659}</UniqueIdentifier>

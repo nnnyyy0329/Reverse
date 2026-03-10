@@ -25,14 +25,11 @@ public:
 	virtual bool ProcessStartAttack() override;	// 攻撃開始
 	virtual bool ProcessStopAttack() override;	// 攻撃停止
 	
+
+	/* 吸収処理関連 */
+
 	// 入力による吸収処理
 	void ProcessAbsorbByInput(int key);
-
-	// 吸収情報を設定する関数
-	void SetAbsorbConfig(const AbsorbConfig& config);
-
-	// 吸収攻撃の設定取得
-	AbsorbConfig GetAbsorbConfig() const;
 
 	// 吸収処理
 	void ProcessAbsorb(std::shared_ptr<CharaBase>owner);
@@ -42,6 +39,9 @@ public:
 
 	// 入力が有効かどうか
 	bool IsInputActive() const { return _bIsInputActive; }
+
+
+	/* デバッグ関連 */
 
 	// デバッグ描画
 	void DebugRender();
@@ -54,6 +54,15 @@ public:
 
 	// 吸収攻撃のカウントデバッグ描画
 	void DrawAbsorbTimer();
+
+
+	/* 吸収情報関連 */
+
+	// 吸収情報を設定する関数
+	void SetAbsorbConfig(const AbsorbConfig& config);
+
+	// 吸収攻撃の設定取得
+	AbsorbConfig GetAbsorbConfig() const;
 
 private:	// 内部処理
 
@@ -77,6 +86,7 @@ protected:
 	float _fAbsorbCooldown;			// 吸収のクールダウン時間
 	float _fAbsorbTimer;			// 吸収タイマー
 	bool _bIsInputActive;			// 入力が有効かどうか
+	bool _bIsAbsorbIncreasing;		// 吸収量が上昇するかのフラグ
 	
 };
 

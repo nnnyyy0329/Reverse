@@ -1,10 +1,11 @@
 #include "BulletPlayer.h"
 #include "CameraManager.h"
 
-// プレベータようパラメータ
-namespace
+// 弾発射に関する定数
+namespace BulletConstants
 {
-	constexpr float consumeShootEnergy = 10.0f;	// 発射に消費するエネルギー
+	constexpr float CONSUME_NORMAL_BULLET_ENERGY = 7.5f;	// 通常弾のエネルギー消費量
+	constexpr float CONSUME_PIERCING_BULLET_ENERGY = 10.0f;	// 貫通弾のエネルギー消費量
 }
 
 // 弾発射設定
@@ -12,8 +13,8 @@ namespace bulletConfig
 {
 	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);
 	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);
-	constexpr float RADIUS = 50.0f;
-	constexpr float DAMAGE = 10.0f;
+	constexpr float RADIUS = 20.0f;
+	constexpr float DAMAGE = 50.0f;
 	constexpr float SPEED = 15.0f;
 	constexpr float LIFE_TIME = 120.0f;
 }
@@ -195,8 +196,9 @@ DodgeConfig BulletPlayer::GetDodgeConfig()
 // 弾発射設定
 BulletConfig BulletPlayer::GetBulletConfig()
 {
-	// 発射位置をワールド座標に変換
-	VECTOR worldOffset = TransOffsetToWorld(GetShootOffset(), GetShootDirection());
+	// オフセット値をワールド座標に変換
+	VECTOR worldOffset = GeometryUtility::TransOffsetToWorld(GetShootOffset(), GetShootDirection());
+	
 
 	// 弾プレイヤー用の弾発射設定
 	BulletConfig config;
@@ -360,33 +362,16 @@ void BulletPlayer::ShootInput()
 // 弾の発射
 void BulletPlayer::ShootBullet()
 {
-	//// 弾管理クラスの有効確認
-	//auto bulletManager = _bulletManager.lock();
-	//if(!bulletManager){ return; }
-
-	//// 発射位置をワールド座標に変換
-	//VECTOR worldOffset = TransOffsetToWorld(GetShootOffset(), GetShootDirection());
-
-	//// 弾情報設定
-	//bulletManager->Shoot
-	//(
-	//	VAdd(_vPos, worldOffset),
-	//	GetShootDirection(),
-	//	bulletConfig::RADIUS,
-	//	bulletConfig::SPEED,
-	//	bulletConfig::LIFE_TIME,
-	//	_eCharaType,
-	//	BULLET_TYPE::NORMAL
-	//);
-
 	auto bullet = BulletManager::GetInstance();
+
+	// 弾の発射
 	bullet->Shoot(GetBulletConfig(), GetBulletEffectConfig(), BULLET_OWNER_TYPE::BULLET_PLAYER);
 
 	// 発射時にエネルギー消費
 	EnergyManager* energyManager = EnergyManager::GetInstance();
 	if(energyManager)
 	{
-		energyManager->ConsumeEnergy(consumeShootEnergy);
+		energyManager->ConsumeEnergy(BulletConstants::CONSUME_NORMAL_BULLET_ENERGY);
 	}
 
 	_bIsShootFromRightArm = !_bIsShootFromRightArm; // 右腕と左腕の切り替え
@@ -395,38 +380,6 @@ void BulletPlayer::ShootBullet()
 // エイムモードの処理
 void BulletPlayer::ProcessAimMode(bool aimKey)
 {
-}
-
-// オフセット位置をワールド座標に変換
-VECTOR BulletPlayer::TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir)
-{
-	// プレイヤーの向きベクトルの正規化
-	VECTOR dirNorm = VNorm(playerDir);
-
-	// 上ベクトル設定
-	VECTOR upVec = VGet(0.0f, 1.0f, 0.0f);
-
-	// 外積で右ベクトルを計算
-	VECTOR rightVec = VCross(upVec, dirNorm);
-
-	// 右ベクトルの正規化
-	rightVec = VNorm(rightVec);
-
-	// ワールド座標に変換
-	VECTOR worldPos = VAdd
-	(
-		// 右ベクトルと上ベクトルの合成位置
-		VAdd
-		(
-			VScale(rightVec, offset.x),
-			VScale(upVec, offset.y)
-		),
-
-		// 前方向ベクトルのスケーリング位置
-		VScale(dirNorm, offset.z)
-	);
-
-	return worldPos;
 }
 
 // 発射位置オフセットの取得

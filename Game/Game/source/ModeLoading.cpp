@@ -15,27 +15,25 @@ bool ModeLoading::Initialize()
 	{
 		auto rs = ResourceServer::GetInstance();
 
-		
-
 		// エフェクト
 		{
 			rs->Register("Laser", "effect/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
-			// 表プレイヤーの攻撃エフェクト
-			rs->Register("SurfacePlayerAttack1", "effect/surfacePlayer/Absorb_Attack_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("SurfacePlayerAttack2", "effect/surfacePlayer/Absorb_Attack_01.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("SurfacePlayerAttack3", "effect/surfacePlayer/Absorb_Attack_02.efkefc", RESOURCE_TYPE::Effect, 20.0f);
 
-			// 表プレイヤーのダメージエフェクト
-			rs->Register("InteriorPlayerAttack1", "effect/interiorPlayer/NChange_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("InteriorPlayerAttack2", "effect/interiorPlayer/NChange_Attack_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("InteriorPlayerAttack3", "effect/interiorPlayer/NChange_Attack_02.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("InteriorPlayerAttack4", "effect/interiorPlayer/NChange_Attack_03.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("InteriorPlayerAttack5", "effect/interiorPlayer/NChange_Attack_04.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			/* プレイヤー */
+
+			// 表プレイヤーの吸収攻撃エフェクト
+			rs->Register("SurfacePlayerAbsorb", "effect/SurfacePlayer/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+
+			// 裏プレイヤーの攻撃エフェクト
+			rs->Register("InteriorPlayerAttack_123", "effect/InteriorPlayer/NChange_Attack.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerFourthAttack", "effect/InteriorPlayer/NChange_Fourth_Attack.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("InteriorPlayerFifthAttack", "effect/InteriorPlayer/NChange_Attack_Scallup.efkefc", RESOURCE_TYPE::Effect, 20.0f);
 
 			// 表プレイヤーの攻撃ヒットエフェクト
 			rs->Register("SurfacePlayerAttackHit1", "effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 			rs->Register("SurfacePlayerAttackHit2", "effect/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+
 
 			// 敵
 			// 共通
@@ -144,15 +142,26 @@ bool ModeLoading::Initialize()
 
 		}
 
-		// テキスト　セリフ　操作説明etc..
+		// シナリオ　
 		{
-			rs->Register("GameStartText",  "res/Graph/Text1.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("GameStartText1", "res/Graph/Text2.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("GameSerif1",     "res/Graph/TextB.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText ",  "res/Senario/story1.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText1",  "res/Senario/story2.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText2",  "res/Senario/story3.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText3",  "res/Senario/story4.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText4",  "res/Senario/story5.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText5",  "res/Senario/story6.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText6",  "res/Senario/story7.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText7",  "res/Senario/story8.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText8",  "res/Senario/story9.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText9",  "res/Senario/story10.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText10", "res/Senario/story11.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText11", "res/Senario/story12.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 		
+	    //　テキストボックス　
+		{
 
-		
+		}
 	}
 
 	// リソースのロード開始

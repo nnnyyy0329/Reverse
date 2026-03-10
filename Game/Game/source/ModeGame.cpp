@@ -40,6 +40,8 @@
 
 bool ModeGame::Initialize() 
 {
+	//StartFade(200, 90, 30);
+
 	if (!base::Initialize()) { return false; }
 
 	// Manager初期化
@@ -169,7 +171,7 @@ bool ModeGame::Terminate()
 bool ModeGame::Process()
 {
 	base::Process();
-	
+	AdvanceFade();
 	// InputManagerから入力を取得
 	auto& im = InputManager::GetInstance();
 
@@ -340,6 +342,8 @@ bool ModeGame::Process()
 
 bool ModeGame::Render() 
 {
+
+
 	base::Render();
 
 	// 3D基本設定
@@ -446,7 +450,7 @@ bool ModeGame::Render()
 		activePlayer->CollisionRender();
 	}
 
-		// FPS表示（0.5秒ごとに更新して見やすくする）
+	// FPS表示（0.5秒ごとに更新して見やすくする）
 	{
 		static int s_frameCount = 0;
 		static unsigned long s_accumMs = 0;
@@ -472,6 +476,20 @@ bool ModeGame::Render()
 	_energyUI->Render();
 	_cameraManager->Render();
 
+
+	// フェード処理
+	{
+		const int a = GetFadeAlpha(); // 0..255, 0=暗/255=明（StartFadeで in を与えた場合）
+		const int overlayAlpha = std::max(0, std::min(255, 255 - a)); // 0->255 の黒オーバーレイ
+		if(overlayAlpha > 0)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, overlayAlpha);
+			DrawBox(0, 0, 1920, 1080, GetColor(0, 0, 0), TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
+	}
+
+
 	return true;
 }
 
@@ -482,7 +500,7 @@ void ModeGame::InitializeLights()
 
 	// ライトを追加
 	// test
-	AddPointLight(VGet(0.0f, 500.0f, 0.0f), 1000.0f, GetColorF(1.0f, 1.0f, 1.0f, 0.0f));
+	AddPointLight(VGet(0.0f, 1000.0f, 0.0f), 1500.0f, GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void ModeGame::ProcessLights()
@@ -567,11 +585,11 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 	// 新しいステージを設定
 	_stage = newStage;
 
-	// プレイヤーの位置をリセット
-	VECTOR vStartPos = VGet(0.0f, 0.0f, 0.0f);
+	//// プレイヤーの位置をリセット
+	//VECTOR vStartPos = VGet(0.0f, 0.0f, 0.0f);
 
-	auto activePlayer = _playerManager->GetActivePlayerShared();
-	activePlayer->SetPos(vStartPos);
+	//auto activePlayer = _playerManager->GetActivePlayerShared();
+	//activePlayer->SetPos(vStartPos);
 
 	// 敵の再設定
 	for (const auto& enemy : _stage->GetEnemies())

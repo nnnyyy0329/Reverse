@@ -13,14 +13,23 @@ enum class ABILITY_TYPE
 	_EOT_
 };
 
+// 能力選択のインデックス定数
+namespace AbilityConstants
+{
+	constexpr int ABILITY_SELECTION_SURFACE = 0;	// 表プレイヤー選択
+	constexpr int ABILITY_SELECTION_BULLET = 1;		// 弾プレイヤー選択
+	constexpr int ABILITY_SELECTION_INTERIOR = 2;	// 裏プレイヤー選択
+}
+
 // 能力選択から実際の能力タイプへの変換
 inline ABILITY_TYPE ConvertSelectionToAbility(int selection)
 {
+	// 選択インデックスに応じて能力タイプを返す
 	switch(selection)
 	{
-		case 0:		return ABILITY_TYPE::SURFACE_PLAYER;
-		case 1:		return ABILITY_TYPE::BULLET_PLAYER;
-		case 2:		return ABILITY_TYPE::INTERIOR_PLAYER;
+		case AbilityConstants::ABILITY_SELECTION_SURFACE:	return ABILITY_TYPE::SURFACE_PLAYER;
+		case AbilityConstants::ABILITY_SELECTION_BULLET:	return ABILITY_TYPE::BULLET_PLAYER;
+		case AbilityConstants::ABILITY_SELECTION_INTERIOR:	return ABILITY_TYPE::INTERIOR_PLAYER;
 
 		default:	return ABILITY_TYPE::NONE;
 	}

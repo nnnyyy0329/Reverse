@@ -183,4 +183,37 @@ namespace GeometryUtility
 		DrawLine3D(center, startPoint, lineColor);
 		DrawLine3D(center, endPoint, lineColor);
 	}
+
+	// オフセット位置をワールド座標に変換
+	VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir)
+	{
+		// プレイヤーの向きベクトルの正規化
+		VECTOR dirNorm = VNorm(playerDir);
+
+		// 上ベクトル設定
+		VECTOR upVec = VGet(0.0f, 1.0f, 0.0f);
+
+		// 外積で右ベクトルを計算
+		VECTOR rightVec = VCross(upVec, dirNorm);
+
+		// 右ベクトルの正規化
+		rightVec = VNorm(rightVec);
+
+		// ワールド座標に変換
+		VECTOR worldPos = VAdd
+		(
+			// 右ベクトルと上ベクトルの合成位置
+			VAdd
+			(
+				VScale(rightVec, offset.x),	// 右方向ベクトルのスケーリング位置
+				VScale(upVec, offset.y)		// 上方向ベクトルのスケーリング位置
+			),
+
+			// 前方向ベクトルのスケーリング位置
+			VScale(dirNorm, offset.z)
+		);
+
+		return worldPos;
+	}
+
 }

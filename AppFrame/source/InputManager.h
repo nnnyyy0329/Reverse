@@ -26,7 +26,11 @@ enum class INPUT_ACTION
 
 	// システム
 	MENU,
-	SELECT,
+	SELECT_POWER,
+	SELECT_BULLET,
+
+	// アウトシステム関連
+	SKIP,
 
 	// デバッグ用
 	DEBUG1,

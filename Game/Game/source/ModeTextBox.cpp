@@ -36,7 +36,7 @@ bool ModeTextBox::Process()
 	const int kInputWaitFrames = 10;
 	const bool canInput = (_frameCount >= kInputWaitFrames);
 
-	if(canInput && (im.IsTrigger(INPUT_ACTION::SELECT) || im.IsTrigger(INPUT_ACTION::ATTACK)))
+	if(canInput && (input->IsTrigger(INPUT_ACTION::SELECT_POWER) || input->IsTrigger(INPUT_ACTION::ATTACK)))
 	{
 		_bClose = true;
 	}

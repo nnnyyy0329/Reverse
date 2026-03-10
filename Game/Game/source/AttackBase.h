@@ -2,6 +2,9 @@
 
 #pragma once
 #include "appframe.h"
+#include "GeometryUtility.h"
+
+#include "AttackEffectSystem.h"
 
   // 前方宣言
 class CharaBase;
@@ -63,6 +66,7 @@ struct AttackMovement
 	bool canMove;		// 移動可能フラグ
 };
 
+// 攻撃のベースクラス
 class AttackBase
 {
 public:
@@ -159,10 +163,14 @@ public:
 	float GetDamage() const { return _stcAttackCol.damage; }		// ダメージ取得
 	void SetDamage(float damage) { _stcAttackCol.damage = damage; }	// ダメージ設定
 
-	void SetOwner(std::shared_ptr<CharaBase> owner) { _owner = owner; }		// 所有者設定
 	std::shared_ptr<CharaBase> GetOwner() const { return _owner.lock(); }	// 所有者取得
+	void SetOwner(std::shared_ptr<CharaBase> owner) { _owner = owner; }		// 所有者設定
+
+	const AttackEffectConfig& GetAttackEffectConfig() const { return _attackEffectConfig; }			// 攻撃エフェクト情報取得
+	void SetAttackEffectConfig(const AttackEffectConfig& config) { _attackEffectConfig = config; }	// 攻撃エフェクト情報設定
 
 protected:
+
 	std::weak_ptr<CharaBase> _owner;	// 所有者キャラ
 
 	// 状態関係
@@ -179,14 +187,17 @@ protected:
 	bool _canDirAdjust;		// 向き調整可能フラグ
 
 private:
+
 	std::vector<std::shared_ptr<CharaBase>> _hitCharas;	// 当たったキャラを管理
+
+	// 攻撃エフェクト情報
+	AttackEffectConfig _attackEffectConfig;	
 
 	// 入力方向計算関数
 	VECTOR CalculateInputDir(const AnalogState& analog);
 
-	// 元の攻撃コリジョン位置を保存する変数
-	VECTOR _originalColTop;
-	VECTOR _originalColBottom;
+	VECTOR _originalColTop;		// 元のコリジョン上部位置
+	VECTOR _originalColBottom;	// 元のコリジョン下部位置
 
 };
 

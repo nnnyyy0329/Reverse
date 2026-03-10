@@ -86,6 +86,10 @@ void PlayerBase::ProcessInputMove()
 
 	float digitalX = 0.0f;
 	float digitalY = 0.0f;
+	if (im->IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
+	if (im->IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }
 	
 	// アナログ入力による移動、なければデジタル入力
 	float inputX = (abs(analog.lx) > analogMin) ? analog.lx : digitalX;
@@ -338,7 +342,7 @@ void PlayerBase::ProcessDebug()
 
 	if(im.IsTrigger(INPUT_ACTION::DASH))
 	{
-		//_cameraManager->StartCameraShake(5.0f, 15.0f);
+		//_cameraManager->StartCameraShake(5.0f, 10.0f);
 	}
 }
 
