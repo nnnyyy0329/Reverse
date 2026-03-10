@@ -9,37 +9,6 @@ namespace
 	constexpr int HOLD_FRAMES = 90;
 	constexpr int FADE_OUT_FRAMES = 30;
 	constexpr int TOTAL_FRAMES = FADE_IN_FRAMES + HOLD_FRAMES + FADE_OUT_FRAMES;
-
-	int ClampAlpha(int a)
-	{
-		if(a < 0) { return 0; }
-		if(a > 255) { return 255; }
-		return a;
-	}
-
-	int CalcAlpha(int frame)
-	{
-		if(frame < FADE_IN_FRAMES)
-		{
-			const float t = static_cast<float>(frame) / static_cast<float>(FADE_IN_FRAMES);
-			return ClampAlpha(static_cast<int>(255.0f * t));
-		}
-
-		frame -= FADE_IN_FRAMES;
-		if(frame < HOLD_FRAMES)
-		{
-			return 255;
-		}
-
-		frame -= HOLD_FRAMES;
-		if(frame < FADE_OUT_FRAMES)
-		{
-			const float t = static_cast<float>(frame) / static_cast<float>(FADE_OUT_FRAMES);
-			return ClampAlpha(static_cast<int>(255.0f * (1.0f - t)));
-		}
-
-		return 0;
-	}
 }
 
 bool ModeLogo::Initialize()
@@ -49,6 +18,9 @@ bool ModeLogo::Initialize()
 	_logoHandle = LoadGraph("res/Graph/AMGlogo.png");
 	_frameCount = 0;
 	_bNext = false;
+
+	// ModeBase の共通フェードを使う
+	StartFade(FADE_IN_FRAMES, HOLD_FRAMES, FADE_OUT_FRAMES);
 
 	return true;
 }
@@ -69,8 +41,12 @@ bool ModeLogo::Process()
 		_bNext = true;
 	}
 
+	// フェードの内部カウンタを進める
+	AdvanceFade();
+
 	_frameCount++;
-	if(_frameCount >= TOTAL_FRAMES)
+	// フェードが終了したら次へ
+	if(IsFadeFinished())
 	{
 		_bNext = true;
 	}
@@ -102,7 +78,7 @@ bool ModeLogo::Render()
 		const int x = (1920 - scaledW) / 2;
 		const int y = (1080 - scaledH) / 2;
 
-		const int a = CalcAlpha(_frameCount);
+		const int a = GetFadeAlpha();
 
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, a);
 		DrawExtendGraph(x, y, x + scaledW, y + scaledH, _logoHandle, TRUE);
