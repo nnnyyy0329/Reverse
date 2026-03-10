@@ -12,6 +12,7 @@
 #include "PlayerAbsorbAttackSystem.h" 
 #include "AbsorbAttack.h"
 #include "ModeTextBox.h"
+#include "CameraShakeSystem.h"
 
 // プレベータようパラメータ
 namespace
@@ -596,8 +597,16 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		// カメラの振動
 		if(!IsPlayerCharacter(charaType) && effectConfig.isActiveCameraShake)
 		{
-			// マグニチュードと持続時間を設定して振動開始
-			_cameraManager->StartCameraShake(effectConfig.cameraShakeMagnitude, effectConfig.cameraShakeDuration);
+			if (_cameraManager)
+			{
+				auto shake = std::make_shared<CameraShakeSystem>();
+
+				// マグニチュードと持続時間を設定
+				shake->StartShake(effectConfig.cameraShakeMagnitude, effectConfig.cameraShakeDuration);
+
+				// カメラマネージャーに振動を追加
+				_cameraManager->AddAddon(shake);
+			}
 		}
 		
 		// ダメージ処理

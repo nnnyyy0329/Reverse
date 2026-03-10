@@ -59,7 +59,7 @@ void DebugCamera::Process()
 			if (bIsPut)
 			{
 				// ターゲットの高さ変更
-				_vTarget.y -= ly * MOVE_SPEED;
+				_vTarget.y += -ly * MOVE_SPEED;
 
 				// ズームイン・アウト
 				_fDistance += lx * ZOOM_SPEED;
@@ -67,15 +67,15 @@ void DebugCamera::Process()
 			}
 			else // 通常時
 			{
-				// カメラの向いている方向のベクトル
-				// Y成分は無視してXZ平面上のベクトルにする
-				VECTOR vForward = VGet(cos(_fAngleH), 0.0f, sin(_fAngleH));
-				VECTOR vRight = VGet(cos(_fAngleH + DX_PI_F / 2.0f), 0.0f, sin(_fAngleH + DX_PI_F / 2));
+				// カメラの向いている前方ベクトル
+				VECTOR vForward = VGet(sinf(_fAngleH), 0.0f, cosf(_fAngleH));
+				// 前方ベクトルから時計回りに90度回した右方向ベクトル
+				VECTOR vRight = VGet(cosf(_fAngleH), 0.0f, -sinf(_fAngleH));
 
 				// 移動量を計算
 				VECTOR vMove = VAdd(
 					VScale(vForward, ly * MOVE_SPEED),
-					VScale(vRight, lx * MOVE_SPEED)
+					VScale(vRight, -lx * MOVE_SPEED)
 				);
 
 				// ターゲット位置を更新

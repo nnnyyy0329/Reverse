@@ -87,7 +87,6 @@ bool ModeTitle::Process()
 	// フェードの内部カウンタを進める
 	AdvanceFade();
 
-	InputManager* input = InputManager::GetInstance();
 	auto& im = InputManager::GetInstance();
 
 	// ↑↓で選択
@@ -101,7 +100,7 @@ bool ModeTitle::Process()
 	}
 
 	// 決定
-	if (input->IsTrigger(INPUT_ACTION::SKIP))
+	if (im.IsTrigger(INPUT_ACTION::SKIP))
 	{
 		switch(_menuIndex)
 		{

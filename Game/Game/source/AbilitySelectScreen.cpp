@@ -141,7 +141,7 @@ void AbilitySelectScreen::SelectionByInput()
 	//		// 一番右に移動
 	//		_iCurrentSelection = MAX_SELECT;
 	//	}
-	//}
+	}
 
 	// 右キーが押されたら
 	if(im.IsTrigger(INPUT_ACTION::RIGHT))
@@ -154,7 +154,7 @@ void AbilitySelectScreen::SelectionByInput()
 	//		// 一番左に移動
 	//		_iCurrentSelection = MIN_SELECT;
 	//	}
-	//}
+	}
 
 	/// 決定キーが押されたら
 	if(im.IsTrigger(INPUT_ACTION::TRANSFORM))
@@ -203,7 +203,7 @@ void AbilitySelectScreen::SelectionByInput()
 	//}
 
 	// パワーアビリティ選択
-	if(im->IsTrigger(INPUT_ACTION::SELECT_POWER))
+	if(im.IsTrigger(INPUT_ACTION::SELECT_POWER))
 	{
 		// 裏プレイヤーが解放されているかチェック
 		if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(ABILITY_TYPE::INTERIOR_PLAYER))
@@ -218,11 +218,11 @@ void AbilitySelectScreen::SelectionByInput()
 		_selectionState = SelectionState::SELECT_COMPLETED;	
 
 		// 入力をリセット
-		im->ResetInput();
+		im.ResetInput();
 	}
 
 	// 弾発射アビリティ選択
-	if(im->IsTrigger(INPUT_ACTION::SELECT_BULLET))
+	if(im.IsTrigger(INPUT_ACTION::SELECT_BULLET))
 	{
 		// 弾プレイヤーが解放されているかチェック
 		if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(ABILITY_TYPE::BULLET_PLAYER))
@@ -237,7 +237,7 @@ void AbilitySelectScreen::SelectionByInput()
 		_selectionState = SelectionState::SELECT_COMPLETED;	
 
 		// 入力をリセット
-		im->ResetInput();
+		im.ResetInput();
 	}
 }
 
