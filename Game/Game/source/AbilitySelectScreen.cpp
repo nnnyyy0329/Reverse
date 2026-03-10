@@ -81,46 +81,7 @@ bool AbilitySelectScreen::Render()
 // 入力による画面表示
 void AbilitySelectScreen::SelectScreenByInput()
 {
-	//if(!IsSelectActiveByPlayerType()){ return; }	// プレイヤータイプに応じて選択可能かどうか
-	auto im = InputManager::GetInstance();
 
-	//if(im->IsTrigger(INPUT_ACTION::TRANSFORM))
-	//{
-	//	// 状態による分岐
-	//	switch(_selectionState)
-	//	{
-	//		case SelectionState::NOT_SELECTION: // 非選択状態のとき
-	//		{
-	//			_selectionState = SelectionState::SELECTING;	// 選択画面表示
-	//			_iCursorCount = 0;								// カウンターリセット
-
-	//			break;
-	//		}
-	//			
-	//		case SelectionState::SELECTING: // 選択中のとき
-	//		{
-	//			break;
-	//		}
-	//			
-	//		case SelectionState::SELECT_COMPLETED: // 選択確定のとき
-	//		{
-	//			// 処理完了後も再度選択画面を開けるようにする
-	//			_selectionState = SelectionState::NOT_SELECTION;	// 選択状態リセット
-	//			_iSelectedAbility = -1;								// 選択されたアビリティリセット
-
-	//			break;
-	//		}
-
-	//		case SelectionState::COMPLETED: // 選択処理完了のとき
-	//		{
-	//			// 処理完了後も再度選択画面を開けるようにする
-	//			_selectionState = SelectionState::NOT_SELECTION;	// 選択状態リセット
-	//			_iSelectedAbility = -1;								// 選択されたアビリティリセット
-
-	//			break;
-	//		}
-	//	}
-	//}
 }
 
 // 入力による選択処理
@@ -133,10 +94,19 @@ void AbilitySelectScreen::SelectionByInput()
 		return;
 	}
 
-	auto im = InputManager::GetInstance();	// 入力クラス
+	auto& im = InputManager::GetInstance();
 
-	// デバッグ用の入力
-	if(im->IsTrigger(INPUT_ACTION::DEBUG2))
+	//// デバッグ用の入力
+	//if(im.IsTrigger(INPUT_ACTION::DEBUG2))
+	//{
+	//	if(_playerUnlockManager)
+	//	{
+	//		// デバッグ用の強制解放
+	//		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::INTERIOR_PLAYER);	// 裏プレイヤー解放
+	//		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::BULLET_PLAYER);		// 弾プレイヤー解放
+	//	}
+	//}
+	if(EnergyManager::GetInstance()->CanSwitchPlayer())
 	{
 		if(_playerUnlockManager)
 		{
@@ -147,7 +117,7 @@ void AbilitySelectScreen::SelectionByInput()
 	}
 
 	// パワーアビリティ選択
-	if(im->IsTrigger(INPUT_ACTION::SELECT_POWER))
+	if(im.IsTrigger(INPUT_ACTION::SELECT_POWER))
 	{
 		// 裏プレイヤーが解放されているかチェック
 		if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(ABILITY_TYPE::INTERIOR_PLAYER))
@@ -162,11 +132,11 @@ void AbilitySelectScreen::SelectionByInput()
 		_selectionState = SelectionState::SELECT_COMPLETED;	
 
 		// 入力をリセット
-		im->ResetInput();
+		im.ResetInput();
 	}
 
 	// 弾発射アビリティ選択
-	if(im->IsTrigger(INPUT_ACTION::SELECT_BULLET))
+	if(im.IsTrigger(INPUT_ACTION::SELECT_BULLET))
 	{
 		// 弾プレイヤーが解放されているかチェック
 		if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(ABILITY_TYPE::BULLET_PLAYER))
@@ -181,7 +151,7 @@ void AbilitySelectScreen::SelectionByInput()
 		_selectionState = SelectionState::SELECT_COMPLETED;	
 
 		// 入力をリセット
-		im->ResetInput();
+		im.ResetInput();
 	}
 }
 
