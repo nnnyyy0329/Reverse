@@ -341,7 +341,7 @@ void InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig config[5])
 		
 		/* カメラシェイク */
 		true,						// カメラシェイクを有効にするか
-		3.0f,						// カメラ振動の強さ
+		5.0f,						// カメラ振動の強さ
 		5.0f,						// カメラ振動の持続時間
 
 		/* ヒットストップ */
@@ -363,7 +363,7 @@ void InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig config[5])
 
 		/* カメラシェイク */
 		true,						// カメラシェイクを有効にするか
-		3.0f,						// カメラ振動の強さ
+		5.0f,						// カメラ振動の強さ
 		5.0f,						// カメラ振動の持続時間
 
 		/* ヒットストップ */
@@ -385,7 +385,7 @@ void InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig config[5])
 
 		/* カメラシェイク */
 		true,						// カメラシェイクを有効にするか
-		3.0f,						// カメラ振動の強さ
+		5.0f,						// カメラ振動の強さ
 		5.0f,						// カメラ振動の持続時間
 
 		/* ヒットストップ */
@@ -407,7 +407,7 @@ void InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig config[5])
 
 		/* カメラシェイク */
 		true,							// カメラシェイクを有効にするか
-		3.0f,							// カメラ振動の強さ
+		5.0f,							// カメラ振動の強さ
 		5.0f,							// カメラ振動の持続時間
 
 		/* ヒットストップ */

@@ -100,7 +100,7 @@ void PlayerAbsorbAttackSystem::DebugRender()
 // ‹zŽûUŒ‚‚ÌÝ’è
 void PlayerAbsorbAttackSystem::SetAbsorbConfig(const AbsorbConfig& config)
 {
-	if (_absorbAttack)
+	if(_absorbAttack)
 	{
 		// ‹zŽûUŒ‚ƒIƒuƒWƒFƒNƒg‚ÉÝ’è‚ð“n‚·
 		_absorbAttack->SetAbsorbConfig(config);
@@ -110,7 +110,7 @@ void PlayerAbsorbAttackSystem::SetAbsorbConfig(const AbsorbConfig& config)
 // ‹zŽûUŒ‚‚ÌÝ’èŽæ“¾
 AbsorbConfig PlayerAbsorbAttackSystem::GetAbsorbConfig() const
 {
-	if (_absorbAttack)
+	if(_absorbAttack)
 	{
 		// ‹zŽûUŒ‚ƒIƒuƒWƒFƒNƒg‚©‚çÝ’è‚ðŽæ“¾‚µ‚Ä•Ô‚·
 		return _absorbAttack->GetAbsorbConfig();
@@ -123,7 +123,7 @@ AbsorbConfig PlayerAbsorbAttackSystem::GetAbsorbConfig() const
 // UŒ‚ŠJŽn
 void PlayerAbsorbAttackSystem::StartAbsorbAttack()
 {
-	if(!CanStartAbsorbAttack() || !_absorbAttack) return;
+	if(!CanStartAbsorbAttack() || !_absorbAttack){ return; }
 
 	// UŒ‚ŠJŽn
 	_absorbAttack->ProcessStartAttack();

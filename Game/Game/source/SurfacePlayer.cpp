@@ -345,24 +345,26 @@ ShieldConfig SurfacePlayer::GetShieldConfig()
 // 吸収攻撃システムの初期化
 void SurfacePlayer::MakeAbsorbSystem()
 {
+	// 吸収攻撃システムの生成
 	_absorbAttackSystem = std::make_unique<PlayerAbsorbAttackSystem>();
 }
 
 // 吸収攻撃システムの初期化
 void SurfacePlayer::InitializeAbsorbSystem()
 {
-	// 吸収システムの初期化
-	if(_absorbAttackSystem)
-	{
-		_absorbAttackSystem->Initialize(shared_from_this());		// 所有者を設定して初期化
-		_absorbAttackSystem->SetAbsorbConfig(GetAbsorbConfig());	// 吸収攻撃の設定を取得して設定
-	}
+	if(!_absorbAttackSystem) { return; }
+
+	// 所有者を設定して初期化
+	_absorbAttackSystem->Initialize(shared_from_this());		
+
+	// 吸収攻撃の設定を取得して設定
+	_absorbAttackSystem->SetAbsorbConfig(GetAbsorbConfig());	
 }
 
 // 吸収攻撃システムの更新
 void SurfacePlayer::ProcessAbsorbSystem()
 {
-	if(!_absorbAttackSystem) { return; }
+	if(!_absorbAttackSystem){ return; }
 
 	// 吸収攻撃モーションの切り替え条件処理
 	ProcessChangeAbsorbMotion();
@@ -386,7 +388,7 @@ AbsorbConfig SurfacePlayer::GetAbsorbConfig()
 	config.energyAbsorbRate = 10.0f;					// エネルギー吸収率
 	config.hpAbsorbRate = 10.0f;						// HP吸収率
 	config.absorbRange = 120.0f;						// 吸収範囲
-	config.absorbAngle = DX_PI_F / 2.0f;				// 90度の扇形(ラジアン)
+	config.absorbAngle = DX_PI_F / 2.0f;				// 90度の扇形
 	config.absorbDivision = 10;							// 滑らかな描画用
 	config.absorbEffectName = "SurfacePlayerAbsorb";	// 吸収エフェクト名
 
