@@ -33,6 +33,9 @@ public:
 	int GetFadeAlpha() const;
 	bool IsFadeActive() const;
 	bool IsFadeFinished() const;
+
+	
+
 private:
 	friend	ModeServer;
 	// ModeServer—p

@@ -3,13 +3,6 @@
 #include "ModeTitle.h"
 #include "ApplicationMain.h"
 
-namespace
-{
-	constexpr int FADE_IN_FRAMES = 30;
-	constexpr int HOLD_FRAMES = 90;
-	constexpr int FADE_OUT_FRAMES = 30;
-	constexpr int TOTAL_FRAMES = FADE_IN_FRAMES + HOLD_FRAMES + FADE_OUT_FRAMES;
-}
 
 bool ModeLogo::Initialize()
 {
@@ -19,8 +12,7 @@ bool ModeLogo::Initialize()
 	_frameCount = 0;
 	_bNext = false;
 
-	// ModeBase の共通フェードを使う
-	StartFade(FADE_IN_FRAMES, HOLD_FRAMES, FADE_OUT_FRAMES);
+	StartFade(30, 90, 30);
 
 	return true;
 }
