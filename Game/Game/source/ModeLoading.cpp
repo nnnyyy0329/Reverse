@@ -15,29 +15,25 @@ bool ModeLoading::Initialize()
 	{
 		auto rs = ResourceServer::GetInstance();
 
-		
-
 		// エフェクト
 		{
 			rs->Register("Laser", "effect/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
-			// 表プレイヤーの攻撃エフェクト
-			rs->Register("SurfacePlayerAttack1", "effect/surfacePlayer/Absorb_Attack_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("SurfacePlayerAttack2", "effect/surfacePlayer/Absorb_Attack_01.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("SurfacePlayerAttack3", "effect/surfacePlayer/Absorb_Attack_02.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+
+			/* プレイヤー */
+
+			// 表プレイヤーの吸収攻撃エフェクト
+			rs->Register("SurfacePlayerAbsorb", "effect/SurfacePlayer/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 			// 裏プレイヤーの攻撃エフェクト
-			
-			rs->Register("InteriorPlayerAttack_123", "effect/interiorPlayer/NChange_Attack.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("InteriorPlayerFourthAttack", "effect/interiorPlayer/NChange_Fourth_Attack.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("InteriorPlayerFifthAttack", "effect/interiorPlayer/NChange_Attack_Scallup.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("InteriorPlayerAttack_123", "effect/InteriorPlayer/NChange_Attack.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerFourthAttack", "effect/InteriorPlayer/NChange_Fourth_Attack.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("InteriorPlayerFifthAttack", "effect/InteriorPlayer/NChange_Attack_Scallup.efkefc", RESOURCE_TYPE::Effect, 20.0f);
 
-			// 表プレイヤーの攻撃ヒット
-
-
-
+			// 表プレイヤーの攻撃ヒットエフェクト
 			rs->Register("SurfacePlayerAttackHit1", "effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 			rs->Register("SurfacePlayerAttackHit2", "effect/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+
 
 			// 敵
 			// 共通
