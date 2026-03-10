@@ -18,11 +18,11 @@ namespace
 	constexpr auto NORMAL_CHASE_LIMIT_RANGE = 600.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ß‚ğ‚â‚ß‚é‹——£
 	constexpr auto NORMAL_IDLE_TIME = 120.0f;// ‘Ò‹@ŠÔ
 	constexpr auto NORMAL_MOVE_TIME = 180.0f;// œpœjŠÔ
-	constexpr auto NORMAL_DETECT_TIME = 60.0f;// ”­Œ©d’¼
+	constexpr auto NORMAL_DETECT_TIME = 90.0f;// ”­Œ©d’¼
 	constexpr auto NORMAL_ATTACK_TIME = 180.0f;// UŒ‚ŠÔ
 
 	// Ranged
-	constexpr auto RANGED_VISION_RANGE = 800.0f;// õ“G‹——£(L‚ß)
+	constexpr auto RANGED_VISION_RANGE = 800.0f;// õ“G‹——£
 	constexpr auto RANGED_VISION_ANGLE = 180.0f;// õ“GŠp“x(‰~Œ`)
 	constexpr auto RANGED_CHASE_LIMIT_RANGE = 1000.0f;// ‚±‚êˆÈã—£‚ê‚½‚ç’ÇÕ‚ğ‚â‚ß‚é‹——£
 	constexpr auto RANGED_MOVE_RADIUS = 0.0f;// œpœj”ÍˆÍ(ˆÚ“®‚µ‚È‚¢‚½‚ß0)
@@ -80,9 +80,9 @@ public:
 			param.bTransToWander = bTransToWander;
 
 			// ‹¤’ÊƒXƒe[ƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ğİ’è
-			param.animDamage = "Nenemy_damage_00";
-			param.animDead = "Nenemy_dead_00";
-			param.animDown = "Nenemy_damagge_01";
+			param.animDamage = "enemy_damage_00";
+			param.animDead = "enemy_dead_00";
+			param.animDown = "enemy_damage_01";
 
 			enemy->SetEnemyParam(param);// ƒpƒ‰ƒ[ƒ^İ’è
 
@@ -130,12 +130,26 @@ public:
 
 			// ‹¤’ÊƒXƒe[ƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ğİ’è
 			param.animDamage = "Senemy_damage_00";
-			param.animDead = "None";
-			param.animDown = "None";
+			param.animDead = "Senemy_dead_00";
+			param.animDown = "Senemy_damage_01";
 
 			enemy->SetEnemyParam(param);
 
 			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
+			enemy->SetAfterDownStateSelector([](Enemy* e)->std::shared_ptr<EnemyState>
+			{
+				if (e->IsDead())
+				{
+					return std::make_shared<Common::Dead>();
+				}
+
+				if (e->GetTarget())
+				{
+					return std::make_shared<Ranged::Approach>();
+				}
+
+				return std::make_shared<Ranged::Idle>();
+			});
 
 		break;
 

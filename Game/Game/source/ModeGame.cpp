@@ -585,12 +585,6 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 	// 新しいステージを設定
 	_stage = newStage;
 
-	//// プレイヤーの位置をリセット
-	//VECTOR vStartPos = VGet(0.0f, 0.0f, 0.0f);
-
-	//auto activePlayer = _playerManager->GetActivePlayerShared();
-	//activePlayer->SetPos(vStartPos);
-
 	// 敵の再設定
 	for (const auto& enemy : _stage->GetEnemies())
 	{
@@ -632,7 +626,9 @@ void ModeGame::RestartCurrentStage()
 		auto activePlayer = _playerManager->GetActivePlayerShared();
 		activePlayer->Initialize();
 		activePlayer->SetPos(startPos);
-		activePlayer->SetDir(startRot);
+
+		VECTOR vDir = VGet(sinf(startRot.y), 0.0f, cosf(startRot.y));
+		activePlayer->SetDir(vDir);
 
 		// ここでプレイヤーの状態をリセット
 	}
@@ -649,5 +645,7 @@ void ModeGame::SetPlayerConfig(VECTOR vPos, VECTOR vRot)
 	auto player = _playerManager->GetActivePlayerShared();
 
 	player->SetPos(vPos);
-	player->SetDir(vRot);
+
+	VECTOR vDir = VGet(sinf(vRot.y), 0.0f, cosf(vRot.y));
+	player->SetDir(vDir);
 }

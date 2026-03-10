@@ -220,7 +220,9 @@
     <ClCompile Include="source\ICameraAddon.cpp">
       <Filter>Camera\Addon</Filter>
     </ClCompile>
-    <ClCompile Include="source\CameraDollyAddon.cpp" />
+    <ClCompile Include="source\CameraDollyAddon.cpp">
+      <Filter>Camera\Addon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -430,7 +432,9 @@
     <ClInclude Include="source\ICameraAddon.h">
       <Filter>Camera\Addon</Filter>
     </ClInclude>
-    <ClInclude Include="source\CameraDollyAddon.h" />
+    <ClInclude Include="source\CameraDollyAddon.h">
+      <Filter>Camera\Addon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">

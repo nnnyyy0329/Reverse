@@ -34,7 +34,6 @@ namespace
 	constexpr auto IDLE_TIME_RANGE = 30.0f;				// 待機時間のランダム幅
 	constexpr auto WANDER_TIME_RANGE = 30.0f;			// 徘徊時間のランダム幅
 	constexpr auto NOTICE_TIME_RANGE = 10.0f;			// 発見硬直のランダム幅
-	constexpr auto LOST_LOOK_RANDOM_TIME = 60.0f;		// 見渡し時間ランダム幅
 
 	// 見渡し関連
 	constexpr auto LOST_LOOK_ARRIVE_THRESHOLD = 2.0f;	// 見渡し到達判定角度
@@ -50,10 +49,11 @@ namespace
 	constexpr auto BLEND_FRAME = 10.0f;					// アニメーションブレンドフレーム数
 	constexpr auto ANIM_LOOP_COUNT = 0;					// アニメーションループ回数(0=無限)
 	constexpr auto ANIM_PLAY_COUNT = 1;					// アニメーション再生回数
-	constexpr auto ANIM_SPEED_NORMAL = 1.0f;			// アニメーション再生速度(通常)
+	constexpr auto ANIM_SPEED_FAST = 1.5f;				// アニメーション再生速度(速い)
 
 	// エフェクト関連
 	constexpr auto ATTACK_EFFECT_OFFSET_Y = 100.0f;		// 攻撃エフェクトYオフセット
+	constexpr auto ATTACK_EFFECT_OFFSET_Z = 100.0f;		// 攻撃エフェクト前方オフセット
 
 	// 攻撃コリジョン設定生成
 	EnemyAttackSettings MakeNormalAttackSettings()
@@ -121,7 +121,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -168,7 +168,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 
 		// ランダム方向へ向かう
@@ -215,14 +215,11 @@ namespace Normal
 		// タイマー初期化
 		_fTimer = 0.0f;
 
-		// 時間ランダム設定
-		_fTargetTimer = CalcRandomRangeTime(owner->GetEnemyParam().fDetectTime, NOTICE_TIME_RANGE);
-
 		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_look_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_look_00", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_FAST);
 		}
 	}
 
@@ -238,8 +235,9 @@ namespace Normal
 			owner->SetDir(targetInfo.vDir);
 		}
 
+		const auto& param = owner->GetEnemyParam();
 		// 時間経過チェック
-		if (_fTimer >= _fTargetTimer)
+		if (_fTimer >= param.fDetectTime)
 		{
 			return std::make_shared<Approach>();
 		}
@@ -257,7 +255,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -346,7 +344,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_NORMAL);
+			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT);
 		}
 	}
 
@@ -382,21 +380,6 @@ namespace Normal
 
 		// アニメーション設定
 
-		// エフェクト
-		{
-			VECTOR efPos = VAdd(owner->GetPos(), VGet(0.0f, ATTACK_EFFECT_OFFSET_Y, 0.0f));
-			//auto handle = EffectServer::GetInstance()->Play("Normal_Attack", efPos);
-			EffectServer::GetInstance()->Play("Normal_Attack02", efPos);
-
-			VECTOR dir = owner->GetDir();
-			float rotY = atan2f(dir.x, dir.z);
-			VECTOR rotation = VGet(0.0f, rotY, 0.0f);
-			//EffectServer::GetInstance()->SetRot(handle, rotation);
-		}
-
-		// SE
-		SoundServer::GetInstance()->Play("SE_Melee_Attanck", DX_PLAYTYPE_BACK);
-
 		// 攻撃コリジョン生成
 		owner->StartAttack(NORMAL_ATTACK_SETTINGS);
 		_bHasCollision = true;
@@ -417,10 +400,31 @@ namespace Normal
 			StopMove(owner);
 		}
 
-		// 攻撃コリジョン生成
+		// 攻撃コリジョン更新
 		if (_bHasCollision)
 		{
 			owner->UpdateAttackTransform(NORMAL_ATTACK_SETTINGS);
+		}
+
+		if(_fTimer == ATTACK_DELAY)
+		{
+			// エフェクト
+			{
+				VECTOR dir = owner->GetDir();
+				float rotY = atan2f(dir.x, dir.z);
+
+				// 前方方向へのオフセットを加算
+				VECTOR efPos = VAdd(owner->GetPos(), VGet(0.0f, ATTACK_EFFECT_OFFSET_Y, 0.0f));
+				efPos = VAdd(efPos, VScale(dir, ATTACK_EFFECT_OFFSET_Z));
+				//auto handle = EffectServer::GetInstance()->Play("Normal_Attack", efPos);
+				auto handle = EffectServer::GetInstance()->Play("Normal_Attack02", efPos);
+
+				VECTOR rotation = VGet(0.0f, rotY, 0.0f);
+				//EffectServer::GetInstance()->SetRot(handle, rotation);
+			}
+
+			// SE
+			SoundServer::GetInstance()->Play("SE_Melee_Attanck", DX_PLAYTYPE_BACK);
 		}
 
 		// 攻撃実行時間終了チェック
@@ -452,7 +456,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -568,7 +572,7 @@ namespace Normal
 				AnimManager* animManager = owner->GetAnimManager();
 				if (animManager)
 				{
-					animManager->ChangeAnimationByName("Nenemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+					animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 				}
 			}
 		}
@@ -581,6 +585,13 @@ namespace Normal
 			if (dist <= LOST_NEARBY_HOME)
 			{
 				_ePhase = Phase::SET_DIR;
+
+				// アニメーション設定
+				AnimManager* animManager = owner->GetAnimManager();
+				if (animManager)
+				{
+					animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+				}
 			}
 
 			// 初期位置方向へ移動
