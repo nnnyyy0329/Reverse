@@ -106,6 +106,8 @@ void AbilitySelectScreen::SelectionByInput()
 	//		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::BULLET_PLAYER);		// 弾プレイヤー解放
 	//	}
 	//}
+
+	// エネルギーがたまったら能力を開放
 	if(EnergyManager::GetInstance()->CanSwitchPlayer())
 	{
 		if(_playerUnlockManager)
