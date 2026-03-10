@@ -1,34 +1,27 @@
 #include "CameraManager.h"
+#include "CameraBase.h"
 #include "GameCamera.h"
 #include "DebugCamera.h"
 #include "AimCamera.h"
-#include "CameraShakeSystem.h"
 
 CameraManager::CameraManager()
 {
-	_eCameraType = CAMERA_TYPE::GAME_CAMERA;	// 初期タイプはゲームカメラ
-	_ePrevCameraType = CAMERA_TYPE::NONE;		// 前回のカメラタイプ初期化
+	_gameCamera = std::make_unique<GameCamera>();
+	_debugCamera = std::make_unique<DebugCamera>();
+	_aimCamera = std::make_unique<AimCamera>();
 
-	_gameCamera			= nullptr;	// ゲームカメラ初期化
-	_debugCamera		= nullptr;	// デバッグカメラ初期化
-	_aimCamera			= nullptr;	// エイムカメラ初期化
-	_cameraShakeSystem	= nullptr;	// カメラシェイクシステム初期化	
+	_pActiveCamera = _gameCamera.get();
 
-	_bIsUseDebugCamera = false;	// デバッグカメラ使用フラグ初期化
+	_eCameraType = CAMERA_TYPE::GAME_CAMERA;// 初期タイプはゲームカメラ
+	_ePrevCameraType = CAMERA_TYPE::NONE;// 前回のカメラタイプ初期化
 }
 
 CameraManager::~CameraManager()
 {
-	_gameCamera.reset();
-	_debugCamera.reset();
-	_aimCamera.reset();
 }
 
 bool CameraManager::Initialize()
 {
-	// カメラシェイクシステムインスタンス生成
-	MakeCameraShakeSystemInstance();
-
 	return true;
 }
 
@@ -39,404 +32,162 @@ bool CameraManager::Terminate()
 
 bool CameraManager::Process()
 {
-	// カメラ切り替え処理
-	SwitchCamera();
+	// アクティブなカメラの更新
+	if (_pActiveCamera)
+	{
+		_pActiveCamera->Process();
+	}
 
-	// カメラ処理切り替え
-	SwitchCameraProcess();
+	// アドオンの更新と適用
+	for (auto it = _addons.begin(); it != _addons.end();)
+	{
+		auto& addon = *it;
 
-	// カメラシェイクシステムをカメラに設定
-	SetCameraSystemInstanceToCamera();
+		addon->Process();
 
-	// カメラシェイクシステム更新
-	ProcessCameraShakeSystem();
+		// アクティブなカメラに効果を適用
+		if (_pActiveCamera)
+		{
+			addon->Apply(_pActiveCamera);
+		}
+
+		// 効果が終了しているアドオンはリストから削除
+		if (addon->IsFinished())
+		{
+			it = _addons.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
 
 	return true;
 }
 
-// カメラ切り替え
-void CameraManager::SwitchCamera()
+bool CameraManager::Render()
 {
-	if(!IsAimMode())
+	if(_pActiveCamera)
 	{
-		// カメラタイプ切り替え
-		if(_bIsUseDebugCamera)
-		{
-			// デバッグカメラへ切り替え
-			_eCameraType = CAMERA_TYPE::DEBUG_CAMERA;
-		}
-		else
-		{
-			// ゲームカメラへ切り替え
-			_eCameraType = CAMERA_TYPE::GAME_CAMERA;
-		}
+		_pActiveCamera->Render();
+	}
+
+	return true;
+}
+
+bool CameraManager::DebugRender()
+{
+	if(_pActiveCamera)
+	{
+		_pActiveCamera->DebugRender();
+	}
+
+	return true;
+}
+
+void CameraManager::SetUp()
+{
+	if(_pActiveCamera)
+	{
+		_pActiveCamera->SetUp();
 	}
 }
 
-// カメラ処理切り替え
-void CameraManager::SwitchCameraProcess()
+void CameraManager::SetTarget(std::shared_ptr<PlayerBase> target)
 {
-	auto im = InputManager::GetInstance();
+	if (_gameCamera) { _gameCamera->SetTarget(target); }
+	if (_aimCamera) { _aimCamera->SetTarget(target); }
+	if (_debugCamera) { _debugCamera->SetTarget(target); }
+}
 
-	// カメラタイプによる処理分岐
-	switch(_eCameraType)
+// カメラ切り替えはここにまとめる
+void CameraManager::SetCameraType(CAMERA_TYPE type)
+{
+	if (_eCameraType == type) { return; }
+
+	// 切り替え前のカメラの角度を保存
+	float prevAngleH = 0.0f;
+	float prevAngleV = 0.0f;
+
+	// 前のカメラの終了処理
+	if (_pActiveCamera) 
 	{
-		// ゲームカメラ処理
-		case CAMERA_TYPE::GAME_CAMERA:
-		{
-			if(_gameCamera)
-			{
-				_gameCamera->Process(im, false);
-			}
+		prevAngleH = _pActiveCamera->GetAngleH();
+		prevAngleV = _pActiveCamera->GetAngleV();
+		_pActiveCamera->OnExit();
+	}
 
-			break;
-		}
+	// 履歴を更新
+	_ePrevCameraType = _eCameraType;
+	_eCameraType = type;
 
-		// デバッグカメラ処理
-		case CAMERA_TYPE::DEBUG_CAMERA:
-		{
-			if(_debugCamera)
-			{
-				bool isInput = false;
+	// ポインタを切り替え
+	switch (_eCameraType)
+	{
+	case CAMERA_TYPE::GAME_CAMERA: _pActiveCamera = _gameCamera.get(); break;
+	case CAMERA_TYPE::DEBUG_CAMERA: _pActiveCamera = _debugCamera.get(); break;
+	case CAMERA_TYPE::AIM_CAMERA: _pActiveCamera = _aimCamera.get(); break;
+	default: _pActiveCamera = nullptr; break;
+	}
 
-				// 押している間は入力を有効にする
-				isInput = im->IsHold(INPUT_ACTION::DODGE);
+	// 新しいカメラの開始処理
+	if (_pActiveCamera) 
+	{
+		// 前のカメラの角度を引き継ぐ
+		_pActiveCamera->SetAngleH(prevAngleH);
+		_pActiveCamera->SetAngleV(prevAngleV);
 
-				_debugCamera->Process(im, isInput);
-			}
-
-			break;
-		}
-
-		// エイムカメラ処理
-		case CAMERA_TYPE::AIM_CAMERA:
-		{
-			if(_aimCamera)
-			{
-				_aimCamera->Process(im, true);
-			}
-
-			break;
-		}
+		_pActiveCamera->OnEnter();
+		_pActiveCamera->SetUp();
 	}
 }
 
-// カメラ設定切り替え
-void CameraManager::SwitchCameraSetUp()
+void CameraManager::SetIsUseDebugCamera(bool isUse)
 {
-	// カメラタイプによる処理分岐
-	switch(_eCameraType)
+	if (isUse) 
 	{
-		// ゲームカメラ設定
-		case CAMERA_TYPE::GAME_CAMERA:
-		{
-			if(_gameCamera)
-			{
-				_gameCamera->SetUp();	// ゲームカメラ設定更新
-			}
-
-			break;
-		}
-
-		// デバッグカメラ設定
-		case CAMERA_TYPE::DEBUG_CAMERA:
-		{
-			if(_debugCamera)
-			{
-				_debugCamera->SetUp();	// デバッグカメラ設定更新
-			}
-
-			break;
-		}
-
-		// エイムカメラ設定
-		case CAMERA_TYPE::AIM_CAMERA:
-		{
-			if(_aimCamera)
-			{
-				_aimCamera->SetUp();	// エイムカメラ設定更新
-			}
-
-			break;
-		}
+		SetCameraType(CAMERA_TYPE::DEBUG_CAMERA);
+	}
+	else 
+	{
+		SetCameraType(CAMERA_TYPE::GAME_CAMERA);
 	}
 }
 
-// カメラ描画切り替え
-void CameraManager::SwitchCameraRender()
+// アクティブなカメラの向いている方向を取得
+VECTOR CameraManager::GetCameraDir()
 {
-	// カメラタイプによる処理分岐
-	switch(_eCameraType)
+	if (_pActiveCamera) { return _pActiveCamera->GetCameraDir(); }
+	return VGet(0.0f, 0.0f, 1.0f);// デフォルト
+}
+
+float CameraManager::GetCurrentCameraAngleH()
+{
+	if(_pActiveCamera) { return _pActiveCamera->GetAngleH(); }
+	return 0.0f;
+}
+
+VECTOR CameraManager::GetActiveCameraPos()
+{
+	if (_pActiveCamera) { return _pActiveCamera->GetPos(); }
+	return VGet(0.0f, 0.0f, 0.0f);
+}
+
+VECTOR CameraManager::GetActiveCameraTarget()
+{
+	if (_pActiveCamera) { return _pActiveCamera->GetTarget(); }
+	return VGet(0.0f, 0.0f, 0.0f);
+}
+
+void CameraManager::SetActiveCameraPos(const VECTOR& pos)
+{
+	if (_pActiveCamera) { _pActiveCamera->SetPos(pos); }
+}
+
+void CameraManager::AddAddon(std::shared_ptr<ICameraAddon> addon)
+{
+	if (addon) 
 	{
-		// ゲームカメラ描画
-		case CAMERA_TYPE::GAME_CAMERA:
-		{
-			if(_gameCamera)
-			{
-				_gameCamera->Render();	// ゲームカメラ描画
-			}
-
-			break;
-		}
-
-		// デバッグカメラ描画
-		case CAMERA_TYPE::DEBUG_CAMERA:
-		{
-			if(_debugCamera)
-			{
-				_debugCamera->Render();	// デバッグカメラ描画
-			}
-
-			break;
-		}
-
-		// エイムカメラ描画
-		case CAMERA_TYPE::AIM_CAMERA:
-		{
-			if(_aimCamera)
-			{
-				_aimCamera->Render();	// エイムカメラ描画
-			}
-
-			break;
-		}
-	}
-}
-
-// カメラデバッグ描画切り替え
-void CameraManager::SwitchCameraDebugRender()
-{
-	//// カメラタイプによる処理分岐
-	//switch(_eCameraType)
-	//{
-	//	// ゲームカメラデバッグ描画
-	//	case CAMERA_TYPE::GAME_CAMERA:
-	//	{
-	//		if(_gameCamera)
-	//		{
-	//			_gameCamera->DebugRender();	// ゲームカメラデバッグ描画
-	//		}
-	//		break;
-	//	}
-	//	// デバッグカメラデバッグ描画
-	//	case CAMERA_TYPE::DEBUG_CAMERA:
-	//	{
-	//		if(_debugCamera)
-	//		{
-	//			_debugCamera->DebugRender();	// デバッグカメラデバッグ描画
-	//		}
-	//		break;
-	//	}
-	//}
-
-	// カメラシェイクシステムのデバッグ描画
-	DebugRenderCameraShakeSystem();
-
-	int x = 400;
-	int y = 90;
-	// デバッグカメラ使用フラグ表示
-	DrawFormatString(x, y, GetColor(255, 255, 255), "Use Debug Camera: %s", _bIsUseDebugCamera ? "True" : "False");
-}
-
-// 現在のカメラの水平角度を取得
-float CameraManager::GetCurrentCameraAngleH() const
-{
-	// カメラタイプによる処理分岐
-	switch(_eCameraType)
-	{
-		// ゲームカメラ
-		case CAMERA_TYPE::GAME_CAMERA:
-		{
-			if(_gameCamera)
-			{
-				return _gameCamera->GetCameraAngleH();	// ゲームカメラの水平角度を返す
-			}
-
-			break;
-		}
-
-		// デバッグカメラ
-		case CAMERA_TYPE::DEBUG_CAMERA:
-		{
-			if(_debugCamera)
-			{
-				//return _debugCamera->GetAngleH();	// デバッグカメラの水平角度を返す
-			}
-
-			break;
-		}
-
-		// エイムカメラ
-		case CAMERA_TYPE::AIM_CAMERA:
-		{
-			if(_aimCamera)
-			{
-				return _aimCamera->GetAimAngleH(); // エイムカメラの水平角度を返す
-			}
-
-			break;
-		}
-
-		default:
-		{
-			break;
-		}
-	}
-
-	return 0.0f; // デフォルト値を返す
-}
-
-// エイムモード開始
-void CameraManager::StartAimMode()
-{
-	if(!_aimCamera){ return; }
-	if(IsAimMode()){ return; }	// すでにエイムモード中だったら処理しない
-
-	_ePrevCameraType = _eCameraType;		// 前回のカメラタイプを保存
-	_eCameraType = CAMERA_TYPE::AIM_CAMERA;	// エイムカメラへ切り替え
-	_aimCamera->StartAiming();				// エイムモード開始処理
-}
-
-// エイムモード終了
-void CameraManager::EndAimMode()
-{
-	if(!_aimCamera){ return; }
-	if(!IsAimMode()){ return; }	// エイムモード中でなかったら処理しない
-
-	_eCameraType = _ePrevCameraType;	// 前回のカメラタイプに戻す
-	_aimCamera->EndAiming();			// エイムモード終了処理
-}
-
-// エイムモード中か
-bool CameraManager::IsAimMode()const
-{
-	return (_aimCamera->IsAiming());
-}
-
-// エイム方向取得
-VECTOR CameraManager::GetAimDirection()const
-{
-	if(!_aimCamera && !_aimCamera->IsAiming()){ return VGet(0.0f, 0.0f, -1.0f); }
-
-	return _aimCamera->GetAimDirection();
-}
-
-// プレイヤー設定
-void CameraManager::SetPlayer(std::shared_ptr<PlayerBase> player)
-{
-	if(_gameCamera)
-	{
-		_gameCamera->SetTarget(player);	// ゲームカメラにターゲット設定
-	}
-	if(_aimCamera)
-	{
-		_aimCamera->SetTarget(player);	// エイムカメラにターゲット設定
-	}
-}
-
-// カメラシェイクシステムインスタンス生成
-void CameraManager::MakeCameraShakeSystemInstance()
-{
-	if(!_cameraShakeSystem)
-	{
-		_cameraShakeSystem = std::make_shared<CameraShakeSystem>();	// カメラシェイクシステムインスタンス生成
-		_cameraShakeSystem->Initialize();							// カメラシェイクシステム初期化
-	}
-}
-
-// カメラシェイクシステムインスタンスをカメラに設定
-void CameraManager::SetCameraSystemInstanceToCamera()
-{
-	if(!_cameraShakeSystem){ return; }
-
-	// ゲームカメラにカメラシェイクシステムを設定
-	switch(_eCameraType)
-	{
-		case CAMERA_TYPE::GAME_CAMERA: // ゲームカメラ
-		{
-			if(_gameCamera)
-			{
-				// ゲームカメラにカメラシェイクシステムを設定
-				_gameCamera->SetCameraShakeSystem(_cameraShakeSystem);
-			}
-
-			break;
-		}
-
-		case CAMERA_TYPE::DEBUG_CAMERA: // デバッグカメラ
-		{
-			if(_debugCamera)
-			{
-				// デバッグカメラにカメラシェイクシステムを設定
-				//_debugCamera->SetCameraShakeSystem(_cameraShakeSystem);
-			}
-
-			break;
-		}
-
-		case CAMERA_TYPE::AIM_CAMERA: // エイムカメラ
-		{
-			if(_aimCamera)
-			{
-				// エイムカメラにカメラシェイクシステムを設定
-				//_aimCamera->SetCameraShakeSystem(_cameraShakeSystem);
-			}
-
-			break;
-		}
-
-		default:
-			break;
-	}
-}
-
-// カメラシェイクシステム更新
-void CameraManager::ProcessCameraShakeSystem()
-{
-	if(_cameraShakeSystem)
-	{
-		// カメラシェイクシステム更新
-		_cameraShakeSystem->Process();	
-	}
-}
-
-// カメラシェイク開始
-void CameraManager::StartCameraShake(float magnitude, float duration)
-{
-	if(_cameraShakeSystem)
-	{
-		// カメラシェイク開始
-		_cameraShakeSystem->StartShake(magnitude, duration);	
-	}
-}
-
-// カメラシェイク停止
-void CameraManager::StopCameraShake()
-{
-	if(_cameraShakeSystem)
-	{
-		// カメラシェイク停止
-		_cameraShakeSystem->StopShake();	
-	}
-}
-
-// カメラがシェイク中かどうか
-bool CameraManager::IsCameraShaking() const
-{
-	if(_cameraShakeSystem)
-	{
-		// カメラがシェイク中かどうか
-		return _cameraShakeSystem->IsShaking();	
-	}
-
-	return false;
-}
-
-// カメラシェイクシステムデバッグ描画
-void CameraManager::DebugRenderCameraShakeSystem()
-{
-	if(_cameraShakeSystem)
-	{
-		_cameraShakeSystem->DebugRender();	// カメラシェイクシステムデバッグ描画
+		_addons.push_back(addon);
 	}
 }

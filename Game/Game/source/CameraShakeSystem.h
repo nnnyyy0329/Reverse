@@ -1,5 +1,8 @@
 #pragma once
 #include "appframe.h"
+#include "ICameraAddon.h"
+
+class CameraBase;
 
 // カメラ振動設定
 struct CameraShakeConfig
@@ -10,18 +13,20 @@ struct CameraShakeConfig
 };
 
 // カメラ振動システム
-class CameraShakeSystem
+class CameraShakeSystem : public ICameraAddon
 {
 public:
 	CameraShakeSystem();
-	~CameraShakeSystem();
+	virtual ~CameraShakeSystem();
 
 	bool Initialize();	// 初期化
 	bool Terminate();	// 終了
-	bool Process();		// 更新
+	void Process() override;// 更新
 	bool Render();		// 描画
-
 	bool DebugRender();	// デバッグ描画
+
+	void Apply(CameraBase* camera) override;
+	bool IsFinished() override;
 
 	// 振動処理関数
 	void StartShake(float magnitude, float duration);	// 振動開始

@@ -406,7 +406,7 @@ void SurfacePlayer::ReturnNormalMotion()
 bool SurfacePlayer::IsAbsorbInput()const
 {
 	// 吸収攻撃の入力チェック
-	return (InputManager::GetInstance()->IsHold(INPUT_ACTION::ABILITY)) != 0;
+	return (InputManager::GetInstance().IsHold(INPUT_ACTION::ABILITY)) != 0;
 }
 
 // 吸収攻撃がアクティブかどうか

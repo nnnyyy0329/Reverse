@@ -160,6 +160,7 @@
     <ClCompile Include="source\Bullet.cpp" />
     <ClCompile Include="source\BulletManager.cpp" />
     <ClCompile Include="source\BulletPlayer.cpp" />
+    <ClCompile Include="source\CameraBase.cpp" />
     <ClCompile Include="source\CameraManager.cpp" />
     <ClCompile Include="source\CameraShakeSystem.cpp" />
     <ClCompile Include="source\CharaBase.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="source\GameCamera.cpp" />
     <ClCompile Include="source\GameObjectBase.cpp" />
     <ClCompile Include="source\GeometryUtility.cpp" />
+    <ClCompile Include="source\ICameraAddon.cpp" />
     <ClCompile Include="source\InteriorPlayer.cpp" />
     <ClCompile Include="source\Item.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -268,6 +270,7 @@
     <ClInclude Include="source\Bullet.h" />
     <ClInclude Include="source\BulletManager.h" />
     <ClInclude Include="source\BulletPlayer.h" />
+    <ClInclude Include="source\CameraBase.h" />
     <ClInclude Include="source\CameraManager.h" />
     <ClInclude Include="source\CameraShakeSystem.h" />
     <ClInclude Include="source\CharaBase.h" />
@@ -284,6 +287,7 @@
     <ClInclude Include="source\GameCamera.h" />
     <ClInclude Include="source\GameObjectBase.h" />
     <ClInclude Include="source\GeometryUtility.h" />
+    <ClInclude Include="source\ICameraAddon.h" />
     <ClInclude Include="source\InteriorPlayer.h" />
     <ClInclude Include="source\Item.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

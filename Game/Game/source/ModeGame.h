@@ -14,9 +14,6 @@ class StageBase;
 class DodgeSystem;
 
 class CameraManager;
-class GameCamera;
-class DebugCamera;
-class AimCamera;
 
 class BulletManager;
 class AttackManager;
@@ -60,12 +57,9 @@ public:
 	void SetDebugViewCollision(bool bView) { _bViewCollision = bView; }
 	bool GetDebugUseCollision() { return _bUseCollision; }
 	void SetDebugUseCollision(bool bUse) { _bUseCollision = bUse; }
+
 	// カメラマネージャー取得
 	std::shared_ptr<CameraManager> GetCameraManager() const { return _cameraManager; }
-	// ゲームカメラ取得
-	std::shared_ptr<GameCamera> GetGameCamera() const { return _gameCamera; }
-	// デバッグカメラ取得
-	std::shared_ptr<DebugCamera> GetDebugCamera() const { return _debugCamera; }
 
 	// ステージ切り替え関連
 	void RequestStageChange(int nextStageNum);// ステージ切り替えリクエスト
@@ -78,9 +72,6 @@ protected:
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される
 	std::shared_ptr<StageBase>				_stage;					// ステージ
-	std::shared_ptr<GameCamera>				_gameCamera;			// ゲームカメラ
-	std::shared_ptr<DebugCamera>			_debugCamera;			// デバッグカメラ
-	std::shared_ptr<AimCamera>				_aimCamera;				// エイムカメラ
 	///std::shared_ptr<ShieldBase>			_shieldBase;			// シールドベース
 	std::shared_ptr<DodgeSystem>			_dodgeSystem;			// 回避システム
 	std::shared_ptr<AbilitySelectScreen>	_abilitySelectScreen;	// 能力選択画面
@@ -119,6 +110,7 @@ private:
 	void CheckCollisionCameraMap();// カメラとマップの当たり判定
 	void CheckHitCharaBullet	(std::shared_ptr<CharaBase> chara);// キャラと弾の当たり判定
 	void CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player);// プレイヤーとトリガーの当たり判定
+	void CheckHitBulletMap();// 弾とマップの当たり判定
 
 
 

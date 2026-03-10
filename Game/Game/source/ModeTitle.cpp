@@ -87,20 +87,20 @@ bool ModeTitle::Process()
 	// フェードの内部カウンタを進める
 	AdvanceFade();
 
-	InputManager* input = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	// ↑↓で選択
-	if (input->IsTrigger(INPUT_ACTION::MOVE_UP))
+	if (im.IsTrigger(INPUT_ACTION::MOVE_UP))
 	{
 		_menuIndex = WrapMenuIndex(_menuIndex - 1);
 	}
-	if (input->IsTrigger(INPUT_ACTION::MOVE_DOWN))
+	if (im.IsTrigger(INPUT_ACTION::MOVE_DOWN))
 	{
 		_menuIndex = WrapMenuIndex(_menuIndex + 1);
 	}
 
 	// 決定
-	if (input->IsTrigger(INPUT_ACTION::SKIP))
+	if (im.IsTrigger(INPUT_ACTION::SKIP))
 	{
 		switch(_menuIndex)
 		{

@@ -7,12 +7,12 @@
 #include "BulletManager.h"
 #include "DodgeSystem.h"
 #include "CameraManager.h"
-#include "GameCamera.h"
 #include "PlayerBase.h"
 #include "SurfacePlayer.h"
 #include "PlayerAbsorbAttackSystem.h" 
 #include "AbsorbAttack.h"
 #include "ModeTextBox.h"
+#include "CameraShakeSystem.h"
 
 // プレベータようパラメータ
 namespace
@@ -288,15 +288,18 @@ void ModeGame::CheckCollisionCharaChara(std::shared_ptr<CharaBase> chara1, std::
 // カメラとマップの当たり判定
 void ModeGame::CheckCollisionCameraMap()
 {
-	if (!_gameCamera || !_stage) { return; }
+	if (!_cameraManager || !_stage) { return; }
+
+	// ゲームカメラ以外は処理しない
+	if (_cameraManager->GetCameraType() != CAMERA_TYPE::GAME_CAMERA) { return; }
 
 	// ステージの全マップモデルを取得
 	const auto& mapObjList = _stage->GetMapModelPosList();
 	if (mapObjList.empty()) { return; }
 
 	// 元のカメラ情報を取得
-	VECTOR vCamPos = _gameCamera->GetVPos();
-	VECTOR vCamTarget = _gameCamera->GetVTarget();
+	VECTOR vCamPos = _cameraManager->GetActiveCameraPos();
+	VECTOR vCamTarget = _cameraManager->GetActiveCameraTarget();
 
 	// 注視点からカメラへのベクトル
 	VECTOR vToCam = VSub(vCamPos, vCamTarget);
@@ -367,7 +370,7 @@ void ModeGame::CheckCollisionCameraMap()
 
 		// 注視点から新しいカメラ位置を計算
 		vCamPos = VAdd(vCamTarget, VScale(vDir, fNewDist));
-		_gameCamera->SetVPos(vCamPos);
+		_cameraManager->SetActiveCameraPos(vCamPos);
 	}
 }
 
@@ -425,6 +428,68 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 	for(const auto& deadBullet : deadBullets)
 	{
 		bulletManager->RemoveBullet(deadBullet);
+	}
+}
+
+// 弾とマップの当たり判定
+void ModeGame::CheckHitBulletMap()
+{
+	auto bulletManager = BulletManager::GetInstance();
+	if (bulletManager == nullptr) { return; }
+
+	const auto& mapObjList = _stage->GetMapModelPosList();
+	if (mapObjList.empty()) { return; }
+
+	auto bullets = bulletManager->GetAllBullets();
+
+	std::vector<std::shared_ptr<Bullet>> deadBullets;
+
+	for (auto& bullet : bullets)
+	{
+		if (!bullet) { continue; }
+
+		if (!bulletManager->IsBulletRegistered(bullet)) { continue; }
+
+		const BulletConfig& bulletConfig = bullet->GetBulletConfig();
+
+		for (auto& obj : mapObjList)
+		{
+			if (obj.collisionFrame == -1 || obj.modelHandle <= 0) { continue; }
+
+			MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_Sphere(
+				obj.modelHandle,
+				obj.collisionFrame,
+				bullet->GetPos(),
+				bulletConfig.radius
+			);
+
+			const float wallThreshold = 0.3f;
+			bool hitWall = false;
+
+			for(int i = 0; i < result.HitNum; ++i)
+			{
+				const MV1_COLL_RESULT_POLY& poly = result.Dim[i];
+
+				if (poly.Normal.y < wallThreshold)
+				{
+					hitWall = true;
+					break;
+				}
+			}
+
+			MV1CollResultPolyDimTerminate(result);
+
+			if (hitWall)
+			{
+				deadBullets.push_back(bullet);
+				break;
+			}
+		}
+	}
+
+	for (const auto& deadBUllets : deadBullets)
+	{
+		bulletManager->RemoveBullet(deadBUllets);
 	}
 }
 
@@ -532,8 +597,16 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		// カメラの振動
 		if(!IsPlayerCharacter(charaType) && effectConfig.isActiveCameraShake)
 		{
-			// マグニチュードと持続時間を設定して振動開始
-			_cameraManager->StartCameraShake(effectConfig.cameraShakeMagnitude, effectConfig.cameraShakeDuration);
+			if (_cameraManager)
+			{
+				auto shake = std::make_shared<CameraShakeSystem>();
+
+				// マグニチュードと持続時間を設定
+				shake->StartShake(effectConfig.cameraShakeMagnitude, effectConfig.cameraShakeDuration);
+
+				// カメラマネージャーに振動を追加
+				_cameraManager->AddAddon(shake);
+			}
 		}
 		
 		// ダメージ処理

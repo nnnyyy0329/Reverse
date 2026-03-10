@@ -527,6 +527,11 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackColl
 	ChangeState(std::make_unique<Common::Damage>());
 }
 
+void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
+{
+	ApplyDamage(fDamage, ATTACK_OWNER_TYPE::NONE, AttackCollision());
+}
+
 bool Enemy::IsDead()
 {
 	return _fLife <= 0.0f;// ƒ‰ƒCƒt‚ª0ˆÈ‰º‚È‚çŽ€–S

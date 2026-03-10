@@ -483,7 +483,10 @@ void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPl
 	newPlayer->SetMovementState(PLAYER_MOVEMENT_STATE::WAIT);	// 待機状態に設定
 
 	// プレイヤー切り替え時に、強制的にエイムモードを終了する
-	_cameraManager->EndAimMode();
+	if (_cameraManager) 
+	{
+		_cameraManager->SetCameraType(CAMERA_TYPE::GAME_CAMERA);
+	}
 }
 
 // 変身タイマー更新処理
@@ -565,7 +568,7 @@ void PlayerManager::ProcessActivePlayer(bool isAbilityScreenActive)
 {
 	if(!_activePlayer) { return; }
 
-	auto im = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	// 変身中、または変身解除中、またはアビリティ選択画面がアクティブな場合
 	if(_bIsTransforming || _bIsTransformCanceling || isAbilityScreenActive)

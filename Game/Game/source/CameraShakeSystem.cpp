@@ -1,4 +1,5 @@
 #include "CameraShakeSystem.h"
+#include "CameraBase.h"
 
 // 振動関連定数
 namespace ShakeContants
@@ -39,12 +40,10 @@ bool CameraShakeSystem::Terminate()
 	return true;
 }
 
-bool CameraShakeSystem::Process()
+void CameraShakeSystem::Process()
 {
 	// 振動の更新処理
 	UpdateShake();
-
-	return true;
 }
 
 bool CameraShakeSystem::Render()
@@ -136,4 +135,18 @@ void CameraShakeSystem::DrawShakeConfig()
 	// 振動オフセットの表示
 	DrawFormatString(x, y, GetColor(255, 255, 255), "Offset: (%.1f, %.1f)", _shakeOffset.x, _shakeOffset.y);
 	y += 20;
+}
+
+void CameraShakeSystem::Apply(CameraBase* camera)
+{
+	if (camera && IsShaking())
+	{
+		camera->ApplyShake(GetShakeOffset());
+	}
+}
+
+bool CameraShakeSystem::IsFinished()
+{
+	// 振動が終わっていれば終了扱い
+	return !IsShaking();
 }

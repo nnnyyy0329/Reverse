@@ -1,24 +1,10 @@
 #include "InputManager.h"
 
 // シングルトンインスタンスの実体
-static InputManager* _nullInstance = nullptr;
-
-InputManager* InputManager::GetNullInstance()
+InputManager& InputManager::GetInstance()
 {
-	if (_nullInstance == nullptr)
-	{
-		_nullInstance = new InputManager();
-	}
-	return _nullInstance;
-}
-
-InputManager* InputManager::GetInstance()
-{
-	if (_nullInstance == nullptr) 
-	{// インスタンスがなければ生成
-		_nullInstance = new InputManager();
-	}
-	return _nullInstance;// インスタンスを返す
+	static InputManager instance;
+	return instance;
 }
 
 void InputManager::Update()

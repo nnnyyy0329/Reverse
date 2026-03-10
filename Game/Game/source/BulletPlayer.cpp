@@ -50,6 +50,35 @@ bool BulletPlayer::Process()
 {
 	PlayerBase::Process();
 
+	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
+
+	if (isAiming)
+	{
+		// カメラマネージャーから現在のエイム方向を取得
+		VECTOR aimDir = _cameraManager->GetCameraDir();
+
+		// Y軸成分を無視して水平にする
+		VECTOR aimDirHorizontal = VGet(aimDir.x, 0.0f, aimDir.z);
+
+		// 正規化してプレイヤーの向きにセットする
+		if (VSquareSize(aimDirHorizontal) > 0.0f)
+		{
+			aimDirHorizontal = VNorm(aimDirHorizontal);
+
+			SetDir(aimDirHorizontal);
+		}
+	}
+	else
+	{
+		// 通常移動時
+		float moveSquare = VSquareSize(_vMove);
+		if (moveSquare > 0.0f)
+		{
+			SetDir(VNorm(_vMove));
+		}
+	}
+
+
 	return true;
 }
 
@@ -211,8 +240,11 @@ void BulletPlayer::DrawShootIntervalTime()
 // 発射間隔更新
 void BulletPlayer::ProcessShoot()
 {
-	// エイムモード開始
-	_cameraManager->StartAimMode();
+	// エイムカメラに切り替え
+	if (_cameraManager)
+	{
+		_cameraManager->SetCameraType(CAMERA_TYPE::AIM_CAMERA);
+	}
 
 	// 弾発射の入力処理
 	ShootInput();
@@ -348,26 +380,6 @@ void BulletPlayer::ShootBullet()
 // エイムモードの処理
 void BulletPlayer::ProcessAimMode(bool aimKey)
 {
-	// エイムキーが押されているなら
-	if(aimKey)
-	{
-		// エイムキーが押されたら
-		if(_cameraManager && !_cameraManager->IsAimMode())
-		{
-			// エイムモード開始
-			_cameraManager->StartAimMode();	// エイムモード開始
-		}
-	}
-	// エイムキーが押されていないなら
-	else
-	{
-		// エイムキーが離されたら
-		if(_cameraManager && _cameraManager->IsAimMode())
-		{
-			// エイムモード終了
-			_cameraManager->EndAimMode();	// エイムモード終了
-		}
-	}
 }
 
 // 発射位置オフセットの取得
@@ -390,10 +402,12 @@ VECTOR BulletPlayer::GetShootDirection()const
 	// エイム中かどうかで発射方向を決定
 	VECTOR shootDirection = _vDir;
 
-	if(_cameraManager && _cameraManager->IsAimMode())
+	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
+
+	if(isAiming)
 	{
 		// エイム中はカメラの向いている方向に発射
-		shootDirection = _cameraManager->GetAimDirection();
+		shootDirection = _cameraManager->GetCameraDir();
 	}
 
 	// 発射方向を返す
@@ -403,10 +417,10 @@ VECTOR BulletPlayer::GetShootDirection()const
 // 弾発射入力チェック
 bool BulletPlayer::IsShootInput()const
 {
-	auto inputManager = InputManager::GetInstance();
+	auto& inputManager = InputManager::GetInstance();
 
 	// 攻撃ボタンが押されたか
-	return (inputManager->IsHold(INPUT_ACTION::ATTACK));
+	return (inputManager.IsHold(INPUT_ACTION::ATTACK));
 }
 
 // カウントが0より少ないかどうが

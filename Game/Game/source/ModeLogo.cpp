@@ -25,10 +25,10 @@ bool ModeLogo::Terminate()
 
 bool ModeLogo::Process()
 {
-	auto inputManager = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	// Aボタンを押したらスキップ
-	if(inputManager->IsTrigger(INPUT_ACTION::SKIP))
+	if(im.IsTrigger(INPUT_ACTION::SKIP))
 	{
 		_bNext = true;
 	}

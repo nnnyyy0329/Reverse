@@ -28,9 +28,6 @@
     <ClCompile Include="source\BulletManager.cpp">
       <Filter>Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="source\CameraManager.cpp">
-      <Filter>Camera</Filter>
-    </ClCompile>
     <ClCompile Include="source\DebugCamera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
@@ -205,15 +202,22 @@
     <ClCompile Include="source\AbilitySelectManager.cpp">
       <Filter>Ability\Select</Filter>
     </ClCompile>
-    <ClCompile Include="source\CameraShakeSystem.cpp">
-      <Filter>Camera</Filter>
-    </ClCompile>
     <ClCompile Include="source\PathfindingManager.cpp">
       <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CameraBase.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CameraManager.cpp">
+      <Filter>Camera\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CameraShakeSystem.cpp">
+      <Filter>Camera\Addon</Filter>
     </ClCompile>
     <ClCompile Include="source\AttackEffectSystem.cpp">
       <Filter>Attack\System</Filter>
     </ClCompile>
+    <ClCompile Include="source\ICameraAddon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -242,9 +246,6 @@
     </ClInclude>
     <ClInclude Include="source\BulletManager.h">
       <Filter>Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="source\CameraManager.h">
-      <Filter>Camera</Filter>
     </ClInclude>
     <ClInclude Include="source\DebugCamera.h">
       <Filter>Camera</Filter>
@@ -408,15 +409,22 @@
     <ClInclude Include="source\AbilitySelectManager.h">
       <Filter>Ability\Select</Filter>
     </ClInclude>
-    <ClInclude Include="source\CameraShakeSystem.h">
-      <Filter>Camera</Filter>
-    </ClInclude>
     <ClInclude Include="source\PathfindingManager.h">
       <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CameraBase.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CameraManager.h">
+      <Filter>Camera\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CameraShakeSystem.h">
+      <Filter>Camera\Addon</Filter>
     </ClInclude>
     <ClInclude Include="source\AttackEffectSystem.h">
       <Filter>Attack\System</Filter>
     </ClInclude>
+    <ClInclude Include="source\ICameraAddon.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -559,6 +567,12 @@
     </Filter>
     <Filter Include="Attack\System">
       <UniqueIdentifier>{326a01b9-9c72-4633-8585-c04bb0a5bff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera\Manager">
+      <UniqueIdentifier>{c9d6516b-d942-4da6-aefd-7e3e96874659}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera\Addon">
+      <UniqueIdentifier>{39565dc8-1ebf-46a5-9c06-baf2566c1042}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

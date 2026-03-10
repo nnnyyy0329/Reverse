@@ -54,7 +54,7 @@ bool ModeScenario::Process()
 {
 	_frameCount++;
 
-	auto input = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	const bool canInput = (_frameCount >= kInputWaitFrames);
 
@@ -80,7 +80,7 @@ bool ModeScenario::Process()
 	}
 
 	// 入力: 全文表示済みでなければ全文を出す、済みなら次のページへ
-	if(canInput && (input->IsTrigger(INPUT_ACTION::SELECT_POWER) || input->IsTrigger(INPUT_ACTION::ATTACK)))
+	if(canInput && (im.IsTrigger(INPUT_ACTION::SELECT_POWER) || im.IsTrigger(INPUT_ACTION::ATTACK)))
 	{
 		if(!_textFullyShown)
 		{

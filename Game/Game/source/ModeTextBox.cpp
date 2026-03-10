@@ -31,12 +31,12 @@ bool ModeTextBox::Process()
 	// ‰º‚ÌƒQ[ƒ€‚ðŽ~‚ß‚é
 	ModeServer::GetInstance()->PauseProcessUnderLayer();
 
-	auto input = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	const int kInputWaitFrames = 10;
 	const bool canInput = (_frameCount >= kInputWaitFrames);
 
-	if(canInput && (input->IsTrigger(INPUT_ACTION::SELECT_POWER) || input->IsTrigger(INPUT_ACTION::ATTACK)))
+	if(canInput && (im.IsTrigger(INPUT_ACTION::SELECT_POWER) || im.IsTrigger(INPUT_ACTION::ATTACK)))
 	{
 		_bClose = true;
 	}
