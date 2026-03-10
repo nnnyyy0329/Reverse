@@ -39,7 +39,7 @@ bool CameraManager::Process()
 	}
 
 	// アドオンの更新と適用
-	for (auto it = _addons.begin(); it != _addons.end(); ++it)
+	for (auto it = _addons.begin(); it != _addons.end();)
 	{
 		auto& addon = *it;
 
