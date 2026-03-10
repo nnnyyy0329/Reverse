@@ -187,6 +187,10 @@ bool ModeGame::Process()
 {
 	base::Process();
 	AdvanceFade();
+	if(IsFadeActive() && GetFadeAlpha() >= 255)
+	{
+		StopFade(); // 以降自動的にフェードアウトしない
+	}
 	// InputManagerから入力を取得
 	InputManager* input = InputManager::GetInstance();
 

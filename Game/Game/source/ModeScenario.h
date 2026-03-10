@@ -28,7 +28,7 @@ private:
 	int _charTimer = 0;    // フレームカウント（文字切り替え用）
 	bool _textFullyShown = false;
 	
-	bool _isTransitioning = false; //// シナリオ→ゲーム遷移用　フェード中かどうか
+	bool _isTransitioning = false; //// シナリオ→ゲーム遷移用フェード中かどうか
 	bool _bNext = false;
 };
 

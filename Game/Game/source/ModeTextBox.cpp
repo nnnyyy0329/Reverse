@@ -15,6 +15,7 @@ bool ModeTextBox::Initialize()
 
 	_graphHandle = ResourceServer::GetInstance()->GetHandle(_graphKey);
 
+	
 	return true;
 }
 

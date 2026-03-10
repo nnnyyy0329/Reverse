@@ -29,10 +29,14 @@ public:
 
 	// --- フェード共通処理 ---
 	void StartFade(int inFrames, int holdFrames, int outFrames);
-	void AdvanceFade();
+	void StopFade();
+    void AdvanceFade();
+
 	int GetFadeAlpha() const;
 	bool IsFadeActive() const;
 	bool IsFadeFinished() const;
+
+
 
 	
 
