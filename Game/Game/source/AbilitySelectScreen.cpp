@@ -130,58 +130,58 @@ void AbilitySelectScreen::SelectionByInput()
 
 	auto im = InputManager::GetInstance();	// 入力クラス
 
-	// 左キーが押されたら
-	if(im->IsTrigger(INPUT_ACTION::LEFT))
-	{
-		_iCurrentSelection--;	// 左に移動
+	//// 左キーが押されたら
+	//if(im->IsTrigger(INPUT_ACTION::LEFT))
+	//{
+	//	_iCurrentSelection--;	// 左に移動
 
-		// 一番左からさらに左に移動したら
-		if(_iCurrentSelection < MIN_SELECT)
-		{
-			// 一番右に移動
-			_iCurrentSelection = MAX_SELECT;
-		}
-	}
+	//	// 一番左からさらに左に移動したら
+	//	if(_iCurrentSelection < MIN_SELECT)
+	//	{
+	//		// 一番右に移動
+	//		_iCurrentSelection = MAX_SELECT;
+	//	}
+	//}
 
-	// 右キーが押されたら
-	if(im->IsTrigger(INPUT_ACTION::RIGHT))
-	{
-		_iCurrentSelection++;	// 右に移動
+	//// 右キーが押されたら
+	//if(im->IsTrigger(INPUT_ACTION::RIGHT))
+	//{
+	//	_iCurrentSelection++;	// 右に移動
 
-		// 一番右からさらに右に移動したら
-		if(_iCurrentSelection > MAX_SELECT)
-		{
-			// 一番左に移動
-			_iCurrentSelection = MIN_SELECT;
-		}
-	}
+	//	// 一番右からさらに右に移動したら
+	//	if(_iCurrentSelection > MAX_SELECT)
+	//	{
+	//		// 一番左に移動
+	//		_iCurrentSelection = MIN_SELECT;
+	//	}
+	//}
 
-	/// 決定キーが押されたら
-	if(im->IsTrigger(INPUT_ACTION::TRANSFORM))
-	{
-		// 選択肢のアビリティタイプの配列
-		ABILITY_TYPE abilities[3] = 
-		{
-			ABILITY_TYPE::SURFACE_PLAYER,	// 表プレイヤー
-			ABILITY_TYPE::BULLET_PLAYER,	// 弾プレイヤー
-			ABILITY_TYPE::INTERIOR_PLAYER	// 裏プレイヤー
-		};
+	///// 決定キーが押されたら
+	//if(im->IsTrigger(INPUT_ACTION::TRANSFORM))
+	//{
+	//	// 選択肢のアビリティタイプの配列
+	//	ABILITY_TYPE abilities[3] = 
+	//	{
+	//		ABILITY_TYPE::SURFACE_PLAYER,	// 表プレイヤー
+	//		ABILITY_TYPE::BULLET_PLAYER,	// 弾プレイヤー
+	//		ABILITY_TYPE::INTERIOR_PLAYER	// 裏プレイヤー
+	//	};
 
-		// 現在選択されているアビリティを取得
-		ABILITY_TYPE selectedAbility = abilities[_iCurrentSelection];
+	//	// 現在選択されているアビリティを取得
+	//	ABILITY_TYPE selectedAbility = abilities[_iCurrentSelection];
 
-		// アビリティが解放されているかチェック
-		if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(selectedAbility))
-		{
-			return;
-		}
+	//	// アビリティが解放されているかチェック
+	//	if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(selectedAbility))
+	//	{
+	//		return;
+	//	}
 
-		_iSelectedAbility = _iCurrentSelection;				// 選択されたアビリティを保存
-		_selectionState = SelectionState::SELECT_COMPLETED;	// 選択確定状態に移行
+	//	_iSelectedAbility = _iCurrentSelection;				// 選択されたアビリティを保存
+	//	_selectionState = SelectionState::SELECT_COMPLETED;	// 選択確定状態に移行
 
-		// 入力をリセット
-		im->ResetInput();
-	}
+	//	// 入力をリセット
+	//	im->ResetInput();
+	//}
 
 	// デバッグ用の入力
 	// 選択画面が有効なときに左十字ボタンを押すと変身できるようになる
@@ -195,11 +195,49 @@ void AbilitySelectScreen::SelectionByInput()
 		}
 	//}
 
-	// 点滅カウンターを進める
-	// 入力が処理された場合のみ点滅カウンターを進める
-	if(_bIsScreenActive)
+	//// 点滅カウンターを進める
+	//// 入力が処理された場合のみ点滅カウンターを進める
+	//if(_bIsScreenActive)
+	//{
+	//	_iCursorCount++;
+	//}
+
+	// パワーアビリティ選択
+	if(im->IsTrigger(INPUT_ACTION::SELECT_POWER))
 	{
-		_iCursorCount++;
+		// 裏プレイヤーが解放されているかチェック
+		if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(ABILITY_TYPE::INTERIOR_PLAYER))
+		{
+			return;	// 解放されていない場合は何もしない
+		}
+
+		// 裏プレイヤー（配列インデックスの2番）
+		_iSelectedAbility = 2;	
+
+		// 選択確定状態に移行
+		_selectionState = SelectionState::SELECT_COMPLETED;	
+
+		// 入力をリセット
+		im->ResetInput();
+	}
+
+	// 弾発射アビリティ選択
+	if(im->IsTrigger(INPUT_ACTION::SELECT_BULLET))
+	{
+		// 弾プレイヤーが解放されているかチェック
+		if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(ABILITY_TYPE::BULLET_PLAYER))
+		{
+			return;	// 解放されていない場合は何もしない
+		}
+
+		// 弾プレイヤー（配列インデックスの1番）
+		_iSelectedAbility = 1;	
+
+		// 選択確定状態に移行
+		_selectionState = SelectionState::SELECT_COMPLETED;	
+
+		// 入力をリセット
+		im->ResetInput();
 	}
 }
 
