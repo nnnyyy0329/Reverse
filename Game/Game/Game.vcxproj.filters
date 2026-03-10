@@ -217,7 +217,10 @@
     <ClCompile Include="source\AttackEffectSystem.cpp">
       <Filter>Attack\System</Filter>
     </ClCompile>
-    <ClCompile Include="source\ICameraAddon.cpp" />
+    <ClCompile Include="source\ICameraAddon.cpp">
+      <Filter>Camera\Addon</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CameraDollyAddon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -424,7 +427,10 @@
     <ClInclude Include="source\AttackEffectSystem.h">
       <Filter>Attack\System</Filter>
     </ClInclude>
-    <ClInclude Include="source\ICameraAddon.h" />
+    <ClInclude Include="source\ICameraAddon.h">
+      <Filter>Camera\Addon</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CameraDollyAddon.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">

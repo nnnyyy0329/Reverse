@@ -162,6 +162,7 @@
     <ClCompile Include="source\BulletPlayer.cpp" />
     <ClCompile Include="source\CameraBase.cpp" />
     <ClCompile Include="source\CameraManager.cpp" />
+    <ClCompile Include="source\CameraDollyAddon.cpp" />
     <ClCompile Include="source\CameraShakeSystem.cpp" />
     <ClCompile Include="source\CharaBase.cpp" />
     <ClCompile Include="source\DebugCamera.cpp" />
@@ -272,6 +273,7 @@
     <ClInclude Include="source\BulletPlayer.h" />
     <ClInclude Include="source\CameraBase.h" />
     <ClInclude Include="source\CameraManager.h" />
+    <ClInclude Include="source\CameraDollyAddon.h" />
     <ClInclude Include="source\CameraShakeSystem.h" />
     <ClInclude Include="source\CharaBase.h" />
     <ClInclude Include="source\DebugCamera.h" />
