@@ -36,15 +36,26 @@ public:
 	void CompleteSelection();				// 選択を完了する関数
 	bool IsSelectActiveByPlayerType()const;	// プレイヤータイプに応じて選択可能かどうか
 
-	// ゲッターセッター
-	ABILITY_TYPE GetSelectedAbility()const	// 選択されたアビリティ取得
+	/* ゲッターセッター */
+
+	// 選択されたアビリティ取得
+	ABILITY_TYPE GetSelectedAbility()const	
 	{
 		return ConvertSelectionToAbility(_iSelectedAbility);
 	}
-	int GetSelectedAbilityIndex()const { return _iSelectedAbility; }	// 選択されたアビリティ番号取得
-	bool GetIsSelectComplete()const{ return _bIsSelectComplete; }		// 選択完了フラグ取得
-	bool GetIsScreenActive()const { return _bIsScreenActive; }			// 選択画面表示フラグ取得
+
+	// 選択されたアビリティ番号取得
+	int GetSelectedAbilityIndex()const { return _iSelectedAbility; }	
+
+	// 選択完了フラグ取得
+	bool GetIsSelectComplete()const{ return _bIsSelectComplete; }		
+
+	// 選択画面表示フラグ取得
+	bool GetIsScreenActive()const { return _bIsScreenActive; }			
+
+	// 選択状態の取得・設定
 	SelectionState GetSelectionState()const{ return _selectionState; }
+	void SetSelectionState(SelectionState state){ _selectionState = state; }
 
 	// クラスセット
 	void SetPlayerManager(std::shared_ptr<PlayerManager> playerManager) { _playerManager = playerManager; }

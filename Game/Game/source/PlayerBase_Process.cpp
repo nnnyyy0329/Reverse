@@ -241,7 +241,7 @@ void PlayerBase::ProcessPlayAnimation()
 	if(animManager == nullptr){ return; }
 
 	const char* animName = GetCurrentAnimationName();	// 現在のステータスに応じたアニメーション名を取得
-	float blendTime = AnimConfig::BLEND_TIME;								// ブレンド時間
+	float blendTime = AnimConfig::BLEND_TIME;			// ブレンド時間
 	int loopCnt = GetLoopCount();						// ループカウント
 	if(animName != nullptr)
 	{
