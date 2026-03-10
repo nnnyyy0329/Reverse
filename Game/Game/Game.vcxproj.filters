@@ -202,9 +202,6 @@
     <ClCompile Include="source\AbilitySelectManager.cpp">
       <Filter>Ability\Select</Filter>
     </ClCompile>
-    <ClCompile Include="source\CameraShakeSystem.cpp">
-      <Filter>Camera</Filter>
-    </ClCompile>
     <ClCompile Include="source\PathfindingManager.cpp">
       <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
     </ClCompile>
@@ -214,6 +211,10 @@
     <ClCompile Include="source\CameraManager.cpp">
       <Filter>Camera\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="source\CameraShakeSystem.cpp">
+      <Filter>Camera\Addon</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ICameraAddon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -405,9 +406,6 @@
     <ClInclude Include="source\AbilitySelectManager.h">
       <Filter>Ability\Select</Filter>
     </ClInclude>
-    <ClInclude Include="source\CameraShakeSystem.h">
-      <Filter>Camera</Filter>
-    </ClInclude>
     <ClInclude Include="source\PathfindingManager.h">
       <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
     </ClInclude>
@@ -417,6 +415,10 @@
     <ClInclude Include="source\CameraManager.h">
       <Filter>Camera\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="source\CameraShakeSystem.h">
+      <Filter>Camera\Addon</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ICameraAddon.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -559,6 +561,9 @@
     </Filter>
     <Filter Include="Camera\Manager">
       <UniqueIdentifier>{c9d6516b-d942-4da6-aefd-7e3e96874659}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera\Addon">
+      <UniqueIdentifier>{39565dc8-1ebf-46a5-9c06-baf2566c1042}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

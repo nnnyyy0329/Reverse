@@ -3,15 +3,12 @@
 #include "GameCamera.h"
 #include "DebugCamera.h"
 #include "AimCamera.h"
-#include "CameraShakeSystem.h"
 
 CameraManager::CameraManager()
 {
 	_gameCamera = std::make_unique<GameCamera>();
 	_debugCamera = std::make_unique<DebugCamera>();
 	_aimCamera = std::make_unique<AimCamera>();
-
-	_cameraShakeSystem = std::make_unique<CameraShakeSystem>();
 
 	_pActiveCamera = _gameCamera.get();
 
@@ -41,15 +38,27 @@ bool CameraManager::Process()
 		_pActiveCamera->Process();
 	}
 
-	if(_cameraShakeSystem && _cameraShakeSystem->IsShaking())
+	// アドオンの更新と適用
+	for (auto it = _addons.begin(); it != _addons.end(); ++it)
 	{
-		_cameraShakeSystem->Process();// 揺れの計算
-		VECTOR shakeOffset = _cameraShakeSystem->GetShakeOffset();
+		auto& addon = *it;
 
-		if(_pActiveCamera)
+		addon->Process();
+
+		// アクティブなカメラに効果を適用
+		if (_pActiveCamera)
 		{
-			// アクティブなカメラに揺れを足す
-			_pActiveCamera->ApplyShake(shakeOffset);
+			addon->Apply(_pActiveCamera);
+		}
+
+		// 効果が終了しているアドオンはリストから削除
+		if (addon->IsFinished())
+		{
+			it = _addons.erase(it);
+		}
+		else
+		{
+			++it;
 		}
 	}
 
@@ -158,22 +167,6 @@ float CameraManager::GetCurrentCameraAngleH()
 	return 0.0f;
 }
 
-void CameraManager::StartCameraShake(float magnitude, float duration)
-{
-	if (_cameraShakeSystem) { _cameraShakeSystem->StartShake(magnitude, duration); }
-}
-
-void CameraManager::StopCameraShake()
-{
-	if (_cameraShakeSystem) { _cameraShakeSystem->StopShake(); }
-}
-
-bool CameraManager::IsCameraShaking()
-{
-	if (_cameraShakeSystem) { return _cameraShakeSystem->IsShaking(); }
-	return false;
-}
-
 VECTOR CameraManager::GetActiveCameraPos()
 {
 	if (_pActiveCamera) { return _pActiveCamera->GetPos(); }
@@ -189,4 +182,12 @@ VECTOR CameraManager::GetActiveCameraTarget()
 void CameraManager::SetActiveCameraPos(const VECTOR& pos)
 {
 	if (_pActiveCamera) { _pActiveCamera->SetPos(pos); }
+}
+
+void CameraManager::AddAddon(std::shared_ptr<ICameraAddon> addon)
+{
+	if (addon) 
+	{
+		_addons.push_back(addon);
+	}
 }

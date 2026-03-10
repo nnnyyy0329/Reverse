@@ -1,12 +1,11 @@
 #pragma once
 #include "appframe.h"
+#include "ICameraAddon.h"
 
 class CameraBase;
 class GameCamera;
 class DebugCamera;
 class AimCamera;
-
-class CameraShakeSystem;
 
 class PlayerBase;
 
@@ -42,12 +41,6 @@ class CameraManager
 	void SetIsUseDebugCamera(bool isUse);
 
 	VECTOR GetCameraDir();
-
-	// カメラシェイク関連
-	void StartCameraShake(float magnitude, float duration);
-	void StopCameraShake();
-	bool IsCameraShaking();
-
 	float GetCurrentCameraAngleH();
 
 	// アクティブカメラの情報
@@ -55,13 +48,17 @@ class CameraManager
 	VECTOR GetActiveCameraTarget();
 	void SetActiveCameraPos(const VECTOR& pos);
 
+	// アドオンを追加する
+	void AddAddon(std::shared_ptr<ICameraAddon> addon);
+
 protected:
 	// カメラインスタンスはマネージャーが管理
 	std::unique_ptr<GameCamera> _gameCamera;
 	std::unique_ptr<DebugCamera> _debugCamera;
 	std::unique_ptr<AimCamera> _aimCamera;
 
-	std::unique_ptr<CameraShakeSystem> _cameraShakeSystem;
+	// アドオンのリスト
+	std::list<std::shared_ptr<ICameraAddon>> _addons;
 
 	CameraBase* _pActiveCamera;
 
