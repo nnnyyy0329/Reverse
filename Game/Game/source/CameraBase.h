@@ -28,6 +28,7 @@ public:
 	VECTOR GetTarget() { return _vTarget; }
 	virtual float GetAngleH() { return _fAngleH; }
 	float GetAngleV() { return _fAngleV; }
+	virtual VECTOR GetCameraDir();// カメラが向いている方向
 	// セッター
 	void SetPos(const VECTOR& pos) { _vPos = pos; }
 	void SetAngleH(float angleH) { _fAngleH = angleH; }

@@ -133,32 +133,6 @@ void CameraManager::SetCameraType(CAMERA_TYPE type)
 	}
 }
 
-void CameraManager::StartAimMode()
-{
-	SetCameraType(CAMERA_TYPE::AIM_CAMERA);
-}
-
-void CameraManager::EndAimMode()
-{
-	if (!IsAimMode()) { return; }
-
-	SetCameraType(_ePrevCameraType);
-}
-
-bool CameraManager::IsAimMode()
-{
-	return _eCameraType == CAMERA_TYPE::AIM_CAMERA;
-}
-
-VECTOR CameraManager::GetAimDirection()
-{
-	if(!_aimCamera || !_aimCamera->IsAiming())
-	{
-		return VGet(0.0f, 0.0f, 0.0f);
-	}
-	return _aimCamera->GetAimDirection();
-}
-
 void CameraManager::SetIsUseDebugCamera(bool isUse)
 {
 	if (isUse) 
@@ -169,6 +143,13 @@ void CameraManager::SetIsUseDebugCamera(bool isUse)
 	{
 		SetCameraType(CAMERA_TYPE::GAME_CAMERA);
 	}
+}
+
+// アクティブなカメラの向いている方向を取得
+VECTOR CameraManager::GetCameraDir()
+{
+	if (_pActiveCamera) { return _pActiveCamera->GetCameraDir(); }
+	return VGet(0.0f, 0.0f, 1.0f);// デフォルト
 }
 
 float CameraManager::GetCurrentCameraAngleH()

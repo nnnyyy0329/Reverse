@@ -38,14 +38,10 @@ class CameraManager
 	void SetCameraType(CAMERA_TYPE type);
 	CAMERA_TYPE GetCameraType() { return _eCameraType; }
 
-	// エイムモード関連
-	void StartAimMode();// エイムモード開始
-	void EndAimMode();// エイムモード終了
-	bool IsAimMode();// エイムモード中か
-	VECTOR GetAimDirection();// エイム方向取得
-
 	// デバッグカメラ関連
 	void SetIsUseDebugCamera(bool isUse);
+
+	VECTOR GetCameraDir();
 
 	// カメラシェイク関連
 	void StartCameraShake(float magnitude, float duration);

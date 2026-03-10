@@ -39,7 +39,7 @@ void PlayerBase::ProcessMovePlayer()
 	if(IsDeath()){ return; }		// 死亡中は移動入力を受け付けない
 	if(_playerState.IsStateAbsorbing()){ return; }	// 吸収攻撃中は移動入力を受け付けない
 
-	bool isAiming = _cameraManager->IsAimMode();		// エイムモード中かどうか
+	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
 	bool isShooting = _playerState.IsStateShooting();	// 発射中かどうか
 	if(!isAiming && isShooting){ return; }				// 発射中でエイムモードでない場合は移動入力を受け付けない
 
@@ -175,7 +175,7 @@ void PlayerBase::ProcessStatusAnimation()
 	else
 	{
 		bool isWalking = VSize(VGet(_vMove.x, 0.0f, _vMove.z)) > 0.0f;	// 移動入力があるかどうかをチェック
-		bool isAiming = _cameraManager && _cameraManager->IsAimMode();	// エイム中かどうかをチェック
+		bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
 
 		// 走っているなら
 		if(isWalking && _bIsDashInput)

@@ -101,12 +101,6 @@ bool AimCamera::IsAiming() const
 	return _isAiming;
 }
 
-// エイム方向取得
-VECTOR AimCamera::GetAimDirection() const
-{
-	return _aimDirection;
-}
-
 // ターゲット設定
 void AimCamera::SetTarget(std::shared_ptr<PlayerBase> target)
 {

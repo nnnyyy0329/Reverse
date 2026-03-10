@@ -451,7 +451,10 @@ void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPl
 	PlayTransConnectionAnim(playerAnim.movement.wait);					// 再生処理
 
 	// プレイヤー切り替え時に、強制的にエイムモードを終了する
-	_cameraManager->EndAimMode();
+	if (_cameraManager) 
+	{
+		_cameraManager->SetCameraType(CAMERA_TYPE::GAME_CAMERA);
+	}
 }
 
 // 変身タイマー更新処理

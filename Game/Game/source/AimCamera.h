@@ -22,7 +22,8 @@ public:
 
 	// エイム処理
 	bool IsAiming() const;// エイムモード中かチェック
-	VECTOR GetAimDirection() const;// エイム方向取得
+
+	VECTOR GetCameraDir() override { return _aimDirection; }
 
 	float GetAngleH() override { return _fAngleH; }
 

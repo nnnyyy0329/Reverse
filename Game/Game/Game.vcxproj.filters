@@ -28,9 +28,6 @@
     <ClCompile Include="source\BulletManager.cpp">
       <Filter>Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="source\CameraManager.cpp">
-      <Filter>Camera</Filter>
-    </ClCompile>
     <ClCompile Include="source\DebugCamera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
@@ -211,7 +208,12 @@
     <ClCompile Include="source\PathfindingManager.cpp">
       <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
     </ClCompile>
-    <ClCompile Include="source\CameraBase.cpp" />
+    <ClCompile Include="source\CameraBase.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CameraManager.cpp">
+      <Filter>Camera\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -240,9 +242,6 @@
     </ClInclude>
     <ClInclude Include="source\BulletManager.h">
       <Filter>Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="source\CameraManager.h">
-      <Filter>Camera</Filter>
     </ClInclude>
     <ClInclude Include="source\DebugCamera.h">
       <Filter>Camera</Filter>
@@ -412,7 +411,12 @@
     <ClInclude Include="source\PathfindingManager.h">
       <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
     </ClInclude>
-    <ClInclude Include="source\CameraBase.h" />
+    <ClInclude Include="source\CameraBase.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CameraManager.h">
+      <Filter>Camera\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -552,6 +556,9 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\Enemy\A%2a">
       <UniqueIdentifier>{0c4e6ac5-25ac-4ace-a1c4-93a3b99f7c4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera\Manager">
+      <UniqueIdentifier>{c9d6516b-d942-4da6-aefd-7e3e96874659}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

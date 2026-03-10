@@ -63,3 +63,14 @@ void CameraBase::CalcAngleFromPos()
 	// 斜辺(距離)に対する高さ(y)の割合から角度を計算
 	_fAngleV = asinf(diff.y / _fDistance);
 }
+
+VECTOR CameraBase::GetCameraDir()
+{
+	// 水平と垂直の角度から、カメラの前方ベクトルを計算して返す
+	float cosV = cosf(_fAngleV);
+	float sinV = sinf(_fAngleV);
+	float cosH = cosf(_fAngleH);
+	float sinH = sinf(_fAngleH);
+
+	return VGet(cosV * sinH, sinV, cosV * cosH);
+}
