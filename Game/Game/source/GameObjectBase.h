@@ -35,6 +35,8 @@ public:
 	AnimManager* GetAnimManager() { return &_animManager; }
 	const AnimManager* GetAnimManager() const { return &_animManager; }
 
+	float GetRotY() { return atan2f(_vDir.x, _vDir.z); }
+
 protected:
 	// ˆÊ’uŠÖ˜A
 	VECTOR _vPos;		// ˆÊ’u

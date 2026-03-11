@@ -349,6 +349,7 @@ public:
 	// 状態リセット
 	void SetStateReset(){ return _playerState.StateReset(); }
 
+	bool IsMoving() { return _playerState.IsStateMoving(); }
 
 	// プレイヤーの動作関連コンポーネントクラスを実装予定
 	// それぞれのシステムはユニークポインタで管理して実装する

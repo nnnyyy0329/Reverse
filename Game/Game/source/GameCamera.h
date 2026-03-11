@@ -24,4 +24,6 @@ protected:
 
 	// ターゲットとなるゲームオブジェクト
 	std::shared_ptr<PlayerBase> _targetObject;
+
+	float _fAutoFollowTimer = 0.0f;
 };
