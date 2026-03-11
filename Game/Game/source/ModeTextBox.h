@@ -24,4 +24,7 @@ private:
 
 	int _frameCount = 0;
 	bool _bClose = false;
+
+
+	// text ‚Ü‚½Œã‚Å
 };

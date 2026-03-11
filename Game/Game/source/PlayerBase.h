@@ -318,7 +318,10 @@ public:
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
 
+
 	/*****ゲッターセッター*****/
+
+	// 攻撃コリジョン情報
 	VECTOR GetAttackColTop(){ return _vAttackColTop; }			// 攻撃コリジョン上部
 	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }	// 攻撃コリジョン下部
 	float GetAttackColR(){ return _fAttackColR; }				// 攻撃コリジョン半径
@@ -342,6 +345,9 @@ public:
 
 	PLAYER_COMBAT_STATE GetCombatState()const{ return _playerState.combatState; }		// 特殊状態取得
 	void SetCombatState(PLAYER_COMBAT_STATE state){ _playerState.combatState = state; }	// 特殊状態設定
+
+	// 状態リセット
+	void SetStateReset(){ return _playerState.StateReset(); }
 
 
 	// プレイヤーの動作関連コンポーネントクラスを実装予定
