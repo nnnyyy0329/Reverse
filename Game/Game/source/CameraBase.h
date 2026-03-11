@@ -12,7 +12,7 @@ public:
 	virtual void Process() {};
 	virtual void Render() {};
 	virtual void DebugRender() {};
-	void SetUp();
+	virtual void SetUp();
 
 	// カメラ切り替え時に呼ばれる
 	virtual void OnEnter() {};
@@ -33,6 +33,7 @@ public:
 	virtual VECTOR GetCameraDir();// カメラが向いている方向
 	// セッター
 	void SetPos(const VECTOR& pos) { _vPos = pos; }
+	void SetTarget(const VECTOR& target) { _vTarget = target; }
 	void SetAngleH(float angleH) { _fAngleH = angleH; }
 	void SetAngleV(float angleV) { _fAngleV = angleV; }
 

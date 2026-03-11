@@ -6,6 +6,7 @@ class CameraBase;
 class GameCamera;
 class DebugCamera;
 class AimCamera;
+class EventCamera;
 
 class PlayerBase;
 
@@ -15,6 +16,7 @@ enum class CAMERA_TYPE
 	GAME_CAMERA,// ゲームカメラ
 	DEBUG_CAMERA,// デバッグカメラ
 	AIM_CAMERA,// エイムカメラ
+	EVENT_CAMERA,// 演出用カメラ
 	_EOT_,
 };
 
@@ -58,6 +60,7 @@ protected:
 	std::unique_ptr<GameCamera> _gameCamera;
 	std::unique_ptr<DebugCamera> _debugCamera;
 	std::unique_ptr<AimCamera> _aimCamera;
+	std::unique_ptr<EventCamera> _eventCamera;
 
 	// アドオンのリスト
 	std::list<std::shared_ptr<ICameraAddon>> _addons;

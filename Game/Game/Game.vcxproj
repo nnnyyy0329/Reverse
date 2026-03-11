@@ -172,6 +172,7 @@
     <ClCompile Include="source\EnemyState.cpp" />
     <ClCompile Include="source\EnergyManager.cpp" />
     <ClCompile Include="source\EnergyUI.cpp" />
+    <ClCompile Include="source\EventCamera.cpp" />
     <ClCompile Include="source\GameCamera.cpp" />
     <ClCompile Include="source\GameObjectBase.cpp" />
     <ClCompile Include="source\GeometryUtility.cpp" />
@@ -286,6 +287,7 @@
     <ClInclude Include="source\EnemyState_impl.h" />
     <ClInclude Include="source\EnergyManager.h" />
     <ClInclude Include="source\EnergyUI.h" />
+    <ClInclude Include="source\EventCamera.h" />
     <ClInclude Include="source\GameCamera.h" />
     <ClInclude Include="source\GameObjectBase.h" />
     <ClInclude Include="source\GeometryUtility.h" />

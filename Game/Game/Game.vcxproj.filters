@@ -223,6 +223,7 @@
     <ClCompile Include="source\CameraDollyAddon.cpp">
       <Filter>Camera\Addon</Filter>
     </ClCompile>
+    <ClCompile Include="source\EventCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -435,6 +436,7 @@
     <ClInclude Include="source\CameraDollyAddon.h">
       <Filter>Camera\Addon</Filter>
     </ClInclude>
+    <ClInclude Include="source\EventCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">

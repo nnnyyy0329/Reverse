@@ -3,12 +3,14 @@
 #include "GameCamera.h"
 #include "DebugCamera.h"
 #include "AimCamera.h"
+#include "EventCamera.h"
 
 CameraManager::CameraManager()
 {
 	_gameCamera = std::make_unique<GameCamera>();
 	_debugCamera = std::make_unique<DebugCamera>();
 	_aimCamera = std::make_unique<AimCamera>();
+	_eventCamera = std::make_unique<EventCamera>();
 
 	_pActiveCamera = _gameCamera.get();
 
@@ -108,12 +110,17 @@ void CameraManager::SetCameraType(CAMERA_TYPE type)
 	// 切り替え前のカメラの角度を保存
 	float prevAngleH = 0.0f;
 	float prevAngleV = 0.0f;
+	VECTOR prevPos = VGet(0.0f, 0.0f, 0.0f);
+	VECTOR prevTarget = VGet(0.0f, 0.0f, 0.0f);
 
 	// 前のカメラの終了処理
 	if (_pActiveCamera) 
 	{
 		prevAngleH = _pActiveCamera->GetAngleH();
 		prevAngleV = _pActiveCamera->GetAngleV();
+		prevPos = _pActiveCamera->GetPos();
+		prevTarget = _pActiveCamera->GetTarget();
+
 		_pActiveCamera->OnExit();
 	}
 
@@ -124,10 +131,11 @@ void CameraManager::SetCameraType(CAMERA_TYPE type)
 	// ポインタを切り替え
 	switch (_eCameraType)
 	{
-	case CAMERA_TYPE::GAME_CAMERA: _pActiveCamera = _gameCamera.get(); break;
-	case CAMERA_TYPE::DEBUG_CAMERA: _pActiveCamera = _debugCamera.get(); break;
-	case CAMERA_TYPE::AIM_CAMERA: _pActiveCamera = _aimCamera.get(); break;
-	default: _pActiveCamera = nullptr; break;
+		case CAMERA_TYPE::GAME_CAMERA: _pActiveCamera = _gameCamera.get(); break;
+		case CAMERA_TYPE::DEBUG_CAMERA: _pActiveCamera = _debugCamera.get(); break;
+		case CAMERA_TYPE::AIM_CAMERA: _pActiveCamera = _aimCamera.get(); break;
+		case CAMERA_TYPE::EVENT_CAMERA: _pActiveCamera = _eventCamera.get(); break;
+		default: _pActiveCamera = nullptr; break;
 	}
 
 	// 新しいカメラの開始処理
@@ -136,6 +144,8 @@ void CameraManager::SetCameraType(CAMERA_TYPE type)
 		// 前のカメラの角度を引き継ぐ
 		_pActiveCamera->SetAngleH(prevAngleH);
 		_pActiveCamera->SetAngleV(prevAngleV);
+		_pActiveCamera->SetPos(prevPos);
+		_pActiveCamera->SetTarget(prevTarget);
 
 		_pActiveCamera->OnEnter();
 		_pActiveCamera->SetUp();

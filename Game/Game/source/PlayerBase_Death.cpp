@@ -28,10 +28,11 @@ void PlayerBase::ProcessDeath()
 		ProcessPlayAnimation();
 
 		// カメラ演出テスト
-		_cameraManager->Reset();
+		/*_cameraManager->Reset();
+		_cameraManager->SetCameraType(CAMERA_TYPE::EVENT_CAMERA);
 		auto zoom = std::make_shared<CameraDollyAddon>();
 		zoom->StartDolly(-250.0f, 300.0f, 60.0f);
-		_cameraManager->AddAddon(zoom);
+		_cameraManager->AddAddon(zoom);*/
 	}
 }
 
@@ -44,7 +45,13 @@ void PlayerBase::CheckDeathAnimFinished()
 		AnimManager* animManager = GetAnimManager();
 		if(animManager->IsAnimationFinished())
 		{
-			_bIsDeathAnimComplete = true; // 死亡アニメーション完了フラグを立てる
+			static int timer = 0;
+			timer++;
+			if (timer > 60)
+			{
+				_bIsDeathAnimComplete = true;// 死亡アニメーション完了フラグを立てる
+				timer = 0;
+			}
 		}
 	}
 }

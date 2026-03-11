@@ -648,6 +648,8 @@ void ModeGame::RestartCurrentStage()
 		BulletManager::GetInstance()->ClearAllBullets();
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
+
+	_cameraManager->Reset();
 }
 
 void ModeGame::SetPlayerConfig(VECTOR vPos, VECTOR vRot)

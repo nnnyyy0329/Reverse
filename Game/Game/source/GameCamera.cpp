@@ -91,6 +91,7 @@ void GameCamera::UpdateCamera()
 	// 左スティックの入力の大きさを計算
 	float moveInputMag = sqrtf(analog.lx * analog.lx + analog.ly * analog.ly);
 
+	// カメラの自動追従処理
 	// 移動中 && 入力が強い && カメラ操作なし
 	if (_targetObject->IsMoving() && moveInputMag > 0.5f && !isCameraOperated)
 	{
