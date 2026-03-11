@@ -32,55 +32,55 @@ public:
 
 	/* 選択関係関数 */
 	
-	/// @brief 入力に応じて選択画面の表示を切り替える関数です。
+	/// @brief 入力に応じて選択画面の表示を切り替える処理
 	void SelectScreenByInput();		
 	
-	/// @brief 入力に応じて選択処理を行う関数です。
+	/// @brief 入力に応じて選択処理
 	void SelectionByInput();		
 	
-	/// @brief 選択要素の表示関数です。
+	/// @brief 選択要素の表示
 	void SelectRender();			
 	
-	/// @brief 選択画面の表示関数です。
+	/// @brief 選択画面の表示
 	void SelectFrameRender();		
 	
-	/// @brief 選択をリセットする関数です。
+	/// @brief 選択をリセット
 	void ResetSelection();			
 	
-	/// @brief 選択を完了する関数です。
+	/// @brief 選択を完了する処理
 	void CompleteSelection();	
 	
-	/// @brief プレイヤータイプに応じて選択可能かどうかを判断する関数です。
+	/// @brief プレイヤータイプに応じて選択可能かどうかをチェック
 	bool IsSelectActiveByPlayerType()const;	
 
 
 	/* ゲッターセッター */
 
-	/// @brief 選択されたアビリティのタイプを取得します。
+	/// @brief 選択されたアビリティのタイプを取得
 	ABILITY_TYPE GetSelectedAbility()const{ return ConvertSelectionToAbility(_iSelectedAbility); }
 
-	/// @brief 	// 選択されたアビリティ番号を取得します。
+	/// @brief 	// 選択されたアビリティ番号を取得
 	int GetSelectedAbilityIndex()const { return _iSelectedAbility; }	
 
-	/// @brief 現在選択中のアビリティのインデックスを取得します。
+	/// @brief 現在選択中のアビリティのインデックスを取得
 	bool GetIsSelectComplete()const{ return _bIsSelectComplete; }		
 
-	/// @brief 選択画面がアクティブかどうかを取得します。
+	/// @brief 選択画面がアクティブかどうかを取得
 	bool GetIsScreenActive()const { return _bIsScreenActive; }			
 
-	/// @brief 選択状態を取得します。
+	/// @brief 選択状態を取得
 	SelectionState GetSelectionState()const{ return _selectionState; }
 
-	/// @brief 選択状態を設定します。
+	/// @brief 選択状態を設定
 	void SetSelectionState(SelectionState state){ _selectionState = state; }
 
 
 	/* クラスセット */
 
-	/// @brief プレイヤーマネージャーを設定します。
+	/// @brief プレイヤーマネージャーを設定
 	void SetPlayerManager(std::shared_ptr<PlayerManager> playerManager) { _playerManager = playerManager; }
 
-	/// @brief プレイヤーアンロックマネージャーを設定します。
+	/// @brief プレイヤーアンロックマネージャーを設定
 	void SetPlayerUnlockManager(std::shared_ptr<PlayerUnlockManager> unlockManager) { _playerUnlockManager = unlockManager; }
 
 private:

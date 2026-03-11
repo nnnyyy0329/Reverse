@@ -332,17 +332,12 @@ void PlayerBase::ProcessDebug()
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG1))
 	{
-		EnergyManager::GetInstance()->ConsumeEnergy(50.0f);
+		EnergyManager::GetInstance()->ConsumeEnergy(25.0f);
 	}
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG2))
 	{
-		EnergyManager::GetInstance()->AddEnergy(100.0f);
-	}
-
-	if(im.IsTrigger(INPUT_ACTION::DASH))
-	{
-		//_cameraManager->StartCameraShake(5.0f, 10.0f);
+		EnergyManager::GetInstance()->AddEnergy(50.0f);
 	}
 }
 

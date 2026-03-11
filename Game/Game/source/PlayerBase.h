@@ -456,19 +456,19 @@ protected:	// 死亡関係 --- 今後クラスで分ける予定 ------------------------------
 	/// @brief 死亡処理呼び出し関数
 	void CallDeath();				
 
-	/// @brief 死亡処理関数
+	/// @brief 死亡処理
 	void ProcessDeath();			
 
-	/// @brief 死亡状態更新関数
+	/// @brief 死亡状態更新
 	void UpdateDeathState();
 
-	/// @brief 死亡したかチェックする関数
+	/// @brief 死亡したかチェック
 	bool IsDeath()const;
 
-	/// @brief 生きているかチェックする関数
+	/// @brief 生きているかチェック
 	bool IsAlive()const;		
 
-	/// @brief 死亡ステートかチェックする関数
+	/// @brief 死亡ステートかチェック
 	bool IsStateDeath()const;	
 
 	// 死亡関係変数
