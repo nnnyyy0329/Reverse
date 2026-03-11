@@ -66,8 +66,8 @@ bool ModeLoading::Initialize()
 			rs->Register("BulletPlayer", "res/Player/SK_player_02_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
-			rs->Register("PlayerLifeBar", "res/Player/UI/Player_Life_Bar.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("PlayerLifeBarFrame", "res/Player/UI/Player_Life_Bar_Frame.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("PlayerLifeBar", "res/Player/UI/player_life_bar.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("PlayerLifeBarFrame", "res/Player/UI/player_life_bar_frame.png", RESOURCE_TYPE::Graph, 1.0f);
 
 		}
 
@@ -99,10 +99,10 @@ bool ModeLoading::Initialize()
 
 		// エネルギーUI用
 		{
-			rs->Register("EnergyFrame", "res/Energy/energy_frame_2.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("Energy1", "res/Energy/energy_1_2.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("Energy2", "res/Energy/energy_2_2.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("Energy3", "res/Energy/energy_3_2.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("EnergyFrame", "res/Energy/energy_frame.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy1", "res/Energy/energy_1r.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy2", "res/Energy/energy_2r.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy3", "res/Energy/energy_3r.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// スタミナUI用

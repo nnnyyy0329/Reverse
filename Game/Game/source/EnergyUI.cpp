@@ -5,9 +5,9 @@ namespace
 {
 	// ‰æ‘œ•\Ž¦—p
 	constexpr int DRAW_X = 0;
-	constexpr int DRAW_Y = 824;
-	constexpr int DRAW_OFFSET_X = 70;
-	constexpr int DRAW_OFFSET_Y = 124;
+	constexpr int DRAW_Y = 696;
+	constexpr int DRAW_OFFSET_X = 100;
+	constexpr int DRAW_OFFSET_Y = 179;
 }
 
 EnergyUI::EnergyUI()

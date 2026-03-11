@@ -176,32 +176,6 @@ void AbilitySelectScreen::SelectRender()
 	DrawGraph(selectX[1], selectY, _iHandle1, TRUE);
 }
 
-//// 選択要素の表示：旧
-//void AbilitySelectScreen::SelectRender()
-//{
-//	// 背景の半透明黒
-//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-//	//DrawBox(x, y, x + w, y + h, GetColor(255, 255, 255), TRUE);
-//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-//
-//	// 画像のサイズを取得
-//	int graphW, graphH;
-//	GetGraphSize(_iHandle1, &graphW, &graphH);
-//
-//	int selectX[3] = // 表示するX座標
-//	{ 
-//		Render::SELECT_DRAW_X,
-//		Render::SELECT_DRAW_X + graphW + Render::DRAW_OFFSET_X,
-//		Render::SELECT_DRAW_X + graphW * 2 + Render::DRAW_OFFSET_X * 2
-//	};
-//	int selectY = Render::SELECT_DRAW_Y; // 表示するY座標
-//
-//	// アビリティ画像を描画
-//	DrawGraph(selectX[0], selectY, _iHandle1, TRUE);
-//	DrawGraph(selectX[1], selectY, _iHandle3, TRUE);
-//	DrawGraph(selectX[2], selectY, _iHandle2, TRUE);
-//}
-
 // 選択画面表示
 void AbilitySelectScreen::SelectFrameRender()
 {
