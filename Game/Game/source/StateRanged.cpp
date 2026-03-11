@@ -481,6 +481,9 @@ namespace Ranged
 					EffectServer::GetInstance()->Play("Normal_Attack02", efPos);
 				}
 
+				// SE
+				SoundServer::GetInstance()->Play("SE_Ranged_Shot", DX_PLAYTYPE_BACK);
+
 				_bHasShot = true;
 			}
 		}

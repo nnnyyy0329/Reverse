@@ -142,7 +142,7 @@ bool ModeLoading::Initialize()
 		// 音関連
 		{
 			// BGM
-			rs->Register("BGM_Stage01", "sound/BGM/stage_01.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Stage01", "sound/BGM/stage_bgm_test.mp3", RESOURCE_TYPE::Sound, 1.0f);
 			rs->Register("BGM_Stage02", "sound/BGM/stage_02.mp3", RESOURCE_TYPE::Sound, 1.0f);
 
 			// SE
@@ -150,6 +150,8 @@ bool ModeLoading::Initialize()
 			rs->Register("SE_En_Dead", "sound/SE/en_common/en_dead.mp3", RESOURCE_TYPE::Sound, 1.0f);
 			rs->Register("SE_En_Down", "sound/SE/en_common/en_down.mp3", RESOURCE_TYPE::Sound, 1.0f);
 			rs->Register("SE_Melee_Attanck", "sound/SE/en_melee/en_melee_attack.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_Ranged_Shot", "sound/SE/en_ranged/en_ranged_shot.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_En_Notice", "sound/SE/en_common/en_common_notice.mp3", RESOURCE_TYPE::Sound, 1.0f);
 
 			// プレイヤーの攻撃
 			rs->Register("sPlayerFirstAttack", "sound/SE/sPlayerFirstAttack/sPlayerFirstAttack1.mp3", RESOURCE_TYPE::Sound, 1.0f);
