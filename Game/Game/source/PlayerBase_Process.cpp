@@ -36,7 +36,7 @@ void PlayerBase::ProcessMovePlayer()
 	if(IsAttacking()){ return; }	// 攻撃中は移動入力を受け付けない
 	if(IsDodging()){ return; }		// 回避中は移動入力を受け付けない
 	if(IsHitStop()){ return; }		// 被弾中は移動入力を受け付けない
-	if(IsDeath()){ return; }		// 死亡中は移動入力を受け付けない
+	if(IsStateDeath()){ return; }	// 死亡中は移動入力を受け付けない
 	if(_playerState.IsStateAbsorbing()){ return; }	// 吸収攻撃中は移動入力を受け付けない
 
 	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
@@ -327,7 +327,7 @@ void PlayerBase::ProcessDebug()
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG3))
 	{
-		_fLife -= 5.0f;
+		_fLife -= 10.0f;
 	}
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG1))

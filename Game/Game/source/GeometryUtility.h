@@ -7,7 +7,7 @@ struct SectorData
 	VECTOR center;				// 中心点
 	VECTOR direction;			// 方向ベクトル  
 	float range;				// 範囲
-	float angle;				// 角度（ラジアン）
+	float angle;				// 角度
 	float heightOffset;			// 高さオフセット
 };
 

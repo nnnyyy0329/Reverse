@@ -387,7 +387,6 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	bool IsAttacking();				// 攻撃中かチェック
 	bool IsAttackInput();			// 攻撃入力があるかチェック
 
-	//void UpdateAttackColPos(std::shared_ptr<AttackBase> attack, VECTOR& topOffset, VECTOR& bottomOffset, VECTOR& baseOffset);	// 攻撃判定の位置更新処理
 	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);				// 攻撃開始処理
 	void ProcessAttackReaction(int attackIndex);										// 攻撃反応処理
 	void ProcessAttackRegister(std::shared_ptr<AttackBase> attack);						// 攻撃登録処理
@@ -454,14 +453,23 @@ protected: 	// シールド関係 --- 今後クラスで分ける予定 -------------------------
 
 protected:	// 死亡関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
-	void CallDeath();				// 死亡関係関係関数呼び出し
-	void ProcessDeath();			// 死亡処理
-	void CheckDeathAnimFinished();	// 死亡アニメーションが再生し終わったか
-	void CheckDeath();				// 死亡したか
+	/// @brief 死亡処理呼び出し関数
+	void CallDeath();				
 
-	bool IsDeath()const;		// 死亡したか
-	bool IsAlive()const;		// プレイヤーが死亡したか
-	bool IsStateDeath()const;	// 死亡ステートになったか
+	/// @brief 死亡処理関数
+	void ProcessDeath();			
+
+	/// @brief 死亡状態更新関数
+	void UpdateDeathState();
+
+	/// @brief 死亡したかチェックする関数
+	bool IsDeath()const;
+
+	/// @brief 生きているかチェックする関数
+	bool IsAlive()const;		
+
+	/// @brief 死亡ステートかチェックする関数
+	bool IsStateDeath()const;	
 
 	// 死亡関係変数
 	bool _bIsAlive;				// 生きているか
