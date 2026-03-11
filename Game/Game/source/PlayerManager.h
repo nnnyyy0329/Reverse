@@ -20,7 +20,7 @@ enum class PLAYER_TYPE
 	_EOT_,
 };
 
-// プレイヤーマネージャークラス
+/// @brief プレイヤーマネージャークラス
 class PlayerManager
 {
 public:

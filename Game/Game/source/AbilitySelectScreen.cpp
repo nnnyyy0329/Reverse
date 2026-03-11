@@ -5,12 +5,12 @@
 namespace Render
 {
 	constexpr int SELECT_DRAW_X = 1500;
-	constexpr int SELECT_DRAW_Y = 950;
+	constexpr int SELECT_DRAW_Y = 850;
 	constexpr int DRAW_OFFSET_X = 10;
 	constexpr int DRAW_OFFSET_Y = 0;
 }
 
-namespace
+namespace SelectConstants
 {
 	constexpr int MIN_SELECT = 0;	// 最小選択肢
 	constexpr int MAX_SELECT = 2;	// 最大選択肢
@@ -21,9 +21,11 @@ AbilitySelectScreen::AbilitySelectScreen()
 {
 	_playerManager = nullptr;	// プレイヤーマネージャー
 
-	_iHandle1 = ResourceServer::GetInstance()->GetHandle("select1");
-	_iHandle2 = ResourceServer::GetInstance()->GetHandle("select2");
-	_iHandle3 = ResourceServer::GetInstance()->GetHandle("select3");
+	_iHandle1 = ResourceServer::GetInstance()->GetHandle("SelectPower");
+	_iHandle2 = ResourceServer::GetInstance()->GetHandle("SelectBlaster");
+	//_iHandle1 = ResourceServer::GetInstance()->GetHandle("select1");
+	//_iHandle2 = ResourceServer::GetInstance()->GetHandle("select2");
+	//_iHandle3 = ResourceServer::GetInstance()->GetHandle("select3");
 
 	// 選択状態の初期化
 	_selectionState = SelectionState::NOT_SELECTION;	// 選択状態
@@ -73,18 +75,16 @@ bool AbilitySelectScreen::Render()
 	if(_selectionState != SelectionState::SELECTING){ return false; }
 
 	// 選択画面表示
-	SelectFrameRender();
+	//SelectFrameRender();
 
 	return true;
 }
 
-// 入力による画面表示
 void AbilitySelectScreen::SelectScreenByInput()
 {
 
 }
 
-// 入力による選択処理
 void AbilitySelectScreen::SelectionByInput()
 {
 	// 選択処理完了中は入力を受け付けない
@@ -160,33 +160,47 @@ void AbilitySelectScreen::SelectionByInput()
 // 選択要素の表示
 void AbilitySelectScreen::SelectRender()
 {
-	int x = 0;
-	int y = 0;
-	int w = 1920;
-	int h = 1080;
-
-	// 背景の半透明黒
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-	//DrawBox(x, y, x + w, y + h, GetColor(255, 255, 255), TRUE);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
 	// 画像のサイズを取得
 	int graphW, graphH;
 	GetGraphSize(_iHandle1, &graphW, &graphH);
 
-	int selectX[3] = // 表示するX座標
+	int selectX[2] = // 表示するX座標
 	{ 
 		Render::SELECT_DRAW_X,
-		Render::SELECT_DRAW_X + graphW + Render::DRAW_OFFSET_X,
-		Render::SELECT_DRAW_X + graphW * 2 + Render::DRAW_OFFSET_X * 2
+		Render::SELECT_DRAW_X + graphW + Render::DRAW_OFFSET_X
 	};
 	int selectY = Render::SELECT_DRAW_Y; // 表示するY座標
 
 	// アビリティ画像を描画
-	DrawGraph(selectX[0], selectY, _iHandle1, TRUE);
-	DrawGraph(selectX[1], selectY, _iHandle3, TRUE);
-	DrawGraph(selectX[2], selectY, _iHandle2, TRUE);
+	DrawGraph(selectX[0], selectY, _iHandle2, TRUE);
+	DrawGraph(selectX[1], selectY, _iHandle1, TRUE);
 }
+
+//// 選択要素の表示：旧
+//void AbilitySelectScreen::SelectRender()
+//{
+//	// 背景の半透明黒
+//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+//	//DrawBox(x, y, x + w, y + h, GetColor(255, 255, 255), TRUE);
+//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+//
+//	// 画像のサイズを取得
+//	int graphW, graphH;
+//	GetGraphSize(_iHandle1, &graphW, &graphH);
+//
+//	int selectX[3] = // 表示するX座標
+//	{ 
+//		Render::SELECT_DRAW_X,
+//		Render::SELECT_DRAW_X + graphW + Render::DRAW_OFFSET_X,
+//		Render::SELECT_DRAW_X + graphW * 2 + Render::DRAW_OFFSET_X * 2
+//	};
+//	int selectY = Render::SELECT_DRAW_Y; // 表示するY座標
+//
+//	// アビリティ画像を描画
+//	DrawGraph(selectX[0], selectY, _iHandle1, TRUE);
+//	DrawGraph(selectX[1], selectY, _iHandle3, TRUE);
+//	DrawGraph(selectX[2], selectY, _iHandle2, TRUE);
+//}
 
 // 選択画面表示
 void AbilitySelectScreen::SelectFrameRender()
@@ -194,7 +208,7 @@ void AbilitySelectScreen::SelectFrameRender()
 	// 選択中のみカーソル表示
 	if(_selectionState == SelectionState::SELECTING)
 	{
-		_bShowCursor = (_iCursorCount / BLINK_SPEED) % 2 == 0;
+		_bShowCursor = (_iCursorCount / SelectConstants::BLINK_SPEED) % 2 == 0;
 
 		// カーソル表示
 		if(_bShowCursor)

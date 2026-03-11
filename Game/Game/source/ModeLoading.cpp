@@ -79,7 +79,7 @@ bool ModeLoading::Initialize()
 
 			rs->Register("SelectChain", "res/UI_Select/ability_lock_chain.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SelectPower", "res/UI_Select/select_power.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SelectBullet", "res/UI_Select/select_bullet.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SelectBlaster", "res/UI_Select/select_blaster.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SkillAbsorb", "res/UI_Select/skill_absorb.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SkillAoe", "res/UI_Select/skill_aoe.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SkillPunch", "res/UI_Select/skill_punch.png", RESOURCE_TYPE::Graph, 1.0f);

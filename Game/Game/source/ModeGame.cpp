@@ -40,7 +40,7 @@
 
 bool ModeGame::Initialize() 
 {
-	//StartFade(200, 90, 30);
+	StartFade(200, 90, 30);
 
 	if (!base::Initialize()) { return false; }
 
