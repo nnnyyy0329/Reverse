@@ -93,11 +93,25 @@ private:
 	// 能力選択画面がアクティブかチェック
 	void CheckAbilityScreenActive(bool& isAbilityScreenActive);	
 
-	// 変身中でなければ自動切り替えなどの処理
+	/// <summary>
+	/// 変身中でなければ自動切り替えなどの処理。
+	/// </summary>
+	/// <param name="isAbilityScreenActive: ">アビリティ画面がアクティブかどうかを示します。</param>
 	void ProcessAutoSwitch(bool isAbilityScreenActive);			
 
 	// アクティブプレイヤーの処理
-	void ProcessActivePlayer(bool isAbilityScreenActive);		
+	
+	/// <summary>
+	/// アクティブなプレイヤーを処理します。
+	/// </summary>
+	/// 
+	/// <param name="isAbilityScreenActive: ">アビリティ画面がアクティブかどうかを示します。</param>
+	void ProcessActivePlayer(bool isAbilityScreenActive);
+
+	/// <summary>
+	/// 待機アニメーションに戻ります。
+	/// </summary>
+	void ReturnWaitAnim();
 
 protected:
 	std::shared_ptr<CameraManager> _cameraManager;

@@ -322,6 +322,9 @@ void PlayerManager::TransformFinishByTime()
 				TransferPlayerState(oldPlayer, _activePlayer);
 			}
 		}
+
+		// 待機アニメーションに戻す
+		ReturnWaitAnim();
 	}
 }
 
@@ -334,9 +337,9 @@ void PlayerManager::EndTransform()
         _activePlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);
     }
 
-	_eTransformTarget = PLAYER_TYPE::NONE;
-	_fTransformTime = 0.0f;
-	_bIsTransforming = false;
+	_eTransformTarget = PLAYER_TYPE::NONE;	// 変身先のプレイヤーをリセット
+	_fTransformTime = 0.0f;					// 変身時間リセット
+	_bIsTransforming = false;				// 変身フラグ無効
 }
 
 // 変身解除開始
@@ -405,6 +408,9 @@ void PlayerManager::SwitchPlayerByTime()
 			}
 		}
 
+		// 待機アニメーションに戻す
+		ReturnWaitAnim();
+
 		// 変身解除終了
 		EndTransformCancel();
 	}
@@ -419,11 +425,9 @@ void PlayerManager::EndTransformCancel()
 		_activePlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);
 	}
 
-	// 能力選択をしていない状態にする
-	_abilitySelectScreen->SetSelectionState(SelectionState::NOT_SELECTION);
-
-	_fTransformCancelTime = 0.0f;
-	_bIsTransformCanceling = false;
+	_abilitySelectScreen->SetSelectionState(SelectionState::NOT_SELECTION);	// 能力選択をしていない状態にする
+	_fTransformCancelTime = 0.0f;											// 変身解除時間リセット
+	_bIsTransformCanceling = false;											// 変身解除フラグ無効
 }
 
 // アクティブプレイヤー取得
@@ -515,9 +519,9 @@ void PlayerManager::PlayTransConnectionAnim(const char* animName)
 		// アニメーション変更
 		animManager->ChangeAnimationByName
 		(
-			animName,
-			TransAnimConstants::ANIMATION_BLEND_TIME, 
-			TransAnimConstants::ANIMATION_NONE_LOOP
+			animName,									// アニメーション名
+			TransAnimConstants::ANIMATION_BLEND_TIME,	// ブレンド時間
+			TransAnimConstants::ANIMATION_LOOP			// ループあり
 		);
 
 		// 変身アニメーションの再生時間を変身時間に設定
@@ -584,4 +588,16 @@ void PlayerManager::ProcessActivePlayer(bool isAbilityScreenActive)
 
 	_activePlayer->SetCameraManager(_cameraManager);	// アクティブプレイヤーにカメラマネージャーをセット
 	_activePlayer->Process();							// アクティブプレイヤーの処理を行う
+}
+
+// アニメーションを待機に戻す
+void PlayerManager::ReturnWaitAnim()
+{
+	if(!_activePlayer) { return; }
+
+	// プレイヤーのアニメーションデータを取得
+	PlayerAnimations playerAnim = _activePlayer->GetPlayerAnimation();	
+
+	// 待機アニメーション再生
+	PlayTransConnectionAnim(playerAnim.movement.wait);	
 }
