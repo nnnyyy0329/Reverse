@@ -10,12 +10,6 @@ public:
 
 	bool LoadModel(const std::string& filePath);
 
-	// アニメーションの追加
-	int AddAnimation(const std::string& filePath, int loopCnt);
-
-	// アニメーションの切り替え
-	bool ChangeAnimation(int animIndex, float fBlendFrame);
-
 	// アニメーションの更新
 	void Update();
 
@@ -28,8 +22,7 @@ public:
 	void SetModelHandle(int handle) { _modelHandle = handle; }
 
 	// アニメーションが終了したか
-	bool IsAnimationFinished();
-	bool IsAnimationFinishedConst()const;// const版
+	bool IsAnimationFinished() const;
 
 	// 現在のアニメーション番号
 	int GetCurrentAnimIndex() { return _currentAnimIndex; }
@@ -47,29 +40,22 @@ private:
 	// アニメーション情報
 	struct AnimationData
 	{
-		int attachIndex;// アタッチインデックス
-		float fTotalTime;// 総再生時間
-		float fPlayTime;// 現在の再生時間
-		float fCloseTime;// ブレンド終了までの時間
-		float fCloseTotalTime;// ブレンド終了の総時間
-		float fFadeInTime;// フェードイン時間
-		float fFadeInTotalTime;// フェードインの総時間
-		int loopCnt;// ループ回数(0:無限ループ　1:ループ無し　2以上:指定回数ループ)
-		float fPlaySpeed;// 再生速度
-		bool bIsFinished;// アニメーションが終わったか
+		int attachIndex = -1;// アタッチインデックス
+		float fTotalTime = 0.0f;// 総再生時間
+		float fPlayTime = 0.0f;// 現在の再生時間
+		float fCloseTime = 0.0f;// ブレンド終了までの時間
+		float fCloseTotalTime = 0.0f;// ブレンド終了の総時間
+		float fFadeInTime = 0.0f;// フェードイン時間
+		float fFadeInTotalTime = 0.0f;// フェードインの総時間
+		int loopCnt = 0;// ループ回数(0:無限ループ　1:ループ無し　2以上:指定回数ループ)
+		float fPlaySpeed  = 1.0f;// 再生速度
+		bool bIsFinished = false;// アニメーションが終わったか
 	};
 
-	// アニメーションリソース情報
-	struct AnimResource
-	{
-		int handle;// アニメーションハンドル
-		int loopCnt;// ループ回数
-	};
+	int _modelHandle = -1;
 
-	int _modelHandle;// モデルハンドル
-	std::vector<AnimResource> _animResources;// アニメーションリソース
-	std::vector<AnimationData*>  _activeAnims;// アクティブなアニメーション
-	int _currentAnimIndex;// 現在のアニメーションインデックス
+	std::vector<std::unique_ptr<AnimationData>> _activeAnims;
+	int _currentAnimIndex = -1;// 現在のアニメーションインデックス
 
 	// アニメーションのデタッチ
 	void DetachAnimation(AnimationData* anim);

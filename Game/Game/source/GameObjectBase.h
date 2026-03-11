@@ -33,7 +33,7 @@ public:
 	void SetMove(VECTOR v) { _vMove = v; }
 
 	AnimManager* GetAnimManager() { return &_animManager; }
-	const AnimManager* GetAnimManagerConst() const { return &_animManager; }// const”Å
+	const AnimManager* GetAnimManager() const { return &_animManager; }
 
 protected:
 	// ˆÊ’uŠÖ˜A

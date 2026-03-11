@@ -13,6 +13,11 @@ AnimManager::~AnimManager()
 
 bool AnimManager::LoadModel(const std::string& filePath)
 {
+	if (_modelHandle != -1)
+	{
+		Release();
+	}
+
 	// モデルの読み込み
 	_modelHandle = MV1LoadModel(filePath.c_str());
 
@@ -20,71 +25,6 @@ bool AnimManager::LoadModel(const std::string& filePath)
 	{
 		return false;
 	}
-
-	return true;
-}
-
-int AnimManager::AddAnimation(const std::string& filePath, int loopCnt)
-{
-	// アニメーションの読み込み
-	int animHandle = MV1LoadModel(filePath.c_str());
-
-	if (animHandle == -1)
-	{
-		return -1;
-	}
-
-	// リソースリストに追加
-	AnimResource res;
-	res.handle = animHandle;
-	res.loopCnt = loopCnt;
-	_animResources.push_back(res);
-
-	// インデックスを返す
-	return static_cast<int>(_animResources.size() - 1);
-}
-
-bool AnimManager::ChangeAnimation(int animIndex, float fBlendFrame)
-{
-	// モデルがロードされているかチェック
-	if (_modelHandle == -1)
-	{
-		return false;
-	}
-
-	// アニメーションインデックスの範囲チェック
-	if (animIndex < 0 || animIndex >= static_cast<int>(_animResources.size()))
-	{
-		return false;
-	}
-
-	// 既存のアニメーションをブレンド終了状態に
-	for (auto* anim : _activeAnims)
-	{
-		if (anim->fCloseTime <= 0.0f)
-		{
-			anim->fCloseTime = fBlendFrame;
-			anim->fCloseTotalTime = fBlendFrame;
-		}
-	}
-
-	// 新しいアニメーションを追加
-	AnimationData* newAnim = new AnimationData();
-	newAnim->attachIndex = MV1AttachAnim(_modelHandle, _animResources[animIndex].handle, -1, FALSE);
-	newAnim->fTotalTime = MV1GetAttachAnimTotalTime(_modelHandle, newAnim->attachIndex);
-	newAnim->fPlayTime = 0.0f;
-	newAnim->fCloseTime = 0.0f;
-	newAnim->fCloseTotalTime = 0.0f;
-	newAnim->fFadeInTime = 0.0f;
-	newAnim->fFadeInTotalTime = fBlendFrame; // フェードイン時間を設定
-	newAnim->loopCnt = _animResources[animIndex].loopCnt;
-
-	// 即切り替えの場合はブレンド率を1.0に設定
-	float startBlendRate = (fBlendFrame <= 0.0f) ? 1.0f : 0.0f;
-	MV1SetAttachAnimBlendRate(_modelHandle, newAnim->attachIndex, startBlendRate);
-
-	_activeAnims.push_back(newAnim);
-	_currentAnimIndex = animIndex;
 
 	return true;
 }
@@ -97,7 +37,7 @@ void AnimManager::Update()
 	auto it = _activeAnims.begin();
 	while (it != _activeAnims.end())
 	{
-		AnimationData* anim = *it;
+		AnimationData* anim = it->get();
 
 		// 再生時間を進める
 		anim->fPlayTime += anim->fPlaySpeed;
@@ -110,13 +50,13 @@ void AnimManager::Update()
 			if (anim->loopCnt == 0)
 			{
 				// 無限ループ
-				anim->fPlayTime = 0.0f;
+				anim->fPlayTime -= anim->fTotalTime;
 			}
 			else if (anim->loopCnt > 1)
 			{
 				// 指定回数ループ
 				anim->loopCnt--;
-				anim->fPlayTime = 0.0f;
+				anim->fPlayTime -= anim->fTotalTime;
 			}
 			else
 			{
@@ -165,7 +105,6 @@ void AnimManager::Update()
 		{
 			DetachAnimation(anim);
 			it = _activeAnims.erase(it);
-			delete anim;
 		}
 		else
 		{
@@ -189,19 +128,11 @@ void AnimManager::Render()
 void AnimManager::Release()
 {
 	// アクティブなアニメーションをデタッチ
-	for (auto* anim : _activeAnims)
+	for (auto& anim : _activeAnims)
 	{
-		DetachAnimation(anim);
-		delete anim;
+		DetachAnimation(anim.get());
 	}
 	_activeAnims.clear();
-
-	// アニメーションリソースを解放
-	for (auto& resource : _animResources)
-	{
-		MV1DeleteModel(resource.handle);
-	}
-	_animResources.clear();
 
 	// モデルを解放
 	if (_modelHandle != -1)
@@ -215,15 +146,8 @@ void AnimManager::Release()
 
 bool AnimManager::ChangeAnimationByName(const char* animName, float fBlendFrame, int loop, float fPlaySpeed)
 {
-	if (_modelHandle == -1)
-	{
-		return false;
-	}
-
-	if (animName == nullptr)
-	{
-		return false;
-	}
+	if (_modelHandle == -1) { return false; }
+	if (animName == nullptr) { return false; }
 
 	// モデル内のアニメーション名からインデックスを取得
 	int animIndex = MV1GetAnimIndex(_modelHandle, animName);
@@ -234,23 +158,29 @@ bool AnimManager::ChangeAnimationByName(const char* animName, float fBlendFrame,
 	}
 
 	// 既存のアニメーションをブレンド終了状態に
-	for (auto* anim : _activeAnims)
+	for (auto& anim : _activeAnims)
 	{
 		if (anim->fCloseTime <= 0.0f)
 		{
-			anim->fCloseTime = fBlendFrame;
+			// 現在のブレンド率を計算する
+			float currentBlendRate = 1.0f;
+
+			// フェードインの途中なら、ブレンド率は1.0f未満になる
+			if(anim->fFadeInTotalTime > 0.0f && anim->fFadeInTime < anim->fFadeInTotalTime)
+			{
+				currentBlendRate = anim->fFadeInTime / anim->fFadeInTotalTime;
+			}
+
+			// フェードアウトの残り時間を、現在のブレンド率に応じて短くする
+			anim->fCloseTime = fBlendFrame * currentBlendRate;
 			anim->fCloseTotalTime = fBlendFrame;
 		}
 	}
 
 	// 新しいアニメーションを追加
-	AnimationData* newAnim = new AnimationData();
+	auto newAnim = std::make_unique<AnimationData>();
 	newAnim->attachIndex = MV1AttachAnim(_modelHandle, animIndex, -1, FALSE);
 	newAnim->fTotalTime = MV1GetAttachAnimTotalTime(_modelHandle, newAnim->attachIndex);
-	newAnim->fPlayTime = 0.0f;
-	newAnim->fCloseTime = 0.0f;
-	newAnim->fCloseTotalTime = 0.0f;
-	newAnim->fFadeInTime = 0.0f;
 	newAnim->fFadeInTotalTime = fBlendFrame; // フェードイン時間を設定
 	newAnim->loopCnt = loop;
 	newAnim->fPlaySpeed = fPlaySpeed;
@@ -259,7 +189,7 @@ bool AnimManager::ChangeAnimationByName(const char* animName, float fBlendFrame,
 	float startBlendRate = (fBlendFrame <= 0.0f) ? 1.0f : 0.0f;
 	MV1SetAttachAnimBlendRate(_modelHandle, newAnim->attachIndex, startBlendRate);
 
-	_activeAnims.push_back(newAnim);
+	_activeAnims.push_back(std::move(newAnim));
 	_currentAnimIndex = animIndex;
 
 	return true;
@@ -275,39 +205,21 @@ void AnimManager::DetachAnimation(AnimationData* anim)
 	MV1DetachAnim(_modelHandle, anim->attachIndex);
 }
 
-bool AnimManager::IsAnimationFinished()
+bool AnimManager::IsAnimationFinished() const
 {
 	// アクティブなアニメーションがない場合はtrueを返す
-	if (_activeAnims.empty())
-	{
-		return true;
-	}
+	if (_activeAnims.empty()) { return true; }
 
 	// 最新のアニメーションの終了状態を確認
-	const AnimationData* currentAnim = _activeAnims.back();
-	return currentAnim->bIsFinished;
-}
-
-bool AnimManager::IsAnimationFinishedConst()const
-{
-	// アクティブなアニメーションがない場合はtrueを返す
-	if (_activeAnims.empty())
-	{
-		return true;
-	}
-
-	// 最新のアニメーションの終了状態を確認
-	const AnimationData* currentAnim = _activeAnims.back();
-	return currentAnim->bIsFinished;
+	return _activeAnims.back()->bIsFinished;
 }
 
 // アニメーションの総再生時間を取得
 float AnimManager::GetCurrentAnimTotalTime()
 {
 	// アクティブなアニメーションがない場合は0を返す
-	if(_activeAnims.empty()){ return 0.0f; }
+	if(_activeAnims.empty()) { return 0.0f; }
 
 	// 最新のアニメーションの総再生時間を返す
-	const AnimationData* currentAnim = _activeAnims.back();
-	return currentAnim->fTotalTime;
+	return _activeAnims.back()->fTotalTime;
 }
