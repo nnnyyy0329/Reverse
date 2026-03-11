@@ -100,6 +100,10 @@ void ModeBase::StartFade(int inFrames, int holdFrames, int outFrames)
 	_fadeActive = true;
 }
 
+void ModeBase::StopFade()
+{
+	_fadeActive = false;
+}
 void ModeBase::AdvanceFade()
 {
 	if(!_fadeActive) return;
