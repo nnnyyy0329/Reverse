@@ -18,11 +18,11 @@ namespace
 	constexpr auto NORMAL_CHASE_LIMIT_RANGE = 600.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ß‚ğ‚â‚ß‚é‹——£
 	constexpr auto NORMAL_IDLE_TIME = 120.0f;// ‘Ò‹@ŠÔ
 	constexpr auto NORMAL_MOVE_TIME = 180.0f;// œpœjŠÔ
-	constexpr auto NORMAL_DETECT_TIME = 60.0f;// ”­Œ©d’¼
+	constexpr auto NORMAL_DETECT_TIME = 90.0f;// ”­Œ©d’¼
 	constexpr auto NORMAL_ATTACK_TIME = 180.0f;// UŒ‚ŠÔ
 
 	// Ranged
-	constexpr auto RANGED_VISION_RANGE = 800.0f;// õ“G‹——£(L‚ß)
+	constexpr auto RANGED_VISION_RANGE = 800.0f;// õ“G‹——£
 	constexpr auto RANGED_VISION_ANGLE = 180.0f;// õ“GŠp“x(‰~Œ`)
 	constexpr auto RANGED_CHASE_LIMIT_RANGE = 1000.0f;// ‚±‚êˆÈã—£‚ê‚½‚ç’ÇÕ‚ğ‚â‚ß‚é‹——£
 	constexpr auto RANGED_MOVE_RADIUS = 0.0f;// œpœj”ÍˆÍ(ˆÚ“®‚µ‚È‚¢‚½‚ß0)
@@ -31,14 +31,11 @@ namespace
 	constexpr auto RANGED_DETECT_TIME = 60.0f;// ”­Œ©d’¼
 
 	// Tank
-	constexpr auto TANK_VISION_RANGE = 300.0f;// õ“G‹——£
-	constexpr auto TANK_VISION_ANGLE = 180.0f;// õ“GŠp“x
-	constexpr auto TANK_ATTACK_RANGE = 150.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
-	constexpr auto TANK_CHASE_LIMIT_RANGE = 700.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ß‚ğ‚â‚ß‚é‹——£
-	constexpr auto TANK_IDLE_TIME = 150.0f;;// ‘Ò‹@ŠÔ
-	constexpr auto TANK_MOVE_TIME = 120.0f;// œpœjŠÔ
+	constexpr auto TANK_ATTACK_RANGE = 500.0f;// UŒ‚ƒXƒe[ƒg‚É“ü‚é‹——£
+	constexpr auto TANK_ATTACK_LIMIT_RAMGE = 550.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ßƒXƒe[ƒg‚Ö
 	constexpr auto TANK_DETECT_TIME = 120.0f;// ”­Œ©d’¼
-	constexpr auto TANK_MOVE_SPEED = 1.5f;// ˆÚ“®‘¬“x
+	constexpr auto TANK_MOVE_SPEED = 5.0f;// ˆÚ“®‘¬“x
+	constexpr auto TANK_IDLE_TIME = 120.0f;// ‘Ò‹@ŠÔ
 }
 
 // “G‚Ìí—Ş
@@ -83,9 +80,9 @@ public:
 			param.bTransToWander = bTransToWander;
 
 			// ‹¤’ÊƒXƒe[ƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ğİ’è
-			param.animDamage = "Nenemy_damage_00";
-			param.animDead = "Nenemy_dead_00";
-			param.animDown = "Nenemy_damagge_01";
+			param.animDamage = "enemy_damage_00";
+			param.animDead = "enemy_dead_00";
+			param.animDown = "enemy_damage_01";
 
 			enemy->SetEnemyParam(param);// ƒpƒ‰ƒ[ƒ^İ’è
 
@@ -133,12 +130,26 @@ public:
 
 			// ‹¤’ÊƒXƒe[ƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ğİ’è
 			param.animDamage = "Senemy_damage_00";
-			param.animDead = "None";
-			param.animDown = "None";
+			param.animDead = "Senemy_dead_00";
+			param.animDown = "Senemy_damage_01";
 
 			enemy->SetEnemyParam(param);
 
 			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
+			enemy->SetAfterDownStateSelector([](Enemy* e)->std::shared_ptr<EnemyState>
+			{
+				if (e->IsDead())
+				{
+					return std::make_shared<Common::Dead>();
+				}
+
+				if (e->GetTarget())
+				{
+					return std::make_shared<Ranged::Approach>();
+				}
+
+				return std::make_shared<Ranged::Idle>();
+			});
 
 		break;
 
@@ -147,14 +158,17 @@ public:
 			enemy->SetModelName("Melee");
 
 			param.fMoveSpeed = TANK_MOVE_SPEED;
-			param.fVisionRange = TANK_VISION_RANGE;
-			param.fVisionAngle = TANK_VISION_ANGLE;
 			param.fAttackRange = TANK_ATTACK_RANGE;
-			param.fChaseLimitRange = TANK_CHASE_LIMIT_RANGE;
-			param.fIdleTime = TANK_IDLE_TIME;
-			param.fMoveTime = TANK_MOVE_TIME;
+			param.fChaseLimitRange = TANK_ATTACK_LIMIT_RAMGE;
 			param.fDetectTime = TANK_DETECT_TIME;
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+			param.fIdleTime = TANK_IDLE_TIME;
+
+			// ‹¤’ÊƒXƒe[ƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ğİ’è
+			param.animDamage = "Nenemy_damage_00";
+			param.animDead = "Nenemy_dead_00";
+			param.animDown = "Nenemy_damagge_01";
+
 			enemy->SetEnemyParam(param);
 
 			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
@@ -184,6 +198,7 @@ public:
 
 		VECTOR vDir = VGet(sinf(rot.y), 0.0f, cosf(rot.y));
 		enemy->SetDir(vDir);
+		enemy->SetHomeDir(vDir);
 
 		return enemy;// ì¬‚µ‚½“G‚ğ•Ô‚·
 	}

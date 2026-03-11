@@ -1,55 +1,27 @@
 #pragma once
-#include "appframe.h"
+#include "CameraBase.h"
 
-class PlayerBase;
-class CameraShakeSystem;
 
 // ゲームカメラクラス
-class GameCamera
+class GameCamera : public CameraBase
 {
 public:
 	GameCamera();
 	virtual ~GameCamera() {};
 
-	void Process(InputManager* input, bool isInput);
-	void Render();
-	void DebugRender();
+	void Process() override;
+	void DebugRender() override;	
 
-	void SetUp();												// カメラ設定
-	void SetShakeOffset();										// カメラシェイクオフセット設定
-	void UpdateCamera();										// カメラの更新処理	
-	void UpdateCameraPos();										// カメラ位置の更新
-	void ControlCamera(float rx, float ry, float analogMin);	// カメラ操作処理
+	void SetTarget(std::shared_ptr<PlayerBase> target) override;
 
-	// ゲッター
-	VECTOR GetVPos() const { return _vPos; }			// カメラ位置を取得
-	VECTOR GetVTarget() const { return _vTarget; }		// 注視点を取得
-	float GetCameraAngleH() const { return _angleH; }	// カメラの水平角度を取得
+	void ApplyShake(const VECTOR& shakeOffset) override;
 
-	void SetVPos(const VECTOR& pos) { _vPos = pos; }// カメラ位置を設定
-
-	// ターゲットを設定する関数
-	void SetTarget(std::shared_ptr<PlayerBase> target);
-
-	// カメラシェイクシステムを設定する関数
-	void SetCameraShakeSystem(std::shared_ptr<CameraShakeSystem> cameraShakeSystem) { _cameraShakeSystem = cameraShakeSystem; }
+	void Reset() override;
 
 protected:
-	// カメラシェイクシステム
-	std::shared_ptr<CameraShakeSystem> _cameraShakeSystem;	
+	void UpdateCamera();
+	void ControlCamera();
 
 	// ターゲットとなるゲームオブジェクト
 	std::shared_ptr<PlayerBase> _targetObject;
-
-	VECTOR _vPos;
-	VECTOR _vTarget;		// 注視点
-	float _nearClip;		// 描画する手前の距離
-	float _farClip;			// 描画する奥の距離
-	VECTOR _posOffset;		// カメラ位置のオフセット
-	VECTOR _targetOffset;	// 注視点のオフセット
-	VECTOR _baseOffset;		// カメラの基準オフセット
-
-	float _distance;	// 注視点からカメラまでの距離
-	float _angleH;		// 水平方向の角度(ラジアン)
-	float _angleV;		// 垂直方向の角度(ラジアン)
 };

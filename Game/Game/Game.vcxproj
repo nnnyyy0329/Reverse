@@ -155,11 +155,14 @@
     <ClCompile Include="source\ApplicationGlobal.cpp" />
     <ClCompile Include="source\ApplicationMain.cpp" />
     <ClCompile Include="source\AttackBase.cpp" />
+    <ClCompile Include="source\AttackEffectSystem.cpp" />
     <ClCompile Include="source\AttackManager.cpp" />
     <ClCompile Include="source\Bullet.cpp" />
     <ClCompile Include="source\BulletManager.cpp" />
     <ClCompile Include="source\BulletPlayer.cpp" />
+    <ClCompile Include="source\CameraBase.cpp" />
     <ClCompile Include="source\CameraManager.cpp" />
+    <ClCompile Include="source\CameraDollyAddon.cpp" />
     <ClCompile Include="source\CameraShakeSystem.cpp" />
     <ClCompile Include="source\CharaBase.cpp" />
     <ClCompile Include="source\DebugCamera.cpp" />
@@ -172,6 +175,7 @@
     <ClCompile Include="source\GameCamera.cpp" />
     <ClCompile Include="source\GameObjectBase.cpp" />
     <ClCompile Include="source\GeometryUtility.cpp" />
+    <ClCompile Include="source\ICameraAddon.cpp" />
     <ClCompile Include="source\InteriorPlayer.cpp" />
     <ClCompile Include="source\Item.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -193,7 +197,7 @@
     <ClCompile Include="source\ModeStageChange.cpp" />
     <ClCompile Include="source\ModeTextBox.cpp" />
     <ClCompile Include="source\ModeTitle.cpp" />
-    <ClCompile Include="source\Pathfinding.cpp" />
+    <ClCompile Include="source\PathfindingManager.cpp" />
     <ClCompile Include="source\StateNormal.cpp" />
     <ClCompile Include="source\PlayerAbsorbAttackSystem.cpp" />
     <ClCompile Include="source\PlayerAttackSystem.cpp" />
@@ -262,11 +266,14 @@
     <ClInclude Include="source\ApplicationGlobal.h" />
     <ClInclude Include="source\ApplicationMain.h" />
     <ClInclude Include="source\AttackBase.h" />
+    <ClInclude Include="source\AttackEffectSystem.h" />
     <ClInclude Include="source\AttackManager.h" />
     <ClInclude Include="source\Bullet.h" />
     <ClInclude Include="source\BulletManager.h" />
     <ClInclude Include="source\BulletPlayer.h" />
+    <ClInclude Include="source\CameraBase.h" />
     <ClInclude Include="source\CameraManager.h" />
+    <ClInclude Include="source\CameraDollyAddon.h" />
     <ClInclude Include="source\CameraShakeSystem.h" />
     <ClInclude Include="source\CharaBase.h" />
     <ClInclude Include="source\DebugCamera.h" />
@@ -282,6 +289,7 @@
     <ClInclude Include="source\GameCamera.h" />
     <ClInclude Include="source\GameObjectBase.h" />
     <ClInclude Include="source\GeometryUtility.h" />
+    <ClInclude Include="source\ICameraAddon.h" />
     <ClInclude Include="source\InteriorPlayer.h" />
     <ClInclude Include="source\Item.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -307,7 +315,7 @@
     <ClInclude Include="source\ModeStageChange.h" />
     <ClInclude Include="source\ModeTextBox.h" />
     <ClInclude Include="source\ModeTitle.h" />
-    <ClInclude Include="source\Pathfinding.h" />
+    <ClInclude Include="source\PathfindingManager.h" />
     <ClInclude Include="source\StateNormal.h" />
     <ClInclude Include="source\PlayerAbsorbAttackSystem.h" />
     <ClInclude Include="source\PlayerAttackSystem.h" />

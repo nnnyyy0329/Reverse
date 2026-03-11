@@ -4,6 +4,7 @@
 #include "AttackManager.h"
 #include "StateCommon.h"
 #include "StageBase.h"
+#include "PathfindingManager.h"
 
 namespace
 {
@@ -18,6 +19,7 @@ namespace
 	// ライフバー表示設定
 	constexpr auto LIFEBAR_HEAD_OFFSET_Y = 100.0f;// ライフバーの表示位置オフセット
 	constexpr auto LIFEBAR_WORLD_WIDTH = 80.0f;// ライフバーのワールド上の幅
+	constexpr auto LIFEBAR_MAX_DIST = 1000.0f;// ライフバーを表示する最大距離
 
 	// デバッグ表示設定
 	constexpr auto DEBUG_TEXT_OFFSET_Y = 150.0f;// デバッグテキスト表示位置オフセット
@@ -40,6 +42,10 @@ namespace
 	// 重力
 	constexpr float GRAVITY = -0.98f;// 重力加速度
 	constexpr float MAX_FALL_SPEED = -20.0f;// 最大落下速度
+
+	// 経路探索
+	constexpr float PATH_UPDATE_INTERVAL = 30.0f;// ルートを再計算する間隔(フレーム)
+	constexpr float WAYPOINT_REACHED_DIST = 20.0f;// ウェイポイント到達したと見なす距離
 }
 
 Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
@@ -189,7 +195,7 @@ void Enemy::DebugRender()
 
 	// 接近中の各範囲の描画
 	{
-		if (_currentState && _currentState->IsChasing())
+		if (_currentState /*&& _currentState->IsChasing()*/)
 		{
 			// 攻撃可能範囲を描画
 			unsigned int attackColor = GetColor(255, 0, 0);// 赤
@@ -249,6 +255,9 @@ void Enemy::DrawLifeBar()
 
 	// カメラから敵までの距離
 	auto dist = VSize(VSub(vHeadPos, vCamPos));
+
+	// 距離が遠い場合は非表示
+	if (dist > LIFEBAR_MAX_DIST) { return; }
 
 	// 画面上の座標に変換
 	VECTOR vPos2D = ConvWorldPosToScreenPos(vHeadPos);
@@ -358,14 +367,20 @@ void Enemy::SetEnemyParam(const EnemyParam& param)
 	_enemyParam = param;
 }
 
-void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime)
+//void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime)
+//{
+//	auto bulletManager = _bulletManager.lock();// マネージャーが有効か確認
+//	if (bulletManager)
+//	{
+//		// タイプを設定して、発射リクエストをする
+//		bulletManager->Shoot(vStartPos, vDir, fRadius, fSpeed, lifeTime, _eCharaType, BULLET_TYPE::NORMAL);
+//	}
+//}
+
+void Enemy::SpawnBullet(const BulletConfig& bulletConfig)
 {
-	auto bulletManager = _bulletManager.lock();// マネージャーが有効か確認
-	if (bulletManager)
-	{
-		// タイプを設定して、発射リクエストをする
-		bulletManager->Shoot(vStartPos, vDir, fRadius, fSpeed, lifeTime, _eCharaType);
-	}
+	// タイプを設定して、発射リクエストをする
+	BulletManager::GetInstance()->ShootSimple(bulletConfig, BULLET_OWNER_TYPE::ENEMY);
 }
 
 void Enemy::StartAttack(const EnemyAttackSettings& settings)
@@ -512,6 +527,11 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackColl
 	ChangeState(std::make_unique<Common::Damage>());
 }
 
+void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
+{
+	ApplyDamage(fDamage, ATTACK_OWNER_TYPE::NONE, AttackCollision());
+}
+
 bool Enemy::IsDead()
 {
 	return _fLife <= 0.0f;// ライフが0以下なら死亡
@@ -599,10 +619,14 @@ void Enemy::SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg)
 bool Enemy::CheckLineOfSight(VECTOR vStart, VECTOR vEnd)
 {
 	auto stage = _stage.lock();
-	if (!stage) { return false; }
+	if (!stage) { return true; }
 
 	const auto& mapObjList = stage->GetMapModelPosList();
 	if (mapObjList.empty()) { return true; }
+
+	float yOffset = 50.0f;
+	vStart.y += yOffset;
+	vEnd.y += yOffset;
 
 	// 全マップモデルを走査
 	for (const auto& obj : mapObjList)
@@ -735,4 +759,116 @@ void Enemy::UpdateDamageComboTimer()
 			_damageComboCnt = 0;// 時間切れでリセット
 		}
 	}
+}
+
+void Enemy::UpdatePath(VECTOR vTarget)
+{
+	auto stage = _stage.lock();
+	if (!stage) { return; }
+
+	// 一定間隔で更新する(重さ対策)
+	_fPathUpdateTimer -= 1.0f;
+	if (_fPathUpdateTimer > 0.0f) { return; }
+	// タイマーリセット
+	_fPathUpdateTimer = PATH_UPDATE_INTERVAL;
+
+	auto pathManager = stage->GetPathfindingManager();
+	if (!pathManager) return;
+
+	// 直接ターゲットが見えているなら、探索せずに直接向かう
+	if (!pathManager->CheckCapsuleLineObstacle(_vPos, vTarget, 5.0f, stage.get()))
+	{
+		_currentPath.clear();
+		_currentPath.push_back(vTarget);
+		_currentPathIndex = 0;
+		return;
+	}
+
+	// 現在向かっているウェイポイントを記憶
+	VECTOR vOldTargetWp;
+	bool bIsHeadingToWp = false;
+
+	// 最後の要素(ターゲット座標)以外の、ウェイポイントに向かっている途中かチェック
+	if (HasPath() && _currentPathIndex < _currentPath.size() - 1)
+	{
+		vOldTargetWp = _currentPath[_currentPathIndex];
+		bIsHeadingToWp = true;
+	}
+
+	// スタート地点の決定
+	int startId = -1;
+	if (bIsHeadingToWp)
+	{
+		// 現在向かっているポイントを次の探索のスタート地点にする
+		startId = pathManager->GetNearestWaypoint(vOldTargetWp, COLLISION_RADIUS, stage.get());
+	}
+	else
+	{
+		startId = pathManager->GetNearestWaypoint(_vPos, COLLISION_RADIUS, stage.get());
+	}
+
+	int goalId = pathManager->GetNearestWaypoint(vTarget, COLLISION_RADIUS, stage.get());
+
+	if (startId != -1 && goalId != -1)
+	{
+		// A*アルゴリズムでルートを取得
+		_currentPath = pathManager->FindPath(startId, goalId);
+		_currentPathIndex = 0;
+
+		// 最後に実際のターゲット座標を付け足して、接近するようにする
+		if (!_currentPath.empty())
+		{
+			_currentPath.push_back(vTarget);
+
+			// スムージングを実行
+			_currentPath = pathManager->SmoothPath(_currentPath, COLLISION_RADIUS, stage.get());
+
+			_currentPathIndex = 0;
+		}
+	}
+}
+
+VECTOR Enemy::GetNextWaypoint()
+{
+	// ルートがない、または最後まで到達している場合は現在地を返す
+	if (_currentPath.empty() || _currentPathIndex >= _currentPath.size()) { return _vPos; }
+
+	VECTOR nextPos = _currentPath[_currentPathIndex];
+
+	// 平面上の距離で到達判定を行う
+	VECTOR vToNext = VSub(nextPos, _vPos);
+	vToNext.y = 0.0f;// Y成分を無視
+
+	float dist = VSize(vToNext);
+
+	// 次のポイントに十分近づいたら、さらに次のポイントへ
+	if(dist < WAYPOINT_REACHED_DIST)
+	{
+		_currentPathIndex++;
+
+		if (_currentPathIndex < _currentPath.size())
+		{
+			nextPos = _currentPath[_currentPathIndex];
+		}
+	}
+
+	return nextPos;
+}
+
+void Enemy::ClearPath()
+{
+	_currentPath.clear();
+	_currentPathIndex = 0;
+	_fPathUpdateTimer = 0.0f;
+}
+
+bool Enemy::IsVisible(VECTOR vTargetPos, float checkRad)
+{
+	auto stage = _stage.lock();
+	if (!stage) { return false; }
+
+	auto pathManager = stage->GetPathfindingManager();
+	if (!pathManager) { return false; }
+
+	return !pathManager->CheckCapsuleLineObstacle(_vPos, vTargetPos, checkRad, stage.get());
 }

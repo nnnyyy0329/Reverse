@@ -240,7 +240,7 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	{
 		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
 		{0.0f, 10.0f, 0.0f},	// コリジョン下部位置
-		40.0f,					// 半径
+		80.0f,					// 半径
 		30.0f,					// 発生フレーム
 		30.0f,					// 持続フレーム
 		0.0f,					// 硬直フレーム
@@ -285,7 +285,7 @@ void InteriorPlayer::GetAttackColOffsetConfigs(AttackColOffset configs[5])
 	// 第5攻撃
 	configs[4] =
 	{
-		100.0f,				// 方向スケール
+		75.0f,				// 方向スケール
 		true,				// 所有者の向きを基準とするか
 	};
 }
@@ -325,52 +325,117 @@ void InteriorPlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[5])
 }
 
 // 演出設定
-AttackEffectConfig InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig configs[5])
+void InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig config[5])
 {
-	// 裏プレイヤー用の演出設定
-	AttackEffectConfig config;
-
 	// 第1攻撃
-	configs[0] =
+	config[0] =
 	{
-		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
-		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
-		config.soundName = "iPlayerAttack",				// サウンド名
+		/* エフェクト */
+		true,						// エフェクトを有効にするか
+		"InteriorPlayerAttack_123",	// エフェクト名
+		{ 0.0f, 100.0f, 100.0f },	// エフェクト位置オフセット
+
+		/* サウンド */
+		true,						// サウンドを有効にするか
+		"iPlayerAttack",			// サウンド名
+		
+		/* カメラシェイク */
+		true,						// カメラシェイクを有効にするか
+		5.0f,						// カメラ振動の強さ
+		5.0f,						// カメラ振動の持続時間
+
+		/* ヒットストップ */
+		false,						// ヒットストップを有効にするか
+		0.0f,						// ヒットストップの持続時間
 	};
 
 	// 第2攻撃
-	configs[1] =
+	config[1] =
 	{
-		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
-		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
-		config.soundName = "iPlayerAttack",				// サウンド名
+		/* エフェクト */
+		true,						// エフェクトを有効にするか
+		"InteriorPlayerAttack_123",	// エフェクト名
+		{ 0.0f, 100.0f, 100.0f },	// エフェクト位置オフセット
+
+		/* サウンド */
+		true,						// サウンドを有効にするか
+		"iPlayerAttack",			// サウンド名
+
+		/* カメラシェイク */
+		true,						// カメラシェイクを有効にするか
+		5.0f,						// カメラ振動の強さ
+		5.0f,						// カメラ振動の持続時間
+
+		/* ヒットストップ */
+		false,						// ヒットストップを有効にするか
+		0.0f,						// ヒットストップの持続時間
 	};
 
 	// 第3攻撃
-	configs[2] =
+	config[2] =
 	{
-		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
-		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
-		config.soundName = "iPlayerAttack",				// サウンド名
+		/* エフェクト */
+		true,						// エフェクトを有効にするか
+		"InteriorPlayerAttack_123",	// エフェクト名
+		{ 0.0f, 100.0f, 100.0f },	// エフェクト位置オフセット
+
+		/* サウンド */
+		true,						// サウンドを有効にするか
+		"iPlayerAttack",			// サウンド名
+
+		/* カメラシェイク */
+		true,						// カメラシェイクを有効にするか
+		5.0f,						// カメラ振動の強さ
+		5.0f,						// カメラ振動の持続時間
+
+		/* ヒットストップ */
+		false,						// ヒットストップを有効にするか
+		0.0f,						// ヒットストップの持続時間
 	};
 
 	// 第4攻撃
-	configs[3] =
+	config[3] =
 	{
-		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
-		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
-		config.soundName = "iPlayerAttack",				// サウンド名
+		/* エフェクト */
+		true,							// エフェクトを有効にするか
+		"InteriorPlayerFourthAttack",	// エフェクト名
+		{ 0.0f, 100.0f, 100.0f },		// エフェクト位置オフセット
+
+		/* サウンド */
+		true,							// サウンドを有効にするか
+		"iPlayerAttack",				// サウンド名
+
+		/* カメラシェイク */
+		true,							// カメラシェイクを有効にするか
+		5.0f,							// カメラ振動の強さ
+		5.0f,							// カメラ振動の持続時間
+
+		/* ヒットストップ */
+		false,							// ヒットストップを有効にするか
+		0.0f,							// ヒットストップの持続時間
 	};
 
 	// 第5攻撃
-	configs[4] =
+	config[4] =
 	{
-		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
-		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
-		config.soundName = "iPlayerAttack",				// サウンド名
-	};
+		/* エフェクト */
+		true,							// エフェクトを有効にするか
+		"InteriorPlayerFifthAttack",	// エフェクト名
+		{ 0.0f, 150.0f, 100.0f },		// エフェクト位置オフセット
 
-	return config;
+		/* サウンド */
+		true,							// サウンドを有効にするか
+		"iPlayerAttack",				// サウンド名
+
+		/* カメラシェイク */
+		true,							// カメラシェイクを有効にするか
+		15.0f,							// カメラ振動の強さ
+		10.0f,							// カメラ振動の持続時間
+
+		/* ヒットストップ */
+		false,							// ヒットストップを有効にするか
+		0.0f,							// ヒットストップの持続時間
+	};
 }
 
 // 範囲攻撃の情報設定
@@ -403,15 +468,6 @@ DodgeConfig InteriorPlayer::GetDodgeConfig()
 	config.activeTime = 30.0f;			// アクティブ時間
 	config.recoveryTime = 10.0f;		// 硬直時間
 	config.dodgeMoveSpeed = 11.0f;		// 移動速度
-
-	return config;
-}
-
-// シールド設定を取得
-ShieldConfig InteriorPlayer::GetShieldConfig()
-{
-	// デフォルトの設定を返す
-	ShieldConfig config = {};
 
 	return config;
 }

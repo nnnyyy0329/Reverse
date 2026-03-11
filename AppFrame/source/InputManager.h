@@ -26,7 +26,11 @@ enum class INPUT_ACTION
 
 	// システム
 	MENU,
-	SELECT,
+	SELECT_POWER,
+	SELECT_BULLET,
+
+	// アウトシステム関連
+	SKIP,
 
 	// デバッグ用
 	DEBUG1,
@@ -84,9 +88,7 @@ class InputManager
 {
 public:
 	// シングルトンインスタンス取得
-	static InputManager* GetInstance();
-
-	static InputManager* GetNullInstance();
+	static InputManager& GetInstance();
 
 	void Update();
 

@@ -8,7 +8,7 @@ namespace AbsorbConstants
 	constexpr float DEFAULT_ABSORB_RATE			= 0.5f;				// デフォルトの吸収率
 	constexpr float DEFAULT_ENERGY_ABSORB_RATE	= 0.5f;				// デフォルトのエネルギー吸収率
 	constexpr float DEFAULT_HP_ABSORB_RATE		= 0.5f;				// デフォルトのHP吸収率
-	constexpr float DEFAULT_ABSORB_RANGE		= 50.0f;			// デフォルトの吸収範囲
+	constexpr float DEFAULT_ABSORB_RANGE		= 75.0f;			// デフォルトの吸収範囲
 	constexpr float DEFAULT_ABSORB_ANGLE		= DX_PI_F / 3.0f;	// デフォルトの吸収範囲の角度（60度）
 	constexpr int DEFAULT_ABSORB_DIVISION		= 16;				// デフォルトの吸収範囲の分割数
 }
@@ -25,6 +25,7 @@ namespace AbsorbTime
 {
 	constexpr float ABSORB_COOLDOWN = 30.0f;		// 吸収のクールダウン時間
 	constexpr float DECREMENT_ABSORB_TIMER = 1.0f;	// 吸収タイマーの減算量
+	constexpr float ABSORB_UP_TIME = -300.0f;		// 吸収量が上昇するまでの時間
 }
 
 AbsorbAttack::AbsorbAttack() : AttackBase() // 親クラスのコンストラクタ呼び出し
@@ -41,6 +42,7 @@ AbsorbAttack::AbsorbAttack() : AttackBase() // 親クラスのコンストラクタ呼び出し
 	_fAbsorbCooldown = AbsorbTime::ABSORB_COOLDOWN;	// 吸収のクールダウン時間の初期化
 	_fAbsorbTimer = 0.0f;							// 吸収タイマーの初期化
 	_bIsInputActive = false;						// 入力が有効かどうかの初期化
+	_bIsAbsorbIncreasing = false;					// 吸収量が上昇するかのフラグの初期化
 }
 
 AbsorbAttack::~AbsorbAttack()
@@ -56,6 +58,9 @@ bool AbsorbAttack::Process()
 
 	// 吸収タイマーの更新
 	ProcessDecrementTimer();
+
+	// 基底攻撃クラスの入力による向き回転処理	
+	UpdateAttackDirAdjust();
 
 	return true;
 }
@@ -93,10 +98,10 @@ void AbsorbAttack::ProcessDecrementTimer()
 	{
 		_fAbsorbTimer -= AbsorbTime::DECREMENT_ABSORB_TIMER;	// タイマーを減算
 
-		// タイマーが0未満になった場合
-		if(_fAbsorbTimer <= 0.0f)
+		// 吸収量が上昇するまでの時間を、吸収時間が下回った場合
+		if(_fAbsorbTimer < AbsorbTime::ABSORB_UP_TIME)
 		{
-			_fAbsorbTimer = 0.0f;	// タイマーを0にリセット
+			_bIsAbsorbIncreasing = true;	// 吸収量が上昇するフラグを立てる
 		}
 	}
 }

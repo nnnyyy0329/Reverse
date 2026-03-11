@@ -12,9 +12,6 @@
 //#include "Item.h"
 
 #include "CameraManager.h"
-#include "GameCamera.h"
-#include "DebugCamera.h"
-#include "AimCamera.h"
 
 #include "BulletManager.h"
 #include "AttackManager.h"
@@ -44,6 +41,7 @@
 bool ModeGame::Initialize() 
 {
 	StartFade(200, 90, 30);
+
 	if (!base::Initialize()) { return false; }
 
 	// Manager初期化
@@ -51,10 +49,6 @@ bool ModeGame::Initialize()
 		// PlayerManagerの初期化
 		_playerManager = std::make_shared<PlayerManager>();
 		_playerManager->Initialize();
-
-		// BulletManagerの初期化
-		_bulletManager = std::make_shared<BulletManager>();
-		_bulletManager->Initialize();
 
 		// LightManagerの初期化
 		_lightManager = std::make_shared<LightManager>();
@@ -95,8 +89,11 @@ bool ModeGame::Initialize()
 		bulletPlayer->SetDodgeSystem(_dodgeSystem);
 		bulletPlayer->Initialize();
 		_playerManager->RegisterPlayer(PLAYER_TYPE::BULLET, bulletPlayer);
-		bulletPlayer->SetBulletManager(_bulletManager);
 	}
+
+	// ステージ初期化
+	_currentStageNum = 0;
+	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
 
 	// プレイヤーアンロックマネージャー初期化
 	{
@@ -107,29 +104,18 @@ bool ModeGame::Initialize()
 		_playerUnlockManager->SetUnlockCallback([this](ABILITY_TYPE ability) {});
 	}
 
-	// ステージ初期化
-	_currentStageNum = 0;
-	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
-
 	// カメラ初期化
 	{
 		_cameraManager = std::make_shared<CameraManager>();
 		_cameraManager->Initialize();
-
-		_gameCamera = std::make_shared<GameCamera>();
-		_gameCamera->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
-
-		_debugCamera = std::make_shared<DebugCamera>();
-
-		_aimCamera = std::make_shared<AimCamera>();
-		_aimCamera->SetTarget(_playerManager->GetActivePlayerShared());
+		_cameraManager->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
+		_cameraManager->Reset();
 	}
 
 	// 敵設定
 	for (const auto& enemy : _stage->GetEnemies())
 	{
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
-		enemy->SetBulletManager(_bulletManager);
 		enemy->SetStage(_stage);
 	}
 
@@ -192,7 +178,7 @@ bool ModeGame::Process()
 		StopFade(); // 以降自動的にフェードアウトしない
 	}
 	// InputManagerから入力を取得
-	InputManager* input = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	// ゲームオーバーチェック
 	{
@@ -211,7 +197,7 @@ bool ModeGame::Process()
 	
 
 	// startでメニューを開く
-	if (input->IsTrigger(INPUT_ACTION::MENU))
+	if (im.IsTrigger(INPUT_ACTION::MENU))
 	{
 		ModeMenu* modeMenu = new ModeMenu();
 		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
@@ -224,10 +210,8 @@ bool ModeGame::Process()
 		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
 		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
 
-		// カメラ情報を設定
+		// デバッグカメラ切り替え
 		debugCamera->SetCameraManagerMenu(_cameraManager);
-		debugCamera->SetDebugCameraMenu(_debugCamera);
-		debugCamera->SetGameCameraMenu(_gameCamera);
 
 		modeMenu->AddMenuItem(viewDebugInfo);
 		modeMenu->AddMenuItem(viewCollision);
@@ -237,10 +221,8 @@ bool ModeGame::Process()
 
 	// クラスセット
 	{
-		_cameraManager->SetPlayer(_playerManager->GetActivePlayerShared());	// アクティブプレイヤーを設定
-		_cameraManager->SetGameCamera(_gameCamera);
-		_cameraManager->SetDebugCamera(_debugCamera);
-		_cameraManager->SetAimCamera(_aimCamera);
+		// アクティブプレイヤーをカメラマネージャーに設定
+		_cameraManager->SetTarget(_playerManager->GetActivePlayerShared());
 
 		_playerManager->SetCameraManager(_cameraManager);				// カメラマネージャーを設定
 		_playerManager->SetAbilitySelectScreen(_abilitySelectScreen);	// 能力選択画面を設定
@@ -262,11 +244,10 @@ bool ModeGame::Process()
 	{
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
 
-		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
-		_aimCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
-		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
+		// プレイヤーにカメラの水平角度を設定
+		activePlayer->SetCameraAngle(_cameraManager->GetCurrentCameraAngleH());
 
-		// 敵にターゲットのプレイヤーを設定
+		// 敵にアクティブプレイヤーを設定
 		for (const auto& enemy : _stage->GetEnemies())
 		{
 			enemy->SetTarget(activePlayer);
@@ -278,7 +259,6 @@ bool ModeGame::Process()
 		_playerManager->Process();
 		_playerUnlockManager->Process();
 		_stage->Process();
-		_bulletManager->Process();
 		_dodgeSystem->Process();
 		_energyUI->Process();
 		_playerLifeBarUI->Process();
@@ -287,7 +267,9 @@ bool ModeGame::Process()
 		_abilitySelectManager->Process();
 		//_shieldBase->Process();
 
+		// シングルトンインスタンスの更新
 		AttackManager::GetInstance()->Process();
+		BulletManager::GetInstance()->Process();
 		StaminaManager::GetInstance()->Process();
 	}
 
@@ -347,23 +329,10 @@ bool ModeGame::Process()
 
 		// トリガー
 		CheckHitPlayerTrigger(player);
+
+		// 弾とマップ
+		CheckHitBulletMap();
 	}
-
-	// ターゲット更新
-	{
-		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
-
-		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
-		_aimCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
-		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
-
-		// 敵にターゲットのプレイヤーを設定
-		for (const auto& enemy : _stage->GetEnemies()) 
-		{
-			enemy->SetTarget(activePlayer);
-		}
-	}
-
 
 	// エフェクト更新
 	EffectServer::GetInstance()->Update();
@@ -381,9 +350,6 @@ bool ModeGame::Render()
 
 
 	base::Render();
-
-
-
 
 	// 3D基本設定
 	{
@@ -407,19 +373,20 @@ bool ModeGame::Render()
 
 	// カメラ設定
 	{
-		_cameraManager->SwitchCameraSetUp();
+		_cameraManager->SetUp();
 	}
 	
 	// オブジェクトの描画
 	{
 		_stage->Render();
 		_playerManager->Render();
-		_bulletManager->Render();
 		_energyUI->Render();
 		_playerLifeBarUI->Render();
 		_staminaUI->Render();
 		//_item->Render();
 		_abilitySelectScreen->Render();
+
+		BulletManager::GetInstance()->Render();
 	}
 
 	// コリジョンの描画
@@ -445,24 +412,21 @@ bool ModeGame::Render()
 		}
 
 		_stage->DebugRender();
-		AttackManager::GetInstance()->DebugRender();
 		_dodgeSystem->DebugRender();
-		_debugCamera->DebugRender();
-		_gameCamera->DebugRender();
+		_cameraManager->DebugRender();
 		_playerManager->DebugRender();
 		_playerUnlockManager->DebugRender();
 
 		// ライト情報
 		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());
 
-		//AttackManager::GetInstance()->DebugRender();
+		AttackManager::GetInstance()->DebugRender();
+		BulletManager::GetInstance()->DebugRender();
 		EnergyManager::GetInstance()->DebugRender();
 
 		// プレイヤーデバッグ情報
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
 		activePlayer->DebugRender();
-
-		_cameraManager->SwitchCameraDebugRender();
 	}
 	
 	// 敵残数表示
@@ -491,7 +455,7 @@ bool ModeGame::Render()
 		activePlayer->CollisionRender();
 	}
 
-		// FPS表示（0.5秒ごとに更新して見やすくする）
+	// FPS表示（0.5秒ごとに更新して見やすくする）
 	{
 		static int s_frameCount = 0;
 		static unsigned long s_accumMs = 0;
@@ -515,8 +479,10 @@ bool ModeGame::Render()
 	}
 
 	_energyUI->Render();
-	_cameraManager->SwitchCameraRender();
+	_cameraManager->Render();
 
+
+	// フェード処理
 	{
 		const int a = GetFadeAlpha(); // 0..255, 0=暗/255=明（StartFadeで in を与えた場合）
 		const int overlayAlpha = std::max(0, std::min(255, 255 - a)); // 0->255 の黒オーバーレイ
@@ -527,6 +493,8 @@ bool ModeGame::Render()
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
 	}
+
+
 	return true;
 }
 
@@ -537,7 +505,7 @@ void ModeGame::InitializeLights()
 
 	// ライトを追加
 	// test
-	AddPointLight(VGet(0.0f, 500.0f, 0.0f), 1000.0f, GetColorF(1.0f, 1.0f, 1.0f, 0.0f));
+	AddPointLight(VGet(0.0f, 1000.0f, 0.0f), 1500.0f, GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void ModeGame::ProcessLights()
@@ -622,23 +590,16 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 	// 新しいステージを設定
 	_stage = newStage;
 
-	// プレイヤーの位置をリセット
-	VECTOR vStartPos = VGet(0.0f, 0.0f, 0.0f);
-
-	auto activePlayer = _playerManager->GetActivePlayerShared();
-	activePlayer->SetPos(vStartPos);
-
 	// 敵の再設定
 	for (const auto& enemy : _stage->GetEnemies())
 	{
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
-		enemy->SetBulletManager(_bulletManager);
 		enemy->SetStage(_stage);
 	}
 
 	// オブジェクトのクリア
 	{
-		_bulletManager->ClearAllBullets();
+		BulletManager::GetInstance()->ClearAllBullets();
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
 
@@ -657,7 +618,6 @@ void ModeGame::RestartCurrentStage()
 		for (const auto& enemy : _stage->GetEnemies())
 		{
 			enemy->SetTarget(_playerManager->GetActivePlayerShared());
-			enemy->SetBulletManager(_bulletManager);
 			enemy->SetStage(_stage);
 		}
 	}
@@ -671,14 +631,16 @@ void ModeGame::RestartCurrentStage()
 		auto activePlayer = _playerManager->GetActivePlayerShared();
 		activePlayer->Initialize();
 		activePlayer->SetPos(startPos);
-		activePlayer->SetDir(startRot);
+
+		VECTOR vDir = VGet(sinf(startRot.y), 0.0f, cosf(startRot.y));
+		activePlayer->SetDir(vDir);
 
 		// ここでプレイヤーの状態をリセット
 	}
 
 	// オブジェクトのクリア
 	{
-		_bulletManager->ClearAllBullets();
+		BulletManager::GetInstance()->ClearAllBullets();
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
 }
@@ -688,5 +650,7 @@ void ModeGame::SetPlayerConfig(VECTOR vPos, VECTOR vRot)
 	auto player = _playerManager->GetActivePlayerShared();
 
 	player->SetPos(vPos);
-	player->SetDir(vRot);
+
+	VECTOR vDir = VGet(sinf(vRot.y), 0.0f, cosf(vRot.y));
+	player->SetDir(vDir);
 }

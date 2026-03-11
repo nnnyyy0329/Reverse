@@ -1,32 +1,22 @@
 #pragma once
-#include "appframe.h"
+#include "CameraBase.h"
 
-class DebugCamera
+class DebugCamera : public CameraBase
 {
 public:
 	DebugCamera();
 	virtual ~DebugCamera();
 
-	void Process(InputManager* input, bool isInput);
-	void Render();
-	void DebugRender();
+	void Process() override;
+	void Render() override;
+	void DebugRender() override;
 
-	void SetUp();
+	void SetTarget(std::shared_ptr<PlayerBase> target) override {}
+	void ApplyShake(const VECTOR& shakeOffset) override {}
 
 	void SetInfo(VECTOR vPos, VECTOR vTarget);// 座標と注視点を設定
 
 protected:
-	void UpdatePosFromAngle();// 角度と距離から座標を計算
-	void CalcAngleFromPos();// 座標から角度と距離を計算
 
-	VECTOR _vPos;
-	VECTOR _vTarget;
-
-	float _distance;// 注視点からカメラまでの距離
-	float _angleH;// 水平方向の角度(ラジアン)
-	float _angleV;// 垂直方向の角度(ラジアン)
-
-	float _nearClip;// 描画する手前の距離
-	float _farClip;// 描画する奥の距離
 };
 

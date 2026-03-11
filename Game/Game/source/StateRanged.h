@@ -1,10 +1,11 @@
 #pragma once
 #include "EnemyState.h"
+#include "BulletManager.h"
 
 namespace Ranged
 {
-	// 円形視界判定(距離のみチェック)
-	bool IsTargetVisible(Enemy* owner);
+	// 扇形視界判定
+	bool IsTargetVisibleFan(Enemy* owner);
 
 	// 待機
 	class Idle : public EnemyState
@@ -15,8 +16,6 @@ namespace Ranged
 		const char* GetName() override { return "Ranged:Idle"; }// 名前を返す(デバッグ用)
 		void UpdateSearch(Enemy* owner) override;
 	};
-
-
 
 
 
@@ -36,9 +35,6 @@ namespace Ranged
 	
 
 
-
-
-
 	// 発見
 	class Notice : public EnemyState
 	{
@@ -47,8 +43,6 @@ namespace Ranged
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() override { return "Ranged:Notice"; }
 	};
-
-
 
 
 
@@ -63,6 +57,16 @@ namespace Ranged
 	};
 
 
+
+	// 後退
+	class Retreat : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:Retreat"; }
+		bool IsChasing() override { return true; }
+	};
 
 
 
@@ -91,7 +95,8 @@ namespace Ranged
 	{
 	public:
 		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;	
+		BulletConfig GetBulletConfig(Enemy* owner);
 		const char* GetName() override { return "Ranged:ShotExecute"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
 
@@ -120,8 +125,6 @@ namespace Ranged
 
 
 
-
-
 	// ターゲットを見失ったとき
 	class LostTarget : public EnemyState
 	{
@@ -135,13 +138,19 @@ namespace Ranged
 		enum class Phase
 		{
 			LOOK_AROUND,// 周囲を見渡す
-			RETURN_HOME// 帰還
+			TO_BASE,// 基準方向へ戻る
+			WAIT,// 帰還前に待機
+			RETURN_HOME,// 帰還
+			SET_DIR// 初期向きへ向きなおす
 		};
 		Phase _ePhase;
 
 		VECTOR _vLookDir;// 見渡しの目標方向
-		float _fLookTimer;// 現在の向きを維持するタイマー
-		float _fLookDuration;// 現在の向きの維持時間
+		VECTOR _vBaseDir;// 基準方向
+		float _fBaseAngle;// 基準角度
 		int _lookCnt;// 見渡し回数
+		float _fWaitTimer;// 待機タイマー
+
+		void SetNextLookDir();// 次の見渡し方向を設定
 	};
 }

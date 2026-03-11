@@ -3,7 +3,8 @@
 #include "ApplicationGlobal.h"
 #include "CameraManager.h"
 
-bool ModeMenu::Initialize() {
+bool ModeMenu::Initialize() 
+{
 	if (!base::Initialize()) { return false; }
 
 	_curPos = 0;
@@ -13,71 +14,69 @@ bool ModeMenu::Initialize() {
 	return true;
 }
 
-bool ModeMenu::Terminate() {
+bool ModeMenu::Terminate() 
+{
 	base::Terminate();
 
 	ClearMenuItems();
-	//_debugCamera.reset();
 	_cameraManager.reset();
 
 	return true;
 }
 
-bool ModeMenu::Process() {
+bool ModeMenu::Process() 
+{
 	base::Process();
-	InputManager* input = InputManager::GetInstance();
+
+	auto& im = InputManager::GetInstance();
 
 	// このモードより下のレイヤーはProcess()を呼ばない
 	ModeServer::GetInstance()->SkipProcessUnderLayer();
 	
-	if(_bUseDebugCamera)
+	// デバッグカメラON中はカメラのみ更新する
+	if (_bUseDebugCamera && _cameraManager)
 	{
-		// デバッグカメラがONならProcess()を呼ぶ
-		if(_cameraManager->GetIsUseDebugCamera())
+		if (_cameraManager->GetCameraType() == CAMERA_TYPE::DEBUG_CAMERA)
 		{
 			_cameraManager->Process();
 		}
 	}
-	else
-	{
-		// ほかの処理
-	}
-
 
 	// startでメニューを閉じる
 	bool close = false;
-	if (input->IsTrigger(INPUT_ACTION::MENU))
+	if (im.IsTrigger(INPUT_ACTION::MENU))
 	{
-		_cameraManager->SetIsUseDebugCamera(false); // デバッグカメラOFFにする
+		// デバッグカメラOFFにしてゲームカメラに戻す
+		if (_cameraManager)
+		{
+			_cameraManager->SetIsUseDebugCamera(false);
+		}
+		_bUseDebugCamera = false;
 		close = true;
 	}
 
 	// 上下でカーソル移動をする
-	if (input->IsTrigger(INPUT_ACTION::UP)) { _curPos--; _curAnimCnt = 0; }
-	if (input->IsTrigger(INPUT_ACTION::DOWN)) { _curPos++; _curAnimCnt = 0; }
-
-
+	if (im.IsTrigger(INPUT_ACTION::UP)) { _curPos--; _curAnimCnt = 0; }
+	if (im.IsTrigger(INPUT_ACTION::DOWN)) { _curPos++; _curAnimCnt = 0; }
 
 	// カーソル位置を上下ループ
 	int itemNum = _menuItems.size();
 	_curPos = (_curPos + itemNum) % itemNum;
 
 	// AでアイテムのSelected()を呼ぶ
-	if (input->IsTrigger(INPUT_ACTION::SELECT))
+	if (im.IsTrigger(INPUT_ACTION::SKIP))
 	{
 		int ret = _menuItems[_curPos]->Selected();
-
 		if (ret == 1) 
 		{
-			 //メニューを閉じる
+			//メニューを閉じる
 			close = true;
 		}
 	}
-
-
-
+	
 	// メニューを閉じる
-	if (close) {
+	if (close) 
+	{
 		// このモードを削除する
 		ModeServer::GetInstance()->Del(this);
 	}
@@ -87,17 +86,20 @@ bool ModeMenu::Process() {
 	return true;
 }
 
-bool ModeMenu::Render() {
+bool ModeMenu::Render() 
+{
 	base::Render();
 
-	if(_bUseDebugCamera){ return false; }
+	if(_bUseDebugCamera) { return false; }
 
 	// メニュー項目の確認
 	int x = 128, y = 128, w = 0, h = 0, fontSize = 32, fontPitch = fontSize + 8;
 	//SetFontSize(fontSize);
-	for (auto ite = _menuItems.begin(); ite != _menuItems.end(); ite++) {
+	for (auto ite = _menuItems.begin(); ite != _menuItems.end(); ite++) 
+	{
 		int itemW = GetDrawStringWidth((*ite)->_text.c_str(), strlen((*ite)->_text.c_str()));
-		if (w < itemW) {
+		if (w < itemW) 
+		{
 			w = itemW;
 		}
 		h += fontPitch;
@@ -114,7 +116,8 @@ bool ModeMenu::Render() {
 	// メニュー項目の描画
 	int startY = 16 / 2;
 	h = 0;
-	for(auto ite = _menuItems.begin(); ite != _menuItems.end(); ite++) {
+	for(auto ite = _menuItems.begin(); ite != _menuItems.end(); ite++) 
+	{
 		DrawString(x + 64, y + startY + h, (*ite)->_text.c_str(), GetColor(255, 0, 0));
 		h += fontPitch;
 	}
@@ -128,11 +131,13 @@ bool ModeMenu::Render() {
 	return true;
 }
 
-void ModeMenu::AddMenuItem(MenuItemBase* item) {
+void ModeMenu::AddMenuItem(MenuItemBase* item) 
+{
 	_menuItems.push_back(std::unique_ptr<MenuItemBase>(item));
 }
 
-void ModeMenu::ClearMenuItems() {
+void ModeMenu::ClearMenuItems() 
+{
 	// 登録したアイテムをすべて削除する
 	_menuItems.clear();
 }

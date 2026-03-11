@@ -100,7 +100,7 @@ void PlayerAbsorbAttackSystem::DebugRender()
 // 吸収攻撃の設定
 void PlayerAbsorbAttackSystem::SetAbsorbConfig(const AbsorbConfig& config)
 {
-	if (_absorbAttack)
+	if(_absorbAttack)
 	{
 		// 吸収攻撃オブジェクトに設定を渡す
 		_absorbAttack->SetAbsorbConfig(config);
@@ -110,7 +110,7 @@ void PlayerAbsorbAttackSystem::SetAbsorbConfig(const AbsorbConfig& config)
 // 吸収攻撃の設定取得
 AbsorbConfig PlayerAbsorbAttackSystem::GetAbsorbConfig() const
 {
-	if (_absorbAttack)
+	if(_absorbAttack)
 	{
 		// 吸収攻撃オブジェクトから設定を取得して返す
 		return _absorbAttack->GetAbsorbConfig();
@@ -123,7 +123,7 @@ AbsorbConfig PlayerAbsorbAttackSystem::GetAbsorbConfig() const
 // 攻撃開始
 void PlayerAbsorbAttackSystem::StartAbsorbAttack()
 {
-	if(!CanStartAbsorbAttack() || !_absorbAttack) return;
+	if(!CanStartAbsorbAttack() || !_absorbAttack){ return; }
 
 	// 攻撃開始
 	_absorbAttack->ProcessStartAttack();
@@ -153,9 +153,9 @@ void PlayerAbsorbAttackSystem::ProcessAbsorb()
 // 吸収攻撃の入力処理
 void PlayerAbsorbAttackSystem::ProcessAbsorbInput()
 {
-	auto im = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
-	if(im->IsHold(INPUT_ACTION::ABILITY) && CanStartAbsorbAttack())
+	if(im.IsHold(INPUT_ACTION::ABILITY) && CanStartAbsorbAttack())
 	{
 		// 攻撃開始
 		StartAbsorbAttack();
@@ -164,7 +164,7 @@ void PlayerAbsorbAttackSystem::ProcessAbsorbInput()
 	// 長押し処理
 	if(IsAbsorbActive())
 	{
-		bool isInputActive = im->IsHold(INPUT_ACTION::ABILITY);	// 入力があるかどうか
+		bool isInputActive = im.IsHold(INPUT_ACTION::ABILITY);	// 入力があるかどうか
 		_absorbAttack->ProcessAbsorbByInput(isInputActive);		// 入力による吸収処理
 	}
 }

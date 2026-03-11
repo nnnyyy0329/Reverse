@@ -3,8 +3,9 @@
 #pragma once
 #include "CharaBase.h"
 #include "AttackBase.h"
-#include "DodgeSystem.h"
 //#include "ShieldBase.h"
+#include "DodgeSystem.h"
+#include "BulletManager.h"
 #include "PlayerShieldSystem.h"
 
 // 前方宣言
@@ -80,13 +81,20 @@ struct AreaAttackConfig
 	bool isHit;					// ヒットフラグ
 };
 
-// 攻撃の演出関連構造体
-struct AttackEffectConfig
-{
-	std::string effectName;		// エフェクト名
-	VECTOR effectOffset;		// エフェクト位置オフセット
-	std::string soundName;		// サウンド名
-};;
+//// 攻撃の演出関連構造体
+//struct AttackEffectConfig
+//{
+//	// エフェクト
+//	std::string effectName;		// エフェクト名
+//	VECTOR effectOffset;		// エフェクト位置オフセット
+//
+//	// サウンド
+//	std::string soundName;		// サウンド名
+//
+//	// カメラの振動
+//	float cameraShakeMagnitude;	// カメラ振動の強さ
+//	float cameraShakeDuration;	// カメラ振動時間
+//};
 
 // 基本移動アニメーション構造体
 struct PlayerMovementAnimations
@@ -281,17 +289,17 @@ public:
 	void DrawBaseData();			// 基本データ表示
 	void DrawCoordinate();			// 座標表示
 	void DrawDirection();			// 向き表示
-	void DrawStatus	();				// ステータス表示
+	void DrawStatus();				// ステータス表示
 	void DrawParameter();			// パラメーター表示
-	void DrawColPos	();				// コリジョン位置表示
+	void DrawColPos();				// コリジョン位置表示
 
 	// ステータス文字列変換
 	std::string GetCurrentStateString() const;								// 現在の状態文字列取得
 	std::string GetMovementStateString(PLAYER_MOVEMENT_STATE state)	const;	// 基本移動の状態文字列取得
-	std::string GetAttackStateString  (PLAYER_ATTACK_STATE state)	const;	// 攻撃状態の文字列取得
-	std::string GetShootStateString   (PLAYER_SHOOT_STATE state)	const;	// 弾発射状態の文字列取得
-	std::string GetAbsorbStateString  (PLAYER_ABSORB_STATE state)	const;	// 吸収攻撃状態の文字列取得
-	std::string GetCombatStateString  (PLAYER_COMBAT_STATE state)	const;	// 特殊状態の文字列取得
+	std::string GetAttackStateString(PLAYER_ATTACK_STATE state)	const;	// 攻撃状態の文字列取得
+	std::string GetShootStateString(PLAYER_SHOOT_STATE state)	const;	// 弾発射状態の文字列取得
+	std::string GetAbsorbStateString(PLAYER_ABSORB_STATE state)	const;	// 吸収攻撃状態の文字列取得
+	std::string GetCombatStateString(PLAYER_COMBAT_STATE state)	const;	// 特殊状態の文字列取得
 
 	// 現在のアニメーション名取得
 	const char* GetCurrentAnimationName() const;
@@ -310,7 +318,10 @@ public:
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
 
+
 	/*****ゲッターセッター*****/
+
+	// 攻撃コリジョン情報
 	VECTOR GetAttackColTop(){ return _vAttackColTop; }			// 攻撃コリジョン上部
 	VECTOR GetAttackColBottom(){ return _vAttackColBottom; }	// 攻撃コリジョン下部
 	float GetAttackColR(){ return _fAttackColR; }				// 攻撃コリジョン半径
@@ -335,18 +346,21 @@ public:
 	PLAYER_COMBAT_STATE GetCombatState()const{ return _playerState.combatState; }		// 特殊状態取得
 	void SetCombatState(PLAYER_COMBAT_STATE state){ _playerState.combatState = state; }	// 特殊状態設定
 
+	// 状態リセット
+	void SetStateReset(){ return _playerState.StateReset(); }
+
 
 	// プレイヤーの動作関連コンポーネントクラスを実装予定
 	// それぞれのシステムはユニークポインタで管理して実装する
-	
+
 protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
-	virtual AttackConstants GetAttackConstants()const = 0;								// 攻撃定数を取得
-	virtual void GetAttackConfigs(AttackConfig configs[]) = 0;							// 攻撃設定を取得
-	virtual void GetAttackColOffsetConfigs(AttackColOffset configs[]) = 0;				// 攻撃コリジョンオフセット設定を取得
-	virtual void GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]) = 0;		// 攻撃向き調整設定を取得
-	virtual AreaAttackConfig GetAreaAttackConfig() = 0;									// 範囲攻撃設定を取得
-	virtual AttackEffectConfig GetAttackEffectConfig(AttackEffectConfig configs[]) = 0;	// 演出設定を取得
+	virtual AttackConstants GetAttackConstants()const{ return AttackConstants{}; };	// 攻撃定数を取得
+	virtual void GetAttackConfigs(AttackConfig configs[]){};						// 攻撃設定を取得
+	virtual void GetAttackColOffsetConfigs(AttackColOffset configs[]){};			// 攻撃コリジョンオフセット設定を取得
+	virtual void GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]){};		// 攻撃向き調整設定を取得
+	virtual AreaAttackConfig GetAreaAttackConfig(){ return AreaAttackConfig{}; };	// 範囲攻撃設定を取得
+	virtual void GetAttackEffectConfig(AttackEffectConfig configs[]){};				// 演出設定を取得
 
 	// 攻撃システム
 	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
@@ -354,12 +368,13 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 
 	// 攻撃関連の初期化関数
 	void InitializeAttackData();						// 攻撃データ初期化
-	void InitializeAttackConfigs(int maxComboCount);	// 攻撃設定配列初期化
-	void SetAttackStatusData(int maxComboCount);		// 攻撃状態を攻撃配列に入れる
-	void CreateAttackData(int maxComboCount);			// 攻撃コリジョンデータ作成	
+	void InitializeAttackConfigs(int maxCombo);			// 攻撃設定配列初期化
+	void SetAttackStatusData(int maxCombo);				// 攻撃状態を攻撃配列に入れる
+	void CreateAttackData(int maxCombo);				// 攻撃コリジョンデータ作成	
 	void SetAttackColData(AttackConfig config, std::shared_ptr<AttackBase> attack);				// 攻撃コリジョン情報設定
 	void SetAttackOffsetData(AttackColOffset config, std::shared_ptr<AttackBase> attack);		// 攻撃オフセット情報設定
-	void SetDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃向き調整情報設定
+	void SetCanDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃向き調整情報設定
+	void SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃エフェクト情報設定
 
 	// PlayerBase_Attack.cppで定義
 	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数
@@ -387,6 +402,9 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	int GetAttackIndexByStatus(PLAYER_ATTACK_STATE status);								// 状態から攻撃インデックスを取得
 	int GetMaxComboCount()const;														// 最大コンボ数取得
 
+	// 各攻撃の演出設定を保存
+	std::vector<AttackEffectConfig> _attackEffectConfigs;  
+
 	// 攻撃コリジョン情報の受け取り用
 	VECTOR _vAttackColTop;
 	VECTOR _vAttackColBottom;
@@ -396,9 +414,10 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 
 protected:	// 弾発射関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 	
-	virtual void ProcessShoot(){};	// 発射処理の仮想関数
+	virtual BulletConfig GetBulletConfig(){ return BulletConfig{}; }					// 弾発射設定を取得
+	virtual BulletEffectConfig GetBulletEffectConfig(){ return BulletEffectConfig{}; }	// 弾演出設定の取得
 
-	virtual bool IsShooting()const{ return _playerState.shootState != PLAYER_SHOOT_STATE::NONE; }
+	virtual void ProcessShoot(){};	// 発射処理の仮想関数
 
 protected:	// 吸収攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
@@ -430,8 +449,8 @@ protected: 	// シールド関係 --- 今後クラスで分ける予定 -------------------------
 	void ProcessShieldInput();     // シールド入力処理
 	bool IsShielding();            // シールド中かチェック
 
-	// 各プレイヤー固有のシールド設定取得（純粋仮想関数）
-	virtual ShieldConfig GetShieldConfig() = 0;
+	// プレイヤー固有のシールド設定取得（仮想関数）
+	virtual ShieldConfig GetShieldConfig(){ return ShieldConfig{}; }
 
 protected:	// 死亡関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 

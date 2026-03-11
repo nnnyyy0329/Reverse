@@ -3,8 +3,9 @@
 #include "CharaBase.h"
 #include "EnemyState.h"
 #include "EnemyAttackSettings.h"
+#include "BulletManager.h"
 
-class BulletManager;
+//class BulletManager;
 class AttackBase;
 class StageBase;
 
@@ -25,6 +26,9 @@ public:
 	VECTOR GetHomePos() { return _vHomePos; }
 	void SetHomePos(VECTOR pos) { _vHomePos = pos; }
 
+	VECTOR GetHomeDir() { return _vHomeDir; }
+	void SetHomeDir(VECTOR dir) { _vHomeDir = dir; }
+
 	bool CanRemove() { return _bCanRemove; }// delete可能か
 
 	const EnemyParam& GetEnemyParam() const { return _enemyParam; }
@@ -41,8 +45,9 @@ public:
 	void ChangeState(std::shared_ptr<EnemyState> newState);
 
 	// 弾関連
-	void SetBulletManager(std::shared_ptr<BulletManager> bulletManager) { _bulletManager = bulletManager; }// マネージャーをセット
-	void SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime);// 発射リクエストをする
+	//void SetBulletManager(std::shared_ptr<BulletManager> bulletManager) { _bulletManager = bulletManager; }// マネージャーをセット
+	//void SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime);// 発射リクエストをする
+	void SpawnBullet(const BulletConfig& bulletConfig);// 発射リクエストをする
 
 	// 攻撃コリジョン関連(ステート側で呼び出し)
 	void StartAttack(const EnemyAttackSettings& settings);// 攻撃の開始
@@ -51,6 +56,7 @@ public:
 
 	// 被ダメージ処理
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;
+	void ApplyDamageByBullet(float fDamage, CHARA_TYPE eType) override;
 
 	// 死亡判定
 	bool IsDead();
@@ -74,6 +80,7 @@ public:
 
 	// 索敵の障害物チェック
 	void SetStage(std::shared_ptr<StageBase> stage) { _stage = stage; }// ステージ参照をセット
+	std::shared_ptr<StageBase> GetStage() { return _stage.lock(); }
 	bool CheckLineOfSight(VECTOR vStart, VECTOR vEnd);// 視線が通っているか(障害物チェック)
 
 	// 移動可能範囲チェック
@@ -89,16 +96,24 @@ public:
 	// 徐々に回転させる
 	void SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg);// 目標方向へ指定速度で回転
 
+	// 経路探索関連
+	void UpdatePath(VECTOR vTargetPos);// 目標座標へ向かうルートを計算、更新する
+	VECTOR GetNextWaypoint();// 次に向かうべき座標を取得
+	void ClearPath();// 記憶しているルートをクリア
+	bool HasPath() { return !_currentPath.empty(); }// ルートを持っているかどうか
+	bool IsVisible(VECTOR vTargetPos, float checkRad = 5.0f);
+
 protected:
 
 	VECTOR _vHomePos;// 敵の初期位置
+	VECTOR _vHomeDir;// 敵の初期向き
 
 	std::shared_ptr<CharaBase> _targetPlayer;// 接近用
 
 	std::shared_ptr<EnemyState> _currentState;
 	EnemyParam _enemyParam;
 
-	std::weak_ptr<BulletManager> _bulletManager;// マネージャーの参照を持つ(modegameが所有)
+	//std::weak_ptr<BulletManager> _bulletManager;// マネージャーの参照を持つ(modegameが所有)
 
 	std::shared_ptr<AttackBase> _attackCollision;// 攻撃コリジョン
 
@@ -126,6 +141,11 @@ protected:
 	float _fDamageComboResetTimer = 0.0f;// リセットタイマー
 
 	bool _bIsOutSideMoveArea = false;// エリア外へ移動しようとしたか
+
+	// 経路記憶用
+	std::vector<VECTOR> _currentPath;// 現在の経路座標リスト
+	int _currentPathIndex = 0;// 現在向かっている経路のインデックス
+	float _fPathUpdateTimer = 0.0f;//経路再計算用タイマー
 
 private:
 	void LoadEnemyModel();// モデルを名前に応じて読み込む

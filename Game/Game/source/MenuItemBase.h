@@ -4,8 +4,6 @@
 // 前方宣言
 class ModeGame;
 class CameraManager;
-class GameCamera;
-class DebugCamera;
 
 // メニュー項目用ベースクラス
 class MenuItemBase
@@ -53,13 +51,10 @@ public:
 	MenuDebugCamera(void* param, std::string text);
 
 	void SetCameraManagerMenu(std::shared_ptr<CameraManager> cameraManager);
-	void SetGameCameraMenu(std::shared_ptr<GameCamera> gameCamera);
-	void SetDebugCameraMenu(std::shared_ptr<DebugCamera> debugCamera);
 
 	virtual int Selected();
 
 protected:
-	std::shared_ptr<CameraManager> __cameraManager;
-	std::shared_ptr<DebugCamera> __debugCamera;
-	std::shared_ptr<GameCamera> __gameCamera;
+	std::shared_ptr<CameraManager> _cameraManager;
+
 };

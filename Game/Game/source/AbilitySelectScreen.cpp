@@ -5,12 +5,12 @@
 namespace Render
 {
 	constexpr int SELECT_DRAW_X = 1500;
-	constexpr int SELECT_DRAW_Y = 950;
+	constexpr int SELECT_DRAW_Y = 850;
 	constexpr int DRAW_OFFSET_X = 10;
 	constexpr int DRAW_OFFSET_Y = 0;
 }
 
-namespace
+namespace SelectConstants
 {
 	constexpr int MIN_SELECT = 0;	// 最小選択肢
 	constexpr int MAX_SELECT = 2;	// 最大選択肢
@@ -21,9 +21,11 @@ AbilitySelectScreen::AbilitySelectScreen()
 {
 	_playerManager = nullptr;	// プレイヤーマネージャー
 
-	_iHandle1 = ResourceServer::GetInstance()->GetHandle("select1");
-	_iHandle2 = ResourceServer::GetInstance()->GetHandle("select2");
-	_iHandle3 = ResourceServer::GetInstance()->GetHandle("select3");
+	_iHandle1 = ResourceServer::GetInstance()->GetHandle("SelectPower");
+	_iHandle2 = ResourceServer::GetInstance()->GetHandle("SelectBlaster");
+	//_iHandle1 = ResourceServer::GetInstance()->GetHandle("select1");
+	//_iHandle2 = ResourceServer::GetInstance()->GetHandle("select2");
+	//_iHandle3 = ResourceServer::GetInstance()->GetHandle("select3");
 
 	// 選択状態の初期化
 	_selectionState = SelectionState::NOT_SELECTION;	// 選択状態
@@ -73,166 +75,132 @@ bool AbilitySelectScreen::Render()
 	if(_selectionState != SelectionState::SELECTING){ return false; }
 
 	// 選択画面表示
-	SelectFrameRender();
+	//SelectFrameRender();
 
 	return true;
 }
 
-// 入力による画面表示
 void AbilitySelectScreen::SelectScreenByInput()
 {
-	//if(!IsSelectActiveByPlayerType()){ return; }	// プレイヤータイプに応じて選択可能かどうか
-	auto im = InputManager::GetInstance();
 
-	if(im->IsTrigger(INPUT_ACTION::TRANSFORM))
-	{
-		// 状態による分岐
-		switch(_selectionState)
-		{
-			case SelectionState::NOT_SELECTION: // 非選択状態のとき
-			{
-				_selectionState = SelectionState::SELECTING;	// 選択画面表示
-				_iCursorCount = 0;								// カウンターリセット
-
-				break;
-			}
-				
-			case SelectionState::SELECTING: // 選択中のとき
-			{
-				break;
-			}
-				
-			case SelectionState::SELECT_COMPLETED: // 選択確定のとき
-			{
-				// 処理完了後も再度選択画面を開けるようにする
-				_selectionState = SelectionState::NOT_SELECTION;	// 選択状態リセット
-				_iSelectedAbility = -1;								// 選択されたアビリティリセット
-
-				break;
-			}
-
-			case SelectionState::COMPLETED: // 選択処理完了のとき
-			{
-				// 処理完了後も再度選択画面を開けるようにする
-				_selectionState = SelectionState::NOT_SELECTION;	// 選択状態リセット
-				_iSelectedAbility = -1;								// 選択されたアビリティリセット
-
-				break;
-			}
-		}
-	}
 }
 
-// 入力による選択処理
 void AbilitySelectScreen::SelectionByInput()
 {
-	if(_selectionState != SelectionState::SELECTING){ return; }	// 選択中でないときは処理しない
-
-	auto im = InputManager::GetInstance();	// 入力クラス
-
-	// 左キーが押されたら
-	if(im->IsTrigger(INPUT_ACTION::LEFT))
+	// 選択処理完了中は入力を受け付けない
+	if(_selectionState == SelectionState::SELECT_COMPLETED ||
+		_selectionState == SelectionState::COMPLETED)
 	{
-		_iCurrentSelection--;	// 左に移動
-
-		// 一番左からさらに左に移動したら
-		if(_iCurrentSelection < MIN_SELECT)
-		{
-			// 一番右に移動
-			_iCurrentSelection = MAX_SELECT;
-		}
+		return;
 	}
 
-	// 右キーが押されたら
-	if(im->IsTrigger(INPUT_ACTION::RIGHT))
-	{
-		_iCurrentSelection++;	// 右に移動
+	auto& im = InputManager::GetInstance();
 
-		// 一番右からさらに右に移動したら
-		if(_iCurrentSelection > MAX_SELECT)
-		{
-			// 一番左に移動
-			_iCurrentSelection = MIN_SELECT;
-		}
-	}
-
-	/// 決定キーが押されたら
-	if(im->IsTrigger(INPUT_ACTION::TRANSFORM))
-	{
-		// 選択肢のアビリティタイプの配列
-		ABILITY_TYPE abilities[3] = 
-		{
-			ABILITY_TYPE::SURFACE_PLAYER,	// 表プレイヤー
-			ABILITY_TYPE::BULLET_PLAYER,	// 弾プレイヤー
-			ABILITY_TYPE::INTERIOR_PLAYER	// 裏プレイヤー
-		};
-
-		// 現在選択されているアビリティを取得
-		ABILITY_TYPE selectedAbility = abilities[_iCurrentSelection];
-
-		// アビリティが解放されているかチェック
-		if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(selectedAbility))
-		{
-			return;
-		}
-
-		_iSelectedAbility = _iCurrentSelection;				// 選択されたアビリティを保存
-		_selectionState = SelectionState::SELECT_COMPLETED;	// 選択確定状態に移行
-
-		// 入力をリセット
-		im->ResetInput();
-	}
-
-	// デバッグ用の入力
-	// 選択画面が有効なときに左十字ボタンを押すと変身できるようになる
-	//if(InputManager::GetInstance()->IsTrigger(INPUT_ACTION::DEBUG1))
+	//// デバッグ用の入力
+	//if(im.IsTrigger(INPUT_ACTION::DEBUG2))
 	//{
+	//	if(_playerUnlockManager)
+	//	{
+	//		// デバッグ用の強制解放
+	//		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::INTERIOR_PLAYER);	// 裏プレイヤー解放
+	//		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::BULLET_PLAYER);		// 弾プレイヤー解放
+	//	}
+	//}
+
+	// エネルギーがたまったら能力を開放
+	if(EnergyManager::GetInstance()->CanSwitchPlayer())
+	{
 		if(_playerUnlockManager)
 		{
 			// デバッグ用の強制解放
 			_playerUnlockManager->ForceUnlock(ABILITY_TYPE::INTERIOR_PLAYER);	// 裏プレイヤー解放
 			_playerUnlockManager->ForceUnlock(ABILITY_TYPE::BULLET_PLAYER);		// 弾プレイヤー解放
 		}
-	//}
+	}
 
-	// 点滅カウンターを進める
-	// 入力が処理された場合のみ点滅カウンターを進める
-	if(_bIsScreenActive)
+	// パワーアビリティ選択
+	if(im.IsTrigger(INPUT_ACTION::SELECT_POWER))
 	{
-		_iCursorCount++;
+		// 裏プレイヤーが解放されているかチェック
+		if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(ABILITY_TYPE::INTERIOR_PLAYER))
+		{
+			return;	// 解放されていない場合は何もしない
+		}
+
+		// 裏プレイヤー（配列インデックスの2番）
+		_iSelectedAbility = 2;	
+
+		// 選択確定状態に移行
+		_selectionState = SelectionState::SELECT_COMPLETED;	
+
+		// 入力をリセット
+		im.ResetInput();
+	}
+
+	// 弾発射アビリティ選択
+	if(im.IsTrigger(INPUT_ACTION::SELECT_BULLET))
+	{
+		// 弾プレイヤーが解放されているかチェック
+		if(_playerUnlockManager && !_playerUnlockManager->IsAbilityUnlocked(ABILITY_TYPE::BULLET_PLAYER))
+		{
+			return;	// 解放されていない場合は何もしない
+		}
+
+		// 弾プレイヤー（配列インデックスの1番）
+		_iSelectedAbility = 1;	
+
+		// 選択確定状態に移行
+		_selectionState = SelectionState::SELECT_COMPLETED;	
+
+		// 入力をリセット
+		im.ResetInput();
 	}
 }
 
 // 選択要素の表示
 void AbilitySelectScreen::SelectRender()
 {
-	int x = 0;
-	int y = 0;
-	int w = 1920;
-	int h = 1080;
-
-	// 背景の半透明黒
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-	//DrawBox(x, y, x + w, y + h, GetColor(255, 255, 255), TRUE);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
 	// 画像のサイズを取得
 	int graphW, graphH;
 	GetGraphSize(_iHandle1, &graphW, &graphH);
 
-	int selectX[3] = // 表示するX座標
+	int selectX[2] = // 表示するX座標
 	{ 
 		Render::SELECT_DRAW_X,
-		Render::SELECT_DRAW_X + graphW + Render::DRAW_OFFSET_X,
-		Render::SELECT_DRAW_X + graphW * 2 + Render::DRAW_OFFSET_X * 2
+		Render::SELECT_DRAW_X + graphW + Render::DRAW_OFFSET_X
 	};
 	int selectY = Render::SELECT_DRAW_Y; // 表示するY座標
 
 	// アビリティ画像を描画
-	DrawGraph(selectX[0], selectY, _iHandle1, TRUE);
-	DrawGraph(selectX[1], selectY, _iHandle3, TRUE);
-	DrawGraph(selectX[2], selectY, _iHandle2, TRUE);
+	DrawGraph(selectX[0], selectY, _iHandle2, TRUE);
+	DrawGraph(selectX[1], selectY, _iHandle1, TRUE);
 }
+
+//// 選択要素の表示：旧
+//void AbilitySelectScreen::SelectRender()
+//{
+//	// 背景の半透明黒
+//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+//	//DrawBox(x, y, x + w, y + h, GetColor(255, 255, 255), TRUE);
+//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+//
+//	// 画像のサイズを取得
+//	int graphW, graphH;
+//	GetGraphSize(_iHandle1, &graphW, &graphH);
+//
+//	int selectX[3] = // 表示するX座標
+//	{ 
+//		Render::SELECT_DRAW_X,
+//		Render::SELECT_DRAW_X + graphW + Render::DRAW_OFFSET_X,
+//		Render::SELECT_DRAW_X + graphW * 2 + Render::DRAW_OFFSET_X * 2
+//	};
+//	int selectY = Render::SELECT_DRAW_Y; // 表示するY座標
+//
+//	// アビリティ画像を描画
+//	DrawGraph(selectX[0], selectY, _iHandle1, TRUE);
+//	DrawGraph(selectX[1], selectY, _iHandle3, TRUE);
+//	DrawGraph(selectX[2], selectY, _iHandle2, TRUE);
+//}
 
 // 選択画面表示
 void AbilitySelectScreen::SelectFrameRender()
@@ -240,7 +208,7 @@ void AbilitySelectScreen::SelectFrameRender()
 	// 選択中のみカーソル表示
 	if(_selectionState == SelectionState::SELECTING)
 	{
-		_bShowCursor = (_iCursorCount / BLINK_SPEED) % 2 == 0;
+		_bShowCursor = (_iCursorCount / SelectConstants::BLINK_SPEED) % 2 == 0;
 
 		// カーソル表示
 		if(_bShowCursor)

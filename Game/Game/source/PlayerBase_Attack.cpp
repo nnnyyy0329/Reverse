@@ -14,10 +14,10 @@ namespace IdConstants
 void PlayerBase::InitializeAttackData()
 {
 	// キャラタイプに応じた最大コンボ数を取得
-	int maxComboCount = GetMaxComboCount();
+	int maxCombo = GetMaxComboCount();
 
 	// コンボカウントが0ならスキップ
-	if(maxComboCount <= 0)
+	if(maxCombo <= 0)
 	{
 		_attacks.clear();
 		_attackStatuses.clear();
@@ -25,17 +25,17 @@ void PlayerBase::InitializeAttackData()
 	}
 
 	// 攻撃設定配列初期化
-	InitializeAttackConfigs(maxComboCount);
+	InitializeAttackConfigs(maxCombo);
 
 	// 攻撃状態を攻撃配列に入れる
-	SetAttackStatusData(maxComboCount);
+	SetAttackStatusData(maxCombo);
 
 	// 攻撃コリジョンデータ作成
-	CreateAttackData(maxComboCount);
+	CreateAttackData(maxCombo);
 }
 
 // 攻撃設定配列初期化
-void PlayerBase::InitializeAttackConfigs(int maxComboCount)
+void PlayerBase::InitializeAttackConfigs(int maxCombo)
 {
 	// 攻撃配列とステータス配列を初期化
 	_attacks.clear();
@@ -43,7 +43,7 @@ void PlayerBase::InitializeAttackConfigs(int maxComboCount)
 }
 
 // 攻撃状態を攻撃配列に入れる
-void PlayerBase::SetAttackStatusData(int maxComboCount)
+void PlayerBase::SetAttackStatusData(int maxCombo)
 {
 	// 攻撃状態の定義
 	std::vector<PLAYER_ATTACK_STATE> statuses =
@@ -56,29 +56,37 @@ void PlayerBase::SetAttackStatusData(int maxComboCount)
 	};
 
 	// コンボカウント回数分ループ
-	for(int i = 0; i < maxComboCount; ++i)
+	for(int i = 0; i < maxCombo; ++i)
 	{
 		_attackStatuses.push_back(statuses[i]);
 	}
 }
 
 // 攻撃コリジョンデータ作成
-void PlayerBase::CreateAttackData(int maxComboCount)
+void PlayerBase::CreateAttackData(int maxCombo)
 {	
+	// 攻撃エフェクト設定配列初期化
+	_attackEffectConfigs.clear();	
+	_attackEffectConfigs.reserve(maxCombo);
+
 	// 攻撃設定取得
-	std::vector<AttackConfig>configs(maxComboCount);
+	std::vector<AttackConfig>configs(maxCombo);
 	GetAttackConfigs(configs.data());
 
 	// 攻撃オフセット設定取得
-	std::vector<AttackColOffset>offsets(maxComboCount);
+	std::vector<AttackColOffset>offsets(maxCombo);
 	GetAttackColOffsetConfigs(offsets.data());
 
 	// 向き調整設定取得
-	std::vector<AttackDirAdjustConfig>dirAdjusts(maxComboCount);
+	std::vector<AttackDirAdjustConfig>dirAdjusts(maxCombo);
 	GetAttackDirAdjustConfigs(dirAdjusts.data());
 
+	// 攻撃エフェクト設定取得
+	std::vector<AttackEffectConfig>effectConfigs(maxCombo);
+	GetAttackEffectConfig(effectConfigs.data());
+
 	// コンボカウント回数分ループ
-	for(int i = 0; i < maxComboCount; ++i)
+	for(int i = 0; i < maxCombo; ++i)
 	{
 		auto attack = std::make_shared<AttackBase>();	// 攻撃オブジェクト作成
 
@@ -89,7 +97,10 @@ void PlayerBase::CreateAttackData(int maxComboCount)
 		SetAttackOffsetData(offsets[i], attack);
 
 		// 向き調整データ設定
-		SetDirAdjustData(dirAdjusts[i], attack);
+		SetCanDirAdjustData(dirAdjusts[i], attack);
+
+		// 攻撃エフェクトデータ設定
+		SetAttackEffectData(effectConfigs[i], attack);
 
 		// 攻撃配列に攻撃オブジェクトを追加
 		_attacks.push_back(attack);
@@ -127,12 +138,24 @@ void PlayerBase::SetAttackOffsetData(AttackColOffset config, std::shared_ptr<Att
 }
 
 // 向き調整データ作成
-void PlayerBase::SetDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack)
+void PlayerBase::SetCanDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack)
 {
 	if(!attack) return;
 
 	// 向き調整データ設定
 	attack->SetDirAdjustData(config.canDirAdjust);	// 攻撃中の移動速度が0より大きい場合は向き調整を有効にする
+}
+
+// 攻撃エフェクトデータ設定
+void PlayerBase::SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<AttackBase> attack)
+{
+	if(!attack) return;
+
+	// 攻撃エフェクトデータ設定
+	_attackEffectConfigs.push_back(config);
+
+	// 攻撃オブジェクトに攻撃エフェクトデータ設定
+	attack->SetAttackEffectConfig(config);
 }
 
 // 攻撃Process呼び出し用関数
@@ -144,58 +167,6 @@ void PlayerBase::CallProcessAttack()
 	// 攻撃分岐処理
 	ProcessBranchAttack();
 }
-
-//// 攻撃のコリジョン位置更新
-//void PlayerBase::UpdateAttackColPos
-//(
-//	std::shared_ptr<AttackBase> attack,
-//	VECTOR& topOffset,
-//	VECTOR& bottomOffset, 
-//	VECTOR& baseOffset
-//)
-//{
-//	if(!attack) return;
-//
-//	// 攻撃コリジョン情報を取得
-//	const AttackCollision& col = attack->GetAttackCollision();
-//
-//	// コリジョン位置を更新
-//	attack->SetCapsuleAttackData
-//	(
-//		VAdd(baseOffset, topOffset),	// 上部
-//		VAdd(baseOffset, bottomOffset),	// 下部
-//		col.attackColR,					// 半径
-//		col.attackDir,					// 攻撃方向
-//		col.attackDelay,				// 発生遅延
-//		col.attackDuration,				// 持続時間
-//		col.recovery, 					// 後隙
-//		col.damage, 					// ダメージ
-//		col.isHit,						// ヒットフラグ
-//		col.attackState,				// 攻撃状態
-//		col.attackMoveSpeed,			// 攻撃中の移動速度
-//		col.canKnockback				// 吹き飛ばし攻撃かどうか
-//	);
-//}
-//
-//// コリジョン位置の更新関数
-//void PlayerBase::ProcessAttackColPos()
-//{
-//	// 子クラスから攻撃定数と設定を取得
-//	AttackConstants constants = GetAttackConstants();	// 攻撃定数取得
-//	std::vector<AttackConfig> configs(_attacks.size());	// 攻撃設定取得
-//	GetAttackConfigs(configs.data());					// 攻撃設定取得
-//
-//	// 判定を前方にずらす
-//	VECTOR dirNorm = VNorm(_vDir);
-//	VECTOR attackOffset = VScale(dirNorm, constants.attackOffsetScale);
-//	VECTOR colOffset = VAdd(_vPos, attackOffset);
-//
-//	// 攻撃配列から各攻撃のコリジョン位置を更新
-//	for(size_t i = 0; i < _attacks.size(); ++i)
-//	{
-//		UpdateAttackColPos(_attacks[i], configs[i].topOffset, configs[i].bottomOffset, colOffset);
-//	}
-//}
 
 // 攻撃処理
 void PlayerBase::ProcessAttack()
@@ -243,25 +214,14 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 // 攻撃の反応処理
 void PlayerBase::ProcessAttackReaction(int attackIndex)
 {
-	// キャラタイプに応じた最大コンボ数を取得
-	int maxComboCount = GetMaxComboCount();
-
-	// 攻撃設定取得
-	std::vector<AttackConfig> configs(maxComboCount);
-	GetAttackConfigs(configs.data());
-
-	// 演出設定取得
-	std::vector<AttackEffectConfig> effectConfigs(maxComboCount);
-	GetAttackEffectConfig(effectConfigs.data());
-
 	// 有効な攻撃インデックスかチェック
-	if((attackIndex >= 0) && (attackIndex < static_cast<int>(configs.size())))
+	if((attackIndex >= 0) && (attackIndex < static_cast<int>(_attackEffectConfigs.size())))
 	{
-		// 攻撃エフェクト処理
-		ProcessAttackEffect(attackIndex, effectConfigs);
+		// 攻撃の演出設定配列を取得
+		const AttackEffectConfig& config = _attackEffectConfigs[attackIndex];
 
-		// 攻撃サウンド処理
-		ProcessAttackSound(attackIndex, effectConfigs);
+		// AttackEffectSystemを使用して演出実行
+		AttackEffectSystem::GetInstance()->AttackEffect(config, _vPos, _vDir);
 	}
 }
 
@@ -279,6 +239,7 @@ void PlayerBase::ProcessAttackRegister(std::shared_ptr<AttackBase> attack)
 			{
 				// 表プレイヤーとして登録
 				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::SURFACE_PLAYER, GetInstanceId());
+
 				break;
 			}
 
@@ -286,6 +247,7 @@ void PlayerBase::ProcessAttackRegister(std::shared_ptr<AttackBase> attack)
 			{
 				// 裏プレイヤーとして登録
 				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::INTERIOR_PLAYER, GetInstanceId());
+
 				break;
 			}
 		}
@@ -301,23 +263,20 @@ void PlayerBase::ProcessAttackEffect(int attackIndex, std::vector<AttackEffectCo
 	// エフェクト名が空でない場合のみ
 	if(!config.effectName.empty())
 	{
-		// エフェクト再生位置を計算
-		VECTOR effectPos = VAdd(_vPos, config.effectOffset);
+		// オフセット値をワールド座標に変換
+		VECTOR worldOffset = GeometryUtility::TransOffsetToWorld(config.effectOffset, _vDir);
 
-		// 攻撃方向に応じてオフセットを回転
-		VECTOR dirNorm = VNorm(_vDir);
-		VECTOR rotatedOffset = VGet
-		(
-			config.effectOffset.x * dirNorm.x - config.effectOffset.z * dirNorm.z,	// X成分
-			config.effectOffset.y,													// Y成分
-			config.effectOffset.x * dirNorm.z + config.effectOffset.z * dirNorm.x	// Z成分
-		);
+		// オフセット値を現在の位置に適応
+		VECTOR effectPos = VAdd(_vPos, worldOffset);
 
-		// エフェクト位置を更新
-		effectPos = VAdd(_vPos, rotatedOffset);
+		// エフェクト再生して、ハンドルを取得
+		auto handle = EffectServer::GetInstance()->Play(config.effectName, effectPos);
 
-		// エフェクト再生
-		EffectServer::GetInstance()->Play(config.effectName, effectPos);
+		// エフェクトの向きを攻撃方向に合わせる
+		VECTOR dirNorm = VNorm(_vDir);							// 攻撃方向の正規化
+		float rotY = atan2f(dirNorm.x, dirNorm.z);				// Y軸回転角度を計算
+		VECTOR rotation = VGet(0.0f, rotY, 0.0f);				// エフェクトの回転量を設定
+		EffectServer::GetInstance()->SetRot(handle, rotation);	// 回転量をエフェクトに適応
 	}
 }
 
@@ -351,7 +310,7 @@ void PlayerBase::ProcessBranchAttack()
 // 汎用コンボ攻撃処理
 void PlayerBase::ProcessComboAttack(int attackIndex)
 {
-	auto im = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	auto currentAttack = _attacks[attackIndex];
 	ATTACK_STATE state = currentAttack->GetAttackState();
@@ -372,7 +331,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 			_bCanCombo = true;
 
 			// 次の攻撃入力があれば次の攻撃へ
-			if(im->IsTrigger(INPUT_ACTION::ATTACK) && CanNextAttack())
+			if(im.IsTrigger(INPUT_ACTION::ATTACK) && CanNextAttack())
 			{
 				//ProcessNextAttack(attackIndex);
 			}
@@ -382,7 +341,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 		case ATTACK_STATE::RECOVERY:	// 硬直中
 		{
 			// 次の攻撃入力があれば次の攻撃へ
-			if(im->IsTrigger(INPUT_ACTION::ATTACK) && CanNextAttack())
+			if(im.IsTrigger(INPUT_ACTION::ATTACK) && CanNextAttack())
 			{
 				ProcessNextAttack(attackIndex);
 			}
@@ -474,14 +433,14 @@ void PlayerBase::ReceiveAttackColData()
 // 攻撃を開始できるかチェック
 bool PlayerBase::IsStartAttack()
 {
-	auto im = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	// 攻撃入力チェック
 	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||	// 待機か
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||	// 歩きか
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN) &&	// 走りで
 		_playerState.attackState   == PLAYER_ATTACK_STATE::NONE	  &&	// 攻撃状態ではなく
-		im->IsTrigger(INPUT_ACTION::ATTACK))												// 入力があるなら
+		im.IsTrigger(INPUT_ACTION::ATTACK))												// 入力があるなら
 	{
 		return true;
 	}
@@ -518,10 +477,10 @@ bool PlayerBase::IsAttacking()
 // 攻撃入力があったかチェック
 bool PlayerBase::IsAttackInput()
 {
-	auto im = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 
 	// 攻撃入力があるかチェック
-	return im->IsHold(INPUT_ACTION::ATTACK) != 0;
+	return im.IsHold(INPUT_ACTION::ATTACK) != 0;
 }
 
 // ヘルパー関数

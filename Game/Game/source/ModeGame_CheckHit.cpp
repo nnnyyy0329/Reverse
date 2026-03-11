@@ -3,14 +3,16 @@
 #include "StageBase.h"
 #include "AttackBase.h"
 #include "AttackManager.h"
-#include "BulletManager.h"
 #include "Bullet.h"
+#include "BulletManager.h"
 #include "DodgeSystem.h"
-#include "GameCamera.h"
+#include "CameraManager.h"
+#include "PlayerBase.h"
 #include "SurfacePlayer.h"
 #include "PlayerAbsorbAttackSystem.h" 
 #include "AbsorbAttack.h"
 #include "ModeTextBox.h"
+#include "CameraShakeSystem.h"
 
 // プレベータようパラメータ
 namespace
@@ -105,7 +107,7 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 				detectionRadius
 			);
 
-			const float wallThreshold = 0.2f;// 壁判定の閾値
+			const float wallThreshold = 0.3f;// 壁判定の閾値
 			for (int i = 0; i < polyResult.HitNum; ++i)
 			{
 				const MV1_COLL_RESULT_POLY& poly = polyResult.Dim[i];
@@ -286,15 +288,18 @@ void ModeGame::CheckCollisionCharaChara(std::shared_ptr<CharaBase> chara1, std::
 // カメラとマップの当たり判定
 void ModeGame::CheckCollisionCameraMap()
 {
-	if (!_gameCamera || !_stage) { return; }
+	if (!_cameraManager || !_stage) { return; }
+
+	// ゲームカメラ以外は処理しない
+	if (_cameraManager->GetCameraType() != CAMERA_TYPE::GAME_CAMERA) { return; }
 
 	// ステージの全マップモデルを取得
 	const auto& mapObjList = _stage->GetMapModelPosList();
 	if (mapObjList.empty()) { return; }
 
 	// 元のカメラ情報を取得
-	VECTOR vCamPos = _gameCamera->GetVPos();
-	VECTOR vCamTarget = _gameCamera->GetVTarget();
+	VECTOR vCamPos = _cameraManager->GetActiveCameraPos();
+	VECTOR vCamTarget = _cameraManager->GetActiveCameraTarget();
 
 	// 注視点からカメラへのベクトル
 	VECTOR vToCam = VSub(vCamPos, vCamTarget);
@@ -365,7 +370,7 @@ void ModeGame::CheckCollisionCameraMap()
 
 		// 注視点から新しいカメラ位置を計算
 		vCamPos = VAdd(vCamTarget, VScale(vDir, fNewDist));
-		_gameCamera->SetVPos(vCamPos);
+		_cameraManager->SetActiveCameraPos(vCamPos);
 	}
 }
 
@@ -376,28 +381,45 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 
 	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
 
-	const auto& bullets = _bulletManager->GetBullets();// 弾のリストを取得
+	auto bulletManager = BulletManager::GetInstance();
+	if(bulletManager == nullptr){ return; }
+
+	auto bullets = bulletManager->GetAllBullets();	// 登録された弾の取得
 
 	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
 
 	// 全弾ループ
-	for(const auto& bullet : bullets)
+	for(auto& bullet : bullets)
 	{
 		if(!bullet) { continue; }
 
-		// キャラと弾のタイプが同じなら無視する
-		if(bullet->GetShooterType() == myType) { continue; }
+		// 登録されていない弾をスキップ
+		if(!bulletManager->IsBulletRegistered(bullet)){ continue; }
+
+		// 弾の発射者タイプを取得
+		CHARA_TYPE bulletShooterType = bullet->GetShooterType();
+
+		// 弾の設定情報を取得
+		const BulletConfig& bulletConfig = bullet->GetBulletConfig();
 
 		// 当たり判定
 		if(HitCheck_Capsule_Sphere(
 			chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
-			bullet->GetPos(), bullet->GetCollisionR()
+			bullet->GetPos(), bulletConfig.radius
 		))
 		{
+			// 同一所有者の弾かチェック
+			if(IsSameOwnerBullet(myType, bulletShooterType))
+			{
+				continue; // 同じ所有者の弾はスキップ
+			}
+
 			// 当たった
 
-			// ダメージ処理とか
-			chara->ApplyDamageByBullet(playerBulletDamage, bullet->GetShooterType());
+			// 弾の設定からダメージを取得
+			float damage = bulletConfig.damage;
+			chara->ApplyDamageByBullet(damage, bullet->GetShooterType());
+
 			deadBullets.push_back(bullet);// 削除リストに追加
 		}
 	}
@@ -405,8 +427,102 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 	// 全ての判定が終わった後に、まとめて削除する
 	for(const auto& deadBullet : deadBullets)
 	{
-		_bulletManager->RemoveBullet(deadBullet);
+		bulletManager->RemoveBullet(deadBullet);
 	}
+}
+
+// 弾とマップの当たり判定
+void ModeGame::CheckHitBulletMap()
+{
+	auto bulletManager = BulletManager::GetInstance();
+	if (bulletManager == nullptr) { return; }
+
+	const auto& mapObjList = _stage->GetMapModelPosList();
+	if (mapObjList.empty()) { return; }
+
+	auto bullets = bulletManager->GetAllBullets();
+
+	std::vector<std::shared_ptr<Bullet>> deadBullets;
+
+	for (auto& bullet : bullets)
+	{
+		if (!bullet) { continue; }
+
+		if (!bulletManager->IsBulletRegistered(bullet)) { continue; }
+
+		const BulletConfig& bulletConfig = bullet->GetBulletConfig();
+
+		for (auto& obj : mapObjList)
+		{
+			if (obj.collisionFrame == -1 || obj.modelHandle <= 0) { continue; }
+
+			MV1_COLL_RESULT_POLY_DIM result = MV1CollCheck_Sphere(
+				obj.modelHandle,
+				obj.collisionFrame,
+				bullet->GetPos(),
+				bulletConfig.radius
+			);
+
+			const float wallThreshold = 0.3f;
+			bool hitWall = false;
+
+			for(int i = 0; i < result.HitNum; ++i)
+			{
+				const MV1_COLL_RESULT_POLY& poly = result.Dim[i];
+
+				if (poly.Normal.y < wallThreshold)
+				{
+					hitWall = true;
+					break;
+				}
+			}
+
+			MV1CollResultPolyDimTerminate(result);
+
+			if (hitWall)
+			{
+				deadBullets.push_back(bullet);
+				break;
+			}
+		}
+	}
+
+	for (const auto& deadBUllets : deadBullets)
+	{
+		bulletManager->RemoveBullet(deadBUllets);
+	}
+}
+
+// 同一所有者の弾かどうかを判定
+bool ModeGame::IsSameOwnerBullet(CHARA_TYPE targetType, CHARA_TYPE bulletShooterType)
+{
+	// プレイヤー系キャラの場合
+	if(IsPlayerCharacter(targetType) && IsPlayerCharacter(bulletShooterType))
+	{
+		return true; // プレイヤー同士の弾は当たらない
+	}
+
+	// 敵キャラの場合
+	if(targetType == CHARA_TYPE::ENEMY && bulletShooterType == CHARA_TYPE::ENEMY)
+	{
+		return true; // 敵同士の弾は当たらない
+	}
+
+	// 完全に同じタイプの場合
+	if(targetType == bulletShooterType)
+	{
+		return true;
+	}
+
+	return false; // 異なる所有者
+}
+
+// プレイヤー系キャラかどうかを判定
+bool ModeGame::IsPlayerCharacter(CHARA_TYPE charaType)
+{
+	return (charaType == CHARA_TYPE::SURFACE_PLAYER ||
+			charaType == CHARA_TYPE::INTERIOR_PLAYER ||
+			charaType == CHARA_TYPE::BULLET_PLAYER);
 }
 
 // キャラと攻撃コリジョンの当たり判定
@@ -415,8 +531,7 @@ void ModeGame::CheckActiveAttack(std::shared_ptr<CharaBase> chara)
 	if(chara == nullptr) { return; }
 
 	// AttackManagerから全てのアクティブな攻撃を取得
-	auto* attackManager = AttackManager::GetInstance();
-	auto activeAttacks = attackManager->GetAllActiveAttacks();
+	auto activeAttacks = _attackManager->GetAllActiveAttacks();
 
 	// 各攻撃と当たり判定
 	for(auto& attack : activeAttacks)
@@ -444,10 +559,7 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 	}
 
 	// 回避済みの攻撃かチェック
-	if(_attackManager->IsDodgeHitAttack(attack))
-	{
-		return;
-	}
+	if(_attackManager->IsDodgeHitAttack(attack)){ return; }
 
 	// 攻撃コリジョン情報を取得
 	const AttackCollision& col = attack->GetAttackCollision();
@@ -470,16 +582,32 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 			return;
 		}
 
-		// ヒットしたキャラを登録
-		attack->AddHitCharas(chara);
-
-		//EffectServer::GetInstance()->Play("SurfacePlayerAttackHit1", chara->GetPos());
-
 		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
 		auto charaType = chara->GetCharaType();							// キャラのタイプ取得
 
 		// 自分に攻撃しているかどうか
-		if(OwnerIsAttackingOwner(charaType, ownerType)){ return; }
+		if(OwnerIsAttackingOwner(charaType, ownerType)) { return; }
+
+		// ヒットしたキャラを登録
+		attack->AddHitCharas(chara);
+
+		// 攻撃のエフェクト設定からカメラシェイクの情報を取得
+		const AttackEffectConfig& effectConfig = attack->GetAttackEffectConfig();
+
+		// カメラの振動
+		if(!IsPlayerCharacter(charaType) && effectConfig.isActiveCameraShake)
+		{
+			if (_cameraManager)
+			{
+				auto shake = std::make_shared<CameraShakeSystem>();
+
+				// マグニチュードと持続時間を設定
+				shake->StartShake(effectConfig.cameraShakeMagnitude, effectConfig.cameraShakeDuration);
+
+				// カメラマネージャーに振動を追加
+				_cameraManager->AddAddon(shake);
+			}
+		}
 		
 		// ダメージ処理
 		float damage = attack->GetDamage();			// ダメージ取得
