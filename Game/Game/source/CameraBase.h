@@ -23,6 +23,8 @@ public:
 
 	virtual void ApplyShake(const VECTOR& shakeOffset) = 0;
 
+	virtual void Reset() {};
+
 	// ÉQÉbÉ^Å[
 	VECTOR GetPos() { return _vPos; }
 	VECTOR GetTarget() { return _vTarget; }

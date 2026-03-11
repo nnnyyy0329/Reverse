@@ -191,3 +191,15 @@ void CameraManager::AddAddon(std::shared_ptr<ICameraAddon> addon)
 		_addons.push_back(addon);
 	}
 }
+
+
+// カメラとアドオンをリセット
+void CameraManager::Reset()
+{
+	if (_pActiveCamera)
+	{
+		_pActiveCamera->Reset();
+	}
+
+	_addons.clear();
+}

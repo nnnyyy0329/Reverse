@@ -51,6 +51,8 @@ class CameraManager
 	// アドオンを追加する
 	void AddAddon(std::shared_ptr<ICameraAddon> addon);
 
+	void Reset();
+
 protected:
 	// カメラインスタンスはマネージャーが管理
 	std::unique_ptr<GameCamera> _gameCamera;

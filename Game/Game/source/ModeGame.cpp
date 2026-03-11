@@ -109,6 +109,7 @@ bool ModeGame::Initialize()
 		_cameraManager = std::make_shared<CameraManager>();
 		_cameraManager->Initialize();
 		_cameraManager->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
+		_cameraManager->Reset();
 	}
 
 	// “Gİ’è

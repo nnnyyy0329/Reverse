@@ -6,6 +6,9 @@ namespace
 	constexpr float ROTATE_SPEED = 0.035f;// 回転速度
 	constexpr float ANGLE_V_LIMIT = 1.50f;// 垂直角度制限(真上、真下の反転防止。85度)
 	constexpr float TARGET_OFFSET_Y = 150.0f;// ターゲットの注視点のYオフセット
+	constexpr float DEFAULT_DISTANCE = 350.0f;// デフォルトのカメラ距離
+	constexpr float DEFAULT_ANGLE_H = DX_PI_F;// デフォルトの水平角度(真後ろ)
+	constexpr float DEFAULT_ANGLE_V = -0.5f;// デフォルトの垂直角度(少し見下ろし)
 }
 
 GameCamera::GameCamera()
@@ -13,9 +16,9 @@ GameCamera::GameCamera()
 	_vPosOffset = VGet(0.0f, TARGET_OFFSET_Y, 0.0f);
 	_fNearClip = 1.f;
 	_fFarClip = 5000.f;
-	_fDistance = 450.0f;
-	_fAngleH = 0.0f;
-	_fAngleV = 0.3f;// 少し見下ろし
+	_fDistance = DEFAULT_DISTANCE;
+	_fAngleH = DEFAULT_ANGLE_H;
+	_fAngleV = -DEFAULT_ANGLE_V;// 少し見下ろし
 }
 
 void GameCamera::Process()
@@ -56,6 +59,23 @@ void GameCamera::ApplyShake(const VECTOR& shakeOffset)
 {
 	_vPos = VAdd(_vPos, shakeOffset);
 	_vTarget = VAdd(_vTarget, shakeOffset);
+}
+
+void GameCamera::Reset()
+{
+	// 角度と距離をデフォルトに戻す
+	_fDistance = DEFAULT_DISTANCE;
+	_fAngleH = DEFAULT_ANGLE_H;
+	_fAngleV = DEFAULT_ANGLE_V;
+
+	// ターゲットがいるなら、注視点を更新
+	if (_targetObject)
+	{
+		_vTarget = VAdd(_targetObject->GetPos(), _vPosOffset);
+	}
+
+	// 角度と距離から座標を計算
+	UpdatePosFromAngle();
 }
 
 // 注視点から後方へdistanceだけ離れた位置にカメラを配置する

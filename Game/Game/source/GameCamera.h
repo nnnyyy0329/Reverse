@@ -16,6 +16,8 @@ public:
 
 	void ApplyShake(const VECTOR& shakeOffset) override;
 
+	void Reset() override;
+
 protected:
 	void UpdateCamera();
 	void ControlCamera();
