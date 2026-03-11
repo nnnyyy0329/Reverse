@@ -172,11 +172,14 @@ bool ModeGame::Terminate()
 bool ModeGame::Process()
 {
 	base::Process();
+
 	AdvanceFade();
+
 	if(IsFadeActive() && GetFadeAlpha() >= 255)
 	{
 		StopFade(); // 以降自動的にフェードアウトしない
 	}
+
 	// InputManagerから入力を取得
 	auto& im = InputManager::GetInstance();
 
@@ -602,6 +605,8 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 		BulletManager::GetInstance()->ClearAllBullets();
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
+
+	_cameraManager->Reset();
 
 	// 切り替え完了
 	_bIsStageChanging = false;

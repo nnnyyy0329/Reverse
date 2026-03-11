@@ -1,4 +1,6 @@
 #include "PlayerBase.h"
+#include "CameraManager.h"
+#include "CameraDollyAddon.h"
 
 // 死亡関係関数呼び出し
 void PlayerBase::CallDeath()
@@ -19,13 +21,17 @@ void PlayerBase::ProcessDeath()
 	// 体力が0以下なら死亡処理
 	if(!IsAlive())
 	{
-		_playerState.movementState = PLAYER_MOVEMENT_STATE::NONE;	
-		_playerState.attackState   = PLAYER_ATTACK_STATE::NONE;
-		_playerState.shootState	   = PLAYER_SHOOT_STATE::NONE;
+		_playerState.StateReset();									// 状態リセット
 		_playerState.combatState   = PLAYER_COMBAT_STATE::DEATH;	// 死亡ステートにする
 
 		// アニメーション切り替え
 		ProcessPlayAnimation();
+
+		// カメラ演出テスト
+		_cameraManager->Reset();
+		auto zoom = std::make_shared<CameraDollyAddon>();
+		zoom->StartDolly(-250.0f, 300.0f, 60.0f);
+		_cameraManager->AddAddon(zoom);
 	}
 }
 

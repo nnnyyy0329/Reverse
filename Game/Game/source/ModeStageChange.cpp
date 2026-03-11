@@ -94,6 +94,7 @@ bool ModeStageChange::Process()
 			// ƒ[ƒhŠ®—¹ŒãA­‚µ‘Ò‚Á‚Ä‚©‚çíœ
 			if (_loadingTimer > 60)
 			{
+				_modeGame->StartFade(200, 90, 30);
 				ModeServer::GetInstance()->Del(this);
 			}
 			break;
