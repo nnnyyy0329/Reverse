@@ -45,7 +45,7 @@ void PlayerShieldSystem::ProcessInput(int key)
     if(!_shieldBase){ return; }
 
     // ガード入力更新
-    _shieldBase->UpdateGuardInput(key);
+    //_shieldBase->UpdateGuardInput(key);
 }
 
 // シールドがアクティブかチェック

@@ -2,6 +2,12 @@
 #include "BulletManager.h"
 #include "CameraManager.h"
 
+// プレベータようパラメータ
+namespace
+{
+	constexpr float consumeShootEnergy = 10.0f;	// 発射に消費するエネルギー
+}
+
 // 弾発射設定
 namespace bulletConfig
 {
@@ -63,7 +69,7 @@ void BulletPlayer::DebugRender()
 }
 
 // 被ダメージ処理
-void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const ATTACK_COLLISION& attackInfo)
+void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
 	// 基底クラスの被ダメージ処理を呼び出す
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
@@ -79,14 +85,21 @@ void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 // 発射間隔更新
 void BulletPlayer::ProcessShoot()
 {
-	bool putKey = (_key & PAD_INPUT_6) != 0;	// 発射キー
-	bool aimKey = (_key & PAD_INPUT_5) != 0;	// エイムキー
+	// エイムモード開始
+	_cameraManager->StartAimMode();
 
-	// エイムモードの制御
-	ProcessAimMode(aimKey);
+	// 弾発射の入力処理
+	ShootInput();
 
+	// 前フレームのキー状態を保存
+	_bWasShootKeyPressed = IsShootInput();
+}
+
+// 弾発射の入力処理
+void BulletPlayer::ShootInput()
+{
 	// キーが押された
-	if(putKey)
+	if(IsShootInput())
 	{
 		// 発射キーが新しく押され、発射カウントが残っていないなら
 		if(!_bWasShootKeyPressed && _shootIntervalTimer <= 0.0f)
@@ -102,11 +115,9 @@ void BulletPlayer::ProcessShoot()
 		else if(_playerState.shootState == PLAYER_SHOOT_STATE::SHOOT_READY && !_bIsReadyCompleted)
 		{
 			// アニメーションが完了したかチェック
-			AnimManager* animManager = GetAnimManager();
-			if(animManager->IsAnimationFinished())
-			{
-				_bIsReadyCompleted = true; // 構えアニメーション完了フラグを立てる
-			}
+			if(!IsAnimationFinishedConst()){ return; }
+
+			_bIsReadyCompleted = true; // 構えアニメーション完了フラグを立てる
 		}
 		// 発射構え状態が完了している、または既に構え完了状態で継続押下していて、発射カウントが0なら、
 		else if((_bIsReadyCompleted || _bWasShootKeyPressed) && _shootIntervalTimer <= 0.0f)
@@ -135,6 +146,13 @@ void BulletPlayer::ProcessShoot()
 	// キーが離された
 	else
 	{
+		// 発射構えアニメーションが完了していない状態でキーが離されたら
+		if(!_bIsReadyCompleted && _bIsReadyCompleted)
+		{
+			// 発射状態をリセット
+			_playerState.shootState = PLAYER_SHOOT_STATE::NONE;	// 発射状態リセット
+		}
+
 		// 発射カウントが0になったら
 		if(_shootIntervalTimer <= 0.0f)
 		{
@@ -156,7 +174,7 @@ void BulletPlayer::ProcessShoot()
 		if(_shootIntervalTimer <= 0.0f)
 		{
 			// 発射アニメーション完了後、キーが押されていたら
-			if(putKey)
+			if(IsShootInput())
 			{
 				// 発射状態の設定
 				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;	// 発射状態リセット
@@ -168,8 +186,7 @@ void BulletPlayer::ProcessShoot()
 				PlayerState oldState = _playerState;
 
 				// 状態リセット
-				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
-				_playerState.movementState = PLAYER_MOVEMENT_STATE::NONE;
+				_playerState.StateReset();
 
 				_bIsReadyCompleted = false; // 構えアニメーション完了フラグをリセット
 
@@ -180,9 +197,6 @@ void BulletPlayer::ProcessShoot()
 			}
 		}
 	}
-
-	// 前フレームのキー状態を保存
-	_bWasShootKeyPressed = putKey;
 }
 
 // 弾の発射
@@ -221,6 +235,13 @@ void BulletPlayer::ShootBullet()
 			bulletConfig::LIFE_TIME,
 			_eCharaType
 		);
+
+		// 発射時にエネルギー消費
+		EnergyManager* energyManager = EnergyManager::GetInstance();
+		if(energyManager)
+		{
+			energyManager->ConsumeEnergy(consumeShootEnergy);
+		}
 	}
 
 	_bIsShootFromRightArm = !_bIsShootFromRightArm; // 右腕と左腕の切り替え
@@ -249,6 +270,15 @@ void BulletPlayer::ProcessAimMode(bool aimKey)
 			_cameraManager->EndAimMode();	// エイムモード終了
 		}
 	}
+}
+
+// 弾発射入力チェック
+bool BulletPlayer::IsShootInput()const
+{
+	auto inputManager = InputManager::GetInstance();
+
+	// 攻撃ボタンが押されたか
+	return (inputManager->IsHold(INPUT_ACTION::ATTACK));
 }
 
 // オフセット位置をワールド座標に変換
@@ -292,12 +322,11 @@ PlayerConfig BulletPlayer::GetPlayerConfig()
 	// 移動速度設定
 	config.crouchMoveSpeed = 2.0f;
 	config.normalMoveSpeed = 4.5f;
-	config.dashMoveSpeed = 2.0f;
+	config.dashMoveSpeed = 3.5f;
 
 	// 基礎ステータス
-	config.life = 100.0f;
-	config.maxLife = 100.0f;
-	config.startPos = VGet(0.0f, 0.0f, 0.0f);
+	config.life = 200.0f;
+	config.maxLife = 200.0f;
 
 	// 表示設定
 	config.drawSizeOffset = 16;
@@ -331,7 +360,7 @@ PlayerAnimations BulletPlayer::GetPlayerAnimation()
 	animation.combat.transCancel	= "player_cancell_01";
 	animation.combat.guard			= "";
 	animation.combat.hit			= "player_damage_02";
-	animation.combat.dodge			= "dodge";
+	animation.combat.dodge			= "player_dodge_02";
 	animation.combat.death			= "player_dead_02";
 
 	return animation;
@@ -356,10 +385,6 @@ AttackConstants BulletPlayer::GetAttackConstants()const
 
 	AttackConstants constants;
 
-	constants.attackOffsetScale = 0.0f;
-	constants.surfaceMaxComboCount = 0;
-	constants.interiorMaxComboCount = 0;
-
 	return constants;
 }
 
@@ -367,6 +392,39 @@ AttackConstants BulletPlayer::GetAttackConstants()const
 void BulletPlayer::GetAttackConfigs(AttackConfig configs[])
 {
 	// 弾プレイヤーは攻撃を行わない
+}
+
+// 弾プレイヤーの攻撃コリジョンオフセット設定
+void BulletPlayer::GetAttackColOffsetConfigs(AttackColOffset configs[])
+{
+	// 弾プレイヤーは攻撃を行わない
+}
+
+// 弾プレイヤーの攻撃方向補正設定
+void BulletPlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[])
+{
+	// 弾プレイヤーは攻撃を行わない
+}
+
+// 弾プレイヤーの演出設定
+AttackEffectConfig BulletPlayer::GetAttackEffectConfig(AttackEffectConfig  configs[])
+{
+	// 弾プレイヤーは攻撃を行わないため、デフォルトの設定を返す
+	AttackEffectConfig config;
+
+	config.effectName = "";							// ダメージエフェクト名
+	config.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// ダメージエフェクト位置オフセット
+	config.soundName = "";							// ダメージサウンド名
+
+	return config;
+}
+
+// 弾プレイヤーの範囲攻撃設定
+AreaAttackConfig BulletPlayer::GetAreaAttackConfig()
+{
+	// 弾プレイヤーは範囲攻撃を行わない
+	AreaAttackConfig config;
+	return config;
 }
 
 // 回避設定データ構造体

@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "StateCommon.h"
 #include "EnemyAttackSettings.h"
+#include "EnemyState_impl.h"
 
 namespace 
 {
@@ -26,14 +27,22 @@ namespace
 	// アニメーション設定
 	constexpr auto BLEND_FRAME = 1.0f;// アニメーションブレンドフレーム数
 
+	constexpr auto LOST_NEARBY_HOME = 10.0f;// 帰還完了判定距離
+
+	constexpr auto LOST_ROTATE_SPEED = 3.0f;// 見渡し回転速度
+
+	constexpr auto LOST_LOOK_MIN_TIME = 60.0f;// 方向あたりの最低見渡し時間
+
 	// 徘徊制御
-	constexpr auto WANDER_HOME_RETURN_RATIO = 0.8f;// 初期位置へ戻る判定距離係数
 	constexpr auto WANDER_RANDOM_ANGLE_RANGE = 90;// 徘徊時のランダム角度範囲(度)
 	constexpr auto WANDER_RANDOM_ANGLE_OFFSET = 45;// 徘徊時のランダム角度オフセット(度)
-	constexpr auto WANDER_RANDOM_ANGLE_MAX = 359;// 徘徊時の完全ランダム角度最大値(度)
 
-	// 帰還制御
-	constexpr auto NEARBY_HOME = 10.0f;// 初期位置とみなす距離
+	// 時間ランダム幅定数
+	constexpr auto IDLE_TIME_RANGE = 30.0f;// 待機時間のランダム幅
+	constexpr auto NOTICE_TIME_RANGE = 10.0f;// 発見硬直のランダム幅
+	constexpr auto LOST_LOOK_RANDOM_TIME = 60.0f;// 見渡し時間ランダム幅
+
+	constexpr auto LOST_LOOK_COUNT = 3;// 見渡し回数
 
 	// 攻撃コリジョン設定
 	EnemyAttackSettings MakeFirstAttackSettings()
@@ -100,7 +109,9 @@ namespace Tank
 	{
 		// タイマー初期化
 		_fTimer = 0.0f;
-		_fTargetTimer = CalcOffsetTime(owner, owner->GetEnemyParam().fIdleTime);
+
+		// 時間ランダム設定
+		_fTargetTimer = CalcRandomRangeTime(owner->GetEnemyParam().fIdleTime, IDLE_TIME_RANGE);
 
 		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
@@ -160,28 +171,9 @@ namespace Tank
 			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);
 		}
 
-		// 移動方向計算
-		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
-		float dist = VSize(vToHome);
-		float limitRange = owner->GetEnemyParam().fMoveRadius;
-
-		float targetAngle = 0.0f;
-
-		if (dist > limitRange * WANDER_HOME_RETURN_RATIO)
-		{
-			// 初期位置方向計算
-			float toHomeAngle = atan2f(vToHome.z, vToHome.x);
-			float randOffset = static_cast<float>(GetRand(WANDER_RANDOM_ANGLE_RANGE) - WANDER_RANDOM_ANGLE_OFFSET) * DEGREE_TO_RADIAN;
-			targetAngle = toHomeAngle + randOffset;
-		}
-		else
-		{
-			// ランダム方向計算
-			targetAngle = static_cast<float>(GetRand(WANDER_RANDOM_ANGLE_MAX)) * DEGREE_TO_RADIAN;
-		}
-
-		// 方向ベクトル設定
-		VECTOR vDir = VGet(cosf(targetAngle), 0.0f, sinf(targetAngle));	
+		// ランダム方向へ向かう
+		float targetAngle = static_cast<float>(GetRand(359)) * DEGREE_TO_RADIAN;
+		VECTOR vDir = VGet(cosf(targetAngle), 0.0f, sinf(targetAngle));
 		owner->SetDir(vDir);
 	}
 
@@ -199,15 +191,9 @@ namespace Tank
 		// パラメータ取得
 		const auto& param = owner->GetEnemyParam();
 
-		// 移動範囲チェック
-		VECTOR vFromHome = VSub(owner->GetPos(), owner->GetHomePos());
-		float distSq = VSquareSize(vFromHome);
-		float limitRange = param.fMoveRadius;
-
-		if (distSq > limitRange * limitRange)
-		{
-			return std::make_shared<Tank::ReturnHome>();// 帰還状態へ
-		}
+		// 移動可能範囲外チェック
+		auto areaResult = TransitionToIdleOutsideArea<Idle>(owner);
+		if (areaResult) { return areaResult; }
 
 		// 移動処理
 		VECTOR vDir = owner->GetDir();
@@ -247,6 +233,9 @@ namespace Tank
 		// タイマー初期化
 		_fTimer = 0.0f;
 
+		// 時間ランダム設定
+		_fTargetTimer = CalcRandomRangeTime(owner->GetEnemyParam().fDetectTime, NOTICE_TIME_RANGE);
+
 		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
@@ -270,7 +259,7 @@ namespace Tank
 		}
 
 		// 発見時間経過チェック
-		if (_fTimer >= owner->GetEnemyParam().fDetectTime)
+		if (_fTimer >= _fTargetTimer)
 		{
 			return std::make_shared<Tank::Approach>();// 接近状態へ
 		}
@@ -319,6 +308,10 @@ namespace Tank
 			owner->SetTargetDetected(false);
 			return std::make_shared<Idle>();// 待機状態へ
 		}
+
+		// 移動可能範囲外チェック
+		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
+		if (areaResult) { return areaResult; }
 
 		// 攻撃範囲チェック
 		if (dist <= param.fAttackRange)
@@ -737,59 +730,94 @@ namespace Tank
 
 
 
-	// 帰還
-	void Tank::ReturnHome::Enter(Enemy* owner)
+	// ターゲットを見失ったとき
+	void LostTarget::Enter(Enemy* owner)
 	{
-		// タイマー初期化
 		_fTimer = 0.0f;
+		_ePhase = Phase::LOOK_AROUND;// 見渡しから
+		_lookCnt = 0;
+
+		// 見渡し方向
+		float fCurrentAngle = atan2f(owner->GetDir().x, owner->GetDir().z);
+		float fOffset = static_cast<float>(GetRand(180) - 90) * DEGREE_TO_RADIAN;// -90 ~ +90度のランダムオフセット 
+		float fTargetAngle = fCurrentAngle + fOffset;
+		_vLookDir = VGet(sinf(fTargetAngle), 0.0f, cosf(fTargetAngle));
+		_vLookDir = VNorm(_vLookDir);
+		// 見渡し時間
+		_fLookDuration = CalcRandomRangeTime(LOST_LOOK_MIN_TIME, LOST_LOOK_RANDOM_TIME);
+		_fLookTimer = 0.0f;
+
+		StopMove(owner);
 
 		// アニメーション設定
-		AnimManager* animManager = owner->GetAnimManager();
-		if (animManager)
-		{
-			animManager->ChangeAnimationByName("enemy_walk_00", BLEND_FRAME, 0);
-		}
 	}
 
-	std::shared_ptr<EnemyState> Tank::ReturnHome::Update(Enemy* owner)
+	std::shared_ptr<EnemyState> LostTarget::Update(Enemy* owner)
 	{
-		// タイマー更新
-		_fTimer++;
-
-		// 初期位置へのベクトル計算
-		VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
-		float dist = VSize(vToHome);
-
-		// 帰還到達チェック
-		if (dist <= NEARBY_HOME)
+		// 再索敵
+		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Tank::Idle>();// 待機状態へ
+			return std::make_shared<Notice>();
 		}
 
-		// 回転処理
-		if (dist > 0.0f)
-		{
-			VECTOR vToHomeNorm = VNorm(vToHome);
-			owner->SetDir(vToHomeNorm);
+		StopMove(owner);
 
-			// 移動処理
-			VECTOR vMove = VScale(vToHomeNorm, owner->GetEnemyParam().fMoveSpeed);
-			owner->SetMove(vMove);
+		if (_ePhase == Phase::LOOK_AROUND)
+		{
+			// 目標方向へ回転
+			RotateToTarget(owner, _vLookDir, LOST_ROTATE_SPEED);
+
+			_fLookTimer++;
+
+			// 見渡し時間経過で次の見渡し方向へ
+			if (_fLookTimer >= _fLookDuration)
+			{
+				_lookCnt++;
+
+				if (_lookCnt >= LOST_LOOK_COUNT)
+				{
+					// 見渡し完了で帰還フェーズで
+					_ePhase = Phase::RETURN_HOME;
+
+					// アニメーション設定
+				}
+			}
+			else
+			{
+				// 次の見渡し方向をランダムに決定
+				float fCurrentAngle = atan2f(owner->GetDir().x, owner->GetDir().z);
+				float fOffset = static_cast<float>(GetRand(240) - 120) * DEGREE_TO_RADIAN;// -120 ~ +120度のランダムオフセット
+				float fTargetAngle = fCurrentAngle + fOffset;
+				_vLookDir = VGet(sinf(fTargetAngle), 0.0f, cosf(fTargetAngle));
+				_vLookDir = VNorm(_vLookDir);
+				// 見渡し時間
+				_fLookDuration = CalcRandomRangeTime(LOST_LOOK_MIN_TIME, LOST_LOOK_RANDOM_TIME);
+				_fLookTimer = 0.0f;
+			}
+		}
+		else// RETURN_HOME
+		{
+			// 初期位置への距離計算
+			VECTOR vToHome = VSub(owner->GetHomePos(), owner->GetPos());
+			float dist = VSize(vToHome);
+
+			if (dist <= LOST_NEARBY_HOME)
+			{
+				return std::make_shared<Idle>();// 帰還完了
+			}
+
+			// 初期位置方向へ移動
+			VECTOR vDir = VNorm(vToHome);
+			RotateToTarget(owner, vDir, LOST_ROTATE_SPEED);
+			MoveToTarget(owner, vDir, owner->GetEnemyParam().fMoveSpeed);
 		}
 
 		return nullptr;
 	}
 
-	void Tank::ReturnHome::UpdateSearch(Enemy* owner)
+	void LostTarget::UpdateSearch(Enemy* owner)
 	{
-		// ターゲット視界チェック
-		if (Tank::IsTargetVisible(owner))
-		{
-			owner->SetTargetDetected(true);
-		}
-		else
-		{
-			owner->SetTargetDetected(false);
-		}
+		owner->SetTargetDetected(Tank::IsTargetVisible(owner));
 	}
+
 }

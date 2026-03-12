@@ -1,6 +1,7 @@
 #pragma once
 #include "appframe.h"
 #include "AnimManager.h"
+#include "GeometryUtility.h"
 
 class GameObjectBase
 {
@@ -32,6 +33,7 @@ public:
 	void SetMove(VECTOR v) { _vMove = v; }
 
 	AnimManager* GetAnimManager() { return &_animManager; }
+	const AnimManager* GetAnimManagerConst() const { return &_animManager; }// const”Å
 
 protected:
 	// ˆÊ’uŠÖ˜A

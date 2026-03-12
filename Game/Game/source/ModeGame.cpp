@@ -2,37 +2,48 @@
 #include "ApplicationMain.h"
 #include "ModeGame.h"
 #include "ModeMenu.h"
+#include "ModeStageChange.h"
+#include "ModeGameOver.h"
+#include "ModeScenario.h"
 
 #include "CharaBase.h"
 #include "StageBase.h"
 #include "Enemy.h"
+//#include "Item.h"
 
 #include "CameraManager.h"
 #include "GameCamera.h"
 #include "DebugCamera.h"
+#include "AimCamera.h"
 
 #include "BulletManager.h"
 #include "AttackManager.h"
 #include "EnergyManager.h"
+#include "StaminaManager.h"
 #include "LightManager.h"
 
-#include "EnergyUI.h"
 #include "DodgeSystem.h"
+//#include "ShieldBase.h"
+
 #include "AbilitySelectScreen.h"
+#include "AbilitySelectManager.h"
 
 #include "PlayerManager.h"
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
+#include "BulletPlayer.h"
+#include "PlayerUnlockManager.h"
+
+#include "EnergyUI.h"
+#include "PlayerLifeBarUI.h"
+#include "StaminaUI.h"
 
 #include "MenuItemBase.h"
-
-#include "Item.h"
-#include <Server/SoundServer.h>
-#include "ScenarioBase.h"
 
 
 bool ModeGame::Initialize() 
 {
+	StartFade(200, 90, 30);
 	if (!base::Initialize()) { return false; }
 
 	// Manager初期化
@@ -50,44 +61,68 @@ bool ModeGame::Initialize()
 		_lightManager->Initialize();
 	}
 
-		// シングルトンインスタンスを取得
+	// シングルトンインスタンスを取得
 	{
 		_attackManager = AttackManager::GetInstance();
 		_energyManager = EnergyManager::GetInstance();
 	}
 
+	// 回避システム初期化
+	{
+		_dodgeSystem = std::make_shared<DodgeSystem>();
+		_dodgeSystem->Initialize();
+	}
+
+	// シールドベース初期化
+	{
+		//_shieldBase = std::make_shared<ShieldBase>();
+		//_shieldBase->Initialize();
+	}
+
 	// プレイヤーの作成と登録
 	{
 		auto surfacePlayer = std::make_shared<SurfacePlayer>();
+		surfacePlayer->SetDodgeSystem(_dodgeSystem);
 		surfacePlayer->Initialize();
 		_playerManager->RegisterPlayer(PLAYER_TYPE::SURFACE, surfacePlayer);
 
 		auto interiorPlayer = std::make_shared<InteriorPlayer>();
+		interiorPlayer->SetDodgeSystem(_dodgeSystem);
 		interiorPlayer->Initialize();
 		_playerManager->RegisterPlayer(PLAYER_TYPE::INTERIOR, interiorPlayer);
+
+		auto bulletPlayer = std::make_shared<BulletPlayer>();
+		bulletPlayer->SetDodgeSystem(_dodgeSystem);
+		bulletPlayer->Initialize();
+		_playerManager->RegisterPlayer(PLAYER_TYPE::BULLET, bulletPlayer);
+		bulletPlayer->SetBulletManager(_bulletManager);
 	}
 
-	//アイテムクラスの初期化
-	_item = std::make_shared<Item>();
-	_item->CreateItems(VGet(300.0f, 100.0f, 55.0f), 30.0, 30.0);
+	// プレイヤーアンロックマネージャー初期化
+	{
+		_playerUnlockManager = std::make_shared<PlayerUnlockManager>();
+		_playerUnlockManager->Initialize();
+
+		// 解放時のコールバックを設定
+		_playerUnlockManager->SetUnlockCallback([this](ABILITY_TYPE ability) {});
+	}
 
 	// ステージ初期化
-	_stage = std::make_shared<StageBase>(1);// ステージ番号で切り替え
+	_currentStageNum = 0;
+	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
 
 	// カメラ初期化
 	{
 		_cameraManager = std::make_shared<CameraManager>();
+		_cameraManager->Initialize();
 
 		_gameCamera = std::make_shared<GameCamera>();
 		_gameCamera->SetTarget(_playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE));
 
 		_debugCamera = std::make_shared<DebugCamera>();
-	}
 
-	// 回避システム初期化loading
-	{
-		//_dodgeSystem = std::make_shared<DodgeSystem>();
-		//_dodgeSystem->Initialize();
+		_aimCamera = std::make_shared<AimCamera>();
+		_aimCamera->SetTarget(_playerManager->GetActivePlayerShared());
 	}
 
 	// 敵設定
@@ -95,19 +130,31 @@ bool ModeGame::Initialize()
 	{
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
 		enemy->SetBulletManager(_bulletManager);
+		enemy->SetStage(_stage);
 	}
 
-	// 能力選択画面初期化
+	// 能力選択関連クラス初期化
 	{
 		_abilitySelectScreen = std::make_shared<AbilitySelectScreen>();
 		_abilitySelectScreen->Initialize();
-		_isUseDebugScreen = false;
+
+		_abilitySelectManager = std::make_shared<AbilitySelectManager>();
+		_abilitySelectManager->Initialize();
 	}
 
-	// エネルギーUI初期化
+	// UI初期化
 	{
+		// エネルギーUI初期化
 		_energyUI = std::make_shared<EnergyUI>();
 		_energyUI->Initialize();
+
+		// ライフバーUI初期化
+		_playerLifeBarUI = std::make_shared<PlayerLifeBarUI>();
+		_playerLifeBarUI->Initialize();
+
+		// スタミナUI初期化
+		_staminaUI = std::make_shared<StaminaUI>();
+		_staminaUI->Initialize();
 	}
 
 	// ライトの初期化
@@ -120,20 +167,7 @@ bool ModeGame::Initialize()
 		_bUseCollision = true;
 	}
 
-	// --- BGM 読み込みと再生（追加） ---
-
-	SoundServer::GetInstance()->Play("bgm1", DX_PLAYTYPE_LOOP);
-
-
-
-	_ScenarioBase = std::make_unique<ScenarioBase>("title", 180, 30);
-	_ScenarioBase->SetPosition(0, 0);
-	_ScenarioBase->SetScale(0.5f, 0.5f);
-	_ScenarioBase->SetAutoClose(false); // ← ここで自動終了を無効化
-	_ScenarioBase->Show();
-
 	return true;
-
 }
 
 bool ModeGame::Terminate() 
@@ -146,75 +180,42 @@ bool ModeGame::Terminate()
 	// プレイヤー開放
 	_playerManager.reset();
 
-	_ScenarioBase.reset();
-
 	return true;
 }
 
 bool ModeGame::Process()
 {
 	base::Process();
-	
-	int key = ApplicationMain::GetInstance()->GetKey();
-	int trg = ApplicationMain::GetInstance()->GetTrg();
-	auto analog = ApplicationMain::GetInstance()->GetAnalog();
-	float lx = analog.lx;
-	float ly = analog.ly;
-	float rx = analog.rx;
-	float ry = analog.ry;
-	float analogMin = ApplicationMain::GetInstance()->GetAnalogMin();
-	if(_ScenarioBase)
+	AdvanceFade();
+	if(IsFadeActive() && GetFadeAlpha() >= 255)
 	{
-		_ScenarioBase->Update();
+		StopFade(); // 以降自動的にフェードアウトしない
 	}
+	// InputManagerから入力を取得
+	InputManager* input = InputManager::GetInstance();
 
-	// タイトルスキップ：ボタン押でフェードアウト（Skip）または即時非表示（Hide）
-	if(_ScenarioBase && !_ScenarioBase->IsFinished())
+	// ゲームオーバーチェック
 	{
-		if(trg & PAD_INPUT_1) { // 例：PAD_INPUT_1 をスキップボタンに割当
-			_ScenarioBase->Skip(); // フェードアウトでスキップしたい場合
-			// _ScenarioBase->Hide(); // 即時非表示にするならこちらを使う
+		auto activePlayer = _playerManager->GetActivePlayerShared();
+		if (activePlayer && activePlayer->GetIsDead())
+		{
+			// ModeGameOverを追加
+			ModeGameOver* modeGameOver = new ModeGameOver();
+			ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
+			// この後の処理をスキップ
+			return true;
 		}
 	}
-
-	
-	/// 入力取得
-	{
-		// プレイヤーマネージャーに入力状態を渡す
-		if(_playerManager)
-		{
-			_playerManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
-		}
-		// カメラマネージャーに入力状態を渡す
-		if(_cameraManager)
-		{
-			_cameraManager->SetInput(key, trg, lx, ly, rx, ry, analogMin);
-		}
-		// 能力選択画面に入力状態を渡す
-		if(_abilitySelectScreen)
-		{
-			_abilitySelectScreen->SetInput(key, trg, lx, ly, rx, ry, analogMin);
-		}
-	}
-
-
 
 	// 能力選択画面のデバッグ関数
-	if(trg & PAD_INPUT_8)
-	{
-		_isUseDebugScreen = !_isUseDebugScreen;
-	}
-	if(_isUseDebugScreen)
-	{
-		_abilitySelectScreen->Process();
-	}
+	
 
-
-
-	// spaceキーでメニューを開く
-	if (ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_10)
+	// startでメニューを開く
+	if (input->IsTrigger(INPUT_ACTION::MENU))
 	{
 		ModeMenu* modeMenu = new ModeMenu();
+		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+
 		modeMenu->SetCameraManager(_cameraManager);
 
 		// メニュー項目を作成
@@ -228,7 +229,6 @@ bool ModeGame::Process()
 		debugCamera->SetDebugCameraMenu(_debugCamera);
 		debugCamera->SetGameCameraMenu(_gameCamera);
 
-		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 		modeMenu->AddMenuItem(viewDebugInfo);
 		modeMenu->AddMenuItem(viewCollision);
 		modeMenu->AddMenuItem(useCollision);
@@ -237,18 +237,58 @@ bool ModeGame::Process()
 
 	// クラスセット
 	{
+		_cameraManager->SetPlayer(_playerManager->GetActivePlayerShared());	// アクティブプレイヤーを設定
 		_cameraManager->SetGameCamera(_gameCamera);
 		_cameraManager->SetDebugCamera(_debugCamera);
+		_cameraManager->SetAimCamera(_aimCamera);
+
+		_playerManager->SetCameraManager(_cameraManager);				// カメラマネージャーを設定
+		_playerManager->SetAbilitySelectScreen(_abilitySelectScreen);	// 能力選択画面を設定
+
+		_playerLifeBarUI->SetPlayerManager(_playerManager);
+
+		_abilitySelectScreen->SetPlayerManager(_playerManager);
+		_abilitySelectScreen->SetPlayerUnlockManager(_playerUnlockManager);
+
+		_abilitySelectManager->SetAbilitySelectScreen(_abilitySelectScreen);
+		_abilitySelectManager->SetPlayerManager(_playerManager);
+
+		// 弾丸プレイヤーにカメラマネージャーを設定
+		auto bulletPlayer = std::dynamic_pointer_cast<BulletPlayer>(_playerManager->GetPlayerByType(PLAYER_TYPE::BULLET));
+		if(bulletPlayer){ bulletPlayer->SetCameraManager(_cameraManager); }
+	}
+
+	// ターゲット更新
+	{
+		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
+
+		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
+		_aimCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
+		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
+
+		// 敵にターゲットのプレイヤーを設定
+		for (const auto& enemy : _stage->GetEnemies())
+		{
+			enemy->SetTarget(activePlayer);
+		}
 	}
 
 	// オブジェクトの更新
 	{
 		_playerManager->Process();
+		_playerUnlockManager->Process();
 		_stage->Process();
 		_bulletManager->Process();
-		AttackManager::GetInstance()->Process();
-		//_dodgeSystem->Process();
+		_dodgeSystem->Process();
 		_energyUI->Process();
+		_playerLifeBarUI->Process();
+		_staminaUI->Process();
+		_abilitySelectScreen->Process();
+		_abilitySelectManager->Process();
+		//_shieldBase->Process();
+
+		AttackManager::GetInstance()->Process();
+		StaminaManager::GetInstance()->Process();
 	}
 
 	// ライト更新
@@ -261,25 +301,52 @@ bool ModeGame::Process()
 
 		// 弾
 		CheckHitCharaBullet(player);
-		for (const auto& enemy : enemies) {
+		for (const auto& enemy : enemies) 
+		{
 			CheckHitCharaBullet(enemy);
 		}
 
-		// プレイヤーと敵の当たり判定
-		for (const auto& enemy : enemies)
+		// キャラと攻撃コリジョンの当たり判定
 		{
-			CheckHitPlayerEnemy(player, enemy);
+			CheckActiveAttack(player);										// プレイヤー
+			for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
 		}
 
-		// キャラと攻撃コリジョンの当たり判定
-		CheckActiveAttack(player);										// プレイヤー
-		for(const auto& enemy : enemies){ CheckActiveAttack(enemy); }	// 敵
+		// キャラと吸収攻撃
+		{
+			for(const auto& enemy : enemies){ CheckHitAbsorbAttack(player, enemy); }
+		}
+
+		// キャラ同士
+		{
+			// プレイヤーと敵
+			for (const auto& enemy : enemies)
+			{
+				CheckCollisionCharaChara(player, enemy);
+			}
+
+			// 敵同士
+			for (size_t i = 0; i < enemies.size(); ++i)
+			{
+				for (size_t j = i + 1; j < enemies.size(); ++j)
+				{
+					CheckCollisionCharaChara(enemies[i], enemies[j]);
+				}
+			}
+		}
 
 		// マップ
-		CheckCollisionCharaMap(player);
-		for (const auto& enemy : enemies) {
-			CheckCollisionCharaMap(enemy);
+		if (_bUseCollision)
+		{
+			CheckCollisionCharaMap(player);
+			for (const auto& enemy : enemies) 
+			{
+				CheckCollisionCharaMap(enemy);
+			}
 		}
+
+		// トリガー
+		CheckHitPlayerTrigger(player);
 	}
 
 	// ターゲット更新
@@ -287,6 +354,7 @@ bool ModeGame::Process()
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
 
 		_gameCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
+		_aimCamera->SetTarget(activePlayer);							// 毎フレームプレイヤーにカメラを合わせる
 		activePlayer->SetCameraAngle(_gameCamera->GetCameraAngleH());	// プレイヤーにカメラ角度を設定
 
 		// 敵にターゲットのプレイヤーを設定
@@ -296,46 +364,26 @@ bool ModeGame::Process()
 		}
 	}
 
+
 	// エフェクト更新
 	EffectServer::GetInstance()->Update();
 
 	// カメラ更新
 	_cameraManager->Process();
 
-	if((ApplicationMain::GetInstance()->GetTrg() & PAD_INPUT_3))
-	{
-		// 既にメニューがあれば重複追加しない
-		if(ModeServer::GetInstance()->Get("menu") == nullptr)
-		{
-			ModeMenu* modeMenu = new ModeMenu();
-			modeMenu->SetCameraManager(_cameraManager);
-
-			// 現在のマスター音量を取得して初期値に設定（255 -> 100 スケールに変換）
-			int currentVolume = SoundServer::GetInstance()->GetMasterVolume();
-			int initValue = (currentVolume * 100) / 255;
-
-			// 音量連動の数値変更メニュー項目を追加（0～100の範囲、音量連動ON）
-			auto volumeNumberItem = new MenuItemNumber(this, "Master Volume", initValue, 0, 100, true);
-
-			ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
-			modeMenu->AddMenuItem(volumeNumberItem);
-		}
-	}
-
+	CheckCollisionCameraMap();
 
 	return true;
 }
 
 bool ModeGame::Render() 
 {
+
+
 	base::Render();
-	// Scenario 描画（タイトル等）
-	if(_ScenarioBase && !_ScenarioBase->IsFinished())
-	{
-		// 余分な 3D 設定やオブジェクト描画をしないで Scenario のみ描画
-		_ScenarioBase->Render();
-		return true;
-	}
+
+
+
 
 	// 3D基本設定
 	{
@@ -368,14 +416,10 @@ bool ModeGame::Render()
 		_playerManager->Render();
 		_bulletManager->Render();
 		_energyUI->Render();
-		_item->Render();
-
-
-		// のうりょk選択画面
-		if(_isUseDebugScreen)
-		{
-			_abilitySelectScreen->Render();
-		}
+		_playerLifeBarUI->Render();
+		_staminaUI->Render();
+		//_item->Render();
+		_abilitySelectScreen->Render();
 	}
 
 	// コリジョンの描画
@@ -384,8 +428,6 @@ bool ModeGame::Render()
 		_stage->CollisionRender();
 		AttackManager::GetInstance()->CollisionRender();
 	}
-
-	
 
 	// エフェクト描画
 	EffectServer::GetInstance()->Render();
@@ -404,8 +446,11 @@ bool ModeGame::Render()
 
 		_stage->DebugRender();
 		AttackManager::GetInstance()->DebugRender();
+		_dodgeSystem->DebugRender();
 		_debugCamera->DebugRender();
 		_gameCamera->DebugRender();
+		_playerManager->DebugRender();
+		_playerUnlockManager->DebugRender();
 
 		// ライト情報
 		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());
@@ -420,6 +465,21 @@ bool ModeGame::Render()
 		_cameraManager->SwitchCameraDebugRender();
 	}
 	
+	// 敵残数表示
+	{
+		if(_stage)
+		{
+			const int current = _stage->GetCurrentEnemyCnt();
+			const int total = _stage->GetTotalEnemyCnt();
+
+			SetFontSize(24);
+			DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
+			SetFontSize(16);
+		}
+	}
+
+
+
 	// コリジョンの描画
 	if (_bViewCollision)
 	{
@@ -431,48 +491,43 @@ bool ModeGame::Render()
 		activePlayer->CollisionRender();
 	}
 
+		// FPS表示（0.5秒ごとに更新して見やすくする）
+	{
+		static int s_frameCount = 0;
+		static unsigned long s_accumMs = 0;
+		static float s_fps = 0.0f;
+
+		const unsigned long stepMs = GetStepTm();
+		if(stepMs > 0)
+		{
+			s_frameCount++;
+			s_accumMs += stepMs;
+
+			if(s_accumMs >= 500)
+			{
+				s_fps = (static_cast<int>(s_frameCount) * 1000.0f) / static_cast<float>(s_accumMs);
+				s_frameCount = 0;
+				s_accumMs = 0;
+			}
+		}
+		
+		DrawFormatString(20, 20, GetColor(255, 255, 255), "FPS: %d", static_cast<int>(s_fps + 0.5f));
+	}
+
 	_energyUI->Render();
 	_cameraManager->SwitchCameraRender();
 
+	{
+		const int a = GetFadeAlpha(); // 0..255, 0=暗/255=明（StartFadeで in を与えた場合）
+		const int overlayAlpha = std::max(0, std::min(255, 255 - a)); // 0->255 の黒オーバーレイ
+		if(overlayAlpha > 0)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, overlayAlpha);
+			DrawBox(0, 0, 1920, 1080, GetColor(0, 0, 0), TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
+	}
 	return true;
-}
-
-// キャラと弾の当たり判定
-void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara){
-	if (!chara) return;
-
-	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
-
-	const auto& bullets = _bulletManager->GetBullets();// 弾のリストを取得
-
-	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
-
-	// 全弾ループ
-	for (const auto& bullet : bullets){
-		if (!bullet) continue;
-
-		// キャラと弾のタイプが同じなら無視する
-		if (bullet->GetShooterType() == myType){
-			continue;
-		}
-
-		// 当たり判定
-		if(HitCheck_Capsule_Sphere(
-			chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
-			bullet->GetPos(), bullet->GetCollisionR()
-		)) {
-			// 当たった
-
-			// ダメージ処理とか
-
-			deadBullets.push_back(bullet);// 削除リストに追加
-		}
-	}
-
-	// 全ての判定が終わった後に、まとめて削除する
-	for (const auto& deadBullet : deadBullets) {
-		_bulletManager->RemoveBullet(deadBullet);
-	}
 }
 
 void ModeGame::InitializeLights()
@@ -543,15 +598,95 @@ void ModeGame::RemoveLight(int lightHandle)
 	}
 }
 
-void ModeGame::CheckHitCharaItem(std::shared_ptr<CharaBase> chara, std::shared_ptr <Item>item)
+void ModeGame::RequestStageChange(int nextStageNum)
 {
-	if(HitCheck_Capsule_Capsule(
-		chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
-		item->GetCollisionTop(), item->GetCollisionBottom(), item->GetCollisionR()
-	))
+	if (_bIsStageChanging) { return; }// すでに切り替え中
+
+	_bIsStageChanging = true;
+
+	// ModeStageChangeを追加
+	auto modeStageChange = new ModeStageChange(this, nextStageNum);
+	ModeServer::GetInstance()->Add(modeStageChange, 50, "stageChange");
+}
+
+void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
+{
+	if (!newStage) { return; }
+
+	// 現在のステージ番号を更新
+	_currentStageNum = stageNum;
+
+	// 古いステージを削除
+	_stage.reset();
+
+	// 新しいステージを設定
+	_stage = newStage;
+
+	// プレイヤーの位置をリセット
+	VECTOR vStartPos = VGet(0.0f, 0.0f, 0.0f);
+
+	auto activePlayer = _playerManager->GetActivePlayerShared();
+	activePlayer->SetPos(vStartPos);
+
+	// 敵の再設定
+	for (const auto& enemy : _stage->GetEnemies())
 	{
-	 //アイテムを消す処理
+		enemy->SetTarget(_playerManager->GetActivePlayerShared());
+		enemy->SetBulletManager(_bulletManager);
+		enemy->SetStage(_stage);
 	}
 
-	
+	// オブジェクトのクリア
+	{
+		_bulletManager->ClearAllBullets();
+		AttackManager::GetInstance()->ClearAllAttacks();
+	}
+
+	// 切り替え完了
+	_bIsStageChanging = false;
+}
+
+void ModeGame::RestartCurrentStage()
+{
+	// ステージの初期化
+	{
+		_stage.reset();
+		_stage = std::make_shared<StageBase>(_currentStageNum);
+
+		// 敵の再設定
+		for (const auto& enemy : _stage->GetEnemies())
+		{
+			enemy->SetTarget(_playerManager->GetActivePlayerShared());
+			enemy->SetBulletManager(_bulletManager);
+			enemy->SetStage(_stage);
+		}
+	}
+
+	// プレイヤーの初期化
+	{
+		// 初期位置に戻す
+		VECTOR startPos = _stage->GetPlayerStartPos();
+		VECTOR startRot = _stage->GetPlayerStartRot();
+
+		auto activePlayer = _playerManager->GetActivePlayerShared();
+		activePlayer->Initialize();
+		activePlayer->SetPos(startPos);
+		activePlayer->SetDir(startRot);
+
+		// ここでプレイヤーの状態をリセット
+	}
+
+	// オブジェクトのクリア
+	{
+		_bulletManager->ClearAllBullets();
+		AttackManager::GetInstance()->ClearAllAttacks();
+	}
+}
+
+void ModeGame::SetPlayerConfig(VECTOR vPos, VECTOR vRot)
+{
+	auto player = _playerManager->GetActivePlayerShared();
+
+	player->SetPos(vPos);
+	player->SetDir(vRot);
 }

@@ -3,18 +3,7 @@
 
 namespace Ranged
 {
-	/*
-	* Idle:待機
-	* ↓プレイヤー索敵(TryDetectPlayer)
-	* Detect:発見
-	* ↓時間経過
-	* Attack:攻撃
-	* プレイヤーの方向を常に向く
-	* 一定間隔で弾を発射し続ける
-	* プレイヤーが範囲外にでたらIdleへ戻る
-	*/
-
-	// 扇形視界判定(距離と角度をチェック)
+	// 円形視界判定(距離のみチェック)
 	bool IsTargetVisible(Enemy* owner);
 
 	// 待機
@@ -23,37 +12,136 @@ namespace Ranged
 		public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:Idle"; }// 名前を返す(デバッグ用)
-
-	private:
-		float _fLookAroundTimer;// 見渡すタイマー
-		float _fTargetAngle;// 目標とする角度(ラジアン)
-		bool _bLookingLeft;// 左を向いているか(true:左, false:右)
-		bool _bisRotating;// 回転中かどうか
-		VECTOR _vInitialDir;//見渡し開始時の向き
+		const char* GetName() override { return "Ranged:Idle"; }// 名前を返す(デバッグ用)
+		void UpdateSearch(Enemy* owner) override;
 	};
 
-	// 発見
-	class Detect : public EnemyState
-	{
-		public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:Detect"; }
-	};
 
-	// 攻撃
-	class Attack : public EnemyState
+
+
+
+	// 徘徊(その場で周囲を見渡す)
+	class Wander : public EnemyState
 	{
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Ranged:Attack"; }
-		bool IsChasing() const override { return true; }// 攻撃状態を追跡状態とみなす
+		const char* GetName() override { return "Ranged:Wander"; }
+		void UpdateSearch(Enemy* owner) override;
 
 	private:
-		float _shotTimer;// 発射間隔タイマー
-		// 弾の発射処理などをここに追加
-		void Shoot(Enemy* owner);// 発射
+		VECTOR _vTargetDir;// 目標方向ベクトル
+		float _fLookDuration;// 視線停止時間
+	};
+	
+
+
+
+
+
+	// 発見
+	class Notice : public EnemyState
+	{
+		public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:Notice"; }
+	};
+
+
+
+
+
+	// 接近
+	class Approach : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:Approach"; }
+		bool IsChasing() override { return true; }
+	};
+
+
+
+
+
+	// 射撃ステート開始
+	class ShotStart : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:ShotStart"; }
+		bool IsChasing() override { return true; }
+	};
+
+	// 射撃溜め
+	class ShotCharge : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:ShotCharge"; }
+		bool CanChangeState() override { return false; }
+	};
+
+	// 射撃実行
+	class ShotExecute : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:ShotExecute"; }
+		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
+
+	private:
+		bool _bHasShot;
+		float _fShotTimer = 0.0f;// 実際に弾を発射する時間
+	};
+
+	// 射撃後隙
+	class ShotRecovery : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:ShotRecovery"; }
+	};
+
+	// 射撃間隔
+	class ShotInterval : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:ShotInterval"; }
+	};
+
+
+
+
+
+	// ターゲットを見失ったとき
+	class LostTarget : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Ranged:LostTarget"; }
+		void UpdateSearch(Enemy* owner) override;
+
+	private:
+		enum class Phase
+		{
+			LOOK_AROUND,// 周囲を見渡す
+			RETURN_HOME// 帰還
+		};
+		Phase _ePhase;
+
+		VECTOR _vLookDir;// 見渡しの目標方向
+		float _fLookTimer;// 現在の向きを維持するタイマー
+		float _fLookDuration;// 現在の向きの維持時間
+		int _lookCnt;// 見渡し回数
 	};
 }

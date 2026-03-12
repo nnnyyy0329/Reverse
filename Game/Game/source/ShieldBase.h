@@ -70,7 +70,7 @@ public:
 	VECTOR GetOwnerDir()const;	// 所有者前方取得
 
 	// ガード入力処理
-	void UpdateGuardInput(int key);		// ガード入力更新
+	void UpdateGuardInput(InputManager* input);		// ガード入力更新
 	void StartGuard();					// ガード開始
 	void StopGuard();					// ガード停止
 

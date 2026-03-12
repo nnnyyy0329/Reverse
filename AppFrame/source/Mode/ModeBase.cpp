@@ -80,3 +80,71 @@ void ModeBase::StepCount()
 {
 	_cntMode++;
 }
+
+namespace
+{
+	inline int ClampAlpha(int a)
+	{
+		if(a < 0) return 0;
+		if(a > 255) return 255;
+		return a;
+	}
+}
+
+void ModeBase::StartFade(int inFrames, int holdFrames, int outFrames)
+{
+	_fadeInFrames = inFrames;
+	_fadeHoldFrames = holdFrames;
+	_fadeOutFrames = outFrames;
+	_fadeFrame = 0;
+	_fadeActive = true;
+}
+
+void ModeBase::StopFade()
+{
+	_fadeActive = false;
+}
+void ModeBase::AdvanceFade()
+{
+	if(!_fadeActive) return;
+	++_fadeFrame;
+}
+
+int ModeBase::GetFadeAlpha() const
+{
+	if(!_fadeActive) return 255;
+
+	int frame = _fadeFrame;
+	if(frame < _fadeInFrames)
+	{
+		const float t = static_cast<float>(frame) / static_cast<float>(_fadeInFrames);
+		return ClampAlpha(static_cast<int>(255.0f * t));
+	}
+
+	frame -= _fadeInFrames;
+	if(frame < _fadeHoldFrames)
+	{
+		return 255;
+	}
+
+	frame -= _fadeHoldFrames;
+	if(frame < _fadeOutFrames)
+	{
+		const float t = static_cast<float>(frame) / static_cast<float>(_fadeOutFrames);
+		return ClampAlpha(static_cast<int>(255.0f * (1.0f - t)));
+	}
+
+	return 0;
+}
+
+bool ModeBase::IsFadeActive() const
+{
+	return _fadeActive;
+}
+
+bool ModeBase::IsFadeFinished() const
+{
+	if(!_fadeActive) return false;
+	const int total = _fadeInFrames + _fadeHoldFrames + _fadeOutFrames;
+	return (_fadeFrame >= total);
+}

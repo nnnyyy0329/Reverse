@@ -2,85 +2,46 @@
 
 #include "InteriorPlayer.h"
 
-namespace
+// 基礎ステータス定数 
+namespace BaseConstants
 {
+	// 基礎ステータス定数
 	constexpr float GRAVITY = -0.6f;		// 重力加速度
-	const float DEFAULT_LIFE = 50.0f;		// デフォルト体力
+	constexpr float DEFAULT_LIFE = 100.0f;	// デフォルト体力
+	constexpr float MAX_LIFE = 100.0f;		// 最大体力
+}
 
+// 表示用定数
+namespace DrawConfig
+{
+	// 表示用定数
 	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
 	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
 	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
 }
 
+// 攻撃判定のパラメーター
+namespace InteriorAttackConstants
+{
+	constexpr float ATTACK_OFFSET_SCALE = 100.0f;	// 攻撃判定オフセット倍率
+	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;		// 裏プレイヤー用コンボカウント
+}
+
 InteriorPlayer::InteriorPlayer()
 {
-	// モデル読み込み
-	int modelHandle = ResourceServer::GetInstance()->GetHandle("InteriorPlayer");
-
-	// AnimManagerにモデルハンドルを複製して設定
-	int duplicatedHandle = MV1DuplicateModel(modelHandle);
-	_animManager.SetModelHandle(duplicatedHandle);
-
-	// 初期アニメーションの設定
-
-	// 位置の初期化
-	_vPos = VGet(100, 0, 0);
-	_vDir = VGet(0, 0, -1);
-
-	// 基礎ステータスの初期化
-	_ePlayerStatus = PLAYER_STATUS::NONE;	// 状態
-	_fMoveSpeed = 0.0f;						// 移動速度
-	_fDirSpeed = 0.0f;						// 回転速度
-	_fLife = DEFAULT_LIFE;					// 体力
-	_fGravity = GRAVITY;					// 重力
-
-	// アクション関係変数の初期化
-	_fVelY = 0.0f;				// Y方向の速度
-	_bIsJumping = false;		// ジャンプ中かどうか
-	_bIsStanding = true;		// 着地しているかどうか
-	_bIsCrouching = false;		// しゃがんでいるかどうか
-	_bIsStartCrouch = false;	// しゃがみ開始フラグ
-
-	// カプセルコリジョンの設定
-	_vCollisionTop = VGet(0.0f, 0.0f, 0.0f);	// 上端
-	_vCollisionBottom = VGet(0.0f, 0.0f, 0.0f);	// 下端
-	_fCollisionR = 20.f;						// 半径
-
-	// 腰位置の設定
-	_colSubY = 40.f;
-	_bViewCollision = false;
-
-	// 表示用オフセット
-	_iDrawSizeOffset = DRAW_SIZE_OFFSET;	// ずらす大きさ
-	_iDrawOffsetX = DRAW_OFFSET_X;			// 描画Xオフセット
-	_iDrawOffsetY = DRAW_OFFSET_Y;			// 描画Yオフセット
-
-	// 攻撃システム初期化
-	_bCanCombo = false;
-	_iComboCount = 0;
-
 	// キャラタイプ
 	SetCharaType(CHARA_TYPE::INTERIOR_PLAYER);
 }
 
 InteriorPlayer::~InteriorPlayer()
 {
+
 }
 
 bool InteriorPlayer::Initialize()
 {
-	// 基礎ステータスの初期化
-	_ePlayerStatus = PLAYER_STATUS::NONE;
-	_fMoveSpeed = 0.0f;
-	_fDirSpeed = 0.0f;
-	_fGravity = GRAVITY;
-
-	// 攻撃システム初期化
-	_bCanCombo = false;
-	_iComboCount = 0;
-
-	// 攻撃データの初期化を追加
-	InitializeAttackData();
+	// 基底クラスの初期化
+	PlayerBase::Initialize();
 
 	return true;
 }
@@ -92,26 +53,15 @@ bool InteriorPlayer::Terminate()
 
 bool InteriorPlayer::Process()
 {
-	// 死亡処理
-	ProcessDeath();
-
-	// プレイヤーが死亡しているなら
-	if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
-
-	// アクション関係Process呼び出し用関数
-	CallProcess();
-
-	// 攻撃関係Process呼び出し用関数
-	CallProcessAttack();
-
-	CharaBase::Process();
+	// 基底クラスの更新処理
+	PlayerBase::Process();
 
 	return true;
 }
 
 bool InteriorPlayer::Render()
 {
-	CharaBase::Render();
+	PlayerBase::Render();
 
 	// プレイヤーが死亡しているなら
 	//if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
@@ -122,37 +72,102 @@ bool InteriorPlayer::Render()
 // デバッグ描画
 void InteriorPlayer::DebugRender()
 {
-	// デバッグ用
-	_iDrawOffsetY = 0;	// 毎フレーム初期位置にリセット
-
-	DrawBaseData();			// 基礎情報表示
-	DrawCoordinate();		// 座標関係の表示
-	DrawStatus();			// ステータスを表示
-	DrawParameter();		// パラメーター表示
-	//DrawAnimationName();	// 再生されているアニメーション名表示
-	DrawColPos();			// コリジョン情報表示
-}
-
-// コリジョン描画
-void InteriorPlayer::DebugCollisionRender()
-{
-	DrawCapsuleCollision();	// カプセルコリジョンを表示
+	// コリジョン描画
+	PlayerBase::DebugRender();
 }
 
 // 被ダメージ処理
-void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
-	CharaBase::ApplyDamage(fDamage, eType);
+	// 基底クラスの被ダメージ処理を呼び出す
+	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
+}
+
+// 弾による被ダメージ処理
+void InteriorPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
+{
+	// 基底クラスの弾による被ダメージ処理を呼び出す
+	PlayerBase::ApplyDamageByBullet(fDamage, chara);
+}
+
+// 裏プレイヤーの情報設定
+PlayerConfig InteriorPlayer::GetPlayerConfig()
+{
+	// 裏プレイヤー用の設定
+	PlayerConfig config;
+
+	// 移動速度設定
+	config.crouchMoveSpeed = 3.0f;				
+	config.normalMoveSpeed = 7.5f;				
+	config.dashMoveSpeed = 2.6f;			
+
+	// 基礎ステータス
+	config.life = 200.0f;
+	config.maxLife = 200.0f;
+
+	// 表示設定
+	config.drawSizeOffset = 16;					
+	config.drawOffsetX = 900;					
+	config.drawOffsetY = 0;						
+
+	// モデル名
+	config.modelName = "InteriorPlayer";			
+
+	return config;
+}
+
+// 裏プレイヤーのアニメーション設定
+PlayerAnimations InteriorPlayer::GetPlayerAnimation()
+{
+	// 裏プレイヤー用のアニメーション設定
+	PlayerAnimations animation;
+
+	animation.movement.wait			= "player_idle_01";
+	animation.movement.walk			= "player_walk_01";
+	animation.movement.run			= "player_jog_01";
+	animation.movement.jumpUp		= "";
+	animation.movement.jumpDown		= "";
+	animation.movement.crouchWait	= "";
+	animation.movement.crouchWalk	= "";
+	animation.attack.firstAttack	= "Nchange_attack_00";
+	animation.attack.secondAttack	= "Nchange_attack_01";
+	animation.attack.thirdAttack	= "Nchange_attack_02";
+	animation.attack.fourthAttack	= "Nchange_attack_03";
+	animation.attack.fifthAttack	= "Nchange_attack_04";
+	animation.attack.firstSkill		= "";
+	animation.attack.secondSkill	= "";
+	animation.absorb.absorbReady	= "";
+	animation.absorb.absorbActive	= "";
+	animation.absorb.absorbEnd		= "";
+	animation.combat.transform		= "";
+	animation.combat.transCancel	= "player_cancell_00";
+	animation.combat.guard			= "";
+	animation.combat.hit			= "player_damage_01";
+	animation.combat.dodge			= "player_dodge_01";
+	animation.combat.death			= "player_dead_01";
+
+	return animation;
+}
+
+// 表示設定
+RenderConfig InteriorPlayer::GetRenderConfig()
+{
+	// 裏プレイヤー用の表示設定
+	RenderConfig config;
+
+	config.playerName = "Interior Player";				// プレイヤー名
+	config.debugColor = COLOR_U8{ 0, 255, 255, 255 };	// デバッグ描画色
+
+	return config;
 }
 
 // 攻撃判定のパラメーター
-AttackConstants InteriorPlayer::GetAttackConstants()
+AttackConstants InteriorPlayer::GetAttackConstants()const
 {
-	// SurfacePlayer専用の攻撃定数
+	// InteriorPlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.ATTACK_OFFSET_SCALE = 80.0f;	// 攻撃判定オフセット倍率	
-	constants.INTERIOR_MAX_COMBO_COUNT = 5;	// 裏プレイヤー用コンボカウント
+	constants.interiorMaxComboCount = InteriorAttackConstants::INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
 
 	return constants;
 }
@@ -163,71 +178,240 @@ void InteriorPlayer::GetAttackConfigs(AttackConfig configs[5])
 	// 第1攻撃
 	configs[0] = 
 	{
-		{0.0f, 80.0f, 0.0f},	// コリジョン上部位置
-		{0.0f, 120.0f, 0.0f}, 	// コリジョン下部位置
-		25.0f,					// 半径
+		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 20.0f, 0.0f}, 	// コリジョン下部位置
+		40.0f,					// 半径
 		8.0f,					// 発生フレーム
 		12.0f,					// 持続フレーム
 		18.0f,					// 硬直フレーム
-		100.0f,					// ダメージ
-		"",						// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
-
+		20.0f,					// ダメージ
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
+		false,					// 吹き飛ばし攻撃かどうか
 	};
 
 	// 第2攻撃
 	configs[1] = 
 	{
-		{0.0f, 20.0f, 0.0f},	// コリジョン上部位置
-		{0.0f, 100.0f, 0.0f},	// コリジョン下部位置
-		25.0f,					// 半径
+		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 20.0f, 0.0f},	// コリジョン下部位置
+		40.0f,					// 半径
 		8.0f,					// 発生フレーム
 		12.0f,					// 持続フレーム
 		18.0f,					// 硬直フレーム
-		100.0f,					// ダメージ
-		"",						// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		30.0f,					// ダメージ
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		0.0f,					// 攻撃中の移動速度
+		false,					// 吹き飛ばし攻撃かどうか
 	};
 
 	// 第3攻撃
 	configs[2] = 
 	{ 
 		{0.0f, 150.0f, 0.0f},	// コリジョン上部位置
-		{0.0f, 80.0f, 0.0f},	// コリジョン下部位置
-		25.0f,					// 半径
-		8.0f,					// 発生フレーム
+		{0.0f, 20.0f, 0.0f},	// コリジョン下部位置
+		40.0f,					// 半径
+		10.0f,					// 発生フレーム
 		12.0f,					// 持続フレーム
 		18.0f,					// 硬直フレーム
-		100.0f,					// ダメージ
-		"",						// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		50.0f,					// ダメージ
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		5.0f,					// 攻撃中の移動速度
+		false,					// 吹き飛ばし攻撃かどうか
 	};
 
 	// 第4攻撃
 	configs[3] = 
 	{
-		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
-		{0.0f, 50.0f, 0.0f},	// コリジョン下部位置
-		25.0f,					// 半径
-		8.0f,					// 発生フレーム
+		{0.0f, 70.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 0.0f, 0.0f},	// コリジョン下部位置
+		40.0f,					// 半径
+		15.0f,					// 発生フレーム
 		12.0f,					// 持続フレーム
-		18.0f,					// 硬直フレーム
-		100.0f,					// ダメージ
-		"",						// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		23.0f,					// 硬直フレーム
+		50.0f,					// ダメージ
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		5.0f,					// 攻撃中の移動速度
+		false,					// 吹き飛ばし攻撃かどうか
 	};
 
 	// 第5攻撃
-	configs[4] = 
+	configs[4] =
 	{
-		{0.0f, 150.0f, 0.0f},	// コリジョン上部位置
-		{0.0f, 80.0f, 0.0f},	// コリジョン下部位置
-		25.0f,					// 半径
-		8.0f,					// 発生フレーム
-		12.0f,					// 持続フレーム
-		18.0f,					// 硬直フレーム
+		{0.0f, 100.0f, 0.0f},	// コリジョン上部位置
+		{0.0f, 10.0f, 0.0f},	// コリジョン下部位置
+		40.0f,					// 半径
+		30.0f,					// 発生フレーム
+		30.0f,					// 持続フレーム
+		0.0f,					// 硬直フレーム
 		100.0f,					// ダメージ
-		"",						// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		15.0f,					// 攻撃中の移動速度
+		true,					// 吹き飛ばし攻撃かどうか
 	};
+}
+
+// 攻撃コリジョンオフセットの情報設定
+void InteriorPlayer::GetAttackColOffsetConfigs(AttackColOffset configs[5])
+{
+	// 第1攻撃
+	configs[0] =
+	{
+		100.0f,				// 方向スケール
+		true,				// 所有者の向きを基準とするか
+	};
+
+	// 第2攻撃
+	configs[1] =
+	{
+		100.0f,				// 方向スケール
+		true,				// 所有者の向きを基準とするか
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{
+		100.0f,				// 方向スケール
+		true,				// 所有者の向きを基準とするか
+	};
+
+	// 第4攻撃
+	configs[3] =
+	{
+		100.0f,				// 方向スケール
+		true,				// 所有者の向きを基準とするか
+	};
+
+	// 第5攻撃
+	configs[4] =
+	{
+		100.0f,				// 方向スケール
+		true,				// 所有者の向きを基準とするか
+	};
+}
+
+// 攻撃方向補正の情報設定
+void InteriorPlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[5])
+{
+	// 第1攻撃
+	configs[0] = 
+	{
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第2攻撃
+	configs[1] =
+	{
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第4攻撃
+	configs[3] =
+	{
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第5攻撃
+	configs[4] =
+	{
+		true,	// 向き調整が可能かどうか
+	};
+}
+
+// 演出設定
+AttackEffectConfig InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig configs[5])
+{
+	// 裏プレイヤー用の演出設定
+	AttackEffectConfig config;
+
+	// 第1攻撃
+	configs[0] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	// 第2攻撃
+	configs[1] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	// 第4攻撃
+	configs[3] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	// 第5攻撃
+	configs[4] =
+	{
+		config.effectName = "InteriorPlayerAttack5",	// エフェクト名
+		config.effectOffset = { 0.0f, 50.0f, 0.0f },	// エフェクト位置オフセット
+		config.soundName = "iPlayerAttack",				// サウンド名
+	};
+
+	return config;
+}
+
+// 範囲攻撃の情報設定
+AreaAttackConfig InteriorPlayer::GetAreaAttackConfig()
+{
+	// 裏プレイヤーの範囲攻撃設定
+	AreaAttackConfig config;
+
+	config.centerOffset = VGet(0.0f, 0.0f, 0.0f);	// コリジョン中心位置オフセット
+	config.radius = 50.0f;							// 半径
+	config.height = 10.0f;							// 高さ
+	config.delay = 10.0f;							// 発生フレーム
+	config.duration = 20.0f;						// 持続フレーム
+	config.recovery = 30.0f;						// 硬直フレーム
+	config.damage = 40.0f;							// ダメージ
+	config.isHit = false;							// ヒットフラグ
+
+	return config;
+}
+
+// 回避設定データ構造体
+DodgeConfig InteriorPlayer::GetDodgeConfig()
+{
+	// 裏プレイヤー用の回避設定
+	DodgeConfig config;
+
+	config.charaType = DODGE_CHARA::INTERIOR_PLAYER;
+	config.invincibleDuration = 25.0f;	// 無敵時間
+	config.startTime = 1.0f;			// 開始時間
+	config.activeTime = 30.0f;			// アクティブ時間
+	config.recoveryTime = 10.0f;		// 硬直時間
+	config.dodgeMoveSpeed = 11.0f;		// 移動速度
+
+	return config;
+}
+
+// シールド設定を取得
+ShieldConfig InteriorPlayer::GetShieldConfig()
+{
+	// デフォルトの設定を返す
+	ShieldConfig config = {};
+
+	return config;
 }

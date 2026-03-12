@@ -2,8 +2,9 @@
 
 #pragma once
 #include "PlayerBase.h"
-#include "AttackBase.h"
+#include "PlayerAbsorbAttackSystem.h"
 
+// 表プレイヤー
 class SurfacePlayer : public PlayerBase
 {
 public:
@@ -15,47 +16,83 @@ public:
 	virtual bool Process();	
 	virtual bool Render();	
 
-	virtual void DebugRender();											// デバッグ情報描画
-	virtual void DebugCollisionRender();								// コリジョン描画
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType) override;	// 被ダメージ処理
+	// 共通関数のオーバーライド
+	virtual void DebugRender()override;																		// デバッグ情報描画
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;	// 被ダメージ処理
+	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
 
-	// SurfacePlayer_Move.cppで定義
-	void CallProcess();						// アクション関係Process呼び出し用関数
-	void ProcessMovePlayer();				// プレイヤー移動処理
-	void ProcessCollisionPos();				// コリジョン位置の更新処理
-	void ProcessStatusAnimation();			// ステータスに応じたアニメーション処理
-	void ProcessPlayAnimation()override;	// アニメーション再生処理
-	void ProcessStanding();					// 着地処理
-	void ProcessJump();						// ジャンプ処理
-	void ProcessCrouch();					// しゃがみ処理
-	void ProcessHit();						// 被弾処理
-	void ProcessDodge();					// 回避処理
-	void ProcessDodgeMove();				// 回避移動処理
-	void ProcessDeath();					// 死亡処理
-	void ProcessDebug();					// デバッグ用関数
-
-	// SurfacePlayer_Draw.cppで定義
-	void DrawBaseData();			// 基礎情報表示
-	void DrawCoordinate();			// 座標の表示
-	void DrawCapsuleCollision();	// カプセルコリジョン表示
-	void DrawStatus();				// ステータス表示
-	void DrawParameter();			// パラメーター表示
-	void DrawAnimationName();		// 再生されているアニメーション名表示
-	void DrawColPos();				// コリジョンの情報表示
-	void DrawAttackColData();		// 受け取ったコリジョンのデータ表示
+	// 純粋仮想関数のオーバーライド
+	virtual PlayerConfig			GetPlayerConfig()											override;	// 設定を取得
+	virtual PlayerAnimations		GetPlayerAnimation()										override;	// アニメーション設定を取得
+	virtual RenderConfig			GetRenderConfig()											override;	// 描画設定を取得
+	virtual DodgeConfig				GetDodgeConfig()											override;	// 回避設定を取得
+	virtual ShieldConfig			GetShieldConfig()											override;	// シールド設定を取得
+	virtual AttackConstants			GetAttackConstants()const									override;	// 攻撃定数を取得
+	virtual void					GetAttackConfigs(AttackConfig configs[3])					override;	// 攻撃設定を取得
+	virtual void					GetAttackColOffsetConfigs(AttackColOffset configs[3])		override;	// 攻撃コリジョンオフセット設定を取得
+	virtual void					GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[3])	override;	// 攻撃方向補正設定を取得
+	virtual AreaAttackConfig		GetAreaAttackConfig()										override;	// 範囲攻撃設定を取得
+	virtual AttackEffectConfig		GetAttackEffectConfig(AttackEffectConfig configs[3])		override;	// 演出設定を取得
+	const PlayerAbsorbAttackSystem* GetAbsorbAttackSystemConst()const;	// 吸収攻撃システム取得
+	PlayerAbsorbAttackSystem* GetAbsorbAttackSystem();					// 非const版
 
 	/*****ゲッターセッター*****/
 
 private:
-	void UpdateAttackColPos(AttackBase& attack, const VECTOR& topOffset, const VECTOR& bottomOffset, const VECTOR& baseOffset);	// 攻撃判定の位置更新処理
-	void ProcessStartAttack(int comboCount, PLAYER_STATUS nextStatus, AttackBase& attack);										// 攻撃開始処理
-	void ProcessComboAttack(AttackBase& currentAttack, int nextComboCount, PLAYER_STATUS nextStatus, AttackBase& nextAttack);	// 汎用コンボ攻撃処理
-	void ProcessAttackFinish(AttackBase& attack);																				// 攻撃終了処理
-	void EndAttackSequence();																									// 攻撃課程修了
+	// 吸収攻撃システム
+	std::unique_ptr<PlayerAbsorbAttackSystem> _absorbAttackSystem;
+
+	// 吸収攻撃関連
+	AbsorbConfig GetAbsorbConfig();	// 吸収攻撃設定取得
+	void MakeAbsorbSystem();		// 吸収攻撃システム生成
+	void InitializeAbsorbSystem();	// 吸収攻撃システム初期化
+	void ProcessAbsorbSystem();		// 吸収攻撃システム処理
+	void AbsorbSystemDebugRender();	// 吸収攻撃システムデバッグ描画
+
+	/* 吸収攻撃のモーション管理用メンバ関数 */
+	
+	// 吸収攻撃モーション切り替え条件処理
+	void ProcessChangeAbsorbMotion();
+
+	// 構え状態に移行
+	void StartAbsorbReadyState();
+
+	// 構えモーション終了時の処理
+	void ProcessAbsorbReadyCompleted();
+
+	// 吸収終了時の処理
+	void ProcessAbsorbFinish();
+
+	// 吸収停止処理
+	void StopAbsorb();
+
+	// 吸収構えキャンセル処理
+	void CancelAbsorbReady();
+
+	// 吸収終了時に通常モーションに戻す処理
+	void ReturnNormalMotion();
+
+	// 吸収攻撃の入力チェック
+	bool IsAbsorbInput()const;
+
+	// 吸収攻撃がアクティブかどうか
+	bool IsAbsorbActive() const;
+
+	// 吸収終了状態中に入力がされたかどうか
+	bool IsInputInAbsorbFinishState()const;
+
+	// 吸収状態が終了状態かどうか
+	bool IsAbsorbEndState()const;
+	
+	// 吸収アニメーション再生時間デバッグ表示
+	void DebugDrawAbsorbAnimationTime();
+
+	/* 吸収攻撃のモーション管理用メンバ変数 */
+
+	bool _bIsAbsorbReadyCompleted = false;	// 吸収構えアニメーション完了フラグ
+	bool _bWasAbsorbKeyPressed = false;		// 前フレームで吸収攻撃キーが押されていたか
 
 protected:
-	// 攻撃システムのカスタマイズ
-	virtual AttackConstants GetAttackConstants() override;
-	virtual void GetAttackConfigs(AttackConfig configs[3]) override;
+
 };
 

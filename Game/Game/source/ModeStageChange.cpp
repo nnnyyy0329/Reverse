@@ -44,7 +44,7 @@ bool ModeStageChange::Process()
 	base::Process();
 
 	// これより下のモードの処理をスキップ
-	ModeServer::GetInstance()->SkipProcessUnderLayer();
+	//ModeServer::GetInstance()->SkipProcessUnderLayer();
 
 	_loadingTimer++;
 
@@ -92,7 +92,7 @@ bool ModeStageChange::Process()
 
 		case  LOADING_PHASE::COMPLETE:
 			// ロード完了後、少し待ってから削除
-			if (_loadingTimer > 10)
+			if (_loadingTimer > 60)
 			{
 				ModeServer::GetInstance()->Del(this);
 			}

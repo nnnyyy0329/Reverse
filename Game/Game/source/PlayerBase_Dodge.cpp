@@ -63,18 +63,20 @@ void PlayerBase::CallProcessDodge()
 // 回避処理
 void PlayerBase::ProcessDodge()
 {
+	auto im = InputManager::GetInstance();
+
 	// 回避入力があったら回避を呼び出す
 	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||
 		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN)
 		&& StaminaManager::GetInstance()->CanDodge()
-		&& _trg & PAD_INPUT_3)
+		&& im->IsTrigger(INPUT_ACTION::DODGE))
 	{
 		// 回避開始
 		ProcessStartDodge();
 
 		// 回避開始時にスタミナを消費
-		StaminaManager::GetInstance()->ConsumeStamina(DODGE_STAMINA_COST);
+		//StaminaManager::GetInstance()->ConsumeStamina(DODGE_STAMINA_COST);
 	}
 }
 

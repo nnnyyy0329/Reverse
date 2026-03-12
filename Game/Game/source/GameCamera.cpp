@@ -1,9 +1,10 @@
 #include "GameCamera.h"
 #include "PlayerBase.h"
+#include "CameraShakeSystem.h"
 
 namespace
 {
-	constexpr auto ROTATE_SPEED = 0.02f;	// 回転速度
+	constexpr auto ROTATE_SPEED = 0.035f;	// 回転速度
 	constexpr auto ANGLE_V_LIMIT = 1.50f;	// 垂直角度制限(真上、真下の反転防止。85度)
 }
 
@@ -16,22 +17,29 @@ GameCamera::GameCamera()
 	_nearClip = 1.f;
 	_farClip = 5000.f;
 
-	_distance = 450.0f;
+	_distance = -450.0f;
 	_angleH = 0.0f;
 	_angleV = 0.0f;
 
-	//_posOffset = VGet(0.0f, 0.0f, 0.0f);
-	//_targetOffset = VGet(0.0f, 100.0f, 0.0f);
 	_targetOffset = VGet(0.0f, 150.0f, 0.0f);
+	_baseOffset = VGet(0.0f, 0.0f, 0.0f);
 }
 
-void GameCamera::Process(int key, int trg, float lx, float ly, float rx, float ry, float analogMin, bool isInput)
+void GameCamera::Process(InputManager* input, bool isInput)
 {
+	const AnalogState& analog = input->GetAnalog();
+	float analogMin = input->GetAnalogMin();
+	float rx = analog.rx;
+	float ry = analog.ry;
+
 	// カメラ更新処理
 	UpdateCamera();
 
 	// カメラ位置の更新
 	UpdateCameraPos();
+
+	// カメラシェイクオフセットの設定処理
+	SetShakeOffset();
 
 	// カメラ操作処理
 	ControlCamera(rx, ry, analogMin);
@@ -58,6 +66,26 @@ void GameCamera::DebugRender()
 
 	// 座標系表示
 	DrawFormatString(x, y, GetColor(255, 255, 255), "GameCamera Pos: (%3.2f, %3.2f, %3.2f)", _vPos.x, _vPos.y, _vPos.z);
+}
+
+// カメラシェイクオフセットの設定処理
+void GameCamera::SetShakeOffset()
+{
+	// 振動オフセットを取得
+	VECTOR shakeOffset = VGet(0.0f, 0.0f, 0.0f);
+
+	// カメラシェイクシステムが存在し、振動中であればオフセットを取得
+	if(_cameraShakeSystem && _cameraShakeSystem->IsShaking())
+	{
+		// カメラシェイクオフセットを取得
+		shakeOffset = _cameraShakeSystem->GetShakeOffset();
+	}
+
+	// 振動オフセットを適用したカメラ位置を計算
+	VECTOR finalCameraPos = VAdd(_baseOffset, shakeOffset);
+
+	// カメラ位置を更新
+	_vPos = finalCameraPos;
 }
 
 // 更新処理
@@ -95,11 +123,14 @@ void GameCamera::UpdateCameraPos()
 	auto r = cos(_angleV) * _distance;
 
 	// 2.水平平面上での位置(x,z)を計算
-	auto x = cos(_angleH) * r;
-	auto z = sin(_angleH) * r;
+	auto x = sin(_angleH) * r;
+	auto z = cos(_angleH) * r;
 
 	// 3.相対位置をターゲットの座標に足してカメラの絶対座標を計算
-	_vPos = VAdd(_vTarget, VGet(x, y, z));
+	_baseOffset = VAdd(_vTarget, VGet(x, y, z));
+
+	// カメラ位置を更新
+	_vPos = _baseOffset;
 }
 
 // カメラ操作処理
@@ -107,9 +138,16 @@ void GameCamera::ControlCamera(float rx, float ry, float analogMin)
 {
 	// カメラの回転
 	{
-		if(abs(rx) > analogMin) _angleH -= rx * ROTATE_SPEED;
-		if(abs(ry) > analogMin) {
-			_angleV += ry * ROTATE_SPEED;
+		// 水平回転
+		if(abs(rx) > analogMin)
+		{
+			_angleH += rx * ROTATE_SPEED; // 右スティックのX軸で水平回転
+		}
+
+		// 垂直回転
+		if(abs(ry) > analogMin) 
+		{
+			_angleV -= ry * ROTATE_SPEED; // 右スティックのY軸で垂直回転
 
 			// 垂直角度制限
 			if(_angleV > ANGLE_V_LIMIT) _angleV = ANGLE_V_LIMIT;

@@ -1,90 +1,45 @@
 // 担当 : 成田
 
 #include "SurfacePlayer.h"
-#include "ApplicationMain.h"
 
 namespace
 {
-	const float GRAVITY = -0.6f;			// 重力加速度
-	const float DEFAULT_LIFE = 50.0f;		// デフォルト体力
+	// 基礎ステータス定数
+	constexpr float GRAVITY = -0.6f;		// 重力加速度
+	constexpr float DEFAULT_LIFE = 100.0f;	// デフォルト体力
+	constexpr float MAX_LIFE = 100.0f;		// 最大体力
 
-	const int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
-	const int DRAW_OFFSET_X = 900;		// 描画Xオフセット
-	const int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
+	// 表示用定数
+	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
+	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
+	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
 }
 
 SurfacePlayer::SurfacePlayer()
 {
-	// モデル読み込み
-	int modelHandle = ResourceServer::GetInstance()->GetHandle("SurfacePlayer");
-
-	// AnimManagerにモデルハンドルを複製して設定
-	int duplicatedHandle = MV1DuplicateModel(modelHandle);
-	_animManager.SetModelHandle(duplicatedHandle);
-
-	// 初期アニメーションの設定
-
-	// 位置の初期化
-	_vPos = VGet(230.0f,0.0f, 0.0f);
-	_vDir = VGet(0, 0, -1);
-
-	// 基礎ステータスの初期化
-	_ePlayerStatus = PLAYER_STATUS::NONE;	// 状態
-	_fMoveSpeed = 0.0f;						// 移動速度
-	_fDirSpeed = 0.0f;						// 回転速度
-	_fLife = DEFAULT_LIFE;					// 体力
-	_fGravity = GRAVITY;					// 重力
-
-	// アクション関係変数の初期化
-	_fVelY = 0.0f;				// Y方向の速度
-	_bIsJumping = false;		// ジャンプ中かどうか
-	_bIsStanding = true;		// 着地しているかどうか
-	_bIsCrouching = false;		// しゃがんでいるかどうか
-	_bIsStartCrouch = false;	// しゃがみ開始フラグ
-
-	// カプセルコリジョンの設定
-	_vCollisionTop = VGet(0.0f, 0.0f, 0.0f);	// 上端
-	_vCollisionBottom = VGet(0.0f, 0.0f, 0.0f);	// 下端
-	_fCollisionR = 20.f;						// 半径
-
-	// 腰位置の設定
-	_colSubY = 40.f;
-	_bViewCollision = false;
-
-	// 表示用オフセット
-	_iDrawSizeOffset = DRAW_SIZE_OFFSET;	// 描画サイズオフセット
-	_iDrawOffsetX = DRAW_OFFSET_X;			// 描画Xオフセット
-	_iDrawOffsetY = DRAW_OFFSET_Y;			// 描画Yオフセット
-
-	// 攻撃システム初期化
-	_bCanCombo = false;
-	_iComboCount = 0;
-
 	// キャラタイプ
 	SetCharaType(CHARA_TYPE::SURFACE_PLAYER);
 
-	//// 攻撃データの初期化
-	//InitializeAttackData();
+	// 吸収攻撃システムの生成
+	MakeAbsorbSystem();
+
+	// 吸収攻撃のモーション管理用変数の初期化
+	_bIsAbsorbReadyCompleted = false;	// 吸収構えアニメーションが完了したかどうか
+	_bWasAbsorbKeyPressed = false;		// 前フレームで吸収攻撃キーが押されていたかどうか
 }
 
 SurfacePlayer::~SurfacePlayer()
 {
+
 }
 
 bool SurfacePlayer::Initialize()
 {
-	// 基礎ステータスの初期化
-	_ePlayerStatus = PLAYER_STATUS::NONE;
-	_fMoveSpeed = 0.0f;
-	_fDirSpeed = 0.0f;
-	_fGravity = GRAVITY;
+	// 基底クラスの初期化
+	PlayerBase::Initialize();
 
-	// 攻撃システム初期化
-	_bCanCombo = false;
-	_iComboCount = 0;
-
-	// 攻撃データの初期化
-	InitializeAttackData();
+	// 吸収攻撃システムの初期化
+	InitializeAbsorbSystem();
 
 	return true;
 }
@@ -96,29 +51,19 @@ bool SurfacePlayer::Terminate()
 
 bool SurfacePlayer::Process()
 {
-	// 死亡処理
-	ProcessDeath();
+	// 基底クラスの更新処理
+	PlayerBase::Process();
 
-	// プレイヤーが死亡しているなら
-	if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
-
-	// アクション関係Process呼び出し用関数
-	CallProcess();
-
-	// 攻撃関係Process呼び出し用関数
-	CallProcessAttack();
-
-	CharaBase::Process();
+	// 吸収攻撃システムの更新
+	ProcessAbsorbSystem();
 
 	return true;
 }
 
 bool SurfacePlayer::Render()
 {
-	CharaBase::Render();
-
-	// プレイヤーが死亡しているなら
-	//if(_ePlayerStatus == PLAYER_STATUS::DEATH) { return false; }
+	// 基底クラスの描画処理呼び出し
+	PlayerBase::Render();
 
 	return true;
 }
@@ -126,37 +71,99 @@ bool SurfacePlayer::Render()
 // デバッグ描画
 void SurfacePlayer::DebugRender()
 {
-	// デバッグ用
-	_iDrawOffsetY = 0;	// 毎フレーム初期位置にリセット
+	// コリジョン描画
+	PlayerBase::DebugRender();
 
-	DrawBaseData();			// 基礎情報表示
-	DrawCoordinate();		// 座標関係の表示
-	DrawStatus();			// ステータスを表示
-	DrawParameter();		// パラメーター表示
-	//DrawAnimationName();	// 再生されているアニメーション名表示
-	DrawColPos();			// コリジョン情報表示
-}
-
-// コリジョン描画
-void SurfacePlayer::DebugCollisionRender()
-{
-	DrawCapsuleCollision();	// カプセルコリジョンを表示
+	// 吸収攻撃システムのデバッグ描画
+	AbsorbSystemDebugRender();
 }
 
 // 被ダメージ処理
-void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType)
+void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
-	CharaBase::ApplyDamage(fDamage, eType);
+	// 基底クラスの被ダメージ処理呼び出し
+	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
+}
+
+// 弾での被ダメージ処理
+void SurfacePlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
+{
+	// 基底クラスの弾での被ダメージ処理呼び出し
+	PlayerBase::ApplyDamageByBullet(fDamage, chara);
+}
+
+// 表プレイヤーの情報設定
+PlayerConfig SurfacePlayer::GetPlayerConfig()
+{
+	// 表プレイヤー用の設定
+	PlayerConfig config;
+
+	// 移動速度設定
+	config.crouchMoveSpeed = 2.0f;				
+	config.normalMoveSpeed = 5.0f;				
+	config.dashMoveSpeed = 2.5f;			
+
+	// 基礎ステータス
+	config.life = 200.0f;
+	config.maxLife = 200.0f;					
+
+	// 表示設定
+	config.drawSizeOffset = 16;					
+	config.drawOffsetX = 900;					
+	config.drawOffsetY = 0;						
+
+	// モデル名
+	config.modelName = "SurfacePlayer";			
+
+	return config;
+}
+
+// 表プレイヤーのアニメーション設定
+PlayerAnimations SurfacePlayer::GetPlayerAnimation()
+{
+	// 表プレイヤー用のアニメーション設定
+	PlayerAnimations animation;
+
+	animation.movement.wait			= "player_idle_00";
+	animation.movement.walk			= "player_walk_00";
+	animation.movement.run			= "player_jog_00";
+	animation.movement.jumpUp		= "";
+	animation.movement.jumpDown		= "";
+	animation.movement.crouchWait	= "";
+	animation.movement.crouchWalk	= "";
+	animation.attack.firstSkill		= ""; 
+	animation.attack.secondSkill	= "";
+	animation.absorb.absorbReady	= "player_absorb_00";
+	animation.absorb.absorbActive	= "player_absorb_01";
+	animation.absorb.absorbEnd		= "player_absorb_02";
+	animation.combat.transform		= "player_change_00";
+	animation.combat.guard			= "";
+	animation.combat.hit			= "player_damage_00";
+	animation.combat.dodge			= "player_dodge_00";
+	animation.combat.death			= "player_dead_00";
+
+	return animation;
+}
+
+// 表示設定
+RenderConfig SurfacePlayer::GetRenderConfig()
+{
+	// 表プレイヤー用の表示設定
+	RenderConfig config;
+
+	config.playerName = "Surface Player";				// プレイヤー名
+	config.debugColor = COLOR_U8{ 0, 255, 255, 255 };	// デバッグ描画色
+
+	return config;
 }
 
 // 攻撃判定のパラメーター
-AttackConstants SurfacePlayer::GetAttackConstants()
+AttackConstants SurfacePlayer::GetAttackConstants()const
 {
 	// SurfacePlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.ATTACK_OFFSET_SCALE = 85.0f;	// 攻撃判定オフセット倍率	
-	constants.SURFACE_MAX_COMBO_COUNT = 3;	// 表プレイヤー用コンボカウント
+	constants.surfaceMaxComboCount = 0;		// 表プレイヤー用コンボカウント
 
 	return constants;
 }
@@ -173,9 +180,10 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		20.0f,					// 発生フレーム
 		25.0f,					// 持続フレーム
 		20.0f,					// 硬直フレーム
-		25.0f,					// ダメージ
-		"SurfacePlayerAttack1",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		10.0f,					// ダメージ
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
+		false,					// 吹き飛ばし攻撃かどうか
 	};	
 
 	// 第2攻撃
@@ -187,9 +195,10 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		20.0f,					// 発生フレーム
 		15.0f,					// 持続フレーム
 		20.0f,					// 硬直フレーム
-		25.0f,					// ダメージ
-		"SurfacePlayerAttack2",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		10.0f,					// ダメージ
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
+		false,					// 吹き飛ばし攻撃かどうか
 	};
 
 	// 第3攻撃
@@ -201,8 +210,376 @@ void SurfacePlayer::GetAttackConfigs(AttackConfig configs[3])
 		20.0f,					// 発生フレーム
 		25.0f,					// 持続フレーム
 		20.0f,					// 硬直フレーム
-		50.0f,					// ダメージ
-		"SurfacePlayerAttack3",	// エフェクト名
-		{0.0f, 50.0f, 0.0f},	// エフェクト位置オフセット
+		20.0f,					// ダメージ
+		ATTACK_STATE::ACTIVE,	// 攻撃状態
+		3.0f,					// 攻撃中の移動速度
+		false,					// 吹き飛ばし攻撃かどうか
 	};
+}
+
+// 攻撃コリジョンオフセットの情報設定
+void SurfacePlayer::GetAttackColOffsetConfigs(AttackColOffset configs[3])
+{
+	// 第1攻撃
+	configs[0] = 
+	{ 
+		0.0f,					// 方向スケール
+		true,					// 所有者の向きを基準とするか
+	};
+
+	// 第2攻撃
+	configs[1] = 
+	{ 
+		0.0f,					// 方向スケール
+		true,					// 所有者の向きを基準とするか
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{ 
+		0.0f,					// 方向スケール
+		true,					// 所有者の向きを基準とするか
+	};
+}
+
+// 攻撃方向補正の情報設定
+void SurfacePlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[3])
+{
+	// 第1攻撃
+	configs[0] = 
+	{ 
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第2攻撃
+	configs[1] = 
+	{ 
+		true,	// 向き調整が可能かどうか
+	};
+
+	// 第3攻撃
+	configs[2] = 
+	{ 
+		true,	// 向き調整が可能かどうか
+	};
+}
+
+// 表プレイヤーの演出設定
+AttackEffectConfig SurfacePlayer::GetAttackEffectConfig(AttackEffectConfig configs[3])
+{
+	// 表プレイヤー用の演出設定
+	AttackEffectConfig config;
+
+	// 第1攻撃
+	configs[0] =
+	{
+		config.effectName = "SurfacePlayerAttack1",		// ダメージエフェクト名
+		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
+		config.soundName = "sPlayerFirstAttack",		// ダメージサウンド名
+	};
+
+	// 第2攻撃
+	configs[1] =
+	{
+		config.effectName = "SurfacePlayerAttack1",		// ダメージエフェクト名
+		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
+		config.soundName = "sPlayerFirstAttack",		// ダメージサウンド名
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{
+		config.effectName = "SurfacePlayerAttack3",		// ダメージエフェクト名
+		config.effectOffset = VGet(0.0f, 50.0f, 0.0f),	// ダメージエフェクト位置オフセット
+		config.soundName = "iPlayerFirstAttack",		// ダメージサウンド名
+	};
+
+
+	return config;
+}
+
+// 範囲攻撃の情報設定
+AreaAttackConfig SurfacePlayer::GetAreaAttackConfig()
+{
+	// 表プレイヤーは範囲攻撃を行わない
+	AreaAttackConfig config;
+	return config;
+}
+
+// 回避設定データ構造体
+DodgeConfig SurfacePlayer::GetDodgeConfig()
+{
+	// 表プレイヤー用の回避設定
+	DodgeConfig config;
+
+	config.charaType = DODGE_CHARA::SURFACE_PLAYER;
+	config.invincibleDuration = 20.0f;	// 無敵時間
+	config.startTime = 25.0f;			// 開始時間
+	config.activeTime = 30.0f;			// アクティブ時間
+	config.recoveryTime = 25.0f;			// 硬直時間
+	config.dodgeMoveSpeed = 12.0f;		// 移動速度
+
+	return config;
+}
+
+// シールド設定を取得
+ShieldConfig SurfacePlayer::GetShieldConfig()
+{
+	// デフォルトの設定を返す
+	ShieldConfig config;
+
+	config.charaType = SHIELD_CHARA::SURFACE_PLAYER;
+	config.dotThreshold = 0.5f;
+	config.blockAngleRange = 90.0f;
+	config.blockDistance = 100.0f;
+	config.startTime = 10.0f;
+	config.recoveryTime = 15.0f;
+	config.staminaCost = 10.0f;
+	config.blockEffectName = "";
+	config.effectOffset = 0.0f;
+
+	return config;
+}
+
+// 吸収攻撃システムの初期化
+void SurfacePlayer::MakeAbsorbSystem()
+{
+	_absorbAttackSystem = std::make_unique<PlayerAbsorbAttackSystem>();
+}
+
+// 吸収攻撃システムの初期化
+void SurfacePlayer::InitializeAbsorbSystem()
+{
+	// 吸収システムの初期化
+	if(_absorbAttackSystem)
+	{
+		_absorbAttackSystem->Initialize(shared_from_this());		// 所有者を設定して初期化
+		_absorbAttackSystem->SetAbsorbConfig(GetAbsorbConfig());	// 吸収攻撃の設定を取得して設定
+	}
+}
+
+// 吸収攻撃システムの更新
+void SurfacePlayer::ProcessAbsorbSystem()
+{
+	if(!_absorbAttackSystem) { return; }
+
+	// 吸収攻撃モーションの切り替え条件処理
+	ProcessChangeAbsorbMotion();
+
+	// 入力処理
+	_absorbAttackSystem->ProcessAbsorbInput();	
+
+	// 吸収システムの更新処理
+	_absorbAttackSystem->Process();
+
+	// 前フレームの吸収攻撃キーの状態を保存
+	_bWasAbsorbKeyPressed = IsAbsorbInput();
+}
+
+// 吸収攻撃設定取得
+AbsorbConfig SurfacePlayer::GetAbsorbConfig()
+{
+	AbsorbConfig config;
+
+	config.absorbRate = 1.0f;							// 吸収率
+	config.energyAbsorbRate = 10.0f;					// エネルギー吸収率
+	config.hpAbsorbRate = 10.0f;						// HP吸収率
+	config.absorbRange = 120.0f;						// 吸収範囲
+	config.absorbAngle = DX_PI_F / 2.0f;				// 90度の扇形(ラジアン)
+	config.absorbDivision = 10;							// 滑らかな描画用
+	config.absorbEffectName = "SurfacePlayerAbsorb";	// 吸収エフェクト名
+
+	return config;
+}
+
+// 吸収攻撃システム取得
+const PlayerAbsorbAttackSystem* SurfacePlayer::GetAbsorbAttackSystemConst()const
+{
+	return _absorbAttackSystem.get();
+}
+
+// 非const版
+PlayerAbsorbAttackSystem* SurfacePlayer::GetAbsorbAttackSystem()
+{
+	return _absorbAttackSystem.get();
+}
+
+// 吸収攻撃システムのデバッグ描画
+void SurfacePlayer::AbsorbSystemDebugRender()
+{
+	if(_absorbAttackSystem)
+	{
+		_absorbAttackSystem->DebugRender();
+	}
+
+	// 吸収アニメーション再生時間のデバッグ表示
+	DebugDrawAbsorbAnimationTime();
+}
+
+// 吸収攻撃モーション切り替え条件処理
+void SurfacePlayer::ProcessChangeAbsorbMotion()
+{
+	// 吸収終了時に通常モーションに戻す処理
+	ReturnNormalMotion();
+
+	if(IsInputInAbsorbFinishState()){ return; }	// 吸収終了状態での入力は無視
+
+	// 吸収入力開始
+	if(IsAbsorbInput() && !_bWasAbsorbKeyPressed)
+	{
+		// 構え状態に移行
+		StartAbsorbReadyState();
+	}
+	// 構え状態なら
+	else if(_playerState.IsStateAbsorbing() && _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY) 
+	{
+		// 構え状態中で入力が続いていないなら
+		if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY && !IsAbsorbInput())
+		{
+			// 吸収構えキャンセル処理
+			StopAbsorb();
+
+			return;
+		}
+
+		// まだ構えモーションが終了していないなら
+		if(!IsAnimationFinishedConst()){ return; }
+
+		// 構えモーション終了時の処理
+		ProcessAbsorbReadyCompleted();
+	}
+	// 吸収入力が終了しているなら
+	else if(!IsAbsorbInput() && _bWasAbsorbKeyPressed)
+	{
+		// 吸収攻撃終了処理
+		ProcessAbsorbFinish();
+	}
+}
+
+// 構え状態に移行
+void SurfacePlayer::StartAbsorbReadyState()
+{
+	// 吸収構え状態に移行
+	_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_READY;	// 状態を吸収構えに設定
+	_bIsAbsorbReadyCompleted = false;								// 吸収構えアニメーション完了フラグをリセット
+
+	// アニメーション切り替え
+	ProcessPlayAnimation();
+}
+
+// 構えモーション終了時の処理
+void SurfacePlayer::ProcessAbsorbReadyCompleted()
+{
+	// 構えモーション終了
+	_bIsAbsorbReadyCompleted = true;
+
+	// 吸収攻撃開始
+	_absorbAttackSystem->StartAbsorbAttack();
+
+	// 吸収状態をアクティブにする
+	_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_ACTIVE;
+
+	// アニメーション切り替え
+	ProcessPlayAnimation();
+}
+
+// 吸収終了処理
+void SurfacePlayer::ProcessAbsorbFinish()
+{
+	// 押していて吸収が始まっていたら停止
+	if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_ACTIVE)
+	{
+		// 吸収攻撃停止処理
+		StopAbsorb();
+	}
+	// 構え状態で押していて、吸収が始まっていなかったらキャンセル
+	else if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_READY)
+	{
+		// 吸収構えキャンセル処理
+		CancelAbsorbReady();
+	}
+}
+
+// 吸収停止処理
+void SurfacePlayer::StopAbsorb()
+{
+	// 吸収攻撃停止処理
+	_absorbAttackSystem->StopAbsorbAttack();
+
+	// 状態を吸収終了にする
+	_playerState.absorbState = PLAYER_ABSORB_STATE::ABSORB_END;
+
+	// アニメーション切り替え
+	ProcessPlayAnimation();
+}
+
+// 吸収構えキャンセル処理
+void SurfacePlayer::CancelAbsorbReady()
+{
+	// 状態を吸収終了にする
+	_playerState.absorbState = PLAYER_ABSORB_STATE::NONE;
+
+	// アニメーション切り替え
+	ProcessPlayAnimation();
+}
+
+// 吸収終了時に通常モーションに戻す処理
+void SurfacePlayer::ReturnNormalMotion()
+{
+	// 吸収終了状態なら通常モーションに戻す
+	if(_playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_END)
+	{
+		// どちらの場合もアニメーションが終了していたら通常モーションに戻す
+		if(IsAnimationFinishedConst())
+		{
+			// 通常モーションに戻す処理
+			ProcessReturnNormalMotion();
+		}
+	}
+}
+
+// 吸収攻撃の入力チェック
+bool SurfacePlayer::IsAbsorbInput()const
+{
+	// 吸収攻撃の入力チェック
+	return (InputManager::GetInstance()->IsHold(INPUT_ACTION::ABILITY)) != 0;
+}
+
+// 吸収攻撃がアクティブかどうか
+bool SurfacePlayer::IsAbsorbActive() const
+{
+	if(!_absorbAttackSystem) { return false; }
+
+	// 吸収攻撃システムに吸収がアクティブかどうかを問い合わせる
+	return _absorbAttackSystem->IsAbsorbActive();
+}
+
+// 吸収終了状態中に入力がされたかどうか
+bool SurfacePlayer::IsInputInAbsorbFinishState()const
+{
+	// 吸収終了状態中に入力がされたかどうか
+	return (IsAbsorbInput() && IsAbsorbEndState() && !IsAnimationFinishedConst());
+}
+
+// 吸収終了状態かどうか
+bool SurfacePlayer::IsAbsorbEndState()const
+{
+	// 吸収終了状態かどうか
+	return _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_END;
+}
+
+// 吸収アニメーション再生時間デバッグ表示
+void SurfacePlayer::DebugDrawAbsorbAnimationTime()
+{
+	if(!_absorbAttackSystem) { return; }
+
+	// アニメーションマネージャーを取得
+	AnimManager* animManager = GetAnimManager();
+	if(!animManager) { return; }
+
+	// 吸収アニメーション再生時間のデバッグ表示
+	std::string debugText = "AbsorbAnimTime: " + std::to_string(animManager->GetCurrentAnimTotalTime());
+
+	// 吸収攻撃のアニメーション再生時間をデバッグ表示
+	DrawFormatString(10, 350, GetColor(255, 255, 255), debugText.c_str());
 }

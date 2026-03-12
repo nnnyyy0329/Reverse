@@ -7,7 +7,8 @@ class StageBase
 {
 public:
 	// マップモデルの設定情報
-	struct MODELPOS {
+	struct MODELPOS 
+	{
 		std::string name;// 名前
 		VECTOR pos;// 位置
 		VECTOR rot;// 回転
@@ -25,6 +26,18 @@ public:
 		VECTOR vRot;// 回転
 	};
 
+	// トリガーの設定情報
+	struct TRIGGERPOS
+	{
+		std::string name;// トリガー名
+		VECTOR vPos;// 位置
+		VECTOR vRot;// 回転
+		VECTOR vScale;// スケール
+		int modelHandle;// モデルハンドル
+		int drawFrame;// 描画フレーム
+		int collisionFrame;// コリジョンフレーム
+	};
+
 	StageBase(int stageNum);
 	virtual ~StageBase();
 
@@ -33,15 +46,38 @@ public:
 	virtual void DebugRender();
 	virtual void CollisionRender();
 
-	const std::vector<std::shared_ptr<Enemy>>& GetEnemies() const { return _stageEnemies; }// ステージ内の敵リストを取得
+	const std::vector<std::shared_ptr<Enemy>>& GetEnemies() const { return _stageEnemies; }
 	const std::vector<MODELPOS>& GetMapModelPosList() const { return _mapModelPosList; }
-	//int GetHandleMap() const { return _handleMap; }// マップモデルのハンドルを取得
-	//int GetFrameMapCollision() const { return _frameMapCollision; }// マップのコリジョンフレームを取得
+	const std::vector<TRIGGERPOS>& GetTriggerList() const { return _triggerList; }
+	const std::vector<MODELPOS>& GetMoveAreaList() const { return _moveAreaList; }
+
+	// 非const敵リスト
+	std::vector<std::shared_ptr<Enemy>>& GetEnemies() { return _stageEnemies; }
+
+	// ステージ切り替え
+	int GetNextStageNumFromTrigger(const std::string& triggerName);// トリガー名から次のステージ番号を取得
+
+	// jsonファイルからステージデータを読み込む
+	void LoadStageDataFromJson(
+		const std::string& filePath,
+		const std::string& objName,
+		std::function<void(const std::string& name, const VECTOR& pos, const VECTOR& rot, const VECTOR& scale)> onLoadItem
+	);
 
 	// 敵の残数管理
 	int GetTotalEnemyCnt() { return _totalEnemyCnt; }// ステージ内の敵の総数を取得
 	int GetCurrentEnemyCnt() { return static_cast<int>(_stageEnemies.size()); }// 現在の敵の数を取得
 	bool IsAllEnemiesDefeated() { return _stageEnemies.empty() && _totalEnemyCnt > 0; }// すべての敵が倒されたか
+
+	// BGM関連
+	void PlayStageBGM();// ステージBGMを再生
+	void StopStageBGM();// ステージBGMを停止
+	std::string GetCurrentBGMName() { return _currentBGMName; }// 現在のBGM名を取得
+
+	VECTOR GetPlayerStartPos() { return _vPlayerStartPos; }
+	VECTOR GetPlayerStartRot() { return _vPlayerStartRot; }
+
+
 
 protected:
 	std::map<std::string, int> _mapModelHandle;// マップモデル用ハンドル(名前、モデルハンドル)
@@ -49,13 +85,18 @@ protected:
 
 	std::vector<MODELPOS> _mapModelPosList;// json読み込みで設定したマップモデルのリスト
 
+	std::vector<MODELPOS> _moveAreaList;// 敵の移動可能範囲リスト
+
 	int _stageNum;// ステージ番号
 
-	// テスト用マップ
-	//int _handleMap;
-	//int _handleSkySphere;
-	//int _frameMapCollision;
-
 	int _totalEnemyCnt;// ステージ内の敵の総数
+
+	std::vector<TRIGGERPOS> _triggerList;// トリガーリスト
+
+	// BGM関連
+	std::string _currentBGMName;// 再生中のBGM名
+	// プレイヤー初期位置
+	VECTOR _vPlayerStartPos;
+	VECTOR _vPlayerStartRot;
 };
 

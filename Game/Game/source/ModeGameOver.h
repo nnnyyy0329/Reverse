@@ -16,5 +16,6 @@ public:
 	virtual bool Render();
 
 private:
+	int _menuIndex = 0;
 };
 

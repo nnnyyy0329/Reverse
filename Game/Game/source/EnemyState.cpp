@@ -1,10 +1,17 @@
 #include "EnemyState.h"
 #include "Enemy.h"
 
-float EnemyState::CalcOffsetTime(Enemy* owner, float baseTime)
+float EnemyState::CalcRandomRangeTime(float fBaseTime, float fRange)
 {
-	if (!owner) { return baseTime; }
-	return baseTime + owner->GetStateTimerOffset();
+	if (fRange < 0.0f) { fRange = 0.0f; }
+
+	// RandomRangeで[-fRange, +fRange]のランダムオフセットを生成
+	float fOffset = (fRange > 0.0f) ? mymath::RandomRange(-fRange, fRange) : 0.0f;
+
+	float fResult = fBaseTime + fOffset;
+	if (fResult < 0.0f) { fResult = 0.0f; }
+
+	return fResult;
 }
 
 // ターゲット情報を取得
@@ -17,18 +24,11 @@ TargetInfo EnemyState::GetTargetInfo(Enemy* owner)
 	if (info.bExist)
 	{
 		// ターゲットへのベクトル計算
-		info.vToTarget = VSub(info.target->GetPos(), owner->GetPos());	
+		info.vToTarget = VSub(info.target->GetPos(), owner->GetPos());
 		info.fDist = VSize(info.vToTarget);
 
-		// 方向ベクトル計算
-		if (info.fDist > 0.0f)
-		{
-			info.vDir = VScale(info.vToTarget, 1.0f / info.fDist);
-		}
-		else
-		{
-			info.vDir = VGet(0.0f, 0.0f, 0.0f);
-		}
+		// 方向ベクトル計算(FlattenVectorでY除去+正規化)
+		info.vDir = mymath::FlattenVector(info.vToTarget);
 	}
 	else
 	{

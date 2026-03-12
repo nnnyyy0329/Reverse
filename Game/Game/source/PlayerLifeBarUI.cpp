@@ -5,9 +5,12 @@ namespace
 {
 	// 画像表示用
 	constexpr int DRAW_BAR_FRAME_X = 216;
-	constexpr int DRAW_BAR_FRAME_Y = 930;
-	constexpr int DRAW_OFFSET_X = 6;
-	constexpr int DRAW_OFFSET_Y = 6;
+	constexpr int DRAW_BAR_FRAME_Y = 1000;
+	constexpr int DRAW_OFFSET_X = 1;
+	constexpr int DRAW_OFFSET_Y = 1;
+
+	// 追加：縦方向スケール
+	constexpr float LIFE_BAR_SCALE_Y = 0.2f;
 }
 
 PlayerLifeBarUI::PlayerLifeBarUI()
@@ -25,6 +28,7 @@ PlayerLifeBarUI::PlayerLifeBarUI()
 
 PlayerLifeBarUI::~PlayerLifeBarUI()
 {
+	// 画像の解放
 	DeleteGraph(_iLifeBar);
 	DeleteGraph(_iLifeBarFrame);
 }
@@ -64,7 +68,21 @@ bool PlayerLifeBarUI::Render()
 // ライフバーフレーム描画
 void PlayerLifeBarUI::LifeBarRenderFrame()
 {
-	DrawGraph(_drawLifeBarFrameX, _drawLifeBarFrameY, _iLifeBarFrame, TRUE);
+	// ライフバーのフレーム描画
+	int w = 0;
+	int h = 0;
+	GetGraphSize(_iLifeBarFrame, &w, &h);
+
+	const int drawH = static_cast<int>(h * LIFE_BAR_SCALE_Y);
+
+	DrawExtendGraph(
+		_drawLifeBarFrameX,
+		_drawLifeBarFrameY,
+		_drawLifeBarFrameX + w,
+		_drawLifeBarFrameY + drawH,
+		_iLifeBarFrame,
+		TRUE
+	);
 }
 
 // ライフバー比率計算
@@ -90,21 +108,69 @@ void PlayerLifeBarUI::BarRatioCalculation()
 // ライフバー描画
 void PlayerLifeBarUI::LifeBarRender(float ratio)
 {
-	if(ratio <= 0.0f){ return; }	// 比率が0以下の場合は描画しない
+	if(ratio <= 0.0f) { return; }	// 比率が0以下の場合は描画しない
 
 	// 画像サイズ
 	int graphW, graphH;
 	GetGraphSize(_iLifeBar, &graphW, &graphH);
 
 	// 描画する幅
-	int clipW = static_cast<int>(graphW * ratio);
+	const int drawH = static_cast<int>(graphH * LIFE_BAR_SCALE_Y);
+	const int clipW = static_cast<int>(graphW * ratio);
 
-	// クリッピング領域を設定
-	SetDrawArea(_drawLifeBarX, _drawLifeBarY, _drawLifeBarX + clipW, _drawLifeBarY + graphH);
+	// バー矩形（実際の表示高さは drawH）
+	const int x0 = _drawLifeBarX;
+	const int y0 = _drawLifeBarY;
+	const int x1 = _drawLifeBarX + graphW;
+	const int y1 = _drawLifeBarY + drawH;
 
-	// ライフバー描画
-	DrawGraph(_drawLifeBarX, _drawLifeBarY, _iLifeBar, TRUE);
+	// 1) 影（ドロップシャドウ）: 少し右下にズラして暗く描く
+	{
+		const int shadowOffsetX = 2;
+		const int shadowOffsetY = 2;
 
-	// クリッピング領域を元に戻す
-	SetDrawAreaFull();
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
+		SetDrawArea(x0 + shadowOffsetX, y0 + shadowOffsetY, x0 + shadowOffsetX + clipW, y0 + shadowOffsetY + drawH);
+		DrawExtendGraph(
+			x0 + shadowOffsetX,
+			y0 + shadowOffsetY,
+			x1 + shadowOffsetX,
+			y1 + shadowOffsetY,
+			_iLifeBar,
+			TRUE
+		);
+		SetDrawAreaFull();
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
+
+	// 2) 本体（従来どおりクリップして描画）
+	{
+		SetDrawArea(x0, y0, x0 + clipW, y0 + drawH);
+		DrawExtendGraph(x0, y0, x1, y1, _iLifeBar, TRUE);
+		SetDrawAreaFull();
+	}
+
+	// 3) 上面ハイライト（細い白帯）
+	{
+		const int highlightH = 3;
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 70);
+		DrawBox(x0, y0, x0 + clipW, y0 + highlightH, GetColor(255, 255, 255), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
+
+	// 4) 下面の影（細い黒帯）
+	{
+		const int shadeH = 3;
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 70);
+		DrawBox(x0, y1 - shadeH, x0 + clipW, y1, GetColor(0, 0, 0), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
+
+	// 5)（任意）減った部分を暗くして「溝」っぽくする
+	if(clipW < graphW)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 60);
+		DrawBox(x0 + clipW, y0, x1, y1, GetColor(0, 0, 0), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
 }

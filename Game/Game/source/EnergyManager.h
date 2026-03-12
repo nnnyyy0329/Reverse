@@ -13,6 +13,7 @@ public:
     bool Terminate();
     bool Process();
     bool Render();
+    void DebugRender();
 
     // エネルギー管理関数
     bool CanSwitchPlayer();                             // 切り替え可能かチェック
@@ -21,9 +22,6 @@ public:
     void ConvertDamageToConsumeEnergy(float damage);    // ダメージを消費エネルギーに変換する関数
     void AddEnergy(float Energy);                       // エネルギー追加関数
     void ConsumeEnergy(float energy);                   // エネルギー消費関数
-
-    // デバッグ表示
-    void DebugRender();
 
     // ゲッターセッター
     float GetCurrentEnergy() const { return _currentEnergy; }       // 現在のエネルギーの取得

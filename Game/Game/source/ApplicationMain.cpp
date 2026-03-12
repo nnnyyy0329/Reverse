@@ -1,10 +1,10 @@
 #include "appframe.h"
 #include "ApplicationMain.h"
 #include "ModeLoading.h"
-
-
-// 消す
 #include "ApplicationGlobal.h"
+
+#include "ModeLogo.h"
+
 
 
 // 実体
@@ -17,8 +17,8 @@ bool ApplicationMain::Initialize(HINSTANCE hInstance) {
 	gGlobal.Init();
 
 	// モードの登録
-	//ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
-	ModeServer::GetInstance()->Add(new ModeLoading(), 9999, "loading");
+	// タイトルモードを登録
+	ModeServer::GetInstance()->Add(new ModeLogo(), 100, "logo");
 
 	return true;
 }
@@ -41,7 +41,7 @@ bool ApplicationMain::Process() {
 }
 
 bool ApplicationMain::Render() {
-	base::Render(); // 呼び出し
+	base::Render();
 
 	return true;
 }

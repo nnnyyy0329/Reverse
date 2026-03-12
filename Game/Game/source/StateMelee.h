@@ -1,80 +1,121 @@
 #pragma once
 #include "EnemyState.h"
+#include "StateNormal.h"
 
 namespace Melee
 {
-	/*
-	* Idle:待機
-	* ↑↓時間経過
-	* Move:自動移動
-	* ↓プレイヤー索敵(TryDetectPlayer)
-	* Detect:発見
-	* ↓時間経過
-	* Chase:追跡(距離が離れすぎたらIdleへ)
-	* ↑↓プレイヤーが攻撃射程内に入ったら
-	* Attack:攻撃(Chaseに戻り距離を再確認)
-	*/
-
-	// 円形視界判定(距離のみチェック)
-	bool IsTargetVisible(Enemy* owner);
+	// 扇形視界判定
+	bool IsTargetVisibleFan(Enemy* owner);
 
 	// 待機
-	class Idle : public EnemyState
-	{
-		public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Idle"; }// 名前を返す(デバッグ用)
-	};
+	using Idle = Normal::Idle;
+	// 徘徊
+	using Wander = Normal::Wander;
+	// 発見
+	using Notice = Normal::Notice;
+	// 接近
+	using Approach = Normal::Approach;
+	// 攻撃溜め
+	using AttackCharge = Normal::AttackCharge;
+	// 攻撃実行
+	using AttackExecute = Normal::AttackExecute;
+	// 攻撃後隙
+	using AttackRecovery = Normal::AttackRecovery;
+	// ターゲットを見失ったとき
+	using LostTarget = Normal::LostTarget;
 
-	// 自動移動
-	class Move : public EnemyState
-	{
-		public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Move"; }
-	};
 
-	// 発見:見つけた瞬間の硬直
-	class Detect : public EnemyState
-	{
-		public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Detect"; }
-	};
 
-	// 追跡
-	class Chase : public EnemyState
-	{
-		public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Chase"; }
-		bool IsChasing() const override { return true; }// 追跡状態である
-	};
-
-	// 攻撃
-	class Attack : public EnemyState
-	{
-		public:
-		void Enter(Enemy* owner) override;
-		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		void Exit(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:Attack"; }
-		bool CanChangeState() override;
-	private:
-		bool _bHasCollision;// 攻撃コリジョンが生成されたか
-	};
-
-	// 初期位置への復帰
-	class ReturnHome : public EnemyState
+	// 攻撃ステート開始(ここでどの攻撃をするか決定)
+	class AttackStart : public EnemyState
 	{
 	public:
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
-		const char* GetName() const override { return "Melee:ReturnHome"; }
+		const char* GetName() override { return "Melee:AttackStart"; }
+		bool IsChasing() override { return true; }
+
+	private:
+		enum class AttackType
+		{
+			NORMAL,
+			RUSH
+		};
+		AttackType _eAttackType;
+	};
+
+	// 突進攻撃溜め
+	class RushCharge : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "RushCharge"; }
+		bool CanChangeState() override { return false; }
+
+	private:
+		VECTOR _vRushDir;
+	};
+
+	// 突進攻撃実行
+	class RushExecute : public EnemyState
+	{
+	public:
+		RushExecute(VECTOR vRushDirection) : _vRushDir(vRushDirection), _bHasCollision(false), _fCurrentSpeed(0.0f) {}
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		void Exit(Enemy* owner) override;
+		const char* GetName() override { return "RushExecute"; }
+		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
+
+	private:
+		VECTOR _vRushDir;// 突進方向
+		VECTOR _vStartPos;// 突進開始位置
+		VECTOR _vTargetPos;// 突進目標位置
+		bool _bHasCollision;// 突進攻撃コリジョンを出したか
+		bool _bReachedTarget;// 目標位置に到達したか
+		float _fCurrentSpeed;// 現在の突進速度
+		float _fReachTimer;// 目標到達後のタイマー
+	};
+
+	// 突進攻撃後隙
+	class RushRecovery : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "RushRecovery"; }
+	};
+
+
+
+	// 対峙
+	class Confront : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Melee:Confront"; }
+
+	private:
+		float _fDuration;// 対峙時間
+		int _direction;// 1:右回り, -1:左回り
+	};
+
+
+
+	// 反撃
+	class CounterAttack : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		void Exit(Enemy* owner) override;
+		const char* GetName() override { return "Melee:CounterAttack"; }
+		//STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
+
+	private:
+		bool _bHasCollision;
 	};
 }
 

@@ -1,5 +1,7 @@
 #pragma once	// .hの先頭に記述。#includeでこのファイルを何度読み込みしても、1度しか読み込まない
 #include <math.h>
+#include <random>
+#include <algorithm>
 #include "DxLib.h"
 
 // 計算用マクロ
@@ -10,8 +12,6 @@
 // degreeとradianの変換
 static constexpr auto DEGREE_TO_RADIAN = DX_PI_F / 180.0f;
 static constexpr auto RADIAN_TO_DEGREE = 180.0f / DX_PI_F;
-
-class Character;
 
 // 当たり判定用。2つのboxが当たったかを判定
 // 当たっていたら1, 当たっていなかったら0を返す
@@ -60,3 +60,112 @@ struct CircleFloor
 	// 円の境界までの距離を計算
 	float GetDistEdge(const VECTOR& point) const;
 };
+
+
+
+// 汎用数学・計算ユーティリティ
+#undef max
+#undef min
+namespace mymath
+{
+	// 線形補間 : tを(0,1)にクランプしてstartとendの間を補間する
+	inline float Lerp(float start, float end, float t)
+	{
+		t = std::max(0.0f, std::min(1.0f, t));
+		return start + (end - start) * t;
+	}
+
+	// ベクトル線形補間 : tを(0,1)にクランプしてstartとendの間を補間する
+	inline VECTOR VectorLerp(const VECTOR& start, const VECTOR& end, float t)
+	{
+		t = std::max(0.0f, std::min(1.0f, t));
+		return VAdd(start, VScale(VSub(end, start), t));
+	}
+
+	// 角度正規化 : 角度(ラジアン)を(-DX_PI_F, +DX_PI_F)の範囲に収める
+	inline float WrapAngle(float angle)
+	{
+		while (angle > DX_PI_F)
+		{
+			angle -= 2.0f * DX_PI_F;
+		}
+		while (angle < -DX_PI_F)
+		{
+			angle += 2.0f * DX_PI_F;
+		}
+		return angle;
+	}
+
+	// 乱数生成 : (min, max)の範囲でランダムなfloatを返す
+	inline float RandomRange(float min, float max)
+	{
+		static std::mt19937 engine(std::random_device{}());
+		std::uniform_real_distribution<float> dist(min, max);
+		return dist(engine);
+	}
+
+	// Y成分を除去して水平方向の単位ベクトルを返す(長さが極小の場合はゼロベクトル)
+	inline VECTOR FlattenVector(const VECTOR& v)
+	{
+		VECTOR flat = v;
+		flat.y = 0.0f;
+		if (VSquareSize(flat) > 0.0001f)
+		{
+			return VNorm(flat);
+		}
+		return VGet(0.0f, 0.0f, 0.0f);
+	}
+
+	// DrawLine3Dを組み合わせて3D空間に円を描画する関数
+	// vCenter:中心座標, fRadius:半径, color:色, segment:分割数
+	inline void DrawCircle3D(const VECTOR& vCenter, float fRadius, unsigned int color, int segments)
+	{
+		float step = DX_TWO_PI_F / segments;
+
+		VECTOR vPrev = VGet(
+			vCenter.x + sinf(0.0f) * fRadius,
+			vCenter.y,
+			vCenter.z + cosf(0.0f) * fRadius
+		);
+
+		for (int i = 1; i <= segments; ++i)
+		{
+			float angle = step * i;
+			VECTOR vNext = VGet(
+				vCenter.x + sinf(angle) * fRadius,
+				vCenter.y,
+				vCenter.z + cosf(angle) * fRadius
+			);
+			DrawLine3D(vPrev, vNext, color);
+			vPrev = vNext;
+		}
+	}
+
+
+	// DrawLine3Dを組み合わせて3D空間に扇形を描画する関数
+	// vCenter:中心座標, vDir:基準の向きベクトル, fRadius:半径, fHalfAngleDeg:半角(度), color:色, segments:分割数
+	inline void DrawFan3D(const VECTOR& vCenter, const VECTOR& vDir, float fRadius, float fHalfAngleDeg, unsigned int color, int segments)
+	{
+		float halfAngleRad = fHalfAngleDeg * DEGREE_TO_RADIAN;
+		float currentDirAngle = atan2f(vDir.x, vDir.z);
+		float startAngle = currentDirAngle - halfAngleRad;
+		float totalAngle = halfAngleRad * 2.0f;
+
+		VECTOR vLeftEdge = VAdd(vCenter, VGet(sinf(startAngle) * fRadius, 0.0f, cosf(startAngle) * fRadius));
+		float  endAngle = startAngle + totalAngle;
+		VECTOR vRightEdge = VAdd(vCenter, VGet(sinf(endAngle) * fRadius, 0.0f, cosf(endAngle) * fRadius));
+
+		DrawLine3D(vCenter, vLeftEdge, color);
+		DrawLine3D(vCenter, vRightEdge, color);
+
+		VECTOR vPrev = vLeftEdge;
+		for (int i = 1; i <= segments; ++i)
+		{
+			float ratio = static_cast<float>(i) / static_cast<float>(segments);
+			float angle = startAngle + totalAngle * ratio;
+			VECTOR vNext = VAdd(vCenter, VGet(sinf(angle) * fRadius, 0.0f, cosf(angle) * fRadius));
+			DrawLine3D(vPrev, vNext, color);
+			vPrev = vNext;
+		}
+	}
+}

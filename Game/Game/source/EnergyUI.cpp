@@ -4,18 +4,18 @@
 namespace
 {
 	// 画像表示用
-	const int DRAW_X = 0;
-	const int DRAW_Y = 824;
-	const int DRAW_OFFSET_X = 70;
-	const int DRAW_OFFSET_Y = 124;
+	constexpr int DRAW_X = 0;
+	constexpr int DRAW_Y = 824;
+	constexpr int DRAW_OFFSET_X = 70;
+	constexpr int DRAW_OFFSET_Y = 124;
 }
 
 EnergyUI::EnergyUI()
 {
-	_iEnergyFrameHandle = ResourceServer::GetInstance()->GetHandle("energyFrame");
-	_iEnergyHandle1 = ResourceServer::GetInstance()->GetHandle("energy1");
-	_iEnergyHandle2 = ResourceServer::GetInstance()->GetHandle("energy2");
-	_iEnergyHandle3 = ResourceServer::GetInstance()->GetHandle("energy3");
+	_iEnergyFrameHandle = ResourceServer::GetInstance()->GetHandle("EnergyFrame");
+	_iEnergyHandle1 = ResourceServer::GetInstance()->GetHandle("Energy1");
+	_iEnergyHandle2 = ResourceServer::GetInstance()->GetHandle("Energy2");
+	_iEnergyHandle3 = ResourceServer::GetInstance()->GetHandle("Energy3");
 
 	_drawX = DRAW_X + DRAW_OFFSET_X;
 	_drawY = DRAW_Y + DRAW_OFFSET_Y;
@@ -46,6 +46,7 @@ bool EnergyUI::Process()
 
 bool EnergyUI::Render()
 {
+	// Zバッファ無効化
 	SetUseZBuffer3D(FALSE);
 
 	// エネルギーフレーム表示関数
@@ -54,6 +55,7 @@ bool EnergyUI::Render()
 	// エネルギーゲージ表示関数
 	GaugeRatioCalculation();
 
+	// Zバッファ有効化
 	SetUseZBuffer3D(TRUE);
 
 	return true;
@@ -88,7 +90,7 @@ void EnergyUI::EnergyGaugeRender(float ratio)
 {
 	if(ratio <= 0.0f){ return; }	// エネルギーが0以下の場合は描画しない
 
-	// 元画像のサイズを取得
+	// 画像のサイズを取得
 	int graphW, graphH;
 	GetGraphSize(_iEnergyHandle1, &graphW, &graphH);
 

@@ -24,7 +24,7 @@ void PlayerBase::ProcessShieldInput()
     if(IsAttacking() || IsDodging() || IsHitStop()) { return; }
 
     // シールドシステムに入力を渡す
-    _shieldSystem->ProcessInput(_key);
+    //_shieldSystem->ProcessInput(_key);
 }
 
 // シールド処理

@@ -12,6 +12,7 @@ void PlayerBase::DebugRender()
 
 	DrawBaseData();		// 基礎情報表示
 	DrawCoordinate();	// 座標関係の表示
+	DrawDirection();	// 向き表示
 	DrawStatus();		// ステータスを表示
 	DrawParameter();	// パラメーター表示
 	DrawColPos();		// コリジョン情報表示
@@ -39,6 +40,15 @@ void PlayerBase::DrawCoordinate()
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 }
 
+// 向きの表示
+void PlayerBase::DrawDirection()
+{
+	auto color = GetColor(_renderConfig.debugColor.r, _renderConfig.debugColor.g, _renderConfig.debugColor.b);
+
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,"dir = (%5.2f, %5.2f, %5.2f)", _vDir.x, _vDir.y, _vDir.z);
+	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
+}
+
 // ステータス描画
 void PlayerBase::DrawStatus()
 {
@@ -56,7 +66,7 @@ void PlayerBase::DrawParameter()
 {
 	auto color = GetColor(_renderConfig.debugColor.r, _renderConfig.debugColor.g, _renderConfig.debugColor.b);
 
-	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,"Player Life: %.2f/%.2f", _fLife, _fMaxLife);
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,"Player Life: %3.2f/%3.2f", _fLife, _fMaxLife);
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 }
 
@@ -69,15 +79,15 @@ void PlayerBase::DrawColPos()
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 
 	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,
-		"  Top     = (%5.2f, %5.2f, %5.2f)", _vCollisionTop.x, _vCollisionTop.y, _vCollisionTop.z);
+		"  Top     = (%4.2f, %4.2f, %4.2f)", _vCollisionTop.x, _vCollisionTop.y, _vCollisionTop.z);
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 	
 	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,
-		"  Bottom  = (%5.2f, %5.2f, %5.2f)", _vCollisionBottom.x, _vCollisionBottom.y, _vCollisionBottom.z);
+		"  Bottom  = (%4.2f, %4.2f, %4.2f)", _vCollisionBottom.x, _vCollisionBottom.y, _vCollisionBottom.z);
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 
 	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color,
-		"  Radius  = %5.2f", _fCollisionR);
+		"  Radius  = %3.2f", _fCollisionR);
 	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
 }
 
@@ -99,6 +109,12 @@ std::string PlayerBase::GetCurrentStateString() const
 	if(_playerState.shootState != PLAYER_SHOOT_STATE::NONE)
 	{
 		result += " | Shoot:" + GetShootStateString(_playerState.shootState);
+	}
+
+	// 吸収攻撃状態
+	if(_playerState.absorbState != PLAYER_ABSORB_STATE::NONE)
+	{
+		result += " | Absorb:" + GetAbsorbStateString(_playerState.absorbState);
 	}
 
 	// 特殊状態
@@ -133,13 +149,16 @@ std::string PlayerBase::GetAttackStateString(PLAYER_ATTACK_STATE state) const
 {
 	switch(state)
 	{
-		case PLAYER_ATTACK_STATE::NONE:          return "NONE";
-		case PLAYER_ATTACK_STATE::FIRST_ATTACK:  return "FIRST_ATTACK";		// 1段目攻撃
-		case PLAYER_ATTACK_STATE::SECOND_ATTACK: return "SECOND_ATTACK";	// 2段目攻撃
-		case PLAYER_ATTACK_STATE::THIRD_ATTACK:  return "THIRD_ATTACK";		// 3段目攻撃
-		case PLAYER_ATTACK_STATE::FOURTH_ATTACK: return "FOURTH_ATTACK";	// 4段目攻撃
-		case PLAYER_ATTACK_STATE::FIFTH_ATTACK:  return "FIFTH_ATTACK";		// 5段目攻撃
-		default:                                 return "UNKNOWN";
+		case PLAYER_ATTACK_STATE::NONE:					return "NONE";
+		case PLAYER_ATTACK_STATE::FIRST_ATTACK:			return "FIRST_ATTACK";	// 1段目攻撃
+		case PLAYER_ATTACK_STATE::SECOND_ATTACK:		return "SECOND_ATTACK";	// 2段目攻撃
+		case PLAYER_ATTACK_STATE::THIRD_ATTACK:			return "THIRD_ATTACK";	// 3段目攻撃
+		case PLAYER_ATTACK_STATE::FOURTH_ATTACK:		return "FOURTH_ATTACK";	// 4段目攻撃
+		case PLAYER_ATTACK_STATE::FIFTH_ATTACK:			return "FIFTH_ATTACK";	// 5段目攻撃
+		case PLAYER_ATTACK_STATE::AREA_ATTACK:			return "AREA_ATTACK";	// 範囲攻撃
+		case PLAYER_ATTACK_STATE::FIRST_SKILL:			return "FIRST_SKILL";	// スキル1
+		case PLAYER_ATTACK_STATE::SECOND_SKILL:			return "SECOND_SKILL";	// スキル2
+		default:										return "UNKNOWN";
 	}
 }
 
@@ -148,12 +167,25 @@ std::string PlayerBase::GetShootStateString(PLAYER_SHOOT_STATE state) const
 {
 	switch(state)
 	{
-		case PLAYER_SHOOT_STATE::NONE:           return "NONE";
-		case PLAYER_SHOOT_STATE::SHOOT_READY:    return "SHOOT_READY";		// 発射構え
-		case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT: return "RIGHT_ARM_SHOOT";	// 右腕発射
-		case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:  return "LEFT_ARM_SHOOT";	// 左腕発射
-		case PLAYER_SHOOT_STATE::SHOOT_MOVE:     return "SHOOT_MOVE";		// 発射移動
-		default:                                 return "UNKNOWN";
+		case PLAYER_SHOOT_STATE::NONE:				return "NONE";
+		case PLAYER_SHOOT_STATE::SHOOT_READY:		return "SHOOT_READY";		// 発射構え
+		case PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT:	return "RIGHT_ARM_SHOOT";	// 右腕発射
+		case PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT:	return "LEFT_ARM_SHOOT";	// 左腕発射
+		case PLAYER_SHOOT_STATE::SHOOT_MOVE:		return "SHOOT_MOVE";		// 発射移動
+		default:									return "UNKNOWN";
+	}
+}
+
+// 吸収攻撃状態文字列取得
+std::string PlayerBase::GetAbsorbStateString(PLAYER_ABSORB_STATE state) const
+{
+	switch(state)
+	{
+		case PLAYER_ABSORB_STATE::NONE:				return "NONE";
+		case PLAYER_ABSORB_STATE::ABSORB_READY:		return "ABSORB_READY";	// 吸収構え
+		case PLAYER_ABSORB_STATE::ABSORB_ACTIVE:	return "ABSORB_ACTIVE";	// 吸収中
+		case PLAYER_ABSORB_STATE::ABSORB_END:		return "ABSORB_END";	// 吸収終了
+		default:									return "UNKNOWN";
 	}
 }
 
