@@ -182,7 +182,11 @@ bool ModeLoading::Initialize()
 		
 	    //　テキストボックス　
 		{
-
+			rs->Register("Aho", "res/Senario/textboxAho.png",    RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Angry", "res/Senario/textboxAngry.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Normal", "res/Senario/textboxNormal.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Scared", "res/Senario/textboxScared.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Kage", "res/Senario/textboxKage.png",   RESOURCE_TYPE::Graph, 1.0f);
 		}
 	}
 
