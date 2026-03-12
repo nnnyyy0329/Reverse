@@ -80,6 +80,7 @@ public:
 	VECTOR GetPlayerStartRot() { return _vPlayerStartRot; }
 
 	Pathfinding::Manager* GetPathfindingManager() { return _pathfindingManager.get(); }
+	void DebugKillAllEnemies();// デバッグ：敵を全滅させる
 
 protected:
 	std::map<std::string, int> _mapModelHandle;// マップモデル用ハンドル(名前、モデルハンドル)

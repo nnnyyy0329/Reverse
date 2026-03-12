@@ -13,7 +13,7 @@ public:
 
 private:
 	static constexpr int TEXT_COUNT = 10;
-	static constexpr int kCharInterval = 2;        // 何フレームごとに次の文字を出すか
+	static constexpr int kCharInterval = 1;        // 何フレームごとに次の文字を出すか
 	static constexpr int kInputWaitFrames = 10;    // 押下を受け付け始めるまでの待ちフレーム
 
 	int _textHandles[TEXT_COUNT] = { -1 };
