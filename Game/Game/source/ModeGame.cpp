@@ -349,7 +349,7 @@ bool ModeGame::Process()
 	if(_currentStageNum == 2 && _stage)
 	{
 		// DEBUG3: キーボードF3 / パッドBACK
-		if(input->IsTrigger(INPUT_ACTION::DEBUG3))
+		if(im.IsTrigger(INPUT_ACTION::DEBUG3))
 		{
 			_stage->DebugKillAllEnemies();
 		}

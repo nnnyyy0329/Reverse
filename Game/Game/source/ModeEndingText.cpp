@@ -71,10 +71,10 @@ bool ModeEndingText::Process()
 	}
 
 	// “ü—Í
-	auto input = InputManager::GetInstance();
+	auto& im = InputManager::GetInstance();
 	const bool canInput = (_frameCount >= kInputWaitFrames);
 
-	if(canInput && (input->IsTrigger(INPUT_ACTION::SELECT) || input->IsTrigger(INPUT_ACTION::ATTACK)))
+	if(canInput && ( im.IsTrigger(INPUT_ACTION::ATTACK)))
 	{
 		if(!_textFullyShown)
 		{
