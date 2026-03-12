@@ -80,11 +80,12 @@ bool ModeLoading::Initialize()
 			rs->Register("SelectChain", "res/UI_Select/ability_lock_chain.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SelectPower", "res/UI_Select/select_power.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SelectBlaster", "res/UI_Select/select_blaster.png", RESOURCE_TYPE::Graph, 1.0f);
+
 			rs->Register("SkillAbsorb", "res/UI_Select/skill_absorb.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SkillAoe", "res/UI_Select/skill_aoe.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SkillPunch", "res/UI_Select/skill_punch.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SkillPiercing", "res/UI_Select/skill_piercing.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SkillNormal", "res/UI_Select/skill_normal.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillPiercingBullet", "res/UI_Select/skill_piercing.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillNormalBullet", "res/UI_Select/skill_normal.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// “ü—ÍUI 

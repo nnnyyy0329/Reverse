@@ -223,6 +223,9 @@
     <ClCompile Include="source\CameraDollyAddon.cpp">
       <Filter>Camera\Addon</Filter>
     </ClCompile>
+    <ClCompile Include="source\AbilityActionHint.cpp">
+      <Filter>Ability\Action</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -435,6 +438,9 @@
     <ClInclude Include="source\CameraDollyAddon.h">
       <Filter>Camera\Addon</Filter>
     </ClInclude>
+    <ClInclude Include="source\AbilityActionHint.h">
+      <Filter>Ability\Action</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -583,6 +589,9 @@
     </Filter>
     <Filter Include="Camera\Addon">
       <UniqueIdentifier>{39565dc8-1ebf-46a5-9c06-baf2566c1042}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ability\Action">
+      <UniqueIdentifier>{f7e93ea7-fb95-498e-a760-192cfe24b873}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
