@@ -295,7 +295,6 @@ StageBase::StageBase(int stageNum)
 		_currentBGMName = "BGM_Stage02";
 		break;
 	}
-	PlayStageBGM();
 }
 
 StageBase::~StageBase()

@@ -153,6 +153,8 @@ bool ModeGame::Initialize()
 		_bUseCollision = true;
 	}
 
+	_stage->PlayStageBGM();
+
 	return true;
 }
 
@@ -191,6 +193,7 @@ bool ModeGame::Process()
 			// ModeGameOverを追加
 			ModeGameOver* modeGameOver = new ModeGameOver();
 			ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
+			_stage->StopStageBGM();
 			// この後の処理をスキップ
 			return true;
 		}
@@ -608,6 +611,8 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 
 	_cameraManager->Reset();
 
+	_stage->PlayStageBGM();
+
 	// 切り替え完了
 	_bIsStageChanging = false;
 }
@@ -651,6 +656,8 @@ void ModeGame::RestartCurrentStage()
 
 	_cameraManager->SetCameraType(CAMERA_TYPE::GAME_CAMERA);
 	_cameraManager->Reset();
+
+	_stage->PlayStageBGM();
 }
 
 void ModeGame::SetPlayerConfig(VECTOR vPos, VECTOR vRot)

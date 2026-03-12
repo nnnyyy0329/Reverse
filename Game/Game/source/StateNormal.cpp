@@ -223,7 +223,7 @@ namespace Normal
 		}
 
 		// SE
-		SoundServer::GetInstance()->Play("SE_En_Notice", DX_PLAYTYPE_BACK);
+		//SoundServer::GetInstance()->Play("SE_En_Notice", DX_PLAYTYPE_BACK);
 	}
 
 	std::shared_ptr<EnemyState> Notice::Update(Enemy* owner)
