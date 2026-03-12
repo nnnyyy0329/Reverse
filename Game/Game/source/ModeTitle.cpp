@@ -86,6 +86,10 @@ bool ModeTitle::Process()
 {
 	// フェードの内部カウンタを進める
 	AdvanceFade();
+	if(IsFadeActive() && GetFadeAlpha() >= 255)
+	{
+		StopFade(); // 以降自動的にフェードアウトしない
+	}
 
 	auto& im = InputManager::GetInstance();
 

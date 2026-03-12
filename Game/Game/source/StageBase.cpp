@@ -309,7 +309,7 @@ void StageBase::Process()
 	{
 		if(IsAllEnemiesDefeated())
 		{
-			_triggerList.clear();
+			//_triggerList.clear();
 		}
 	}
 
