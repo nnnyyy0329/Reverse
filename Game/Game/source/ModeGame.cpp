@@ -374,7 +374,9 @@ bool ModeGame::Render()
 		_lightManager->SetDirectionalLightDir(VGet(-1.0f, -1.0f, -1.0f));
 
 		// グローバルアンビエントライト設定
-		_lightManager->SetAmbientLight(GetColorF(0.3f, 0.3f, 0.3f, 0.0f));
+		_lightManager->SetAmbientLight(GetColorF(0.8f, 0.8f, 0.8f, 0.0f));
+
+		//SetLightDifColor(GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 	}
 
 	// カメラ設定
@@ -511,7 +513,7 @@ void ModeGame::InitializeLights()
 
 	// ライトを追加
 	// test
-	AddPointLight(VGet(0.0f, 1000.0f, 0.0f), 1500.0f, GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
+	AddPointLight(VGet(0.0f, 500.0f, 0.0f), 3000.0f, GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void ModeGame::ProcessLights()

@@ -223,9 +223,11 @@
     <ClCompile Include="source\CameraDollyAddon.cpp">
       <Filter>Camera\Addon</Filter>
     </ClCompile>
-    <ClCompile Include="source\EventCamera.cpp" />
     <ClCompile Include="source\AbilityActionHint.cpp">
       <Filter>Ability\Action</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EventCamera.cpp">
+      <Filter>Camera\Addon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -439,9 +441,11 @@
     <ClInclude Include="source\CameraDollyAddon.h">
       <Filter>Camera\Addon</Filter>
     </ClInclude>
-    <ClInclude Include="source\EventCamera.h" />
     <ClInclude Include="source\AbilityActionHint.h">
       <Filter>Ability\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EventCamera.h">
+      <Filter>Camera\Addon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
