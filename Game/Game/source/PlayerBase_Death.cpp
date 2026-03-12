@@ -9,6 +9,9 @@ void PlayerBase::CallDeath()
 
 	// 死亡状態の更新
 	UpdateDeathState();
+
+	// 死亡後の処理
+	UpdateAfterDeath();
 }
 
 void PlayerBase::ProcessDeath()
@@ -69,6 +72,14 @@ void PlayerBase::UpdateDeathState()
 		// 死亡フラグを立てる
 		_bIsDead = true;				
 	}
+}
+
+void PlayerBase::UpdateAfterDeath()
+{
+	if(!IsDeath()){ return; }
+
+	// 状態リセット
+	_playerState.StateReset();
 }
 
 bool PlayerBase::IsDeath()const

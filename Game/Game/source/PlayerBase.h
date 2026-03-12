@@ -463,6 +463,9 @@ protected:	// 死亡関係 --- 今後クラスで分ける予定 ------------------------------
 	/// @brief 死亡状態更新
 	void UpdateDeathState();
 
+	/// @brief 死亡後の処理
+	void UpdateAfterDeath();
+
 	/// @brief 死亡したかチェック
 	bool IsDeath()const;
 

@@ -33,6 +33,9 @@ bool GameObjectBase::Process()
 	// ƒAƒjƒ[ƒVƒ‡ƒ“XV
 	_animManager.Update();
 
+	// ƒ^[ƒQƒbƒg‚ÌYŽ²‰ñ“]Šp“x‚ðŒvŽZ‚µ‚Ä‰ñ“]‚É”½‰f
+	//CalcTargetY();
+
 	return true;
 }
 
@@ -44,6 +47,7 @@ bool GameObjectBase::Render()
 	{
 		// ‰ñ“]s—ñ‚ðì¬
 		VECTOR vRot = { 0, 0, 0 };
+		//vRot.y = CalcTargetY();// ƒ‚ƒfƒ‹•W€‚Å‚Ç‚¿‚ç‚ðŒü‚¢‚Ä‚¢‚é‚©‚ÅŽ®‚ª•Ï‚í‚é
 		vRot.y = atan2(_vDir.x * -1, _vDir.z * -1);// ƒ‚ƒfƒ‹•W€‚Å‚Ç‚¿‚ç‚ðŒü‚¢‚Ä‚¢‚é‚©‚ÅŽ®‚ª•Ï‚í‚é
 		MATRIX mRotY = MGetRotY(vRot.y);
 
@@ -67,4 +71,56 @@ bool GameObjectBase::Render()
 	}
 
 	return true;
+}
+
+float GameObjectBase::CalcTargetY()
+{
+	// ‰ñ“]ˆ—
+	float _rotationY = atan2f(_vDir.x * -1.0f, _vDir.z * -1.0f); // Œ»Ý‚ÌYŽ²‰ñ“]Šp“x
+
+	// –Ú•WŠp“x‚ÆŒ»ÝŠp“x‚Ì·•ª‚ðŒvŽZ
+	float angleDiff = _rotationY;
+
+	// Šp“x·‚ð -ƒÎ`ƒÎ ‚Ì”ÍˆÍ‚É³‹K‰»
+	while(angleDiff > DX_PI_F)
+	{
+		angleDiff -= DX_TWO_PI_F;
+	}
+	while(angleDiff < -DX_PI_F)
+	{
+		angleDiff += DX_TWO_PI_F;
+	}
+
+	// 20“x‚ðƒ‰ƒWƒAƒ“‚É•ÏŠ·i“x¨ƒ‰ƒWƒAƒ“j
+	float rotationStep = DEG2RAD(_vMove.y);
+
+	if(fabsf(angleDiff) > rotationStep)
+	{
+		// ·•ª‚ª‘å‚«‚¢ê‡‚Í20“x‚¸‚Â‰ñ“]
+		if(angleDiff > 0.0f)
+		{
+			_rotationY += rotationStep;
+		}
+		else
+		{
+			_rotationY -= rotationStep;
+		}
+	}
+	else
+	{
+		// ·•ª‚ª¬‚³‚¢ê‡‚Í–Ú•WŠp“x‚É‚Ò‚Á‚½‚è‡‚í‚¹‚é
+		_rotationY = _rotationY;
+	}
+
+	// Šp“x‚ð -ƒÎ`ƒÎ ‚Ì”ÍˆÍ‚É³‹K‰»
+	while(_rotationY > DX_PI_F)
+	{
+		_rotationY -= DX_TWO_PI_F;
+	}
+	while(_rotationY < -DX_PI_F)
+	{
+		_rotationY += DX_TWO_PI_F;
+	}
+
+	return _rotationY;
 }

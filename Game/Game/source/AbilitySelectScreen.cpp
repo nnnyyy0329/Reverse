@@ -43,6 +43,11 @@ AbilitySelectScreen::AbilitySelectScreen()
 	_iCurrentSelection = 0;								// 現在選択中のアビリティ
 	_iSelectedAbility = 0;								// 決定されたアビリティ
 
+	// 描画位置の初期化
+	_fDrawCenterX = 0.0f;		// 描画中心X座標
+	_fSecondDrawCenterX = 0.0f;	// 2つ目の描画中心X座標
+
+	// 選択完了と画面表示のフラグの初期化
 	_bIsSelectComplete = false;				// 選択完了フラグ
 	_bIsScreenActive = false;				// 選択画面表示フラグ
 
@@ -85,7 +90,7 @@ bool AbilitySelectScreen::Render()
 	// アクションヒントの表示
 	if(_abilityActionHint)
 	{
-		_abilityActionHint->ActionHintRender(_iSelectedAbility, GetSelectedAbility());
+		_abilityActionHint->ActionHintRender(_iSelectedAbility, _fDrawCenterX, _fSecondDrawCenterX);
 	}
 
 	// 選択中じゃない場合は選択画面表示しない
@@ -195,6 +200,10 @@ void AbilitySelectScreen::SelectRender()
 		SelectRenderConfig::SELECT_DRAW_X + graphW + SelectRenderConfig::DRAW_OFFSET_X
 	};
 	int selectY = SelectRenderConfig::SELECT_DRAW_Y; // 表示するY座標
+
+	// 表示位置の中心を計算
+	_fDrawCenterX = static_cast<float>(selectX[0] + graphW / 2.0f);
+	_fSecondDrawCenterX = static_cast<float>(selectX[1] + graphW / 2.0f);
 
 	// アビリティ画像を描画
 	DrawGraph(selectX[0], selectY, _iHandle2, TRUE);

@@ -111,6 +111,11 @@ protected:
 	int _iCurrentSelection;			// 現在選択中のアビリティ
 	int _iSelectedAbility;			// 選択されたアビリティ
 
+	// 表示位置関連
+	float _fDrawCenterX;		// 描画中心X座標
+	float _fSecondDrawCenterX;	// 2つ目の描画中心X座標
+	
+	// 選択完了と画面表示のフラグ
 	bool _bIsSelectComplete;	// 選択完了フラグ
 	bool _bIsScreenActive;		// 選択画面表示フラグ
 

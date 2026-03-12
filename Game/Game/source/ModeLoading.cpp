@@ -26,9 +26,9 @@ bool ModeLoading::Initialize()
 			rs->Register("SurfacePlayerAbsorb", "effect/SurfacePlayer/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 			// 裏プレイヤーの攻撃エフェクト
-			rs->Register("InteriorPlayerAttack_123", "effect/InteriorPlayer/NChange_Attack.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("InteriorPlayerFourthAttack", "effect/InteriorPlayer/NChange_Fourth_Attack.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("InteriorPlayerFifthAttack", "effect/InteriorPlayer/NChange_Attack_Scallup.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("InteriorPlayerAttack_123",	"effect/InteriorPlayer/NChange_Attack.efkefc",			RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerFourthAttack",	"effect/InteriorPlayer/NChange_Fourth_Attack.efkefc",	RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("InteriorPlayerFifthAttack",	"effect/InteriorPlayer/NChange_Attack_Scallup.efkefc",	RESOURCE_TYPE::Effect, 20.0f);
 
 			// 表プレイヤーの攻撃ヒットエフェクト
 			rs->Register("SurfacePlayerAttackHit1", "effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
@@ -61,55 +61,55 @@ bool ModeLoading::Initialize()
 		// プレイヤー関連
 		{
 			// プレイヤーモデル
-			rs->Register("SurfacePlayer", "res/Player/SK_player_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("InteriorPlayer", "res/Player/SK_player_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("BulletPlayer", "res/Player/SK_player_02_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SurfacePlayer",	"res/Player/SK_player_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("InteriorPlayer",	"res/Player/SK_player_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("BulletPlayer",	"res/Player/SK_player_02_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
-			rs->Register("PlayerLifeBar", "res/Player/UI/player_life_bar.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("PlayerLifeBarFrame", "res/Player/UI/player_life_bar_frame.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("PlayerLifeBar",		"res/Player/UI/player_life_bar.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("PlayerLifeBarFrame",	"res/Player/UI/player_life_bar_frame.png",	RESOURCE_TYPE::Graph, 1.0f);
 
 		}
 
 		// 能力選択画面用
 		{
-			rs->Register("select1", "res/SelectItem/normal.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("select2", "res/SelectItem/melee.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("select3", "res/SelectItem/bullet.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("select1", "res/SelectItem/normal.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("select2", "res/SelectItem/melee.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("select3", "res/SelectItem/bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
 
-			rs->Register("SelectChain", "res/UI_Select/ability_lock_chain.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SelectPower", "res/UI_Select/select_power.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SelectBlaster", "res/UI_Select/select_blaster.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SelectChain",		"res/UI_Select/ability_lock_chain.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SelectPower",		"res/UI_Select/select_power.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SelectBlaster",	"res/UI_Select/select_blaster.png",		RESOURCE_TYPE::Graph, 1.0f);
 
-			rs->Register("SkillAbsorb", "res/UI_Select/skill_absorb.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SkillAoe", "res/UI_Select/skill_aoe.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SkillPunch", "res/UI_Select/skill_punch.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SkillPiercingBullet", "res/UI_Select/skill_piercing.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SkillNormalBullet", "res/UI_Select/skill_normal.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillAbsorb",			"res/UI_Select/skill_absorb.png",			RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillAoe",			"res/UI_Select/skill_aoe.png",				RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillPunch",			"res/UI_Select/skill_punch.png",			RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillPiercingBullet",	"res/UI_Select/skill_piercing_bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillNormalBullet",	"res/UI_Select/skill_normal_bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// 入力UI 
 		{
-			rs->Register("InputA", "res/UI_Input/input_A.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputB", "res/UI_Input/input_B.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputX", "res/UI_Input/input_X.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputY", "res/UI_Input/input_Y.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputLT", "res/UI_Input/input_LT.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputRT", "res/UI_Input/input_RT.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("InputA",	"res/UI_Input/input_A.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("InputB",	"res/UI_Input/input_B.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("InputX",	"res/UI_Input/input_X.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("InputY",	"res/UI_Input/input_Y.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("InputLT", "res/UI_Input/input_LT.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("InputRT", "res/UI_Input/input_RT.png",	RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// エネルギーUI用
 		{
-			rs->Register("EnergyFrame", "res/Energy/energy_frame.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("Energy1", "res/Energy/energy_1r.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("Energy2", "res/Energy/energy_2r.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("Energy3", "res/Energy/energy_3r.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("EnergyFrame", "res/Energy/energy_frame.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy1",		"res/Energy/energy_1r.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy2",		"res/Energy/energy_2r.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy3",		"res/Energy/energy_3r.png",		RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// スタミナUI用
 		{
-			rs->Register("StaminaFrame", "res/StaminaUI/staminaFrame.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("Stamina", "res/StaminaUI/Stamina.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("StaminaFrame",	"res/StaminaUI/staminaFrame.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Stamina",			"res/StaminaUI/Stamina.png",		RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// ステージモデル
@@ -147,20 +147,20 @@ bool ModeLoading::Initialize()
 			rs->Register("BGM_Stage02", "sound/BGM/stage_02.mp3", RESOURCE_TYPE::Sound, 1.0f);
 
 			// SE
-			rs->Register("SE_En_Damage", "sound/SE/en_common/en_damage.mp3", RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("SE_En_Dead", "sound/SE/en_common/en_dead.mp3", RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("SE_En_Down", "sound/SE/en_common/en_down.mp3", RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("SE_Melee_Attanck", "sound/SE/en_melee/en_melee_attack.mp3", RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("SE_Ranged_Shot", "sound/SE/en_ranged/en_ranged_shot.mp3", RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("SE_En_Notice", "sound/SE/en_common/en_common_notice.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_En_Damage",		"sound/SE/en_common/en_damage.mp3",			RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_En_Dead",			"sound/SE/en_common/en_dead.mp3",			RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_En_Down",			"sound/SE/en_common/en_down.mp3",			RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_Melee_Attanck",	"sound/SE/en_melee/en_melee_attack.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_Ranged_Shot",		"sound/SE/en_ranged/en_ranged_shot.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_En_Notice",		"sound/SE/en_common/en_common_notice.mp3",	RESOURCE_TYPE::Sound, 1.0f);
 
 			// プレイヤーの攻撃
-			rs->Register("sPlayerFirstAttack", "sound/SE/sPlayerFirstAttack/sPlayerFirstAttack1.mp3", RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("iPlayerAttack", "sound/SE/iPlayerAttack/iPlayerAttack1.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("sPlayerFirstAttack",	"sound/SE/sPlayerFirstAttack/sPlayerFirstAttack1.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("iPlayerAttack",		"sound/SE/iPlayerAttack/iPlayerAttack1.mp3",			RESOURCE_TYPE::Sound, 1.0f);
 
 			// プレイヤー変身
-			rs->Register("ChangePower", "sound/SE/changePlayer/knuckleSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("ChangeBlaster", "sound/SE/changePlayer/blasterSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("ChangePower",		"sound/SE/changePlayer/knuckleSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("ChangeBlaster",	"sound/SE/changePlayer/blasterSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
 
 		}
 

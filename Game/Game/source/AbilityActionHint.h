@@ -15,7 +15,7 @@ public:
 	bool Render();
 
 	/// @brief アクションヒントの表示
-	void ActionHintRender(int selectedIndex, ABILITY_TYPE type);
+	void ActionHintRender(int selectedIndex, float selectGraphSenterX, float secondSelectGraphCenterX);
 
 private:
 
