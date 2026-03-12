@@ -221,6 +221,9 @@ namespace Normal
 		{
 			animManager->ChangeAnimationByName("Nenemy_look_00", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_FAST);
 		}
+
+		// SE
+		SoundServer::GetInstance()->Play("SE_En_Notice", DX_PLAYTYPE_BACK);
 	}
 
 	std::shared_ptr<EnemyState> Notice::Update(Enemy* owner)

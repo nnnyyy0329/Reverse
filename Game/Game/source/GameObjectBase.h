@@ -33,7 +33,9 @@ public:
 	void SetMove(VECTOR v) { _vMove = v; }
 
 	AnimManager* GetAnimManager() { return &_animManager; }
-	const AnimManager* GetAnimManagerConst() const { return &_animManager; }// const”Å
+	const AnimManager* GetAnimManager() const { return &_animManager; }
+
+	float GetRotY() { return atan2f(_vDir.x, _vDir.z); }
 
 protected:
 	// ˆÊ’uŠÖ˜A

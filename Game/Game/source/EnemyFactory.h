@@ -91,10 +91,10 @@ public:
 			{
 				if (e->GetTarget())
 				{
-					return std::make_shared<Melee::Approach>();
+					return std::make_shared<Normal::Approach>();
 				}
 
-				return std::make_shared<Melee::Idle>();
+				return std::make_shared<Normal::Idle>();
 			});
 
 			// ƒ_ƒEƒ“Œã‚Ì‘JˆÚæ‚ğŒˆ’è
@@ -107,10 +107,10 @@ public:
 
 				if (e->GetTarget())
 				{
-					return std::make_shared<Melee::Approach>();
+					return std::make_shared<Normal::Approach>();
 				}
 
-				return std::make_shared<Melee::Idle>();
+				return std::make_shared<Normal::Idle>();
 			});
 
 		break;
@@ -134,6 +134,17 @@ public:
 			param.animDown = "Senemy_damage_01";
 
 			enemy->SetEnemyParam(param);
+
+			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
+			enemy->SetAfterDamageStateSelector([](Enemy* e, int comboCnt)->std::shared_ptr<EnemyState>
+			{
+				if (e->GetTarget())
+				{
+					return std::make_shared<Ranged::Approach>();
+				}
+
+				return std::make_shared<Ranged::Idle>();
+			});
 
 			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
 			enemy->SetAfterDownStateSelector([](Enemy* e)->std::shared_ptr<EnemyState>
