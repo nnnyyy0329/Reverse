@@ -77,7 +77,7 @@ public:
 	VECTOR GetPlayerStartPos() { return _vPlayerStartPos; }
 	VECTOR GetPlayerStartRot() { return _vPlayerStartRot; }
 
-
+	void DebugKillAllEnemies();// デバッグ：敵を全滅させる
 
 protected:
 	std::map<std::string, int> _mapModelHandle;// マップモデル用ハンドル(名前、モデルハンドル)

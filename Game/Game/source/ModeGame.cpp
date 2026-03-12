@@ -5,6 +5,8 @@
 #include "ModeStageChange.h"
 #include "ModeGameOver.h"
 #include "ModeScenario.h"
+#include "ModeLogo.h" 
+#include "ModeEndingText.h"
 
 #include "CharaBase.h"
 #include "StageBase.h"
@@ -191,8 +193,13 @@ bool ModeGame::Process()
 	{
 		StopFade(); // 以降自動的にフェードアウトしない
 	}
+
+
 	// InputManagerから入力を取得
 	InputManager* input = InputManager::GetInstance();
+
+
+
 
 	// ゲームオーバーチェック
 	{
@@ -364,6 +371,23 @@ bool ModeGame::Process()
 		}
 	}
 
+	// ステージ3：ボタン1つで敵全滅 → 全滅後にLOGOへ戻す
+	if(_currentStageNum == 2 && _stage)
+	{
+		// DEBUG3: キーボードF3 / パッドBACK
+		if(input->IsTrigger(INPUT_ACTION::DEBUG3))
+		{
+			_stage->DebugKillAllEnemies();
+		}
+
+		// 全滅したら最初のLOGOへ（疑似的にゲーム終了）
+		if(_stage->IsAllEnemiesDefeated())
+		{
+			ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
+			ModeServer::GetInstance()->Del(this);
+			return true;
+		}
+	}
 
 	// エフェクト更新
 	EffectServer::GetInstance()->Update();

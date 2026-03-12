@@ -209,6 +209,9 @@
       <Filter>Camera</Filter>
     </ClCompile>
     <ClCompile Include="source\Pathfinding.cpp" />
+    <ClCompile Include="source\ModeEndingText.cpp">
+      <Filter>Mode\Ending</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -407,6 +410,9 @@
       <Filter>Camera</Filter>
     </ClInclude>
     <ClInclude Include="source\Pathfinding.h" />
+    <ClInclude Include="source\ModeEndingText.h">
+      <Filter>Mode\Ending</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -543,6 +549,9 @@
     </Filter>
     <Filter Include="Mode\ModeTextBox">
       <UniqueIdentifier>{7569f880-1bfa-403d-a4e0-3b44f6293292}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Ending">
+      <UniqueIdentifier>{b0d99bd7-07da-4af2-a2a3-3900ea9d10fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

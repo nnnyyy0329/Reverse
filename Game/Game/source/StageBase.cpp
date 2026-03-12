@@ -456,3 +456,18 @@ void StageBase::StopStageBGM()
 	// BGMを停止
 	SoundServer::GetInstance()->Stop(_currentBGMName);
 }
+
+void StageBase::DebugKillAllEnemies()
+{
+	for(auto& enemy : _stageEnemies)
+	{
+		if(!enemy) { continue; }
+
+		// まずHPを0にして死亡扱いに寄せる（既存ロジック依存のため保険）
+		enemy->SetLife(0.0f);
+		enemy->SetIsDead(true);
+
+		// StageBase::Process の erase 条件に乗せる
+		enemy->EnableRemove();
+	}
+}

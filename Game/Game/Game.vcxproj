@@ -181,6 +181,7 @@
     </ClCompile>
     <ClCompile Include="source\LightManager.cpp" />
     <ClCompile Include="source\MenuItemBase.cpp" />
+    <ClCompile Include="source\ModeEndingText.cpp" />
     <ClCompile Include="source\ModeGame.cpp" />
     <ClCompile Include="source\ModeGameOver.cpp" />
     <ClCompile Include="source\ModeGame_CheckHit.cpp" />
@@ -296,6 +297,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="source\ModeEndingText.h" />
     <ClInclude Include="source\ModeGame.h" />
     <ClInclude Include="source\ModeGameOver.h" />
     <ClInclude Include="source\ModeLoading.h" />
