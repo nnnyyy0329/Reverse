@@ -10,6 +10,7 @@ public:
 	typedef ModeBase base;
 
 	explicit ModeTextBox(const std::string& graphKey, std::function<void()> onClosed = nullptr);
+	explicit ModeTextBox(const std::string& graphKey, const std::string& text, std::function<void()> onClosed = nullptr);
 
 	virtual bool Initialize() override;
 	virtual bool Terminate() override;
@@ -18,13 +19,11 @@ public:
 
 private:
 	std::string _graphKey;
+	std::string _text;
 	std::function<void()> _onClosed;
 
 	int _graphHandle = -1;
 
 	int _frameCount = 0;
 	bool _bClose = false;
-
-
-	// text ‚Ü‚½Œã‚Å
 };

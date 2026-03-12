@@ -2,10 +2,17 @@
 
 ModeTextBox::ModeTextBox(const std::string& graphKey, std::function<void()> onClosed)
 	: _graphKey(graphKey)
+	, _text()
 	, _onClosed(std::move(onClosed))
 {
 }
 
+ModeTextBox::ModeTextBox(const std::string& graphKey, const std::string& text, std::function<void()> onClosed)
+	: _graphKey(graphKey)
+	, _text(text)
+	, _onClosed(std::move(onClosed))
+{
+}
 bool ModeTextBox::Initialize()
 {
 	if(!base::Initialize()) { return false; }
@@ -59,6 +66,8 @@ bool ModeTextBox::Render()
 		return true;
 	}
 
+
+
 	int w = 0;
 	int h = 0;
 	GetGraphSize(_graphHandle, &w, &h);
@@ -85,6 +94,31 @@ bool ModeTextBox::Render()
 	const int y = screenH - drawH - marginBottom;
 
 	DrawExtendGraph(x, y, x + drawW, y + drawH, _graphHandle, TRUE);
+
+	// テキスト描画（追加）
+	if(!_text.empty())
+	{
+		SetFontSize(32);
+
+		const int textX = x + 120;
+		const int textY = y + 70;
+
+		// アウトライン（黒）
+		const int colOutline = GetColor(0, 0, 0);
+		for(int oy = -2; oy <= 2; ++oy)
+		{
+			for(int ox = -2; ox <= 2; ++ox)
+			{
+				if(ox == 0 && oy == 0) { continue; }
+				DrawFormatString(textX + ox, textY + oy, colOutline, "%s", _text.c_str());
+			}
+		}
+
+		// 本体（白）
+		DrawFormatString(textX, textY, GetColor(255, 255, 255), "%s", _text.c_str());
+
+		SetFontSize(16);
+	}
 
 	return true;
 }
