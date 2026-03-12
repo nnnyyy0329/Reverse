@@ -649,6 +649,7 @@ void ModeGame::RestartCurrentStage()
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
 
+	_cameraManager->SetCameraType(CAMERA_TYPE::GAME_CAMERA);
 	_cameraManager->Reset();
 }
 

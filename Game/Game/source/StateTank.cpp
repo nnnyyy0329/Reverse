@@ -35,9 +35,9 @@ namespace
 
 	// 突進攻撃
 	constexpr auto CHARGE_PREPARE_TIME = 10.0f;// 突進準備時間
-	constexpr auto CHARGE_EXECUTE_TIME = 120.0f;// 突進の最大時間
+	constexpr auto CHARGE_EXECUTE_TIME = 90.0f;// 突進の最大時間
 	constexpr auto CHARGE_RECOVERY_TIME = 90.0f;// 突進後の硬直時間
-	constexpr auto CHARGE_SPEED = 10.0f;// 突進速度
+	constexpr auto CHARGE_SPEED = 8.0f;// 突進速度
 	constexpr auto CHARGE_DAMAGE = 2.0f;// 突進ダメージ
 	constexpr auto CHARGE_ARRIVE_DIST = 20.0f;// 突進完了とみなす距離
 
@@ -54,7 +54,10 @@ namespace
 	constexpr auto ATTACK_WAIT_TIME = 30.0f;// 攻撃選択後の待機時間
 
 	// アニメーション設定
-	constexpr auto BLEND_FRAME = 1.0f;// アニメーションブレンドフレーム数
+	// アニメーション制御用定数
+	constexpr auto BLEND_FRAME = 10.0f;// アニメーションブレンドフレーム数
+	constexpr auto ANIM_LOOP_COUNT = 0;// アニメーションループ回数(0=無限)
+	constexpr auto ANIM_PLAY_COUNT = 1;// アニメーション再生回数
 
 	// 攻撃コリジョン設定
 	EnemyAttackSettings MakeFirstAttackSettings()
@@ -107,7 +110,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, 0);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -136,7 +139,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_walk_01", BLEND_FRAME, 0);
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 
 		// 経路情報をリセット
@@ -276,7 +279,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, 0);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -311,7 +314,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_attack_00", BLEND_FRAME, 1);
+			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT);
 		}
 
 		// 攻撃コリジョン生成
@@ -368,7 +371,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, 0);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -400,7 +403,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, 0);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -435,7 +438,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_attack_00", BLEND_FRAME, 1);
+			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT);
 		}
 
 		// 攻撃コリジョン生成
@@ -494,7 +497,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, 0);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -537,7 +540,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, 0);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -571,7 +574,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_attack_00", BLEND_FRAME, 1);
+			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT);
 		}
 
 		// 攻撃コリジョン生成
@@ -627,7 +630,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, 0);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -657,7 +660,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, 0);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -701,7 +704,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_attack_00", BLEND_FRAME, 1);
+			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT);
 		}
 	}
 
@@ -744,7 +747,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_idle_01", BLEND_FRAME, 0);
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 

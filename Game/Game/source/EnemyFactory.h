@@ -176,13 +176,38 @@ public:
 			param.fIdleTime = TANK_IDLE_TIME;
 
 			// 共通ステートのアニメーション名を設定
-			param.animDamage = "Nenemy_damage_00";
-			param.animDead = "Nenemy_dead_00";
-			param.animDown = "Nenemy_damagge_01";
+			param.animDamage = "enemy_damage_00";
+			param.animDead = "enemy_dead_00";
+			param.animDown = "enemy_damage_01";
 
 			enemy->SetEnemyParam(param);
 
 			// 被ダメ後の遷移先を決定
+			enemy->SetAfterDamageStateSelector([](Enemy* e, int comboCnt)->std::shared_ptr<EnemyState>
+			{
+				if (e->GetTarget())
+				{
+					return std::make_shared<Tank::Approach>();
+				}
+
+				return std::make_shared<Tank::Idle>();
+			});
+
+			// ダウン後の遷移先を決定
+			enemy->SetAfterDownStateSelector([](Enemy* e)->std::shared_ptr<EnemyState>
+			{
+				if (e->IsDead())
+				{
+					return std::make_shared<Common::Dead>();
+				}
+
+				if (e->GetTarget())
+				{
+					return std::make_shared<Tank::Approach>();
+				}
+
+				return std::make_shared<Tank::Idle>();
+			});
 
 		break;
 		}

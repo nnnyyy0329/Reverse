@@ -502,6 +502,8 @@ protected:
 
 	// ƒJƒƒ‰Šp“x
 	float _cameraAngle;
+
+	bool _bDeathCameraSet = false;
 };
 
 
