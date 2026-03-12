@@ -36,20 +36,35 @@ void PlayerBase::ProcessDeath()
 
 void PlayerBase::UpdateDeathState()
 {
-	if(_playerState.combatState == PLAYER_COMBAT_STATE::DEATH)
+	//if(_playerState.combatState == PLAYER_COMBAT_STATE::DEATH)
+	//{
+	//	// アニメーションが完了したかチェック
+	//	AnimManager* animManager = GetAnimManager();
+	//	if(animManager->IsAnimationFinished())
+	//	{
+	//		static int timer = 0;
+	//		timer++;
+	//		if (timer > 60)
+	//		{
+	//			_bIsDeathAnimComplete = true;// 死亡アニメーション完了フラグを立てる
+	//			timer = 0;
+	//		}
+	//	}
+
+	//	// 死亡フラグを立てる
+	//	_bIsDead = true;				
+	//}
+
+	if(_playerState.combatState != PLAYER_COMBAT_STATE::DEATH){ return; }
+	
+	// アニメーションマネージャーを取得
+	AnimManager* animManager = GetAnimManager();	
+
+	// アニメーションが終了したかチェック
+	if(animManager->IsAnimationFinished())
 	{
-		// アニメーションが完了したかチェック
-		AnimManager* animManager = GetAnimManager();
-		if(animManager->IsAnimationFinished())
-		{
-			static int timer = 0;
-			timer++;
-			if (timer > 60)
-			{
-				_bIsDeathAnimComplete = true;// 死亡アニメーション完了フラグを立てる
-				timer = 0;
-			}
-		}
+		// 死亡アニメーション完了フラグを立てる
+		_bIsDeathAnimComplete = true;	
 
 		// 死亡フラグを立てる
 		_bIsDead = true;				

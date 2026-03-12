@@ -24,6 +24,7 @@
 
 #include "AbilitySelectScreen.h"
 #include "AbilitySelectManager.h"
+#include "AbilityActionHint.h"
 
 #include "PlayerManager.h"
 #include "SurfacePlayer.h"
@@ -126,6 +127,9 @@ bool ModeGame::Initialize()
 
 		_abilitySelectManager = std::make_shared<AbilitySelectManager>();
 		_abilitySelectManager->Initialize();
+
+		_abilityActionHint = std::make_shared<AbilityActionHint>();
+		_abilityActionHint->Initialize();
 	}
 
 	// UI初期化
@@ -234,6 +238,7 @@ bool ModeGame::Process()
 
 		_abilitySelectScreen->SetPlayerManager(_playerManager);
 		_abilitySelectScreen->SetPlayerUnlockManager(_playerUnlockManager);
+		_abilitySelectScreen->SetAbilityActionHint(_abilityActionHint);
 
 		_abilitySelectManager->SetAbilitySelectScreen(_abilitySelectScreen);
 		_abilitySelectManager->SetPlayerManager(_playerManager);
@@ -419,6 +424,7 @@ bool ModeGame::Render()
 		_cameraManager->DebugRender();
 		_playerManager->DebugRender();
 		_playerUnlockManager->DebugRender();
+		_abilitySelectScreen->DebugRender();
 
 		// ライト情報
 		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());

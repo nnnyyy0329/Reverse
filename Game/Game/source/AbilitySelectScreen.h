@@ -16,6 +16,7 @@ enum class SelectionState
 /// @brief 前方宣言
 class PlayerManager;
 class PlayerUnlockManager;
+class AbilityActionHint;
 
 /// @brief 能力選択画面クラス
 class AbilitySelectScreen
@@ -29,6 +30,8 @@ public:
 	bool Process();
 	bool Render();
 
+	/// @brief デバッグ描画
+	void DebugRender();
 
 	/* 選択関係関数 */
 	
@@ -53,23 +56,27 @@ public:
 	/// @brief プレイヤータイプに応じて選択可能かどうかをチェック
 	bool IsSelectActiveByPlayerType()const;	
 
+	
+	/* デバッグ表示関連 */
+
+	/// @brief デバッグ用の選択されたアビリティの表示
+	void DebugSelectedAbilityRender();
+
 
 	/* ゲッターセッター */
+
+	/// @brief 選択状態を取得
+	SelectionState GetSelectionState()const{ return _selectionState; }
 
 	/// @brief 選択されたアビリティのタイプを取得
 	ABILITY_TYPE GetSelectedAbility()const{ return ConvertSelectionToAbility(_iSelectedAbility); }
 
-	/// @brief 	// 選択されたアビリティ番号を取得
-	int GetSelectedAbilityIndex()const { return _iSelectedAbility; }	
-
-	/// @brief 現在選択中のアビリティのインデックスを取得
-	bool GetIsSelectComplete()const{ return _bIsSelectComplete; }		
-
 	/// @brief 選択画面がアクティブかどうかを取得
-	bool GetIsScreenActive()const { return _bIsScreenActive; }			
+	bool GetIsScreenActive()const{ return _bIsScreenActive; }			
 
-	/// @brief 選択状態を取得
-	SelectionState GetSelectionState()const{ return _selectionState; }
+	/// @brief 選択されたアビリティの番号を取得・設定
+	int GetSelectedAbilityIndex()const{ return _iSelectedAbility; }
+	void SetSelectedAbilityIndex(int index){ _iSelectedAbility = index; }
 
 	/// @brief 選択状態を設定
 	void SetSelectionState(SelectionState state){ _selectionState = state; }
@@ -83,11 +90,16 @@ public:
 	/// @brief プレイヤーアンロックマネージャーを設定
 	void SetPlayerUnlockManager(std::shared_ptr<PlayerUnlockManager> unlockManager) { _playerUnlockManager = unlockManager; }
 
+	/// @brief アビリティアクションヒントを設定
+	void SetAbilityActionHint(std::shared_ptr<AbilityActionHint> actionHint) { _abilityActionHint = actionHint; }
+
 private:
+
 
 protected:
 	std::shared_ptr<PlayerManager> _playerManager;				// プレイヤーマネージャー
 	std::shared_ptr<PlayerUnlockManager> _playerUnlockManager;	// プレイヤーアンロックマネージャー
+	std::shared_ptr<AbilityActionHint> _abilityActionHint;		// アビリティアクションヒント
 
 	// 表示用ハンドル
 	int _iHandle1;
@@ -97,7 +109,7 @@ protected:
 	// 選択状態の管理
 	SelectionState _selectionState;	// 選択状態
 	int _iCurrentSelection;			// 現在選択中のアビリティ
-	int _iSelectedAbility;			// 決定されたアビリティ
+	int _iSelectedAbility;			// 選択されたアビリティ
 
 	bool _bIsSelectComplete;	// 選択完了フラグ
 	bool _bIsScreenActive;		// 選択画面表示フラグ

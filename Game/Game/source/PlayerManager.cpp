@@ -19,7 +19,12 @@ namespace TransAnimConstants
 	constexpr float ANIMATION_BLEND_TIME = 1.0f;	// アニメーションブレンド時間
 	constexpr int ANIMATION_LOOP = 0;				// ループあり
 	constexpr int ANIMATION_NONE_LOOP = 1;			// ループなし
+}
 
+// 能力選択関連の設定用名前空間
+namespace AbilityConfig
+{
+	constexpr int DEFAULT_ABILITY_INDEX = 0;	// デフォルトのアビリティインデックス
 }
 
 PlayerManager::PlayerManager()
@@ -331,9 +336,9 @@ void PlayerManager::TransformFinishByTime()
 // 変身終了
 void PlayerManager::EndTransform()
 {   
-	// 戦闘状態を通常に戻す
     if(_activePlayer)
     {
+		// 戦闘状態を通常に戻す
         _activePlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);
     }
 
@@ -419,10 +424,16 @@ void PlayerManager::SwitchPlayerByTime()
 // 変身解除終了
 void PlayerManager::EndTransformCancel()
 {
-	// 戦闘状態を通常に戻す
 	if(_activePlayer)
 	{
+		// 戦闘状態を通常に戻す
 		_activePlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);
+	}
+
+	if(_abilitySelectScreen)
+	{
+		// 選択されたアビリティのインデックスをリセット
+		_abilitySelectScreen->SetSelectedAbilityIndex(AbilityConfig::DEFAULT_ABILITY_INDEX);
 	}
 
 	_abilitySelectScreen->SetSelectionState(SelectionState::NOT_SELECTION);	// 能力選択をしていない状態にする

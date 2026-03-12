@@ -103,9 +103,11 @@ private:
 	void ReturnWaitAnim();
 
 protected:
-	std::shared_ptr<CameraManager> _cameraManager;
-	std::shared_ptr<AbilitySelectScreen> _abilitySelectScreen;
-	std::unordered_map<PLAYER_TYPE, std::shared_ptr<PlayerBase>> _players;
+
+	std::unordered_map<PLAYER_TYPE, std::shared_ptr<PlayerBase>> _players;	// プレイヤーのマップ
+	
+	std::shared_ptr<CameraManager> _cameraManager;				// カメラマネージャー
+	std::shared_ptr<AbilitySelectScreen> _abilitySelectScreen;	// 能力選択画面
 
 	// アクティブプレイヤー
 	PlayerBase* _activePlayer;

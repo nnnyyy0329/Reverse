@@ -1,5 +1,6 @@
 #pragma once
 #include "appframe.h"
+#include "AbilityBase.h"
 
 /// @brief アビリティアクションヒントクラス
 class AbilityActionHint
@@ -13,10 +14,11 @@ public:
 	bool Process();
 	bool Render();
 
+	/// @brief アクションヒントの表示
+	void ActionHintRender(int selectedIndex, ABILITY_TYPE type);
+
 private:
 
-	/// @brief アクションヒントの表示
-	void ActionHintRender();
 
 protected:
 
