@@ -614,6 +614,11 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 	_cameraManager->Reset();
 
 	_stage->PlayStageBGM();
+	std::string name = _stage->GetCurrentBGMName();
+	if (name == "BGM_Stage02")
+	{
+		SoundServer::GetInstance()->SetVolume(name, 128);
+	}
 
 	// Ø‚è‘Ö‚¦Š®—¹
 	_bIsStageChanging = false;
