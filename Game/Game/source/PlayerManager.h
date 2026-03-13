@@ -81,36 +81,25 @@ public:
 
 private:
 
-	// 変身タイマー更新関数
+	/// @brief 変身タイマーを更新
 	void UpdateTransformTime();									
 
-	// 変身解除タイマー更新関数
+	/// @brief 変身解除タイマーを更新
 	void UpdateTransformCancelTime();							
 
-	// 変身関連アニメーション再生
+	/// @brief 変身関連のアニメーションを再生
 	void PlayTransConnectionAnim(const char* animName);			
 
-	// 能力選択画面がアクティブかチェック
+	/// @brief 能力選択画面がアクティブかどうかをチェックする
 	void CheckAbilityScreenActive(bool& isAbilityScreenActive);	
 
-	/// <summary>
-	/// 変身中でなければ自動切り替えなどの処理。
-	/// </summary>
-	/// <param name="isAbilityScreenActive: ">アビリティ画面がアクティブかどうかを示します。</param>
+	/// @brief 能力選択に応じた自動切り替え処理
 	void ProcessAutoSwitch(bool isAbilityScreenActive);			
-
-	// アクティブプレイヤーの処理
 	
-	/// <summary>
-	/// アクティブなプレイヤーを処理します。
-	/// </summary>
-	/// 
-	/// <param name="isAbilityScreenActive: ">アビリティ画面がアクティブかどうかを示します。</param>
+	/// @brief アクティブプレイヤーの処理
 	void ProcessActivePlayer(bool isAbilityScreenActive);
 
-	/// <summary>
-	/// 待機アニメーションに戻ります。
-	/// </summary>
+	/// @brief 待機アニメーションに戻す処理
 	void ReturnWaitAnim();
 
 protected:

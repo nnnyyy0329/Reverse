@@ -24,6 +24,10 @@ public:
 	void SetVolume(const std::string& name, int volume); // 0-255
 	void SetVolumeByHandle(int soundHandle, int volume);
 
+	// マスター音量（0-255）。全サウンドに対して一括適用する
+	void SetMasterVolume(int volume);
+	int  GetMasterVolume() const;
+
 	void StopAll();
 	void UnloadAll();
 
@@ -36,4 +40,6 @@ private:
 
 	mutable std::mutex _mtx;
 	std::map<std::string, int> _resources;
+
+	int _masterVolume = 255;
 };

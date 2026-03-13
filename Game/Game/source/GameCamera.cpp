@@ -110,10 +110,10 @@ void GameCamera::UpdateCamera()
 			while (diff < -DX_PI_F) diff += DX_PI_F * 2.0f;
 
 			// 真後ろの時は強制的に右回りにする
-			/*if (diff > DX_PI_F * 0.95f || diff < -DX_PI_F * 0.95f)
+			if (diff > DX_PI_F * 0.95f || diff < -DX_PI_F * 0.95f)
 			{
 				diff = DX_PI_F * 0.95f;
-			}*/
+			}
 
 			float rotSpeed = diff * 0.03f;
 			// 回転速度の上限を設定

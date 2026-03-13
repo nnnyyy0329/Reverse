@@ -66,8 +66,8 @@ bool ModeLoading::Initialize()
 			rs->Register("BulletPlayer", "res/Player/SK_player_02_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
-			rs->Register("PlayerLifeBar", "res/Player/UI/Player_Life_Bar.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("PlayerLifeBarFrame", "res/Player/UI/Player_Life_Bar_Frame.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("PlayerLifeBar", "res/Player/UI/player_life_bar.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("PlayerLifeBarFrame", "res/Player/UI/player_life_bar_frame.png", RESOURCE_TYPE::Graph, 1.0f);
 
 		}
 
@@ -80,11 +80,12 @@ bool ModeLoading::Initialize()
 			rs->Register("SelectChain", "res/UI_Select/ability_lock_chain.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SelectPower", "res/UI_Select/select_power.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SelectBlaster", "res/UI_Select/select_blaster.png", RESOURCE_TYPE::Graph, 1.0f);
+
 			rs->Register("SkillAbsorb", "res/UI_Select/skill_absorb.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SkillAoe", "res/UI_Select/skill_aoe.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SkillPunch", "res/UI_Select/skill_punch.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SkillPiercing", "res/UI_Select/skill_piercing.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SkillNormal", "res/UI_Select/skill_normal.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillPiercingBullet", "res/UI_Select/skill_piercing.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillNormalBullet", "res/UI_Select/skill_normal.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// 入力UI 
@@ -99,10 +100,10 @@ bool ModeLoading::Initialize()
 
 		// エネルギーUI用
 		{
-			rs->Register("EnergyFrame", "res/Energy/energy_frame_2.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("Energy1", "res/Energy/energy_1_2.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("Energy2", "res/Energy/energy_2_2.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("Energy3", "res/Energy/energy_3_2.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("EnergyFrame", "res/Energy/energy_frame.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy1", "res/Energy/energy_1r.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy2", "res/Energy/energy_2r.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy3", "res/Energy/energy_3r.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// スタミナUI用
@@ -142,7 +143,7 @@ bool ModeLoading::Initialize()
 		// 音関連
 		{
 			// BGM
-			rs->Register("BGM_Stage01", "sound/BGM/stage_bgm_test.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Stage01", "sound/BGM/stage_01.mp3", RESOURCE_TYPE::Sound, 1.0f);
 			rs->Register("BGM_Stage02", "sound/BGM/stage_02.mp3", RESOURCE_TYPE::Sound, 1.0f);
 
 			// SE

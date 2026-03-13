@@ -31,6 +31,7 @@ namespace
 	constexpr auto RANGED_DETECT_TIME = 60.0f;// 発見硬直
 
 	// Tank
+	constexpr auto TANK_LIFE = 1000.0f;// タンクの体力
 	constexpr auto TANK_ATTACK_RANGE = 500.0f;// 攻撃ステートに入る距離
 	constexpr auto TANK_ATTACK_LIMIT_RAMGE = 550.0f;// これ以上離れたら接近ステートへ
 	constexpr auto TANK_DETECT_TIME = 120.0f;// 発見硬直
@@ -172,17 +173,42 @@ public:
 			param.fAttackRange = TANK_ATTACK_RANGE;
 			param.fChaseLimitRange = TANK_ATTACK_LIMIT_RAMGE;
 			param.fDetectTime = TANK_DETECT_TIME;
-			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+			param.fMaxLife = TANK_LIFE;
 			param.fIdleTime = TANK_IDLE_TIME;
 
 			// 共通ステートのアニメーション名を設定
-			param.animDamage = "Nenemy_damage_00";
-			param.animDead = "Nenemy_dead_00";
-			param.animDown = "Nenemy_damagge_01";
+			param.animDamage = "enemy_damage_00";
+			param.animDead = "enemy_dead_00";
+			param.animDown = "enemy_damage_01";
 
 			enemy->SetEnemyParam(param);
 
 			// 被ダメ後の遷移先を決定
+			enemy->SetAfterDamageStateSelector([](Enemy* e, int comboCnt)->std::shared_ptr<EnemyState>
+			{
+				if (e->GetTarget())
+				{
+					return std::make_shared<Tank::Approach>();
+				}
+
+				return std::make_shared<Tank::Idle>();
+			});
+
+			// ダウン後の遷移先を決定
+			enemy->SetAfterDownStateSelector([](Enemy* e)->std::shared_ptr<EnemyState>
+			{
+				if (e->IsDead())
+				{
+					return std::make_shared<Common::Dead>();
+				}
+
+				if (e->GetTarget())
+				{
+					return std::make_shared<Tank::Approach>();
+				}
+
+				return std::make_shared<Tank::Idle>();
+			});
 
 		break;
 		}

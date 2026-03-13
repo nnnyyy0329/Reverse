@@ -73,6 +73,8 @@ bool PlayerBase::Initialize()
 	// アニメーション初期化
 	InitializeAnimation();
 
+	_bDeathCameraSet = false;
+
 	return true;
 }
 

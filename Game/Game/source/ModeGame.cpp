@@ -5,6 +5,8 @@
 #include "ModeStageChange.h"
 #include "ModeGameOver.h"
 #include "ModeScenario.h"
+#include "ModeLogo.h" 
+#include "ModeEndingText.h"
 
 #include "CharaBase.h"
 #include "StageBase.h"
@@ -153,6 +155,8 @@ bool ModeGame::Initialize()
 		_bUseCollision = true;
 	}
 
+	_stage->PlayStageBGM();
+
 	return true;
 }
 
@@ -191,13 +195,13 @@ bool ModeGame::Process()
 			// ModeGameOverを追加
 			ModeGameOver* modeGameOver = new ModeGameOver();
 			ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
+			_stage->StopStageBGM();
 			// この後の処理をスキップ
 			return true;
 		}
 	}
 
 	// 能力選択画面のデバッグ関数
-	
 
 	// startでメニューを開く
 	if (im.IsTrigger(INPUT_ACTION::MENU))
@@ -337,6 +341,24 @@ bool ModeGame::Process()
 		CheckHitBulletMap();
 	}
 
+	// ステージ3：ボタン1つで敵全滅 → 全滅後にLOGOへ戻す
+	if(_currentStageNum == 2 && _stage)
+	{
+		// DEBUG3: キーボードF3 / パッドBACK
+		if(im.IsTrigger(INPUT_ACTION::DEBUG3))
+		{
+			_stage->DebugKillAllEnemies();
+		}
+
+		// 全滅したら最初のLOGOへ（疑似的にゲーム終了）
+		if(_stage->IsAllEnemiesDefeated())
+		{
+			ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
+			ModeServer::GetInstance()->Del(this);
+			return true;
+		}
+	}
+
 	// エフェクト更新
 	EffectServer::GetInstance()->Update();
 
@@ -370,8 +392,10 @@ bool ModeGame::Render()
 		_lightManager->SetLightType(LightManager::LIGHT_TYPE::DIRECTIONAL);
 		_lightManager->SetDirectionalLightDir(VGet(-1.0f, -1.0f, -1.0f));
 
+		SetLightDifColor(GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
+
 		// グローバルアンビエントライト設定
-		_lightManager->SetAmbientLight(GetColorF(0.3f, 0.3f, 0.3f, 0.0f));
+		_lightManager->SetAmbientLight(GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 	}
 
 	// カメラ設定
@@ -508,7 +532,7 @@ void ModeGame::InitializeLights()
 
 	// ライトを追加
 	// test
-	AddPointLight(VGet(0.0f, 1000.0f, 0.0f), 1500.0f, GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
+	AddPointLight(VGet(0.0f, 500.0f, 0.0f), 3000.0f, GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void ModeGame::ProcessLights()
@@ -608,6 +632,13 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 
 	_cameraManager->Reset();
 
+	_stage->PlayStageBGM();
+	std::string name = _stage->GetCurrentBGMName();
+	if (name == "BGM_Stage02")
+	{
+		SoundServer::GetInstance()->SetVolume(name, 128);
+	}
+
 	// 切り替え完了
 	_bIsStageChanging = false;
 }
@@ -649,7 +680,10 @@ void ModeGame::RestartCurrentStage()
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
 
+	_cameraManager->SetCameraType(CAMERA_TYPE::GAME_CAMERA);
 	_cameraManager->Reset();
+
+	_stage->PlayStageBGM();
 }
 
 void ModeGame::SetPlayerConfig(VECTOR vPos, VECTOR vRot)

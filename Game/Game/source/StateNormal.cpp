@@ -46,7 +46,7 @@ namespace
 	constexpr auto TARGET_DETECT_RADIUS = 20.0f;// ターゲット検出に幅を持たせる(半径)
 
 	// アニメーション制御用定数
-	constexpr auto BLEND_FRAME = 10.0f;					// アニメーションブレンドフレーム数
+	constexpr auto BLEND_FRAME = 5.0f;					// アニメーションブレンドフレーム数
 	constexpr auto ANIM_LOOP_COUNT = 0;					// アニメーションループ回数(0=無限)
 	constexpr auto ANIM_PLAY_COUNT = 1;					// アニメーション再生回数
 	constexpr auto ANIM_SPEED_FAST = 1.5f;				// アニメーション再生速度(速い)
@@ -223,7 +223,7 @@ namespace Normal
 		}
 
 		// SE
-		SoundServer::GetInstance()->Play("SE_En_Notice", DX_PLAYTYPE_BACK);
+		//SoundServer::GetInstance()->Play("SE_En_Notice", DX_PLAYTYPE_BACK);
 	}
 
 	std::shared_ptr<EnemyState> Notice::Update(Enemy* owner)
