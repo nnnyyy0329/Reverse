@@ -16,6 +16,7 @@ void SoundServer::Initialize()
 {
 	std::lock_guard<std::mutex> lk(_mtx);
 	_resources.clear();
+	_masterVolume = 255; // 初期マスター音量
 }
 
 void SoundServer::Terminate()
@@ -41,6 +42,8 @@ bool SoundServer::Load(const std::string& name, const char* path)
 	if(handle < 0) {
 		return false; // 読み込み失敗
 	}
+
+	ChangeVolumeSoundMem(_masterVolume, handle);
 
 	_resources[name] = handle;
 	return true;
@@ -74,6 +77,9 @@ int SoundServer::Play(const std::string& name, int playType)
 	int h = it->second;
 	// PlaySoundMem の戻り値は成功/失敗だが、呼び出し側で停止したいのでハンドルを返す
 	PlaySoundMem(h, playType);
+
+	// 再生時にマスター音量を適用
+	ChangeVolumeSoundMem(_masterVolume, h);
 	return h;
 }
 
@@ -103,6 +109,27 @@ void SoundServer::SetVolumeByHandle(int soundHandle, int volume)
 {
 	if(soundHandle < 0) return;
 	ChangeVolumeSoundMem(volume, soundHandle);
+}
+
+void SoundServer::SetMasterVolume(int volume)
+{
+	std::lock_guard<std::mutex> lk(_mtx);
+
+	// 1. 三項演算子で範囲を絞る（C++11でも確実に動く）
+	_masterVolume = (volume < 0) ? 0 : (volume > 255 ? 255 : volume);
+
+	// 2. ループ（DXライブラリの型に合わせて int にキャストするとより安全）
+	for(auto& p : _resources) {
+		// p.second がハンドル（int）であることを想定
+		ChangeVolumeSoundMem(_masterVolume, (int)p.second);
+	}
+}
+
+
+int SoundServer::GetMasterVolume() const
+{
+	std::lock_guard<std::mutex> lk(_mtx);
+	return _masterVolume;
 }
 
 void SoundServer::StopAll()

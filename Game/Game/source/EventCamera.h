@@ -8,7 +8,8 @@ public:
 	virtual ~EventCamera() {};
 
 	void Process() override;
-	void SetUp() override;
+
+	void OnEnter() override;
 
 	virtual void SetTarget(std::shared_ptr<PlayerBase> target) {};
 

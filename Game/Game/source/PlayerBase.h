@@ -458,7 +458,10 @@ protected:	// 死亡関係 --- 今後クラスで分ける予定 ------------------------------
 	void CallDeath();				
 
 	/// @brief 死亡処理
-	void ProcessDeath();			
+	void ProcessDeath();
+
+	/// @brief 死亡カメラ演出開始処理(テスト)
+	void StartDeathCameraEffect();
 
 	/// @brief 死亡状態更新
 	void UpdateDeathState();
@@ -511,8 +514,9 @@ protected:
 	float	_fHitSpeedDecay;	// 被弾速度減衰
 	float	_fHitTime;			// 被弾時間
 
-	// カメラ角度
+	// カメラ関連
 	float _cameraAngle;
+	bool _bIsDeathCameraSet;
 };
 
 

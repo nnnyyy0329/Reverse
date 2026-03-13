@@ -28,12 +28,30 @@ void PlayerBase::ProcessDeath()
 		// アニメーション切り替え
 		ProcessPlayAnimation();
 
-		// カメラ演出テスト
-		/*_cameraManager->Reset();
+		// カメラ演出開始
+		StartDeathCameraEffect();
+	}
+}
+
+void PlayerBase::StartDeathCameraEffect()
+{
+	// カメラ演出テスト
+	if(!_bIsDeathCameraSet)
+	{
+		// カメラタイプを演出用カメラに切り替える
 		_cameraManager->SetCameraType(CAMERA_TYPE::EVENT_CAMERA);
+
+		// カメラドリーアドオンを作成して追加する
 		auto zoom = std::make_shared<CameraDollyAddon>();
-		zoom->StartDolly(-250.0f, 300.0f, 60.0f);
-		_cameraManager->AddAddon(zoom);*/
+
+		// ドリー移動を開始する（引きで、全体の持続時間9999秒、移行時間240フレーム）
+		zoom->StartDolly(-200.0f, 9999.0f, 240.0f);
+
+		// カメラマネージャーにアドオンを追加
+		_cameraManager->AddAddon(zoom);
+
+		// カメラ切り替えフラグを立てる
+		_bIsDeathCameraSet = true;
 	}
 }
 

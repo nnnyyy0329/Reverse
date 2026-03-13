@@ -143,7 +143,7 @@ bool ModeLoading::Initialize()
 		// ‰¹ŠÖ˜A
 		{
 			// BGM
-			rs->Register("BGM_Stage01", "sound/BGM/stage_bgm_test.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Stage01", "sound/BGM/stage_01.mp3", RESOURCE_TYPE::Sound, 1.0f);
 			rs->Register("BGM_Stage02", "sound/BGM/stage_02.mp3", RESOURCE_TYPE::Sound, 1.0f);
 
 			// SE

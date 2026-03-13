@@ -739,14 +739,16 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 			if(hasHit)
 			{
 				int nextStageNum = _stage->GetNextStageNumFromTrigger(trigger.name);
+				RequestStageChange(nextStageNum);
 
-				auto* self = this;
+				/*auto* self = this;
 				auto modeTextBox = new ModeTextBox("GameSerif1", [self, nextStageNum]()
 					{
 						self->RequestStageChange(nextStageNum);
 					});
 
-				ModeServer::GetInstance()->Add(modeTextBox, 200, "textbox");
+				ModeServer::GetInstance()->Add(modeTextBox, 200, "textbox");*/
+
 				return;
 			}
 		}

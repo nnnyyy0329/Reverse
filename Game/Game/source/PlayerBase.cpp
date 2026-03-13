@@ -124,6 +124,10 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	// 死亡関係
 	_bIsAlive = true;				// 生きているから
 	_bIsDeathAnimComplete = false;	// 死亡アニメーションが再生し終わったか
+
+	// カメラ関連
+	_cameraAngle = 0.0f;		// カメラ角度
+	_bIsDeathCameraSet = false;	// 死亡カメラがセットされたかどうか
 }
 
 // 被弾設定初期化

@@ -223,9 +223,15 @@
     <ClCompile Include="source\CameraDollyAddon.cpp">
       <Filter>Camera\Addon</Filter>
     </ClCompile>
-    <ClCompile Include="source\EventCamera.cpp" />
     <ClCompile Include="source\AbilityActionHint.cpp">
       <Filter>Ability\Action</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EventCamera.cpp">
+      <Filter>Camera\Addon</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Pathfinding.cpp" />
+    <ClCompile Include="source\ModeEndingText.cpp">
+      <Filter>Mode\Ending</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -439,9 +445,15 @@
     <ClInclude Include="source\CameraDollyAddon.h">
       <Filter>Camera\Addon</Filter>
     </ClInclude>
-    <ClInclude Include="source\EventCamera.h" />
     <ClInclude Include="source\AbilityActionHint.h">
       <Filter>Ability\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EventCamera.h">
+      <Filter>Camera\Addon</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Pathfinding.h" />
+    <ClInclude Include="source\ModeEndingText.h">
+      <Filter>Mode\Ending</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -594,6 +606,9 @@
     </Filter>
     <Filter Include="Ability\Action">
       <UniqueIdentifier>{f7e93ea7-fb95-498e-a760-192cfe24b873}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Ending">
+      <UniqueIdentifier>{b0d99bd7-07da-4af2-a2a3-3900ea9d10fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

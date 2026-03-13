@@ -64,6 +64,8 @@ bool CameraManager::Process()
 		}
 	}
 
+	SetUp();
+
 	return true;
 }
 
