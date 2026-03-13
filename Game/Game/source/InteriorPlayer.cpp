@@ -191,7 +191,7 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 		configs[0].isActive				= false,				// アクティブかどうか
 		configs[0].isHit				= false,				// ヒットしたかどうか
 		configs[0].canKnockback			= false,				// 吹き飛ばし攻撃かどうか
-		configs[0].isAttackCancelByHit	= false,				// 被弾でキャンセルされる攻撃か
+		configs[0].isAttackCancelByHit	= true,					// 被弾でキャンセルされる攻撃か
 	};
 
 	// 第2攻撃
@@ -210,7 +210,7 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 		configs[1].isActive				= false,				// アクティブかどうか
 		configs[1].isHit				= false,				// ヒットしたかどうか
 		configs[1].canKnockback			= false,				// 吹き飛ばし攻撃かどうか
-		configs[1].isAttackCancelByHit	= false,				// 被弾でキャンセルされる攻撃か
+		configs[1].isAttackCancelByHit	= true,					// 被弾でキャンセルされる攻撃か
 	};
 
 	// 第3攻撃
@@ -229,7 +229,7 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 		configs[2].isActive				= false,				// アクティブかどうか
 		configs[2].isHit				= false,				// ヒットしたかどうか
 		configs[2].canKnockback			= false,				// 吹き飛ばし攻撃かどうか
-		configs[2].isAttackCancelByHit	= false,				// 被弾でキャンセルされる攻撃か
+		configs[2].isAttackCancelByHit	= true,					// 被弾でキャンセルされる攻撃か
 	};
 
 	// 第4攻撃
@@ -248,7 +248,7 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 		configs[3].isActive				= false,				// アクティブかどうか
 		configs[3].isHit				= false,				// ヒットしたかどうか
 		configs[3].canKnockback			= false,				// 吹き飛ばし攻撃かどうか
-		configs[3].isAttackCancelByHit	= false,				// 被弾でキャンセルされる攻撃か
+		configs[3].isAttackCancelByHit	= true,					// 被弾でキャンセルされる攻撃か
 	};
 
 	// 第5攻撃

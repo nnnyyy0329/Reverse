@@ -251,7 +251,7 @@ bool ModeGame::Process()
 		_abilitySelectManager->SetAbilitySelectScreen(_abilitySelectScreen);
 		_abilitySelectManager->SetPlayerManager(_playerManager);
 
-		// 弾丸プレイヤーにカメラマネージャーを設定
+		// 弾発射プレイヤーにカメラマネージャーを設定
 		auto bulletPlayer = std::dynamic_pointer_cast<BulletPlayer>(_playerManager->GetPlayerByType(PLAYER_TYPE::BULLET));
 		if(bulletPlayer){ bulletPlayer->SetCameraManager(_cameraManager); }
 	}

@@ -278,15 +278,17 @@ void PlayerBase::ProcessHit()
 	// 被弾時間が終了したら通常状態に戻る
 	if(_fHitTime <= 0.0f)
 	{
-		PlayerState oldStatus = _playerState; // 古いステータスを保存
+		// 古いステータスを保存
+		PlayerState oldStatus = _playerState; 
 
 		// ステータスを通常にリセット
 		_playerState.StateReset();
 
-		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// ステータスを待機に変更
+		// ステータスを待機に変更
+		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	
 
-		_fHitSpeed = 0.0f;											// 吹き飛び速度を0にする
-		_vHitDir = VGet(0, 0, 0);									// 吹き飛び方向をリセット
+		_fHitSpeed = 0.0f;			// 吹き飛び速度を0にする
+		_vHitDir = VGet(0, 0, 0);	// 吹き飛び方向をリセット
 
 		// ステータス変更後、アニメーション切り替え
 		_oldPlayerState = oldStatus;	// 古いステータスを攻撃状態に設定

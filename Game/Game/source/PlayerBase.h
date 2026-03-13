@@ -208,6 +208,13 @@ struct PlayerState
 	bool IsStateAbsorbing()	const { return absorbState	 != PLAYER_ABSORB_STATE::NONE; }	// 吸収攻撃状態かどうか
 	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }	// 特殊状態かどうか
 
+	// 特定の状態かどうかをチェックする関数
+	bool IsMovementState(PLAYER_MOVEMENT_STATE state)	const { return movementState == state; }	// 特定の移動状態かチェック
+	bool IsAttackState(PLAYER_ATTACK_STATE state)		const { return attackState == state; }		// 特定の攻撃状態かチェック
+	bool IsShootState(PLAYER_SHOOT_STATE state)			const { return shootState == state; }		// 特定の発射状態かチェック
+	bool IsAbsorbState(PLAYER_ABSORB_STATE state)		const { return absorbState == state; }		// 特定の吸収状態かチェック
+	bool IsCombatState(PLAYER_COMBAT_STATE state)		const { return combatState == state; }		// 特定の特殊状態かチェック
+
 	// 状態リセット関数
 	void StateReset()
 	{
@@ -321,6 +328,7 @@ public:
 
 	bool IsMoving() { return _playerState.IsStateMoving(); }
 
+
 	// プレイヤーの動作関連コンポーネントクラスを実装予定
 	// それぞれのシステムはユニークポインタで管理して実装する
 
@@ -353,7 +361,7 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	void ProcessAttack();			// 攻撃処理
 	void ProcessBranchAttack();		// 攻撃分岐処理
 	void ReceiveAttackColData();	// 攻撃コリジョンの情報受け取り関数
-	bool IsStartAttack();			// 攻撃を開始できるかチェック
+	bool CanStartAttack();			// 攻撃を開始できるかチェック
 	bool CanNextAttack();			// 次の攻撃が可能かチェック
 	bool IsAttacking();				// 攻撃中かチェック
 	bool IsAttackInput();			// 攻撃入力があるかチェック
@@ -402,6 +410,7 @@ protected:	// 回避関係 --- 今後クラスで分ける予定 ------------------------------
 	void ProcessDodge();			// 回避処理
 	void ProcessStartDodge();		// 回避開始処理
 	void ProcessEndDodge();			// 回避終了処理
+	bool CanStartDodge();			// 回避を開始できるかチェック
 	bool CanDodge();				// 回避可能かチェック
 	bool IsDodging();				// 回避中かチェック
 	bool IsInvincible();			// 無敵状態かチェック

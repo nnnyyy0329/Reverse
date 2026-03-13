@@ -112,6 +112,7 @@ void PlayerBase::SetAttackColData(AttackCollision config, std::shared_ptr<Attack
 {
 	if(!attack) return;
 
+	// 攻撃コリジョンデータ設定
 	attack->SetCapsuleAttackData(config);
 }
 
@@ -120,6 +121,7 @@ void PlayerBase::SetAttackOffsetData(AttackColOffset config, std::shared_ptr<Att
 {
 	if(!attack) return;
 
+	// 攻撃オフセットデータ設定
 	attack->SetCollisionOffset(config);
 }
 
@@ -158,7 +160,7 @@ void PlayerBase::CallProcessAttack()
 void PlayerBase::ProcessAttack()
 {
 	// 攻撃開始チェック
-	if(IsStartAttack())
+	if(CanStartAttack())
 	{
 		// 攻撃配列が空の場合は処理をスキップ
 		if(_attacks.empty()){ return; }
@@ -417,16 +419,15 @@ void PlayerBase::ReceiveAttackColData()
 }
 
 // 攻撃を開始できるかチェック
-bool PlayerBase::IsStartAttack()
+bool PlayerBase::CanStartAttack()
 {
 	auto& im = InputManager::GetInstance();
 
 	// 攻撃入力チェック
-	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||	// 待機か
-		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||	// 歩きか
-		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN) &&	// 走りで
-		_playerState.attackState   == PLAYER_ATTACK_STATE::NONE	  &&	// 攻撃状態ではなく
-		im.IsTrigger(INPUT_ACTION::ATTACK))												// 入力があるなら
+	if((_playerState.IsStateMoving()							&&	// 何かしらの移動状態で
+		!_playerState.IsStateAttacking())						&&	// 攻撃状態ではなく
+		!_playerState.IsCombatState(PLAYER_COMBAT_STATE::DODGE)	&&	// 回避状態で
+		im.IsTrigger(INPUT_ACTION::ATTACK))							// 入力があるなら
 	{
 		return true;
 	}

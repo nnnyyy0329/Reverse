@@ -63,14 +63,8 @@ void PlayerBase::CallProcessDodge()
 // 回避処理
 void PlayerBase::ProcessDodge()
 {
-	auto& im = InputManager::GetInstance();
-
 	// 回避入力があったら回避を呼び出す
-	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||
-		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||
-		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN)
-		&& StaminaManager::GetInstance()->CanDodge()
-		&& im.IsTrigger(INPUT_ACTION::DODGE))
+	if(CanStartDodge())
 	{
 		// 回避開始
 		ProcessStartDodge();
@@ -130,14 +124,33 @@ void PlayerBase::ProcessEndDodge()
 		// 古いステータスを保持
 		PlayerState oldStatus = _playerState;
 
-		// ステータス変更後、アニメーション切り替え
-		_playerState.combatState = PLAYER_COMBAT_STATE::NONE;		// 通常に戻す
-		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 待機状態に戻る
+		// ステータスリセット
+		_playerState.StateReset();
+
+		// 待機状態に戻る
+		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	
 
 		_oldPlayerState = oldStatus;	// 古いステータスを攻撃状態に設定
 		ProcessPlayAnimation();			// アニメーション切り替え実行
 		_oldPlayerState = _playerState;	// 切り替え後に更新
 	}
+}
+
+// 回避を開始できるかチェック
+bool PlayerBase::CanStartDodge()
+{
+	auto& im = InputManager::GetInstance();
+
+	if((_playerState.IsStateMoving())							&&	// 移動状態で
+		_playerState.IsAttackState(PLAYER_ATTACK_STATE::NONE)	&&	// 何かしらの攻撃で
+		StaminaManager::GetInstance()->CanDodge()				&&	// スタミナが回避可能な量で
+		im.IsTrigger(INPUT_ACTION::DODGE))							// 回避入力があったら
+	{
+		return true;
+	}
+
+	// 回避開始不可能
+	return false;
 }
 
 // 回避可能かチェック
