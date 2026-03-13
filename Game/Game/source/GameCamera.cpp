@@ -15,7 +15,7 @@ GameCamera::GameCamera()
 {
 	_vPosOffset = VGet(0.0f, TARGET_OFFSET_Y, 0.0f);
 	_fNearClip = 1.f;
-	_fFarClip = 5000.f;
+	_fFarClip = 50000.f;
 	_fDistance = DEFAULT_DISTANCE;
 	_fAngleH = DEFAULT_ANGLE_H;
 	_fAngleV = -DEFAULT_ANGLE_V;// è≠Çµå©â∫ÇÎÇµ

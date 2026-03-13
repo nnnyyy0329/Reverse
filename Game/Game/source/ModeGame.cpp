@@ -403,6 +403,12 @@ bool ModeGame::Render()
 		_cameraManager->SetUp();
 	}
 	
+	// スカイスフィア
+	{
+		int handle = ResourceServer::GetInstance()->GetHandle("skysphereA");
+		MV1DrawModel(handle);
+	}
+
 	// オブジェクトの描画
 	{
 		_stage->Render();

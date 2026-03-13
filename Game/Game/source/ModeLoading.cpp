@@ -50,7 +50,7 @@ bool ModeLoading::Initialize()
 		// 敵関連
 		{
 			// モデル
-			rs->Register("Melee", "res/Enemy/SK_enemy_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("Melee", "res/Enemy/SK_enemy_00_multimotion.mv1", RESOURCE_TYPE::Model, 2.0f);
 			rs->Register("Ranged", "res/Enemy/SK_enemy_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
@@ -138,6 +138,9 @@ bool ModeLoading::Initialize()
 			rs->Register("SM_MERGED_locker", "res/stage/json/SM_MERGED_locker.mv1", RESOURCE_TYPE::Model, 1.0f);
 			// ポータル
 			rs->Register("S_Portal_1to2", "res/stage/json/S_Portal_1to2.mv1", RESOURCE_TYPE::Model, 1.0f);
+
+			// スカイスフィア
+			rs->Register("skysphereA", "res/skysphere/skysphereA.mv1", RESOURCE_TYPE::Model, 1.0f);
 		}
 
 		// 音関連

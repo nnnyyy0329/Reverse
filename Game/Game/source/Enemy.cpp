@@ -67,6 +67,9 @@ Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
 	SetCharaType(CHARA_TYPE::ENEMY);// キャラタイプを設定
 
 	_searchTimer = 0;
+
+	// スケールテスト
+	_vScale = VGet(1.0f, 1.0f, 1.0f);
 }
 
 Enemy::~Enemy()
