@@ -8,6 +8,7 @@ class CameraManager;
 class BulletPlayer : public PlayerBase
 {
 public:
+
 	BulletPlayer();
 	virtual ~BulletPlayer();
 
@@ -36,6 +37,7 @@ public:
 	void SetCameraManager(std::shared_ptr<CameraManager>cameraManager){ _cameraManager = cameraManager; }	// カメラマネージャーをセット
 
 private:
+
 	// 基底クラスの弾発射関数のオーバーライド
 	void ProcessShoot()override;
 

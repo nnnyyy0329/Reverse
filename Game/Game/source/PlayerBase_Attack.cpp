@@ -70,8 +70,8 @@ void PlayerBase::CreateAttackData(int maxCombo)
 	_attackEffectConfigs.reserve(maxCombo);
 
 	// 攻撃設定取得
-	std::vector<AttackConfig>configs(maxCombo);
-	GetAttackConfigs(configs.data());
+	std::vector<AttackCollision>configs(maxCombo);
+	GetAttackColConfigs(configs.data());
 
 	// 攻撃オフセット設定取得
 	std::vector<AttackColOffset>offsets(maxCombo);
@@ -108,25 +108,11 @@ void PlayerBase::CreateAttackData(int maxCombo)
 }
 
 // 攻撃コリジョンデータ設定
-void PlayerBase::SetAttackColData(AttackConfig config, std::shared_ptr<AttackBase> attack)
+void PlayerBase::SetAttackColData(AttackCollision config, std::shared_ptr<AttackBase> attack)
 {
 	if(!attack) return;
 
-	attack->SetCapsuleAttackData
-	(
-		config.topOffset,			// 上部
-		config.bottomOffset,		// 下部
-		config.radius,				// 半径
-		_vMove,						// 攻撃方向
-		config.delay,				// 発生フレーム
-		config.duration,			// 持続フレーム
-		config.recovery,			// 硬直フレーム
-		config.damage,				// ダメージ
-		false,						// ヒットフラグ
-		config.attackState,			// 攻撃状態
-		config.attackMoveSpeed,		// 攻撃中の移動速度
-		config.canKnockback			// 吹き飛ばし攻撃かどうか
-	);
+	attack->SetCapsuleAttackData(config);
 }
 
 // 攻撃オフセットデータ作成

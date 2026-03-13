@@ -47,21 +47,6 @@ struct AttackConstants
 	int interiorMaxComboCount;	// 裏プレイヤー用コンボカウント
 };
 
-// 攻撃設定データ構造体
-struct AttackConfig
-{
-	VECTOR topOffset;			// コリジョン上部位置
-	VECTOR bottomOffset;		// コリジョン下部位置
-	float radius;				// 半径
-	float delay;				// 発生
-	float duration;				// 持続
-	float recovery;				// 硬直
-	float damage;				// ダメージ
-	ATTACK_STATE attackState;	// 攻撃状態
-	float attackMoveSpeed;		// 攻撃中の移動速度
-	bool canKnockback;			// 吹き飛ばし攻撃かどうか
-};
-
 // 攻撃向き設定データ構造体
 struct AttackDirAdjustConfig
 {
@@ -80,21 +65,6 @@ struct AreaAttackConfig
 	float damage;				// ダメージ
 	bool isHit;					// ヒットフラグ
 };
-
-//// 攻撃の演出関連構造体
-//struct AttackEffectConfig
-//{
-//	// エフェクト
-//	std::string effectName;		// エフェクト名
-//	VECTOR effectOffset;		// エフェクト位置オフセット
-//
-//	// サウンド
-//	std::string soundName;		// サウンド名
-//
-//	// カメラの振動
-//	float cameraShakeMagnitude;	// カメラ振動の強さ
-//	float cameraShakeDuration;	// カメラ振動時間
-//};
 
 // 基本移動アニメーション構造体
 struct PlayerMovementAnimations
@@ -357,7 +327,7 @@ public:
 protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
 	virtual AttackConstants GetAttackConstants()const{ return AttackConstants{}; };	// 攻撃定数を取得
-	virtual void GetAttackConfigs(AttackConfig configs[]){};						// 攻撃設定を取得
+	virtual void GetAttackColConfigs(AttackCollision configs[]){};					// 攻撃設定を取得
 	virtual void GetAttackColOffsetConfigs(AttackColOffset configs[]){};			// 攻撃コリジョンオフセット設定を取得
 	virtual void GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]){};		// 攻撃向き調整設定を取得
 	virtual AreaAttackConfig GetAreaAttackConfig(){ return AreaAttackConfig{}; };	// 範囲攻撃設定を取得
@@ -368,11 +338,11 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	std::vector<PLAYER_ATTACK_STATE> _attackStatuses;	// 攻撃状態配列
 
 	// 攻撃関連の初期化関数
-	void InitializeAttackData();						// 攻撃データ初期化
-	void InitializeAttackConfigs(int maxCombo);			// 攻撃設定配列初期化
-	void SetAttackStatusData(int maxCombo);				// 攻撃状態を攻撃配列に入れる
-	void CreateAttackData(int maxCombo);				// 攻撃コリジョンデータ作成	
-	void SetAttackColData(AttackConfig config, std::shared_ptr<AttackBase> attack);				// 攻撃コリジョン情報設定
+	void InitializeAttackData();				// 攻撃データ初期化
+	void InitializeAttackConfigs(int maxCombo);	// 攻撃設定配列初期化
+	void SetAttackStatusData(int maxCombo);		// 攻撃状態を攻撃配列に入れる
+	void CreateAttackData(int maxCombo);		// 攻撃コリジョンデータ作成	
+	void SetAttackColData(AttackCollision config, std::shared_ptr<AttackBase> attack);			// 攻撃コリジョン情報設定
 	void SetAttackOffsetData(AttackColOffset config, std::shared_ptr<AttackBase> attack);		// 攻撃オフセット情報設定
 	void SetCanDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃向き調整情報設定
 	void SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃エフェクト情報設定

@@ -39,14 +39,14 @@ struct AttackCollision
 	VECTOR attackDir;			// 攻撃方向
 	float attackDelay;			// 攻撃発生までの遅延時間
 	float attackDuration;		// 攻撃の持続時間
-	float recovery;				// 攻撃後の後隙
+	float attackRecovery;		// 攻撃後の後隙
 	float damage;				// ダメージ量
-	float currentTime;			// 現在の経過時間
 	ATTACK_STATE attackState;	// 攻撃状態
 	float attackMoveSpeed;		// 攻撃中の移動速度
 	bool isActive;				// 現在アクティブかどうか
-	bool isHit;					// ヒットしたかどうか
+	bool isHit = false;			// ヒットしたかどうか(共通初期化)
 	bool canKnockback;			// 吹き飛ばし攻撃かどうか
+	bool isAttackCancelByHit;	// 被弾でキャンセルされる攻撃か
 };
 
 // 攻撃コリジョンオフセット情報構造体
@@ -115,11 +115,15 @@ public:
 		float duration,				// 持続時間
 		float recovery,				// 後隙
 		float damage,				// ダメージ	
-		bool hit,					// ヒットフラグ
 		ATTACK_STATE attackState,	// 攻撃状態
 		float attackMoveSpeed,		// 攻撃中の移動速度
 		bool canKnockback			// 吹き飛ばし攻撃かどうか
 	);
+
+	/// @brief カプセル攻撃データ設定関数
+	///
+	/// @param data 攻撃コリジョン情報構造体
+	void SetCapsuleAttackData(const AttackCollision& data);
 
 	// 円形攻撃データ設定
 	void SetCircleAttackData
@@ -186,9 +190,11 @@ protected:
 	float _dirAdjustSpeed;	// 向き調整速度
 	bool _canDirAdjust;		// 向き調整可能フラグ
 
+	float _fCurrentTime;	// 経過時間	
+
 private:
 
-	std::vector<std::shared_ptr<CharaBase>> _hitCharas;	// 当たったキャラを管理
+	std::vector<std::shared_ptr<CharaBase>> _hitChars;	// 当たったキャラを管理
 
 	// 攻撃エフェクト情報
 	AttackEffectConfig _attackEffectConfig;	
@@ -198,6 +204,7 @@ private:
 
 	VECTOR _originalColTop;		// 元のコリジョン上部位置
 	VECTOR _originalColBottom;	// 元のコリジョン下部位置
+
 
 };
 

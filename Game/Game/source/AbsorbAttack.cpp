@@ -84,7 +84,7 @@ bool AbsorbAttack::ProcessStopAttack()
 
 	_eAttackState = ATTACK_STATE::RECOVERY;	// 状態を硬直中に遷移
 	_stcAttackCol.isActive = false;			// 攻撃判定を非アクティブにする
-	_stcAttackCol.currentTime = 0.0f;		// タイマーリセット
+	_fCurrentTime = 0.0f;		// タイマーリセット
 
 	// 吸収攻撃の停止処理は、基底クラスの攻撃停止処理を呼び出すことで完了する
 	return AttackBase::ProcessStopAttack();
@@ -204,12 +204,12 @@ void AbsorbAttack::ProcessAbsorbAttackState()
 	{
 		case ATTACK_STATE::STARTUP: // 発生前状態
 		{
-			_stcAttackCol.currentTime += 1.0f;	// タイマー加算
+			_fCurrentTime += 1.0f;	// タイマー加算
 
 			// 発生遅延時間を超えた場合
-			if(_stcAttackCol.currentTime >= _stcAttackCol.attackDelay)
+			if(_fCurrentTime >= _stcAttackCol.attackDelay)
 			{
-				_stcAttackCol.currentTime = 0.0f;		// タイマーリセット
+				_fCurrentTime = 0.0f;					// タイマーリセット
 				_stcAbsorbConfig.isActive = true;		// 吸収攻撃をアクティブにする
 				_eAttackState = ATTACK_STATE::ACTIVE;	// 状態遷移
 			}
@@ -224,13 +224,13 @@ void AbsorbAttack::ProcessAbsorbAttackState()
 
 		case ATTACK_STATE::RECOVERY: // 硬直中状態
 		{
-			_stcAttackCol.currentTime += 1.0f;	// タイマー加算
+			_fCurrentTime += 1.0f;	// タイマー加算
 
 			// 後隙時間を超えた場合
-			if(_stcAttackCol.currentTime >= _stcAttackCol.recovery)
+			if(_fCurrentTime >= _stcAttackCol.attackRecovery)
 			{
 				_eAttackState = ATTACK_STATE::INACTIVE;	// 状態遷移
-				_stcAttackCol.currentTime = 0.0f;		// タイマーリセット
+				_fCurrentTime = 0.0f;					// タイマーリセット
 				ClearHitCharas();						// ヒットリストクリア
 			}
 

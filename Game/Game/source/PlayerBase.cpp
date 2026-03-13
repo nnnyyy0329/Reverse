@@ -11,21 +11,12 @@ namespace HitConfig
 	constexpr float HIT_TIME = 30.0f;	// 被弾時間
 }
 
-namespace
-{
-	const float GRAVITY = 0.6f;	// 重力定数
-}
-
 PlayerBase::PlayerBase()
 {
 	_cameraManager = nullptr;	// カメラマネージャー
 
 	// キャラの状態初期化
-	_playerState.movementState = PLAYER_MOVEMENT_STATE::NONE;
-	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
-	_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
-	_playerState.absorbState = PLAYER_ABSORB_STATE::NONE;
-	_playerState.combatState = PLAYER_COMBAT_STATE::NONE;
+	_playerState.StateReset();
 	_oldPlayerState = _playerState;
 
 	// 位置関連初期化
@@ -159,19 +150,14 @@ void PlayerBase::InitializeShieldData()
 // 状態初期化
 void PlayerBase::InitializeState()
 {
-	// 基礎ステータスの初期化
-	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 待機状態
-	_playerState.attackState   = PLAYER_ATTACK_STATE  ::NONE;
-	_playerState.shootState	   = PLAYER_SHOOT_STATE   ::NONE;
-	_playerState.absorbState   = PLAYER_ABSORB_STATE  ::NONE;
-	_playerState.combatState   = PLAYER_COMBAT_STATE  ::NONE;
+	// プレイヤーの状態をリセット
+	_playerState.StateReset();
 
-	// 古いステートを異なる値に設定して状態変化を認識させる
-	_oldPlayerState.movementState = PLAYER_MOVEMENT_STATE::NONE;
-	_oldPlayerState.attackState   = PLAYER_ATTACK_STATE  ::NONE;
-	_oldPlayerState.shootState	  = PLAYER_SHOOT_STATE	 ::NONE;
-	_oldPlayerState.absorbState	  = PLAYER_ABSORB_STATE	 ::NONE;
-	_oldPlayerState.combatState   = PLAYER_COMBAT_STATE	 ::NONE;
+	// 待機状態
+	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;
+
+	// 古いステートをリセット
+	_oldPlayerState.StateReset();
 }
 
 // アニメーション初期化
