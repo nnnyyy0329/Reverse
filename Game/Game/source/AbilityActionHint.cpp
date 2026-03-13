@@ -10,8 +10,8 @@ namespace RenderConfig
 namespace SelectedIndexConfig
 {
 	constexpr int SURFACE_PLAYER_INDEX = 0;		// 表プレイヤーのインデックス
-	constexpr int INTERIOR_PLAYER_INDEX = 1;	// 裏プレイヤーのインデックス
-	constexpr int BULLET_PLAYER_INDEX = 2;		// 弾プレイヤーのインデックス
+	constexpr int BULLET_PLAYER_INDEX = 1;		// 弾プレイヤーのインデックス
+	constexpr int INTERIOR_PLAYER_INDEX = 2;	// 裏プレイヤーのインデックス
 }
 
 AbilityActionHint::AbilityActionHint()
@@ -53,7 +53,7 @@ bool AbilityActionHint::Render()
 	return true;
 }
 
-void AbilityActionHint::ActionHintRender(int selectedIndex, float selectGraphSenterX, float secondSelectGraphCenterX)
+void AbilityActionHint::ActionHintRender(ABILITY_TYPE abilityType, float selectGraphSenterX, float secondSelectGraphCenterX)
 {
 	// 画像のサイズを取得
 	int graphW, graphH;
@@ -62,9 +62,9 @@ void AbilityActionHint::ActionHintRender(int selectedIndex, float selectGraphSen
 	float graphCenterX = static_cast<float>(graphW / 2);	// 画像の中心X座標
 
 	// 能力タイプに応じてアクションヒントを描画
-	switch(selectedIndex)
+	switch(abilityType)
 	{
-		case SelectedIndexConfig::SURFACE_PLAYER_INDEX: // 表プレイヤー
+		case ABILITY_TYPE::SURFACE_PLAYER: // 表プレイヤー
 		{
 			/* 表プレイヤーのアクションヒントを描画 */
 
@@ -74,7 +74,7 @@ void AbilityActionHint::ActionHintRender(int selectedIndex, float selectGraphSen
 			break;
 		}
 			
-		case SelectedIndexConfig::BULLET_PLAYER_INDEX: // 弾発射プレイヤー
+		case ABILITY_TYPE::BULLET_PLAYER: // 弾発射プレイヤー
 		{
 			/* 弾プレイヤーのアクションヒントを描画 */
 
@@ -87,7 +87,7 @@ void AbilityActionHint::ActionHintRender(int selectedIndex, float selectGraphSen
 			break;
 		}
 
-		case SelectedIndexConfig::INTERIOR_PLAYER_INDEX: // 裏プレイヤー
+		case ABILITY_TYPE::INTERIOR_PLAYER: // 裏プレイヤー
 		{
 			/* 裏プレイヤーのアクションヒントを描画 */
 

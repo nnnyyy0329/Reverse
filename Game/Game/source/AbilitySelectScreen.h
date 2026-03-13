@@ -33,19 +33,13 @@ public:
 	/// @brief デバッグ描画
 	void DebugRender();
 
-	/* 選択関係関数 */
+	/* 選択処理関数 */
 	
 	/// @brief 入力に応じて選択画面の表示を切り替える処理
 	void SelectScreenByInput();		
 	
 	/// @brief 入力に応じて選択処理
 	void SelectionByInput();		
-	
-	/// @brief 選択要素の表示
-	void SelectRender();			
-	
-	/// @brief 選択画面の表示
-	void SelectFrameRender();		
 	
 	/// @brief 選択をリセット
 	void ResetSelection();			
@@ -54,7 +48,22 @@ public:
 	void CompleteSelection();	
 	
 	/// @brief プレイヤータイプに応じて選択可能かどうかをチェック
-	bool IsSelectActiveByPlayerType()const;	
+	bool IsSelectActiveByPlayerType()const;
+
+	/// @brief アビリティ選択時にエネルギーが足りているかどうかをチェック
+	bool IsSelectActiveByEnergy()const;
+
+
+	/* 選択描画関数 */
+
+	/// @brief 選択要素の表示
+	void SelectRender();
+
+	/// @brief アクションヒントの表示
+	void ActionHintRender();
+
+	/// @brief 選択画面の表示
+	void SelectFrameRender();
 
 	
 	/* デバッグ表示関連 */
@@ -72,11 +81,14 @@ public:
 	ABILITY_TYPE GetSelectedAbility()const{ return ConvertSelectionToAbility(_iSelectedAbility); }
 
 	/// @brief 選択画面がアクティブかどうかを取得
-	bool GetIsScreenActive()const{ return _bIsScreenActive; }			
+	bool GetIsScreenActive()const{ return _bIsScreenActive; }		
 
-	/// @brief 選択されたアビリティの番号を取得・設定
+	/// @brief 選択されたアビリティの番号を取得
 	int GetSelectedAbilityIndex()const{ return _iSelectedAbility; }
+
+	/// @brief 選択されたアビリティの番号を設定
 	void SetSelectedAbilityIndex(int index){ _iSelectedAbility = index; }
+
 
 	/// @brief 選択状態を設定
 	void SetSelectionState(SelectionState state){ _selectionState = state; }
@@ -116,6 +128,7 @@ protected:
 	float _fSecondDrawCenterX;	// 2つ目の描画中心X座標
 	
 	// 選択完了と画面表示のフラグ
+	bool _bIsSelectedAbility;	// 能力選択したかのフラグ
 	bool _bIsSelectComplete;	// 選択完了フラグ
 	bool _bIsScreenActive;		// 選択画面表示フラグ
 

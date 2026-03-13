@@ -48,8 +48,8 @@ AbilitySelectScreen::AbilitySelectScreen()
 	_fSecondDrawCenterX = 0.0f;	// 2つ目の描画中心X座標
 
 	// 選択完了と画面表示のフラグの初期化
-	_bIsSelectComplete = false;				// 選択完了フラグ
-	_bIsScreenActive = false;				// 選択画面表示フラグ
+	_bIsSelectComplete = false;	// 選択完了フラグ
+	_bIsScreenActive = false;	// 選択画面表示フラグ
 
 	// カーソル選択用
 	_iCursorCount = 0;		// 点滅用カウンター
@@ -88,10 +88,7 @@ bool AbilitySelectScreen::Render()
 	SelectRender();
 
 	// アクションヒントの表示
-	if(_abilityActionHint)
-	{
-		_abilityActionHint->ActionHintRender(_iSelectedAbility, _fDrawCenterX, _fSecondDrawCenterX);
-	}
+	ActionHintRender();
 
 	// 選択中じゃない場合は選択画面表示しない
 	if(_selectionState != SelectionState::SELECTING){ return false; }
@@ -148,6 +145,9 @@ void AbilitySelectScreen::SelectionByInput()
 			_playerUnlockManager->ForceUnlock(ABILITY_TYPE::BULLET_PLAYER);		// 弾プレイヤー解放
 		}
 	}
+
+	// アビリティ選択時にエネルギーが足りているかどうか
+	if(!IsSelectActiveByEnergy()){ return; }
 
 	// パワーアビリティ選択
 	if(im.IsTrigger(INPUT_ACTION::SELECT_POWER))
@@ -208,6 +208,15 @@ void AbilitySelectScreen::SelectRender()
 	// アビリティ画像を描画
 	DrawGraph(selectX[0], selectY, _iHandle2, TRUE);
 	DrawGraph(selectX[1], selectY, _iHandle1, TRUE);
+}
+
+void AbilitySelectScreen::ActionHintRender()
+{
+	// 選択されたアビリティに応じてアクションヒントを描画
+	if(_abilityActionHint)
+	{
+		_abilityActionHint->ActionHintRender(GetSelectedAbility(), _fDrawCenterX, _fSecondDrawCenterX);
+	}
 }
 
 void AbilitySelectScreen::SelectFrameRender()
@@ -310,6 +319,19 @@ bool AbilitySelectScreen::IsSelectActiveByPlayerType()const
 	}
 
 	return true;	// 表プレイヤーなら選択可能
+}
+
+// アビリティ選択時にエネルギーが足りているかどうか
+bool AbilitySelectScreen::IsSelectActiveByEnergy()const
+{
+	// エネルギーがたまっていない場合は選択不可
+	if(EnergyManager::GetInstance()->CanSwitchPlayer())
+	{
+		// エネルギーがたまっている場合は選択可能
+		return true;	
+	}
+
+	return false;
 }
 
 
