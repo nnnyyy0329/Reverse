@@ -32,51 +32,132 @@ public:
 	bool Process();
 	bool Render();
 
+	/// @brief デバッグ処理
 	bool DebugProcess();
+
+	/// @brief デバッグ描画
 	bool DebugRender();
 
+
 	/* プレイヤー管理 */
-	bool RegisterPlayer(PLAYER_TYPE type, std::shared_ptr<PlayerBase> player);	// プレイヤーの登録関数
-	void SwitchPlayerByAbility(ABILITY_TYPE ability);							// アビリティによるプレイヤー切り替え
+
+	/// @brief プレイヤーを登録する関数
+	/// 
+	/// @param type	プレイヤーのタイプ
+	/// @param player	登録するプレイヤーのインスタンス
+	/// 
+	/// @return 登録成功ならtrue、同じタイプのプレイヤーが既に登録されている場合はfalseを返す
+	bool RegisterPlayer(PLAYER_TYPE type, std::shared_ptr<PlayerBase> player);	
+
+	/// @brief アビリティに応じたプレイヤー切り替え
+	/// 
+	/// @param ability	切り替えのトリガーとなるアビリティのタイプ
+	void SwitchPlayerByAbility(ABILITY_TYPE ability);							
+
 
 	/* プレイヤー切り替え管理 */	//--- 今後クラス分け予定--------------------------------------
-	void SwitchPlayerByEnergy();												// エネルギーによるプレイヤー切り替え
-	void SwitchPlayer(PLAYER_TYPE type);										// プレイヤー切り替え関数
-	void EnableStateTransfer(bool enable) { _bEnableStateTransfer = enable; }	// 状態の引き継ぎ設定
-	void TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPlayer);		// 切り替え時の位置置き換え関数
+
+	/// @brief エネルギーに応じたプレイヤー切り替え
+	void SwitchPlayerByEnergy();												
+
+	/// @brief プレイヤー切り替え処理
+	///
+	/// @param type 切り替えるプレイヤーのタイプ
+	void SwitchPlayer(PLAYER_TYPE type);										
+
+	/// @brief プレイヤー切り替え時の状態引き継ぎの設定
+	/// 
+	/// @param enable	状態引き継ぎを有効にするならtrue、無効にするならfalse
+	void EnableStateTransfer(bool enable) { _bEnableStateTransfer = enable; }	
+
+	/// @brief プレイヤー切り替え時の状態引き継ぎ処理
+	///
+	/// @param oldPlayer 切り替え前のプレイヤー
+	/// @param newPlayer 切り替え後のプレイヤー
+	void TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPlayer);		
+
 
 	/* 変身管理 */		//--- 今後クラス分け予定 --------------------------------------
-	void StartTransform(PLAYER_TYPE targetType);				// 変身開始
-	void SwitchPlayerImmediate(PLAYER_TYPE targetType);			// 即時変身
-	void UpdateTransform();										// 変身処理
-	void TransformFinishByTime();								// 時間による変身終了処理
-	void EndTransform();										// 変身終了
-	bool IsTransforming() const { return _bIsTransforming; }	// 変身中か
+
+	/// @brief 変身開始処理
+	///
+	/// @param targetType 変身先のプレイヤータイプ
+	void StartTransform(PLAYER_TYPE targetType);				
+
+	/// @brief 即時変身処理
+	///
+	/// @param targetType 変身先のプレイヤータイプ
+	void SwitchPlayerImmediate(PLAYER_TYPE targetType);			
+
+	/// @brief 変身処理
+	void UpdateTransform();										
+
+	/// @brief 時間経過による変身終了処理
+	void TransformFinishByTime();								
+
+	/// @brief 変身終了処理
+	void EndTransform();										
+
+	/// @brief 変身中かどうかを取得
+	/// 
+	/// @return 変身中ならtrue、そうでないならfalse
+	bool IsTransforming() const { return _bIsTransforming; }	
 
 	/* 変身解除管理 */		// --- 今後クラス分け予定--------------------------------------
-	void StartTransformCancel();											// 変身解除開始
-	void UpdateTransformCancel();											// 変身解除処理
-	void SwitchPlayerByTime();												// 時間によるプレイヤー切り替え処理
-	void EndTransformCancel();												// 変身解除終了
-	bool IsTransformCanceling() const { return _bIsTransformCanceling; }	// 変身解除中か
+
+	/// @brief 変身解除開始処理
+	void StartTransformCancel();											
+
+	/// @brief 変身解除処理
+	void UpdateTransformCancel();
+
+	/// @brief 変身解除中の時間経過によるプレイヤー切り替え処理
+	void SwitchPlayerByTime();	
+
+	/// @brief 変身解除終了処理
+	void EndTransformCancel();
+
+	/// @brief 変身解除中かどうかを取得
+	///
+	/// @return 変身解除中ならtrue、そうでないならfalse
+	bool IsTransformCanceling() const { return _bIsTransformCanceling; }	
 
 
 	/*****ゲッターセッター*****/
 
-	// アクティブプレイヤー取得
+	/// @brief アクティブプレイヤー取得(生ポインタ版)
+	/// 
+	/// @return アクティブプレイヤーのポインタ。存在しない場合はnullptrを返す。
 	PlayerBase* GetActivePlayer() const;									
 
-	// アクティブプレイヤー取得(shared_ptr版)
+	/// @brief アクティブプレイヤー取得(shared_ptr版)
+	///
+	/// @return アクティブプレイヤーのshared_ptr。存在しない場合はnullptrを返す。
 	std::shared_ptr<PlayerBase> GetActivePlayerShared() const;				
 
-	// タイプでプレイヤーを取得
+	/// @brief 指定したプレイヤータイプのプレイヤーを取得
+	///
+	/// @param type 取得したいプレイヤーのタイプ
+	/// 
+	/// @return 指定したタイプのプレイヤーのshared_ptr。存在しない場合はnullptrを返す。
 	std::shared_ptr<PlayerBase> GetPlayerByType(PLAYER_TYPE type) const;	
 
-	// アクティブプレイヤーのタイプ取得
+	/// @brief アクティブプレイヤーのタイプを取得
+	///
+	/// @return アクティブプレイヤーのタイプ。
 	PLAYER_TYPE GetActivePlayerType() const { return _eActivePlayerType; }	
 
-	// クラスセット
+
+	/* クラスセット */
+
+	/// @brief カメラマネージャーを設定
+	///
+	/// @param cameraManager 設定するCameraManager
 	void SetCameraManager(std::shared_ptr<CameraManager> cameraManager) { _cameraManager = cameraManager; }
+
+	/// @brief 能力選択画面を設定
+	///
+	/// @param abilityScreen 設定するAbilitySelectScreen
 	void SetAbilitySelectScreen(std::shared_ptr<AbilitySelectScreen> abilityScreen){_abilitySelectScreen = abilityScreen;}
 
 private:
@@ -88,15 +169,23 @@ private:
 	void UpdateTransformCancelTime();							
 
 	/// @brief 変身関連のアニメーションを再生
+	///
+	/// @param animName 再生するアニメーションの名前
 	void PlayTransConnectionAnim(const char* animName);			
 
 	/// @brief 能力選択画面がアクティブかどうかをチェックする
+	///
+	/// @param isAbilityScreenActive 能力選択画面がアクティブならtrue、そうでないならfalseを返す参照
 	void CheckAbilityScreenActive(bool& isAbilityScreenActive);	
 
 	/// @brief 能力選択に応じた自動切り替え処理
+	///
+	/// @param isAbilityScreenActive 能力選択画面がアクティブかどうか
 	void ProcessAutoSwitch(bool isAbilityScreenActive);			
 	
 	/// @brief アクティブプレイヤーの処理
+	///
+	/// @param isAbilityScreenActive 能力選択画面がアクティブかどうか
 	void ProcessActivePlayer(bool isAbilityScreenActive);
 
 	/// @brief 待機アニメーションに戻す処理
