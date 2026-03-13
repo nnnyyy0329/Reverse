@@ -12,6 +12,7 @@ struct AbsorbConfig
 	int absorbDivision;				// 吸収範囲の分割数
 	bool isActive;					// 吸収攻撃がアクティブかどうか
 	std::string absorbEffectName;	// 吸収エフェクト名
+	VECTOR effectOffset;			// エフェクト位置オフセット
 };
 
 // 吸収攻撃クラス
@@ -29,7 +30,7 @@ public:
 	/* 吸収処理関連 */
 
 	// 入力による吸収処理
-	void ProcessAbsorbByInput(int key);
+	void ProcessAbsorbByInput(bool key);
 
 	// 吸収処理
 	void ProcessAbsorb(std::shared_ptr<CharaBase>owner);

@@ -78,11 +78,11 @@ void AbilityActionHint::ActionHintRender(ABILITY_TYPE abilityType, float selectG
 		{
 			/* 弾プレイヤーのアクションヒントを描画 */
 
-			// 貫通弾アクションヒントを描画
-			DrawGraph(selectGraphSenterX - graphCenterX, RenderConfig::DRAW_Y, _iHandlePiercingBulletAction, TRUE);
-
 			// 通常弾アクションヒントを描画
-			DrawGraph(secondSelectGraphCenterX - graphCenterX, RenderConfig::DRAW_Y, _iHandleNormalBulletAction, TRUE);
+			DrawGraph(selectGraphSenterX - graphCenterX, RenderConfig::DRAW_Y, _iHandleNormalBulletAction, TRUE);
+
+			// 貫通弾アクションヒントを描画
+			DrawGraph(secondSelectGraphCenterX - graphCenterX, RenderConfig::DRAW_Y, _iHandlePiercingBulletAction, TRUE);
 
 			break;
 		}

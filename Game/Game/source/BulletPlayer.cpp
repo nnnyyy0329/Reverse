@@ -262,9 +262,11 @@ void BulletPlayer::ShootInput()
 		// 発射キーが新しく押され、発射カウントが残っていないなら
 		if(!_bWasShootKeyPressed && IsShootIntervalNegative())
 		{
-			// 構えに移行
-			_playerState.shootState = PLAYER_SHOOT_STATE::SHOOT_READY;	// 発射構え状態に移行
-			_bIsReadyCompleted = false;									// 構えアニメーション未完了
+			// 発射構え状態に移行
+			_playerState.shootState = PLAYER_SHOOT_STATE::SHOOT_READY;	
+
+			// 構えアニメーション未完了
+			_bIsReadyCompleted = false;									
 
 			// アニメーション切り替え
 			ProcessPlayAnimation();
@@ -322,7 +324,8 @@ void BulletPlayer::ShootInput()
 			}
 		}
 
-		_bIsShootFromRightArm = false; // 左腕から発射するようにリセット
+		// 左腕から発射するようにリセット
+		_bIsShootFromRightArm = false; 
 	}
 
 	// 弾発射カウントを減らす

@@ -209,11 +209,11 @@ struct PlayerState
 	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }	// 特殊状態かどうか
 
 	// 特定の状態かどうかをチェックする関数
-	bool IsMovementState(PLAYER_MOVEMENT_STATE state)	const { return movementState == state; }	// 特定の移動状態かチェック
-	bool IsAttackState(PLAYER_ATTACK_STATE state)		const { return attackState == state; }		// 特定の攻撃状態かチェック
-	bool IsShootState(PLAYER_SHOOT_STATE state)			const { return shootState == state; }		// 特定の発射状態かチェック
-	bool IsAbsorbState(PLAYER_ABSORB_STATE state)		const { return absorbState == state; }		// 特定の吸収状態かチェック
-	bool IsCombatState(PLAYER_COMBAT_STATE state)		const { return combatState == state; }		// 特定の特殊状態かチェック
+	bool IsInMovementState(PLAYER_MOVEMENT_STATE state)	const { return movementState == state; }	// 特定の移動状態かチェック
+	bool IsInAttackState(PLAYER_ATTACK_STATE state)		const { return attackState == state; }		// 特定の攻撃状態かチェック
+	bool IsInShootState(PLAYER_SHOOT_STATE state)		const { return shootState == state; }		// 特定の発射状態かチェック
+	bool IsInAbsorbState(PLAYER_ABSORB_STATE state)		const { return absorbState == state; }		// 特定の吸収状態かチェック
+	bool IsInCombatState(PLAYER_COMBAT_STATE state)		const { return combatState == state; }		// 特定の特殊状態かチェック
 
 	// 状態リセット関数
 	void StateReset()
@@ -273,10 +273,10 @@ public:
 	// ステータス文字列変換
 	std::string GetCurrentStateString() const;								// 現在の状態文字列取得
 	std::string GetMovementStateString(PLAYER_MOVEMENT_STATE state)	const;	// 基本移動の状態文字列取得
-	std::string GetAttackStateString(PLAYER_ATTACK_STATE state)	const;	// 攻撃状態の文字列取得
-	std::string GetShootStateString(PLAYER_SHOOT_STATE state)	const;	// 弾発射状態の文字列取得
-	std::string GetAbsorbStateString(PLAYER_ABSORB_STATE state)	const;	// 吸収攻撃状態の文字列取得
-	std::string GetCombatStateString(PLAYER_COMBAT_STATE state)	const;	// 特殊状態の文字列取得
+	std::string GetAttackStateString(PLAYER_ATTACK_STATE state)	const;		// 攻撃状態の文字列取得
+	std::string GetShootStateString(PLAYER_SHOOT_STATE state)	const;		// 弾発射状態の文字列取得
+	std::string GetAbsorbStateString(PLAYER_ABSORB_STATE state)	const;		// 吸収攻撃状態の文字列取得
+	std::string GetCombatStateString(PLAYER_COMBAT_STATE state)	const;		// 特殊状態の文字列取得
 
 	// 現在のアニメーション名取得
 	const char* GetCurrentAnimationName() const;

@@ -45,6 +45,9 @@ private:
 	void AbsorbSystemDebugRender();	// 吸収攻撃システムデバッグ描画
 
 	/* 吸収攻撃のモーション管理用メンバ関数 */
+
+	// 吸収攻撃処理
+	void ProcessAbsorb()override;
 	
 	// 吸収攻撃モーション切り替え条件処理
 	void ProcessChangeAbsorbMotion();

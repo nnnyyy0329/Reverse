@@ -2,17 +2,6 @@
 #include "CharaBase.h"
 #include "EnergyManager.h"
 
-// 吸収攻撃の設定に関する定数
-namespace AbsorbConstants
-{
-	constexpr float DEFAULT_ABSORB_RATE			= 0.5f;				// デフォルトの吸収率
-	constexpr float DEFAULT_ENERGY_ABSORB_RATE	= 0.5f;				// デフォルトのエネルギー吸収率
-	constexpr float DEFAULT_HP_ABSORB_RATE		= 0.5f;				// デフォルトのHP吸収率
-	constexpr float DEFAULT_ABSORB_RANGE		= 75.0f;			// デフォルトの吸収範囲
-	constexpr float DEFAULT_ABSORB_ANGLE		= DX_PI_F / 3.0f;	// デフォルトの吸収範囲の角度（60度）
-	constexpr int DEFAULT_ABSORB_DIVISION		= 16;				// デフォルトの吸収範囲の分割数
-}
-
 // 吸収量に関する定数
 namespace AbsorbAmount
 {
@@ -30,14 +19,15 @@ namespace AbsorbTime
 
 AbsorbAttack::AbsorbAttack() : AttackBase() // 親クラスのコンストラクタ呼び出し
 {
-	_stcAbsorbConfig.absorbRate			= AbsorbConstants::DEFAULT_ABSORB_RATE;			// 吸収率の初期化
-	_stcAbsorbConfig.energyAbsorbRate	= AbsorbConstants::DEFAULT_ENERGY_ABSORB_RATE;	// エネルギー吸収率の初期化
-	_stcAbsorbConfig.hpAbsorbRate		= AbsorbConstants::DEFAULT_HP_ABSORB_RATE;		// HP吸収率の初期化
-	_stcAbsorbConfig.absorbRange		= AbsorbConstants::DEFAULT_ABSORB_RANGE;		// 吸収範囲の初期化
-	_stcAbsorbConfig.absorbAngle		= AbsorbConstants::DEFAULT_ABSORB_ANGLE;		// 吸収範囲の角度の初期化
-	_stcAbsorbConfig.absorbDivision		= AbsorbConstants::DEFAULT_ABSORB_DIVISION;		// 吸収範囲の分割数の初期化
-	_stcAbsorbConfig.isActive			= false;										// 吸収攻撃がアクティブかどうかの初期化
-	_stcAbsorbConfig.absorbEffectName	= "";											// 吸収エフェクト名の初期化
+	_stcAbsorbConfig.absorbRate			= 0.0f;						// 吸収率の初期化
+	_stcAbsorbConfig.energyAbsorbRate	= 0.0f;						// エネルギー吸収率の初期化
+	_stcAbsorbConfig.hpAbsorbRate		= 0.0f;						// HP吸収率の初期化
+	_stcAbsorbConfig.absorbRange		= 0.0f;						// 吸収範囲の初期化
+	_stcAbsorbConfig.absorbAngle		= 0.0f;						// 吸収範囲の角度の初期化
+	_stcAbsorbConfig.absorbDivision		= 0.0f;						// 吸収範囲の分割数の初期化
+	_stcAbsorbConfig.isActive			= false;					// 吸収攻撃がアクティブかどうかの初期化
+	_stcAbsorbConfig.absorbEffectName	= "";						// 吸収エフェクト名の初期化
+	_stcAbsorbConfig.effectOffset		= VGet(0.0f, 0.0f, 0.0f);	// エフェクト位置オフセットの初期化
 
 	_fAbsorbCooldown = AbsorbTime::ABSORB_COOLDOWN;	// 吸収のクールダウン時間の初期化
 	_fAbsorbTimer = 0.0f;							// 吸収タイマーの初期化
@@ -107,7 +97,7 @@ void AbsorbAttack::ProcessDecrementTimer()
 }
 
 // 入力による吸収処理
-void AbsorbAttack::ProcessAbsorbByInput(int key)
+void AbsorbAttack::ProcessAbsorbByInput(bool key)
 {
 	// 入力がある場合のみ処理
 	if(key)
@@ -145,7 +135,7 @@ void AbsorbAttack::ProcessAbsorb(std::shared_ptr<CharaBase> owner)
 	if(!owner){ return; }	
 
 	// クールダウン中の場合は処理しない
-	if(_fAbsorbTimer > 0.0f){ return; }	
+	if(_fAbsorbTimer > 0.0f){ return; }
 
 	// 扇形データ設定
 	SectorData sectorData;
@@ -191,6 +181,22 @@ void AbsorbAttack::ProcessAbsorbEffect(const VECTOR& ownerPos)
 	// エフェクト名が設定されている場合のみ再生
 	if(!_stcAbsorbConfig.absorbEffectName.empty())
 	{
+		//// オフセット値をワールド座標に変換
+		//VECTOR worldOffset = GeometryUtility::TransOffsetToWorld(config.effectOffset, dir);
+
+		//// オフセット値を現在の位置に適応
+		//VECTOR effectPos = VAdd(pos, worldOffset);
+
+		//// エフェクト再生して、ハンドルを取得
+		//auto handle = EffectServer::GetInstance()->Play(config.effectName, effectPos);
+
+		//// エフェクトの向きを攻撃方向に合わせる
+		//VECTOR dirNorm = VNorm(dir);							// 攻撃方向の正規化
+		//float rotY = atan2f(dirNorm.x, dirNorm.z);				// Y軸回転角度を計算
+		//VECTOR rotation = VGet(0.0f, rotY, 0.0f);				// エフェクトの回転量を設定
+		//EffectServer::GetInstance()->SetRot(handle, rotation);	// 回転量をエフェクトに適応
+
+
 		// 吸収エフェクト再生
 		EffectServer::GetInstance()->Play(_stcAbsorbConfig.absorbEffectName, ownerPos);
 	}
