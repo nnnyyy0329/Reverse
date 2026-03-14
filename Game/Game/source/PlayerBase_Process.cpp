@@ -33,14 +33,14 @@ void PlayerBase::ProcessMovePlayer()
 	_vOldPos = _vPos;	// 前フレームの位置を保存
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
-	if(IsAttacking()){ return; }	// 攻撃中は移動入力を受け付けない
+	// 攻撃中は移動入力を受け付けない
+	if(IsAttacking()){ return; }					
 
-	if(_playerState.IsStateCombat()){ return; }		// 回避中は移動入力を受け付けない
-	//if(IsDodging()){ return; }		// 回避中は移動入力を受け付けない
+	// 特殊ステート中は移動入力を受け付けない(変身関連、回避、被弾や死亡)
+	if(_playerState.IsStateCombat()){ return; }		
 
-	if(IsHitStop()){ return; }		// 被弾中は移動入力を受け付けない
-	if(IsStateDeath()){ return; }	// 死亡中は移動入力を受け付けない
-	if(_playerState.IsStateAbsorbing()){ return; }	// 吸収攻撃中は移動入力を受け付けない
+	// 吸収攻撃中は移動入力を受け付けない
+	if(_playerState.IsStateAbsorbing()){ return; }	
 
 	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
 	bool isShooting = _playerState.IsStateShooting();	// 発射中かどうか

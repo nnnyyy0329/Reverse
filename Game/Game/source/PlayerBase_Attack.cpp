@@ -426,6 +426,7 @@ bool PlayerBase::CanStartAttack()
 	// 攻撃入力チェック
 	if((_playerState.IsStateMoving()								&&	// 何かしらの移動状態で
 		!_playerState.IsStateAttacking())							&&	// 攻撃状態ではなく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)		&&	// 被弾中でなく
 		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DODGE)	&&	// 回避状態で
 		im.IsTrigger(INPUT_ACTION::ATTACK))							// 入力があるなら
 	{

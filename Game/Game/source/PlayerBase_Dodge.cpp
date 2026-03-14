@@ -144,6 +144,7 @@ bool PlayerBase::CanStartDodge()
 	if((_playerState.IsStateMoving())							&&	// 移動状態で
 		_playerState.IsInAttackState(PLAYER_ATTACK_STATE::NONE)	&&	// 何かしらの攻撃状態ではなく
 		_playerState.IsInShootState(PLAYER_SHOOT_STATE::NONE)	&&	// 何かしらの発射状態ではなく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)	&&	// 被弾中でなく
 		StaminaManager::GetInstance()->CanDodge()				&&	// スタミナが回避可能な量で
 		im.IsTrigger(INPUT_ACTION::DODGE))							// 回避入力があったら
 	{
@@ -157,11 +158,11 @@ bool PlayerBase::CanStartDodge()
 // 回避可能かチェック
 bool PlayerBase::CanDodge()
 {
-	if(_dodgeSystem != nullptr									||	// 回避システムが有効で
-		_dodgeSystem->CanDodge()								||	// 回避中でなく
-		!IsAttacking()											||	// 攻撃中でなく
-		_playerState.combatState != PLAYER_COMBAT_STATE::HIT	||	// 被弾中でなく
-		_playerState.combatState != PLAYER_COMBAT_STATE::DEATH)		// 死亡中じゃないなら
+	if(_dodgeSystem != nullptr										||	// 回避システムが有効で
+		_dodgeSystem->CanDodge()									||	// 回避中でなく
+		!IsAttacking()												||	// 攻撃中でなく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)		||	// 被弾中でなく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DEATH))		// 死亡中じゃないなら
 	{
 		return true;
 	}
@@ -176,8 +177,8 @@ bool PlayerBase::IsDodging()
 	if(_dodgeSystem == nullptr) { return false; }
 
 	// 回避中かチェック
-	if(_playerState.combatState == PLAYER_COMBAT_STATE::DODGE ||
-		_dodgeSystem->IsDodging())
+	if(_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DODGE)	||	// 回避中で
+		_dodgeSystem->IsDodging())									// 回避をすでにしている
 	{
 		return true;
 	}
