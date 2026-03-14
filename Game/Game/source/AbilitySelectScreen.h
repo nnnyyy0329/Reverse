@@ -53,6 +53,9 @@ public:
 	/// @brief アビリティ選択時にエネルギーが足りているかどうかをチェック
 	bool IsSelectActiveByEnergy()const;
 
+	/// @brief プレイヤーのステートが吸収状態関連かチェック
+	bool IsPlayerStateAbsorb()const;
+
 
 	/* 選択描画関数 */
 
@@ -88,7 +91,6 @@ public:
 
 	/// @brief 選択されたアビリティの番号を設定
 	void SetSelectedAbilityIndex(int index){ _iSelectedAbility = index; }
-
 
 	/// @brief 選択状態を設定
 	void SetSelectionState(SelectionState state){ _selectionState = state; }

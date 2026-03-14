@@ -326,6 +326,7 @@ public:
 	// 状態リセット
 	void SetStateReset(){ return _playerState.StateReset(); }
 
+	// 移動ステートか
 	bool IsMoving() { return _playerState.IsStateMoving(); }
 
 

@@ -129,7 +129,7 @@ private:
 	void CheckHitAbsorbAttack(std::shared_ptr<CharaBase> player, std::shared_ptr<CharaBase>enemy);
 
 	// ƒLƒƒƒ‰‚Æ‹zûUŒ‚‚Ì“–‚½‚è”»’è
-	void CheckHitCharaAbsorbAttack	(std::shared_ptr<CharaBase> chara, std::shared_ptr<CharaBase> owner, PlayerAbsorbAttackSystem* absorbSystem);
+	void CheckHitCharaAbsorbAttack	(std::shared_ptr<CharaBase> chara, std::shared_ptr<PlayerBase> owner, PlayerAbsorbAttackSystem* absorbSystem);
 		
 	// UŒ‚Š—LÒ‚ª©•ª‚ÉUŒ‚‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
 	bool OwnerIsAttackingOwner		(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);						

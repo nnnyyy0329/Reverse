@@ -227,7 +227,7 @@ void SurfacePlayer::ProcessAbsorbSystem()
 {
 	if(!_absorbAttackSystem){ return; }
 
-	if(_playerState.absorbState != PLAYER_ABSORB_STATE::ABSORB_READY){ return; }
+	//if(_playerState.absorbState != PLAYER_ABSORB_STATE::ABSORB_READY){ return; }
 
 	// ‹zûUŒ‚ƒ‚[ƒVƒ‡ƒ“‚ÌØ‚è‘Ö‚¦ğŒˆ—
 	ProcessChangeAbsorbMotion();

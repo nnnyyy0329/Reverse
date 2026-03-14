@@ -148,6 +148,9 @@ void AbilitySelectScreen::SelectionByInput()
 
 	// アビリティ選択時にエネルギーが足りているかどうか
 	if(!IsSelectActiveByEnergy()){ return; }
+	
+	// プレイヤーのステートが吸収状態関連かチェック
+	if(IsPlayerStateAbsorb()){ return; }
 
 	// パワーアビリティ選択
 	if(im.IsTrigger(INPUT_ACTION::SELECT_POWER))
@@ -332,6 +335,18 @@ bool AbilitySelectScreen::IsSelectActiveByEnergy()const
 	}
 
 	return false;
+}
+
+bool AbilitySelectScreen::IsPlayerStateAbsorb()const
+{
+	if(!_playerManager){ return false; }
+
+	// アクティブプレイヤーの shared_ptr を取得
+	auto activePlayer = _playerManager->GetActivePlayerShared();
+	if(!activePlayer) { return false; }
+
+	// 吸収状態が NONE 以外なら吸収ステート中と判断して true を返す
+	return (activePlayer->GetAbsorbState() != PLAYER_ABSORB_STATE::NONE);
 }
 
 

@@ -766,7 +766,7 @@ void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<CharaBase> player, std::shar
 	if(!player || !enemy){ return; }
 	
 	// SurfacePlayerかチェック
-	auto surfacePlayer = std::dynamic_pointer_cast<SurfacePlayer>(player);
+	auto surfacePlayer = std:: dynamic_pointer_cast<SurfacePlayer>(player);
 	if(!surfacePlayer){ return; }
 
 	// 吸収攻撃システムを取得
@@ -781,7 +781,7 @@ void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<CharaBase> player, std::shar
 }
 
 // キャラと吸収攻撃の当たり判定
-void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::shared_ptr<CharaBase> owner, PlayerAbsorbAttackSystem* absorbSystem)
+void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::shared_ptr<PlayerBase> owner, PlayerAbsorbAttackSystem* absorbSystem)
 {
 	if(!chara || !owner || !absorbSystem){ return; }
 
@@ -803,6 +803,9 @@ void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::
 	if(GeometryUtility::IsInSector(chara->GetPos(), sectorData))
 	{
 		if(!config.isActive){ return; }	// 吸収攻撃が有効でない場合は当たらない
+
+		// プレイヤーの吸収状態が構えではないならスキップ
+		if(owner->GetAbsorbState() != PLAYER_ABSORB_STATE::ABSORB_READY){ return; }
 
 		// プレイヤーの吸収システムの更新呼び出し
 		absorbSystem->ProcessAbsorb();
