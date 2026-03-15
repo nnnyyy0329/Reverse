@@ -428,7 +428,7 @@ bool PlayerBase::CanStartAttack()
 		!_playerState.IsStateAttacking())							&&	// 攻撃状態ではなく
 		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)		&&	// 被弾中でなく
 		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DODGE)	&&	// 回避状態で
-		im.IsTrigger(INPUT_ACTION::ATTACK))							// 入力があるなら
+		im.IsTrigger(INPUT_ACTION::ATTACK))								// 入力があるなら
 	{
 		return true;
 	}
@@ -445,8 +445,16 @@ bool PlayerBase::CanNextAttack()
 	// キャラタイプに応じた最大コンボ数を取得
 	int maxComboCount = GetMaxComboCount();
 
-	// コンボ可能で、現在のコンボカウントが最大コンボ数より小さいなら次の攻撃可能
-	return _bCanCombo && _iComboCount < maxComboCount;
+	if((_bCanCombo													&&	// コンボ可能で
+		_iComboCount < maxComboCount								&&	// 現在のコンボカウントが最大コンボ数より小さく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT))		// 被弾中でないなら次の攻撃が可能
+
+		)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 // 攻撃状態中かどうかをチェック
