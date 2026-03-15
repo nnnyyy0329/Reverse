@@ -5,7 +5,7 @@
 
 namespace AnimConfig
 {
-	const float BLEND_TIME = 1.0f;	// アニメーションのブレンド時間
+	const float BLEND_TIME = 3.5f;	// アニメーションのブレンド時間
 }
 
 // 共通関数呼び出し
@@ -42,9 +42,9 @@ void PlayerBase::ProcessMovePlayer()
 	// 吸収攻撃中は移動入力を受け付けない
 	if(_playerState.IsStateAbsorbing()){ return; }	
 
+	// 発射中でエイムモードでない場合は移動入力を受け付けない
 	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
-	bool isShooting = _playerState.IsStateShooting();	// 発射中かどうか
-	if(!isAiming && isShooting){ return; }				// 発射中でエイムモードでない場合は移動入力を受け付けない
+	if(!isAiming && _playerState.IsStateShooting()){ return; }	
 
 	// 移動処理
 	{
@@ -78,10 +78,20 @@ void PlayerBase::ProcessInputMove()
 {
 	auto& im = InputManager::GetInstance();
 
+	// 発射状態なら
+	if(_playerState.IsStateShooting())
+	{
+		// ダッシュフラグを false にする
+		_bIsDashInput = false;
+	}
+
 	// ダッシュ入力があればフラグを変える
 	if(im.IsTrigger(INPUT_ACTION::DASH))
 	{
-		_bIsDashInput = !_bIsDashInput;// ダッシュ入力フラグをトグルする
+		// 弾発射ステートならスキップ
+		if(_playerState.IsStateShooting()){ return; }
+
+		_bIsDashInput = !_bIsDashInput;// ダッシュ入力フラグを切り替える
 	}
 
 	const AnalogState& analog = im.GetAnalog();
@@ -203,7 +213,11 @@ void PlayerBase::ProcessStatusAnimation()
 				_vDir = _vMove;	// 移動方向を向く
 			}
 
-			_playerState.movementState = PLAYER_MOVEMENT_STATE::WALK;	// 歩行
+			// 弾の発射状態じゃないなら
+			if(!_playerState.IsStateShooting())
+			{
+				_playerState.movementState = PLAYER_MOVEMENT_STATE::WALK;	// 歩行
+			}
 		}
 		else // 止まっているなら
 		{

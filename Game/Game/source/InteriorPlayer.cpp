@@ -266,7 +266,7 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 		configs[4].attackMoveSpeed		= 15.0f,				// 攻撃中の移動速度
 		configs[4].isActive				= false,				// アクティブかどうか
 		configs[4].isHit				= false,				// ヒットしたかどうか
-		configs[4].canKnockback			= false,				// 吹き飛ばし攻撃かどうか
+		configs[4].canKnockback			= true,					// 吹き飛ばし攻撃かどうか
 		configs[4].isAttackCancelByHit	= false,				// 被弾でキャンセルされる攻撃か
 	};
 }

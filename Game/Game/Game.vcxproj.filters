@@ -109,9 +109,6 @@
     <ClCompile Include="source\PlayerBase_Process.cpp">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClCompile>
-    <ClCompile Include="source\BulletPlayer.cpp">
-      <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
-    </ClCompile>
     <ClCompile Include="source\ModeStageChange.cpp">
       <Filter>Mode\StageChange</Filter>
     </ClCompile>
@@ -229,9 +226,11 @@
     <ClCompile Include="source\EventCamera.cpp">
       <Filter>Camera\Addon</Filter>
     </ClCompile>
-    <ClCompile Include="source\Pathfinding.cpp" />
     <ClCompile Include="source\ModeEndingText.cpp">
       <Filter>Mode\Ending</Filter>
+    </ClCompile>
+    <ClCompile Include="source\BulletPlayer.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -451,7 +450,6 @@
     <ClInclude Include="source\EventCamera.h">
       <Filter>Camera\Addon</Filter>
     </ClInclude>
-    <ClInclude Include="source\Pathfinding.h" />
     <ClInclude Include="source\ModeEndingText.h">
       <Filter>Mode\Ending</Filter>
     </ClInclude>

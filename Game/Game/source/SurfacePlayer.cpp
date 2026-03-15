@@ -229,6 +229,9 @@ void SurfacePlayer::ProcessAbsorbSystem()
 
 	//if(_playerState.absorbState != PLAYER_ABSORB_STATE::ABSORB_READY){ return; }
 
+	// 回避状態の時は吸収の入力処理をスキップ
+	if(_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DODGE)){ return; }
+
 	// 吸収攻撃モーションの切り替え条件処理
 	ProcessChangeAbsorbMotion();
 

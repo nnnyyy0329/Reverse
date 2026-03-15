@@ -92,7 +92,7 @@ void AbilityActionHint::ActionHintRender(ABILITY_TYPE abilityType, float selectG
 			/* 裏プレイヤーのアクションヒントを描画 */
 
 			// 範囲攻撃アクションヒントを描画
-			DrawGraph(selectGraphSenterX - graphCenterX, RenderConfig::DRAW_Y, _iHandleAoeAction, TRUE);
+			//DrawGraph(selectGraphSenterX - graphCenterX, RenderConfig::DRAW_Y, _iHandleAoeAction, TRUE);
 
 			// 打撃攻撃アクションヒントを描画
 			DrawGraph(secondSelectGraphCenterX - graphCenterX, RenderConfig::DRAW_Y, _iHandlePunchAction, TRUE);
