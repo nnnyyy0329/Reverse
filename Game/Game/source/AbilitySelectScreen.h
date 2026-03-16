@@ -2,21 +2,20 @@
 #include "appframe.h"
 #include "AbilityBase.h" 
 
+class PlayerManager;
+class PlayerUnlockManager;
+class AbilityActionHint;
+
 /// @brief 選択状態を表す列挙型
 enum class SelectionState
 {
 	NONE,
-	NOT_SELECTION,		// 非選択
-	SELECTING,			// 選択中
-	SELECT_COMPLETED,	// 選択確定
-	COMPLETED,			// 選択処理完了
+	NOT_SELECTION,		///< 非選択
+	SELECTING,			///< 選択中
+	SELECT_COMPLETED,	///< 選択確定
+	COMPLETED,			///< 選択処理完了
 	_EOT_,
 };
-
-/// @brief 前方宣言
-class PlayerManager;
-class PlayerUnlockManager;
-class AbilityActionHint;
 
 /// @brief 能力選択画面クラス
 class AbilitySelectScreen
@@ -55,6 +54,9 @@ public:
 
 	/// @brief プレイヤーのステートが吸収状態関連かチェック
 	bool IsPlayerStateAbsorb()const;
+
+	/// @brief プレイヤーのステートが特殊状態かチェック
+	bool IsPlayerCombatState()const;
 
 
 	/* 選択描画関数 */

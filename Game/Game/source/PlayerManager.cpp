@@ -265,13 +265,6 @@ void PlayerManager::UpdateTransform()
 
 	// 変身時間による変身終了処理
 	TransformFinishByTime();
-
-	// 変身時間が最大を超えたら変身終了で、変身中なら
-	if(_fTransformTime >= _fTransformMaxTime && _bIsTransforming)
-	{
-		// 変身終了
-		EndTransform();
-	}
 }
 
 void PlayerManager::TransformFinishByTime()

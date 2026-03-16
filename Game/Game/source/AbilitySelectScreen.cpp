@@ -124,17 +124,6 @@ void AbilitySelectScreen::SelectionByInput()
 
 	auto& im = InputManager::GetInstance();
 
-	//// デバッグ用の入力
-	//if(im.IsTrigger(INPUT_ACTION::DEBUG2))
-	//{
-	//	if(_playerUnlockManager)
-	//	{
-	//		// デバッグ用の強制解放
-	//		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::INTERIOR_PLAYER);	// 裏プレイヤー解放
-	//		_playerUnlockManager->ForceUnlock(ABILITY_TYPE::BULLET_PLAYER);		// 弾プレイヤー解放
-	//	}
-	//}
-
 	// エネルギーがたまったら能力を開放
 	if(EnergyManager::GetInstance()->CanSwitchPlayer())
 	{
@@ -151,6 +140,9 @@ void AbilitySelectScreen::SelectionByInput()
 	
 	// プレイヤーのステートが吸収状態関連かチェック
 	if(IsPlayerStateAbsorb()){ return; }
+
+	// プレイヤーのステートが特殊状態かチェック
+	if(IsPlayerCombatState()){ return; }
 
 	// パワーアビリティ選択
 	if(im.IsTrigger(INPUT_ACTION::SELECT_POWER))
@@ -347,6 +339,18 @@ bool AbilitySelectScreen::IsPlayerStateAbsorb()const
 
 	// 吸収状態が NONE 以外なら吸収ステート中と判断して true を返す
 	return (activePlayer->GetAbsorbState() != PLAYER_ABSORB_STATE::NONE);
+}
+
+bool AbilitySelectScreen::IsPlayerCombatState()const
+{
+	if(!_playerManager){ return false; }
+
+	// アクティブプレイヤーの shared_ptr を取得
+	auto activePlayer = _playerManager->GetActivePlayerShared();
+	if(!activePlayer) { return false; }
+
+	// 特殊状態が NONE 以外なら特殊ステート中と判断して true を返す
+	return (activePlayer->GetCombatState() != PLAYER_COMBAT_STATE::NONE);
 }
 
 
