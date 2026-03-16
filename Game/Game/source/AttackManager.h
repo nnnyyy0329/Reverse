@@ -22,6 +22,7 @@ struct ATTACK_INFO
 	int registrationFrame;				// 登録されたフレーム数
 };
 
+/// @brief 攻撃管理クラス
 class AttackManager
 {
 public:
@@ -29,46 +30,125 @@ public:
 	// シングルトン
 	static AttackManager* GetInstance()	// インスタンス取得
 	{
-		// 静的ローカル変数シングルトン
-		static AttackManager instance;
-		return &instance;
+		static AttackManager instance;	// 静的インスタンス
+		return &instance;				// インスタンスを返す
 	}
-	static void CreateInstance();	// インスタンス作成
-	static void DestroyInstance();	// インスタンス破棄
+	static void CreateInstance();			// インスタンス作成
+	static void DestroyInstance();			// インスタンス破棄
 
-	bool Initialize();		// 初期化
-	bool Terminate();		// 終了
-	bool Process();			// 更新
-	bool Render();			// 描画
-	void DebugRender();		// デバッグ情報描画
-	void CollisionRender(); // コリジョン描画
+	bool Initialize();		
+	bool Terminate();		
+	bool Process();			
+	bool Render();			
 
-	// 攻撃の登録と解除
-	void RegisterAttack(std::shared_ptr<AttackBase> attack, ATTACK_OWNER_TYPE ownerType, int ownerId);	// 攻撃登録
-	void UnregisterAttack(std::shared_ptr<AttackBase> attack);											// 攻撃解除
-	void UnregisterAttackByOwner(int ownerId);															// 所有者による攻撃解除
-	void ClearAllAttacks();																				// 全ての攻撃解除
-	void CleanupInvalidAttacks();																		// 無効な攻撃のクリーンアップ
-	bool IsAttackRegistered(std::shared_ptr<AttackBase> attack)const;									// 攻撃が登録されているかチェック
+	// デバッグ情報描画
+	void DebugRender();		
 
-	// 回避にヒットした攻撃の登録と解除
-	void RegisterDodgeHitAttack(std::shared_ptr<AttackBase> attack);	// 回避にヒットした攻撃を登録
-	void ClearDodgeHitAttacks();										// 回避にヒットした攻撃をクリア
-	void CleanupDodgeHitAttacks();										// 回避にヒットした攻撃のクリーンアップ
-	bool IsDodgeHitAttack(std::shared_ptr<AttackBase> attack) const;	// 回避にヒットした攻撃かチェック
+	// コリジョン描画
+	void CollisionRender(); 
 
-	// 攻撃の取得
-	std::vector<std::shared_ptr<AttackBase>>GetAllActiveAttacks()const;									// 全てのアクティブな攻撃を取得
-	std::vector<std::shared_ptr<AttackBase>>GetAttacksByOwnerType(ATTACK_OWNER_TYPE ownerType)const;	// 所有者タイプによる攻撃取得
-	std::vector<std::shared_ptr<AttackBase>> GetAttacksByOwner(int ownerId) const;						// 所有者IDによる攻撃取得
+
+	/* 攻撃の登録と解除 */
+
+	/// @brief 攻撃の登録関数
+	///
+	/// @param attack 登録する攻撃オブジェクト
+	/// @param ownerType 攻撃の所有者タイプ
+	/// @param ownerId 攻撃の所有者ID
+	void RegisterAttack(std::shared_ptr<AttackBase> attack, ATTACK_OWNER_TYPE ownerType, int ownerId);
+
+	/// @brief 攻撃の解除関数
+	///
+	/// @param attack 解除する攻撃オブジェクト
+	void UnregisterAttack(std::shared_ptr<AttackBase> attack);	
+
+	/// @brief 所有者による攻撃解除関数
+	///
+	/// @param ownerId 解除する攻撃の所有者ID
+	void UnregisterAttackByOwner(int ownerId);
+
+	/// @brief 全ての攻撃解除関数
+	void ClearAllAttacks();	
+
+	/// @brief 無効な攻撃のクリーンアップ関数
+	void CleanupInvalidAttacks();	
+
+	/// @brief 攻撃が登録されているかチェック関数
+	///
+	/// @param attack チェックする攻撃オブジェクト
+	bool IsAttackRegistered(std::shared_ptr<AttackBase> attack)const;									
+
+
+	/* 回避にヒットした攻撃の登録と解除 */
+
+	/// @brief 回避にヒットした攻撃の登録関数
+	///
+	/// @param attack 登録する攻撃オブジェクト
+	void RegisterDodgeHitAttack(std::shared_ptr<AttackBase> attack);
+
+	/// @brief 回避にヒットした攻撃のクリア関数
+	void ClearDodgeHitAttacks();										
+
+	/// @brief 回避にヒットした攻撃のクリーンアップ関数
+	void CleanupDodgeHitAttacks();										
+
+	/// @brief 回避にヒットした攻撃かチェック関数
+	///
+	/// @param attack チェックする攻撃オブジェクト
+	bool IsDodgeHitAttack(std::shared_ptr<AttackBase> attack) const;	
+
+
+	/* 攻撃の取得 */
+
+	/// @brief 全てのアクティブな攻撃を取得関数
+	///
+	/// @return 登録されたすべてのアクティブな攻撃のポインタのベクター
+	std::vector<std::shared_ptr<AttackBase>>GetAllActiveAttacks()const;									
+
+	/// @brief 所有者タイプによる攻撃取得関数
+	///
+	/// @param ownerType 取得する攻撃の所有者タイプ
+	/// 
+	/// @return 指定された所有者タイプのすべての攻撃の共有ポインタのベクター
+	std::vector<std::shared_ptr<AttackBase>>GetAttacksByOwnerType(ATTACK_OWNER_TYPE ownerType)const;	
+
+	/// @brief 所有者IDによる攻撃取得関数
+	///
+	/// @param ownerId 取得する攻撃の所有者ID
+	std::vector<std::shared_ptr<AttackBase>> GetAttacksByOwner(int ownerId) const;						
 
 	// ゲッターセッター
-	int GetRegisteredAttackCount() const { return static_cast<int>(_registeredAttacks.size()); }	// 登録攻撃数取得
-	int GetActiveAttackCount() const;																// アクティブ攻撃数取得
-	int GetFrameCounter() const { return _frameCounter; }											// フレームカウンタ取得
 
-	ATTACK_OWNER_TYPE GetAttackOwnerType(std::shared_ptr<AttackBase> attack) const;	// 攻撃の所有者を取得
-	int GetAttackOwnerId(std::shared_ptr<AttackBase> attack) const;					// 攻撃の所有者IDを取得
+	/* ゲッターセッター */
+
+	/// @brief 登録された攻撃数の取得関数
+	///
+	/// @return 登録された攻撃の数
+	int GetRegisteredAttackCount() const { return static_cast<int>(_registeredAttacks.size()); }	
+
+	/// @brief アクティブな攻撃数の取得関数
+	///
+	/// @return アクティブな攻撃の数
+	int GetActiveAttackCount() const;																
+
+	/// @brief フレームカウンタの取得関数
+	///
+	/// @return 現在のフレームカウンタの値
+	int GetFrameCounter() const { return _frameCounter; }											
+
+	/// @brief 攻撃の所有者タイプの取得関数
+	///
+	/// @param attack 所有者タイプを取得する攻撃オブジェクト
+	///	
+	/// @return 指定された攻撃の所有者タイプ
+	ATTACK_OWNER_TYPE GetAttackOwnerType(std::shared_ptr<AttackBase> attack) const;	
+
+	/// @brief 攻撃の所有者IDの取得関数
+	///
+	/// @param attack 所有者IDを取得する攻撃オブジェクト
+	/// 
+	/// @return 指定された攻撃の所有者ID
+	int GetAttackOwnerId(std::shared_ptr<AttackBase> attack) const;					
 
 private:
 

@@ -380,11 +380,6 @@ void BulletPlayer::ShootBullet()
 	_bIsShootFromRightArm = !_bIsShootFromRightArm; // 右腕と左腕の切り替え
 }
 
-// エイムモードの処理
-void BulletPlayer::ProcessAimMode(bool aimKey)
-{
-}
-
 // 発射位置オフセットの取得
 VECTOR BulletPlayer::GetShootOffset()const
 {

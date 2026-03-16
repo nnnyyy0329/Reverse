@@ -10,13 +10,13 @@
 class CameraManager;
 class AbilitySelectScreen;
 
-// プレイヤータイプ列挙型
+/// @brief プレイヤータイプ列挙型
 enum class PLAYER_TYPE
 {
 	NONE,
-	SURFACE,	// 表プレイヤー
-	INTERIOR,	// 裏プレイヤー
-	BULLET,		// 弾丸プレイヤー
+	SURFACE,	///< 表プレイヤー
+	INTERIOR,	///< 裏プレイヤー
+	BULLET,		///< 弾丸プレイヤー
 	_EOT_,
 };
 
@@ -70,11 +70,11 @@ public:
 	/// @param enable	状態引き継ぎを有効にするならtrue、無効にするならfalse
 	void EnableStateTransfer(bool enable) { _bEnableStateTransfer = enable; }	
 
-	/// @brief プレイヤー切り替え時の状態引き継ぎ処理
+	/// @brief プレイヤー切り替え時の情報引き継ぎ処理
 	///
 	/// @param oldPlayer 切り替え前のプレイヤー
 	/// @param newPlayer 切り替え後のプレイヤー
-	void TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPlayer);		
+	void TransferPlayerConfig(PlayerBase* oldPlayer, PlayerBase* newPlayer);
 
 
 	/* 変身管理 */		//--- 今後クラス分け予定 --------------------------------------
@@ -103,6 +103,7 @@ public:
 	/// @return 変身中ならtrue、そうでないならfalse
 	bool IsTransforming() const { return _bIsTransforming; }	
 
+
 	/* 変身解除管理 */		// --- 今後クラス分け予定--------------------------------------
 
 	/// @brief 変身解除開始処理
@@ -127,24 +128,24 @@ public:
 
 	/// @brief アクティブプレイヤー取得(生ポインタ版)
 	/// 
-	/// @return アクティブプレイヤーのポインタ。存在しない場合はnullptrを返す。
+	/// @return アクティブプレイヤーのポインタ。存在しない場合はnullptrを返す
 	PlayerBase* GetActivePlayer() const;									
 
 	/// @brief アクティブプレイヤー取得(shared_ptr版)
 	///
-	/// @return アクティブプレイヤーのshared_ptr。存在しない場合はnullptrを返す。
+	/// @return アクティブプレイヤーのshared_ptr。存在しない場合はnullptrを返す
 	std::shared_ptr<PlayerBase> GetActivePlayerShared() const;				
 
 	/// @brief 指定したプレイヤータイプのプレイヤーを取得
 	///
 	/// @param type 取得したいプレイヤーのタイプ
 	/// 
-	/// @return 指定したタイプのプレイヤーのshared_ptr。存在しない場合はnullptrを返す。
+	/// @return 指定したタイプのプレイヤーのshared_ptr。存在しない場合はnullptrを返す
 	std::shared_ptr<PlayerBase> GetPlayerByType(PLAYER_TYPE type) const;	
 
 	/// @brief アクティブプレイヤーのタイプを取得
 	///
-	/// @return アクティブプレイヤーのタイプ。
+	/// @return アクティブプレイヤーのタイプ
 	PLAYER_TYPE GetActivePlayerType() const { return _eActivePlayerType; }	
 
 

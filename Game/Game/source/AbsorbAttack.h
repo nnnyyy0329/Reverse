@@ -13,76 +13,115 @@ struct AbsorbConfig
 	bool isActive;					// 吸収攻撃がアクティブかどうか
 	std::string absorbEffectName;	// 吸収エフェクト名
 	VECTOR effectOffset;			// エフェクト位置オフセット
+	std::string	absorbSoundName;	// 吸収サウンド名
 };
 
-// 吸収攻撃クラス
+/// @brief 吸収攻撃クラス
 class AbsorbAttack : public AttackBase
 {
 public:
 	AbsorbAttack();
 	virtual ~AbsorbAttack();
 
-	virtual bool Process() override;			// 更新
-	virtual bool ProcessStartAttack() override;	// 攻撃開始
-	virtual bool ProcessStopAttack() override;	// 攻撃停止
+	/// @brief 吸収攻撃の更新
+	///
+	/// @return 更新処理が成功したかどうか
+	virtual bool Process() override;
+
+	/// @brief 吸収攻撃の開始処理
+	///
+	/// @return 開始処理が成功したかどうか
+	virtual bool ProcessStartAttack() override;	
+
+	/// @brief 吸収攻撃の停止処理
+	///
+	/// @return 停止処理が成功したかどうか
+	virtual bool ProcessStopAttack() override;	
 	
 
 	/* 吸収処理関連 */
 
-	// 入力による吸収処理
+	/// @brief 入力による吸収処理
+	///
+	/// @param key 入力状態（true: 押されている, false: 押されていない）
 	void ProcessAbsorbByInput(bool key);
 
-	// 吸収処理
+	/// @brief 吸収処理
+	///
+	/// @param owner 吸収攻撃の所有者キャラクター
 	void ProcessAbsorb(std::shared_ptr<CharaBase>owner);
 
-	// 攻撃がアクティブ状態かどうか
+	/// @brief 吸収攻撃がアクティブ状態かどうかをチェック
+	///
+	/// @return 吸収攻撃がアクティブ状態であればtrue、そうでなければfalse
 	bool IsAbsorbActive() const { return GetAttackState() == ATTACK_STATE::ACTIVE; }
 
-	// 入力が有効かどうか
+	/// @brief 入力が有効かどうかをチェック
+	///
+	/// @return 入力が有効であればtrue、そうでなければfalse
 	bool IsInputActive() const { return _bIsInputActive; }
 
 
 	/* デバッグ関連 */
 
-	// デバッグ描画
+	/// @brief 吸収攻撃のデバッグ描画
 	void DebugRender();
 
-	// 吸収範囲の扇形デバッグ描画
+	/// @brief 吸収範囲の扇形デバッグ描画
+	///
+	/// @param ownerPos 所有者の位置
+	/// @param ownerDir 所有者の向き
 	void DrawAbsorbRange(const VECTOR& ownerPos, const VECTOR& ownerDir);
 
-	// 吸収攻撃の状態更新デバッグ描画
+	/// @brief 吸収攻撃の状態更新デバッグ描画
 	void DrawAbsorbAttackState();
 
-	// 吸収攻撃のカウントデバッグ描画
+	/// @brief 吸収攻撃のカウントデバッグ描画
 	void DrawAbsorbTimer();
 
 
 	/* 吸収情報関連 */
 
-	// 吸収情報を設定する関数
+	/// @brief 吸収攻撃の設定を保存する
+	///
+	/// @param config 吸収攻撃の設定構造体
 	void SetAbsorbConfig(const AbsorbConfig& config);
 
-	// 吸収攻撃の設定取得
+	/// @brief 吸収攻撃の設定を取得する	
+	///
+	/// @return 吸収攻撃の設定構造体
 	AbsorbConfig GetAbsorbConfig() const;
 
 private:	// 内部処理
 
-	// タイマー更新処理
+	/// @brief 吸収タイマーの減算処理
 	void ProcessDecrementTimer();
 
-	// エネルギー吸収処理
+	/// @brief エネルギー吸収処理
+	///
+	/// @param owner 吸収攻撃の所有者キャラクター
 	void ProcessEnergyAbsorb(std::shared_ptr<CharaBase> owner);
 
-	// HP吸収処理
+	/// @brief HP吸収処理
+	///
+	/// @param owner 吸収攻撃の所有者キャラクター
 	void ProcessHPAbsorb(std::shared_ptr<CharaBase> owner);
 
-	// 吸収エフェクト処理
+	/// @brief 吸収エフェクト処理
+	///
+	/// @param ownerPos 所有者の位置
 	void ProcessAbsorbEffect(const VECTOR& ownerPos);
 
-	// 吸収攻撃の状態更新
+	/// @brief 吸収サウンド処理
+	///
+	/// @param ownerPos 所有者の位置
+	void ProcessAbsorbSound(const VECTOR& ownerPos);
+
+	/// @brief 吸収攻撃の状態更新処理
 	void ProcessAbsorbAttackState();
 
 protected:
+
 	AbsorbConfig _stcAbsorbConfig;	// 吸収攻撃の設定
 	float _fAbsorbCooldown;			// 吸収のクールダウン時間
 	float _fAbsorbTimer;			// 吸収タイマー

@@ -257,6 +257,8 @@ AbsorbConfig SurfacePlayer::GetAbsorbConfig()
 	config.absorbAngle		= DX_PI_F / 2.9f;			// 吸収角度
 	config.absorbDivision	= 10;						// 滑らかな描画用
 	config.absorbEffectName = "SurfacePlayerAbsorb";	// 吸収エフェクト名
+	config.effectOffset = { 0.0f, 0.0f, 0.0f };			// エフェクト位置オフセット
+	config.absorbSoundName = "sPlayerAttack";			// 吸収サウンド名
 
 	return config;
 }

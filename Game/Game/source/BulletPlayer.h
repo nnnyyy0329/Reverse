@@ -47,9 +47,6 @@ private:
 	// 弾の発射
 	void ShootBullet();
 
-	// エイムモードの処理
-	void ProcessAimMode(bool aimKey);
-
 	// 発射位置オフセットの取得
 	VECTOR GetShootOffset()const;
 

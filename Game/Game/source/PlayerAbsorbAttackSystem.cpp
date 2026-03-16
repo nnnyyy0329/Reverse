@@ -31,14 +31,12 @@ bool PlayerAbsorbAttackSystem::Initialize(std::weak_ptr<CharaBase> owner)
 	return true;
 }
 
-// 吸収攻撃クラスインスタンスの作成
 void PlayerAbsorbAttackSystem::MakeAbsorbAttack()
 {
 	// 吸収攻撃オブジェクト生成
 	_absorbAttack = std::make_unique<AbsorbAttack>();
 }
 
-// 初期化時の所有者設定
 void PlayerAbsorbAttackSystem::InitializeSetOwner(std::weak_ptr<CharaBase> owner)
 {
 	_owner = owner;	// 所有者設定
@@ -88,7 +86,6 @@ bool PlayerAbsorbAttackSystem::Render()
 	return true;
 }
 
-// デバッグ描画
 void PlayerAbsorbAttackSystem::DebugRender()
 {
 	if(!_bIsInitialized || !_absorbAttack){ return; }	// 初期化されていない、またはオブジェクトがない場合はスキップ
@@ -97,7 +94,6 @@ void PlayerAbsorbAttackSystem::DebugRender()
 	_absorbAttack->DebugRender();
 }
 
-// 吸収攻撃の設定
 void PlayerAbsorbAttackSystem::SetAbsorbConfig(const AbsorbConfig& config)
 {
 	if(_absorbAttack)
@@ -107,7 +103,6 @@ void PlayerAbsorbAttackSystem::SetAbsorbConfig(const AbsorbConfig& config)
 	}
 }
 
-// 吸収攻撃の設定取得
 AbsorbConfig PlayerAbsorbAttackSystem::GetAbsorbConfig() const
 {
 	if(_absorbAttack)
@@ -120,7 +115,6 @@ AbsorbConfig PlayerAbsorbAttackSystem::GetAbsorbConfig() const
 	return AbsorbConfig(); 
 }
 
-// 攻撃開始
 void PlayerAbsorbAttackSystem::StartAbsorbAttack()
 {
 	if(!CanStartAbsorbAttack() || !_absorbAttack){ return; }
@@ -129,7 +123,6 @@ void PlayerAbsorbAttackSystem::StartAbsorbAttack()
 	_absorbAttack->ProcessStartAttack();
 }
 
-// 攻撃停止
 void PlayerAbsorbAttackSystem::StopAbsorbAttack()
 {
 	if(!_absorbAttack){ return; }
@@ -138,7 +131,6 @@ void PlayerAbsorbAttackSystem::StopAbsorbAttack()
 	_absorbAttack->ProcessStopAttack();
 }
 
-// 吸収攻撃の更新処理
 void PlayerAbsorbAttackSystem::ProcessAbsorb()
 {
 	if(!IsAbsorbActive()){ return; }	// 攻撃オブジェクトがない場合はスキップ
@@ -150,7 +142,6 @@ void PlayerAbsorbAttackSystem::ProcessAbsorb()
 	_absorbAttack->ProcessAbsorb(owner);
 }
 
-// 吸収攻撃の入力処理
 void PlayerAbsorbAttackSystem::ProcessAbsorbInput()
 {
 	auto& im = InputManager::GetInstance();
@@ -169,7 +160,6 @@ void PlayerAbsorbAttackSystem::ProcessAbsorbInput()
 	}
 }
 
-// 吸収攻撃を開始できるかどうか
 bool PlayerAbsorbAttackSystem::CanStartAbsorbAttack() const
 {
 	auto owner = _owner.lock();
@@ -178,7 +168,6 @@ bool PlayerAbsorbAttackSystem::CanStartAbsorbAttack() const
 	return !IsAbsorbActive();	// 吸収攻撃中でない場合に攻撃開始できると判断
 }
 
-// 吸収攻撃中かどうか
 bool PlayerAbsorbAttackSystem::IsAbsorbActive() const
 {
 	if(!_absorbAttack){ return false; }	// 攻撃オブジェクトがない場合はスキップ

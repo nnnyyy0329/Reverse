@@ -96,15 +96,11 @@ bool PlayerManager::Render()
 	return true;
 }
 
-// デバッグ処理
 bool PlayerManager::DebugProcess()
 {
-
-
 	return true;
 }
 
-// デバッグ描画
 bool PlayerManager::DebugRender()
 {
 	// 変身時間の描画
@@ -124,7 +120,6 @@ bool PlayerManager::DebugRender()
 	return true;
 }
 
-// プレイヤーの登録関数
 bool PlayerManager::RegisterPlayer(PLAYER_TYPE type, std::shared_ptr<PlayerBase> player)
 {
 	if(!player) return false;
@@ -141,7 +136,6 @@ bool PlayerManager::RegisterPlayer(PLAYER_TYPE type, std::shared_ptr<PlayerBase>
 	return true;
 }
 
-// アビリティによるプレイヤー切り替え
 void PlayerManager:: SwitchPlayerByAbility(ABILITY_TYPE ability)
 {
 	// 切り替え対象プレイヤータイプ
@@ -180,7 +174,6 @@ void PlayerManager:: SwitchPlayerByAbility(ABILITY_TYPE ability)
 	}
 }
 
-// エネルギーによるプレイヤー切り替え
 void PlayerManager:: SwitchPlayerByEnergy()
 {
 	// エネルギーのインスタンス取得
@@ -204,7 +197,6 @@ void PlayerManager:: SwitchPlayerByEnergy()
 	}
 }
 
-// プレイヤー切り替え関数
 void PlayerManager::SwitchPlayer(PLAYER_TYPE type)
 {
 	// 指定されたタイプのプレイヤーが存在するかチェック
@@ -218,7 +210,6 @@ void PlayerManager::SwitchPlayer(PLAYER_TYPE type)
 	StartTransform(type);
 }
 
-// 変身開始
 void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 {
 	// 変身フラグ有効
@@ -261,7 +252,6 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 	PlayTransConnectionAnim(playerAnim.combat.transform);				
 }
 
-// 即時変身
 void PlayerManager::SwitchPlayerImmediate(PLAYER_TYPE targetType)
 {
 	auto player = _players.find(targetType);
@@ -281,11 +271,10 @@ void PlayerManager::SwitchPlayerImmediate(PLAYER_TYPE targetType)
 	if(_bEnableStateTransfer && oldPlayer && newPlayer)
 	{
 		// 位置と状態の引き継ぎ
-		TransferPlayerState(oldPlayer, newPlayer);
+		TransferPlayerConfig(oldPlayer, newPlayer);
 	}
 }
 
-// 変身処理
 void PlayerManager::UpdateTransform()
 {
 	if(!_bIsTransforming){ return; }	// 変身中でなければ何もしない
@@ -304,7 +293,6 @@ void PlayerManager::UpdateTransform()
 	}
 }
 
-// 変身時間による変身終了処理
 void PlayerManager::TransformFinishByTime()
 {
 	// 変身時間が最大を超えいて、現在のタイプと変身先のタイプが不一致なら変身終了
@@ -324,7 +312,7 @@ void PlayerManager::TransformFinishByTime()
 			if(!_bEnableStateTransfer && oldPlayer && _activePlayer)
 			{
 				// 位置と状態の引き継ぎ
-				TransferPlayerState(oldPlayer, _activePlayer);
+				TransferPlayerConfig(oldPlayer, _activePlayer);
 			}
 		}
 
@@ -333,7 +321,6 @@ void PlayerManager::TransformFinishByTime()
 	}
 }
 
-// 変身終了
 void PlayerManager::EndTransform()
 {   
     if(_activePlayer)
@@ -347,7 +334,6 @@ void PlayerManager::EndTransform()
 	_bIsTransforming = false;				// 変身フラグ無効
 }
 
-// 変身解除開始
 void PlayerManager::StartTransformCancel()
 {
 	if(_bIsTransformCanceling){ return; }	// すでに変身解除中なら何もしない
@@ -371,7 +357,6 @@ void PlayerManager::StartTransformCancel()
 	PlayTransConnectionAnim(playerAnim.combat.transCancel);
 }
 
-// 変身解除処理
 void PlayerManager::UpdateTransformCancel()
 {
 	if(!_bIsTransformCanceling){ return; }
@@ -383,7 +368,6 @@ void PlayerManager::UpdateTransformCancel()
 	SwitchPlayerByTime();
 }
 
-// 時間によるプレイヤー切り替え処理
 void PlayerManager::SwitchPlayerByTime()
 {
 	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	// すでに表プレイヤーなら処理しない
@@ -391,25 +375,24 @@ void PlayerManager::SwitchPlayerByTime()
 	// 変身解除時間が最大を超えて、タイプが表プレイヤーではないなら表プレイヤーに切り替え
 	if(_fTransformCancelTime >= _fTransformCancelMaxTime)
 	{
-		//// 表プレイヤーに即座に切り替え
-		//if(_eActivePlayerType != PLAYER_TYPE::SURFACE)
-		//{
-		//	// 即時変身
-		//	SwitchPlayerImmediate(PLAYER_TYPE::SURFACE);
-		//}
-
+		// 表プレイヤーの取得
 		PlayerBase* oldPlayer = _activePlayer;
 		auto newPlayer = _players.find(PLAYER_TYPE::SURFACE);
 
+		// 存在チェック
 		if(newPlayer != _players.end())
 		{
+			// プレイヤーを切り替え
 			_activePlayer = newPlayer->second.get();
+
+			// アクティブプレイヤータイプを表プレイヤーに更新
 			_eActivePlayerType = PLAYER_TYPE::SURFACE;
 
 			// 状態の引き継ぎ
 			if(oldPlayer && _activePlayer)
 			{
-				TransferPlayerState(oldPlayer, _activePlayer);
+				// 情報の引き継ぎ
+				TransferPlayerConfig(oldPlayer, _activePlayer);
 			}
 		}
 
@@ -421,7 +404,6 @@ void PlayerManager::SwitchPlayerByTime()
 	}
 }
 
-// 変身解除終了
 void PlayerManager::EndTransformCancel()
 {
 	if(_activePlayer)
@@ -441,13 +423,11 @@ void PlayerManager::EndTransformCancel()
 	_bIsTransformCanceling = false;											// 変身解除フラグ無効
 }
 
-// アクティブプレイヤー取得
 PlayerBase* PlayerManager::GetActivePlayer() const
 {
 	return _activePlayer;	// 生ポインタを返す
 }
 
-// アクティブプレイヤー取得（shared_ptr版）
 std::shared_ptr<PlayerBase> PlayerManager::GetActivePlayerShared() const
 {
 	auto player = _players.find(_eActivePlayerType);
@@ -461,7 +441,6 @@ std::shared_ptr<PlayerBase> PlayerManager::GetActivePlayerShared() const
 	return nullptr;
 }
 
-// タイプによって取得
 std::shared_ptr<PlayerBase> PlayerManager::GetPlayerByType(PLAYER_TYPE type) const
 {
 	auto player = _players.find(type);
@@ -475,14 +454,17 @@ std::shared_ptr<PlayerBase> PlayerManager::GetPlayerByType(PLAYER_TYPE type) con
 	return nullptr;
 }
 
-// 切り替え時の位置置き換え関数
-void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPlayer)
+void PlayerManager::TransferPlayerConfig(PlayerBase* oldPlayer, PlayerBase* newPlayer)
 {
 	if(!oldPlayer || !newPlayer) return;
 
-	// 位置と向きと古い位置の引き継ぎ
+	// 位置の引き継ぎ
 	newPlayer->SetPos(oldPlayer->GetPos());
+
+	// 向きの引き継ぎ
 	newPlayer->SetDir(oldPlayer->GetDir());
+
+	// 前フレームの位置の引き継ぎ
 	newPlayer->SetOldPos(oldPlayer->GetOldPos());
 
 	// ステータスの引き継ぎ
@@ -491,11 +473,8 @@ void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPl
 	// 新しいプレイヤーの状態をリセット
 	newPlayer->SetStateReset();
 
-	//// 待機アニメーション再生
-	//PlayerAnimations playerAnim = _activePlayer->GetPlayerAnimation();	// プレイヤーのアニメーションデータを取得
-	//PlayTransConnectionAnim(playerAnim.movement.wait);					// 再生処理
-
-	newPlayer->SetMovementState(PLAYER_MOVEMENT_STATE::WAIT);	// 待機状態に設定
+	// 待機状態に設定
+	newPlayer->SetMovementState(PLAYER_MOVEMENT_STATE::WAIT);	
 
 	// プレイヤー切り替え時に、強制的にエイムモードを終了する
 	if (_cameraManager) 
@@ -504,19 +483,16 @@ void PlayerManager::TransferPlayerState(PlayerBase* oldPlayer, PlayerBase* newPl
 	}
 }
 
-// 変身タイマー更新処理
 void PlayerManager::UpdateTransformTime()
 {
 	_fTransformTime += TransformConstants::TRANSFORM_TIME_INCREMENT;	// 変身時間を更新
 }
 
-// 変身解除タイマー更新処理
 void PlayerManager::UpdateTransformCancelTime()
 {
 	_fTransformCancelTime += TransformConstants::TRANSFORM_TIME_INCREMENT;	// 変身解除時間を更新
 }
 
-// 変身関連アニメーション再生関数
 void PlayerManager::PlayTransConnectionAnim(const char* animName)
 {
 	if(!_activePlayer) { return; }
@@ -554,7 +530,6 @@ void PlayerManager::PlayTransConnectionAnim(const char* animName)
 	}
 }
 
-// 能力選択画面が存在するかをチェック
 void PlayerManager::CheckAbilityScreenActive(bool& isAbilityScreenActive)
 {
 	isAbilityScreenActive = false; // 存在するかのフラグ
@@ -567,7 +542,6 @@ void PlayerManager::CheckAbilityScreenActive(bool& isAbilityScreenActive)
 	}
 }
 
-// 自動切り替え系（エネルギーによる強制切り替えなど）をまとめる
 void PlayerManager::ProcessAutoSwitch(bool isAbilityScreenActive)
 {
 	// 変身中でなければプレイヤー切り替え処理
@@ -578,7 +552,6 @@ void PlayerManager::ProcessAutoSwitch(bool isAbilityScreenActive)
 	}
 }
 
-// アクティブプレイヤーへの処理
 void PlayerManager::ProcessActivePlayer(bool isAbilityScreenActive)
 {
 	if(!_activePlayer) { return; }
@@ -601,7 +574,6 @@ void PlayerManager::ProcessActivePlayer(bool isAbilityScreenActive)
 	_activePlayer->Process();							// アクティブプレイヤーの処理を行う
 }
 
-// アニメーションを待機に戻す
 void PlayerManager::ReturnWaitAnim()
 {
 	if(!_activePlayer) { return; }
