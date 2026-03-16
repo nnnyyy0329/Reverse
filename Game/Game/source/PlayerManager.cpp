@@ -257,7 +257,8 @@ void PlayerManager::SwitchPlayerImmediate(PLAYER_TYPE targetType)
 
 void PlayerManager::UpdateTransform()
 {
-	if(!_bIsTransforming){ return; }	// 変身中でなければ何もしない
+	// 変身中でなければ何もしない
+	if(!_bIsTransforming){ return; }	
 
 	// 変身タイマー更新処理
 	UpdateTransformTime();
@@ -265,8 +266,8 @@ void PlayerManager::UpdateTransform()
 	// 変身時間による変身終了処理
 	TransformFinishByTime();
 
-	// 変身時間が最大を超えたら変身終了
-	if(_fTransformTime >= _fTransformMaxTime)
+	// 変身時間が最大を超えたら変身終了で、変身中なら
+	if(_fTransformTime >= _fTransformMaxTime && _bIsTransforming)
 	{
 		// 変身終了
 		EndTransform();
@@ -295,6 +296,9 @@ void PlayerManager::TransformFinishByTime()
 				TransferPlayerConfig(oldPlayer, _activePlayer);
 			}
 		}
+
+		// 変身終了
+		EndTransform();
 
 		// 待機アニメーションに戻す
 		ReturnWaitAnim();
@@ -376,11 +380,11 @@ void PlayerManager::SwitchPlayerByTime()
 			}
 		}
 
-		// 待機アニメーションに戻す
-		ReturnWaitAnim();
-
 		// 変身解除終了
 		EndTransformCancel();
+
+		// 待機アニメーションに戻す
+		ReturnWaitAnim();
 	}
 }
 

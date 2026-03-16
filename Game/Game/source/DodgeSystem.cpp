@@ -293,7 +293,7 @@ bool DodgeSystem::IsCharacterInvincible(std::shared_ptr<CharaBase> chara) const
 	auto currentChara = _currentDodgeChara.lock();
 	if(currentChara && currentChara == chara)
 	{
-		EnergyManager::GetInstance()->AddEnergy(1.0f);
+		EnergyManager::GetInstance()->AddEnergy(2.0f);
 
 		return true;	// –³“Gó‘Ô
 	}

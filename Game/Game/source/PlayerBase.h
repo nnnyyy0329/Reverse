@@ -12,7 +12,70 @@
 class CameraManager;
 class AbsorbAttack;
 
-// プレイヤー設定データ構造体
+/// @brief プレイヤーの基本移動状態列挙型
+enum class PLAYER_MOVEMENT_STATE
+{
+	NONE,
+	WAIT,			///< 待機
+	WALK,			///< 歩行
+	RUN,			///< 走行
+	JUMP_UP,		///< ジャンプ（上昇）
+	JUMP_DOWN,		///< ジャンプ（下降）
+	CROUCH_WAIT,	///< しゃがみ待機
+	CROUCH_WALK,	///< しゃがみ歩行
+	_EOT_,
+};
+
+/// @brief プレイヤーの攻撃状態列挙型
+enum class PLAYER_ATTACK_STATE
+{
+	NONE,
+	FIRST_ATTACK,	///< 1段目攻撃
+	SECOND_ATTACK,	///< 2段目攻撃
+	THIRD_ATTACK,	///< 3段目攻撃
+	FOURTH_ATTACK,	///< 4段目攻撃
+	FIFTH_ATTACK,	///< 5段目攻撃
+	AREA_ATTACK,	///< 範囲攻撃
+	FIRST_SKILL,	///< スキル1
+	SECOND_SKILL,	///< スキル2
+	_EOT_,
+};
+
+/// @brief プレイヤーの弾発射状態列挙型
+enum class PLAYER_SHOOT_STATE
+{
+	NONE,
+	SHOOT_READY,		///< 発射構え
+	RIGHT_ARM_SHOOT,	///< 右腕発射
+	LEFT_ARM_SHOOT,		///< 左腕発射
+	SHOOT_MOVE,			///< 発射移動
+	_EOT_,
+};
+
+/// @brief プレイヤーの吸収攻撃状態列挙型
+enum class PLAYER_ABSORB_STATE
+{
+	NONE,
+	ABSORB_READY,	///< 吸収構え
+	ABSORB_ACTIVE,	///< 吸収中
+	ABSORB_END,		///< 吸収終了
+	_EOT_,
+};
+
+/// @brief プレイヤーの特殊状態列挙型
+enum class PLAYER_COMBAT_STATE
+{
+	NONE,
+	TRANSFORM,		///< 変身
+	TRANS_CANCEL,	///< 変身解除
+	GUARD,			///< ガード
+	HIT,			///< 被弾
+	DODGE,			///< 回避
+	DEATH,			///< 死亡
+	_EOT_,
+};
+
+/// @brief プレイヤーの基本設定をまとめた構造体
 struct PlayerConfig
 {
 	// 移動速度設定
@@ -33,40 +96,40 @@ struct PlayerConfig
 	std::string modelName;	// モデル名
 };
 
-// 表示設定構造体
+/// @brief プレイヤーの表示設定をまとめた構造体
 struct RenderConfig
 {
 	const char* playerName;	// プレイヤー名
 	COLOR_U8 debugColor;	// デバッグ描画色
 };
 
-// 攻撃定数構造体
+/// @brief 攻撃に関する定数をまとめた構造体
 struct AttackConstants
 {
 	int surfaceMaxComboCount;	// 表プレイヤー用コンボカウント
 	int interiorMaxComboCount;	// 裏プレイヤー用コンボカウント
 };
 
-// 攻撃向き設定データ構造体
+/// @brief 攻撃の向き調整に関する設定をまとめた構造体
 struct AttackDirAdjustConfig
 {
 	bool canDirAdjust;	// 向き調整が可能かどうか
 };
 
-// 範囲攻撃設定データ構造体
+/// @brief 範囲攻撃の設定をまとめた構造体
 struct AreaAttackConfig
 {
-	VECTOR centerOffset;		// コリジョン中心位置オフセット
-	float radius;				// 半径
-	float height;				// 高さ
-	float delay;				// 発生
-	float duration;				// 持続
-	float recovery;				// 硬直
-	float damage;				// ダメージ
-	bool isHit;					// ヒットフラグ
+	VECTOR centerOffset;	// コリジョン中心位置オフセット
+	float radius;			// 半径
+	float height;			// 高さ
+	float delay;			// 発生
+	float duration;			// 持続
+	float recovery;			// 硬直
+	float damage;			// ダメージ
+	bool isHit;				// ヒットフラグ
 };
 
-// 基本移動アニメーション構造体
+/// @brief プレイヤーの基本移動アニメーションをまとめた構造体
 struct PlayerMovementAnimations
 {
 	const char* wait;        // 待機
@@ -78,7 +141,7 @@ struct PlayerMovementAnimations
 	const char* crouchWalk;  // しゃがみ歩行
 };
 
-// 攻撃アニメーション構造体
+/// @brief プレイヤーの攻撃アニメーションをまとめた構造体
 struct PlayerAttackAnimations
 {
 	const char* firstAttack;	// 1段目攻撃
@@ -91,7 +154,7 @@ struct PlayerAttackAnimations
 	const char* secondSkill;	// スキル2
 };
 
-// 弾発射アニメーション構造体
+/// @brief プレイヤーの弾発射アニメーションをまとめた構造体
 struct PlayerShootAnimations
 {
 	const char* shootReady;     // 発射構え
@@ -100,7 +163,7 @@ struct PlayerShootAnimations
 	const char* shootMove;      // 発射移動
 };
 
-// 吸収攻撃アニメーション構造体
+/// @brief プレイヤーの吸収攻撃アニメーションをまとめた構造体
 struct PlayerAbsorbAnimations
 {
 	const char* absorbReady;	// 吸収構え
@@ -108,7 +171,7 @@ struct PlayerAbsorbAnimations
 	const char* absorbEnd;		// 吸収終了
 };
 
-// 戦闘アニメーション構造体
+/// @brief プレイヤーの特殊アニメーションをまとめた構造体
 struct PlayerCombatAnimations
 {
 	const char* transform;		// 変身
@@ -119,7 +182,7 @@ struct PlayerCombatAnimations
 	const char* death;			// 死亡
 };
 
-// 統合アニメーション構造体
+/// @brief プレイヤーのアニメーションをまとめた構造体
 struct PlayerAnimations
 {
 	PlayerMovementAnimations	movement;	// 基本行動
@@ -129,70 +192,7 @@ struct PlayerAnimations
 	PlayerCombatAnimations		combat;		// 特殊
 };
 
-// 基本移動状態
-enum class PLAYER_MOVEMENT_STATE
-{
-	NONE,
-	WAIT,			///< 待機
-	WALK,			///< 歩行
-	RUN,			///< 走行
-	JUMP_UP,		///< ジャンプ（上昇）
-	JUMP_DOWN,		///< ジャンプ（下降）
-	CROUCH_WAIT,	///< しゃがみ待機
-	CROUCH_WALK,	///< しゃがみ歩行
-	_EOT_,
-};
-
-// 攻撃状態
-enum class PLAYER_ATTACK_STATE
-{
-	NONE,
-	FIRST_ATTACK,		///< 1段目攻撃
-	SECOND_ATTACK,		///< 2段目攻撃
-	THIRD_ATTACK,		///< 3段目攻撃
-	FOURTH_ATTACK,		///< 4段目攻撃
-	FIFTH_ATTACK,		///< 5段目攻撃
-	AREA_ATTACK,		///< 範囲攻撃
-	FIRST_SKILL,		///< スキル1
-	SECOND_SKILL,		///< スキル2
-	_EOT_,
-};
-
-// 弾の発射状態
-enum class PLAYER_SHOOT_STATE
-{
-	NONE,
-	SHOOT_READY,		///< 発射構え
-	RIGHT_ARM_SHOOT,	///< 右腕発射
-	LEFT_ARM_SHOOT,		///< 左腕発射
-	SHOOT_MOVE,			///< 発射移動
-	_EOT_,
-};
-
-// 吸収攻撃状態列挙型を追加
-enum class PLAYER_ABSORB_STATE
-{
-	NONE,
-	ABSORB_READY,		///< 吸収構え
-	ABSORB_ACTIVE,		///< 吸収中
-	ABSORB_END,			///< 吸収終了
-	_EOT_,
-};
-
-// 特殊状態
-enum class PLAYER_COMBAT_STATE
-{
-	NONE,
-	TRANSFORM,		///< 変身
-	TRANS_CANCEL,	///< 変身解除
-	GUARD,			///< ガード
-	HIT,			///< 被弾
-	DODGE,			///< 回避
-	DEATH,			///< 死亡
-	_EOT_,
-};
-
-// 統合状態管理構造体
+/// @brief プレイヤーの状態をまとめた構造体
 struct PlayerState
 {
 	PLAYER_MOVEMENT_STATE	movementState;	// 基本移動状態
@@ -238,8 +238,18 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
-	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)override;	// 被ダメージ処理
-	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾での被ダメージ処理
+	/// @brief 被ダメージ処理関数
+	///
+	/// @param fDamage ダメージ量
+	/// @param eType 攻撃の所有者タイプ
+	/// @param attackInfo 攻撃コリジョン情報
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)override;	
+
+	/// @brief 弾による被ダメージ処理関数
+	/// 
+	/// @param fDamage ダメージ量
+	/// @param chara 弾のキャラタイプ
+	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										
 
 	// 共通初期化
 	void InitializePlayerConfig(PlayerConfig& config);			// プレイヤー設定初期化

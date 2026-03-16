@@ -446,10 +446,9 @@ bool PlayerBase::CanNextAttack()
 	// キャラタイプに応じた最大コンボ数を取得
 	int maxComboCount = GetMaxComboCount();
 
-	if((_bCanCombo															&&	// コンボ可能で
-		_iComboCount < maxComboCount										&&	// 現在のコンボカウントが最大コンボ数より小さく
-		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT))			&&	// 被弾中でないなら次の攻撃が可能
-		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::TRANS_CANCEL))		// 変身解除状態でないなら
+	if((_bCanCombo						&&	// コンボ可能で
+		_iComboCount < maxComboCount)	&&	// 現在のコンボカウントが最大コンボ数より小さく
+		!_playerState.IsStateCombat())		// 特殊状態でないなら
 	{
 		// 次の攻撃可能
 		return true;

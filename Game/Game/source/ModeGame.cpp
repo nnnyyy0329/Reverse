@@ -681,7 +681,8 @@ void ModeGame::RestartCurrentStage()
 		VECTOR vDir = VGet(sinf(startRot.y), 0.0f, cosf(startRot.y));
 		activePlayer->SetDir(vDir);
 
-		// ここでプレイヤーの状態をリセット
+		// プレイヤーのモーションリセット
+		
 	}
 
 	// オブジェクトのクリア
