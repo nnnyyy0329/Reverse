@@ -1,24 +1,6 @@
 #include "BulletPlayer.h"
 #include "CameraManager.h"
 
-// 弾発射に関する定数
-namespace BulletConstants
-{
-	constexpr float CONSUME_NORMAL_BULLET_ENERGY = 7.5f;	// 通常弾のエネルギー消費量
-	constexpr float CONSUME_PIERCING_BULLET_ENERGY = 10.0f;	// 貫通弾のエネルギー消費量
-}
-
-// 弾発射設定
-namespace bulletConfig
-{
-	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);
-	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);
-	constexpr float RADIUS = 20.0f;
-	constexpr float DAMAGE = 50.0f;
-	constexpr float SPEED = 15.0f;
-	constexpr float LIFE_TIME = 120.0f;
-}
-
 BulletPlayer::BulletPlayer()
 {
 	_eCharaType = CHARA_TYPE::BULLET_PLAYER;
@@ -89,7 +71,6 @@ bool BulletPlayer::Render()
 	return true;
 }
 
-// デバッグ描画
 void BulletPlayer::DebugRender()
 {
 	PlayerBase::DebugRender();
@@ -98,21 +79,18 @@ void BulletPlayer::DebugRender()
 	DrawShootIntervalTime();
 }
 
-// 被ダメージ処理
 void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
 	// 基底クラスの被ダメージ処理を呼び出す
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
 }
 
-// 弾による被ダメージ処理
 void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 {
 	// 基底クラスの弾による被ダメージ処理を呼び出す
 	PlayerBase::ApplyDamageByBullet(fDamage, chara);
 }
 
-// 弾プレイヤーの情報設定
 PlayerConfig BulletPlayer::GetPlayerConfig()
 {
 	// 裏プレイヤー用の設定
@@ -138,7 +116,6 @@ PlayerConfig BulletPlayer::GetPlayerConfig()
 	return config;
 }
 
-// 弾プレイヤーのアニメーション設定
 PlayerAnimations BulletPlayer::GetPlayerAnimation()
 {
 	// 裏プレイヤー用のアニメーション設定
@@ -165,7 +142,6 @@ PlayerAnimations BulletPlayer::GetPlayerAnimation()
 	return animation;
 }
 
-// 弾プレイヤーの表示設定
 RenderConfig BulletPlayer::GetRenderConfig()
 {
 	// 裏プレイヤー用の表示設定
@@ -177,7 +153,6 @@ RenderConfig BulletPlayer::GetRenderConfig()
 	return config;
 }
 
-// 回避設定データ構造体
 DodgeConfig BulletPlayer::GetDodgeConfig()
 {
 	// 弾プレイヤー用の回避設定
@@ -193,12 +168,10 @@ DodgeConfig BulletPlayer::GetDodgeConfig()
 	return config;
 }
 
-// 弾発射設定
 BulletConfig BulletPlayer::GetBulletConfig()
 {
 	// オフセット値をワールド座標に変換
 	VECTOR worldOffset = GeometryUtility::TransOffsetToWorld(GetShootOffset(), GetShootDirection());
-	
 
 	// 弾プレイヤー用の弾発射設定
 	BulletConfig config;
@@ -215,7 +188,6 @@ BulletConfig BulletPlayer::GetBulletConfig()
 	return config;
 }
 
-// 弾演出設定
 BulletEffectConfig BulletPlayer::GetBulletEffectConfig()
 {
 	// 弾プレイヤー用の弾演出設定
@@ -228,21 +200,20 @@ BulletEffectConfig BulletPlayer::GetBulletEffectConfig()
 	return config;
 }
 
-// 弾発射カウント表示関数
 void BulletPlayer::DrawShootIntervalTime()
 {
+	// 発射間隔がマイナスなら表示しない
 	if(IsShootIntervalNegative()){ return; }
 
 	// 弾発射カウントを表示
 	DrawFormatString(10, 510, GetColor(255, 255, 255), "弾発射カウント: %3.2f", _shootIntervalTimer);
 }
 
-// 発射間隔更新
 void BulletPlayer::ProcessShoot()
 {
-	// エイムカメラに切り替え
 	if (_cameraManager)
 	{
+		// エイムカメラに切り替える
 		_cameraManager->SetCameraType(CAMERA_TYPE::AIM_CAMERA);
 	}
 
@@ -253,116 +224,142 @@ void BulletPlayer::ProcessShoot()
 	_bWasShootKeyPressed = IsShootInput();
 }
 
-// 弾発射の入力処理
 void BulletPlayer::ShootInput()
 {
-	// キーが押された
-	if(IsShootInput())
+	// 発射キーが新しく押されたかどうか
+	bool isInputNewPress = IsShootInput() && !_bWasShootKeyPressed; 
+
+	// 待機状態：新しく入力がきたら構えへ
+	if(_playerState.shootState == PLAYER_SHOOT_STATE::NONE	&&	// 現在発射構え状態でなく
+		isInputNewPress										&&	// 発射キーが新しく押され
+		IsShootIntervalNegative())								// 発射カウントが残っていないなら
 	{
-		// 発射キーが新しく押され、発射カウントが残っていないなら
-		if(!_bWasShootKeyPressed && IsShootIntervalNegative())
-		{
-			// 発射構え状態に移行
-			_playerState.shootState = PLAYER_SHOOT_STATE::SHOOT_READY;	
+		// 発射構え状態に移行
+		_playerState.shootState = PLAYER_SHOOT_STATE::SHOOT_READY;
 
-			// 構えアニメーション未完了
-			_bIsReadyCompleted = false;									
+		// 構えアニメーション未完了
+		_bIsReadyCompleted = false;
 
-			// アニメーション切り替え
-			ProcessPlayAnimation();
-		}
-		// 構え状態で構えアニメーションが完了しているなら
-		else if(_playerState.shootState == PLAYER_SHOOT_STATE::SHOOT_READY && !_bIsReadyCompleted)
-		{
-			// アニメーションが完了したかチェック
-			if(!IsAnimationFinishedConst()){ return; }
+		// アニメーション切り替え
+		ProcessPlayAnimation();
 
-			_bIsReadyCompleted = true; // 構えアニメーション完了フラグを立てる
-		}
-		// 発射構え状態が完了している、または既に構え完了状態で継続押下していて、発射カウントが0なら、
-		else if((_bIsReadyCompleted || _bWasShootKeyPressed) && IsShootIntervalNegative())
-		{
-			// 発射状態の設定
-			if(!_bIsShootFromRightArm)
-			{
-				_playerState.shootState = PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT; // 左腕発射
-			}
-			else
-			{
-				_playerState.shootState = PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT; // 右腕発射
-			}
-
-			// アニメーション切り替え
-			ProcessPlayAnimation();
-
-			// 弾の発射
-			ShootBullet();
-
-			// 発射間隔の設定
-			AnimManager* animManager = GetAnimManager();
-			_shootIntervalTimer = animManager->GetCurrentAnimTotalTime();
-		}
-	}
-	// キーが離された
-	else
-	{
-		// 発射構えアニメーションが完了していない状態でキーが離されたら
-		if(!_bIsReadyCompleted && _bIsReadyCompleted)
-		{
-			// 発射状態をリセット
-			_playerState.shootState = PLAYER_SHOOT_STATE::NONE;	// 発射状態リセット
-		}
-
-		// 発射カウントが0になったら
-		if(IsShootIntervalNegative())
-		{
-			// キーが離されたら発射状態をリセット
-			if(_playerState.shootState != PLAYER_SHOOT_STATE::NONE)
-			{
-				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;	// 発射状態リセット
-				_bIsReadyCompleted = false;							// 構えアニメーション完了フラグをリセット	
-			}
-		}
-
-		// 左腕から発射するようにリセット
-		_bIsShootFromRightArm = false; 
+		return;
 	}
 
-	// 弾発射カウントを減らす
+	// 構え状態：アニメーション完了を待つ
+	if(_playerState.shootState == PLAYER_SHOOT_STATE::SHOOT_READY &&
+		!_bIsReadyCompleted)
+	{
+		// アニメーションがまだ再生中
+		if(!IsAnimationFinishedConst()){ return; }
+
+		// アニメーション完了
+		_bIsReadyCompleted = true;
+
+		return;
+	}
+
+	// 構え完了状態：発射可能になったら発射へ
+	if(_playerState.shootState == PLAYER_SHOOT_STATE::SHOOT_READY	&&	// 現在発射構え状態で
+		_bIsReadyCompleted											&&	// 構えアニメーションが完了していて
+		IsShootIntervalNegative())										// 発射カウントが残っていないなら
+	{
+		// 発射状態への移行処理
+		TransToShootState();
+
+		return;
+	}
+
+	// 発射中(タイマー進行中)：カウント処理
 	if(_shootIntervalTimer > 0.0f)
 	{
-		_shootIntervalTimer--; // カウントを減らす
+		_shootIntervalTimer--;
 
-		// 発射カウントが0になったら
+		// タイマー終了時
 		if(IsShootIntervalNegative())
 		{
-			// 発射アニメーション完了後、キーが押されていたら
-			if(IsShootInput())
-			{
-				// 発射状態の設定
-				_playerState.shootState = PLAYER_SHOOT_STATE::NONE;	// 発射状態リセット
-			}
-			// 発射状態のリセット
-			else
-			{
-				// 古いステートを保存
-				PlayerState oldState = _playerState;
-
-				// 状態リセット
-				_playerState.StateReset();
-
-				_bIsReadyCompleted = false; // 構えアニメーション完了フラグをリセット
-
-				// アニメーション更新
-				_oldPlayerState = oldState;		// 変更前の状態を設定
-				ProcessPlayAnimation();			// アニメーション更新
-				_oldPlayerState = _playerState; // 更新後の状態に同期
-			}
+			// 発射状態の更新処理
+			UpdateByShootIntervalEnd(IsShootInput());
 		}
+
+		return;
+	}
+
+	// 入力が離されたら初期化
+	if(!IsShootInput() && _playerState.shootState != PLAYER_SHOOT_STATE::NONE)
+	{
+		// 発射状態をリセット
+		ResetShootState();
+
+		return;
 	}
 }
 
-// 弾の発射
+void BulletPlayer::TransToShootState()
+{
+	// 発射状態の設定
+	if(!_bIsShootFromRightArm)
+	{
+		// 左腕発射
+		_playerState.shootState = PLAYER_SHOOT_STATE::LEFT_ARM_SHOOT; 
+	}
+	else
+	{
+		// 右腕発射
+		_playerState.shootState = PLAYER_SHOOT_STATE::RIGHT_ARM_SHOOT; 
+	}
+
+	// アニメーション切り替え
+	ProcessPlayAnimation();
+
+	// 弾の発射
+	ShootBullet();
+
+	// 発射間隔の設定
+	AnimManager* animManager = GetAnimManager();
+	_shootIntervalTimer = animManager->GetCurrentAnimTotalTime();
+}
+
+void BulletPlayer::UpdateByShootIntervalEnd(bool isInputActive)
+{
+	// まだ入力が継続していれば、次の発射へ
+	if(isInputActive && IsShootIntervalNegative())
+	{
+		// 発射状態への移行処理
+		TransToShootState();
+
+		return;
+	}
+
+	// 入力が途切れていれば完全にリセット
+	if(!isInputActive)
+	{
+		// 発射状態をリセット
+		ResetShootState();
+
+		return;
+	}
+}
+
+void BulletPlayer::ResetShootState()
+{
+	PlayerState oldState = _playerState;
+	
+	// 発射状態をリセット
+	_playerState.StateReset();
+
+	// 構えアニメーション完了フラグをリセット
+	_bIsReadyCompleted = false;
+
+	// 右腕から発射するようにリセット
+	_bIsShootFromRightArm = false;
+
+	// アニメーション更新
+	_oldPlayerState = oldState;		// 変更前の状態を設定
+	ProcessPlayAnimation();			// アニメーション更新
+	_oldPlayerState = _playerState;	// 更新後の状態に同期
+}
+
 void BulletPlayer::ShootBullet()
 {
 	auto bullet = BulletManager::GetInstance();
@@ -374,13 +371,14 @@ void BulletPlayer::ShootBullet()
 	EnergyManager* energyManager = EnergyManager::GetInstance();
 	if(energyManager)
 	{
+		// エネルギーを消費
 		energyManager->ConsumeEnergy(BulletConstants::CONSUME_NORMAL_BULLET_ENERGY);
 	}
 
-	_bIsShootFromRightArm = !_bIsShootFromRightArm; // 右腕と左腕の切り替え
+	// 右腕と左腕の切り替え
+	_bIsShootFromRightArm = !_bIsShootFromRightArm; 
 }
 
-// 発射位置オフセットの取得
 VECTOR BulletPlayer::GetShootOffset()const
 {
 	// 発射位置オフセット設定
@@ -394,7 +392,6 @@ VECTOR BulletPlayer::GetShootOffset()const
 	return startPosOffset;
 }
 
-// エイム中かどうかで発射方向を決める
 VECTOR BulletPlayer::GetShootDirection()const
 {
 	// エイム中かどうかで発射方向を決定
@@ -412,7 +409,6 @@ VECTOR BulletPlayer::GetShootDirection()const
 	return shootDirection;
 }
 
-// 弾発射入力チェック
 bool BulletPlayer::IsShootInput()const
 {
 	auto& inputManager = InputManager::GetInstance();
@@ -421,7 +417,6 @@ bool BulletPlayer::IsShootInput()const
 	return (inputManager.IsHold(INPUT_ACTION::ATTACK));
 }
 
-// カウントが0より少ないかどうが
 bool BulletPlayer::IsShootIntervalNegative()const
 {
 	// カウントが0より少ないかチェック

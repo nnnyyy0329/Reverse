@@ -424,11 +424,10 @@ bool PlayerBase::CanStartAttack()
 	auto& im = InputManager::GetInstance();
 
 	// 攻撃入力チェック
-	if((_playerState.IsStateMoving()								&&	// 何かしらの移動状態で
-		!_playerState.IsStateAttacking())							&&	// 攻撃状態ではなく
-		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)		&&	// 被弾中でなく
-		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DODGE)	&&	// 回避状態で
-		im.IsTrigger(INPUT_ACTION::ATTACK))								// 入力があるなら
+	if((_playerState.IsStateMoving()		&&	// 何かしらの移動状態で
+		!_playerState.IsStateAttacking()	&&	// どの攻撃状態でもなく
+		!_playerState.IsStateCombat())		&&	// どの特殊状態でもなく
+		im.IsTrigger(INPUT_ACTION::ATTACK))		// 入力があるなら
 	{
 		// 攻撃開始可能
 		return true;

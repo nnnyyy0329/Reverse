@@ -1,10 +1,28 @@
 #pragma once
 #include "PlayerBase.h"
 
+// 弾発射に関する定数
+namespace BulletConstants
+{
+	constexpr float CONSUME_NORMAL_BULLET_ENERGY = 5.0f;	// 通常弾のエネルギー消費量
+	constexpr float CONSUME_PIERCING_BULLET_ENERGY = 10.0f;	// 貫通弾のエネルギー消費量
+}
+
+// 弾発射設定
+namespace bulletConfig
+{
+	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);
+	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);
+	constexpr float RADIUS = 20.0f;
+	constexpr float DAMAGE = 50.0f;
+	constexpr float SPEED = 15.0f;
+	constexpr float LIFE_TIME = 120.0f;
+}
+
 // 前方宣言
 class CameraManager;
 
-// 弾発射プレイヤー
+/// @brief 弾発射プレイヤークラス
 class BulletPlayer : public PlayerBase
 {
 public:
@@ -17,13 +35,26 @@ public:
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
 
-	// 共通関数のオーバーライド
-	virtual void DebugRender()override;																		// デバッグ描画
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;	// 被ダメージ処理
-	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
+	/* 共通関数のオーバーライド */
 
-	// 弾発射時間のデバッグ表示
-	void DrawShootIntervalTime();												
+	/// @brief デバッグ描画
+	virtual void DebugRender()override;																		
+
+	/// @brief 弾発射時間のデバッグ表示
+	void DrawShootIntervalTime();
+
+	/// @brief 被ダメージ処理
+	/// 
+	/// @param fDamage ダメージ量
+	/// @param eType 攻撃の所有者タイプ
+	/// @param attackInfo 攻撃コリジョン情報
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;	
+
+	/// @brief 弾による被ダメージ処理
+	///
+	/// @param fDamage ダメージ量
+	/// @param chara 弾のキャラタイプ
+	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										
 
 	// 純粋仮想関数のオーバーライド
 	virtual PlayerConfig		GetPlayerConfig()		override;	// 設定を取得
@@ -33,38 +64,66 @@ public:
 	virtual BulletConfig		GetBulletConfig()		override;	// 弾発射設定を取得
 	virtual BulletEffectConfig	GetBulletEffectConfig()	override;	// 弾演出設定を取得
 
-	// クラス設定
-	void SetCameraManager(std::shared_ptr<CameraManager>cameraManager){ _cameraManager = cameraManager; }	// カメラマネージャーをセット
+	/* クラス設定 */
+
+	// カメラマネージャーをセット
+
+	/// @brief カメラマネージャーをセットする関数
+	///
+	/// @param cameraManager カメラマネージャーの共有ポインタ
+	void SetCameraManager(std::shared_ptr<CameraManager>cameraManager){ _cameraManager = cameraManager; }	
 
 private:
 
-	// 基底クラスの弾発射関数のオーバーライド
+	/// @brief 弾発射処理
 	void ProcessShoot()override;
 
-	// 弾発射の入力処理
+	/// @brief 弾発射入力処理
 	void ShootInput();
 
-	// 弾の発射
+	/// @brief 発射状態へ移行処理
+	void TransToShootState();
+
+	/// @brief 発射状態の処理
+	/// 
+	/// @param isInputActive 発射入力がアクティブかどうか
+	void UpdateByShootIntervalEnd(bool isInputActive);
+
+	/// @brief 発射状態をリセット
+	void ResetShootState();
+
+	/// @brief 弾発射処理
 	void ShootBullet();
 
-	// 発射位置オフセットの取得
+	/// @brief 発射位置オフセットの取得
+	///
+	/// @return 発射位置オフセット
 	VECTOR GetShootOffset()const;
 
-	// エイム中かどうかで発射方向を決める
+	/// @brief エイム中かどうかで発射方向を決める
+	///
+	/// @return 発射方向
 	VECTOR GetShootDirection()const;
 
-	// 弾発射入力チェック
+	/// @brief 弾発射入力チェック
+	///
+	/// @return 弾発射入力があったらtrue、なければfalse
 	bool IsShootInput()const;
 
-	// 弾の種類切り替え入力チェック
+	/// @brief 弾の種類切り替え入力チェック
+	///
+	/// @brief 弾の種類切り替え入力があったらtrue、なければfalse
 	bool IsChangeBulletTypeInput()const;
 
-	// 発射間隔がマイナスかどうか
+	/// @brief 発射間隔がマイナスかどうかをチェックする関数
+	/// 
+	/// @return 発射間隔がマイナスならtrue、そうでなければfalse
 	bool IsShootIntervalNegative()const;
 
 protected:
-	std::weak_ptr<BulletManager>_bulletManager;
-	std::shared_ptr<CameraManager>_cameraManager;
+
+	std::weak_ptr<BulletManager>_bulletManager;		// 弾マネージャーの弱参照
+	std::shared_ptr<CameraManager>_cameraManager;	// カメラマネージャーの共有ポインタ
 
 	float _shootIntervalTimer;	// 発射間隔タイマー
 	bool _bIsShootFromRightArm;	// 右腕から発射したかどうか
