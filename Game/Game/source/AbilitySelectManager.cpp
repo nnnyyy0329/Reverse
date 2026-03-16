@@ -38,9 +38,11 @@ void AbilitySelectManager::SetPlayerManager(std::shared_ptr<PlayerManager> playe
 // アビリティ選択処理
 void AbilitySelectManager::AbilitySelection()
 {
-	if(!_abilitySelectScreen || !_playerManager){ return; }	// クラスがセットされていない場合は処理しない
+	// クラスがセットされていない場合は処理しない
+	if(!_abilitySelectScreen || !_playerManager){ return; }	
 
-	if(!IsSwitchPlayerByEnergy()){ return; }	// エネルギーによる切り替えができない場合は処理しない
+	// エネルギーによる切り替えができない場合は処理しない
+	if(!IsSwitchPlayerByEnergy()){ return; }	
 
 	// 選択状態が選択確定の場合
 	if(_abilitySelectScreen->GetSelectionState() == SelectionState::SELECT_COMPLETED)

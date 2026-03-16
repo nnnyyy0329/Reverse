@@ -6,7 +6,7 @@ namespace
 	constexpr float ROTATE_SPEED = 0.045f;// 回転速度
 	constexpr float ANGLE_V_LIMIT = 1.50f;// 垂直角度制限(真上、真下の反転防止。85度)
 	constexpr float TARGET_OFFSET_Y = 150.0f;// ターゲットの注視点のYオフセット
-	constexpr float DEFAULT_DISTANCE = 350.0f;// デフォルトのカメラ距離
+	constexpr float DEFAULT_DISTANCE = 300.0f;// デフォルトのカメラ距離
 	constexpr float DEFAULT_ANGLE_H = DX_PI_F;// デフォルトの水平角度(真後ろ)
 	constexpr float DEFAULT_ANGLE_V = -0.4f;// デフォルトの垂直角度(少し見下ろし)
 }
@@ -179,7 +179,7 @@ void GameCamera::ControlCamera()
 		// 垂直回転
 		if(abs(ry) > analogMin) 
 		{
-			_fAngleV -= ry * ROTATE_SPEED;// 右スティックのY軸で垂直回転
+			//_fAngleV -= ry * ROTATE_SPEED;// 右スティックのY軸で垂直回転
 
 			// 垂直角度制限
 			if(_fAngleV > ANGLE_V_LIMIT) _fAngleV = ANGLE_V_LIMIT;

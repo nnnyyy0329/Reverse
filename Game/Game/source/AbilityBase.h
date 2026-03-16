@@ -35,6 +35,7 @@ inline ABILITY_TYPE ConvertSelectionToAbility(int selection)
 	}
 }
 
+/// @brief アビリティの基底クラス
 class AbilityBase
 {
 public:
@@ -46,9 +47,7 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
-	// ゲッターセッター
-
-
 protected:
-	ABILITY_TYPE _eAbilityType;
+
+	ABILITY_TYPE _eAbilityType;	// 能力タイプ
 };

@@ -6,7 +6,8 @@ class StaminaManager
 {
 public:
 	StaminaManager();
-	~StaminaManager();
+	virtual ~StaminaManager();
+
 	bool Initialize();	// ‰Šú‰»
 	bool Terminate();	// I—¹	
 	bool Process();		// XV

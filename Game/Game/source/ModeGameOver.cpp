@@ -88,7 +88,7 @@ bool ModeGameOver::Process()
 
 	auto& im = InputManager::GetInstance();
 
-	if(im.IsTrigger(INPUT_ACTION::ABILITY)) {// zキー Aボタン
+	if(im.IsTrigger(INPUT_ACTION::SKIP)) {// zキー Aボタン
 		// 現在のステージ番号からリスタート
 		ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
 		if (modeGame != nullptr)

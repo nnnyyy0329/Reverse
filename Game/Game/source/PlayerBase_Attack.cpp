@@ -70,8 +70,8 @@ void PlayerBase::CreateAttackData(int maxCombo)
 	_attackEffectConfigs.reserve(maxCombo);
 
 	// 攻撃設定取得
-	std::vector<AttackConfig>configs(maxCombo);
-	GetAttackConfigs(configs.data());
+	std::vector<AttackCollision>configs(maxCombo);
+	GetAttackColConfigs(configs.data());
 
 	// 攻撃オフセット設定取得
 	std::vector<AttackColOffset>offsets(maxCombo);
@@ -108,25 +108,12 @@ void PlayerBase::CreateAttackData(int maxCombo)
 }
 
 // 攻撃コリジョンデータ設定
-void PlayerBase::SetAttackColData(AttackConfig config, std::shared_ptr<AttackBase> attack)
+void PlayerBase::SetAttackColData(AttackCollision config, std::shared_ptr<AttackBase> attack)
 {
 	if(!attack) return;
 
-	attack->SetCapsuleAttackData
-	(
-		config.topOffset,			// 上部
-		config.bottomOffset,		// 下部
-		config.radius,				// 半径
-		_vMove,						// 攻撃方向
-		config.delay,				// 発生フレーム
-		config.duration,			// 持続フレーム
-		config.recovery,			// 硬直フレーム
-		config.damage,				// ダメージ
-		false,						// ヒットフラグ
-		config.attackState,			// 攻撃状態
-		config.attackMoveSpeed,		// 攻撃中の移動速度
-		config.canKnockback			// 吹き飛ばし攻撃かどうか
-	);
+	// 攻撃コリジョンデータ設定
+	attack->SetCapsuleAttackData(config);
 }
 
 // 攻撃オフセットデータ作成
@@ -134,6 +121,7 @@ void PlayerBase::SetAttackOffsetData(AttackColOffset config, std::shared_ptr<Att
 {
 	if(!attack) return;
 
+	// 攻撃オフセットデータ設定
 	attack->SetCollisionOffset(config);
 }
 
@@ -172,7 +160,7 @@ void PlayerBase::CallProcessAttack()
 void PlayerBase::ProcessAttack()
 {
 	// 攻撃開始チェック
-	if(IsStartAttack())
+	if(CanStartAttack())
 	{
 		// 攻撃配列が空の場合は処理をスキップ
 		if(_attacks.empty()){ return; }
@@ -431,17 +419,18 @@ void PlayerBase::ReceiveAttackColData()
 }
 
 // 攻撃を開始できるかチェック
-bool PlayerBase::IsStartAttack()
+bool PlayerBase::CanStartAttack()
 {
 	auto& im = InputManager::GetInstance();
 
 	// 攻撃入力チェック
-	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||	// 待機か
-		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||	// 歩きか
-		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN) &&	// 走りで
-		_playerState.attackState   == PLAYER_ATTACK_STATE::NONE	  &&	// 攻撃状態ではなく
-		im.IsTrigger(INPUT_ACTION::ATTACK))												// 入力があるなら
+	if((_playerState.IsStateMoving()								&&	// 何かしらの移動状態で
+		!_playerState.IsStateAttacking())							&&	// 攻撃状態ではなく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)		&&	// 被弾中でなく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DODGE)	&&	// 回避状態で
+		im.IsTrigger(INPUT_ACTION::ATTACK))								// 入力があるなら
 	{
+		// 攻撃開始可能
 		return true;
 	}
 
@@ -457,8 +446,16 @@ bool PlayerBase::CanNextAttack()
 	// キャラタイプに応じた最大コンボ数を取得
 	int maxComboCount = GetMaxComboCount();
 
-	// コンボ可能で、現在のコンボカウントが最大コンボ数より小さいなら次の攻撃可能
-	return _bCanCombo && _iComboCount < maxComboCount;
+	if((_bCanCombo															&&	// コンボ可能で
+		_iComboCount < maxComboCount										&&	// 現在のコンボカウントが最大コンボ数より小さく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT))			&&	// 被弾中でないなら次の攻撃が可能
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::TRANS_CANCEL))		// 変身解除状態でないなら
+	{
+		// 次の攻撃可能
+		return true;
+	}
+
+	return false;
 }
 
 // 攻撃状態中かどうかをチェック

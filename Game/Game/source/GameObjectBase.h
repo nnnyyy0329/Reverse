@@ -37,6 +37,9 @@ public:
 
 	float GetRotY() { return atan2f(_vDir.x, _vDir.z); }
 
+	// ターゲットのY軸回転角度を計算する関数
+	float CalcTargetY();
+
 protected:
 	// 位置関連
 	VECTOR _vPos;		// 位置

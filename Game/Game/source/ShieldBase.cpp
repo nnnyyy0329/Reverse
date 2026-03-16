@@ -148,7 +148,7 @@ void ShieldBase::SuccessBlock(const VECTOR& attackDir)
 void ShieldBase::UpdateGuardInput(InputManager* input)
 {
 	// 押されたら
-	if (input->IsHold(INPUT_ACTION::ABILITY))
+	if(input->IsHold(INPUT_ACTION::ABILITY))
 	{
 		// ガード開始
 		StartGuard();

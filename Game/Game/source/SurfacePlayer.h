@@ -22,12 +22,13 @@ public:
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
 
 	// 純粋仮想関数のオーバーライド
-	virtual PlayerConfig			GetPlayerConfig()											override;	// 設定を取得
-	virtual PlayerAnimations		GetPlayerAnimation()										override;	// アニメーション設定を取得
-	virtual RenderConfig			GetRenderConfig()											override;	// 描画設定を取得
-	virtual DodgeConfig				GetDodgeConfig()											override;	// 回避設定を取得
-	virtual ShieldConfig			GetShieldConfig()											override;	// シールド設定を取得
-	virtual AttackConstants			GetAttackConstants()const									override;	// 攻撃定数を取得
+	virtual PlayerConfig			GetPlayerConfig()				override;	// 設定を取得
+	virtual PlayerAnimations		GetPlayerAnimation()			override;	// アニメーション設定を取得
+	virtual RenderConfig			GetRenderConfig()				override;	// 描画設定を取得
+	virtual DodgeConfig				GetDodgeConfig()				override;	// 回避設定を取得
+	virtual ShieldConfig			GetShieldConfig()				override;	// シールド設定を取得
+	virtual AttackConstants			GetAttackConstants()const		override;	// 攻撃定数を取得
+
 	const PlayerAbsorbAttackSystem* GetAbsorbAttackSystemConst()const;	// 吸収攻撃システム取得
 	PlayerAbsorbAttackSystem* GetAbsorbAttackSystem();					// 非const版
 
@@ -45,6 +46,9 @@ private:
 	void AbsorbSystemDebugRender();	// 吸収攻撃システムデバッグ描画
 
 	/* 吸収攻撃のモーション管理用メンバ関数 */
+
+	// 吸収攻撃処理
+	void ProcessAbsorb()override;
 	
 	// 吸収攻撃モーション切り替え条件処理
 	void ProcessChangeAbsorbMotion();

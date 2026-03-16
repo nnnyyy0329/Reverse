@@ -2,7 +2,7 @@
 #include "AbsorbAttack.h"
 #include "CharaBase.h"
 
-// プレイヤーの吸収攻撃システムクラス
+/// @brief プレイヤーの吸収攻撃システムクラス
 class PlayerAbsorbAttackSystem
 {
 public:
@@ -14,45 +14,57 @@ public:
 	virtual bool Process();										// 更新
 	virtual bool Render();										// 描画
 
-	// デバッグ描画
+	/// @brief デバッグ描画関数
 	void DebugRender();
 
-	// 吸収攻撃の設定
+	/// @brief 吸収攻撃の設定する
+	///
+	/// @param config 吸収攻撃の設定構造体
 	void SetAbsorbConfig(const AbsorbConfig& config);
 
-	// 吸収攻撃の設定取得
+	/// @brief 吸収攻撃の設定を取得する
+	///
+	/// @return 吸収攻撃の設定構造体
 	AbsorbConfig GetAbsorbConfig() const;
 
-	// 吸収攻撃の開始
+	/// @brief 吸収攻撃の開始処理
 	void StartAbsorbAttack();
 
-	// 吸収攻撃の停止
+	/// @brief 吸収攻撃の停止処理
 	void StopAbsorbAttack();
 
-	// 吸収攻撃の入力処理
+	/// @brief 吸収攻撃の入力処理
 	void ProcessAbsorbInput();
 
-	// 吸収の更新処理
+	/// @brief 吸収攻撃の更新処理
 	void ProcessAbsorb();
 
-	// 吸収攻撃が開始可能かどうか
+	/// @brief 吸収攻撃が開始可能かどうかをチェック
+	///
+	/// @return 吸収攻撃が開始可能であればtrue、そうでなければfalse
 	bool CanStartAbsorbAttack() const;
 
-	// 吸収攻撃がアクティブかどうか
+	/// @brief 吸収攻撃がアクティブ状態かどうかをチェック
+	///
+	/// @return 吸収攻撃がアクティブ状態であればtrue、そうでなければfalse
 	bool IsAbsorbActive() const;
 
 private:
-	// 吸収攻撃クラスインスタンスの作成
+
+	/// @brief 吸収攻撃クラスインスタンスの作成
 	void MakeAbsorbAttack();
 
-	// 初期化時の所有者設定
+	/// @brief 初期化時の所有者設定
+	///
+	/// @param owner 所有者の弱ポインタ
 	void InitializeSetOwner(std::weak_ptr<CharaBase> owner);
 
-	// 吸収攻撃の状態更新
+	/// @brief 吸収攻撃の状態更新処理
 	void ProcessAbsorbAttackState();
 	
 
 protected:
+
 	std::weak_ptr<CharaBase> _owner;                // 所有者
 	std::unique_ptr<AbsorbAttack> _absorbAttack;    // 吸収攻撃オブジェクト
 

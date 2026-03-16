@@ -63,14 +63,8 @@ void PlayerBase::CallProcessDodge()
 // 回避処理
 void PlayerBase::ProcessDodge()
 {
-	auto& im = InputManager::GetInstance();
-
 	// 回避入力があったら回避を呼び出す
-	if((_playerState.movementState == PLAYER_MOVEMENT_STATE::WAIT ||
-		_playerState.movementState == PLAYER_MOVEMENT_STATE::WALK ||
-		_playerState.movementState == PLAYER_MOVEMENT_STATE::RUN)
-		&& StaminaManager::GetInstance()->CanDodge()
-		&& im.IsTrigger(INPUT_ACTION::DODGE))
+	if(CanStartDodge())
 	{
 		// 回避開始
 		ProcessStartDodge();
@@ -130,9 +124,11 @@ void PlayerBase::ProcessEndDodge()
 		// 古いステータスを保持
 		PlayerState oldStatus = _playerState;
 
-		// ステータス変更後、アニメーション切り替え
-		_playerState.combatState = PLAYER_COMBAT_STATE::NONE;		// 通常に戻す
-		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 待機状態に戻る
+		// ステータスリセット
+		_playerState.StateReset();
+
+		// 待機状態に戻る
+		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	
 
 		_oldPlayerState = oldStatus;	// 古いステータスを攻撃状態に設定
 		ProcessPlayAnimation();			// アニメーション切り替え実行
@@ -140,14 +136,33 @@ void PlayerBase::ProcessEndDodge()
 	}
 }
 
+// 回避を開始できるかチェック
+bool PlayerBase::CanStartDodge()
+{
+	auto& im = InputManager::GetInstance();
+
+	if((_playerState.IsStateMoving())							&&	// 移動状態で
+		_playerState.IsInAttackState(PLAYER_ATTACK_STATE::NONE)	&&	// 何かしらの攻撃状態ではなく
+		_playerState.IsInShootState(PLAYER_SHOOT_STATE::NONE)	&&	// 何かしらの発射状態ではなく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)	&&	// 被弾中でなく
+		StaminaManager::GetInstance()->CanDodge()				&&	// スタミナが回避可能な量で
+		im.IsTrigger(INPUT_ACTION::DODGE))							// 回避入力があったら
+	{
+		return true;
+	}
+
+	// 回避開始不可能
+	return false;
+}
+
 // 回避可能かチェック
 bool PlayerBase::CanDodge()
 {
-	if(_dodgeSystem != nullptr									||	// 回避システムが有効で
-		_dodgeSystem->CanDodge()								||	// 回避中でなく
-		!IsAttacking()											||	// 攻撃中でなく
-		_playerState.combatState != PLAYER_COMBAT_STATE::HIT	||	// 被弾中でなく
-		_playerState.combatState != PLAYER_COMBAT_STATE::DEATH)		// 死亡中じゃないなら
+	if(_dodgeSystem != nullptr										||	// 回避システムが有効で
+		_dodgeSystem->CanDodge()									||	// 回避中でなく
+		!IsAttacking()												||	// 攻撃中でなく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)		||	// 被弾中でなく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DEATH))		// 死亡中じゃないなら
 	{
 		return true;
 	}
@@ -162,8 +177,8 @@ bool PlayerBase::IsDodging()
 	if(_dodgeSystem == nullptr) { return false; }
 
 	// 回避中かチェック
-	if(_playerState.combatState == PLAYER_COMBAT_STATE::DODGE ||
-		_dodgeSystem->IsDodging())
+	if(_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DODGE)	||	// 回避中で
+		_dodgeSystem->IsDodging())									// 回避をすでにしている
 	{
 		return true;
 	}

@@ -20,6 +20,9 @@ AttackBase::AttackBase()
     _eColType = COLLISION_TYPE::NONE;
     _eAttackState = ATTACK_STATE::INACTIVE;
 
+	// 経過時間の初期化
+	_fCurrentTime = 0.0f;
+
     // 攻撃コリジョンの初期化
     _stcAttackCol.attackColTop = VGet(0.0f, 0.0f, 0.0f);
     _stcAttackCol.attackColBottom = VGet(0.0f, 0.0f, 0.0f);
@@ -27,14 +30,13 @@ AttackBase::AttackBase()
 	_stcAttackCol.attackDir = VGet(0.0f, 0.0f, 0.0f);
     _stcAttackCol.attackDelay = 0.0f;
     _stcAttackCol.attackDuration = 0.0f;
-    _stcAttackCol.recovery = 0.0f;
+    _stcAttackCol.attackRecovery = 0.0f;
     _stcAttackCol.damage = 0.0f;
-    _stcAttackCol.currentTime = 0.0f;
-    _stcAttackCol.isActive = false;
-    _stcAttackCol.isHit = false;
 	_stcAttackCol.attackState = ATTACK_STATE::INACTIVE;
 	_stcAttackCol.attackMoveSpeed = 0.0f;
+    _stcAttackCol.isActive = false;
 	_stcAttackCol.canKnockback = false;
+	_stcAttackCol.isAttackCancelByHit = false;
 
 	// 攻撃移動情報の初期化
 	_stcAttackMovement.moveDir = VGet(0.0f, 0.0f, 0.0f);
@@ -102,7 +104,7 @@ bool AttackBase::ProcessStartAttack()
     if(_eAttackState == ATTACK_STATE::INACTIVE)
     {
 		_eAttackState = ATTACK_STATE::STARTUP;  // 発生前状態に移行
-		_stcAttackCol.currentTime = 0.0f;       // 経過時間リセット
+        _fCurrentTime = 0.0f;                   // 経過時間リセット
 		_stcAttackCol.isActive = false;         // 攻撃判定は非アクティブに設定
 		_stcAttackCol.isHit = false;            // ヒットフラグリセット
 
@@ -117,7 +119,7 @@ bool AttackBase::ProcessStopAttack()
 {
 	_eAttackState = ATTACK_STATE::INACTIVE; // 攻撃状態を非アクティブに設定
 	_stcAttackCol.isActive = false;         // 攻撃判定を非アクティブに設定
-	_stcAttackCol.currentTime = 0.0f;       // 経過時間リセット
+    _fCurrentTime = 0.0f;       // 経過時間リセット
 
     // ヒットリストクリア
     ClearHitCharas();
@@ -132,10 +134,10 @@ void AttackBase::UpdateAttackState()
     {
 		case ATTACK_STATE::STARTUP: // 発生前
         {
-			_stcAttackCol.currentTime += 1.0f;  // 経過時間を進める
+            _fCurrentTime += 1.0f;  // 経過時間を進める
 
 			// 発生遅延時間を超えたら攻撃判定をアクティブにする
-            if(_stcAttackCol.currentTime >= _stcAttackCol.attackDelay)
+            if(_fCurrentTime >= _stcAttackCol.attackDelay)
             {
                 _eAttackState = ATTACK_STATE::ACTIVE;
                 _stcAttackCol.isActive = true;
@@ -146,10 +148,10 @@ void AttackBase::UpdateAttackState()
 
 		case ATTACK_STATE::ACTIVE:  // 攻撃判定中
         {
-			_stcAttackCol.currentTime += 1.0f;  // 経過時間を進める
+            _fCurrentTime += 1.0f;  // 経過時間を進める
 
 			// 持続時間を超えたら後隙状態に移行する
-            if(_stcAttackCol.currentTime >= _stcAttackCol.attackDelay + _stcAttackCol.attackDuration)
+            if(_fCurrentTime >= _stcAttackCol.attackDelay + _stcAttackCol.attackDuration)
             {
                 _eAttackState = ATTACK_STATE::RECOVERY;
                 _stcAttackCol.isActive = false;
@@ -160,13 +162,13 @@ void AttackBase::UpdateAttackState()
 
 		case ATTACK_STATE::RECOVERY:    // 後隙
         {
-			_stcAttackCol.currentTime += 1.0f;  // 経過時間を進める
+            _fCurrentTime += 1.0f;  // 経過時間を進める
 
 			// 後隙時間を超えたら攻撃状態を非アクティブにする
-            if(_stcAttackCol.currentTime >= _stcAttackCol.attackDelay + _stcAttackCol.attackDuration + _stcAttackCol.recovery)
+            if(_fCurrentTime >= _stcAttackCol.attackDelay + _stcAttackCol.attackDuration + _stcAttackCol.attackRecovery)
             {
                 _eAttackState = ATTACK_STATE::INACTIVE;
-                _stcAttackCol.currentTime = 0.0f;
+                _fCurrentTime = 0.0f;
 
 				// ヒットリストクリア
 				ClearHitCharas();
@@ -418,7 +420,6 @@ void AttackBase::SetCapsuleAttackData
     float duration,
     float recovery,
     float damage,
-    bool hit,
     ATTACK_STATE attackState,
     float attackMoveSpeed,
 	bool canKnockback
@@ -431,17 +432,29 @@ void AttackBase::SetCapsuleAttackData
 	_stcAttackCol.attackColTop = top;                   // カプセル上部
 	_stcAttackCol.attackColBottom = bottom;             // カプセル下部
 	_stcAttackCol.attackColR = radius;                  // 半径
-    _stcAttackCol.attackDir = attackDir;                 // 攻撃方向
+    _stcAttackCol.attackDir = attackDir;                // 攻撃方向
 	_stcAttackCol.attackDelay = delay;                  // 発生遅延
 	_stcAttackCol.attackDuration = duration;            // 持続時間
-	_stcAttackCol.recovery = recovery;                  // 後隙
+	_stcAttackCol.attackRecovery = recovery;            // 後隙
 	_stcAttackCol.damage = damage;                      // ダメージ
-	_stcAttackCol.isHit = hit;                          // ヒットフラグ
 	_stcAttackCol.attackState = attackState;            // 攻撃状態
 	_stcAttackCol.attackMoveSpeed = attackMoveSpeed;    // 攻撃中の移動速度
-	_stcAttackCol.canKnockback = canKnockback;        // 吹き飛ばし攻撃かどうか
+	_stcAttackCol.canKnockback = canKnockback;          // 吹き飛ばし攻撃かどうか
 
 	_eColType = COLLISION_TYPE::CAPSULE;    // コリジョンタイプをカプセルに設定
+}
+
+// カプセル攻撃データ設定
+void AttackBase::SetCapsuleAttackData(const AttackCollision& data)
+{
+    _originalColTop = data.attackColTop;          // 元のコリジョン上部位置を保存
+    _originalColBottom = data.attackColBottom;    // 元のコリジョン下部位置を保存
+
+    // 攻撃コリジョン情報をコピー
+    _stcAttackCol = data;
+
+    // コリジョンタイプをカプセルに設定
+    _eColType = COLLISION_TYPE::CAPSULE;
 }
 
 // 円形攻撃データ設定
@@ -463,7 +476,7 @@ void AttackBase::SetCircleAttackData
 	_stcAttackCol.attackColR = radius;                                                  // 半径
 	_stcAttackCol.attackDelay = delay;                                                  // 発生遅延
 	_stcAttackCol.attackDuration = duration;                                            // 持続時間 
-	_stcAttackCol.recovery = recovery;                                                  // 後隙
+	_stcAttackCol.attackRecovery = recovery;                                            // 後隙
 	_stcAttackCol.damage = damage;                                                      // ダメージ
 	_stcAttackCol.isHit = hit;                                                          // ヒットフラグ
 
@@ -487,7 +500,7 @@ void AttackBase::SetSphereAttackData
 	_stcAttackCol.attackColR = radius;                      // 半径
 	_stcAttackCol.attackDelay = delay;                      // 発生遅延
 	_stcAttackCol.attackDuration = duration;                // 持続時間
-	_stcAttackCol.recovery = recovery;                      // 後隙
+	_stcAttackCol.attackRecovery = recovery;                // 後隙
 	_stcAttackCol.damage = damage;                          // ダメージ
 	_stcAttackCol.isHit = hit;                              // ヒットフラグ
 
@@ -515,7 +528,7 @@ void AttackBase::AddHitCharas(std::shared_ptr<CharaBase> chara)
     if(!HasHitCharas(chara))
     {
 		// 当たったキャラリストに追加
-        _hitCharas.push_back(chara);
+        _hitChars.push_back(chara);
     }
 }
 
@@ -525,7 +538,7 @@ bool AttackBase::HasHitCharas(std::shared_ptr<CharaBase> chara)const
     if(chara == nullptr) { return false; }
 
     // 当たったキャラリストを検索
-    for(const auto& hitChara : _hitCharas)
+    for(const auto& hitChara : _hitChars)
     {
 		// 一致するキャラがいるかチェック
         if(hitChara == chara)
@@ -542,7 +555,7 @@ bool AttackBase::HasHitCharas(std::shared_ptr<CharaBase> chara)const
 // 当たったキャラリストクリア
 void AttackBase::ClearHitCharas()
 {
-    _hitCharas.clear();
+    _hitChars.clear();
 }
 
 // 攻撃コリジョン表示

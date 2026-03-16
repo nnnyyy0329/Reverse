@@ -52,13 +52,41 @@ void PlayerBase::DrawDirection()
 // ステータス描画
 void PlayerBase::DrawStatus()
 {
+	//auto color = GetColor(_renderConfig.debugColor.r, _renderConfig.debugColor.g, _renderConfig.debugColor.b);
+
+	//// ステータス文字列取得関数
+	//std::string statusStr = GetCurrentStateString();
+
+	//DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color, "Player Status: %s", statusStr.c_str());
+	//_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
+
+
 	auto color = GetColor(_renderConfig.debugColor.r, _renderConfig.debugColor.g, _renderConfig.debugColor.b);
 
-	// ステータス文字列取得関数
-	std::string statusStr = GetCurrentStateString();
+	// 移動状態は常に表示
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color, "Move: %s",
+		GetMovementStateString(_playerState.movementState).c_str());
+	_iDrawOffsetY += _iDrawSizeOffset;
 
-	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color, "Player Status: %s", statusStr.c_str());
-	_iDrawOffsetY += _iDrawSizeOffset;	// 表示位置をずらす
+	// 攻撃状態を表示
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color, "Attack: %s",
+		GetAttackStateString(_playerState.attackState).c_str());
+	_iDrawOffsetY += _iDrawSizeOffset;
+
+	// 発射状態を表示
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color, "Shoot: %s",
+		GetShootStateString(_playerState.shootState).c_str());
+	_iDrawOffsetY += _iDrawSizeOffset;
+
+	// 吸収攻撃状態を表示
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color, "Absorb: %s",
+		GetAbsorbStateString(_playerState.absorbState).c_str());
+	_iDrawOffsetY += _iDrawSizeOffset;
+
+	// 特殊状態を表示
+	DrawFormatString(_iDrawOffsetX, _iDrawOffsetY, color, "Combat: %s",
+		GetCombatStateString(_playerState.combatState).c_str());
+	_iDrawOffsetY += _iDrawSizeOffset;
 }
 
 // パラメーター表示

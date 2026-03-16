@@ -1,5 +1,6 @@
 #pragma once
 #include "appframe.h"
+#include "AbilityBase.h"
 
 /// @brief アビリティアクションヒントクラス
 class AbilityActionHint
@@ -13,10 +14,11 @@ public:
 	bool Process();
 	bool Render();
 
+	/// @brief アクションヒントの表示
+	void ActionHintRender(ABILITY_TYPE abilityType, float selectGraphSenterX, float secondSelectGraphCenterX);
+
 private:
 
-	/// @brief アクションヒントの表示
-	void ActionHintRender();
 
 protected:
 

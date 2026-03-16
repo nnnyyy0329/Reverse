@@ -405,7 +405,6 @@ void Enemy::StartAttack(const EnemyAttackSettings& settings)
 		settings.fDuration,// 持続時間
 		settings.fRecovery,// 後隙
 		settings.fDamage,// ダメージ
-		false,// ヒットフラグ
 		ATTACK_STATE::INACTIVE,
 		0.0f,
 		false
@@ -444,9 +443,8 @@ void Enemy::UpdateAttackTransform(const EnemyAttackSettings& settings)
 		_vDir,
 		col.attackDelay,
 		col.attackDuration,
-		col.recovery,
+		col.attackRecovery,
 		col.damage,
-		col.isHit,
 		ATTACK_STATE::INACTIVE,
 		0.0f,
 		false
