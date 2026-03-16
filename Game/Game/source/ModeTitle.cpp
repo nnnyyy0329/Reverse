@@ -90,7 +90,7 @@ bool ModeTitle::Process()
 	{
 		StopFade(); // 以降自動的にフェードアウトしない
 	}
-
+	
 	auto& im = InputManager::GetInstance();
 
 	// ↑↓で選択
@@ -106,6 +106,9 @@ bool ModeTitle::Process()
 	// 決定
 	if (im.IsTrigger(INPUT_ACTION::SKIP))
 	{
+		// サウンドBGM停止
+		SoundServer::GetInstance()->Stop("BGM_Title");
+
 		switch(_menuIndex)
 		{
 			case 0: // スタート

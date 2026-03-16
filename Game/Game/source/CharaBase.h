@@ -4,17 +4,18 @@
 #include "AttackEffectSystem.h"
 #include "EnergyManager.h"
 
+/// @brief キャラクターベースクラス
 enum class CHARA_TYPE
 {
 	NONE,
 
-	PLAYER,
-	ENEMY,
-	BULLET,
+	PLAYER,	///< プレイヤー
+	ENEMY,	///< 敵
+	BULLET,	///< 弾
 
-	SURFACE_PLAYER,
-	INTERIOR_PLAYER,
-	BULLET_PLAYER,
+	SURFACE_PLAYER,		///< 表プレイヤー
+	INTERIOR_PLAYER,	///< 裏プレイヤー
+	BULLET_PLAYER,		///< プレイヤーの弾
 
 	_EOT_,
 };

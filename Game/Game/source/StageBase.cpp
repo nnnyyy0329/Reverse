@@ -288,11 +288,13 @@ StageBase::StageBase(int stageNum)
 	switch (_stageNum)
 	{
 	case 0:
-	case 1:
 		_currentBGMName = "BGM_Stage01";
 		break;
-	case 2:
+	case 1:
 		_currentBGMName = "BGM_Stage02";
+		break;
+	case 2:
+		_currentBGMName = "BGM_Stage03";
 		break;
 	}
 }

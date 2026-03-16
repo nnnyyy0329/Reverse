@@ -143,8 +143,12 @@ bool ModeLoading::Initialize()
 		// ‰¹ŠÖ˜A
 		{
 			// BGM
-			rs->Register("BGM_Stage01", "sound/BGM/stage_01.mp3", RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("BGM_Stage02", "sound/BGM/stage_02.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Title",			"sound/BGM/title.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_OpeningScenario",	"sound/BGM/story.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Stage01",			"sound/BGM/stage1.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Stage02",			"sound/BGM/stage2.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Stage03",			"sound/BGM/stage3.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Ending",			"sound/BGM/ending.mp3", RESOURCE_TYPE::Sound, 1.0f);
 
 			// SE
 			rs->Register("SE_En_Damage",		"sound/SE/en_common/en_damage.mp3",			RESOURCE_TYPE::Sound, 1.0f);

@@ -133,13 +133,13 @@ struct PlayerAnimations
 enum class PLAYER_MOVEMENT_STATE
 {
 	NONE,
-	WAIT,			// 待機
-	WALK,			// 歩行
-	RUN,			// 走行
-	JUMP_UP,		// ジャンプ（上昇）
-	JUMP_DOWN,		// ジャンプ（下降）
-	CROUCH_WAIT,	// しゃがみ待機
-	CROUCH_WALK,	// しゃがみ歩行
+	WAIT,			///< 待機
+	WALK,			///< 歩行
+	RUN,			///< 走行
+	JUMP_UP,		///< ジャンプ（上昇）
+	JUMP_DOWN,		///< ジャンプ（下降）
+	CROUCH_WAIT,	///< しゃがみ待機
+	CROUCH_WALK,	///< しゃがみ歩行
 	_EOT_,
 };
 
@@ -147,14 +147,14 @@ enum class PLAYER_MOVEMENT_STATE
 enum class PLAYER_ATTACK_STATE
 {
 	NONE,
-	FIRST_ATTACK,		// 1段目攻撃
-	SECOND_ATTACK,		// 2段目攻撃
-	THIRD_ATTACK,		// 3段目攻撃
-	FOURTH_ATTACK,		// 4段目攻撃
-	FIFTH_ATTACK,		// 5段目攻撃
-	AREA_ATTACK,		// 範囲攻撃
-	FIRST_SKILL,		// スキル1
-	SECOND_SKILL,		// スキル2
+	FIRST_ATTACK,		///< 1段目攻撃
+	SECOND_ATTACK,		///< 2段目攻撃
+	THIRD_ATTACK,		///< 3段目攻撃
+	FOURTH_ATTACK,		///< 4段目攻撃
+	FIFTH_ATTACK,		///< 5段目攻撃
+	AREA_ATTACK,		///< 範囲攻撃
+	FIRST_SKILL,		///< スキル1
+	SECOND_SKILL,		///< スキル2
 	_EOT_,
 };
 
@@ -162,10 +162,10 @@ enum class PLAYER_ATTACK_STATE
 enum class PLAYER_SHOOT_STATE
 {
 	NONE,
-	SHOOT_READY,		// 発射構え
-	RIGHT_ARM_SHOOT,	// 右腕発射
-	LEFT_ARM_SHOOT,		// 左腕発射
-	SHOOT_MOVE,			// 発射移動
+	SHOOT_READY,		///< 発射構え
+	RIGHT_ARM_SHOOT,	///< 右腕発射
+	LEFT_ARM_SHOOT,		///< 左腕発射
+	SHOOT_MOVE,			///< 発射移動
 	_EOT_,
 };
 
@@ -173,9 +173,9 @@ enum class PLAYER_SHOOT_STATE
 enum class PLAYER_ABSORB_STATE
 {
 	NONE,
-	ABSORB_READY,		// 吸収構え
-	ABSORB_ACTIVE,		// 吸収中
-	ABSORB_END,			// 吸収終了
+	ABSORB_READY,		///< 吸収構え
+	ABSORB_ACTIVE,		///< 吸収中
+	ABSORB_END,			///< 吸収終了
 	_EOT_,
 };
 
@@ -183,12 +183,12 @@ enum class PLAYER_ABSORB_STATE
 enum class PLAYER_COMBAT_STATE
 {
 	NONE,
-	TRANSFORM,		// 変身
-	TRANS_CANCEL,	// 変身解除
-	GUARD,			// ガード
-	HIT,			// 被弾
-	DODGE,			// 回避
-	DEATH,			// 死亡
+	TRANSFORM,		///< 変身
+	TRANS_CANCEL,	///< 変身解除
+	GUARD,			///< ガード
+	HIT,			///< 被弾
+	DODGE,			///< 回避
+	DEATH,			///< 死亡
 	_EOT_,
 };
 
@@ -226,6 +226,7 @@ struct PlayerState
 	}
 };
 
+/// @brief プレイヤーの基底クラス
 class PlayerBase : public CharaBase
 {
 public:
