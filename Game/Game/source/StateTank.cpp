@@ -55,9 +55,10 @@ namespace
 
 	// アニメーション設定
 	// アニメーション制御用定数
-	constexpr auto BLEND_FRAME = 10.0f;// アニメーションブレンドフレーム数
+	constexpr auto BLEND_FRAME = 5.0f;// アニメーションブレンドフレーム数
 	constexpr auto ANIM_LOOP_COUNT = 0;// アニメーションループ回数(0=無限)
 	constexpr auto ANIM_PLAY_COUNT = 1;// アニメーション再生回数
+	constexpr auto ANIM_SPEED_HALF = 0.5f;// アニメーション再生速度(半分)
 
 	// 攻撃コリジョン設定
 	EnemyAttackSettings MakeFirstAttackSettings()
@@ -314,7 +315,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT);
+			animManager->ChangeAnimationByName("mainRig|Attack01", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_HALF);
 		}
 
 		// 攻撃コリジョン生成
@@ -438,7 +439,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT);
+			animManager->ChangeAnimationByName("mainRig|Attack02", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_HALF);
 		}
 
 		// 攻撃コリジョン生成
@@ -574,7 +575,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT);
+			animManager->ChangeAnimationByName("mainRig|Attack03", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_HALF);
 		}
 
 		// 攻撃コリジョン生成

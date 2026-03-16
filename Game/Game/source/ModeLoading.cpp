@@ -50,7 +50,7 @@ bool ModeLoading::Initialize()
 		// 敵関連
 		{
 			// モデル
-			rs->Register("Melee", "res/Enemy/SK_enemy_00_multimotion.mv1", RESOURCE_TYPE::Model, 2.0f);
+			rs->Register("Melee", "res/Enemy/test.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("Ranged", "res/Enemy/SK_enemy_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
