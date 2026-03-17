@@ -26,17 +26,12 @@ public:
 	virtual RenderConfig		GetRenderConfig()											override;	// 描画設定を取得
 	virtual DodgeConfig			GetDodgeConfig()											override;	// 回避設定を取得
 	virtual AttackConstants		GetAttackConstants()const									override;	// 攻撃定数を取得
-
-	//virtual void				GetAttackConfigs(AttackConfig configs[5])					override;	// 攻撃設定を取得
 	virtual void				GetAttackColConfigs(AttackCollision configs[5])				override;	// 攻撃コリジョン設定を取得
-
 	virtual void				GetAttackColOffsetConfigs(AttackColOffset configs[5])		override;	// 攻撃コリジョンオフセット設定を取得
 	virtual void				GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[5])	override;	// 攻撃方向補正設定を取得
-
-	//virtual AttackEffectConfig	GetAttackEffectConfig(AttackEffectConfig configs[5])		override;	// 演出設定を取得
-	virtual void GetAttackEffectConfig(AttackEffectConfig configs[5])		override;	// 演出設定を取得
-
-	virtual AreaAttackConfig GetAreaAttackConfig()											override;	// 範囲攻撃設定を取得
+	virtual AreaAttackConfig	GetAreaAttackConfigs()										override;	// 範囲攻撃設定を取得
+	virtual void				GetAttackEffectConfigs(AttackEffectConfig configs[5])		override;	// 演出設定を取得
+	virtual void				GetAttackArmConfigs(AttackArmConfig configs[5])				override;	// 攻撃腕設定を取得
 
 	/*****ゲッターセッター*****/
 

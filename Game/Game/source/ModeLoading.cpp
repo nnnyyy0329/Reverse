@@ -68,7 +68,6 @@ bool ModeLoading::Initialize()
 			// ライフバー
 			rs->Register("PlayerLifeBar",		"res/Player/UI/player_life_bar.png",		RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("PlayerLifeBarFrame",	"res/Player/UI/player_life_bar_frame.png",	RESOURCE_TYPE::Graph, 1.0f);
-
 		}
 
 		// 能力選択画面用

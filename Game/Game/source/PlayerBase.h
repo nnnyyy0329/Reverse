@@ -116,6 +116,16 @@ struct AttackDirAdjustConfig
 	bool canDirAdjust;	// 向き調整が可能かどうか
 };
 
+/// @brief 攻撃時にどちらの腕で攻撃するかの設定をまとめた構造体
+struct AttackArmConfig
+{
+	bool useRightArm;		// 右腕を使用するかどうか
+	int rightArmFrameIndex;	// 右腕攻撃のフレームインデックス
+
+	bool useLeftArm;		// 左腕を使用するかどうか
+	int leftArmFrameIndex;	// 左腕攻撃のフレームインデックス
+};
+
 /// @brief 範囲攻撃の設定をまとめた構造体
 struct AreaAttackConfig
 {
@@ -350,8 +360,9 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	virtual void GetAttackColConfigs(AttackCollision configs[]){};					// 攻撃設定を取得
 	virtual void GetAttackColOffsetConfigs(AttackColOffset configs[]){};			// 攻撃コリジョンオフセット設定を取得
 	virtual void GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]){};		// 攻撃向き調整設定を取得
-	virtual AreaAttackConfig GetAreaAttackConfig(){ return AreaAttackConfig{}; };	// 範囲攻撃設定を取得
-	virtual void GetAttackEffectConfig(AttackEffectConfig configs[]){};				// 演出設定を取得
+	virtual AreaAttackConfig GetAreaAttackConfigs(){ return AreaAttackConfig{}; };	// 範囲攻撃設定を取得
+	virtual void GetAttackEffectConfigs(AttackEffectConfig configs[]){};				// 演出設定を取得
+	virtual void GetAttackArmConfigs(AttackArmConfig config[]){};					// 攻撃の腕設定を取得
 
 	// 攻撃システム
 	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
@@ -366,6 +377,7 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	void SetAttackOffsetData(AttackColOffset config, std::shared_ptr<AttackBase> attack);		// 攻撃オフセット情報設定
 	void SetCanDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃向き調整情報設定
 	void SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃エフェクト情報設定
+	void SetAttackArmData(AttackArmConfig config, std::shared_ptr<AttackBase> attack);			// 攻撃の腕設定情報設定
 
 	// PlayerBase_Attack.cppで定義
 	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数
@@ -378,8 +390,8 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	bool IsAttacking();				// 攻撃中かチェック
 	bool IsAttackInput();			// 攻撃入力があるかチェック
 
-	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);				// 攻撃開始処理
-	void ProcessAttackReaction(int attackIndex);										// 攻撃反応処理
+	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);	// 攻撃開始処理
+	void ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBase> attack);	// 攻撃反応処理
 	void ProcessAttackRegister(std::shared_ptr<AttackBase> attack);						// 攻撃登録処理
 	void ProcessAttackEffect(int attackIndex, std::vector<AttackEffectConfig> configs);	// 攻撃エフェクト処理
 	void ProcessAttackSound(int attackIndex, std::vector<AttackEffectConfig> configs);	// 攻撃サウンド処理
@@ -394,6 +406,7 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 
 	// 各攻撃の演出設定を保存
 	std::vector<AttackEffectConfig> _attackEffectConfigs;  
+	std::vector<AttackArmConfig> _attackArmConfigs;
 
 	// 攻撃コリジョン情報の受け取り用
 	VECTOR _vAttackColTop;

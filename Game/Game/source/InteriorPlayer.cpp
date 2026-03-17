@@ -345,7 +345,7 @@ void InteriorPlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[5])
 }
 
 // 演出設定
-void InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig config[5])
+void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 {
 	// 第1攻撃
 	config[0] =
@@ -459,7 +459,7 @@ void InteriorPlayer::GetAttackEffectConfig(AttackEffectConfig config[5])
 }
 
 // 範囲攻撃の情報設定
-AreaAttackConfig InteriorPlayer::GetAreaAttackConfig()
+AreaAttackConfig InteriorPlayer::GetAreaAttackConfigs()
 {
 	// 裏プレイヤーの範囲攻撃設定
 	AreaAttackConfig config;
@@ -490,4 +490,58 @@ DodgeConfig InteriorPlayer::GetDodgeConfig()
 	config.dodgeMoveSpeed		= 11.0f;	// 移動速度
 
 	return config;
+}
+
+// 攻撃腕の情報設定
+void InteriorPlayer::GetAttackArmConfigs(AttackArmConfig configs[5])
+{
+	// 第1攻撃
+	configs[0] =
+	{
+		configs[0].useRightArm = true,			// 右腕を使用するか
+		configs[0].rightArmFrameIndex = 157,	// 攻撃腕位置オフセット
+
+		configs[0].useLeftArm = false,		// 左腕を使用するか
+		configs[0].leftArmFrameIndex = 0,	// 攻撃腕位置オフセット
+	};
+
+	// 第2攻撃
+	configs[1] =
+	{
+		configs[1].useRightArm = false,		// 右腕を使用するか
+		configs[1].rightArmFrameIndex = 0,	// 攻撃腕位置オフセット
+
+		configs[1].useLeftArm = true,		// 左腕を使用するか
+		configs[1].leftArmFrameIndex = 133,	// 攻撃腕位置オフセット
+	};
+
+	// 第3攻撃
+	configs[2] =
+	{
+		configs[2].useRightArm = true,			// 右腕を使用するか
+		configs[2].rightArmFrameIndex = 157,	// 攻撃腕位置オフセット
+
+		configs[2].useLeftArm = false,		// 左腕を使用するか
+		configs[2].leftArmFrameIndex = 0,	// 攻撃腕位置オフセット
+	};
+
+	// 第4攻撃
+	configs[3] =
+	{
+		configs[3].useRightArm = false,		// 右腕を使用するか
+		configs[3].rightArmFrameIndex = 0,	// 攻撃腕位置オフセット
+
+		configs[3].useLeftArm = false,		// 左腕を使用するか
+		configs[3].leftArmFrameIndex = 0,	// 攻撃腕位置オフセット
+	};
+
+	// 第5攻撃
+	configs[4] =
+	{
+		configs[4].useRightArm = true,		// 右腕を使用するか
+		configs[4].rightArmFrameIndex = 157,	// 攻撃腕位置オフセット
+
+		configs[4].useLeftArm = false,		// 左腕を使用するか
+		configs[4].leftArmFrameIndex = 0,	// 攻撃腕位置オフセット
+	};
 }

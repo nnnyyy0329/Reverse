@@ -65,9 +65,12 @@ void PlayerBase::SetAttackStatusData(int maxCombo)
 // 攻撃コリジョンデータ作成
 void PlayerBase::CreateAttackData(int maxCombo)
 {	
-	// 攻撃エフェクト設定配列初期化
+	// 攻撃演出の設定配列初期化
 	_attackEffectConfigs.clear();	
 	_attackEffectConfigs.reserve(maxCombo);
+
+	_attackArmConfigs.clear();
+	_attackArmConfigs.reserve(maxCombo);
 
 	// 攻撃設定取得
 	std::vector<AttackCollision>configs(maxCombo);
@@ -83,7 +86,11 @@ void PlayerBase::CreateAttackData(int maxCombo)
 
 	// 攻撃エフェクト設定取得
 	std::vector<AttackEffectConfig>effectConfigs(maxCombo);
-	GetAttackEffectConfig(effectConfigs.data());
+	GetAttackEffectConfigs(effectConfigs.data());
+
+	// 攻撃の腕情報設定
+	std::vector<AttackArmConfig> armConfigs(maxCombo);
+	GetAttackArmConfigs(armConfigs.data());
 
 	// コンボカウント回数分ループ
 	for(int i = 0; i < maxCombo; ++i)
@@ -101,6 +108,9 @@ void PlayerBase::CreateAttackData(int maxCombo)
 
 		// 攻撃エフェクトデータ設定
 		SetAttackEffectData(effectConfigs[i], attack);
+
+		// 攻撃の腕情報設定
+		SetAttackArmData(armConfigs[i], attack);
 
 		// 攻撃配列に攻撃オブジェクトを追加
 		_attacks.push_back(attack);
@@ -141,9 +151,15 @@ void PlayerBase::SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<
 
 	// 攻撃エフェクトデータ設定
 	_attackEffectConfigs.push_back(config);
+}
 
-	// 攻撃オブジェクトに攻撃エフェクトデータ設定
-	attack->SetAttackEffectConfig(config);
+// 攻撃の腕情報設定
+void PlayerBase::SetAttackArmData(AttackArmConfig config, std::shared_ptr<AttackBase> attack)
+{
+	if(!attack) return;
+
+	// 攻撃の腕情報設定
+	_attackArmConfigs.push_back(config);
 }
 
 // 攻撃Process呼び出し用関数
@@ -191,7 +207,7 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 
 	// 攻撃エフェクト処理
 	// -1しているのは攻撃開始処理内で攻撃状態が更新されるため、次の攻撃状態を渡すため
-	ProcessAttackReaction(comboCount - 1);	// 攻撃反応処理
+	ProcessAttackReaction(comboCount - 1, attack);	// 攻撃反応処理
 
 	// 攻撃登録処理
 	ProcessAttackRegister(attack);
@@ -201,16 +217,31 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 }
 
 // 攻撃の反応処理
-void PlayerBase::ProcessAttackReaction(int attackIndex)
+void PlayerBase::ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBase> attack)
 {
 	// 有効な攻撃インデックスかチェック
 	if((attackIndex >= 0) && (attackIndex < static_cast<int>(_attackEffectConfigs.size())))
 	{
 		// 攻撃の演出設定配列を取得
 		const AttackEffectConfig& config = _attackEffectConfigs[attackIndex];
+		const AttackArmConfig& armConfig = _attackArmConfigs[attackIndex];
+
+		VECTOR handPos = VGet(0.0f, 0.0f, 0.0f);
+
+		if(armConfig.useRightArm)
+		{
+			handPos =
+				MV1GetFramePosition(ResourceServer::GetInstance()->GetHandle("InteriorPlayer"), armConfig.rightArmFrameIndex);
+		}
+		
+		if(armConfig.useLeftArm)
+		{
+			handPos =
+				MV1GetFramePosition(ResourceServer::GetInstance()->GetHandle("InteriorPlayer"), armConfig.leftArmFrameIndex);
+		}
 
 		// AttackEffectSystemを使用して演出実行
-		AttackEffectSystem::GetInstance()->AttackEffect(config, _vPos, _vDir);
+		AttackEffectSystem::GetInstance()->AttackEffect(config, handPos, _vDir);
 	}
 }
 
@@ -243,45 +274,45 @@ void PlayerBase::ProcessAttackRegister(std::shared_ptr<AttackBase> attack)
 	}
 }
 
-// 攻撃エフェクト処理
-void PlayerBase::ProcessAttackEffect(int attackIndex, std::vector<AttackEffectConfig> configs)
-{
-	// 攻撃設定からエフェクト名とオフセットを取得
-	AttackEffectConfig& config = configs[attackIndex];
+//// 攻撃エフェクト処理
+//void PlayerBase::ProcessAttackEffect(int attackIndex, std::vector<AttackEffectConfig> configs)
+//{
+//	// 攻撃設定からエフェクト名とオフセットを取得
+//	AttackEffectConfig& config = configs[attackIndex];
+//
+//	// エフェクト名が空でない場合のみ
+//	if(!config.effectName.empty())
+//	{
+//		// オフセット値をワールド座標に変換
+//		VECTOR worldOffset = GeometryUtility::TransOffsetToWorld(config.effectOffset, _vDir);
+//
+//		// オフセット値を現在の位置に適応
+//		VECTOR effectPos = VAdd(_vPos, worldOffset);
+//
+//		// エフェクト再生して、ハンドルを取得
+//		auto handle = EffectServer::GetInstance()->Play(config.effectName, effectPos);
+//
+//		// エフェクトの向きを攻撃方向に合わせる
+//		VECTOR dirNorm = VNorm(_vDir);							// 攻撃方向の正規化
+//		float rotY = atan2f(dirNorm.x, dirNorm.z);				// Y軸回転角度を計算
+//		VECTOR rotation = VGet(0.0f, rotY, 0.0f);				// エフェクトの回転量を設定
+//		EffectServer::GetInstance()->SetRot(handle, rotation);	// 回転量をエフェクトに適応
+//	}
+//}
 
-	// エフェクト名が空でない場合のみ
-	if(!config.effectName.empty())
-	{
-		// オフセット値をワールド座標に変換
-		VECTOR worldOffset = GeometryUtility::TransOffsetToWorld(config.effectOffset, _vDir);
-
-		// オフセット値を現在の位置に適応
-		VECTOR effectPos = VAdd(_vPos, worldOffset);
-
-		// エフェクト再生して、ハンドルを取得
-		auto handle = EffectServer::GetInstance()->Play(config.effectName, effectPos);
-
-		// エフェクトの向きを攻撃方向に合わせる
-		VECTOR dirNorm = VNorm(_vDir);							// 攻撃方向の正規化
-		float rotY = atan2f(dirNorm.x, dirNorm.z);				// Y軸回転角度を計算
-		VECTOR rotation = VGet(0.0f, rotY, 0.0f);				// エフェクトの回転量を設定
-		EffectServer::GetInstance()->SetRot(handle, rotation);	// 回転量をエフェクトに適応
-	}
-}
-
-// 攻撃サウンド処理
-void PlayerBase::ProcessAttackSound(int attackIndex, std::vector<AttackEffectConfig> configs)
-{
-	// 攻撃設定からサウンド名を取得
-	AttackEffectConfig& config = configs[attackIndex];
-
-	// サウンド名が空でない場合のみ
-	if(!config.soundName.empty())
-	{
-		// サウンド再生
-		SoundServer::GetInstance()->Play(config.soundName, DX_PLAYTYPE_BACK);
-	}
-}
+//// 攻撃サウンド処理
+//void PlayerBase::ProcessAttackSound(int attackIndex, std::vector<AttackEffectConfig> configs)
+//{
+//	// 攻撃設定からサウンド名を取得
+//	AttackEffectConfig& config = configs[attackIndex];
+//
+//	// サウンド名が空でない場合のみ
+//	if(!config.soundName.empty())
+//	{
+//		// サウンド再生
+//		SoundServer::GetInstance()->Play(config.soundName, DX_PLAYTYPE_BACK);
+//	}
+//}
 
 // 攻撃分岐処理
 void PlayerBase::ProcessBranchAttack()
