@@ -15,24 +15,24 @@ public:
 	Enemy();
 	virtual ~Enemy();
 
-	virtual bool Initialize();	// 初期化
-	virtual bool Terminate();	// 終了
-	virtual bool Process();		// 更新
-	virtual bool Render();		// 描画
-	virtual void DebugRender();	// デバッグ描画
-	virtual void CollisionRender(); // コリジョン描画
+	virtual bool Initialize();// 初期化
+	virtual bool Terminate();// 終了
+	virtual bool Process();// 更新
+	virtual bool Render();// 描画
+	virtual void DebugRender();// デバッグ描画
+	virtual void CollisionRender();// コリジョン描画
 	void DrawLifeBar();// ライフバー描画
 
-	VECTOR GetHomePos() { return _vHomePos; }
+	VECTOR GetHomePos() { return _vHomePos; }// 初期座標
 	void SetHomePos(VECTOR pos) { _vHomePos = pos; }
 
-	VECTOR GetHomeDir() { return _vHomeDir; }
+	VECTOR GetHomeDir() { return _vHomeDir; }// 初期向き
 	void SetHomeDir(VECTOR dir) { _vHomeDir = dir; }
 
 	bool CanRemove() { return _bCanRemove; }// delete可能か
 
 	const EnemyParam& GetEnemyParam() const { return _enemyParam; }
-	void SetEnemyParam(const EnemyParam& param);// パラメータを設定したときに視界のcos値を計算
+	void SetEnemyParam(const EnemyParam& param) { _enemyParam = param; };// パラメータを設定したときに視界のcos値を計算
 
 	std::shared_ptr<CharaBase> GetTarget() { return _targetPlayer; }
 	void SetTarget(std::shared_ptr<CharaBase> target) { _targetPlayer = target; }
@@ -45,8 +45,6 @@ public:
 	void ChangeState(std::shared_ptr<EnemyState> newState);
 
 	// 弾関連
-	//void SetBulletManager(std::shared_ptr<BulletManager> bulletManager) { _bulletManager = bulletManager; }// マネージャーをセット
-	//void SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime);// 発射リクエストをする
 	void SpawnBullet(const BulletConfig& bulletConfig);// 発射リクエストをする
 
 	// 攻撃コリジョン関連(ステート側で呼び出し)
@@ -56,10 +54,10 @@ public:
 
 	// 被ダメージ処理
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;
-	void ApplyDamageByBullet(float fDamage, CHARA_TYPE eType) override;
+	void ApplyDamageByBullet(float fDamage, CHARA_TYPE eType) override;// 弾用
 
 	// 死亡判定
-	bool IsDead();
+	bool IsDead() { return _fLife <= 0.0f; }
 	void EnableRemove() { _bCanRemove = true; }// delete可能にする
 
 
@@ -86,7 +84,7 @@ public:
 	// 移動可能範囲チェック
 	bool CheckInsideMoveArea(VECTOR vPos);// 指定座標が移動可能範囲内かどうか
 	bool IsOutSideMoveArea() { return _bIsOutSideMoveArea; }
-	bool CorrectPosToMoveArea();// 初期位置方向へ押し戻す
+	bool CorrectPosToMoveArea();// 初期座標方向へ押し戻す
 
 	// 連続被ダメカウント管理
 	int GetDamageComboCnt() { return _damageComboCnt; }
@@ -105,15 +103,13 @@ public:
 
 protected:
 
-	VECTOR _vHomePos;// 敵の初期位置
+	VECTOR _vHomePos;// 敵の初期座標
 	VECTOR _vHomeDir;// 敵の初期向き
 
 	std::shared_ptr<CharaBase> _targetPlayer;// 接近用
 
 	std::shared_ptr<EnemyState> _currentState;
 	EnemyParam _enemyParam;
-
-	//std::weak_ptr<BulletManager> _bulletManager;// マネージャーの参照を持つ(modegameが所有)
 
 	std::shared_ptr<AttackBase> _attackCollision;// 攻撃コリジョン
 
@@ -135,7 +131,7 @@ protected:
 	std::weak_ptr<StageBase> _stage;// ステージ参照
 
 	COLOR_F _defaultColor;// 元のマテリアルカラーを保存
-	bool _bIsColorChanged = false;// カラー変更中かどうか
+	bool _bIsColorChanged = false;// カラー変更中か
 
 	int _damageComboCnt = 0;// 連続被ダメ回数
 	float _fDamageComboResetTimer = 0.0f;// リセットタイマー

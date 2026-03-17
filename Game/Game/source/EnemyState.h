@@ -9,7 +9,7 @@ enum class STATE_PRIORITY
 {
 	NORMAL = 0,// 通常
 	DAMAGE = 50,// 被ダメージ
-	HIGH = 75,// 高優先度(中断されないアクションなど)
+	HIGH = 75,// 高優先度(中断されないアクション)
 	TOP = 100,// 最優先(Dead, Stun, Down)
 };
 
@@ -44,7 +44,7 @@ struct EnemyParam
 // ターゲット情報構造体
 struct TargetInfo
 {
-	std::shared_ptr<CharaBase> target;// ターゲットへのポインタ
+	std::shared_ptr<CharaBase> target;// ターゲットのポインタ
 	VECTOR vToTarget;// ターゲットへのベクトル
 	VECTOR vDir;// ターゲットへの方向ベクトル(正規化)
 	float fDist;// ターゲットまでの距離

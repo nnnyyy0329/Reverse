@@ -82,7 +82,7 @@ namespace mymath
 		return VAdd(start, VScale(VSub(end, start), t));
 	}
 
-	// Šp“x³‹K‰» : Šp“x(ƒ‰ƒWƒAƒ“)‚ð(-DX_PI_F, +DX_PI_F)‚Ì”ÍˆÍ‚ÉŽû‚ß‚é
+	// Šp“x³‹K‰» : Šp“x(ƒ‰ƒWƒAƒ“)‚ð(-PI, +PI)‚Ì”ÍˆÍ‚ÉŽû‚ß‚é
 	inline float WrapAngle(float angle)
 	{
 		while (angle > DX_PI_F)
