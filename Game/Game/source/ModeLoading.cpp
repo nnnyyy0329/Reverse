@@ -159,7 +159,7 @@ bool ModeLoading::Initialize()
 			rs->Register("SE_En_Notice",		"sound/SE/en_common/en_common_notice.mp3",	RESOURCE_TYPE::Sound, 1.0f);
 
 			// プレイヤーの攻撃
-			rs->Register("sPlayerAttack",	"sound/SE/sPlayerAttack/absorb1.mp3",			RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("sPlayerAttack",	"sound/SE/sPlayerAttack/absorb2.mp3",			RESOURCE_TYPE::Sound, 1.0f);
 			rs->Register("iPlayerAttack",	"sound/SE/iPlayerAttack/iPlayerAttack1.mp3",	RESOURCE_TYPE::Sound, 1.0f);
 
 			// プレイヤー変身
