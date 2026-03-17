@@ -3,11 +3,24 @@
 #pragma once
 #include "appframe.h"
 #include "GeometryUtility.h"
-
 #include "AttackEffectSystem.h"
+
+// 移動関連定数
+namespace MoveConstants
+{
+	constexpr float ATTACK_MOVE_DECAY_RATE = 0.9f; // 攻撃中の移動減衰率
+}
+
+// 向き調整関連定数
+namespace DirAdjustConstants
+{
+	constexpr float INTERP_CLAMP = 1.0f;        // 補間速度の上限
+	constexpr float ROTATE_DIVISOR = 150.0f;    // 回転速度の割る量
+}
 
   // 前方宣言
 class CharaBase;
+class CameraManager;
 
 enum class COLLISION_TYPE
 {
@@ -173,9 +186,13 @@ public:
 	const AttackEffectConfig& GetAttackEffectConfig() const { return _attackEffectConfig; }			// 攻撃エフェクト情報取得
 	void SetAttackEffectConfig(const AttackEffectConfig& config) { _attackEffectConfig = config; }	// 攻撃エフェクト情報設定
 
+	// クラスセット
+	void SetCameraManager(std::shared_ptr<CameraManager> cameraManager) { _cameraManager = cameraManager; }
+
 protected:
 
-	std::weak_ptr<CharaBase> _owner;	// 所有者キャラ
+	std::weak_ptr<CharaBase> _owner;				// 所有者キャラ
+	std::shared_ptr<CameraManager> _cameraManager;	// カメラマネージャー
 
 	// 状態関係
 	COLLISION_TYPE _eColType;		// コリジョンタイプ

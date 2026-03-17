@@ -2,17 +2,7 @@
 
 #include "AttackBase.h"
 #include "CharaBase.h"
-
-namespace MoveConstants
-{
-	constexpr float ATTACK_MOVE_DECAY_RATE = 0.9f; // 攻撃中の移動減衰率
-}
-
-namespace DirAdjustConstants
-{
-	constexpr float INTERP_CLAMP = 1.0f;        // 補間速度の上限
-	constexpr float ROTATE_DIVISOR = 150.0f;    // 回転速度の割る量
-}
+#include "CameraManager.h"
 
 AttackBase::AttackBase()
 {    
@@ -55,6 +45,9 @@ AttackBase::AttackBase()
 	// 元の攻撃コリジョン位置の初期化
 	_originalColTop = VGet(0.0f, 0.0f, 0.0f);
 	_originalColBottom = VGet(0.0f, 0.0f, 0.0f);
+
+	// カメラマネージャーの初期化
+	_cameraManager = nullptr;
 }
 
 AttackBase::~AttackBase()
@@ -377,28 +370,51 @@ void AttackBase::UpdateAttackDirAdjust()
 // 入力方向計算関数
 VECTOR AttackBase::CalculateInputDir(const AnalogState& analog)
 {
-	auto owner = GetOwner();
-	if(!owner){ return VGet(0.0f, 0.0f, 0.0f); }
+    // 所有者取得
+    auto owner = GetOwner();
+    if(!owner){ return VGet(0.0f, 0.0f, 0.0f); }
 
-	float inputX = -analog.lx;   // 左スティックのX軸入力
-	float inputY = -analog.ly;   // 左スティックのY軸入力
+    // 入力取得
+    float inputX = analog.lx;
+    float inputY = analog.ly;
 
-    // 所有者の向きを基準にする
-	VECTOR ownerDir = owner->GetDir();
-    float currentAngle = atan2(ownerDir.z, ownerDir.x);
+    // 入力が小さければゼロベクトルを返す
+    auto& im = InputManager::GetInstance();
+    if(fabsf(inputX) <= im.GetAnalogMin() && fabsf(inputY) <= im.GetAnalogMin())
+    {
+		// 入力がない場合はゼロベクトルを返す
+        return VGet(0.0f, 0.0f, 0.0f);
+    }
 
-    // カメラ基準のベクトル計算
-    VECTOR cameraForward = VGet(cos(currentAngle), 0.0f, sin(currentAngle));
-    VECTOR cameraRight=VGet(cos(currentAngle + DX_PI_F / 2.0f), 0.0f, sin(currentAngle + DX_PI_F / 2.0f));
+    // カメラの水平角度を取得
+    float cameraAngleH = 0.0f;
+    {
+        if(_cameraManager)
+        {
+			// カメラの水平角度を取得
+            cameraAngleH = _cameraManager->GetCurrentCameraAngleH();
+        }
+        else
+        {
+            // CameraManager がない場合は所有者の向きを使う
+            VECTOR ownerDir = owner->GetDir();
+            cameraAngleH = atan2f(ownerDir.z, ownerDir.x);
+        }
+    }
 
-    // 入力方向計算
+    // カメラ基準の前方と右方向ベクトル（XZ 平面）
+    VECTOR cameraForward = VGet(sinf(cameraAngleH), 0.0f, cosf(cameraAngleH));
+    VECTOR cameraRight = VGet(cosf(cameraAngleH), 0.0f, -sinf(cameraAngleH));
+
+    // 入力をカメラ基準のワールド方向に変換
+    // PlayerBase 側の移動変換と同様に前方向は -inputY を使う（上下スティックの向き合わせ）
     VECTOR inputDir = VAdd
     (
-        VScale(cameraForward, inputY),  // 前後移動
-        VScale(cameraRight, inputX)     // 左右移動
+        VScale(cameraForward, -inputY), // 前後
+        VScale(cameraRight, inputX)     // 左右
     );
 
-    // 正規化
+    // 正規化して返す
     float len = VSize(inputDir);
     if(len > 0.0f)
     {
@@ -406,7 +422,7 @@ VECTOR AttackBase::CalculateInputDir(const AnalogState& analog)
         return VScale(inputDir, 1.0f / len);
     }
 
-    return VGet(0, 0, 0);
+    return VGet(0.0f, 0.0f, 0.0f);
 }
 
 // カプセル攻撃データ設定

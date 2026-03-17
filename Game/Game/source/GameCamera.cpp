@@ -7,7 +7,7 @@ namespace
 	constexpr float ANGLE_V_LIMIT = 1.50f;// 垂直角度制限(真上、真下の反転防止。85度)
 	constexpr float TARGET_OFFSET_Y = 150.0f;// ターゲットの注視点のYオフセット
 	constexpr float DEFAULT_DISTANCE = 300.0f;// デフォルトのカメラ距離
-	constexpr float DEFAULT_ANGLE_H = DX_PI_F;// デフォルトの水平角度(真後ろ)
+	constexpr float DEFAULT_ANGLE_H = DX_PI_F / 2.0f;// デフォルトの水平角度(真後ろ)
 	constexpr float DEFAULT_ANGLE_V = -0.4f;// デフォルトの垂直角度(少し見下ろし)
 }
 
@@ -91,60 +91,60 @@ void GameCamera::UpdateCamera()
 	// 左スティックの入力の大きさを計算
 	float moveInputMag = sqrtf(analog.lx * analog.lx + analog.ly * analog.ly);
 
-	// カメラの自動追従処理
-	// 移動中 && 入力が強い && カメラ操作なし
-	if (_targetObject->IsMoving() && moveInputMag > 0.5f && !isCameraOperated)
-	{
-		_fAutoFollowTimer++;
+	//// カメラの自動追従処理
+	//// 移動中 && 入力が強い && カメラ操作なし
+	//if (_targetObject->IsMoving() && moveInputMag > 0.5f && !isCameraOperated)
+	//{
+	//	_fAutoFollowTimer++;
 
-		if (_fAutoFollowTimer > 30.0f)
-		{
+	//	if (_fAutoFollowTimer > 30.0f)
+	//	{
 
-			// 水平方向
-			// 現在のカメラとの角度差を計算
-			float targetRot = _targetObject->GetRotY();
-			float diff = targetRot - _fAngleH;
+	//		// 水平方向
+	//		// 現在のカメラとの角度差を計算
+	//		float targetRot = _targetObject->GetRotY();
+	//		float diff = targetRot - _fAngleH;
 
-			// 角度差を-PI～PIの範囲に正規化
-			while (diff >= DX_PI_F) diff -= DX_PI_F * 2.0f;
-			while (diff < -DX_PI_F) diff += DX_PI_F * 2.0f;
+	//		// 角度差を-PI～PIの範囲に正規化
+	//		while (diff >= DX_PI_F) diff -= DX_PI_F * 2.0f;
+	//		while (diff < -DX_PI_F) diff += DX_PI_F * 2.0f;
 
-			// 真後ろの時は強制的に右回りにする
-			if (diff > DX_PI_F * 0.95f || diff < -DX_PI_F * 0.95f)
-			{
-				diff = DX_PI_F * 0.95f;
-			}
+	//		// 真後ろの時は強制的に右回りにする
+	//		if (diff > DX_PI_F * 0.95f || diff < -DX_PI_F * 0.95f)
+	//		{
+	//			diff = DX_PI_F * 0.95f;
+	//		}
 
-			float rotSpeed = diff * 0.03f;
-			// 回転速度の上限を設定
-			float maxRotSpeed = DX_PI_F / 180.0f;
-			if (rotSpeed > maxRotSpeed)  rotSpeed = maxRotSpeed;
-			if (rotSpeed < -maxRotSpeed) rotSpeed = -maxRotSpeed;
+	//		float rotSpeed = diff * 0.03f;
+	//		// 回転速度の上限を設定
+	//		float maxRotSpeed = DX_PI_F / 180.0f;
+	//		if (rotSpeed > maxRotSpeed)  rotSpeed = maxRotSpeed;
+	//		if (rotSpeed < -maxRotSpeed) rotSpeed = -maxRotSpeed;
 
-			_fAngleH += rotSpeed;
+	//		_fAngleH += rotSpeed;
 
-			// 垂直方向
-			// デフォルトの角度との差を計算
-			float diffV = DEFAULT_ANGLE_V - _fAngleV;
+	//		// 垂直方向
+	//		// デフォルトの角度との差を計算
+	//		float diffV = DEFAULT_ANGLE_V - _fAngleV;
 
-			float rotSpeedV = diffV * 0.03f;
-			float maxRotSpeedV = DX_PI_F / 180.0f;
-			if (rotSpeedV > maxRotSpeedV)  rotSpeedV = maxRotSpeedV;
-			if (rotSpeedV < -maxRotSpeedV) rotSpeedV = -maxRotSpeedV;
+	//		float rotSpeedV = diffV * 0.03f;
+	//		float maxRotSpeedV = DX_PI_F / 180.0f;
+	//		if (rotSpeedV > maxRotSpeedV)  rotSpeedV = maxRotSpeedV;
+	//		if (rotSpeedV < -maxRotSpeedV) rotSpeedV = -maxRotSpeedV;
 
-			_fAngleV += rotSpeedV;
+	//		_fAngleV += rotSpeedV;
 
-			// カメラ距離
-			// デフォルトの距離との差を計算
-			float diffDist = DEFAULT_DISTANCE - _fDistance;
+	//		// カメラ距離
+	//		// デフォルトの距離との差を計算
+	//		float diffDist = DEFAULT_DISTANCE - _fDistance;
 
-			_fDistance += diffDist * 0.03f;
-		}
-	}
-	else
-	{
-		_fAutoFollowTimer = 0.0f;
-	}
+	//		_fDistance += diffDist * 0.03f;
+	//	}
+	//}
+	//else
+	//{
+	//	_fAutoFollowTimer = 0.0f;
+	//}
 
 	// 注視点を決定
 	_vTarget = VAdd(_targetObject->GetPos(), _vPosOffset);

@@ -173,8 +173,9 @@ void PlayerBase::ProcessAttack()
 // コンボ攻撃開始の処理
 void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack)
 {
-	// 攻撃オブジェクト設定
+	// オブジェクト設定
 	attack->SetOwner(shared_from_this());
+	attack->SetCameraManager(_cameraManager);	
 
 	// コリジョン位置更新処理
 	//ProcessAttackColPos();	
@@ -387,6 +388,7 @@ void PlayerBase::ProcessNextAttack(int currentIndex)
 	// 次の攻撃が存在する場合
 	if(nextIndex < static_cast<int>(_attacks.size()))
 	{
+		_attacks[nextIndex]->SetCameraManager(_cameraManager);
  		PLAYER_ATTACK_STATE nextStatus = _attackStatuses[nextIndex];						// 次の状態取得
 		ProcessStartAttack(nextIndex + 1, _attackStatuses[nextIndex], _attacks[nextIndex]);	// 次の攻撃へ
 	}

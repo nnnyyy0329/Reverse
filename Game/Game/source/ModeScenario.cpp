@@ -113,6 +113,14 @@ bool ModeScenario::Process()
 		}
 	}
 
+	if(im.IsTrigger(INPUT_ACTION::SELECT_POWER))
+	{
+		SoundServer::GetInstance()->Stop("BGM_OpeningScenario");
+
+		ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
+		ModeServer::GetInstance()->Del(this);
+	}
+
 	return true;
 }
 

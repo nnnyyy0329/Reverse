@@ -63,7 +63,7 @@ bool ModeLoading::Initialize()
 			// プレイヤーモデル
 			rs->Register("SurfacePlayer",	"res/Player/SK_player_03_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("InteriorPlayer",	"res/Player/SK_player_04_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("BulletPlayer",	"res/Player/SK_player_02_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("BulletPlayer",	"res/Player/SK_player_05_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
 			rs->Register("PlayerLifeBar",		"res/Player/UI/player_life_bar.png",		RESOURCE_TYPE::Graph, 1.0f);
