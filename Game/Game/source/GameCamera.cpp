@@ -65,17 +65,23 @@ void GameCamera::Reset()
 {
 	// 角度と距離をデフォルトに戻す
 	_fDistance = DEFAULT_DISTANCE;
-	_fAngleH = DEFAULT_ANGLE_H;
 	_fAngleV = DEFAULT_ANGLE_V;
 
 	// ターゲットがいるなら、注視点を更新
 	if (_targetObject)
 	{
 		_vTarget = VAdd(_targetObject->GetPos(), _vPosOffset);
+
+		_fAngleH = _targetObject->GetRotY();
 	}
 
-	// 角度と距離から座標を計算
-	UpdatePosFromAngle();
+	float cosV = cosf(_fAngleV);
+	float sinV = sinf(_fAngleV);
+	float cosH = cosf(_fAngleH);
+	float sinH = sinf(_fAngleH);
+	VECTOR forward = VGet(cosV * sinH, sinV, cosV * cosH);
+
+	_vPos = VSub(_vTarget, VScale(forward, _fDistance));
 }
 
 // 注視点から後方へdistanceだけ離れた位置にカメラを配置する

@@ -253,7 +253,8 @@ bool ModeLoading::Process()
 		StopSoundMem(_seHandle);
 		_bIsAddGame = true;
 
-		ModeServer::GetInstance()->Add(new ModeScenario(), 1, "scenario");
+		//ModeServer::GetInstance()->Add(new ModeScenario(), 1, "scenario");
+		ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
 		ModeServer::GetInstance()->Del(this);
 	}
 	return true;
