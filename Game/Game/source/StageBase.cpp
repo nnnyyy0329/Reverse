@@ -315,8 +315,6 @@ void StageBase::Process()
 		}
 	}
 
-
-
 	// 敵の更新
 	{
 		// 敵の更新と削除処理

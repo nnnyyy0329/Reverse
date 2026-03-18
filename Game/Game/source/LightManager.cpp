@@ -19,9 +19,9 @@ LightManager::LightManager()
 	, _fSpotAtten2(0.0f)
 {
 	// ƒ‰ƒCƒg‚ÌF‚ğ‰Šú‰»
-	_ambientColor = GetColorF(0.5f, 0.5f, 0.5f, 0.f);
-	_diffuseColor = GetColorF(1.0f, 1.0f, 1.0f, 0.0f);
-	_specularColor = GetColorF(1.0f, 1.0f, 1.0f, 0.0f);
+	_ambientColor = GetColorF(1.0f, 1.0f, 1.0f, 1.0f);
+	_diffuseColor = GetColorF(1.0f, 1.0f, 1.0f, 1.0f);
+	_specularColor = GetColorF(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 LightManager::~LightManager()

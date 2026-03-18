@@ -196,9 +196,6 @@ bool ModeGame::Process()
 	// InputManagerから入力を取得
 	auto& im = InputManager::GetInstance();
 
-
-
-
 	// ゲームオーバーチェック
 	{
 		auto activePlayer = _playerManager->GetActivePlayerShared();
@@ -214,7 +211,6 @@ bool ModeGame::Process()
 	}
 
 	// 能力選択画面のデバッグ関数
-	
 
 	// startでメニューを開く
 	if (im.IsTrigger(INPUT_ACTION::MENU))
@@ -407,10 +403,10 @@ bool ModeGame::Render()
 		_lightManager->SetLightType(LightManager::LIGHT_TYPE::DIRECTIONAL);
 		_lightManager->SetDirectionalLightDir(VGet(-1.0f, -1.0f, -1.0f));
 
-		// グローバルアンビエントライト設定
-		_lightManager->SetAmbientLight(GetColorF(0.8f, 0.8f, 0.8f, 0.0f));
+		SetLightDifColor(GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 
-		//SetLightDifColor(GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
+		// グローバルアンビエントライト設定
+		_lightManager->SetAmbientLight(GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 	}
 
 	// カメラ設定
@@ -418,6 +414,12 @@ bool ModeGame::Render()
 		_cameraManager->SetUp();
 	}
 	
+	// スカイスフィア
+	{
+		int handle = ResourceServer::GetInstance()->GetHandle("skysphereA");
+		MV1DrawModel(handle);
+	}
+
 	// オブジェクトの描画
 	{
 		_stage->Render();

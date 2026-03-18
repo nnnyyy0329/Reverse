@@ -8,7 +8,7 @@ namespace
 	constexpr auto DOWN_TIME = 90.0f;// ダウン時間
 
 	// ノックバック制御
-	constexpr auto DAMAGE_KNOCKBACK_SPEED = 5.0f;// ノックバック速度
+	constexpr auto DAMAGE_KNOCKBACK_SPEED = 6.0f;// ノックバック速度
 	constexpr auto DAMAGE_KNOCKBACK_TIME = 15.0f;// ノックバック時間
 	constexpr auto DOWN_KNOCKBACK_SPEED = 18.0f;// ダウンノックバック速度
 	constexpr auto DOWN_KNOCKBACK_TIME = 90.0f;// ダウンノックバック時間

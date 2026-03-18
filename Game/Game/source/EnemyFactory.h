@@ -66,7 +66,7 @@ public:
 		case EnemyType::NORMAL:// ’ÊíŒ^
 		case EnemyType::MELEE:// ‹ßÚŒ^
 			// ƒ‚ƒfƒ‹–¼‚ðÝ’è
-			enemy->SetModelName("Melee");
+			enemy->SetModelName("Normal");
 
 			param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
 			param.fVisionRange = NORMAL_VISION_RANGE;
@@ -167,7 +167,7 @@ public:
 
 		case EnemyType::TANK:// ƒ^ƒ“ƒNŒ^
 
-			enemy->SetModelName("Melee");
+			enemy->SetModelName("Tank");
 
 			param.fMoveSpeed = TANK_MOVE_SPEED;
 			param.fAttackRange = TANK_ATTACK_RANGE;

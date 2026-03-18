@@ -9,9 +9,9 @@
 namespace
 {
 	// コリジョン設定
-	constexpr auto COLLISION_RADIUS = 30.0f;// 敵の当たり判定半径
-	constexpr auto COLLISION_HEIGHT = 100.0f;// 敵の当たり判定高さ
-	constexpr auto COLLLISION_SUB_Y = 40.0f;// 腰位置オフセット
+	constexpr auto COLLISION_RADIUS = 30.0f;// カプセル半径
+	constexpr auto COLLISION_HEIGHT = 100.0f;// カプセル高さ
+	constexpr auto COLLLISION_SUB_Y = 50.0f;// 腰位置オフセット
 
 	// 索敵制御
 	constexpr auto SEARCH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
@@ -30,8 +30,8 @@ namespace
 	constexpr auto CAMERA_DEPTH_MAX = 1.0f;// カメラ深度最大値
 
 	// 視界チェック用
-	constexpr auto SIGHT_CHECK_RADIUS = 10.0f;// 視線チェック用の球の半径
-	constexpr auto WALL_NORMAL_THRESHOLD = 0.2f;// 壁判定の法線Y成分閾値
+	constexpr auto SIGHT_CHECK_RADIUS = 10.0f;// 視界チェック用の球の半径
+	constexpr auto WALL_NORMAL_THRESHOLD = 0.3f;// 壁判定の法線Y成分閾値
 
 	// エフェクト関連
 	constexpr auto DAMAGE_EFFECT_OFFSET_Y = 50.0f;// ダメージエフェクトYオフセット
@@ -48,7 +48,10 @@ namespace
 	constexpr float WAYPOINT_REACHED_DIST = 20.0f;// ウェイポイント到達したと見なす距離
 }
 
-Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
+Enemy::Enemy() 
+	: _vHomePos(VGet(0.0f, 0.0f, 0.0f))
+	, _vHomeDir(VGet(0.0f, 0.0f, 1.0f))
+	, _defaultColor({ 1.0f, 1.0f, 1.0f, 1.0f })
 {
 	_vDir = VGet(0.0f, 0.0f, 1.0f);// 前方を向いておく
 
@@ -67,6 +70,9 @@ Enemy::Enemy() : _vHomePos(VGet(0.0f, 0.0f, 0.0f)), _bCanRemove(false)
 	SetCharaType(CHARA_TYPE::ENEMY);// キャラタイプを設定
 
 	_searchTimer = 0;
+
+	// スケールテスト
+	_vScale = VGet(1.0f, 1.0f, 1.0f);
 }
 
 Enemy::~Enemy()
@@ -79,7 +85,7 @@ bool Enemy::Initialize()
 	LoadEnemyModel();
 
 	_vOldPos = _vPos;
-	_vHomePos = _vPos;// 初期位置を保存
+	_vHomePos = _vPos;// 初期座標を保存
 	_fLife = _enemyParam.fMaxLife;// ライフに最大値をセット
 	_bIsExist = true;
 	_bCanRemove = false;
@@ -96,7 +102,7 @@ bool Enemy::Terminate()
 
 bool Enemy::Process()
 {
-	_vOldPos = _vPos;// 前フレームの位置を保存
+	_vOldPos = _vPos;// 前フレームの座標を保存
 
 	_vMove = VGet(0.0f, 0.0f, 0.0f);// 毎フレーム移動量リセット
 
@@ -147,15 +153,15 @@ bool Enemy::Process()
 		_vMove.y += _fVelY;
 	}
 
-	_vPos = VAdd(_vPos, _vMove);// 位置更新
+	_vPos = VAdd(_vPos, _vMove);// 座標更新
 
 	// 移動可能範囲チェック
 	if (!CheckInsideMoveArea(_vPos))
 	{
-		// エリア外 初期位置へ押し戻しを試みる
+		// エリア外 初期座標へ押し戻しを試みる
 		if (!CorrectPosToMoveArea())
 		{
-			_vPos = _vOldPos;// 失敗なら前フレームの位置に戻す
+			_vPos = _vOldPos;// 失敗なら前フレームの座標に戻す
 		}
 		_bIsOutSideMoveArea = true;// エリア外
 	}
@@ -362,21 +368,6 @@ void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 	}
 }
 
-void Enemy::SetEnemyParam(const EnemyParam& param)
-{
-	_enemyParam = param;
-}
-
-//void Enemy::SpawnBullet(VECTOR vStartPos, VECTOR vDir, float fRadius, float fSpeed, int lifeTime)
-//{
-//	auto bulletManager = _bulletManager.lock();// マネージャーが有効か確認
-//	if (bulletManager)
-//	{
-//		// タイプを設定して、発射リクエストをする
-//		bulletManager->Shoot(vStartPos, vDir, fRadius, fSpeed, lifeTime, _eCharaType, BULLET_TYPE::NORMAL);
-//	}
-//}
-
 void Enemy::SpawnBullet(const BulletConfig& bulletConfig)
 {
 	// タイプを設定して、発射リクエストをする
@@ -392,7 +383,7 @@ void Enemy::StartAttack(const EnemyAttackSettings& settings)
 		_attackCollision->Initialize();
 	}
 
-	// 位置更新
+	// 座標更新
 	UpdateAttackTransform(settings);// 初期座標をセット
 
 	// ステートごとの設定を反映
@@ -530,11 +521,6 @@ void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
 	ApplyDamage(fDamage, ATTACK_OWNER_TYPE::NONE, AttackCollision());
 }
 
-bool Enemy::IsDead()
-{
-	return _fLife <= 0.0f;// ライフが0以下なら死亡
-}
-
 std::shared_ptr<EnemyState> Enemy::GetAfterDamageStateSelector(int comboCnt)
 {
 	if (_afterDamageStateSelector)
@@ -557,7 +543,7 @@ std::shared_ptr<EnemyState> Enemy::GetAfterDownStateSelector()
 
 void Enemy::LoadEnemyModel()
 {
-	// モデル読み込み
+	// ハンドル取得
 	int modelHandle = ResourceServer::GetInstance()->GetHandle(_modelName.c_str());
 
 	// モデルハンドルが無効な場合はデフォルトの敵モデルを使用
@@ -566,7 +552,7 @@ void Enemy::LoadEnemyModel()
 		modelHandle = ResourceServer::GetInstance()->GetHandle("Enemy");
 	}
 
-	// animManagerにモデルハンドルを複製して設定
+	// ハンドルを複製
 	int dupHandle = MV1DuplicateModel(modelHandle);
 
 	// 複製したモデルをanimManagerに設定
@@ -590,7 +576,7 @@ void Enemy::SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg)
 	// 目標の角度
 	float targetY = atan2f(vTargetDir.x, vTargetDir.z);
 
-	// 角度差を[-PI, PI]に正規化
+	// 角度差を[-PI, +PI]に正規化
 	float diff = mymath::WrapAngle(targetY - currentY);
 
 	// 1フレームあたりの回転量(ラジアン)
@@ -700,15 +686,15 @@ bool Enemy::CheckInsideMoveArea(VECTOR vPos)
 
 bool Enemy::CorrectPosToMoveArea()
 {
-	// 初期位置方向へのベクトルをY除去+正規化して取得
+	// 初期座標方向へのベクトルをY除去+正規化して取得
 	VECTOR vDir = mymath::FlattenVector(VSub(_vHomePos, _vPos));
 
-	// ゼロベクトルならほぼ初期位置
+	// ゼロベクトルならほぼ初期座標
 	if (VSquareSize(vDir) < 0.0001f) { return false; }
 
 	float dist = VSize(VSub(_vHomePos, _vPos));
 
-	// 初期位置方向へ少しづつ移動して、範囲内かチェック
+	// 初期座標方向へ少しづつ移動して、範囲内かチェック
 	const float correctStep = 5.0f;// 補正ステップ距離
 	const int correctMaxSteps = 20;// 最大試行回数
 
@@ -716,7 +702,7 @@ bool Enemy::CorrectPosToMoveArea()
 	{
 		float fOffset = correctStep * static_cast<float>(i);
 
-		// ステップ距離が初期位置までの距離を超えないようにする
+		// ステップ距離が初期座標までの距離を超えないようにする
 		if (fOffset > dist) { fOffset = dist; }
 
 		VECTOR vCandidate = VAdd(_vPos, VScale(vDir, fOffset));
@@ -727,7 +713,7 @@ bool Enemy::CorrectPosToMoveArea()
 			return true;
 		}
 
-		if (fOffset >= dist) { break; }// 初期位置を超えたら終了
+		if (fOffset >= dist) { break; }// 初期座標を超えたら終了
 	}
 
 	return false;// 補正失敗
