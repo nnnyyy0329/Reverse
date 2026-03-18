@@ -1,8 +1,9 @@
 #pragma once
 #include "appframe.h"
 #include "GeometryUtility.h"
+#include "AnimManager.h"
 
-// 攻撃演出設定構造体
+/// @brief 攻撃の演出設定構造体
 struct AttackEffectConfig
 {
 	// エフェクト設定
@@ -24,40 +25,107 @@ struct AttackEffectConfig
 	float hitStopDuration;		// ヒットストップの持続時間
 };
 
-// 攻撃の演出システムクラス
+/// @brief エフェクトのインスタンス情報構造体
+struct EffectInstanceInfo
+{
+	int effectHandle;	// エフェクトのハンドル
+	VECTOR currentPos;	// エフェクトの現在位置
+};
+
+/// @brief 追跡するエフェクトの情報構造体
+struct TrackedEffectInfo
+{
+	int effectHandle;			// エフェクトハンドル
+	int attachFrameIndex;		// アタッチするフレームインデックス
+	VECTOR effectOffset;		// エフェクトのオフセット
+	AnimManager* animManager;	// アニメーションマネージャー
+};
+
+/// @brief 攻撃の演出システムクラス
 class AttackEffectSystem
 {
 public:
-	// シングルトンアクセス
-	static AttackEffectSystem* GetInstance();	// インスタンス取得
-	static void CreateInstance();				// インスタンス生成
-	static void DestroyInstance();				// インスタンス破棄
+
+	/* シングルトンアクセス */
+
+	/// @brief インスタンス取得処理
+	static AttackEffectSystem* GetInstance();	
+
+	/// @brief インスタンス生成処理
+	static void CreateInstance();				
+
+	/// @brief インスタンス破棄処理
+	static void DestroyInstance();				
 
 	bool Initialize();
 	bool Terminate();
 	bool Process();
 	bool Render();
 
-	// 攻撃演出の処理関数
-	void AttackEffect(const AttackEffectConfig& config, const VECTOR& pos, const VECTOR& dir);
+	/* 攻撃演出処理関数 */
 
-	// 攻撃エフェクト処理
-	void ProcessEffect(const AttackEffectConfig& config, const VECTOR& pos, const VECTOR& dir);
+	//// 攻撃演出の処理関数
+	//void AttackEffect(const AttackEffectConfig& config, const VECTOR& pos, const VECTOR& dir);
 
-	// 攻撃サウンド処理
+
+	/// @brief 攻撃エフェクト再生処理
+	///
+	/// @param config 攻撃演出設定
+	/// @param pos エフェクト再生位置
+	/// @param dir エフェクトの向き（攻撃方向）
+	///	
+	/// @return 再生したエフェクトのハンドル
+	int PlayEffect(const AttackEffectConfig& config, const VECTOR& pos, const VECTOR& dir);
+
+	/// @brief 追跡エフェクト再生処理
+	///
+	/// @param config 攻撃演出設定
+	/// @param initialPos エフェクトの初期位置
+	/// @param dir エフェクトの向き（攻撃方向）
+	/// @param frameIndex 追跡するフレームのインデックス
+	/// @param animManager 追跡するアニメーションマネージャーの共有ポインタ
+	/// 
+	/// @return 再生したエフェクトのハンドル
+	int PlayTrackedEffect
+	(
+		const AttackEffectConfig& config,
+		const VECTOR& initialPos,		
+		const VECTOR& dir,
+		int frameIndex,
+		AnimManager* animManager
+	);
+
+	/// @brief エフェクト停止処理
+	///
+	/// @param effectHandle 停止するエフェクトのハンドル
+	void StopEffect(int effectHandle);
+
+	/// @brief エフェクトの演出処理
+	///
+	/// @param handle エフェクトのハンドル
+	/// @param dir エフェクトの向き（攻撃方向）
+	void ProcessEffect(int handle, const VECTOR& dir);
+
+	/// @brief 攻撃サウンド演出処理
+	///
+	/// @param config 攻撃演出設定
 	void ProcessSound(const AttackEffectConfig& config);
 
-	// カメラシェイク処理
+	/// @brief カメラシェイク演出処理
+	///
+	/// @param config 攻撃演出設定
 	void ProcessCameraShake(const AttackEffectConfig& config);
 
-	// ヒットストップ処理
+	/// @brief ヒットストップ演出処理
+	///
+	/// @param config 攻撃演出設定
 	void ProcessHitStop(const AttackEffectConfig& config);
 
 	/* クラスの設定 */
 
-	// ゲッターセッター
-	const AttackEffectConfig& GetAttackEffectConfig() const { return _stcAttackEffectConfig; }
-	void SetAttackEffectConfig(const AttackEffectConfig& config) { _stcAttackEffectConfig = config; }
+	//// ゲッターセッター
+	//const AttackEffectConfig& GetAttackEffectConfig() const { return _stcAttackEffectConfig; }
+	//void SetAttackEffectConfig(const AttackEffectConfig& config) { _stcAttackEffectConfig = config; }
 
 private:
 
@@ -68,8 +136,19 @@ private:
 	// シングルトンインスタンス
 	static AttackEffectSystem* _instance;
 
+
+	/// @brief 追跡エフェクトの位置更新処理
+	void UpdateTrackedEffects();
+
+
+	// エフェクト管理関係
+	std::map<int, EffectInstanceInfo> _activeEffects;	// アクティブなエフェクトの管理マップ
+	std::map<int, TrackedEffectInfo> _trackedEffects;	// 追跡するエフェクトの管理マップ
+
 protected:
-	AttackEffectConfig _stcAttackEffectConfig;	// 攻撃演出の設定
+
+	//// 攻撃演出の設定
+	//AttackEffectConfig _stcAttackEffectConfig;	
 
 };
 

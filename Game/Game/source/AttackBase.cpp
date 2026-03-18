@@ -46,6 +46,9 @@ AttackBase::AttackBase()
 	_originalColTop = VGet(0.0f, 0.0f, 0.0f);
 	_originalColBottom = VGet(0.0f, 0.0f, 0.0f);
 
+	// エフェクトの更新用変数の初期化
+	_effectHandle = -1; // エフェクトハンドル
+
 	// カメラマネージャーの初期化
 	_cameraManager = nullptr;
 }

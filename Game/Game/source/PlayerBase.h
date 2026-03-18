@@ -119,10 +119,8 @@ struct AttackDirAdjustConfig
 /// @brief 攻撃時にどちらの腕で攻撃するかの設定をまとめた構造体
 struct AttackArmConfig
 {
-	bool useRightArm;		// 右腕を使用するかどうか
+	int useFromBody;		// どの部位で再生するか(2 : 腕以外、1 : 右腕、0 : 左腕、-1 : 再生しない)
 	int rightArmFrameIndex;	// 右腕攻撃のフレームインデックス
-
-	bool useLeftArm;		// 左腕を使用するかどうか
 	int leftArmFrameIndex;	// 左腕攻撃のフレームインデックス
 };
 
@@ -368,7 +366,7 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
 	std::vector<PLAYER_ATTACK_STATE> _attackStatuses;	// 攻撃状態配列
 
-	// 攻撃関連の初期化関数
+	// 攻撃関連の情報設定関数
 	void InitializeAttackData();				// 攻撃データ初期化
 	void InitializeAttackConfigs(int maxCombo);	// 攻撃設定配列初期化
 	void SetAttackStatusData(int maxCombo);		// 攻撃状態を攻撃配列に入れる
@@ -393,8 +391,6 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);	// 攻撃開始処理
 	void ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBase> attack);	// 攻撃反応処理
 	void ProcessAttackRegister(std::shared_ptr<AttackBase> attack);						// 攻撃登録処理
-	void ProcessAttackEffect(int attackIndex, std::vector<AttackEffectConfig> configs);	// 攻撃エフェクト処理
-	void ProcessAttackSound(int attackIndex, std::vector<AttackEffectConfig> configs);	// 攻撃サウンド処理
 	void ProcessComboAttack(int attackIndex);											// コンボ攻撃処理
 	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);						// 攻撃終了処理
 	void EndAttackSequence();															// 攻撃課程修了

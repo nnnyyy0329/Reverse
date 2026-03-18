@@ -3,6 +3,19 @@
 #pragma once
 #include "PlayerBase.h"
 
+// 攻撃判定のパラメーター
+namespace InteriorAttackConstants
+{
+	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;		// 裏プレイヤー用コンボカウント
+}
+
+// 攻撃腕のパラメーター
+namespace InteriorPlayerArmConstants
+{
+	constexpr int RIGHT_ARM_FRAME_INDEX = 157;	// 右腕攻撃のフレームインデックス
+	constexpr int LEFT_ARM_FRAME_INDEX = 133;	// 左腕攻撃のフレームインデックス
+}
+
 // 裏プレイヤー
 class InteriorPlayer : public PlayerBase
 {

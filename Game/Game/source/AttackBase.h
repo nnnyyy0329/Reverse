@@ -100,14 +100,14 @@ public:
 	void UpdateAttackMove();				// 移動更新
 	virtual void ProcessAttackMovement();	// 移動処理
 
-	// 攻撃コリジョンの位置更新
+	/// @brief 攻撃コリジョンの位置更新
 	void UpdateAttackColPos();	
 
 	// 攻撃コリジョンの位置計算(コリジョン上下のオフセットを入れる場合の計算用関数).未使用
 	VECTOR CalculateAttackColPos(const VECTOR& basePos, const VECTOR& offset, const VECTOR& direction);	
 
-	// 攻撃の向き調整処理
-	void UpdateAttackDirAdjust();	// 向き調整更新
+	/// @brief 攻撃の向き調整処理
+	void UpdateAttackDirAdjust();	
 
 	// 当たったキャラ管理
 	void AddHitCharas(std::shared_ptr<CharaBase> chara);		// 当たったキャラを追加
@@ -186,6 +186,8 @@ public:
 	const AttackEffectConfig& GetAttackEffectConfig() const { return _attackEffectConfig; }			// 攻撃エフェクト情報取得
 	void SetAttackEffectConfig(const AttackEffectConfig& config) { _attackEffectConfig = config; }	// 攻撃エフェクト情報設定
 
+	void SetEffectHandle(int handle) { _effectHandle = handle; }	// エフェクトハンドル設定
+
 	// クラスセット
 	void SetCameraManager(std::shared_ptr<CameraManager> cameraManager) { _cameraManager = cameraManager; }
 
@@ -211,17 +213,25 @@ protected:
 
 private:
 
+	/// @brief 入力方向計算関数
+	///
+	/// @param analog アナログ入力状態
+	/// 
+	/// @return 入力方向ベクトル
+	VECTOR CalculateInputDir(const AnalogState& analog);
+
 	std::vector<std::shared_ptr<CharaBase>> _hitChars;	// 当たったキャラを管理
 
 	// 攻撃エフェクト情報
 	AttackEffectConfig _attackEffectConfig;	
 
-	// 入力方向計算関数
-	VECTOR CalculateInputDir(const AnalogState& analog);
 
+	// コリジョン位置計算関連
 	VECTOR _originalColTop;		// 元のコリジョン上部位置
 	VECTOR _originalColBottom;	// 元のコリジョン下部位置
 
+	// エフェクトの更新用
+	int _effectHandle;	// エフェクトハンドル
 
 };
 
