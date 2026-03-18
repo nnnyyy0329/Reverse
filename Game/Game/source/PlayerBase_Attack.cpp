@@ -150,6 +150,9 @@ void PlayerBase::SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<
 	if(!attack) return;
 
 	// 攻撃エフェクトデータ設定
+	attack->SetAttackEffectConfig(config);
+
+	// 攻撃エフェクト設定配列に追加
 	_attackEffectConfigs.push_back(config);
 }
 
