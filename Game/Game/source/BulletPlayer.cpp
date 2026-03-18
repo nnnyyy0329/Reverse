@@ -1,6 +1,15 @@
 #include "BulletPlayer.h"
 #include "CameraManager.h"
 
+// 弾発射設定エイリアス
+namespace BC =  BulletConstants;
+
+// 通常弾設定エイリアス
+namespace NBC = NormalBulletConfig;
+
+// 貫通弾設定エイリアス
+namespace PBC = PiercingBulletConfig;
+
 BulletPlayer::BulletPlayer()
 {
 	_eCharaType = CHARA_TYPE::BULLET_PLAYER;
@@ -9,6 +18,8 @@ BulletPlayer::BulletPlayer()
 	_bIsShootFromRightArm = false;	// 右腕から発射したかどうか
 	_bIsReadyCompleted = false;		// 構えアニメーション完了フラグ
 	_bWasShootKeyPressed = false;	// 前フレームで発射キーが押されていたか
+
+	_currentBulletType = BULLET_TYPE::NORMAL;	// 初期の弾の種類は通常弾
 }
 
 BulletPlayer::~BulletPlayer()
@@ -176,14 +187,41 @@ BulletConfig BulletPlayer::GetBulletConfig()
 	// 弾プレイヤー用の弾発射設定
 	BulletConfig config;
 
-	config.bulletType	= BULLET_TYPE::NORMAL;			// 弾のタイプ
+	// 弾の種類による設定
+	switch(_currentBulletType)
+	{
+		case BULLET_TYPE::NORMAL: // 通常弾
+		{
+			// 通常弾設定
+			config.bulletType	= BULLET_TYPE::NORMAL;	// 弾の種類
+			config.radius		= NBC::RADIUS;			// 弾の半径
+			config.damage		= NBC::DAMAGE;			// ダメージ量
+			config.speed		= NBC::SPEED;			// 移動速度
+
+			break;
+		}
+
+		case BULLET_TYPE::PIERCING: // 貫通弾
+		{
+			// 貫通弾設定
+			config.bulletType	= BULLET_TYPE::PIERCING;	// 弾の種類
+			config.radius		= PBC::RADIUS;				// 弾の半径
+			config.damage		= PBC::DAMAGE;				// ダメージ量
+			config.speed		= PBC::SPEED;				// 移動速度
+
+			break;
+		}
+
+		case BULLET_TYPE::NONE: // 弾なし
+		default:
+		{
+			break;
+		}
+	}
 	config.shooterType	= CHARA_TYPE::BULLET_PLAYER;	// キャラタイプ
 	config.startPos		= VAdd(_vPos, worldOffset);		// 発射開始位置
 	config.dir			= GetShootDirection();			// エイムカメラの向いてる方向
-	config.radius		= bulletConfig::RADIUS;			// 弾の半径
-	config.damage		= bulletConfig::DAMAGE;			// 弾のダメージ
-	config.speed		= bulletConfig::SPEED;			// 弾のスピード
-	config.lifeTime		= bulletConfig::LIFE_TIME;		// 弾の自然消滅時間
+	config.lifeTime		= BC::LIFE_TIME;				// 弾の自然消滅時間
 
 	return config;
 }
@@ -221,13 +259,14 @@ void BulletPlayer::ProcessShoot()
 	ShootInput();
 
 	// 前フレームのキー状態を保存
-	_bWasShootKeyPressed = IsShootInput();
+	_bWasShootKeyPressed = IsShootNormalInput() || IsShootPiercingInput();
 }
 
 void BulletPlayer::ShootInput()
 {
-	// 発射キーが新しく押されたかどうか
-	bool isInputNewPress = IsShootInput() && !_bWasShootKeyPressed; 
+	// どちらかの発射キーが新しく押されたかどうか
+	bool isInputPress = IsShootNormalInput() || IsShootPiercingInput();	// 発射キーが押されているか
+	bool isInputNewPress = isInputPress && !_bWasShootKeyPressed;		// 発射キーが新しく押されたか
 
 	// 待機状態：新しく入力がきたら構えへ
 	if(_playerState.shootState == PLAYER_SHOOT_STATE::NONE	&&	// 現在発射構え状態でなく
@@ -279,14 +318,14 @@ void BulletPlayer::ShootInput()
 		if(IsShootIntervalNegative())
 		{
 			// 発射状態の更新処理
-			UpdateByShootIntervalEnd(IsShootInput());
+			UpdateByShootIntervalEnd(isInputPress);
 		}
 
 		return;
 	}
 
 	// 入力が離されたら初期化
-	if(!IsShootInput() && _playerState.shootState != PLAYER_SHOOT_STATE::NONE)
+	if(!isInputPress && _playerState.shootState != PLAYER_SHOOT_STATE::NONE)
 	{
 		// 発射状態をリセット
 		ResetShootState();
@@ -385,8 +424,8 @@ VECTOR BulletPlayer::GetShootOffset()const
 	VECTOR startPosOffset;
 
 	// 右腕か左腕かでオフセットを変更
-	if(_bIsShootFromRightArm){ startPosOffset = bulletConfig::RIGHT_ARM_SHOT_OFFSET; }	// 右腕
-	else{ startPosOffset = bulletConfig::LEFT_ARM_SHOT_OFFSET; }						// 左腕
+	if(_bIsShootFromRightArm){ startPosOffset = BC::RIGHT_ARM_SHOT_OFFSET; }	// 右腕
+	else{ startPosOffset = BC::LEFT_ARM_SHOT_OFFSET; }							// 左腕
 
 	// 発射位置オフセットを返す
 	return startPosOffset;
@@ -409,12 +448,36 @@ VECTOR BulletPlayer::GetShootDirection()const
 	return shootDirection;
 }
 
-bool BulletPlayer::IsShootInput()const
+bool BulletPlayer::IsShootNormalInput()
 {
 	auto& inputManager = InputManager::GetInstance();
 
-	// 攻撃ボタンが押されたか
-	return (inputManager.IsHold(INPUT_ACTION::ATTACK));
+	// 通常弾発射ボタンが押されたら
+	if(inputManager.IsHold(INPUT_ACTION::ATTACK))
+	{
+		// 弾のタイプを通常弾にセット
+		SetBulletType(BULLET_TYPE::NORMAL);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool BulletPlayer::IsShootPiercingInput()
+{
+	auto& inputManager = InputManager::GetInstance();
+
+	// 貫通弾発射ボタンが押されたら
+	if(inputManager.IsHold(INPUT_ACTION::ABILITY))
+	{
+		// 弾のタイプを貫通弾にセット
+		SetBulletType(BULLET_TYPE::PIERCING);
+
+		return true;
+	}
+
+	return false;
 }
 
 bool BulletPlayer::IsShootIntervalNegative()const
@@ -427,4 +490,9 @@ bool BulletPlayer::IsShootIntervalNegative()const
 	}
 
 	return false;
+}
+
+void BulletPlayer::SetBulletType(BULLET_TYPE bulletType)
+{
+	_currentBulletType = bulletType;
 }

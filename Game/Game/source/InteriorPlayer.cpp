@@ -50,28 +50,24 @@ bool InteriorPlayer::Render()
 	return true;
 }
 
-// デバッグ描画
 void InteriorPlayer::DebugRender()
 {
 	// コリジョン描画
 	PlayerBase::DebugRender();
 }
 
-// 被ダメージ処理
 void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
 	// 基底クラスの被ダメージ処理を呼び出す
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
 }
 
-// 弾による被ダメージ処理
 void InteriorPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 {
 	// 基底クラスの弾による被ダメージ処理を呼び出す
 	PlayerBase::ApplyDamageByBullet(fDamage, chara);
 }
 
-// 裏プレイヤーの情報設定
 PlayerConfig InteriorPlayer::GetPlayerConfig()
 {
 	// 裏プレイヤー用の設定
@@ -97,7 +93,6 @@ PlayerConfig InteriorPlayer::GetPlayerConfig()
 	return config;
 }
 
-// 裏プレイヤーのアニメーション設定
 PlayerAnimations InteriorPlayer::GetPlayerAnimation()
 {
 	// 裏プレイヤー用のアニメーション設定
@@ -130,7 +125,6 @@ PlayerAnimations InteriorPlayer::GetPlayerAnimation()
 	return animation;
 }
 
-// 表示設定
 RenderConfig InteriorPlayer::GetRenderConfig()
 {
 	// 裏プレイヤー用の表示設定
@@ -142,7 +136,6 @@ RenderConfig InteriorPlayer::GetRenderConfig()
 	return config;
 }
 
-// 攻撃判定のパラメーター
 AttackConstants InteriorPlayer::GetAttackConstants()const
 {
 	// InteriorPlayer専用の攻撃定数
@@ -153,7 +146,6 @@ AttackConstants InteriorPlayer::GetAttackConstants()const
 	return constants;
 }
 
-// 攻撃コリジョンの情報設定
 void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 {
 	// 第1攻撃
@@ -252,7 +244,6 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 	};
 }
 
-// 攻撃コリジョンオフセットの情報設定
 void InteriorPlayer::GetAttackColOffsetConfigs(AttackColOffset configs[5])
 {
 	// 第1攻撃
@@ -291,7 +282,6 @@ void InteriorPlayer::GetAttackColOffsetConfigs(AttackColOffset configs[5])
 	};
 }
 
-// 攻撃方向補正の情報設定
 void InteriorPlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[5])
 {
 	// 第1攻撃
@@ -325,7 +315,6 @@ void InteriorPlayer::GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[5])
 	};
 }
 
-// 演出設定
 void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 {
 	// 第1攻撃
@@ -444,7 +433,6 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 	};
 }
 
-// 範囲攻撃の情報設定
 AreaAttackConfig InteriorPlayer::GetAreaAttackConfigs()
 {
 	// 裏プレイヤーの範囲攻撃設定
@@ -462,7 +450,6 @@ AreaAttackConfig InteriorPlayer::GetAreaAttackConfigs()
 	return config;
 }
 
-// 回避設定データ構造体
 DodgeConfig InteriorPlayer::GetDodgeConfig()
 {
 	// 裏プレイヤー用の回避設定
@@ -478,7 +465,6 @@ DodgeConfig InteriorPlayer::GetDodgeConfig()
 	return config;
 }
 
-// 攻撃腕の情報設定
 void InteriorPlayer::GetAttackArmConfigs(AttackArmConfig configs[5])
 {
 	// 第1攻撃

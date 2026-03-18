@@ -515,8 +515,8 @@ protected:
 	float	_fHitTime;			// ”í’eŠÔ
 
 	// ƒJƒƒ‰ŠÖ˜A
-	float _cameraAngle;
-	bool _bIsDeathCameraSet;
+	float	_cameraAngle;
+	bool	_bIsDeathCameraSet;
 };
 
 

@@ -9,14 +9,27 @@ namespace BulletConstants
 }
 
 // 弾発射設定
-namespace bulletConfig
+namespace BulletConstants
 {
 	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);
 	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);
+	constexpr float LIFE_TIME = 120.0f;
+};
+
+// 通常弾設定
+namespace NormalBulletConfig
+{
 	constexpr float RADIUS = 20.0f;
 	constexpr float DAMAGE = 50.0f;
 	constexpr float SPEED = 20.0f;
-	constexpr float LIFE_TIME = 120.0f;
+}
+
+// 貫通弾設定
+namespace PiercingBulletConfig
+{
+	constexpr float RADIUS = 15.0f;
+	constexpr float DAMAGE = 30.0f;
+	constexpr float SPEED = 25.0f;
 }
 
 // 前方宣言
@@ -35,8 +48,6 @@ public:
 	virtual bool Process();		// 更新
 	virtual bool Render();		// 描画
 
-	/* 共通関数のオーバーライド */
-
 	/// @brief デバッグ描画
 	virtual void DebugRender()override;																		
 
@@ -53,7 +64,7 @@ public:
 	/// @brief 弾による被ダメージ処理
 	///
 	/// @param fDamage ダメージ量
-	/// @param chara 弾のキャラタイプ
+	/// @param char 弾のキャラタイプ
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										
 
 	// 純粋仮想関数のオーバーライド
@@ -105,20 +116,28 @@ private:
 	/// @return 発射方向
 	VECTOR GetShootDirection()const;
 
-	/// @brief 弾発射入力チェック
+	/// @brief 通常弾発射入力チェック
 	///
-	/// @return 弾発射入力があったらtrue、なければfalse
-	bool IsShootInput()const;
+	/// @return 通常弾発射入力があったらtrue、なければfalse
+	bool IsShootNormalInput();
 
-	/// @brief 弾の種類切り替え入力チェック
+	/// @brief 貫通弾発射入力チェック
 	///
-	/// @brief 弾の種類切り替え入力があったらtrue、なければfalse
-	bool IsChangeBulletTypeInput()const;
+	/// @return 貫通弾発射入力があったらtrue、なければfalse
+	bool IsShootPiercingInput();
 
 	/// @brief 発射間隔がマイナスかどうかをチェックする関数
 	/// 
 	/// @return 発射間隔がマイナスならtrue、そうでなければfalse
 	bool IsShootIntervalNegative()const;
+
+	/// @brief 弾のタイプをセットする関数
+	///
+	/// @param bulletType セットする弾のタイプ
+	void SetBulletType(BULLET_TYPE bulletType);	
+
+
+	BULLET_TYPE _currentBulletType;	// 現在の弾の種類
 
 protected:
 

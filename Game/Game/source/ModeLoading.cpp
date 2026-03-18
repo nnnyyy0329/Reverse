@@ -26,9 +26,9 @@ bool ModeLoading::Initialize()
 			rs->Register("SurfacePlayerAbsorb", "effect/SurfacePlayer/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 			// 裏プレイヤーの攻撃エフェクト
-			rs->Register("InteriorPlayerAttack_123",	"effect/InteriorPlayer/NChange_Attack.efkefc",			RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerAttack_123",	"effect/InteriorPlayer/NChange_004.efkefc",				RESOURCE_TYPE::Effect, 10.0f);
 			rs->Register("InteriorPlayerFourthAttack",	"effect/InteriorPlayer/NChange_Fourth_Attack.efkefc",	RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("InteriorPlayerFifthAttack",	"effect/InteriorPlayer/NChange_Attack_Scallup.efkefc",	RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("InteriorPlayerFifthAttack",	"effect/InteriorPlayer/NChange_004.efkefc",				RESOURCE_TYPE::Effect, 30.0f);
 
 			// 表プレイヤーの攻撃ヒットエフェクト
 			rs->Register("SurfacePlayerAttackHit1", "effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
@@ -165,6 +165,52 @@ bool ModeLoading::Initialize()
 			rs->Register("ChangePower",		"sound/SE/changePlayer/knuckleSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
 			rs->Register("ChangeBlaster",	"sound/SE/changePlayer/blasterSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
 
+
+			// その他SE
+
+			// プレイヤー
+			{
+				rs->Register("SE_", "sound/SE/se_0.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_", "sound/SE/se_1.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_", "sound/SE/se_2.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_GameOver", "sound/SE/se_3.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_", "sound/SE/se_4.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_", "sound/SE/se_5.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_", "sound/SE/se_6.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_sDodge", "sound/SE/se_7.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_PlayerDead", "sound/SE/se_8.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_", "sound/SE/se_9.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_", "sound/SE/se_10.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_Dodge", "sound/SE/se_11.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_iPlayerAttacck", "sound/SE/se_12.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_", "sound/SE/se_13.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_", "sound/SE/se_14.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_JustDodge", "sound/SE/se_15.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_TransPower", "sound/SE/se_16.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_", "sound/SE/se_17.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_TransBullet", "sound/SE/se_18.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_PiercingBullet", "sound/SE/se_19.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_NormalBullet", "sound/SE/se_20.mp3", RESOURCE_TYPE::Sound, 1.0f);
+
+			}
+
+
+			rs->Register("SE_", "sound/SE/se_21.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_22.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_23.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_24.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_25.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_26.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_27.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_28.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_29.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_30.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_31.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_32.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_33.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_34.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_35.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_36.mp3", RESOURCE_TYPE::Sound, 1.0f);
 		}
 
 		// シナリオ　
