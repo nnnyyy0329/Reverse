@@ -30,27 +30,6 @@ void AttackEffectSystem::DestroyInstance()
 }
 AttackEffectSystem::AttackEffectSystem()
 {
-	/* 攻撃エフェクトの設定初期化 */
-
-	//// エフェクト設定
-	//_stcAttackEffectConfig.isActiveEffect = false;
-	//_stcAttackEffectConfig.effectName = "";
-	//_stcAttackEffectConfig.effectOffset = VGet(0.0f, 0.0f, 0.0f);
-
-	//// サウンド設定
-	//_stcAttackEffectConfig.isActiveSound = false;
-	//_stcAttackEffectConfig.soundName = "";
-
-	//// カメラシェイク設定
-	//_stcAttackEffectConfig.isActiveCameraShake = false;
-	//_stcAttackEffectConfig.cameraShakeMagnitude = 0.0f;
-	//_stcAttackEffectConfig.cameraShakeDuration = 0.0f;
-
-	//// ヒットストップ設定
-	//_stcAttackEffectConfig.isActiveHitStop = false;
-	//_stcAttackEffectConfig.hitStopDuration = 0.0f;
-
-
 	// アクティブなエフェクトの管理マップ初期化
 	_activeEffects.clear();
 
@@ -154,14 +133,15 @@ int AttackEffectSystem::PlayTrackedEffect
 	int handle = EffectServer::GetInstance()->Play(config.effectName, effectPos);
 
 	// エフェクト処理
-	ProcessEffect(handle, dir);
+	ProcessEffect(handle, dir, config.effectRotation);
 
 	// 追跡エフェクト情報
 	TrackedEffectInfo trackedInfo;
 
 	trackedInfo.effectHandle = handle;
-	trackedInfo.effectOffset = worldOffset;
 	trackedInfo.attachFrameIndex = frameIndex;
+	trackedInfo.effectOffset = worldOffset;
+	trackedInfo.effectRotation = config.effectRotation;
 	trackedInfo.animManager = animManager;
 
 	_trackedEffects[handle] = trackedInfo;
@@ -232,6 +212,9 @@ void AttackEffectSystem::UpdateTrackedEffects()
 
 				// エフェクト位置更新
 				EffectServer::GetInstance()->SetPos(info.effectHandle, offsetPos);
+
+				// エフェクト回転更新
+				EffectServer::GetInstance()->SetRot(info.effectHandle, info.effectRotation);
 			}
 		}
 
@@ -240,13 +223,23 @@ void AttackEffectSystem::UpdateTrackedEffects()
 	}
 }
 
-void AttackEffectSystem::ProcessEffect(int handle, const VECTOR& dir)
+void AttackEffectSystem::ProcessEffect(int handle, const VECTOR& dir, const VECTOR& customRotation)
 {
-	// 向き設定
-	VECTOR dirNorm = VNorm(dir);
-	float rotY = atan2f(dirNorm.x, dirNorm.z);
-	VECTOR rotation = VGet(0.0f, rotY, 0.0f);
-	EffectServer::GetInstance()->SetRot(handle, rotation);
+	// カスタム回転が指定されている場合
+	if(VSize(customRotation) > 0.0001f)
+	{
+		// カスタム回転を使用
+		EffectServer::GetInstance()->SetRot(handle, customRotation);
+	}
+	// カスタム回転が指定されていない場合
+	else
+	{
+		// 攻撃方向から回転を計算
+		VECTOR dirNorm = VNorm(dir);
+		float rotY = atan2f(dirNorm.x, dirNorm.z);
+		VECTOR rotation = VGet(0.0f, rotY, 0.0f);
+		EffectServer::GetInstance()->SetRot(handle, rotation);
+	}
 }
 
 void AttackEffectSystem::ProcessSound(const AttackEffectConfig& config)

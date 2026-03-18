@@ -7,13 +7,15 @@
 namespace InteriorAttackConstants
 {
 	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;		// 裏プレイヤー用コンボカウント
+
+	constexpr float REVERSE_EFFECT_ROT = 180.0f;	// エフェクトの回転を反転
 }
 
 // 攻撃腕のパラメーター
 namespace InteriorPlayerArmConstants
 {
 	constexpr int RIGHT_ARM_FRAME_INDEX = 157;	// 右腕攻撃のフレームインデックス
-	constexpr int LEFT_ARM_FRAME_INDEX = 133;	// 左腕攻撃のフレームインデックス
+	constexpr int LEFT_ARM_FRAME_INDEX = 147;	// 左腕攻撃のフレームインデックス
 }
 
 // 裏プレイヤー

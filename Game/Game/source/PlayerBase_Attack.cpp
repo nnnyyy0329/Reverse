@@ -286,11 +286,11 @@ void PlayerBase::ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBa
 		// 座標追跡エフェクト再生
 		int effectHandle = AttackEffectSystem::GetInstance()->PlayTrackedEffect
 		(
-			config,
-			initialPos,
-			_vDir,
-			attachFrameIndex,
-			animManager
+			config,				// エフェクト設定
+			initialPos,			// 初期位置
+			_vDir,				// 向き
+			attachFrameIndex,	// フレームインデックス
+			animManager			// アニメーションマネージャー
 		);
 
 		// 攻撃オブジェクトにエフェクトハンドルを設定

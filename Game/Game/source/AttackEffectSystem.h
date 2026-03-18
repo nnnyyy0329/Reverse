@@ -10,6 +10,7 @@ struct AttackEffectConfig
 	bool isActiveEffect;	// エフェクトを有効にするか
 	std::string effectName;	// エフェクト名
 	VECTOR effectOffset;	// エフェクト位置オフセット
+	VECTOR effectRotation;	// エフェクト回転
 	
 	// サウンド設定
 	bool isActiveSound;		// サウンドを有効にするか
@@ -38,6 +39,7 @@ struct TrackedEffectInfo
 	int effectHandle;			// エフェクトハンドル
 	int attachFrameIndex;		// アタッチするフレームインデックス
 	VECTOR effectOffset;		// エフェクトのオフセット
+	VECTOR effectRotation;		// エフェクトの回転
 	AnimManager* animManager;	// アニメーションマネージャー
 };
 
@@ -63,10 +65,6 @@ public:
 	bool Render();
 
 	/* 攻撃演出処理関数 */
-
-	//// 攻撃演出の処理関数
-	//void AttackEffect(const AttackEffectConfig& config, const VECTOR& pos, const VECTOR& dir);
-
 
 	/// @brief 攻撃エフェクト再生処理
 	///
@@ -104,7 +102,8 @@ public:
 	///
 	/// @param handle エフェクトのハンドル
 	/// @param dir エフェクトの向き（攻撃方向）
-	void ProcessEffect(int handle, const VECTOR& dir);
+	/// @param customRotation エフェクトのカスタムの回転量
+	void ProcessEffect(int handle, const VECTOR& dir, const VECTOR& customRotation);
 
 	/// @brief 攻撃サウンド演出処理
 	///
@@ -122,10 +121,6 @@ public:
 	void ProcessHitStop(const AttackEffectConfig& config);
 
 	/* クラスの設定 */
-
-	//// ゲッターセッター
-	//const AttackEffectConfig& GetAttackEffectConfig() const { return _stcAttackEffectConfig; }
-	//void SetAttackEffectConfig(const AttackEffectConfig& config) { _stcAttackEffectConfig = config; }
 
 private:
 
@@ -146,9 +141,6 @@ private:
 	std::map<int, TrackedEffectInfo> _trackedEffects;	// 追跡するエフェクトの管理マップ
 
 protected:
-
-	//// 攻撃演出の設定
-	//AttackEffectConfig _stcAttackEffectConfig;	
 
 };
 

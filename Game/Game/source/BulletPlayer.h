@@ -15,7 +15,7 @@ namespace bulletConfig
 	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);
 	constexpr float RADIUS = 20.0f;
 	constexpr float DAMAGE = 50.0f;
-	constexpr float SPEED = 15.0f;
+	constexpr float SPEED = 20.0f;
 	constexpr float LIFE_TIME = 120.0f;
 }
 
