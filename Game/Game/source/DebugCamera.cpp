@@ -11,20 +11,19 @@ DebugCamera::DebugCamera()
 {
 	_vPos = VGet(0.0f, 0.0f, -100.0f);
 	_vTarget = VGet(0.0f, 0.0f, 0.0f);
-	_fDistance = 100.0f;
 	_fAngleH = 0.0f;
 	_fAngleV = 0.0f;
 	_fNearClip = 2.0f;
-	_fFarClip = 50000.0f;
+	_fFarClip = 5000.0f;
 
-	CalcAngleFromPos();// 初期座標から角度などを計算しておく
+	CalcAngleFromPos();// 初期座標から角度と距離を計算
 }
 
 DebugCamera::~DebugCamera()
 {
 }
 
-// 左スティック:ターゲットの移動(ボタン同時押し(B)で高さ変更、ズーム)
+// 左スティック:ターゲットの移動(ボタン同時押しで高さ変更、ズーム)
 // 右スティック:カメラの回転
 void DebugCamera::Process()
 {
@@ -39,14 +38,16 @@ void DebugCamera::Process()
 
 	// カメラの回転
 	{
-		if (abs(rx) > analogMin) { _fAngleH -= rx * ROTATE_SPEED; }
+		if (abs(rx) > analogMin) 
+		{ 
+			_fAngleH -= rx * ROTATE_SPEED;
+			_fAngleH = NormalizeAngleRad(_fAngleH);
+		}
+
 		if (abs(ry) > analogMin) 
 		{
 			_fAngleV += ry * ROTATE_SPEED;
-
-			// 垂直角度制限
-			if (_fAngleV > ANGLE_V_LIMIT) _fAngleV = ANGLE_V_LIMIT;
-			if (_fAngleV < -ANGLE_V_LIMIT) _fAngleV = -ANGLE_V_LIMIT;
+			_fAngleV = ClampVerticalAngle(_fAngleV, ANGLE_V_LIMIT);
 		}
 	}
 
@@ -55,7 +56,7 @@ void DebugCamera::Process()
 		if (abs(lx) > analogMin || abs(ly) > analogMin) 
 		{
 
-			// ボタン同時押し中(B)
+			// ボタン同時押し中
 			if (bIsPut)
 			{
 				// ターゲットの高さ変更
@@ -68,18 +69,18 @@ void DebugCamera::Process()
 			else // 通常時
 			{
 				// カメラの向いている前方ベクトル
-				VECTOR vForward = VGet(sinf(_fAngleH), 0.0f, cosf(_fAngleH));
+				VECTOR forward = VGet(sinf(_fAngleH), 0.0f, cosf(_fAngleH));
 				// 前方ベクトルから時計回りに90度回した右方向ベクトル
-				VECTOR vRight = VGet(cosf(_fAngleH), 0.0f, -sinf(_fAngleH));
+				VECTOR right = CalcRight(_fAngleH);
 
 				// 移動量を計算
-				VECTOR vMove = VAdd(
-					VScale(vForward, ly * MOVE_SPEED),
-					VScale(vRight, -lx * MOVE_SPEED)
+				VECTOR move = VAdd(
+					VScale(forward, ly * MOVE_SPEED),
+					VScale(right, -lx * MOVE_SPEED)
 				);
 
 				// ターゲット位置を更新
-				_vTarget = VAdd(_vTarget, vMove);
+				_vTarget = VAdd(_vTarget, move);
 			}
 		}
 	}

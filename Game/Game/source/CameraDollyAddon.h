@@ -16,7 +16,7 @@ public:
 	bool IsFinished() override { return !_bIsActive; }
 
 	// 前後移動を開始
-	// どれくらい移動するか(+で引き、-で寄り)、全体の持続時間、往復にかける時間
+	// どれくらい移動するか(+で引き、-で寄り)、演出の全体時間、開始、終了のイージング時間
 	void StartDolly(float maxDollyDist, float duration, float transitionTime);
 
 	// 強制終了
@@ -25,13 +25,18 @@ public:
 	// 滑らかに元の位置に戻る
 	void CancelSmoothly();
 
+	// trueなら、水平方向のみにドリーを適用
+	void SetUseHorrizontalOnly(bool only) { _bUseHorrizontalOnly = only; }
+
 private:
+	float CalculateCurrentOffset();// 現在時間からドリー量を計算
+
 	float _fMaxDollyDist;// 最大移動距離
 	float _fCurrentOffset;// 現在のオフセット距離
-	float _fDuration;// 持続時間
+	float _fDuration;// 演出全体時間
 	float _fCurrentTime;// 経過時間
-	float _fTransitionTime;// 移行時間
-	bool _bIsActive;
-
+	float _fTransitionTime;// イージング時間
+	bool _bIsActive;// 有効フラグ
+	bool _bUseHorrizontalOnly;// 水平方向のみ適用するか
 };
 

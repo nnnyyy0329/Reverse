@@ -44,7 +44,7 @@ void PlayerBase::StartDeathCameraEffect()
 		// カメラドリーアドオンを作成して追加する
 		auto zoom = std::make_shared<CameraDollyAddon>();
 
-		// ドリー移動を開始する（引きで、全体の持続時間9999秒、移行時間240フレーム）
+		// ドリー移動を開始する
 		zoom->StartDolly(-200.0f, 9999.0f, 240.0f);
 
 		// カメラマネージャーにアドオンを追加
@@ -84,11 +84,16 @@ void PlayerBase::UpdateDeathState()
 	// アニメーションが終了したかチェック
 	if(animManager->IsAnimationFinished())
 	{
-		// 死亡アニメーション完了フラグを立てる
-		_bIsDeathAnimComplete = true;	
+		static int timer = 0;
+		timer++;
+		if (timer > 60)
+		{
+			_bIsDeathAnimComplete = true;// 死亡アニメーション完了フラグを立てる
 
-		// 死亡フラグを立てる
-		_bIsDead = true;				
+			// 死亡フラグを立てる
+			_bIsDead = true;
+			timer = 0;
+		}					
 	}
 }
 

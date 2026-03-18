@@ -9,16 +9,21 @@ namespace
 	constexpr float DEFAULT_DISTANCE = 300.0f;// デフォルトのカメラ距離
 	constexpr float DEFAULT_ANGLE_H = DX_PI_F;// デフォルトの水平角度(真後ろ)
 	constexpr float DEFAULT_ANGLE_V = -0.4f;// デフォルトの垂直角度(少し見下ろし)
+
+	constexpr float AUTO_FOLLOW_TIME = 30.0f;// 自動追従開始までのフレーム
 }
 
 GameCamera::GameCamera()
 {
-	_vPosOffset = VGet(0.0f, TARGET_OFFSET_Y, 0.0f);
 	_fNearClip = 1.f;
-	_fFarClip = 50000.f;
+	_fFarClip = 10000.f;
 	_fDistance = DEFAULT_DISTANCE;
 	_fAngleH = DEFAULT_ANGLE_H;
 	_fAngleV = -DEFAULT_ANGLE_V;// 少し見下ろし
+
+	_lookAtSettings.worldOffset = VGet(0.0f, TARGET_OFFSET_Y, 0.0f);
+	_lookAtSettings.localOffset = VGet(0.0f, 0.0f, 0.0f);
+	_lookAtSettings.lerpRate = 1.0f;
 }
 
 void GameCamera::Process()
@@ -48,10 +53,7 @@ void GameCamera::SetTarget(std::shared_ptr<PlayerBase> target)
 	if (_targetObject)
 	{
 		// 注視点を初期化
-		_vTarget = VAdd(_targetObject->GetPos(), _vPosOffset);
-
-		// 角度、距離から座標を計算
-		UpdatePosFromAngle();
+		_vTarget = CalculateLookAtPoint();
 	}
 }
 
@@ -66,22 +68,21 @@ void GameCamera::Reset()
 	// 角度と距離をデフォルトに戻す
 	_fDistance = DEFAULT_DISTANCE;
 	_fAngleV = DEFAULT_ANGLE_V;
+	_fAutoFollowTimer = 0.0f;
 
-	// ターゲットがいるなら、注視点を更新
 	if (_targetObject)
 	{
-		_vTarget = VAdd(_targetObject->GetPos(), _vPosOffset);
-
+		// ターゲットの真後ろにセット
 		_fAngleH = _targetObject->GetRotY();
+		_vTarget = CalculateLookAtPoint();
+	}
+	else
+	{
+		_fAngleH = DEFAULT_ANGLE_H;
 	}
 
-	float cosV = cosf(_fAngleV);
-	float sinV = sinf(_fAngleV);
-	float cosH = cosf(_fAngleH);
-	float sinH = sinf(_fAngleH);
-	VECTOR forward = VGet(cosV * sinH, sinV, cosV * cosH);
-
-	_vPos = VSub(_vTarget, VScale(forward, _fDistance));
+	_fAngleH = NormalizeAngleRad(_fAngleH);
+	UpdatePosFromAngle();
 }
 
 // 注視点から後方へdistanceだけ離れた位置にカメラを配置する
@@ -103,31 +104,22 @@ void GameCamera::UpdateCamera()
 	{
 		_fAutoFollowTimer++;
 
-		if (_fAutoFollowTimer > 30.0f)
+		if (_fAutoFollowTimer > AUTO_FOLLOW_TIME)
 		{
 
 			// 水平方向
 			// 現在のカメラとの角度差を計算
 			float targetRot = _targetObject->GetRotY();
-			float diff = targetRot - _fAngleH;
-
-			// 角度差を-PI～PIの範囲に正規化
-			while (diff >= DX_PI_F) diff -= DX_PI_F * 2.0f;
-			while (diff < -DX_PI_F) diff += DX_PI_F * 2.0f;
-
-			// 真後ろの時は強制的に右回りにする
-			if (diff > DX_PI_F * 0.95f || diff < -DX_PI_F * 0.95f)
-			{
-				diff = DX_PI_F * 0.95f;
-			}
+			float diff = NormalizeAngleRad(targetRot - _fAngleH);
 
 			float rotSpeed = diff * 0.03f;
 			// 回転速度の上限を設定
 			float maxRotSpeed = DX_PI_F / 180.0f;
-			if (rotSpeed > maxRotSpeed)  rotSpeed = maxRotSpeed;
-			if (rotSpeed < -maxRotSpeed) rotSpeed = -maxRotSpeed;
+			if (rotSpeed > maxRotSpeed) { rotSpeed = maxRotSpeed; }
+			if (rotSpeed < -maxRotSpeed) { rotSpeed = -maxRotSpeed; }
 
 			_fAngleH += rotSpeed;
+			_fAngleH = NormalizeAngleRad(_fAngleH);
 
 			// 垂直方向
 			// デフォルトの角度との差を計算
@@ -135,15 +127,15 @@ void GameCamera::UpdateCamera()
 
 			float rotSpeedV = diffV * 0.03f;
 			float maxRotSpeedV = DX_PI_F / 180.0f;
-			if (rotSpeedV > maxRotSpeedV)  rotSpeedV = maxRotSpeedV;
-			if (rotSpeedV < -maxRotSpeedV) rotSpeedV = -maxRotSpeedV;
+			if (rotSpeedV > maxRotSpeedV) { rotSpeedV = maxRotSpeedV; }
+			if (rotSpeedV < -maxRotSpeedV) { rotSpeedV = -maxRotSpeedV; }
 
 			_fAngleV += rotSpeedV;
+			_fAngleV = ClampVerticalAngle(_fAngleV, ANGLE_V_LIMIT);
 
 			// カメラ距離
 			// デフォルトの距離との差を計算
 			float diffDist = DEFAULT_DISTANCE - _fDistance;
-
 			_fDistance += diffDist * 0.03f;
 		}
 	}
@@ -152,17 +144,16 @@ void GameCamera::UpdateCamera()
 		_fAutoFollowTimer = 0.0f;
 	}
 
-	// 注視点を決定
-	_vTarget = VAdd(_targetObject->GetPos(), _vPosOffset);
+	// 注視点を計算して、必要なら補完する
+	VECTOR desiredTarget = CalculateLookAtPoint();
+	float t = _lookAtSettings.lerpRate;
+	if (t < 0.0f) { t = 0.0f; }
+	if (t > 1.0f) { t = 1.0f; }
 
-	// 角度から前方ベクトルを計算
-	float cosV = cos(_fAngleV);
-	float sinV = sin(_fAngleV);
-	float cosH = cos(_fAngleH);
-	float sinH = sin(_fAngleH);
-	VECTOR forward = VGet(cosV * sinH, sinV, cosV * cosH);
+	_vTarget = VAdd(VScale(_vTarget, 1.0f - t), VScale(desiredTarget, t));
 
-	_vPos = VSub(_vTarget, VScale(forward, _fDistance));
+	// 角度と距離からカメラ位置を計算
+	UpdatePosFromAngle();
 }
 
 // スティック入力でカメラ角度を更新
@@ -180,16 +171,35 @@ void GameCamera::ControlCamera()
 		if(abs(rx) > analogMin)
 		{
 			_fAngleH += rx * ROTATE_SPEED;// 右スティックのX軸で水平回転
+			_fAngleH = NormalizeAngleRad(_fAngleH);
 		}
 
 		// 垂直回転
 		if(abs(ry) > analogMin) 
 		{
 			//_fAngleV -= ry * ROTATE_SPEED;// 右スティックのY軸で垂直回転
-
-			// 垂直角度制限
-			if(_fAngleV > ANGLE_V_LIMIT) _fAngleV = ANGLE_V_LIMIT;
-			if(_fAngleV < -ANGLE_V_LIMIT) _fAngleV = -ANGLE_V_LIMIT;
+			_fAngleV = ClampVerticalAngle(_fAngleV, ANGLE_V_LIMIT);
 		}
 	}
+}
+
+VECTOR GameCamera::CalculateLookAtPoint()
+{
+	if (!_targetObject) { return _vTarget; }
+
+	// ターゲットの位置にワールドオフセットを加算
+	VECTOR lookAt = VAdd(_targetObject->GetPos(), _lookAtSettings.worldOffset);
+
+	// ターゲットの向きからそれぞれの軸を計算
+	float rotY = _targetObject->GetRotY();
+	VECTOR right = CalcRight(rotY);
+	VECTOR up = VGet(0.0f, 1.0f, 0.0f);
+	VECTOR forward = VGet(sinf(rotY), 0.0f, cosf(rotY));
+
+	// ローカルオフセットを加算
+	lookAt = VAdd(lookAt, VScale(right, _lookAtSettings.localOffset.x));
+	lookAt = VAdd(lookAt, VScale(up, _lookAtSettings.localOffset.y));
+	lookAt = VAdd(lookAt, VScale(forward, _lookAtSettings.localOffset.z));
+
+	return lookAt;
 }

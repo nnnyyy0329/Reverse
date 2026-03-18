@@ -14,7 +14,7 @@ public:
 	void SetTarget(std::shared_ptr<PlayerBase> target) override {}
 	void ApplyShake(const VECTOR& shakeOffset) override {}
 
-	void SetInfo(VECTOR vPos, VECTOR vTarget);// 座標と注視点を設定
+	void SetInfo(VECTOR vPos, VECTOR vTarget);// 座標と注視点を直接セット
 
 protected:
 

@@ -20,57 +20,64 @@ void CameraBase::SetUp()
 	SetCameraNearFar(_fNearClip, _fFarClip);
 }
 
-// 角度と距離からカメラの座標を計算
-// スティック操作で角度を変えた後に呼ぶ
 void CameraBase::UpdatePosFromAngle()
 {
-	// x = -sin(H) * r
-	// z =  cos(H) * r
-
-	// 1.高さ(y)と水平面でのターゲットまでの距離(r)を計算
-	float y = sinf(_fAngleV) * _fDistance;
-	float r = cosf(_fAngleV) * _fDistance;
-
-	// 2.水平平面上での位置(x,z)を計算
-	float x = -sinf(_fAngleH) * r;
-	float z = cosf(_fAngleH) * r;
-
-	// 3.相対位置をターゲットの座標に足してカメラの絶対座標を計算
-	_vPos = VAdd(_vTarget, VGet(x, y, z));
+	// 注視点から、前方の逆方向に距離を引いてカメラ位置を計算
+	VECTOR forward = CalcForward(_fAngleH, _fAngleV);
+	_vPos = VSub(_vTarget, VScale(forward, _fDistance));
 }
 
-// ターゲットの座標とカメラの座標から角度と距離を計算
-// 初期化時や外部からカメラ位置を変更した後に呼ぶ
 void CameraBase::CalcAngleFromPos()
 {
-	VECTOR diff = VSub(_vPos, _vTarget);// ターゲットからカメラへのベクトル
+	// 注視点からカメラ位置
+	VECTOR diff = VSub(_vPos, _vTarget);
 
-	// 距離
 	_fDistance = VSize(diff);
-	if (_fDistance < 0.001f) {// ゼロ除算防止
+	if (_fDistance < 0.001f)
+	{
 		_fDistance = 0.001f;
 		_fAngleH = 0.0f;
 		_fAngleV = 0.0f;
-		return;// 距離がほぼ0なら計算しない
-
+		return;
 	}
 
-	// 水平角度(atan2)
-	// x,zから角度(ラジアン)を計算
-	_fAngleH = atan2f(-diff.z, diff.x);
+	VECTOR forward = VScale(diff, -1.0f / _fDistance);
 
-	// 垂直角度(asin)
-	// 斜辺(距離)に対する高さ(y)の割合から角度を計算
-	_fAngleV = asinf(diff.y / _fDistance);
+	// 前方ベクトルから水平、垂直角度を逆算
+	_fAngleH = atan2f(forward.x, forward.z);
+	_fAngleV = asinf(forward.y);
+}
+
+VECTOR CameraBase::CalcForward(float angleH, float angleV)
+{
+	float cosV = cosf(angleV);
+	float sinV = sinf(angleV);
+	float cosH = cosf(angleH);
+	float sinH = sinf(angleH);
+
+	return VGet(cosV * sinH, sinV, cosV * cosH);
+}
+
+VECTOR CameraBase::CalcRight(float angleH)
+{
+	return VGet(cosf(angleH), 0.0f, -sinf(angleH));
+}
+
+float CameraBase::NormalizeAngleRad(float angle)
+{
+	while (angle >= DX_PI_F) { angle -= DX_PI_F * 2.0f; }
+	while (angle < -DX_PI_F) { angle += DX_PI_F * 2.0f; }
+	return angle;
+}
+
+float CameraBase::ClampVerticalAngle(float angleV, float limit)
+{
+	if (angleV > limit) { return limit; }
+	if (angleV < -limit) { return -limit; }
+	return angleV;
 }
 
 VECTOR CameraBase::GetCameraDir()
 {
-	// 水平と垂直の角度から、カメラの前方ベクトルを計算して返す
-	float cosV = cosf(_fAngleV);
-	float sinV = sinf(_fAngleV);
-	float cosH = cosf(_fAngleH);
-	float sinH = sinf(_fAngleH);
-
-	return VGet(cosV * sinH, sinV, cosV * cosH);
+	return CalcForward(_fAngleH, _fAngleV);
 }

@@ -196,7 +196,7 @@ void Enemy::DebugRender()
 		auto fVisionAngle = _enemyParam.fVisionAngle;// õ“GŠp“x(”¼•ª)
 		unsigned int color = GetColor(0, 255, 0);// —Î
 		int segments = 16;// îŒ`‚Ì•ªŠ„”
-		mymath::DrawFan3D(_vPos, _vDir, fVisionRange, fVisionAngle, color, segments);
+		mydraw::DrawFan3D(_vPos, _vDir, fVisionRange, fVisionAngle, color, segments);
 	}
 
 	// Ú‹ß’†‚ÌŠe”ÍˆÍ‚Ì•`‰æ
@@ -205,11 +205,11 @@ void Enemy::DebugRender()
 		{
 			// UŒ‚‰Â”\”ÍˆÍ‚ğ•`‰æ
 			unsigned int attackColor = GetColor(255, 0, 0);// Ô
-			mymath::DrawCircle3D(_vPos, _enemyParam.fAttackRange, attackColor, 16);
+			mydraw::DrawCircle3D(_vPos, _enemyParam.fAttackRange, attackColor, 16);
 
 			// Ú‹ßŒÀŠE”ÍˆÍ‚ğ•`‰æ
 			unsigned int chaseColor = GetColor(255, 255, 0);// ‰©
-			mymath::DrawCircle3D(_vPos, _enemyParam.fChaseLimitRange, chaseColor, 16);
+			mydraw::DrawCircle3D(_vPos, _enemyParam.fChaseLimitRange, chaseColor, 16);
 		}
 	}
 

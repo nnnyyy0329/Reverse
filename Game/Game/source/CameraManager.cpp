@@ -102,6 +102,7 @@ void CameraManager::SetTarget(std::shared_ptr<PlayerBase> target)
 	if (_gameCamera) { _gameCamera->SetTarget(target); }
 	if (_aimCamera) { _aimCamera->SetTarget(target); }
 	if (_debugCamera) { _debugCamera->SetTarget(target); }
+	if (_eventCamera) { _eventCamera->SetTarget(target); }
 }
 
 // カメラ切り替えはここにまとめる
@@ -143,11 +144,11 @@ void CameraManager::SetCameraType(CAMERA_TYPE type)
 	// 新しいカメラの開始処理
 	if (_pActiveCamera) 
 	{
-		// 前のカメラの角度を引き継ぐ
+		// 前のカメラの状態を引き継ぐ
 		_pActiveCamera->SetAngleH(prevAngleH);
 		_pActiveCamera->SetAngleV(prevAngleV);
 		_pActiveCamera->SetPos(prevPos);
-		_pActiveCamera->SetTarget(prevTarget);
+		_pActiveCamera->SetLookAtPoint(prevTarget);
 
 		_pActiveCamera->OnEnter();
 		_pActiveCamera->SetUp();

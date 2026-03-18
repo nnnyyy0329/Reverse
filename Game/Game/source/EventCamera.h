@@ -4,10 +4,11 @@
 class EventCamera : public CameraBase
 {
 public:
-	EventCamera() {};
+	EventCamera();
 	virtual ~EventCamera() {};
 
 	void Process() override;
+	void DebugRender() override;
 
 	void OnEnter() override;
 

@@ -31,15 +31,21 @@ public:
 	virtual float GetAngleH() { return _fAngleH; }
 	float GetAngleV() { return _fAngleV; }
 	virtual VECTOR GetCameraDir();// カメラが向いている方向
+
 	// セッター
 	void SetPos(const VECTOR& pos) { _vPos = pos; }
-	void SetTarget(const VECTOR& target) { _vTarget = target; }
+	void SetLookAtPoint(const VECTOR& target) { _vTarget = target; }
 	void SetAngleH(float angleH) { _fAngleH = angleH; }
 	void SetAngleV(float angleV) { _fAngleV = angleV; }
 
 protected:
-	void UpdatePosFromAngle();// 角度と距離から座標を計算
-	void CalcAngleFromPos();// 座標から角度と距離を計算
+	void UpdatePosFromAngle();// 角度と距離からカメラ座標を計算
+	void CalcAngleFromPos();// カメラ座標と注視点から角度と距離を逆算
+
+	static VECTOR CalcForward(float angleH, float angleV);// 水平、垂直角度から前方ベクトルを生成
+	static VECTOR CalcRight(float angleH);// 水平角度から右方向ベクトルを生成
+	static float NormalizeAngleRad(float angle);// 角度を-PI～+PIの範囲に正規化
+	static float ClampVerticalAngle(float angleV, float limit);// 垂直角度のクランプ
 
 	VECTOR _vPos;
 	VECTOR _vTarget;
@@ -47,9 +53,7 @@ protected:
 
 	float _fNearClip;
 	float _fFarClip;
-
 	float _fDistance;
-
 	float _fAngleH;
 	float _fAngleV;
 };

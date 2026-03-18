@@ -37,14 +37,11 @@
     <Filter Include="Server\Sound">
       <UniqueIdentifier>{e23f687b-19ea-4472-861b-d107208df316}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Senario">
-      <UniqueIdentifier>{81805f63-ba75-4e5f-a0cd-1d742e9c4bdd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Senario\Title">
-      <UniqueIdentifier>{e0dede67-086b-455a-aa2a-31f47b89e628}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Manager\Input">
       <UniqueIdentifier>{8777042d-11c4-47a3-9507-7b0749d4b0cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="draw">
+      <UniqueIdentifier>{d86d2fdb-700d-4520-874a-752409425a23}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -100,9 +97,6 @@
       <Filter>Server\Sound</Filter>
     </ClCompile>
     <ClCompile Include="source\InputManager.cpp" />
-    <ClCompile Include="source\ScenarioBase.cpp">
-      <Filter>Senario</Filter>
-    </ClCompile>
     <ClCompile Include="source\InputManager.cpp">
       <Filter>Manager\Input</Filter>
     </ClCompile>
@@ -171,11 +165,11 @@
       <Filter>Server\Sound</Filter>
     </ClInclude>
     <ClInclude Include="source\InputManager.h" />
-    <ClInclude Include="source\ScenarioBase.h">
-      <Filter>Senario</Filter>
-    </ClInclude>
     <ClInclude Include="source\InputManager.h">
       <Filter>Manager\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="source\draw\mydraw.h">
+      <Filter>draw</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

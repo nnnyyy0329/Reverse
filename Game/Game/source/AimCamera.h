@@ -20,7 +20,6 @@ public:
 	void SetTarget(std::shared_ptr<PlayerBase> target) override;
 	void ApplyShake(const VECTOR& shakeOffset) override {};
 
-	// エイム処理
 	bool IsAiming() const;// エイムモード中かチェック
 
 	VECTOR GetCameraDir() override { return _aimDirection; }
@@ -33,20 +32,12 @@ public:
 	void DrawAimCursor();// エイムカーソル描画
 
 protected:
-	bool _isAiming;// エイムモードフラグ
+	bool _isAiming = false;// エイムモードフラグ
 
-	// エイム方向
 	VECTOR _aimDirection;// エイム方向ベクトル
-	VECTOR _aimStartPlayerDir;// エイム開始時のプレイヤー方向ベクトル
 
-	// カメラ基準方向
-	VECTOR _cameraBaseDirection;
-	VECTOR _cameraBaseRight;
+	std::shared_ptr<PlayerBase> _targetPlayer;// ターゲットプレイヤー
 
-	// ターゲットプレイヤー
-	std::shared_ptr<PlayerBase> _targetPlayer;
-
-	// プレイヤー右後ろのオフセット
-	VECTOR _aimCameraOffset; 
+	VECTOR _aimCameraOffset;// ローカルオフセット
 };
 

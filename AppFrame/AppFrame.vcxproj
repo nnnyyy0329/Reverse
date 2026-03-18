@@ -185,6 +185,7 @@
     <ClInclude Include="source\CFile\CFile.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="source\draw\mydraw.h" />
     <ClInclude Include="source\InputManager.h" />
     <ClInclude Include="source\Manager\ComponentManager.h" />
     <ClInclude Include="source\math\mymath.h" />

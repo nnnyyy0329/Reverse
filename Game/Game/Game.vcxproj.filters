@@ -215,7 +215,7 @@
       <Filter>Camera\Addon</Filter>
     </ClCompile>
     <ClCompile Include="source\AttackEffectSystem.cpp">
-      <Filter>AttackSystem\Effect</Filter>
+      <Filter>Attack\System</Filter>
     </ClCompile>
     <ClCompile Include="source\ICameraAddon.cpp">
       <Filter>Camera\Addon</Filter>
@@ -226,11 +226,11 @@
     <ClCompile Include="source\AbilityActionHint.cpp">
       <Filter>Ability\Action</Filter>
     </ClCompile>
-    <ClCompile Include="source\EventCamera.cpp">
-      <Filter>Camera\Addon</Filter>
-    </ClCompile>
     <ClCompile Include="source\ModeEndingText.cpp">
       <Filter>Mode\Ending</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EventCamera.cpp">
+      <Filter>Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -436,7 +436,7 @@
       <Filter>Camera\Addon</Filter>
     </ClInclude>
     <ClInclude Include="source\AttackEffectSystem.h">
-      <Filter>AttackSystem\Effect</Filter>
+      <Filter>Attack\System</Filter>
     </ClInclude>
     <ClInclude Include="source\ICameraAddon.h">
       <Filter>Camera\Addon</Filter>
@@ -447,11 +447,11 @@
     <ClInclude Include="source\AbilityActionHint.h">
       <Filter>Ability\Action</Filter>
     </ClInclude>
-    <ClInclude Include="source\EventCamera.h">
-      <Filter>Camera\Addon</Filter>
-    </ClInclude>
     <ClInclude Include="source\ModeEndingText.h">
       <Filter>Mode\Ending</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EventCamera.h">
+      <Filter>Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -593,6 +593,9 @@
     <Filter Include="GameObject\CharaBase\Enemy\A%2a">
       <UniqueIdentifier>{0c4e6ac5-25ac-4ace-a1c4-93a3b99f7c4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Attack\System">
+      <UniqueIdentifier>{326a01b9-9c72-4633-8585-c04bb0a5bff6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Camera\Manager">
       <UniqueIdentifier>{c9d6516b-d942-4da6-aefd-7e3e96874659}</UniqueIdentifier>
     </Filter>
@@ -604,12 +607,6 @@
     </Filter>
     <Filter Include="Mode\Ending">
       <UniqueIdentifier>{b0d99bd7-07da-4af2-a2a3-3900ea9d10fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="AttackSystem">
-      <UniqueIdentifier>{28205cb9-dc3b-4fb5-9a01-8962fa8aac40}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="AttackSystem\Effect">
-      <UniqueIdentifier>{326a01b9-9c72-4633-8585-c04bb0a5bff6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -20,6 +20,7 @@ enum class CAMERA_TYPE
 	_EOT_,
 };
 
+// カメラ切り替え、カメラ演出を管理するクラス
 class CameraManager
 {
 	public:
@@ -39,7 +40,7 @@ class CameraManager
 	void SetCameraType(CAMERA_TYPE type);
 	CAMERA_TYPE GetCameraType() { return _eCameraType; }
 
-	// デバッグカメラ関連
+	// デバッグカメラON/OFF
 	void SetIsUseDebugCamera(bool isUse);
 
 	VECTOR GetCameraDir();
@@ -53,6 +54,7 @@ class CameraManager
 	// アドオンを追加する
 	void AddAddon(std::shared_ptr<ICameraAddon> addon);
 
+	// カメラ状態、Addonのリセット
 	void Reset();
 
 protected:

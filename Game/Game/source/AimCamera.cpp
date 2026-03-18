@@ -10,9 +10,6 @@ namespace
 
 AimCamera::AimCamera()
 {
-	// カメラ基本設定
-	_vPos = VGet(0.0f, 0.0f, 0.0f);
-	_vTarget = VGet(0.0f, 0.0f, 0.0f);
 	_fNearClip = 1.0f;
 	_fFarClip = 3000.0f;
 	_fDistance = AIM_DISTANCE;
@@ -21,15 +18,9 @@ AimCamera::AimCamera()
 
 	// エイムモード設定
 	_isAiming = false;
-
 	// エイム方向
 	_aimDirection = VGet(0.0f, 0.0f, -1.0f);// 初期エイム方向は前方
-	_aimStartPlayerDir = VGet(0.0f, 0.0f, -1.0f);// 初期エイム方向は前方
 	_aimCameraOffset = VGet(60.0f, 160.0f, -100.0f);// プレイヤー右後ろのオフセット
-
-	// カメラ基準方向
-	_cameraBaseDirection = VGet(0.0f, 0.0f, -1.0f);
-	_cameraBaseRight = VGet(1.0f, 0.0f, 0.0f);
 }
 
 AimCamera::~AimCamera()
@@ -84,8 +75,8 @@ void AimCamera::OnEnter()
 		VECTOR playerDir = _targetPlayer->GetDir();// プレイヤーの向き
 
 		// プレイヤーの向きから少し右後ろの角度を計算
-		float playerAngle = atan2f(playerDir.x, playerDir.z);// プレイヤーの水平角度取得
-		_fAngleH = playerAngle + 0.3f;// 少し右向きに調整
+		float playerAngle = atan2f(playerDir.x, playerDir.z);// プレイヤーの水平角度
+		_fAngleH = NormalizeAngleRad(playerAngle + 0.3f);// 少し右向きに調整
 		_fAngleV = -0.1f;// 少し下向き
 	}
 }
@@ -112,32 +103,24 @@ void AimCamera::UpdateAimCamera()
 {
 	if(!_targetPlayer){ return; }
 
-	// 角度から各方向ベクトルを計算
-	float cosV = cos(_fAngleV);
-	float sinV = sin(_fAngleV);
-	float cosH = cos(_fAngleH);
-	float sinH = sin(_fAngleH);
+	// 角度から基準軸を計算
+	VECTOR forward = CalcForward(_fAngleH, _fAngleV);// 前方ベクトル
+	VECTOR right = CalcRight(_fAngleH);// 右方向ベクトル
+	VECTOR up = VCross(forward, right);// 上方向ベクトル
 
-	VECTOR forward = VGet(cosV * sinH, sinV, cosV * cosH);
-	VECTOR right = VGet(cosf(_fAngleH), 0.0f, -sinf(_fAngleH));
-	// カメラの上方向(正面ベクトルと右ベクトルから外積で計算)
-	VECTOR up = VCross(forward, right);
-
-	// プレイヤー位置を基準に、オフセットを加算してカメラ位置を決定(右後ろ)
+	// プレイヤー基準位置でオフセットを適用
 	VECTOR basePos = _targetPlayer->GetPos();
 	VECTOR offset = VGet(0.0f, 0.0f, 0.0f);
-	offset = VAdd(offset, VScale(right, _aimCameraOffset.x)); // 右へズラす
-	offset = VAdd(offset, VScale(up, _aimCameraOffset.y));    // 上へズラす
-	offset = VAdd(offset, VScale(forward, _aimCameraOffset.z)); // 前後へズラす
+	offset = VAdd(offset, VScale(right, _aimCameraOffset.x));
+	offset = VAdd(offset, VScale(up, _aimCameraOffset.y));
+	offset = VAdd(offset, VScale(forward, _aimCameraOffset.z));
 
 	_vPos = VAdd(basePos, offset);
 
-	// カメラ位置から前方へ注視点を決定
+	// カメラ前方の一定距離先を注視点に設定
 	_vTarget = VAdd(_vPos, VScale(forward, _fDistance));
 
-	// エイム方向として保存
-	_aimDirection = forward;
-
+	_aimDirection = forward;// エイム方向を更新
 }
 
 // エイムカメラ操作
@@ -153,16 +136,14 @@ void AimCamera::ControlAimCamera()
 	if(abs(rx) > analogMin)
 	{
 		_fAngleH += rx * AIM_SENSITIVITY;// 右スティックのX軸で水平回転
+		_fAngleH = NormalizeAngleRad(_fAngleH);
 	}
 
 	// 垂直回転
 	if(abs(ry) > analogMin)
 	{
 		_fAngleV -= ry * AIM_SENSITIVITY;// 右スティックのY軸で垂直回転
-
-		// 垂直角度制限
-		if(_fAngleV > AIM_ANGLE_LIMIT) _fAngleV = AIM_ANGLE_LIMIT;// 上限
-		if(_fAngleV < -AIM_ANGLE_LIMIT) _fAngleV = -AIM_ANGLE_LIMIT;// 下限
+		_fAngleV = ClampVerticalAngle(_fAngleV, AIM_ANGLE_LIMIT);
 	}
 }
 

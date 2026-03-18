@@ -4,12 +4,12 @@
 // 当たり判定用。2つのboxが当たったかを判定
 // 当たっていたら1, 当たっていなかったら0を返す
 int IsHitBox(
-	int x1, int y1, int w1, int h1,		// ひとつめのbox 左上(x,y), 大きさw,h
-	int x2, int y2, int w2, int h2		// ふたつめのbox 左上(x,y), 大きさw,h
+	int x1, int y1, int w1, int h1,// ひとつめのbox 左上(x,y), 大きさw,h
+	int x2, int y2, int w2, int h2// ふたつめのbox 左上(x,y), 大きさw,h
 	)
 {
-	if (x1 < x2 + w2 && x2 < x1 + w1		// x方向の判定
-		&& y1 < y2 + h2 && y2 < y1 + h1		// y方向の判定
+	if (x1 < x2 + w2 && x2 < x1 + w1// x方向の判定
+		&& y1 < y2 + h2 && y2 < y1 + h1// y方向の判定
 		)
 	{
 		// 2つのboxは当たっている
@@ -23,8 +23,8 @@ int IsHitBox(
 // 当たり判定用。2つの円が当たったかを判定
 // 当たっていたら1, 当たっていなかったら0を返す
 int IsHitCircle(
-	int x1, int y1, int r1,		// ひとつめのcircle 中心(x,y), 半径r
-	int x2, int y2, int r2		// ふたつめのcircle 中心(x,y), 半径r
+	int x1, int y1, int r1,// ひとつめのcircle 中心(x,y), 半径r
+	int x2, int y2, int r2// ふたつめのcircle 中心(x,y), 半径r
 	)
 {
 	int w, h, r;
@@ -41,8 +41,8 @@ int IsHitCircle(
 // 当たり判定用。円と矩形が当たったかを判定
 // 当たっていたら1, 当たっていなかったら0を返す
 int IsHitBoxCircle(
-	int cx, int cy, int r,			// circle 中心(cx,cy), 半径r
-	int x, int y, int w, int h	// 左上(x,y), 大きさw,h
+	int cx, int cy, int r,// circle 中心(cx,cy), 半径r
+	int x, int y, int w, int h// 左上(x,y), 大きさw,h
 	)
 {
 	// 円の中心から矩形までの最短距離を計算
@@ -96,7 +96,7 @@ float GetPointSegmentSq(const VECTOR& point, const VECTOR& segmentStart, const V
 	// 線分の長さが0の場合(点と点の距離)
 	if (segmentLenSq < 1e-6f)
 	{
-		return VDot(toPoint, toPoint); // 点と開始点の距離の二乗を返す
+		return VDot(toPoint, toPoint);// 点と開始点の距離の二乗を返す
 	}
 
 	// 線分上の最近点を求める
