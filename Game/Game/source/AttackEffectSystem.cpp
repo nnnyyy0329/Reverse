@@ -214,7 +214,7 @@ void AttackEffectSystem::UpdateTrackedEffects()
 				EffectServer::GetInstance()->SetPos(info.effectHandle, offsetPos);
 
 				// エフェクト回転更新
-				EffectServer::GetInstance()->SetRot(info.effectHandle, info.effectRotation);
+				//EffectServer::GetInstance()->SetRot(info.effectHandle, info.effectRotation);
 			}
 		}
 

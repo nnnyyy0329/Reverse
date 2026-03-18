@@ -417,9 +417,8 @@ void PlayerBase::EndAttackSequence()
 	int currentAttackIndex = GetAttackIndexByStatus(_playerState.attackState);
 	if(currentAttackIndex >= 0 && currentAttackIndex < static_cast<int>(_attacks.size()))
 	{
+		// 現在の攻撃オブジェクトを取得
 		auto currentAttack = _attacks[currentAttackIndex];
-
-		// 必要に応じてエフェクト停止処理
 	}
 
 	// 状態リセット
