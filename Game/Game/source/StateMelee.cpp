@@ -62,7 +62,7 @@ namespace
 	constexpr auto RUSH_MIN_SPEED_THRESHOLD = 0.1f;		// 突進攻撃最小速度閾値(これ以下で到達とみなす)
 
 	// アニメーション制御用定数
-	constexpr auto BLEND_FRAME = 10.0f;					// アニメーションブレンドフレーム数
+	constexpr auto BLEND_FRAME = 5.0f;					// アニメーションブレンドフレーム数
 	constexpr auto ANIM_LOOP_COUNT = 0;					// アニメーションループ回数(0=無限)
 	constexpr auto ANIM_PLAY_COUNT = 1;					// アニメーション再生回数
 	constexpr auto ANIM_SPEED_NORMAL = 1.0f;			// アニメーション再生速度(通常)

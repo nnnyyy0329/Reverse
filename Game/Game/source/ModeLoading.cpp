@@ -50,8 +50,9 @@ bool ModeLoading::Initialize()
 		// 敵関連
 		{
 			// モデル
-			rs->Register("Melee", "res/Enemy/SK_enemy_00_multimotion.mv1", RESOURCE_TYPE::Model, 2.0f);
+			rs->Register("Normal", "res/Enemy/SK_enemy_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("Ranged", "res/Enemy/SK_enemy_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("Tank", "res/Enemy/test_0317.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
 			rs->Register("LifeBar", "res/GameUI/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
@@ -126,18 +127,24 @@ bool ModeLoading::Initialize()
 			rs->Register("object_locker", "res/stage/json/object_locker.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("object_kyodan", "res/stage/json/object_kyodan.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("object_blackboard", "res/stage/json/object_blackboard.mv1", RESOURCE_TYPE::Model, 1.0f);
-			// ポータル
-			rs->Register("S_Portal_0to1", "res/stage/json/S_Portal_0to1.mv1", RESOURCE_TYPE::Model, 1.0f);
-			// 敵の移動可能範囲
-			rs->Register("Enemy_Area", "res/stage/json/Enemy_Area.mv1", RESOURCE_TYPE::Model, 1.0f);
-
-			// ステージ2のモデル
 			rs->Register("SM_MERGED_BigB", "res/stage/json/SM_MERGED_BigB.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("SM_walltypeZ", "res/stage/json/SM_walltypeZ.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("SM_MERGED_BigD", "res/stage/json/SM_MERGED_BigD.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("SM_MERGED_locker", "res/stage/json/SM_MERGED_locker.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_MERGED_locker", "res/stage/json/SM_MERGED_locker.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_stairs", "res/stage/json/SM_stairs.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_floorA", "res/stage/json/stage_floorA.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_floorB", "res/stage/json/stage_floorB.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_typeDoorA", "res/stage/json/stage_wall_typeDoorA.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_typeDoorB", "res/stage/json/stage_wall_typeDoorB.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_typeDoorC", "res/stage/json/stage_wall_typeDoorC.mv1", RESOURCE_TYPE::Model, 1.0f);
+
 			// ポータル
+			rs->Register("S_Portal_0to1", "res/stage/json/S_Portal_0to1.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("S_Portal_1to2", "res/stage/json/S_Portal_1to2.mv1", RESOURCE_TYPE::Model, 1.0f);
+
+			// 敵の移動可能範囲
+			rs->Register("Enemy_Area", "res/stage/json/Enemy_Area.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// スカイスフィア
 			rs->Register("skysphereA", "res/skysphere/skysphereA.mv1", RESOURCE_TYPE::Model, 1.0f);
