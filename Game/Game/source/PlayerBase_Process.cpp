@@ -5,7 +5,7 @@
 
 namespace AnimConfig
 {
-	const float BLEND_TIME = 1.0f;	// アニメーションのブレンド時間
+	const float BLEND_TIME = 3.5f;	// アニメーションのブレンド時間
 }
 
 // 共通関数呼び出し
@@ -33,15 +33,18 @@ void PlayerBase::ProcessMovePlayer()
 	_vOldPos = _vPos;	// 前フレームの位置を保存
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
-	if(IsAttacking()){ return; }	// 攻撃中は移動入力を受け付けない
-	if(IsDodging()){ return; }		// 回避中は移動入力を受け付けない
-	if(IsHitStop()){ return; }		// 被弾中は移動入力を受け付けない
-	if(IsStateDeath()){ return; }	// 死亡中は移動入力を受け付けない
-	if(_playerState.IsStateAbsorbing()){ return; }	// 吸収攻撃中は移動入力を受け付けない
+	// 攻撃中は移動入力を受け付けない
+	if(IsAttacking()){ return; }					
 
+	// 特殊ステート中は移動入力を受け付けない(変身関連、回避、被弾や死亡)
+	if(_playerState.IsStateCombat()){ return; }		
+
+	// 吸収攻撃中は移動入力を受け付けない
+	if(_playerState.IsStateAbsorbing()){ return; }	
+
+	// 発射中でエイムモードでない場合は移動入力を受け付けない
 	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
-	bool isShooting = _playerState.IsStateShooting();	// 発射中かどうか
-	if(!isAiming && isShooting){ return; }				// 発射中でエイムモードでない場合は移動入力を受け付けない
+	if(!isAiming && _playerState.IsStateShooting()){ return; }	
 
 	// 移動処理
 	{
@@ -75,10 +78,20 @@ void PlayerBase::ProcessInputMove()
 {
 	auto& im = InputManager::GetInstance();
 
+	// 発射状態なら
+	if(_playerState.IsStateShooting())
+	{
+		// ダッシュフラグを false にする
+		_bIsDashInput = false;
+	}
+
 	// ダッシュ入力があればフラグを変える
 	if(im.IsTrigger(INPUT_ACTION::DASH))
 	{
-		_bIsDashInput = !_bIsDashInput;// ダッシュ入力フラグをトグルする
+		// 弾発射ステートならスキップ
+		if(_playerState.IsStateShooting()){ return; }
+
+		_bIsDashInput = !_bIsDashInput;// ダッシュ入力フラグを切り替える
 	}
 
 	const AnalogState& analog = im.GetAnalog();
@@ -86,10 +99,10 @@ void PlayerBase::ProcessInputMove()
 
 	float digitalX = 0.0f;
 	float digitalY = 0.0f;
-	if (im.IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
+	/*if (im.IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
 	if (im.IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
 	if (im.IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
-	if (im.IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }
+	if (im.IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }*/
 	
 	// アナログ入力による移動、なければデジタル入力
 	float inputX = (abs(analog.lx) > analogMin) ? analog.lx : digitalX;
@@ -200,7 +213,11 @@ void PlayerBase::ProcessStatusAnimation()
 				_vDir = _vMove;	// 移動方向を向く
 			}
 
-			_playerState.movementState = PLAYER_MOVEMENT_STATE::WALK;	// 歩行
+			// 弾の発射状態じゃないなら
+			if(!_playerState.IsStateShooting())
+			{
+				_playerState.movementState = PLAYER_MOVEMENT_STATE::WALK;	// 歩行
+			}
 		}
 		else // 止まっているなら
 		{
@@ -278,15 +295,17 @@ void PlayerBase::ProcessHit()
 	// 被弾時間が終了したら通常状態に戻る
 	if(_fHitTime <= 0.0f)
 	{
-		PlayerState oldStatus = _playerState; // 古いステータスを保存
+		// 古いステータスを保存
+		PlayerState oldStatus = _playerState; 
 
 		// ステータスを通常にリセット
 		_playerState.StateReset();
 
-		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// ステータスを待機に変更
+		// ステータスを待機に変更
+		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	
 
-		_fHitSpeed = 0.0f;											// 吹き飛び速度を0にする
-		_vHitDir = VGet(0, 0, 0);									// 吹き飛び方向をリセット
+		_fHitSpeed = 0.0f;			// 吹き飛び速度を0にする
+		_vHitDir = VGet(0, 0, 0);	// 吹き飛び方向をリセット
 
 		// ステータス変更後、アニメーション切り替え
 		_oldPlayerState = oldStatus;	// 古いステータスを攻撃状態に設定

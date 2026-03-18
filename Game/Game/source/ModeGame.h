@@ -29,6 +29,7 @@ class StaminaUI;
 
 class AbilitySelectScreen;
 class AbilitySelectManager;
+class AbilityActionHint;
 
 class PlayerAbsorbAttackSystem;
 
@@ -76,6 +77,7 @@ protected:
 	std::shared_ptr<DodgeSystem>			_dodgeSystem;			// 回避システム
 	std::shared_ptr<AbilitySelectScreen>	_abilitySelectScreen;	// 能力選択画面
 	std::shared_ptr<AbilitySelectManager>	_abilitySelectManager;	// 能力選択マネージャー
+	std::shared_ptr<AbilityActionHint>		_abilityActionHint;		// 能力アクションヒント
 	//std::shared_ptr<Item>					_item;                  //　アイテム
 	std::shared_ptr<PlayerUnlockManager>	_playerUnlockManager;	// プレイヤーアンロックマネージャー
 
@@ -127,7 +129,7 @@ private:
 	void CheckHitAbsorbAttack(std::shared_ptr<CharaBase> player, std::shared_ptr<CharaBase>enemy);
 
 	// キャラと吸収攻撃の当たり判定
-	void CheckHitCharaAbsorbAttack	(std::shared_ptr<CharaBase> chara, std::shared_ptr<CharaBase> owner, PlayerAbsorbAttackSystem* absorbSystem);
+	void CheckHitCharaAbsorbAttack	(std::shared_ptr<CharaBase> chara, std::shared_ptr<PlayerBase> owner, PlayerAbsorbAttackSystem* absorbSystem);
 		
 	// 攻撃所有者が自分に攻撃しているかどうか
 	bool OwnerIsAttackingOwner		(CHARA_TYPE charaType, ATTACK_OWNER_TYPE ownerType);						

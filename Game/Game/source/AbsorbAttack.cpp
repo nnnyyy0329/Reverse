@@ -2,17 +2,6 @@
 #include "CharaBase.h"
 #include "EnergyManager.h"
 
-// 吸収攻撃の設定に関する定数
-namespace AbsorbConstants
-{
-	constexpr float DEFAULT_ABSORB_RATE			= 0.5f;				// デフォルトの吸収率
-	constexpr float DEFAULT_ENERGY_ABSORB_RATE	= 0.5f;				// デフォルトのエネルギー吸収率
-	constexpr float DEFAULT_HP_ABSORB_RATE		= 0.5f;				// デフォルトのHP吸収率
-	constexpr float DEFAULT_ABSORB_RANGE		= 75.0f;			// デフォルトの吸収範囲
-	constexpr float DEFAULT_ABSORB_ANGLE		= DX_PI_F / 3.0f;	// デフォルトの吸収範囲の角度（60度）
-	constexpr int DEFAULT_ABSORB_DIVISION		= 16;				// デフォルトの吸収範囲の分割数
-}
-
 // 吸収量に関する定数
 namespace AbsorbAmount
 {
@@ -30,14 +19,15 @@ namespace AbsorbTime
 
 AbsorbAttack::AbsorbAttack() : AttackBase() // 親クラスのコンストラクタ呼び出し
 {
-	_stcAbsorbConfig.absorbRate			= AbsorbConstants::DEFAULT_ABSORB_RATE;			// 吸収率の初期化
-	_stcAbsorbConfig.energyAbsorbRate	= AbsorbConstants::DEFAULT_ENERGY_ABSORB_RATE;	// エネルギー吸収率の初期化
-	_stcAbsorbConfig.hpAbsorbRate		= AbsorbConstants::DEFAULT_HP_ABSORB_RATE;		// HP吸収率の初期化
-	_stcAbsorbConfig.absorbRange		= AbsorbConstants::DEFAULT_ABSORB_RANGE;		// 吸収範囲の初期化
-	_stcAbsorbConfig.absorbAngle		= AbsorbConstants::DEFAULT_ABSORB_ANGLE;		// 吸収範囲の角度の初期化
-	_stcAbsorbConfig.absorbDivision		= AbsorbConstants::DEFAULT_ABSORB_DIVISION;		// 吸収範囲の分割数の初期化
-	_stcAbsorbConfig.isActive			= false;										// 吸収攻撃がアクティブかどうかの初期化
-	_stcAbsorbConfig.absorbEffectName	= "";											// 吸収エフェクト名の初期化
+	_stcAbsorbConfig.absorbRate			= 0.0f;						// 吸収率の初期化
+	_stcAbsorbConfig.energyAbsorbRate	= 0.0f;						// エネルギー吸収率の初期化
+	_stcAbsorbConfig.hpAbsorbRate		= 0.0f;						// HP吸収率の初期化
+	_stcAbsorbConfig.absorbRange		= 0.0f;						// 吸収範囲の初期化
+	_stcAbsorbConfig.absorbAngle		= 0.0f;						// 吸収範囲の角度の初期化
+	_stcAbsorbConfig.absorbDivision		= 0.0f;						// 吸収範囲の分割数の初期化
+	_stcAbsorbConfig.isActive			= false;					// 吸収攻撃がアクティブかどうかの初期化
+	_stcAbsorbConfig.absorbEffectName	= "";						// 吸収エフェクト名の初期化
+	_stcAbsorbConfig.effectOffset		= VGet(0.0f, 0.0f, 0.0f);	// エフェクト位置オフセットの初期化
 
 	_fAbsorbCooldown = AbsorbTime::ABSORB_COOLDOWN;	// 吸収のクールダウン時間の初期化
 	_fAbsorbTimer = 0.0f;							// 吸収タイマーの初期化
@@ -50,7 +40,6 @@ AbsorbAttack::~AbsorbAttack()
 
 }
 
-// 更新
 bool AbsorbAttack::Process()
 {
 	// 状態更新処理
@@ -65,7 +54,6 @@ bool AbsorbAttack::Process()
 	return true;
 }
 
-// 攻撃開始
 bool AbsorbAttack::ProcessStartAttack()
 {
 	// 基底クラスの攻撃開始処理
@@ -77,20 +65,18 @@ bool AbsorbAttack::ProcessStartAttack()
 	return true;
 }
 
-// 攻撃停止
 bool AbsorbAttack::ProcessStopAttack()
 {
 	if(!IsAbsorbActive()){ return false; }	// 吸収がアクティブでない場合は処理しない
 
 	_eAttackState = ATTACK_STATE::RECOVERY;	// 状態を硬直中に遷移
 	_stcAttackCol.isActive = false;			// 攻撃判定を非アクティブにする
-	_stcAttackCol.currentTime = 0.0f;		// タイマーリセット
+	_fCurrentTime = 0.0f;		// タイマーリセット
 
 	// 吸収攻撃の停止処理は、基底クラスの攻撃停止処理を呼び出すことで完了する
 	return AttackBase::ProcessStopAttack();
 }
 
-// タイマー更新処理
 void AbsorbAttack::ProcessDecrementTimer()
 {
 	// 吸収タイマーが0以上の場合
@@ -106,8 +92,7 @@ void AbsorbAttack::ProcessDecrementTimer()
 	}
 }
 
-// 入力による吸収処理
-void AbsorbAttack::ProcessAbsorbByInput(int key)
+void AbsorbAttack::ProcessAbsorbByInput(bool key)
 {
 	// 入力がある場合のみ処理
 	if(key)
@@ -126,26 +111,23 @@ void AbsorbAttack::ProcessAbsorbByInput(int key)
 	}
 }
 
-// 吸収情報を設定する関数
 void AbsorbAttack::SetAbsorbConfig(const AbsorbConfig& config)
 {
 	_stcAbsorbConfig = config;	// 吸収設定を保存
 }
 
-// 吸収攻撃の設定取得
 AbsorbConfig AbsorbAttack::GetAbsorbConfig() const
 {
 	return _stcAbsorbConfig;	// 吸収設定を返す
 }
 
-// 吸収処理
 void AbsorbAttack::ProcessAbsorb(std::shared_ptr<CharaBase> owner)
 {
 	// 対象が有効でない場合は処理しない
 	if(!owner){ return; }	
 
 	// クールダウン中の場合は処理しない
-	if(_fAbsorbTimer > 0.0f){ return; }	
+	if(_fAbsorbTimer > 0.0f){ return; }
 
 	// 扇形データ設定
 	SectorData sectorData;
@@ -165,17 +147,18 @@ void AbsorbAttack::ProcessAbsorb(std::shared_ptr<CharaBase> owner)
 	// 吸収エフェクト処理
 	ProcessAbsorbEffect(owner->GetPos());
 
+	// 吸収サウンド処理
+	ProcessAbsorbSound(owner->GetPos());
+
 	_fAbsorbTimer = _fAbsorbCooldown;	// タイマーをリセット
 }
 
-// エネルギー吸収処理
 void AbsorbAttack::ProcessEnergyAbsorb(std::shared_ptr<CharaBase> owner)
 {
 	// エネルギー取得
 	EnergyManager::GetInstance()->AddEnergy(AbsorbAmount::ABSORB_ENERGY * _stcAbsorbConfig.energyAbsorbRate);
 }
 
-// HP吸収処理
 void AbsorbAttack::ProcessHPAbsorb(std::shared_ptr<CharaBase> owner)
 {
 	// HP吸収量計算
@@ -185,18 +168,42 @@ void AbsorbAttack::ProcessHPAbsorb(std::shared_ptr<CharaBase> owner)
 	owner->SetLife(owner->GetLife() + hpAbsorbAmount);
 }
 
-// 吸収エフェクト処理
 void AbsorbAttack::ProcessAbsorbEffect(const VECTOR& ownerPos)
 {
 	// エフェクト名が設定されている場合のみ再生
 	if(!_stcAbsorbConfig.absorbEffectName.empty())
 	{
+		//// オフセット値をワールド座標に変換
+		//VECTOR worldOffset = GeometryUtility::TransOffsetToWorld(config.effectOffset, dir);
+
+		//// オフセット値を現在の位置に適応
+		//VECTOR effectPos = VAdd(pos, worldOffset);
+
+		//// エフェクト再生して、ハンドルを取得
+		//auto handle = EffectServer::GetInstance()->Play(config.effectName, effectPos);
+
+		//// エフェクトの向きを攻撃方向に合わせる
+		//VECTOR dirNorm = VNorm(dir);							// 攻撃方向の正規化
+		//float rotY = atan2f(dirNorm.x, dirNorm.z);				// Y軸回転角度を計算
+		//VECTOR rotation = VGet(0.0f, rotY, 0.0f);				// エフェクトの回転量を設定
+		//EffectServer::GetInstance()->SetRot(handle, rotation);	// 回転量をエフェクトに適応
+
+
 		// 吸収エフェクト再生
 		EffectServer::GetInstance()->Play(_stcAbsorbConfig.absorbEffectName, ownerPos);
 	}
 }
 
-// 吸収攻撃の状態更新
+void AbsorbAttack::ProcessAbsorbSound(const VECTOR& ownerPos)
+{
+	// サウンド名が設定されている場合のみ再生
+	if(!_stcAbsorbConfig.absorbSoundName.empty())
+	{
+		// サウンド再生
+		SoundServer::GetInstance()->Play(_stcAbsorbConfig.absorbSoundName, DX_PLAYTYPE_LOOP);
+	}
+}
+
 void AbsorbAttack::ProcessAbsorbAttackState()
 {
 	// 攻撃状態に応じた処理
@@ -204,12 +211,12 @@ void AbsorbAttack::ProcessAbsorbAttackState()
 	{
 		case ATTACK_STATE::STARTUP: // 発生前状態
 		{
-			_stcAttackCol.currentTime += 1.0f;	// タイマー加算
+			_fCurrentTime += 1.0f;	// タイマー加算
 
 			// 発生遅延時間を超えた場合
-			if(_stcAttackCol.currentTime >= _stcAttackCol.attackDelay)
+			if(_fCurrentTime >= _stcAttackCol.attackDelay)
 			{
-				_stcAttackCol.currentTime = 0.0f;		// タイマーリセット
+				_fCurrentTime = 0.0f;					// タイマーリセット
 				_stcAbsorbConfig.isActive = true;		// 吸収攻撃をアクティブにする
 				_eAttackState = ATTACK_STATE::ACTIVE;	// 状態遷移
 			}
@@ -224,13 +231,13 @@ void AbsorbAttack::ProcessAbsorbAttackState()
 
 		case ATTACK_STATE::RECOVERY: // 硬直中状態
 		{
-			_stcAttackCol.currentTime += 1.0f;	// タイマー加算
+			_fCurrentTime += 1.0f;	// タイマー加算
 
 			// 後隙時間を超えた場合
-			if(_stcAttackCol.currentTime >= _stcAttackCol.recovery)
+			if(_fCurrentTime >= _stcAttackCol.attackRecovery)
 			{
 				_eAttackState = ATTACK_STATE::INACTIVE;	// 状態遷移
-				_stcAttackCol.currentTime = 0.0f;		// タイマーリセット
+				_fCurrentTime = 0.0f;					// タイマーリセット
 				ClearHitCharas();						// ヒットリストクリア
 			}
 
@@ -245,7 +252,6 @@ void AbsorbAttack::ProcessAbsorbAttackState()
 	}
 }
 
-// デバッグ描画
 void AbsorbAttack::DebugRender()
 {
 	// 吸収攻撃の吸収範囲を描画
@@ -270,7 +276,6 @@ void AbsorbAttack::DebugRender()
 	DrawAbsorbTimer();
 }
 
-// 吸収範囲の扇形描画
 void AbsorbAttack::DrawAbsorbRange(const VECTOR& ownerPos, const VECTOR& ownerDir)
 {
 	if(!_stcAbsorbConfig.isActive){ return; }	// 吸収攻撃がアクティブでない場合は描画しない
@@ -292,7 +297,6 @@ void AbsorbAttack::DrawAbsorbRange(const VECTOR& ownerPos, const VECTOR& ownerDi
 	GeometryUtility::DrawSector(sectorData, _stcAbsorbConfig.absorbDivision, fillColor, lineColor);
 }
 
-// 吸収攻撃の状態更新デバッグ描画
 void AbsorbAttack::DrawAbsorbAttackState()
 {
 	// 状態文字列の初期化
@@ -326,7 +330,6 @@ void AbsorbAttack::DrawAbsorbAttackState()
 	DrawFormatString(10, 310, GetColor(255, 255, 255), stateStr.c_str());
 }
 
-// 吸収攻撃のカウントデバッグ描画
 void AbsorbAttack::DrawAbsorbTimer()
 {
 	std::string timerStr = "Absorb Timer: " + std::to_string(_fAbsorbTimer);

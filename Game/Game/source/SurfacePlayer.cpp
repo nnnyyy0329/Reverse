@@ -99,18 +99,18 @@ PlayerConfig SurfacePlayer::GetPlayerConfig()
 	PlayerConfig config;
 
 	// 移動速度設定
-	config.crouchMoveSpeed = 2.0f;				
-	config.normalMoveSpeed = 3.0f;				
-	config.dashMoveSpeed = 2.5f;			
+	config.crouchMoveSpeed	= 2.0f;				
+	config.normalMoveSpeed	= 3.0f;				
+	config.dashMoveSpeed	= 2.5f;			
 
 	// 基礎ステータス
-	config.life = 200.0f;
-	config.maxLife = 200.0f;					
+	config.life		= 200.0f;
+	config.maxLife	= 200.0f;					
 
 	// 表示設定
-	config.drawSizeOffset = 16;					
-	config.drawOffsetX = 900;					
-	config.drawOffsetY = 0;						
+	config.drawSizeOffset	= 16;					
+	config.drawOffsetX		= 900;					
+	config.drawOffsetY		= 0;						
 
 	// モデル名
 	config.modelName = "SurfacePlayer";			
@@ -227,6 +227,11 @@ void SurfacePlayer::ProcessAbsorbSystem()
 {
 	if(!_absorbAttackSystem){ return; }
 
+	//if(_playerState.absorbState != PLAYER_ABSORB_STATE::ABSORB_READY){ return; }
+
+	// 回避状態の時は吸収の入力処理をスキップ
+	if(_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DODGE)){ return; }
+
 	// 吸収攻撃モーションの切り替え条件処理
 	ProcessChangeAbsorbMotion();
 
@@ -245,13 +250,15 @@ AbsorbConfig SurfacePlayer::GetAbsorbConfig()
 {
 	AbsorbConfig config;
 
-	config.absorbRate = 1.0f;							// 吸収率
+	config.absorbRate		= 1.0f;						// 吸収率
 	config.energyAbsorbRate = 10.0f;					// エネルギー吸収率
-	config.hpAbsorbRate = 10.0f;						// HP吸収率
-	config.absorbRange = 120.0f;						// 吸収範囲
-	config.absorbAngle = DX_PI_F / 2.0f;				// 90度の扇形
-	config.absorbDivision = 10;							// 滑らかな描画用
+	config.hpAbsorbRate		= 10.0f;					// HP吸収率(未使用)
+	config.absorbRange		= 190.0f;					// 吸収範囲
+	config.absorbAngle		= DX_PI_F / 2.9f;			// 吸収角度
+	config.absorbDivision	= 10;						// 滑らかな描画用
 	config.absorbEffectName = "SurfacePlayerAbsorb";	// 吸収エフェクト名
+	config.effectOffset = { 0.0f, 0.0f, 0.0f };			// エフェクト位置オフセット
+	config.absorbSoundName = "sPlayerAttack";			// 吸収サウンド名
 
 	return config;
 }
@@ -278,6 +285,13 @@ void SurfacePlayer::AbsorbSystemDebugRender()
 
 	// 吸収アニメーション再生時間のデバッグ表示
 	DebugDrawAbsorbAnimationTime();
+}
+
+// 吸収攻撃処理
+void SurfacePlayer::ProcessAbsorb()
+{
+	// 吸収攻撃モーションの切り替え条件処理
+	//_absorbAttackSystem->ProcessAbsorb();
 }
 
 // 吸収攻撃モーション切り替え条件処理

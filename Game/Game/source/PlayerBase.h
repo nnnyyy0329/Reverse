@@ -47,21 +47,6 @@ struct AttackConstants
 	int interiorMaxComboCount;	// 裏プレイヤー用コンボカウント
 };
 
-// 攻撃設定データ構造体
-struct AttackConfig
-{
-	VECTOR topOffset;			// コリジョン上部位置
-	VECTOR bottomOffset;		// コリジョン下部位置
-	float radius;				// 半径
-	float delay;				// 発生
-	float duration;				// 持続
-	float recovery;				// 硬直
-	float damage;				// ダメージ
-	ATTACK_STATE attackState;	// 攻撃状態
-	float attackMoveSpeed;		// 攻撃中の移動速度
-	bool canKnockback;			// 吹き飛ばし攻撃かどうか
-};
-
 // 攻撃向き設定データ構造体
 struct AttackDirAdjustConfig
 {
@@ -80,21 +65,6 @@ struct AreaAttackConfig
 	float damage;				// ダメージ
 	bool isHit;					// ヒットフラグ
 };
-
-//// 攻撃の演出関連構造体
-//struct AttackEffectConfig
-//{
-//	// エフェクト
-//	std::string effectName;		// エフェクト名
-//	VECTOR effectOffset;		// エフェクト位置オフセット
-//
-//	// サウンド
-//	std::string soundName;		// サウンド名
-//
-//	// カメラの振動
-//	float cameraShakeMagnitude;	// カメラ振動の強さ
-//	float cameraShakeDuration;	// カメラ振動時間
-//};
 
 // 基本移動アニメーション構造体
 struct PlayerMovementAnimations
@@ -238,6 +208,13 @@ struct PlayerState
 	bool IsStateAbsorbing()	const { return absorbState	 != PLAYER_ABSORB_STATE::NONE; }	// 吸収攻撃状態かどうか
 	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }	// 特殊状態かどうか
 
+	// 特定の状態かどうかをチェックする関数
+	bool IsInMovementState(PLAYER_MOVEMENT_STATE state)	const { return movementState == state; }	// 特定の移動状態かチェック
+	bool IsInAttackState(PLAYER_ATTACK_STATE state)		const { return attackState == state; }		// 特定の攻撃状態かチェック
+	bool IsInShootState(PLAYER_SHOOT_STATE state)		const { return shootState == state; }		// 特定の発射状態かチェック
+	bool IsInAbsorbState(PLAYER_ABSORB_STATE state)		const { return absorbState == state; }		// 特定の吸収状態かチェック
+	bool IsInCombatState(PLAYER_COMBAT_STATE state)		const { return combatState == state; }		// 特定の特殊状態かチェック
+
 	// 状態リセット関数
 	void StateReset()
 	{
@@ -296,10 +273,10 @@ public:
 	// ステータス文字列変換
 	std::string GetCurrentStateString() const;								// 現在の状態文字列取得
 	std::string GetMovementStateString(PLAYER_MOVEMENT_STATE state)	const;	// 基本移動の状態文字列取得
-	std::string GetAttackStateString(PLAYER_ATTACK_STATE state)	const;	// 攻撃状態の文字列取得
-	std::string GetShootStateString(PLAYER_SHOOT_STATE state)	const;	// 弾発射状態の文字列取得
-	std::string GetAbsorbStateString(PLAYER_ABSORB_STATE state)	const;	// 吸収攻撃状態の文字列取得
-	std::string GetCombatStateString(PLAYER_COMBAT_STATE state)	const;	// 特殊状態の文字列取得
+	std::string GetAttackStateString(PLAYER_ATTACK_STATE state)	const;		// 攻撃状態の文字列取得
+	std::string GetShootStateString(PLAYER_SHOOT_STATE state)	const;		// 弾発射状態の文字列取得
+	std::string GetAbsorbStateString(PLAYER_ABSORB_STATE state)	const;		// 吸収攻撃状態の文字列取得
+	std::string GetCombatStateString(PLAYER_COMBAT_STATE state)	const;		// 特殊状態の文字列取得
 
 	// 現在のアニメーション名取得
 	const char* GetCurrentAnimationName() const;
@@ -349,7 +326,9 @@ public:
 	// 状態リセット
 	void SetStateReset(){ return _playerState.StateReset(); }
 
+	// 移動ステートか
 	bool IsMoving() { return _playerState.IsStateMoving(); }
+
 
 	// プレイヤーの動作関連コンポーネントクラスを実装予定
 	// それぞれのシステムはユニークポインタで管理して実装する
@@ -357,7 +336,7 @@ public:
 protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
 	virtual AttackConstants GetAttackConstants()const{ return AttackConstants{}; };	// 攻撃定数を取得
-	virtual void GetAttackConfigs(AttackConfig configs[]){};						// 攻撃設定を取得
+	virtual void GetAttackColConfigs(AttackCollision configs[]){};					// 攻撃設定を取得
 	virtual void GetAttackColOffsetConfigs(AttackColOffset configs[]){};			// 攻撃コリジョンオフセット設定を取得
 	virtual void GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]){};		// 攻撃向き調整設定を取得
 	virtual AreaAttackConfig GetAreaAttackConfig(){ return AreaAttackConfig{}; };	// 範囲攻撃設定を取得
@@ -368,11 +347,11 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	std::vector<PLAYER_ATTACK_STATE> _attackStatuses;	// 攻撃状態配列
 
 	// 攻撃関連の初期化関数
-	void InitializeAttackData();						// 攻撃データ初期化
-	void InitializeAttackConfigs(int maxCombo);			// 攻撃設定配列初期化
-	void SetAttackStatusData(int maxCombo);				// 攻撃状態を攻撃配列に入れる
-	void CreateAttackData(int maxCombo);				// 攻撃コリジョンデータ作成	
-	void SetAttackColData(AttackConfig config, std::shared_ptr<AttackBase> attack);				// 攻撃コリジョン情報設定
+	void InitializeAttackData();				// 攻撃データ初期化
+	void InitializeAttackConfigs(int maxCombo);	// 攻撃設定配列初期化
+	void SetAttackStatusData(int maxCombo);		// 攻撃状態を攻撃配列に入れる
+	void CreateAttackData(int maxCombo);		// 攻撃コリジョンデータ作成	
+	void SetAttackColData(AttackCollision config, std::shared_ptr<AttackBase> attack);			// 攻撃コリジョン情報設定
 	void SetAttackOffsetData(AttackColOffset config, std::shared_ptr<AttackBase> attack);		// 攻撃オフセット情報設定
 	void SetCanDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃向き調整情報設定
 	void SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃エフェクト情報設定
@@ -383,7 +362,7 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	void ProcessAttack();			// 攻撃処理
 	void ProcessBranchAttack();		// 攻撃分岐処理
 	void ReceiveAttackColData();	// 攻撃コリジョンの情報受け取り関数
-	bool IsStartAttack();			// 攻撃を開始できるかチェック
+	bool CanStartAttack();			// 攻撃を開始できるかチェック
 	bool CanNextAttack();			// 次の攻撃が可能かチェック
 	bool IsAttacking();				// 攻撃中かチェック
 	bool IsAttackInput();			// 攻撃入力があるかチェック
@@ -432,6 +411,7 @@ protected:	// 回避関係 --- 今後クラスで分ける予定 ------------------------------
 	void ProcessDodge();			// 回避処理
 	void ProcessStartDodge();		// 回避開始処理
 	void ProcessEndDodge();			// 回避終了処理
+	bool CanStartDodge();			// 回避を開始できるかチェック
 	bool CanDodge();				// 回避可能かチェック
 	bool IsDodging();				// 回避中かチェック
 	bool IsInvincible();			// 無敵状態かチェック
@@ -458,10 +438,16 @@ protected:	// 死亡関係 --- 今後クラスで分ける予定 ------------------------------
 	void CallDeath();				
 
 	/// @brief 死亡処理
-	void ProcessDeath();			
+	void ProcessDeath();
+
+	/// @brief 死亡カメラ演出開始処理(テスト)
+	void StartDeathCameraEffect();
 
 	/// @brief 死亡状態更新
 	void UpdateDeathState();
+
+	/// @brief 死亡後の処理
+	void UpdateAfterDeath();
 
 	/// @brief 死亡したかチェック
 	bool IsDeath()const;
@@ -508,10 +494,9 @@ protected:
 	float	_fHitSpeedDecay;	// 被弾速度減衰
 	float	_fHitTime;			// 被弾時間
 
-	// カメラ角度
+	// カメラ関連
 	float _cameraAngle;
-
-	bool _bDeathCameraSet = false;
+	bool _bIsDeathCameraSet;
 };
 
 
