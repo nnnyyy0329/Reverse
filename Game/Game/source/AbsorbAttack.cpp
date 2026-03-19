@@ -2,20 +2,11 @@
 #include "CharaBase.h"
 #include "EnergyManager.h"
 
-// 吸収量に関する定数
-namespace AbsorbAmount
-{
-	constexpr float ABSORB_ENERGY = 1.0;	// 吸収エネルギー量
-	constexpr float ABSORB_HP = 0.5f;		// 吸収HP量
-}
+// 吸収量定数のエイリアス
+namespace AAC = AbsorbAmountConstants;	
 
-// 吸収時間に関する定数
-namespace AbsorbTime
-{
-	constexpr float ABSORB_COOLDOWN = 30.0f;		// 吸収のクールダウン時間
-	constexpr float DECREMENT_ABSORB_TIMER = 1.0f;	// 吸収タイマーの減算量
-	constexpr float ABSORB_UP_TIME = -300.0f;		// 吸収量が上昇するまでの時間
-}
+// 吸収時間に関する定数のエイリアス
+namespace ATC = AbsorbTimeConstants;
 
 AbsorbAttack::AbsorbAttack() : AttackBase() // 親クラスのコンストラクタ呼び出し
 {
@@ -29,10 +20,10 @@ AbsorbAttack::AbsorbAttack() : AttackBase() // 親クラスのコンストラクタ呼び出し
 	_stcAbsorbConfig.absorbEffectName	= "";						// 吸収エフェクト名の初期化
 	_stcAbsorbConfig.effectOffset		= VGet(0.0f, 0.0f, 0.0f);	// エフェクト位置オフセットの初期化
 
-	_fAbsorbCooldown = AbsorbTime::ABSORB_COOLDOWN;	// 吸収のクールダウン時間の初期化
-	_fAbsorbTimer = 0.0f;							// 吸収タイマーの初期化
-	_bIsInputActive = false;						// 入力が有効かどうかの初期化
-	_bIsAbsorbIncreasing = false;					// 吸収量が上昇するかのフラグの初期化
+	_fAbsorbCooldown = ATC::ABSORB_COOLDOWN;	// 吸収のクールダウン時間の初期化
+	_fAbsorbTimer = 0.0f;						// 吸収タイマーの初期化
+	_bIsInputActive = false;					// 入力が有効かどうかの初期化
+	_bIsAbsorbIncreasing = false;				// 吸収量が上昇するかのフラグの初期化
 }
 
 AbsorbAttack::~AbsorbAttack()
@@ -82,10 +73,10 @@ void AbsorbAttack::ProcessDecrementTimer()
 	// 吸収タイマーが0以上の場合
 	if(_fAbsorbTimer > 0.0f)
 	{
-		_fAbsorbTimer -= AbsorbTime::DECREMENT_ABSORB_TIMER;	// タイマーを減算
+		_fAbsorbTimer -= ATC::DECREMENT_ABSORB_TIMER;	// タイマーを減算
 
 		// 吸収量が上昇するまでの時間を、吸収時間が下回った場合
-		if(_fAbsorbTimer < AbsorbTime::ABSORB_UP_TIME)
+		if(_fAbsorbTimer <= ATC::ABSORB_UP_AMOUNT_TIME && !_bIsAbsorbIncreasing)
 		{
 			_bIsAbsorbIncreasing = true;	// 吸収量が上昇するフラグを立てる
 		}
@@ -147,13 +138,13 @@ void AbsorbAttack::ProcessAbsorb(std::shared_ptr<CharaBase> owner)
 void AbsorbAttack::ProcessEnergyAbsorb(std::shared_ptr<CharaBase> owner)
 {
 	// エネルギー取得
-	EnergyManager::GetInstance()->AddEnergy(AbsorbAmount::ABSORB_ENERGY * _stcAbsorbConfig.energyAbsorbRate);
+	EnergyManager::GetInstance()->AddEnergy(AAC::ABSORB_ENERGY * _stcAbsorbConfig.energyAbsorbRate);
 }
 
 void AbsorbAttack::ProcessHPAbsorb(std::shared_ptr<CharaBase> owner)
 {
 	// HP吸収量計算
-	float hpAbsorbAmount = AbsorbAmount::ABSORB_HP * _stcAbsorbConfig.hpAbsorbRate;
+	float hpAbsorbAmount = AAC::ABSORB_HP * _stcAbsorbConfig.hpAbsorbRate;
 
 	// HPを回復
 	owner->SetLife(owner->GetLife() + hpAbsorbAmount);

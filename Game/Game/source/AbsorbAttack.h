@@ -1,6 +1,21 @@
 #pragma once
 #include "AttackBase.h"
 
+// 吸収量に関する定数
+namespace AbsorbAmountConstants
+{
+	constexpr float ABSORB_ENERGY = 1.0;	// 吸収エネルギー量
+	constexpr float ABSORB_HP = 1.0f;		// 吸収HP量
+}
+
+// 吸収時間に関する定数
+namespace AbsorbTimeConstants
+{
+	constexpr float ABSORB_UP_AMOUNT_TIME	= 300.0f;	// 吸収量が上昇するまでの時間
+	constexpr float ABSORB_COOLDOWN			= 30.0f;	// 吸収のクールダウン時間
+	constexpr float DECREMENT_ABSORB_TIMER	= 1.0f;		// 吸収タイマーの減算量
+}
+
 // 吸収攻撃の設定構造体
 struct AbsorbConfig
 {

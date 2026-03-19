@@ -214,6 +214,10 @@ bool ModeGame::Process()
 			ModeGameOver* modeGameOver = new ModeGameOver();
 			ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
 			_stage->StopStageBGM();
+
+			// サウンド再生
+			SoundServer::GetInstance()->Play("SE_GameOver", DX_PLAYTYPE_BACK);
+
 			// この後の処理をスキップ
 			return true;
 		}

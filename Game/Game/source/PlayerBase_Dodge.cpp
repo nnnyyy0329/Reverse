@@ -71,6 +71,9 @@ void PlayerBase::ProcessDodge()
 
 		// 回避開始時にスタミナを消費
 		//StaminaManager::GetInstance()->ConsumeStamina(DODGE_STAMINA_COST);
+
+		// サウンド再生
+		SoundServer::GetInstance()->Play("SE_SurfacePlayerDodge", DX_PLAYTYPE_BACK);
 	}
 }
 
