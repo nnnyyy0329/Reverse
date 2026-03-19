@@ -26,7 +26,7 @@ bool ModeLoading::Initialize()
 			rs->Register("SurfacePlayerAbsorb", "effect/SurfacePlayer/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 			// 裏プレイヤーの攻撃エフェクト
-			rs->Register("InteriorPlayerAttack_123",	"effect/InteriorPlayer/NChange_004.efkefc",				RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("InteriorPlayerAttack_123",	"effect/InteriorPlayer/NChange_004.efkefc",				RESOURCE_TYPE::Effect, 20.0f);
 			rs->Register("InteriorPlayerFourthAttack",	"effect/InteriorPlayer/NChange_Fourth_Attack.efkefc",	RESOURCE_TYPE::Effect, 20.0f);
 			rs->Register("InteriorPlayerFifthAttack",	"effect/InteriorPlayer/NChange_Attack.efkefc",			RESOURCE_TYPE::Effect, 20.0f);
 
