@@ -7,26 +7,6 @@
 #include "CameraManager.h"
 #include "AbilitySelectScreen.h"
 
-// 変身設定用の名前空間
-namespace TransformConstants
-{
-	constexpr float TRANSFORM_TIME_INCREMENT = 1.0f;	// 変身時間の増加量
-}
-
-// 変身関連アニメーション設定用の名前空間
-namespace TransAnimConstants
-{
-	constexpr float ANIMATION_BLEND_TIME = 1.0f;	// アニメーションブレンド時間
-	constexpr int ANIMATION_LOOP = 0;				// ループあり
-	constexpr int ANIMATION_NONE_LOOP = 1;			// ループなし
-}
-
-// 能力選択関連の設定用名前空間
-namespace AbilityConfig
-{
-	constexpr int DEFAULT_ABILITY_INDEX = 0;	// デフォルトのアビリティインデックス
-}
-
 PlayerManager::PlayerManager()
 {
 	_cameraManager = nullptr;		// カメラマネージャー
@@ -277,20 +257,14 @@ void PlayerManager::SwitchPlayerImmediate(PLAYER_TYPE targetType)
 
 void PlayerManager::UpdateTransform()
 {
-	if(!_bIsTransforming){ return; }	// 変身中でなければ何もしない
+	// 変身中でなければ何もしない
+	if(!_bIsTransforming){ return; }	
 
 	// 変身タイマー更新処理
 	UpdateTransformTime();
 
 	// 変身時間による変身終了処理
 	TransformFinishByTime();
-
-	// 変身時間が最大を超えたら変身終了
-	if(_fTransformTime >= _fTransformMaxTime)
-	{
-		// 変身終了
-		EndTransform();
-	}
 }
 
 void PlayerManager::TransformFinishByTime()
@@ -315,6 +289,9 @@ void PlayerManager::TransformFinishByTime()
 				TransferPlayerConfig(oldPlayer, _activePlayer);
 			}
 		}
+
+		// 変身終了
+		EndTransform();
 
 		// 待機アニメーションに戻す
 		ReturnWaitAnim();
@@ -396,11 +373,11 @@ void PlayerManager::SwitchPlayerByTime()
 			}
 		}
 
-		// 待機アニメーションに戻す
-		ReturnWaitAnim();
-
 		// 変身解除終了
 		EndTransformCancel();
+
+		// 待機アニメーションに戻す
+		ReturnWaitAnim();
 	}
 }
 

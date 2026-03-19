@@ -65,9 +65,12 @@ void PlayerBase::SetAttackStatusData(int maxCombo)
 // 攻撃コリジョンデータ作成
 void PlayerBase::CreateAttackData(int maxCombo)
 {	
-	// 攻撃エフェクト設定配列初期化
+	// 攻撃演出の設定配列初期化
 	_attackEffectConfigs.clear();	
 	_attackEffectConfigs.reserve(maxCombo);
+
+	_attackArmConfigs.clear();
+	_attackArmConfigs.reserve(maxCombo);
 
 	// 攻撃設定取得
 	std::vector<AttackCollision>configs(maxCombo);
@@ -83,7 +86,11 @@ void PlayerBase::CreateAttackData(int maxCombo)
 
 	// 攻撃エフェクト設定取得
 	std::vector<AttackEffectConfig>effectConfigs(maxCombo);
-	GetAttackEffectConfig(effectConfigs.data());
+	GetAttackEffectConfigs(effectConfigs.data());
+
+	// 攻撃の腕情報設定
+	std::vector<AttackArmConfig> armConfigs(maxCombo);
+	GetAttackArmConfigs(armConfigs.data());
 
 	// コンボカウント回数分ループ
 	for(int i = 0; i < maxCombo; ++i)
@@ -101,6 +108,9 @@ void PlayerBase::CreateAttackData(int maxCombo)
 
 		// 攻撃エフェクトデータ設定
 		SetAttackEffectData(effectConfigs[i], attack);
+
+		// 攻撃の腕情報設定
+		SetAttackArmData(armConfigs[i], attack);
 
 		// 攻撃配列に攻撃オブジェクトを追加
 		_attacks.push_back(attack);
@@ -140,10 +150,19 @@ void PlayerBase::SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<
 	if(!attack) return;
 
 	// 攻撃エフェクトデータ設定
-	_attackEffectConfigs.push_back(config);
-
-	// 攻撃オブジェクトに攻撃エフェクトデータ設定
 	attack->SetAttackEffectConfig(config);
+
+	// 攻撃エフェクト設定配列に追加
+	_attackEffectConfigs.push_back(config);
+}
+
+// 攻撃の腕情報設定
+void PlayerBase::SetAttackArmData(AttackArmConfig config, std::shared_ptr<AttackBase> attack)
+{
+	if(!attack) return;
+
+	// 攻撃の腕情報設定
+	_attackArmConfigs.push_back(config);
 }
 
 // 攻撃Process呼び出し用関数
@@ -173,8 +192,9 @@ void PlayerBase::ProcessAttack()
 // コンボ攻撃開始の処理
 void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack)
 {
-	// 攻撃オブジェクト設定
+	// オブジェクト設定
 	attack->SetOwner(shared_from_this());
+	attack->SetCameraManager(_cameraManager);	
 
 	// コリジョン位置更新処理
 	//ProcessAttackColPos();	
@@ -190,7 +210,7 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 
 	// 攻撃エフェクト処理
 	// -1しているのは攻撃開始処理内で攻撃状態が更新されるため、次の攻撃状態を渡すため
-	ProcessAttackReaction(comboCount - 1);	// 攻撃反応処理
+	ProcessAttackReaction(comboCount - 1, attack);	// 攻撃反応処理
 
 	// 攻撃登録処理
 	ProcessAttackRegister(attack);
@@ -200,16 +220,84 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 }
 
 // 攻撃の反応処理
-void PlayerBase::ProcessAttackReaction(int attackIndex)
+void PlayerBase::ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBase> attack)
 {
 	// 有効な攻撃インデックスかチェック
 	if((attackIndex >= 0) && (attackIndex < static_cast<int>(_attackEffectConfigs.size())))
 	{
-		// 攻撃の演出設定配列を取得
+		// プレイヤー設定取得
+		const PlayerConfig& playerConfig = GetPlayerConfig();
+		
+		// 攻撃エフェクト設定取得
 		const AttackEffectConfig& config = _attackEffectConfigs[attackIndex];
 
-		// AttackEffectSystemを使用して演出実行
-		AttackEffectSystem::GetInstance()->AttackEffect(config, _vPos, _vDir);
+		// 攻撃の腕情報設定取得
+		const AttackArmConfig& armConfig = _attackArmConfigs[attackIndex];
+
+		// モデルのハンドルを取得
+		int handle = ResourceServer::GetInstance()->GetHandle(playerConfig.modelName);
+		if(handle <= 0){ return; }
+
+		// フレームインデックスを決定
+		int attachFrameIndex = -1;
+		switch(armConfig.useFromBody)
+		{
+			case 2:	// 腕以外を使用する場合
+			//{
+			//	// 現在の位置をエフェクトの座標とする
+			//	effectPos = _vPos;
+
+			//	break;
+			//}
+
+			case 1:	// 右腕を使用する場合
+			{
+				// 腕情報設定の右腕のフレームインデックスを使用
+				attachFrameIndex = armConfig.rightArmFrameIndex;
+
+				break;
+			}
+
+			case 0:	// 左腕を使用する場合
+			{
+				// 腕情報設定の左腕のフレームインデックスを使用
+				attachFrameIndex = armConfig.leftArmFrameIndex;
+
+				break;
+			}
+
+			case -1:	// 再生しない場合
+			default:
+			{
+				break;
+			}
+		}
+
+		// 初期位置
+		VECTOR initialPos = VGet(0, 0, 0);
+
+		// アニメーションマネージャーを取得
+		AnimManager* animManager = GetAnimManager();
+
+		// フレームインデックスが有効で、アニメーションマネージャーが存在する場合
+		if(attachFrameIndex >= 0 && animManager)
+		{
+			// フレームインデックスから座標を取得して初期位置とする
+			initialPos = MV1GetFramePosition(handle, attachFrameIndex);
+		}
+
+		// 座標追跡エフェクト再生
+		int effectHandle = AttackEffectSystem::GetInstance()->PlayTrackedEffect
+		(
+			config,				// エフェクト設定
+			initialPos,			// 初期位置
+			_vDir,				// 向き
+			attachFrameIndex,	// フレームインデックス
+			animManager			// アニメーションマネージャー
+		);
+
+		// 攻撃オブジェクトにエフェクトハンドルを設定
+		attack->SetEffectHandle(effectHandle);
 	}
 }
 
@@ -239,46 +327,6 @@ void PlayerBase::ProcessAttackRegister(std::shared_ptr<AttackBase> attack)
 				break;
 			}
 		}
-	}
-}
-
-// 攻撃エフェクト処理
-void PlayerBase::ProcessAttackEffect(int attackIndex, std::vector<AttackEffectConfig> configs)
-{
-	// 攻撃設定からエフェクト名とオフセットを取得
-	AttackEffectConfig& config = configs[attackIndex];
-
-	// エフェクト名が空でない場合のみ
-	if(!config.effectName.empty())
-	{
-		// オフセット値をワールド座標に変換
-		VECTOR worldOffset = GeometryUtility::TransOffsetToWorld(config.effectOffset, _vDir);
-
-		// オフセット値を現在の位置に適応
-		VECTOR effectPos = VAdd(_vPos, worldOffset);
-
-		// エフェクト再生して、ハンドルを取得
-		auto handle = EffectServer::GetInstance()->Play(config.effectName, effectPos);
-
-		// エフェクトの向きを攻撃方向に合わせる
-		VECTOR dirNorm = VNorm(_vDir);							// 攻撃方向の正規化
-		float rotY = atan2f(dirNorm.x, dirNorm.z);				// Y軸回転角度を計算
-		VECTOR rotation = VGet(0.0f, rotY, 0.0f);				// エフェクトの回転量を設定
-		EffectServer::GetInstance()->SetRot(handle, rotation);	// 回転量をエフェクトに適応
-	}
-}
-
-// 攻撃サウンド処理
-void PlayerBase::ProcessAttackSound(int attackIndex, std::vector<AttackEffectConfig> configs)
-{
-	// 攻撃設定からサウンド名を取得
-	AttackEffectConfig& config = configs[attackIndex];
-
-	// サウンド名が空でない場合のみ
-	if(!config.soundName.empty())
-	{
-		// サウンド再生
-		SoundServer::GetInstance()->Play(config.soundName, DX_PLAYTYPE_BACK);
 	}
 }
 
@@ -359,11 +407,19 @@ void PlayerBase::ProcessAttackFinish(std::shared_ptr<AttackBase> attack)
 // 攻撃過程終了
 void PlayerBase::EndAttackSequence()
 {
+	// 古いステータスを保持
+	PlayerState oldState = _playerState;
+
 	// AttackManagerから自分の攻撃を全て解除
 	AttackManager::GetInstance()->UnregisterAttackByOwner(GetInstanceId());
 
-	// 古いステータスを保持
-	PlayerState oldState = _playerState;
+	// 現在の攻撃インデックスを取得
+	int currentAttackIndex = GetAttackIndexByStatus(_playerState.attackState);
+	if(currentAttackIndex >= 0 && currentAttackIndex < static_cast<int>(_attacks.size()))
+	{
+		// 現在の攻撃オブジェクトを取得
+		auto currentAttack = _attacks[currentAttackIndex];
+	}
 
 	// 状態リセット
 	_playerState.StateReset();									// 攻撃状態リセット
@@ -387,6 +443,7 @@ void PlayerBase::ProcessNextAttack(int currentIndex)
 	// 次の攻撃が存在する場合
 	if(nextIndex < static_cast<int>(_attacks.size()))
 	{
+		_attacks[nextIndex]->SetCameraManager(_cameraManager);
  		PLAYER_ATTACK_STATE nextStatus = _attackStatuses[nextIndex];						// 次の状態取得
 		ProcessStartAttack(nextIndex + 1, _attackStatuses[nextIndex], _attacks[nextIndex]);	// 次の攻撃へ
 	}
@@ -424,11 +481,10 @@ bool PlayerBase::CanStartAttack()
 	auto& im = InputManager::GetInstance();
 
 	// 攻撃入力チェック
-	if((_playerState.IsStateMoving()								&&	// 何かしらの移動状態で
-		!_playerState.IsStateAttacking())							&&	// 攻撃状態ではなく
-		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)		&&	// 被弾中でなく
-		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DODGE)	&&	// 回避状態で
-		im.IsTrigger(INPUT_ACTION::ATTACK))								// 入力があるなら
+	if((_playerState.IsStateMoving()		&&	// 何かしらの移動状態で
+		!_playerState.IsStateAttacking()	&&	// どの攻撃状態でもなく
+		!_playerState.IsStateCombat())		&&	// どの特殊状態でもなく
+		im.IsTrigger(INPUT_ACTION::ATTACK))		// 入力があるなら
 	{
 		// 攻撃開始可能
 		return true;
@@ -448,8 +504,8 @@ bool PlayerBase::CanNextAttack()
 
 	if((_bCanCombo															&&	// コンボ可能で
 		_iComboCount < maxComboCount										&&	// 現在のコンボカウントが最大コンボ数より小さく
-		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT))			&&	// 被弾中でないなら次の攻撃が可能
-		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::TRANS_CANCEL))		// 変身解除状態でないなら
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)) &&	// 被弾中でなく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::TRANS_CANCEL))	// 変身解除状態でないなら
 	{
 		// 次の攻撃可能
 		return true;

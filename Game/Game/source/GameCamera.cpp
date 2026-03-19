@@ -98,11 +98,11 @@ void GameCamera::UpdateCamera()
 	// 左スティックの入力の大きさを計算
 	float moveInputMag = sqrtf(analog.lx * analog.lx + analog.ly * analog.ly);
 
-	// カメラの自動追従処理
-	// 移動中 && 入力が強い && カメラ操作なし
-	if (_targetObject->IsMoving() && moveInputMag > 0.5f && !isCameraOperated)
-	{
-		_fAutoFollowTimer++;
+	//// カメラの自動追従処理
+	//// 移動中 && 入力が強い && カメラ操作なし
+	//if (_targetObject->IsMoving() && moveInputMag > 0.5f && !isCameraOperated)
+	//{
+	//	_fAutoFollowTimer++;
 
 		if (_fAutoFollowTimer > AUTO_FOLLOW_TIME)
 		{
@@ -121,9 +121,9 @@ void GameCamera::UpdateCamera()
 			_fAngleH += rotSpeed;
 			_fAngleH = NormalizeAngleRad(_fAngleH);
 
-			// 垂直方向
-			// デフォルトの角度との差を計算
-			float diffV = DEFAULT_ANGLE_V - _fAngleV;
+	//		// 垂直方向
+	//		// デフォルトの角度との差を計算
+	//		float diffV = DEFAULT_ANGLE_V - _fAngleV;
 
 			float rotSpeedV = diffV * 0.03f;
 			float maxRotSpeedV = DX_PI_F / 180.0f;

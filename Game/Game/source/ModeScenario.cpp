@@ -64,6 +64,10 @@ bool ModeScenario::Process()
 	// 文字自動展開
 	if(!_textFullyShown)
 	{
+		// サウンド再生
+		SoundServer::GetInstance()->Play("BGM_OpeningScenario", DX_PLAYTYPE_LOOP);
+
+
 		_charTimer++;
 		if(_charTimer >= kCharInterval)
 		{
@@ -100,10 +104,21 @@ bool ModeScenario::Process()
 			// 最後のページを超えたらゲームへ
 			if(_pageIndex >= TEXT_COUNT)
 			{
+				// BGM停止
+				SoundServer::GetInstance()->Stop("BGM_OpeningScenario");
+
 				ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
 				ModeServer::GetInstance()->Del(this);
 			}
 		}
+	}
+
+	if(im.IsTrigger(INPUT_ACTION::SELECT_POWER))
+	{
+		SoundServer::GetInstance()->Stop("BGM_OpeningScenario");
+
+		ModeServer::GetInstance()->Add(new ModeGame(), 1, "game");
+		ModeServer::GetInstance()->Del(this);
 	}
 
 	return true;

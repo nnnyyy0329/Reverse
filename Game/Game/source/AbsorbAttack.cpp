@@ -129,15 +129,6 @@ void AbsorbAttack::ProcessAbsorb(std::shared_ptr<CharaBase> owner)
 	// クールダウン中の場合は処理しない
 	if(_fAbsorbTimer > 0.0f){ return; }
 
-	// 扇形データ設定
-	SectorData sectorData;
-
-	sectorData.center		= owner->GetPos();
-	sectorData.direction	= owner->GetDir();
-	sectorData.range		= _stcAbsorbConfig.absorbRange;
-	sectorData.angle		= _stcAbsorbConfig.absorbAngle;
-	sectorData.heightOffset = 0.0f;
-
 	// エネルギー吸収処理
 	ProcessEnergyAbsorb(owner);
 
@@ -148,7 +139,7 @@ void AbsorbAttack::ProcessAbsorb(std::shared_ptr<CharaBase> owner)
 	ProcessAbsorbEffect(owner->GetPos());
 
 	// 吸収サウンド処理
-	ProcessAbsorbSound(owner->GetPos());
+	ProcessAbsorbSound(owner);
 
 	_fAbsorbTimer = _fAbsorbCooldown;	// タイマーをリセット
 }
@@ -194,14 +185,13 @@ void AbsorbAttack::ProcessAbsorbEffect(const VECTOR& ownerPos)
 	}
 }
 
-void AbsorbAttack::ProcessAbsorbSound(const VECTOR& ownerPos)
+void AbsorbAttack::ProcessAbsorbSound(std::shared_ptr<CharaBase> owner)
 {
 	// サウンド名が設定されている場合のみ再生
-	if(!_stcAbsorbConfig.absorbSoundName.empty())
-	{
-		// サウンド再生
-		SoundServer::GetInstance()->Play(_stcAbsorbConfig.absorbSoundName, DX_PLAYTYPE_LOOP);
-	}
+	if(_stcAbsorbConfig.absorbSoundName.empty()){ return; }
+
+	// サウンド再生
+	SoundServer::GetInstance()->Play(_stcAbsorbConfig.absorbSoundName, DX_PLAYTYPE_BACK);
 }
 
 void AbsorbAttack::ProcessAbsorbAttackState()

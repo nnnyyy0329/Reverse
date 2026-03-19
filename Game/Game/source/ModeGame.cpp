@@ -60,6 +60,8 @@ bool ModeGame::Initialize()
 
 	// シングルトンインスタンスを取得
 	{
+		AttackEffectSystem::CreateInstance();
+
 		_attackManager = AttackManager::GetInstance();
 		_energyManager = EnergyManager::GetInstance();
 	}
@@ -167,6 +169,9 @@ bool ModeGame::Initialize()
 bool ModeGame::Terminate() 
 {
 	base::Terminate();
+
+	AttackEffectSystem::DestroyInstance();
+
 
 	// ライトの終了処理
 	TerminateLights();
@@ -280,9 +285,10 @@ bool ModeGame::Process()
 		//_shieldBase->Process();
 
 		// シングルトンインスタンスの更新
-		AttackManager::GetInstance()->Process();
-		BulletManager::GetInstance()->Process();
-		StaminaManager::GetInstance()->Process();
+		AttackManager::GetInstance()->Process();		// 攻撃管理
+		AttackEffectSystem::GetInstance()->Process();	// 攻撃演出システム
+		BulletManager::GetInstance()->Process();		// 弾管理
+		StaminaManager::GetInstance()->Process();		// スタミナ管理
 	}
 
 	// ライト更新
@@ -683,7 +689,8 @@ void ModeGame::RestartCurrentStage()
 		VECTOR vDir = VGet(sinf(startRot.y), 0.0f, cosf(startRot.y));
 		activePlayer->SetDir(vDir);
 
-		// ここでプレイヤーの状態をリセット
+		// プレイヤーのモーションリセット
+		
 	}
 
 	// オブジェクトのクリア

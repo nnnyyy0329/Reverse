@@ -403,24 +403,32 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 		const BulletConfig& bulletConfig = bullet->GetBulletConfig();
 
 		// 当たり判定
-		if(HitCheck_Capsule_Sphere(
+		if(HitCheck_Capsule_Sphere
+		(
 			chara->GetCollisionTop(), chara->GetCollisionBottom(), chara->GetCollisionR(),
 			bullet->GetPos(), bulletConfig.radius
-		))
+		) != false)
 		{
-			// 同一所有者の弾かチェック
-			if(IsSameOwnerBullet(myType, bulletShooterType))
-			{
-				continue; // 同じ所有者の弾はスキップ
-			}
-
-			// 当たった
+			// 同一所有者の弾ならスキップ
+			if(IsSameOwnerBullet(myType, bulletShooterType)){ continue; }
 
 			// 弾の設定からダメージを取得
 			float damage = bulletConfig.damage;
+
+			// ダメージを適用
 			chara->ApplyDamageByBullet(damage, bullet->GetShooterType());
 
-			deadBullets.push_back(bullet);// 削除リストに追加
+			// 弾のタイプが通常なら
+			if(bullet->GetBulletType() == BULLET_TYPE::NORMAL)
+			{
+				// 通常弾なら削除リストに追加
+				deadBullets.push_back(bullet);
+			}
+			// 貫通弾なら削除せずに残す
+			else if(bullet->GetBulletType() == BULLET_TYPE::PIERCING)
+			{
+				// 貫通弾は残す
+			}
 		}
 	}
 
@@ -805,7 +813,11 @@ void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::
 		if(!config.isActive){ return; }	// 吸収攻撃が有効でない場合は当たらない
 
 		// プレイヤーの吸収状態が構えではないならスキップ
-		if(owner->GetAbsorbState() != PLAYER_ABSORB_STATE::ABSORB_READY){ return; }
+		if(owner->GetAbsorbState() != PLAYER_ABSORB_STATE::ABSORB_READY ||
+			owner->GetAbsorbState() != PLAYER_ABSORB_STATE::ABSORB_ACTIVE)
+		{
+			return; 
+		}
 
 		// プレイヤーの吸収システムの更新呼び出し
 		absorbSystem->ProcessAbsorb();

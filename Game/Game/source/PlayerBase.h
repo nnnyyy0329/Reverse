@@ -12,7 +12,70 @@
 class CameraManager;
 class AbsorbAttack;
 
-// プレイヤー設定データ構造体
+/// @brief プレイヤーの基本移動状態列挙型
+enum class PLAYER_MOVEMENT_STATE
+{
+	NONE,
+	WAIT,			///< 待機
+	WALK,			///< 歩行
+	RUN,			///< 走行
+	JUMP_UP,		///< ジャンプ（上昇）
+	JUMP_DOWN,		///< ジャンプ（下降）
+	CROUCH_WAIT,	///< しゃがみ待機
+	CROUCH_WALK,	///< しゃがみ歩行
+	_EOT_,
+};
+
+/// @brief プレイヤーの攻撃状態列挙型
+enum class PLAYER_ATTACK_STATE
+{
+	NONE,
+	FIRST_ATTACK,	///< 1段目攻撃
+	SECOND_ATTACK,	///< 2段目攻撃
+	THIRD_ATTACK,	///< 3段目攻撃
+	FOURTH_ATTACK,	///< 4段目攻撃
+	FIFTH_ATTACK,	///< 5段目攻撃
+	AREA_ATTACK,	///< 範囲攻撃
+	FIRST_SKILL,	///< スキル1
+	SECOND_SKILL,	///< スキル2
+	_EOT_,
+};
+
+/// @brief プレイヤーの弾発射状態列挙型
+enum class PLAYER_SHOOT_STATE
+{
+	NONE,
+	SHOOT_READY,		///< 発射構え
+	RIGHT_ARM_SHOOT,	///< 右腕発射
+	LEFT_ARM_SHOOT,		///< 左腕発射
+	SHOOT_MOVE,			///< 発射移動
+	_EOT_,
+};
+
+/// @brief プレイヤーの吸収攻撃状態列挙型
+enum class PLAYER_ABSORB_STATE
+{
+	NONE,
+	ABSORB_READY,	///< 吸収構え
+	ABSORB_ACTIVE,	///< 吸収中
+	ABSORB_END,		///< 吸収終了
+	_EOT_,
+};
+
+/// @brief プレイヤーの特殊状態列挙型
+enum class PLAYER_COMBAT_STATE
+{
+	NONE,
+	TRANSFORM,		///< 変身
+	TRANS_CANCEL,	///< 変身解除
+	GUARD,			///< ガード
+	HIT,			///< 被弾
+	DODGE,			///< 回避
+	DEATH,			///< 死亡
+	_EOT_,
+};
+
+/// @brief プレイヤーの基本設定をまとめた構造体
 struct PlayerConfig
 {
 	// 移動速度設定
@@ -33,40 +96,48 @@ struct PlayerConfig
 	std::string modelName;	// モデル名
 };
 
-// 表示設定構造体
+/// @brief プレイヤーの表示設定をまとめた構造体
 struct RenderConfig
 {
 	const char* playerName;	// プレイヤー名
 	COLOR_U8 debugColor;	// デバッグ描画色
 };
 
-// 攻撃定数構造体
+/// @brief 攻撃に関する定数をまとめた構造体
 struct AttackConstants
 {
 	int surfaceMaxComboCount;	// 表プレイヤー用コンボカウント
 	int interiorMaxComboCount;	// 裏プレイヤー用コンボカウント
 };
 
-// 攻撃向き設定データ構造体
+/// @brief 攻撃の向き調整に関する設定をまとめた構造体
 struct AttackDirAdjustConfig
 {
 	bool canDirAdjust;	// 向き調整が可能かどうか
 };
 
-// 範囲攻撃設定データ構造体
-struct AreaAttackConfig
+/// @brief 攻撃時にどちらの腕で攻撃するかの設定をまとめた構造体
+struct AttackArmConfig
 {
-	VECTOR centerOffset;		// コリジョン中心位置オフセット
-	float radius;				// 半径
-	float height;				// 高さ
-	float delay;				// 発生
-	float duration;				// 持続
-	float recovery;				// 硬直
-	float damage;				// ダメージ
-	bool isHit;					// ヒットフラグ
+	int useFromBody;		// どの部位で再生するか(2 : 腕以外、1 : 右腕、0 : 左腕、-1 : 再生しない)
+	int rightArmFrameIndex;	// 右腕攻撃のフレームインデックス
+	int leftArmFrameIndex;	// 左腕攻撃のフレームインデックス
 };
 
-// 基本移動アニメーション構造体
+/// @brief 範囲攻撃の設定をまとめた構造体
+struct AreaAttackConfig
+{
+	VECTOR centerOffset;	// コリジョン中心位置オフセット
+	float radius;			// 半径
+	float height;			// 高さ
+	float delay;			// 発生
+	float duration;			// 持続
+	float recovery;			// 硬直
+	float damage;			// ダメージ
+	bool isHit;				// ヒットフラグ
+};
+
+/// @brief プレイヤーの基本移動アニメーションをまとめた構造体
 struct PlayerMovementAnimations
 {
 	const char* wait;        // 待機
@@ -78,7 +149,7 @@ struct PlayerMovementAnimations
 	const char* crouchWalk;  // しゃがみ歩行
 };
 
-// 攻撃アニメーション構造体
+/// @brief プレイヤーの攻撃アニメーションをまとめた構造体
 struct PlayerAttackAnimations
 {
 	const char* firstAttack;	// 1段目攻撃
@@ -91,7 +162,7 @@ struct PlayerAttackAnimations
 	const char* secondSkill;	// スキル2
 };
 
-// 弾発射アニメーション構造体
+/// @brief プレイヤーの弾発射アニメーションをまとめた構造体
 struct PlayerShootAnimations
 {
 	const char* shootReady;     // 発射構え
@@ -100,7 +171,7 @@ struct PlayerShootAnimations
 	const char* shootMove;      // 発射移動
 };
 
-// 吸収攻撃アニメーション構造体
+/// @brief プレイヤーの吸収攻撃アニメーションをまとめた構造体
 struct PlayerAbsorbAnimations
 {
 	const char* absorbReady;	// 吸収構え
@@ -108,7 +179,7 @@ struct PlayerAbsorbAnimations
 	const char* absorbEnd;		// 吸収終了
 };
 
-// 戦闘アニメーション構造体
+/// @brief プレイヤーの特殊アニメーションをまとめた構造体
 struct PlayerCombatAnimations
 {
 	const char* transform;		// 変身
@@ -119,7 +190,7 @@ struct PlayerCombatAnimations
 	const char* death;			// 死亡
 };
 
-// 統合アニメーション構造体
+/// @brief プレイヤーのアニメーションをまとめた構造体
 struct PlayerAnimations
 {
 	PlayerMovementAnimations	movement;	// 基本行動
@@ -129,70 +200,7 @@ struct PlayerAnimations
 	PlayerCombatAnimations		combat;		// 特殊
 };
 
-// 基本移動状態
-enum class PLAYER_MOVEMENT_STATE
-{
-	NONE,
-	WAIT,			// 待機
-	WALK,			// 歩行
-	RUN,			// 走行
-	JUMP_UP,		// ジャンプ（上昇）
-	JUMP_DOWN,		// ジャンプ（下降）
-	CROUCH_WAIT,	// しゃがみ待機
-	CROUCH_WALK,	// しゃがみ歩行
-	_EOT_,
-};
-
-// 攻撃状態
-enum class PLAYER_ATTACK_STATE
-{
-	NONE,
-	FIRST_ATTACK,		// 1段目攻撃
-	SECOND_ATTACK,		// 2段目攻撃
-	THIRD_ATTACK,		// 3段目攻撃
-	FOURTH_ATTACK,		// 4段目攻撃
-	FIFTH_ATTACK,		// 5段目攻撃
-	AREA_ATTACK,		// 範囲攻撃
-	FIRST_SKILL,		// スキル1
-	SECOND_SKILL,		// スキル2
-	_EOT_,
-};
-
-// 弾の発射状態
-enum class PLAYER_SHOOT_STATE
-{
-	NONE,
-	SHOOT_READY,		// 発射構え
-	RIGHT_ARM_SHOOT,	// 右腕発射
-	LEFT_ARM_SHOOT,		// 左腕発射
-	SHOOT_MOVE,			// 発射移動
-	_EOT_,
-};
-
-// 吸収攻撃状態列挙型を追加
-enum class PLAYER_ABSORB_STATE
-{
-	NONE,
-	ABSORB_READY,		// 吸収構え
-	ABSORB_ACTIVE,		// 吸収中
-	ABSORB_END,			// 吸収終了
-	_EOT_,
-};
-
-// 特殊状態
-enum class PLAYER_COMBAT_STATE
-{
-	NONE,
-	TRANSFORM,		// 変身
-	TRANS_CANCEL,	// 変身解除
-	GUARD,			// ガード
-	HIT,			// 被弾
-	DODGE,			// 回避
-	DEATH,			// 死亡
-	_EOT_,
-};
-
-// 統合状態管理構造体
+/// @brief プレイヤーの状態をまとめた構造体
 struct PlayerState
 {
 	PLAYER_MOVEMENT_STATE	movementState;	// 基本移動状態
@@ -226,6 +234,7 @@ struct PlayerState
 	}
 };
 
+/// @brief プレイヤーの基底クラス
 class PlayerBase : public CharaBase
 {
 public:
@@ -237,8 +246,18 @@ public:
 	virtual bool	Process();		// 更新
 	virtual bool	Render();		// 描画
 
-	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)override;	// 被ダメージ処理
-	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾での被ダメージ処理
+	/// @brief 被ダメージ処理関数
+	///
+	/// @param fDamage ダメージ量
+	/// @param eType 攻撃の所有者タイプ
+	/// @param attackInfo 攻撃コリジョン情報
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)override;	
+
+	/// @brief 弾による被ダメージ処理関数
+	/// 
+	/// @param fDamage ダメージ量
+	/// @param chara 弾のキャラタイプ
+	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										
 
 	// 共通初期化
 	void InitializePlayerConfig(PlayerConfig& config);			// プレイヤー設定初期化
@@ -339,14 +358,15 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	virtual void GetAttackColConfigs(AttackCollision configs[]){};					// 攻撃設定を取得
 	virtual void GetAttackColOffsetConfigs(AttackColOffset configs[]){};			// 攻撃コリジョンオフセット設定を取得
 	virtual void GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]){};		// 攻撃向き調整設定を取得
-	virtual AreaAttackConfig GetAreaAttackConfig(){ return AreaAttackConfig{}; };	// 範囲攻撃設定を取得
-	virtual void GetAttackEffectConfig(AttackEffectConfig configs[]){};				// 演出設定を取得
+	virtual AreaAttackConfig GetAreaAttackConfigs(){ return AreaAttackConfig{}; };	// 範囲攻撃設定を取得
+	virtual void GetAttackEffectConfigs(AttackEffectConfig configs[]){};				// 演出設定を取得
+	virtual void GetAttackArmConfigs(AttackArmConfig config[]){};					// 攻撃の腕設定を取得
 
 	// 攻撃システム
 	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列
 	std::vector<PLAYER_ATTACK_STATE> _attackStatuses;	// 攻撃状態配列
 
-	// 攻撃関連の初期化関数
+	// 攻撃関連の情報設定関数
 	void InitializeAttackData();				// 攻撃データ初期化
 	void InitializeAttackConfigs(int maxCombo);	// 攻撃設定配列初期化
 	void SetAttackStatusData(int maxCombo);		// 攻撃状態を攻撃配列に入れる
@@ -355,6 +375,7 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	void SetAttackOffsetData(AttackColOffset config, std::shared_ptr<AttackBase> attack);		// 攻撃オフセット情報設定
 	void SetCanDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃向き調整情報設定
 	void SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<AttackBase> attack);	// 攻撃エフェクト情報設定
+	void SetAttackArmData(AttackArmConfig config, std::shared_ptr<AttackBase> attack);			// 攻撃の腕設定情報設定
 
 	// PlayerBase_Attack.cppで定義
 	void CallProcessAttack();		// 攻撃関係Process呼び出し用関数
@@ -367,11 +388,9 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	bool IsAttacking();				// 攻撃中かチェック
 	bool IsAttackInput();			// 攻撃入力があるかチェック
 
-	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);				// 攻撃開始処理
-	void ProcessAttackReaction(int attackIndex);										// 攻撃反応処理
+	void ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack);	// 攻撃開始処理
+	void ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBase> attack);	// 攻撃反応処理
 	void ProcessAttackRegister(std::shared_ptr<AttackBase> attack);						// 攻撃登録処理
-	void ProcessAttackEffect(int attackIndex, std::vector<AttackEffectConfig> configs);	// 攻撃エフェクト処理
-	void ProcessAttackSound(int attackIndex, std::vector<AttackEffectConfig> configs);	// 攻撃サウンド処理
 	void ProcessComboAttack(int attackIndex);											// コンボ攻撃処理
 	void ProcessAttackFinish(std::shared_ptr<AttackBase> attack);						// 攻撃終了処理
 	void EndAttackSequence();															// 攻撃課程修了
@@ -383,6 +402,7 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 
 	// 各攻撃の演出設定を保存
 	std::vector<AttackEffectConfig> _attackEffectConfigs;  
+	std::vector<AttackArmConfig> _attackArmConfigs;
 
 	// 攻撃コリジョン情報の受け取り用
 	VECTOR _vAttackColTop;
@@ -495,8 +515,8 @@ protected:
 	float	_fHitTime;			// 被弾時間
 
 	// カメラ関連
-	float _cameraAngle;
-	bool _bIsDeathCameraSet;
+	float	_cameraAngle;
+	bool	_bIsDeathCameraSet;
 };
 
 

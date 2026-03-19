@@ -114,8 +114,8 @@ private:	// 内部処理
 
 	/// @brief 吸収サウンド処理
 	///
-	/// @param ownerPos 所有者の位置
-	void ProcessAbsorbSound(const VECTOR& ownerPos);
+	/// @param owner 吸収攻撃の所有者キャラクター
+	void ProcessAbsorbSound(std::shared_ptr<CharaBase> owner);
 
 	/// @brief 吸収攻撃の状態更新処理
 	void ProcessAbsorbAttackState();

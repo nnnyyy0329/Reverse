@@ -52,6 +52,9 @@ bool ModeEndingText::Process()
 		return true;
 	}
 
+	// サウンド再生
+	SoundServer::GetInstance()->Play("BGM_Ending", DX_PLAYTYPE_LOOP);
+
 	// 文字自動展開
 	if(!_textFullyShown)
 	{
@@ -83,6 +86,9 @@ bool ModeEndingText::Process()
 		}
 		else
 		{
+			// サウンド停止
+			SoundServer::GetInstance()->Stop("BGM_Ending");
+
 			// もう一回確定でLOGOへ
 			ModeServer::GetInstance()->Clear();
 			ModeServer::GetInstance()->Add(new ModeLogo(), 100, "logo");
