@@ -170,8 +170,8 @@ void AimCamera::ControlAimCamera()
 void AimCamera::DrawAimCursor()
 {
 	// カーソルの位置
-	int screenCenterX = 1920 / 2;// 画面中央座標
-	int screenCenterY = 1080 / 2;// 画面中央座標
+	int screenCenterX = 1920 / 2.15f;// 画面中央座標
+	int screenCenterY = 1080 / 1.8f;// 画面中央座標
 	int cursorSize = 20;// カーソルサイズ
 
 	// 十字カーソル描画
