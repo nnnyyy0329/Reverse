@@ -3,6 +3,7 @@
 #include "AttackManager.h"
 #include "AttackEffectSystem.h"
 #include "EnergyManager.h"
+#include "BulletManager.h"
 
 /// @brief キャラクターベースクラス
 enum class CHARA_TYPE
@@ -74,7 +75,7 @@ public:
 
 	// 被ダメージ処理
 	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo);	// 攻撃による被ダメージ処理
-	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE eType);										// 弾による被ダメージ処理
+	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE charaType, BULLET_TYPE bulletType);			// 弾による被ダメージ処理
 	
 
 	void SetIsStanding(bool b) { _bIsStanding = b; }

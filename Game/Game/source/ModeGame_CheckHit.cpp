@@ -416,7 +416,7 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 			float damage = bulletConfig.damage;
 
 			// ダメージを適用
-			chara->ApplyDamageByBullet(damage, bullet->GetShooterType());
+			chara->ApplyDamageByBullet(damage, bullet->GetShooterType(), bullet->GetBulletType());
 
 			// 弾のタイプが通常なら
 			if(bullet->GetBulletType() == BULLET_TYPE::NORMAL)
@@ -769,23 +769,19 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 }
 
 // 吸収攻撃の当たり判定チェック関数
-void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<CharaBase> player, std::shared_ptr<CharaBase>enemy)
+void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<PlayerBase> player, std::shared_ptr<CharaBase>enemy)
 {
 	if(!player || !enemy){ return; }
-	
-	// SurfacePlayerかチェック
-	auto surfacePlayer = std:: dynamic_pointer_cast<SurfacePlayer>(player);
-	if(!surfacePlayer){ return; }
 
 	// 吸収攻撃システムを取得
-	PlayerAbsorbAttackSystem* absorbSystemConst = surfacePlayer->GetAbsorbAttackSystem();
+	PlayerAbsorbAttackSystem* absorbSystemConst = player->GetAbsorbAttackSystem();
 	if(!absorbSystemConst) { return; }
 
 	// 吸収攻撃がアクティブかチェック
 	if(!absorbSystemConst->IsAbsorbActive()){ return; }
 
 	// 吸収の所有者を渡して判定
-	CheckHitCharaAbsorbAttack(enemy, surfacePlayer, absorbSystemConst);
+	CheckHitCharaAbsorbAttack(enemy, player, absorbSystemConst);
 }
 
 // キャラと吸収攻撃の当たり判定
@@ -812,8 +808,8 @@ void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::
 	{
 		if(!config.isActive){ return; }	// 吸収攻撃が有効でない場合は当たらない
 
-		// プレイヤーの吸収状態が構えではないならスキップ
-		if(owner->GetAbsorbState() != PLAYER_ABSORB_STATE::ABSORB_READY ||
+		// プレイヤーの吸収状態が構えか有効状態ではないならスキップ
+		if(owner->GetAbsorbState() != PLAYER_ABSORB_STATE::ABSORB_READY &&
 			owner->GetAbsorbState() != PLAYER_ABSORB_STATE::ABSORB_ACTIVE)
 		{
 			return; 
