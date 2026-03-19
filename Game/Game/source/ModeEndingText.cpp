@@ -30,6 +30,9 @@ bool ModeEndingText::Initialize()
 bool ModeEndingText::Terminate()
 {
 	base::Terminate();
+
+	ResourceServer::GetInstance()->Terminate();  // リソースサーバーの終了
+
 	return true;
 }
 

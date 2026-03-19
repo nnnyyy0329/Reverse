@@ -170,13 +170,19 @@ bool ModeGame::Terminate()
 {
 	base::Terminate();
 
+	AttackManager::DestroyInstance();
 	AttackEffectSystem::DestroyInstance();
+	EnergyManager::DestroyInstance();
+	BulletManager::DestroyInstance();
+	StaminaManager::DestroyInstance();
 
+	_stage.reset();
 
 	// ライトの終了処理
 	TerminateLights();
 
 	// プレイヤー開放
+	_playerManager->Terminate();
 	_playerManager.reset();
 
 	return true;
@@ -370,6 +376,7 @@ bool ModeGame::Process()
 		if(_stage->IsAllEnemiesDefeated())
 		{
 			ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
+			
 			ModeServer::GetInstance()->Del(this);
 			return true;
 		}
