@@ -44,7 +44,7 @@ public:
 	///
 	/// @param fDamage ダメージ量
 	/// @param chara 弾のキャラタイプ
-	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;
+	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara, BULLET_TYPE bulletType)override;
 
 
 	/* 純粋仮想関数のオーバーライド */

@@ -3,7 +3,9 @@
 #include "AttackManager.h"
 #include "AttackEffectSystem.h"
 #include "EnergyManager.h"
-#include "BulletManager.h"
+
+// 前方宣言
+class BulletManager;
 
 /// @brief キャラクターベースクラス
 enum class CHARA_TYPE

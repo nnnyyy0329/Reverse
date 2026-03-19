@@ -56,7 +56,7 @@ public:
 
 	// ”íƒ_ƒ[ƒWˆ—
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;
-	void ApplyDamageByBullet(float fDamage, CHARA_TYPE eType) override;
+	void ApplyDamageByBullet(float fDamage, CHARA_TYPE eType, BULLET_TYPE bulletType) override;
 
 	// €–S”»’è
 	bool IsDead();

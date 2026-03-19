@@ -62,10 +62,10 @@ void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const A
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
 }
 
-void InteriorPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
+void InteriorPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara, BULLET_TYPE bulletType)
 {
 	// 基底クラスの弾による被ダメージ処理を呼び出す
-	PlayerBase::ApplyDamageByBullet(fDamage, chara);
+	PlayerBase::ApplyDamageByBullet(fDamage, chara, bulletType);
 }
 
 PlayerConfig InteriorPlayer::GetPlayerConfig()

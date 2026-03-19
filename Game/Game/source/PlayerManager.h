@@ -104,11 +104,6 @@ public:
 	/// @param targetType 変身先のプレイヤータイプ
 	void StartTransform(PLAYER_TYPE targetType);				
 
-	/// @brief 即時変身処理
-	///
-	/// @param targetType 変身先のプレイヤータイプ
-	void SwitchPlayerImmediate(PLAYER_TYPE targetType);			
-
 	/// @brief 変身処理
 	void UpdateTransform();										
 
@@ -234,7 +229,7 @@ protected:
 	float _fTransformCancelMaxTime;	// 変身解除にかかる時間
 	bool _bIsTransformCanceling;	// 変身解除中か
 
-	// プレイヤー切り替え時の状態引き継ぎフラグ
-	bool _bEnableStateTransfer;		
+	
+	bool _bEnableStateTransfer;		// プレイヤー切り替え時の状態引き継ぎフラグ
 
 };

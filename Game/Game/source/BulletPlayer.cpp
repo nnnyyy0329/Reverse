@@ -96,10 +96,10 @@ void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const Att
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
 }
 
-void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
+void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara, BULLET_TYPE bulletType)
 {
 	// 基底クラスの弾による被ダメージ処理を呼び出す
-	PlayerBase::ApplyDamageByBullet(fDamage, chara);
+	PlayerBase::ApplyDamageByBullet(fDamage, chara, bulletType);
 }
 
 PlayerConfig BulletPlayer::GetPlayerConfig()

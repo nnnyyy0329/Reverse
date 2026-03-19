@@ -195,15 +195,6 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 	// 変身フラグ有効
 	_bIsTransforming = true;	
 
-	// 表プレイヤーへの切り替えは即時切り替え
-	if(targetType == PLAYER_TYPE::SURFACE)
-	{
-		// 即時切り替え
-		SwitchPlayerImmediate(targetType);
-
-		return;
-	}
-
 	// プレイヤータイプごとの変身サウンド再生
 	if(targetType == PLAYER_TYPE::INTERIOR)
 	{
@@ -230,29 +221,6 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 
 	// 変身アニメーション再生
 	PlayTransConnectionAnim(playerAnim.combat.transform);				
-}
-
-void PlayerManager::SwitchPlayerImmediate(PLAYER_TYPE targetType)
-{
-	auto player = _players.find(targetType);
-	if(player == _players.end()){ return; }	// プレイヤーが存在しないなら
-	
-	if(_eActivePlayerType == targetType){ return; }	// 現在のタイプと次のタイプが一致しないならスキップ
-
-	PlayerBase* oldPlayer = _activePlayer;			// 古いプレイヤー
-	PlayerBase* newPlayer = player->second.get();	// 新しいプレイヤー
-
-	// プレイヤーを切り替え
-	_activePlayer = newPlayer;									// 有効プレイヤーを新しいプレイヤーにする
-	_activePlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);	// 特殊状態をリセット
-	_eActivePlayerType = targetType;							// アクティブプレイヤータイプを変更
-
-	// 状態の引き継ぎ
-	if(_bEnableStateTransfer && oldPlayer && newPlayer)
-	{
-		// 位置と状態の引き継ぎ
-		TransferPlayerConfig(oldPlayer, newPlayer);
-	}
 }
 
 void PlayerManager::UpdateTransform()
@@ -452,6 +420,12 @@ void PlayerManager::TransferPlayerConfig(PlayerBase* oldPlayer, PlayerBase* newP
 
 	// 待機状態に設定
 	newPlayer->SetMovementState(PLAYER_MOVEMENT_STATE::WAIT);	
+
+	if(_bIsTransforming || _bIsTransformCanceling)
+	{
+		// 体力をマックス体力にする
+
+	}
 
 	// プレイヤー切り替え時に、強制的にエイムモードを終了する
 	if (_cameraManager) 

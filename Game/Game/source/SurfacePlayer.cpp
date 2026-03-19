@@ -86,10 +86,10 @@ void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const At
 }
 
 // 弾での被ダメージ処理
-void SurfacePlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
+void SurfacePlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara, BULLET_TYPE bulletType)
 {
 	// 基底クラスの弾での被ダメージ処理呼び出し
-	PlayerBase::ApplyDamageByBullet(fDamage, chara);
+	PlayerBase::ApplyDamageByBullet(fDamage, chara, bulletType);
 }
 
 // 表プレイヤーの情報設定

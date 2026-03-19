@@ -230,10 +230,10 @@ void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const Attac
 }
 
 // 弾での被ダメージ処理
-void PlayerBase::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
+void PlayerBase::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara, BULLET_TYPE bulletType)
 {
 	// 親クラスの被ダメージ処理呼び出し
-	CharaBase::ApplyDamageByBullet(fDamage, chara);
+	CharaBase::ApplyDamageByBullet(fDamage, chara, bulletType);
 
 	// 被弾状態に変更
 	_playerState.combatState = PLAYER_COMBAT_STATE::HIT;

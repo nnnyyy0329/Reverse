@@ -258,7 +258,7 @@ public:
 	/// 
 	/// @param fDamage ダメージ量
 	/// @param chara 弾のキャラタイプ
-	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										
+	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara, BULLET_TYPE bulletType)override;										
 
 	// 共通初期化
 	void InitializePlayerConfig(PlayerConfig& config);			// プレイヤー設定初期化

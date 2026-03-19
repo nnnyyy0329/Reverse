@@ -525,7 +525,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackColl
 	ChangeState(std::make_unique<Common::Damage>());
 }
 
-void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
+void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType,  BULLET_TYPE bulletType)
 {
 	ApplyDamage(fDamage, ATTACK_OWNER_TYPE::NONE, AttackCollision());
 }

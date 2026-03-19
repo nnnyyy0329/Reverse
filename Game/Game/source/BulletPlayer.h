@@ -65,7 +65,8 @@ public:
 	///
 	/// @param fDamage ダメージ量
 	/// @param char 弾のキャラタイプ
-	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										
+	/// @param bulletType 弾のタイプ
+	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara, BULLET_TYPE bulletType)override;
 
 	// 純粋仮想関数のオーバーライド
 	virtual PlayerConfig		GetPlayerConfig()		override;	// 設定を取得
