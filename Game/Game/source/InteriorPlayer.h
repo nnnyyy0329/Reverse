@@ -8,7 +8,7 @@ namespace InteriorAttackConstants
 {
 	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;		// 裏プレイヤー用コンボカウント
 
-	constexpr float REVERSE_EFFECT_ROT = 90.0f;	// エフェクトの回転を反転
+	constexpr float REVERSE_EFFECT_ROT = 180.0f;	// エフェクトの回転を反転
 }
 
 // 攻撃腕のパラメーター

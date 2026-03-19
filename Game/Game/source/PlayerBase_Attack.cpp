@@ -241,52 +241,49 @@ void PlayerBase::ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBa
 		int handle = ResourceServer::GetInstance()->GetHandle(playerConfig.modelName);
 		if(handle <= 0){ return; }
 
-		// フレームインデックスを決定
-		int attachFrameIndex = -1;
-		switch(armConfig.useFromBody)
-		{
-			case 2:	// 腕以外を使用する場合
-			//{
-			//	// 現在の位置をエフェクトの座標とする
-			//	effectPos = _vPos;
-
-			//	break;
-			//}
-
-			case 1:	// 右腕を使用する場合
-			{
-				// 腕情報設定の右腕のフレームインデックスを使用
-				attachFrameIndex = armConfig.rightArmFrameIndex;
-
-				break;
-			}
-
-			case 0:	// 左腕を使用する場合
-			{
-				// 腕情報設定の左腕のフレームインデックスを使用
-				attachFrameIndex = armConfig.leftArmFrameIndex;
-
-				break;
-			}
-
-			case -1:	// 再生しない場合
-			default:
-			{
-				break;
-			}
-		}
-
-		// 初期位置
-		VECTOR initialPos = VGet(0, 0, 0);
-
 		// アニメーションマネージャーを取得
 		AnimManager* animManager = GetAnimManager();
+		if(!animManager){ return; }
 
-		// フレームインデックスが有効で、アニメーションマネージャーが存在する場合
-		if(attachFrameIndex >= 0 && animManager)
+		// 初期位置
+		VECTOR initialPos = VGet(0.0f, 0.0f, 0.0f);
+
+		// フレームインデックスを決定
+		int attachFrameIndex = -1;
+
+		// エフェクトの追跡タイプに応じて初期位置とフレームインデックスを設定
+		switch(config.attachType)
 		{
-			// フレームインデックスから座標を取得して初期位置とする
-			initialPos = MV1GetFramePosition(handle, attachFrameIndex);
+			case EFFECT_ATTACH_TYPE::CHARACTER_OFFSET: // キャラの位置 + オフセット
+			{
+				// キャラクター位置 + オフセット
+				initialPos = VAdd(_vPos, config.effectOffset);
+
+				break;
+			}
+
+			case EFFECT_ATTACH_TYPE::LEFT_ARM: // 左腕
+			{
+				// 左腕のフレームインデックス
+				attachFrameIndex = armConfig.leftArmFrameIndex;
+				initialPos = MV1GetFramePosition(handle, attachFrameIndex);
+
+				break;
+			}
+
+			case EFFECT_ATTACH_TYPE::RIGHT_ARM: // 右腕
+			{
+				// 右腕のフレームインデックス
+				attachFrameIndex = armConfig.rightArmFrameIndex;
+				initialPos = MV1GetFramePosition(handle, attachFrameIndex);
+
+				break;
+			}
+
+			case EFFECT_ATTACH_TYPE::NONE:
+			default:
+				// 処理をスキップ
+				return;
 		}
 
 		// 座標追跡エフェクト再生

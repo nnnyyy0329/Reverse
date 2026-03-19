@@ -120,7 +120,6 @@ struct AttackDirAdjustConfig
 /// @brief 攻撃時にどちらの腕で攻撃するかの設定をまとめた構造体
 struct AttackArmConfig
 {
-	int useFromBody;		// どの部位で再生するか(2 : 腕以外、1 : 右腕、0 : 左腕、-1 : 再生しない)
 	int rightArmFrameIndex;	// 右腕攻撃のフレームインデックス
 	int leftArmFrameIndex;	// 左腕攻撃のフレームインデックス
 };

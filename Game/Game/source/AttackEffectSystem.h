@@ -6,15 +6,26 @@
 // 前方宣言
 class CharaBase;
 
+// @brief エフェクトのアタッチタイプ列挙型
+enum class EFFECT_ATTACH_TYPE
+{
+	NONE,				
+	LEFT_ARM,			///< 左腕フレーム位置
+	RIGHT_ARM,			///< 右腕フレーム位置
+	CHARACTER_OFFSET,	///< キャラクター位置 + オフセット
+	_EOT_,
+};
+
 /// @brief 攻撃の演出設定構造体
 struct AttackEffectConfig
 {
 	// エフェクト設定
-	bool isActiveEffect;	// エフェクトを有効にするか
-	std::string effectName;	// エフェクト名
-	VECTOR effectOffset;	// エフェクト位置オフセット
-	VECTOR effectRotation;	// エフェクト回転
-	
+	bool isActiveEffect;			// エフェクトを有効にするか
+	std::string effectName;			// エフェクト名
+	VECTOR effectOffset;			// エフェクト位置オフセット
+	VECTOR effectRotation;			// エフェクト回転
+	EFFECT_ATTACH_TYPE attachType;	// エフェクトのアタッチタイプ
+
 	// サウンド設定
 	bool isActiveSound;		// サウンドを有効にするか
 	std::string soundName;	// サウンド名
@@ -46,6 +57,7 @@ struct TrackedEffectInfo
 	AnimManager* animManager;		// アニメーションマネージャー
 	std::weak_ptr<CharaBase> owner;	// 所有者キャラの弱参照
 	bool useOwnerDirection = false;	// 所有者の向きを基準とするか(最初から false )
+	EFFECT_ATTACH_TYPE attachType;	// エフェクトのアタッチタイプ
 };
 
 /// @brief 攻撃の演出システムクラス
@@ -105,10 +117,15 @@ public:
 	/// @param effectHandle 停止するエフェクトのハンドル
 	void StopEffect(int effectHandle);
 
+	/// @brief 追跡エフェクトの位置計算処理
+	///
+	/// @param info 追跡エフェクトの情報構造体
+	VECTOR UpdateCalculatePos(const TrackedEffectInfo& info);
+
 	/// @brief 追跡エフェクトの回転計算処理
 	///
 	/// @param info 追跡エフェクトの情報構造体
-	VECTOR UpdateCalculateRot(TrackedEffectInfo& info);
+	VECTOR UpdateCalculateRot(const TrackedEffectInfo& info);
 
 	/// @brief エフェクトの演出処理
 	///

@@ -321,10 +321,11 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 	config[0] =
 	{
 		/* エフェクト */
-		config[0].isActiveEffect	= true,										// エフェクトを有効にするか
-		config[0].effectName		= "InteriorPlayerAttack_123",				// エフェクト名
-		config[0].effectOffset		= { 0.0f, 0.0f, 0.0f },						// エフェクト位置オフセット
-		config[0].effectRotation	= { 0.0f, IA::REVERSE_EFFECT_ROT, 0.0f },	// エフェクト回転オフセット
+		config[0].isActiveEffect	= true,							// エフェクトを有効にするか
+		config[0].effectName		= "InteriorPlayerAttack_123",	// エフェクト名
+		config[0].effectOffset		= { 0.0f, 0.0f, 0.0f },			// エフェクト位置オフセット
+		config[0].effectRotation	= { 0.0f, 180.0f, 0.0f },		// エフェクト回転オフセット
+		config[0].attachType		= EFFECT_ATTACH_TYPE::LEFT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
 		config[0].isActiveSound = true,				// サウンドを有効にするか
@@ -344,10 +345,11 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 	config[1] =
 	{
 		/* エフェクト */
-		config[1].isActiveEffect	= true,										// エフェクトを有効にするか
-		config[1].effectName		= "InteriorPlayerAttack_123",				// エフェクト名
-		config[1].effectOffset		= { 0.0f, 0.0f, 0.0f },						// エフェクト位置オフセット
-		config[1].effectRotation	= { 0.0f, IA::REVERSE_EFFECT_ROT, 0.0f },	// エフェクト回転オフセット
+		config[1].isActiveEffect	= true,								// エフェクトを有効にするか
+		config[1].effectName		= "InteriorPlayerAttack_123",		// エフェクト名
+		config[1].effectOffset		= { 0.0f, 0.0f, 0.0f },				// エフェクト位置オフセット
+		config[1].effectRotation	= { 0.0f, 90.0f, 0.0f },			// エフェクト回転オフセット
+		config[1].attachType		= EFFECT_ATTACH_TYPE::RIGHT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
 		config[1].isActiveSound = true,				// サウンドを有効にするか
@@ -367,10 +369,11 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 	config[2] =
 	{
 		/* エフェクト */
-		config[2].isActiveEffect	= true,										// エフェクトを有効にするか
-		config[2].effectName		= "InteriorPlayerAttack_123",				// エフェクト名
-		config[2].effectOffset		= { 0.0f, 0.0f, 0.0f },						// エフェクト位置オフセット
-		config[2].effectRotation	= { 0.0f, IA::REVERSE_EFFECT_ROT, 0.0f },	// エフェクト回転オフセット
+		config[2].isActiveEffect	= true,							// エフェクトを有効にするか
+		config[2].effectName		= "InteriorPlayerAttack_123",	// エフェクト名
+		config[2].effectOffset		= { 0.0f, 0.0f, 0.0f },			// エフェクト位置オフセット
+		config[2].effectRotation	= { 90.0f, 0.0f, 0.0f },		// エフェクト回転オフセット
+		config[2].attachType		= EFFECT_ATTACH_TYPE::LEFT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
 		config[2].isActiveSound = true,				// サウンドを有効にするか
@@ -390,10 +393,11 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 	config[3] =
 	{
 		/* エフェクト */
-		config[3].isActiveEffect	= true,							// エフェクトを有効にするか
-		config[3].effectName		= "InteriorPlayerFourthAttack",	// エフェクト名
-		config[3].effectOffset		= { 0.0f, 0.0f, 0.0f },			// エフェクト位置オフセット
-		config[3].effectRotation	= { 0.0f, 90.0f, 0.0f },		// エフェクト回転オフセット
+		config[3].isActiveEffect	= true,									// エフェクトを有効にするか
+		config[3].effectName		= "InteriorPlayerFourthAttack",			// エフェクト名
+		config[3].effectOffset		= { 0.0f, 150.0f, 0.0f },				// エフェクト位置オフセット
+		config[3].effectRotation	= { 0.0f, -90.0f, 0.0f },				// エフェクト回転オフセット
+		config[3].attachType		= EFFECT_ATTACH_TYPE::CHARACTER_OFFSET,	// エフェクトの追従方法
 
 		/* サウンド */
 		config[3].isActiveSound = true,				// サウンドを有効にするか
@@ -413,10 +417,11 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 	config[4] =
 	{
 		/* エフェクト */
-		config[4].isActiveEffect	= true,										// エフェクトを有効にするか
-		config[4].effectName		= "InteriorPlayerFifthAttack",				// エフェクト名
-		config[4].effectOffset		= { 0.0f, 0.0f, 0.0f },						// エフェクト位置オフセット
-		config[4].effectRotation	= { 0.0f, IA::REVERSE_EFFECT_ROT, 0.0f },	// エフェクト回転オフセット
+		config[4].isActiveEffect	= true,							// エフェクトを有効にするか
+		config[4].effectName		= "InteriorPlayerFifthAttack",	// エフェクト名
+		config[4].effectOffset		= { 0.0f, 0.0f, 0.0f },			// エフェクト位置オフセット
+		config[4].effectRotation	= { 0.0f, 180.0f, 0.0f },		// エフェクト回転オフセット
+		config[4].attachType		= EFFECT_ATTACH_TYPE::LEFT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
 		config[4].isActiveSound = true,				// サウンドを有効にするか
@@ -470,7 +475,6 @@ void InteriorPlayer::GetAttackArmConfigs(AttackArmConfig configs[5])
 	// 第1攻撃
 	configs[0] =
 	{
-		configs[0].useFromBody = 0,									// 左腕を使用
 		configs[0].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 		configs[0].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
@@ -478,7 +482,6 @@ void InteriorPlayer::GetAttackArmConfigs(AttackArmConfig configs[5])
 	// 第2攻撃
 	configs[1] =
 	{
-		configs[1].useFromBody = 1,									// 右腕を使用
 		configs[1].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 		configs[1].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
@@ -486,7 +489,6 @@ void InteriorPlayer::GetAttackArmConfigs(AttackArmConfig configs[5])
 	// 第3攻撃
 	configs[2] =
 	{
-		configs[2].useFromBody = 0,									// 左腕を使用
 		configs[2].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 		configs[2].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
@@ -494,7 +496,6 @@ void InteriorPlayer::GetAttackArmConfigs(AttackArmConfig configs[5])
 	// 第4攻撃
 	configs[3] =
 	{
-		configs[3].useFromBody = 2,									// 左腕を使用
 		configs[3].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 		configs[3].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
@@ -502,7 +503,6 @@ void InteriorPlayer::GetAttackArmConfigs(AttackArmConfig configs[5])
 	// 第5攻撃
 	configs[4] =
 	{
-		configs[4].useFromBody = 0,									// 左腕を使用
 		configs[4].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 		configs[4].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
