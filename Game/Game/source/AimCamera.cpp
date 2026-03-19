@@ -11,7 +11,7 @@ namespace
 AimCamera::AimCamera()
 {
 	_fNearClip = 1.0f;
-	_fFarClip = 3000.0f;
+	_fFarClip = 10000.0f;
 	_fDistance = AIM_DISTANCE;
 	_fAngleH = 0.0f;
 	_fAngleV = 0.0f;
