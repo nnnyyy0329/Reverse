@@ -125,7 +125,7 @@ void GameCamera::UpdateCamera()
 			// デフォルトの角度との差を計算
 			float diffV = DEFAULT_ANGLE_V - _fAngleV;
 
-			float rotSpeedV = diff * 0.03f;
+			float rotSpeedV = diffV * 0.03f;
 			float maxRotSpeedV = DX_PI_F / 180.0f;
 			if (rotSpeedV > maxRotSpeedV) { rotSpeedV = maxRotSpeedV; }
 			if (rotSpeedV < -maxRotSpeedV) { rotSpeedV = -maxRotSpeedV; }
@@ -138,10 +138,10 @@ void GameCamera::UpdateCamera()
 			float diffDist = DEFAULT_DISTANCE - _fDistance;
 			_fDistance += diffDist * 0.03f;
 		}
-		else
-		{
-			_fAutoFollowTimer = 0.0f;
-		}
+	}
+	else
+	{
+		_fAutoFollowTimer = 0.0f;
 	}
 
 	// 注視点を計算して、必要なら補完する
