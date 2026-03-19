@@ -416,7 +416,7 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 			float damage = bulletConfig.damage;
 
 			// ダメージを適用
-			chara->ApplyDamageByBullet(damage, bullet->GetShooterType(), bullet->GetBulletType());
+			chara->ApplyDamageByBullet(damage, bullet->GetShooterType());
 
 			// 弾のタイプが通常なら
 			if(bullet->GetBulletType() == BULLET_TYPE::NORMAL)
