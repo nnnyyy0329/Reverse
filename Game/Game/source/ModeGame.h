@@ -106,6 +106,8 @@ protected:
 	bool _bIsStageChanging;// ステージ切り替え中フラグ
 	int _currentStageNum;// 現在のステージ番号
 
+	int _shadowMapHandle;
+
 private:
 	void CheckCollisionCharaMap	(std::shared_ptr<CharaBase> chara);// キャラとマップの当たり判定
 	void CheckCollisionCharaChara(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);// キャラ同士の当たり判定

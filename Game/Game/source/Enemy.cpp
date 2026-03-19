@@ -459,7 +459,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackColl
 	// エフェクト
 	VECTOR efPos = VAdd(_vPos, VGet(0.0f, DAMAGE_EFFECT_OFFSET_Y, 0.0f));
 	EffectServer::GetInstance()->Play("En_Damage", efPos);
-	EffectServer::GetInstance()->Play("En_Damage02", efPos);
+	//EffectServer::GetInstance()->Play("En_Damage02", efPos);
 
 	// 現在のステートが最優先の場合、ダメージのみ受付
 	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::TOP)
@@ -518,7 +518,61 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackColl
 
 void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
 {
-	ApplyDamage(fDamage, ATTACK_OWNER_TYPE::NONE, AttackCollision());
+	if (_fLife <= 0.0f) { return; }
+
+	// SE
+	SoundServer::GetInstance()->Play("SE_En_Damage", DX_PLAYTYPE_BACK);
+
+	// エフェクト
+	VECTOR efPos = VAdd(_vPos, VGet(0.0f, DAMAGE_EFFECT_OFFSET_Y, 0.0f));
+	EffectServer::GetInstance()->Play("En_Damage02", efPos);
+
+	// 現在のステートが最優先の場合、ダメージのみ受付
+	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::TOP)
+	{
+		_fLife -= fDamage;
+
+		// 死亡判定のみチェック
+		if (_fLife <= 0.0f)
+		{
+			_fLife = 0.0f;// マイナス防止
+			// 死亡ステートへ遷移
+			ChangeState(std::make_unique<Common::Dead>());
+		}
+
+		return;
+	}
+
+	// 通常のダメージ処理
+	_fLife -= fDamage;
+
+	// 死亡判定
+	if (IsDead())
+	{
+		_fLife = 0.0f;// マイナス防止
+		// 死亡ステートへ遷移
+		ChangeState(std::make_unique<Common::Dead>());
+		return;
+	}
+
+	// 生存時:通常ダメージ
+
+	// リアクションとしてマテリアルカラーを赤くする
+	COLOR_F red = GetColorF(1.0f, 0.0f, 0.0f, 1.0f);
+	MV1SetMaterialDifColor(GetAnimManager()->GetModelHandle(), 0, red);
+	_bIsColorChanged = true;
+
+	// 中断されないアクション中はDamageステートへ遷移しない
+	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::HIGH)
+	{
+		// 連続被ダメカウントは更新
+		UpdateDamageCombo();
+		return;
+	}
+
+	UpdateDamageCombo();
+	// ダメージステートへ遷移
+	ChangeState(std::make_unique<Common::Damage>());
 }
 
 std::shared_ptr<EnemyState> Enemy::GetAfterDamageStateSelector(int comboCnt)

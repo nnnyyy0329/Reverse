@@ -163,6 +163,8 @@ bool ModeGame::Initialize()
 
 	_stage->PlayStageBGM();
 
+	_shadowMapHandle = MakeShadowMap(2048, 2048);
+
 	return true;
 }
 
@@ -420,18 +422,56 @@ bool ModeGame::Render()
 		MV1DrawModel(handle);
 	}
 
-	// オブジェクトの描画
-	{
-		_playerManager->Render();
-		_stage->Render();
-		_energyUI->Render();
-		_playerLifeBarUI->Render();
-		_staminaUI->Render();
-		//_item->Render();
-		_abilitySelectScreen->Render();
+	//----------------------------------------------------------------------------
+	// シャドウマップが想定するライトの方向もセット
+	SetShadowMapLightDirection(_shadowMapHandle, VGet(-1.0f, -1.0f, -1.0f));
 
-		BulletManager::GetInstance()->Render();
+	// シャドウマップに描画する範囲を設定
+	// カメラの注視点を中心にする
+	float length = 1000.f;
+	VECTOR minPos = VAdd(_cameraManager->GetActiveCameraTarget(), VGet(-length, -1.0f, -length));
+	VECTOR maxPos = VAdd(_cameraManager->GetActiveCameraTarget(), VGet(length, length, length));
+	SetShadowMapDrawArea(_shadowMapHandle, minPos, maxPos);
+
+	// 2回まわして、path=0:シャドウマップへの描画, path=1:モデルの描画
+	for (int path = 0; path < 2; path++) 
+	{
+		if (path == 0) 
+		{
+			// シャドウマップへの描画の準備
+			ShadowMap_DrawSetup(_shadowMapHandle);
+			_playerManager->Render();
+			for (const auto& enemy : _stage->GetEnemies())
+			{
+				enemy->Render();
+			}
+		}
+		else if (path == 1) 
+		{
+			// シャドウマップへの描画を終了
+			ShadowMap_DrawEnd();
+			// 描画に使用するシャドウマップを設定
+			SetUseShadowMap(0, _shadowMapHandle);
+			// オブジェクトの描画
+			{
+				_playerManager->Render();
+				_stage->Render();
+				_energyUI->Render();
+				_playerLifeBarUI->Render();
+				_staminaUI->Render();
+				//_item->Render();
+				_abilitySelectScreen->Render();
+
+				BulletManager::GetInstance()->Render();
+			}
+		}
 	}
+	//----------------------------------------------------------------------------
+
+	// 描画に使用するシャドウマップの設定を解除
+	SetUseShadowMap(0, -1);
+
+	//----------------------------------------------------------------------------
 
 	// コリジョンの描画
 	if (_bViewCollision)
