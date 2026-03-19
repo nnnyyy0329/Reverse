@@ -318,7 +318,8 @@ bool ModeGame::Process()
 
 		// ƒLƒƒƒ‰‚Æ‹zŽûUŒ‚
 		{
-			for(const auto& enemy : enemies){ CheckHitAbsorbAttack(player, enemy); }
+			auto surfacePlayer = _playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE);
+			for(const auto& enemy : enemies){ CheckHitAbsorbAttack(surfacePlayer, enemy); }
 		}
 
 		// ƒLƒƒƒ‰“¯Žm

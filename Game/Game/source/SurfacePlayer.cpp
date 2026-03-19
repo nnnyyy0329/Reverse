@@ -216,7 +216,8 @@ void SurfacePlayer::InitializeAbsorbSystem()
 	if(!_absorbAttackSystem) { return; }
 
 	// 所有者を設定して初期化
-	_absorbAttackSystem->Initialize(shared_from_this());		
+	// CharaBase の shared_from_this() を使用するため、Initialize関数内で所有者を設定する必要がある
+	_absorbAttackSystem->Initialize(shared_from_this());
 
 	// 吸収攻撃の設定を取得して設定
 	_absorbAttackSystem->SetAbsorbConfig(GetAbsorbConfig());	

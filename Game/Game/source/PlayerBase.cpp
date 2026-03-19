@@ -137,6 +137,7 @@ void PlayerBase::InitializeShieldData()
 	_shieldSystem = std::make_shared<PlayerShieldSystem>();
 
 	// シールド所有者設定
+	// CharaBase の shared_from_this() を使用するため、Initialize関数内で所有者を設定する必要がある
 	_shieldSystem->SetOwner(shared_from_this());
 	
 	// プレイヤー固有の設定を取得してシールドシステムに設定

@@ -2,7 +2,6 @@
 
 #pragma once
 #include "PlayerBase.h"
-#include "PlayerAbsorbAttackSystem.h"
 
 // 表プレイヤー
 class SurfacePlayer : public PlayerBase
@@ -30,7 +29,7 @@ public:
 	virtual AttackConstants			GetAttackConstants()const		override;	// 攻撃定数を取得
 
 	const PlayerAbsorbAttackSystem* GetAbsorbAttackSystemConst()const;	// 吸収攻撃システム取得
-	PlayerAbsorbAttackSystem* GetAbsorbAttackSystem();					// 非const版
+	PlayerAbsorbAttackSystem* GetAbsorbAttackSystem()override;			// 非const版
 
 	/*****ゲッターセッター*****/
 

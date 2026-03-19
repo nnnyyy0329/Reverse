@@ -13,7 +13,7 @@ namespace BulletConstants
 {
 	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);
 	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);
-	constexpr float LIFE_TIME = 120.0f;
+	constexpr int LIFE_TIME = 120;
 };
 
 // í èÌíeê›íË

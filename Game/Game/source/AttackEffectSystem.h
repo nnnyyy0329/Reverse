@@ -3,6 +3,9 @@
 #include "GeometryUtility.h"
 #include "AnimManager.h"
 
+// 前方宣言
+class CharaBase;
+
 /// @brief 攻撃の演出設定構造体
 struct AttackEffectConfig
 {
@@ -36,11 +39,13 @@ struct EffectInstanceInfo
 /// @brief 追跡するエフェクトの情報構造体
 struct TrackedEffectInfo
 {
-	int effectHandle;			// エフェクトハンドル
-	int attachFrameIndex;		// アタッチするフレームインデックス
-	VECTOR effectOffset;		// エフェクトのオフセット
-	VECTOR effectRotation;		// エフェクトの回転
-	AnimManager* animManager;	// アニメーションマネージャー
+	int effectHandle;				// エフェクトハンドル
+	int attachFrameIndex;			// アタッチするフレームインデックス
+	VECTOR effectOffset;			// エフェクトのオフセット
+	VECTOR effectRotation;			// エフェクトの回転
+	AnimManager* animManager;		// アニメーションマネージャー
+	std::weak_ptr<CharaBase> owner;	// 所有者キャラの弱参照
+	bool useOwnerDirection = false;	// 所有者の向きを基準とするか(最初から false )
 };
 
 /// @brief 攻撃の演出システムクラス
@@ -82,6 +87,7 @@ public:
 	/// @param dir エフェクトの向き（攻撃方向）
 	/// @param frameIndex 追跡するフレームのインデックス
 	/// @param animManager 追跡するアニメーションマネージャーの共有ポインタ
+	/// @param owner エフェクトの所有者キャラの共有ポインタ
 	/// 
 	/// @return 再生したエフェクトのハンドル
 	int PlayTrackedEffect
@@ -90,13 +96,19 @@ public:
 		const VECTOR& initialPos,		
 		const VECTOR& dir,
 		int frameIndex,
-		AnimManager* animManager
+		AnimManager* animManager,
+		std::shared_ptr<CharaBase> owner
 	);
 
 	/// @brief エフェクト停止処理
 	///
 	/// @param effectHandle 停止するエフェクトのハンドル
 	void StopEffect(int effectHandle);
+
+	/// @brief 追跡エフェクトの回転計算処理
+	///
+	/// @param info 追跡エフェクトの情報構造体
+	VECTOR UpdateCalculateRot(TrackedEffectInfo& info);
 
 	/// @brief エフェクトの演出処理
 	///

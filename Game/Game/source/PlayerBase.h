@@ -7,6 +7,7 @@
 #include "DodgeSystem.h"
 #include "BulletManager.h"
 #include "PlayerShieldSystem.h"
+#include "PlayerAbsorbAttackSystem.h"
 
 // 前方宣言
 class CameraManager;
@@ -342,6 +343,15 @@ public:
 	PLAYER_COMBAT_STATE GetCombatState()const{ return _playerState.combatState; }		// 特殊状態取得
 	void SetCombatState(PLAYER_COMBAT_STATE state){ _playerState.combatState = state; }	// 特殊状態設定
 
+
+	// 吸収攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
+	/// @brief 吸収攻撃システムの取得関数
+	///
+	/// @return 吸収攻撃システムのポインタ(デフォルトはnullptr)
+	virtual PlayerAbsorbAttackSystem* GetAbsorbAttackSystem(){ return nullptr; };
+
+
+
 	// 状態リセット
 	void SetStateReset(){ return _playerState.StateReset(); }
 
@@ -420,7 +430,8 @@ protected:	// 弾発射関係 --- 今後クラスで分ける予定 ----------------------------
 
 protected:	// 吸収攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
-	virtual void ProcessAbsorb(){};	// 吸収攻撃の仮想関数
+	/// @brief 吸収攻撃処理の仮想関数
+	virtual void ProcessAbsorb(){};	
 
 protected:	// 回避関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
@@ -523,54 +534,54 @@ protected:
 
 
 
-// まだ未使用のクラスたち
-class PlayerInput
-{
-public:
-
-	// 入力状態の取得
-	bool IsMoving() const;
-	bool IsDashing() const;
-	bool IsAttackPressed() const;
-	bool IsDodgePressed() const;
-
-	// 入力状態を設定する
-	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
-	{
-		_key = key;
-		_trg = trg;
-		_lx = lx;
-		_ly = ly;
-		_rx = rx;
-		_ry = ry;
-		_analogMin = analogMin;
-	}
-
-protected:
-	// 入力関係
-	int _key = 0;
-	int _trg = 0;
-	float _lx = 0.0f;
-	float _ly = 0.0f;
-	float _rx = 0.0f;
-	float _ry = 0.0f;
-	float _analogMin = 0.0f;
-};
-
-class PlayerMove
-{
-public:
-	void InitializePlayerConfig(PlayerConfig& config);	// プレイヤー設定初期化
-	void ProcessMovement(const PlayerInput& input, float cameraAngle);
-
-protected:
-	PlayerConfig _config;
-};
-
-class PlayerAnimator
-{
-
-};
+//// まだ未使用のクラスたち
+//class PlayerInput
+//{
+//public:
+//
+//	// 入力状態の取得
+//	bool IsMoving() const;
+//	bool IsDashing() const;
+//	bool IsAttackPressed() const;
+//	bool IsDodgePressed() const;
+//
+//	// 入力状態を設定する
+//	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
+//	{
+//		_key = key;
+//		_trg = trg;
+//		_lx = lx;
+//		_ly = ly;
+//		_rx = rx;
+//		_ry = ry;
+//		_analogMin = analogMin;
+//	}
+//
+//protected:
+//	// 入力関係
+//	int _key = 0;
+//	int _trg = 0;
+//	float _lx = 0.0f;
+//	float _ly = 0.0f;
+//	float _rx = 0.0f;
+//	float _ry = 0.0f;
+//	float _analogMin = 0.0f;
+//};
+//
+//class PlayerMove
+//{
+//public:
+//	void InitializePlayerConfig(PlayerConfig& config);	// プレイヤー設定初期化
+//	void ProcessMovement(const PlayerInput& input, float cameraAngle);
+//
+//protected:
+//	PlayerConfig _config;
+//};
+//
+//class PlayerAnimator
+//{
+//
+//};
 
 //class PlayerDraw
 //{

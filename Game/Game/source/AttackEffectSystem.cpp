@@ -1,4 +1,5 @@
 #include "AttackEffectSystem.h"
+#include "CharaBase.h"
 
 // シングルトンインスタンス初期化
 AttackEffectSystem* AttackEffectSystem::_instance = nullptr;
@@ -117,7 +118,8 @@ int AttackEffectSystem::PlayTrackedEffect
 	const VECTOR& initialPos,
 	const VECTOR& dir,
 	int frameIndex,
-	AnimManager* animManager
+	AnimManager* animManager,
+	std::shared_ptr<CharaBase> owner
 )
 {
 	if(!config.isActiveEffect || config.effectName.empty())
@@ -143,6 +145,8 @@ int AttackEffectSystem::PlayTrackedEffect
 	trackedInfo.effectOffset = worldOffset;
 	trackedInfo.effectRotation = config.effectRotation;
 	trackedInfo.animManager = animManager;
+	trackedInfo.owner = owner;
+	trackedInfo.useOwnerDirection = true;
 
 	_trackedEffects[handle] = trackedInfo;
 
@@ -187,40 +191,64 @@ void AttackEffectSystem::UpdateTrackedEffects()
 		return;
 	}
 
-	auto trackedEffect = _trackedEffects.begin();
-
-	// すべての追跡エフェクトを更新
-	while(trackedEffect != _trackedEffects.end())
+	for(auto& trackedEffect : _trackedEffects)
 	{
-		// 追跡エフェクト情報取得
-		TrackedEffectInfo& info = trackedEffect->second;
+		// エフェクトハンドル
+		int handle = trackedEffect.first;
 
-		// アニメーションマネージャーとフレームインデックスが有効な場合のみ位置更新
-		if(info.animManager && info.attachFrameIndex >= 0)
-		{
-			// モデルハンドル取得
-			int modelHandle = info.animManager->GetModelHandle();
+		// 追跡エフェクト情報
+		TrackedEffectInfo& info = trackedEffect.second;
 
-			// モデルハンドルが有効な場合のみ位置更新
-			if(modelHandle >= 0)
-			{
-				// フレームインデックスから座標取得
-				VECTOR framePos = MV1GetFramePosition(modelHandle, info.attachFrameIndex);
+		// アニメーションマネージャーチェック
+		if(!info.animManager){ continue; }
 
-				// オフセット計算
-				VECTOR offsetPos = VAdd(framePos, info.effectOffset);
+		// フレームインデックスチェック
+		if(info.attachFrameIndex < 0){ continue; }
 
-				// エフェクト位置更新
-				EffectServer::GetInstance()->SetPos(info.effectHandle, offsetPos);
+		// モデルハンドル取得
+		int modelHandle = info.animManager->GetModelHandle();
+		if(modelHandle < 0){ continue; }
 
-				// エフェクト回転更新
-				EffectServer::GetInstance()->SetRot(info.effectHandle, info.effectRotation);
-			}
-		}
+		// フレームインデックスから座標取得
+		VECTOR framePos = MV1GetFramePosition(modelHandle, info.attachFrameIndex);
 
-		// 次の追跡エフェクトへ
-		++trackedEffect;
+		// オフセット計算
+		VECTOR offsetPos = VAdd(framePos, info.effectOffset);
+
+		// エフェクト位置更新
+		EffectServer::GetInstance()->SetPos(handle, offsetPos);
+
+		// 毎フレーム回転を更新
+		VECTOR calcRot = UpdateCalculateRot(info);
+
+		// エフェクト回転更新
+		EffectServer::GetInstance()->SetRot(handle, calcRot);
 	}
+}
+
+VECTOR AttackEffectSystem::UpdateCalculateRot(TrackedEffectInfo& info)
+{
+	// 毎フレーム回転を更新
+	VECTOR rotationToApply = info.effectRotation;
+
+	// 所有者の向きを使う場合
+	if(info.useOwnerDirection)
+	{
+		// 所有者の使用可能チェック
+		auto owner = info.owner.lock();
+
+		// 所有者が存在しない場合は回転なし
+		if(!owner){ return VGet(0.0f, 0.0f, 0.0f); }
+
+		// 所有者の向きから回転を計算
+		VECTOR dir = owner->GetDir();
+		VECTOR dirNorm = VNorm(dir);
+		float rotY = atan2f(dirNorm.x, dirNorm.z);
+		rotationToApply = VGet(0.0f, rotY, 0.0f);
+	}
+
+	// カスタム指定されている場合はカスタム回転
+	return rotationToApply;
 }
 
 void AttackEffectSystem::ProcessEffect(int handle, const VECTOR& dir, const VECTOR& customRotation)

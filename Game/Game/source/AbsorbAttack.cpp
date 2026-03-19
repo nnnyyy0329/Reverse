@@ -24,7 +24,7 @@ AbsorbAttack::AbsorbAttack() : AttackBase() // 親クラスのコンストラクタ呼び出し
 	_stcAbsorbConfig.hpAbsorbRate		= 0.0f;						// HP吸収率の初期化
 	_stcAbsorbConfig.absorbRange		= 0.0f;						// 吸収範囲の初期化
 	_stcAbsorbConfig.absorbAngle		= 0.0f;						// 吸収範囲の角度の初期化
-	_stcAbsorbConfig.absorbDivision		= 0.0f;						// 吸収範囲の分割数の初期化
+	_stcAbsorbConfig.absorbDivision		= 0;						// 吸収範囲の分割数の初期化
 	_stcAbsorbConfig.isActive			= false;					// 吸収攻撃がアクティブかどうかの初期化
 	_stcAbsorbConfig.absorbEffectName	= "";						// 吸収エフェクト名の初期化
 	_stcAbsorbConfig.effectOffset		= VGet(0.0f, 0.0f, 0.0f);	// エフェクト位置オフセットの初期化

@@ -608,9 +608,9 @@ void AttackBase::DrawAttackCollision()
         {
             DrawCircle
             (
-                static_cast<float>(_stcAttackCol.attackColTop.x),   // 中心X座標
-                static_cast<float>(_stcAttackCol.attackColTop.y),   // 中心Y座標
-                _stcAttackCol.attackColR,                           // 半径
+                static_cast<int>(_stcAttackCol.attackColTop.x), // 中心X座標
+                static_cast<int>(_stcAttackCol.attackColTop.y), // 中心Y座標
+                static_cast<int>(_stcAttackCol.attackColR),     // 半径
                 GetColor(0, 255, 0),
                 TRUE
             );

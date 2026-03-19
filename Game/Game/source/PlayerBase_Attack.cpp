@@ -192,8 +192,11 @@ void PlayerBase::ProcessAttack()
 // コンボ攻撃開始の処理
 void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack)
 {
-	// オブジェクト設定
+	// 攻撃オブジェクトの所有者をプレイヤーに設定
+	// プレイヤーは make_shared で生成している
 	attack->SetOwner(shared_from_this());
+
+	// カメラマネージャー設定
 	attack->SetCameraManager(_cameraManager);	
 
 	// コリジョン位置更新処理
@@ -293,7 +296,8 @@ void PlayerBase::ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBa
 			initialPos,			// 初期位置
 			_vDir,				// 向き
 			attachFrameIndex,	// フレームインデックス
-			animManager			// アニメーションマネージャー
+			animManager,		// アニメーションマネージャー
+			shared_from_this()	// エフェクトの追跡対象(派生プレイヤーは make_shared で作成)
 		);
 
 		// 攻撃オブジェクトにエフェクトハンドルを設定
