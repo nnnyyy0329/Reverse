@@ -3,16 +3,20 @@
 #pragma once
 #include "PlayerBase.h"
 
-// 攻撃判定のパラメーター
+// 裏プレイヤー用定数
+namespace InteriorPlayerConstants
+{
+	constexpr float DAMAGE_MULTIPLIER = 0.75f;	// 裏プレイヤー専用のダメージ倍率
+};
+
+// 攻撃定数
 namespace InteriorAttackConstants
 {
 	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;		// 裏プレイヤー用コンボカウント
-
-	constexpr float REVERSE_EFFECT_ROT = 180.0f;	// エフェクトの回転を反転
 }
 
-// 攻撃腕のパラメーター
-namespace InteriorPlayerArmConstants
+// 裏プレイヤーのフレームインデックス定数
+namespace InteriorPlayerFrameIndexConstants
 {
 	constexpr int RIGHT_ARM_FRAME_INDEX = 157;	// 右腕攻撃のフレームインデックス
 	constexpr int LEFT_ARM_FRAME_INDEX = 147;	// 左腕攻撃のフレームインデックス

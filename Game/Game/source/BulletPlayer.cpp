@@ -1,14 +1,20 @@
 #include "BulletPlayer.h"
 #include "CameraManager.h"
 
-// 弾発射設定エイリアス
-namespace BC =  BulletConstants;
+// 弾プレイヤー用定数のエイリアス
+namespace BPC = BulletPlayerConstants;
 
-// 通常弾設定エイリアス
+// 通常弾設定定数のエイリアス
 namespace NBC = NormalBulletConfig;
 
-// 貫通弾設定エイリアス
+// 貫通弾設定定数のエイリアス
 namespace PBC = PiercingBulletConfig;
+
+// 弾発射設定定数のエイリアス
+namespace BSC = BulletShootConstants;
+
+// 弾のエネルギー消費量定数のエイリアス
+namespace BCEC = BulletConsumeEnergyConstants;
 
 BulletPlayer::BulletPlayer()
 {
@@ -92,6 +98,9 @@ void BulletPlayer::DebugRender()
 
 void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
+	// ダメージに弾プレイヤー専用の倍率を適用
+	float resultDamage = fDamage * BPC::DAMAGE_MULTIPLIER;
+
 	// 基底クラスの被ダメージ処理を呼び出す
 	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
 }
@@ -221,7 +230,7 @@ BulletConfig BulletPlayer::GetBulletConfig()
 	config.shooterType	= CHARA_TYPE::BULLET_PLAYER;	// キャラタイプ
 	config.startPos		= VAdd(_vPos, worldOffset);		// 発射開始位置
 	config.dir			= GetShootDirection();			// エイムカメラの向いてる方向
-	config.lifeTime		= BC::LIFE_TIME;				// 弾の自然消滅時間
+	config.lifeTime		= BSC::LIFE_TIME;				// 弾の自然消滅時間
 
 	return config;
 }
@@ -411,7 +420,7 @@ void BulletPlayer::ShootBullet()
 	if(energyManager)
 	{
 		// エネルギーを消費
-		energyManager->ConsumeEnergy(BulletConstants::CONSUME_NORMAL_BULLET_ENERGY);
+		energyManager->ConsumeEnergy(BCEC::CONSUME_NORMAL_BULLET_ENERGY);
 	}
 
 	// 右腕と左腕の切り替え
@@ -424,8 +433,8 @@ VECTOR BulletPlayer::GetShootOffset()const
 	VECTOR startPosOffset;
 
 	// 右腕か左腕かでオフセットを変更
-	if(_bIsShootFromRightArm){ startPosOffset = BC::RIGHT_ARM_SHOT_OFFSET; }	// 右腕
-	else{ startPosOffset = BC::LEFT_ARM_SHOT_OFFSET; }							// 左腕
+	if(_bIsShootFromRightArm){ startPosOffset = BSC::RIGHT_ARM_SHOT_OFFSET; }	// 右腕
+	else{ startPosOffset = BSC::LEFT_ARM_SHOT_OFFSET; }							// 左腕
 
 	// 発射位置オフセットを返す
 	return startPosOffset;

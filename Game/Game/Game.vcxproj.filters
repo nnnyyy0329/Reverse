@@ -76,9 +76,6 @@
     <ClCompile Include="source\StateRanged.cpp">
       <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClCompile>
-    <ClCompile Include="source\InteriorPlayer.cpp">
-      <Filter>GameObject\CharaBase\PlayerBase\Interior</Filter>
-    </ClCompile>
     <ClCompile Include="source\SurfacePlayer.cpp">
       <Filter>GameObject\CharaBase\PlayerBase\Surface</Filter>
     </ClCompile>
@@ -231,6 +228,9 @@
     </ClCompile>
     <ClCompile Include="source\ModeEndingText.cpp">
       <Filter>Mode\Ending</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InteriorPlayer.cpp">
+      <Filter>GameObject\CharaBase\PlayerBase\Interior</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

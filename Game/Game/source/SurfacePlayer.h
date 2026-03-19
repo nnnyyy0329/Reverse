@@ -3,6 +3,12 @@
 #pragma once
 #include "PlayerBase.h"
 
+// 表プレイヤー用定数
+namespace SurfacePlayerConstants
+{
+	constexpr float DAMAGE_MULTIPLIER = 3.0f;	// 表プレイヤー専用のダメージ倍率
+}
+
 // 表プレイヤー
 class SurfacePlayer : public PlayerBase
 {

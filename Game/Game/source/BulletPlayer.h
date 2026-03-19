@@ -1,22 +1,13 @@
 #pragma once
 #include "PlayerBase.h"
 
-// 弾発射に関する定数
-namespace BulletConstants
+// 弾プレイヤー用定数
+namespace BulletPlayerConstants
 {
-	constexpr float CONSUME_NORMAL_BULLET_ENERGY = 5.0f;	// 通常弾のエネルギー消費量
-	constexpr float CONSUME_PIERCING_BULLET_ENERGY = 10.0f;	// 貫通弾のエネルギー消費量
-}
-
-// 弾発射設定
-namespace BulletConstants
-{
-	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);
-	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);
-	constexpr int LIFE_TIME = 120;
+	constexpr float DAMAGE_MULTIPLIER = 0.75f;	// 弾プレイヤー専用のダメージ倍率
 };
 
-// 通常弾設定
+// 通常弾設定定数
 namespace NormalBulletConfig
 {
 	constexpr float RADIUS = 20.0f;
@@ -24,12 +15,27 @@ namespace NormalBulletConfig
 	constexpr float SPEED = 20.0f;
 }
 
-// 貫通弾設定
+// 貫通弾設定定数
 namespace PiercingBulletConfig
 {
 	constexpr float RADIUS = 15.0f;
 	constexpr float DAMAGE = 30.0f;
 	constexpr float SPEED = 25.0f;
+}
+
+// 弾発射設定定数
+namespace BulletShootConstants
+{
+	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);	// 右腕発射位置オフセット
+	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);	// 左腕発射位置オフセット
+	constexpr int LIFE_TIME = 120;							// 弾の寿命
+};
+
+// 弾のエネルギー消費量定数
+namespace BulletConsumeEnergyConstants
+{
+	constexpr float CONSUME_NORMAL_BULLET_ENERGY = 5.0f;	// 通常弾のエネルギー消費量
+	constexpr float CONSUME_PIERCING_BULLET_ENERGY = 10.0f;	// 貫通弾のエネルギー消費量
 }
 
 // 前方宣言

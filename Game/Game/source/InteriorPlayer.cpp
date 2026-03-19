@@ -2,11 +2,14 @@
 
 #include "InteriorPlayer.h"
 
-// 定数のエイリアス
-namespace IA = InteriorAttackConstants;
+// 裏プレイヤー用定数のエイリアス
+namespace IPC = InteriorPlayerConstants;
 
-// 腕の定数のエイリアス
-namespace IPA = InteriorPlayerArmConstants;
+// 攻撃定数のエイリアス
+namespace IAC = InteriorAttackConstants;
+
+// 裏プレイヤーのフレームインデックス定数のエイリアス
+namespace IPFIC = InteriorPlayerFrameIndexConstants;
 
 InteriorPlayer::InteriorPlayer()
 {
@@ -58,8 +61,11 @@ void InteriorPlayer::DebugRender()
 
 void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
+	// ダメージに裏プレイヤー専用の倍率を適用
+	float resultDamage = fDamage * IPC::DAMAGE_MULTIPLIER;
+
 	// 基底クラスの被ダメージ処理を呼び出す
-	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
+	PlayerBase::ApplyDamage(resultDamage, eType, attackInfo);
 }
 
 void InteriorPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
@@ -141,7 +147,7 @@ AttackConstants InteriorPlayer::GetAttackConstants()const
 	// InteriorPlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.interiorMaxComboCount = InteriorAttackConstants::INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
+	constants.interiorMaxComboCount = IAC::INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
 
 	return constants;
 }
@@ -475,35 +481,35 @@ void InteriorPlayer::GetAttackArmConfigs(AttackArmConfig configs[5])
 	// 第1攻撃
 	configs[0] =
 	{
-		configs[0].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
-		configs[0].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[0].rightArmFrameIndex = IPFIC::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[0].leftArmFrameIndex = IPFIC::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
 
 	// 第2攻撃
 	configs[1] =
 	{
-		configs[1].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
-		configs[1].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[1].rightArmFrameIndex = IPFIC::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[1].leftArmFrameIndex = IPFIC::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
 
 	// 第3攻撃
 	configs[2] =
 	{
-		configs[2].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
-		configs[2].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[2].rightArmFrameIndex = IPFIC::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[2].leftArmFrameIndex = IPFIC::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
 
 	// 第4攻撃
 	configs[3] =
 	{
-		configs[3].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
-		configs[3].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[3].rightArmFrameIndex = IPFIC::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[3].leftArmFrameIndex = IPFIC::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
 
 	// 第5攻撃
 	configs[4] =
 	{
-		configs[4].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
-		configs[4].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[4].rightArmFrameIndex = IPFIC::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[4].leftArmFrameIndex = IPFIC::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
 }

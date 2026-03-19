@@ -2,18 +2,21 @@
 
 #include "SurfacePlayer.h"
 
-namespace
-{
-	// 基礎ステータス定数
-	constexpr float GRAVITY = -0.6f;		// 重力加速度
-	constexpr float DEFAULT_LIFE = 100.0f;	// デフォルト体力
-	constexpr float MAX_LIFE = 100.0f;		// 最大体力
+// 表プレイヤー用定数のエイリアス
+namespace SPC = SurfacePlayerConstants;
 
-	// 表示用定数
-	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
-	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
-	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
-}
+//namespace
+//{
+//	// 基礎ステータス定数
+//	constexpr float GRAVITY = -0.6f;		// 重力加速度
+//	constexpr float DEFAULT_LIFE = 100.0f;	// デフォルト体力
+//	constexpr float MAX_LIFE = 100.0f;		// 最大体力
+//
+//	// 表示用定数
+//	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
+//	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
+//	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
+//}
 
 SurfacePlayer::SurfacePlayer()
 {
@@ -81,8 +84,11 @@ void SurfacePlayer::DebugRender()
 // 被ダメージ処理
 void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
 {
+	// 表プレイヤー専用のダメージ倍率を適用
+	float resultDamage = fDamage * SPC::DAMAGE_MULTIPLIER;
+
 	// 基底クラスの被ダメージ処理呼び出し
-	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
+	PlayerBase::ApplyDamage(resultDamage, eType, attackInfo);
 }
 
 // 弾での被ダメージ処理

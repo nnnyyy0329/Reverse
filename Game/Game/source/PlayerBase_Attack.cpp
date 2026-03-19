@@ -294,7 +294,7 @@ void PlayerBase::ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBa
 			_vDir,				// 向き
 			attachFrameIndex,	// フレームインデックス
 			animManager,		// アニメーションマネージャー
-			shared_from_this()	// エフェクトの追跡対象(派生プレイヤーは make_shared で作成)
+			shared_from_this()	// エフェクトの追跡対象(対象の派生プレイヤーは make_shared で作成)
 		);
 
 		// 攻撃オブジェクトにエフェクトハンドルを設定
