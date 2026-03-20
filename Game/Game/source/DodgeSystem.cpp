@@ -49,31 +49,8 @@ bool DodgeSystem::Render()
 	return true;
 }
 
-// 回避設定初期化
-bool DodgeSystem::SetDodgeConfig
-(
-	float invincibleDuration,   // 無敵持続時間
-	float startTime,			// 開始時間
-	float activeTime,			// アクティブ時間
-	float recoveryTime,			// 硬直時間
-	float dodgeMoveSpeed		// 回避移動速度
-)
-{
-	// 回避設定初期化
-	_stcDodgeConfig.invincibleDuration = invincibleDuration;	// 無敵持続時間
-	_stcDodgeConfig.startTime = startTime;						// 開始時間
-	_stcDodgeConfig.activeTime = activeTime;					// アクティブ時間
-	_stcDodgeConfig.recoveryTime = recoveryTime;				// 硬直時間
-	_stcDodgeConfig.dodgeMoveSpeed = dodgeMoveSpeed;			// 回避移動速度
-
-	_eDodgeState = DODGE_STATE::INACTIVE;	// 回避状態初期化
-	_currentTime = 0.0f;					// 経過時間初期化
-
-	return true;
-}
-
 // キャラタイプ別設定登録
-void DodgeSystem::RegisterCharaConfig(DODGE_CHARA charaType, const DodgeConfig& config)
+void DodgeSystem::RegisterDodgeCharaConfig(DODGE_CHARA charaType, const DodgeConfig& config)
 {
 	_charaConfigs[charaType] = config;
 }
@@ -85,29 +62,29 @@ void DodgeSystem::CallDodge
 	DODGE_CHARA charaType
 )
 {
-	if(chara == nullptr){ return; }	// キャラオブジェクトが無効なら処理しない
+	// キャラオブジェクトが無効なら処理しない
+	if(!chara){ return; }	
 
 	// キャラタイプの設定を取得
 	auto config = _charaConfigs.find(charaType);
 	if(config == _charaConfigs.end()){ return; }
 
 	// キャラタイプの有効性チェック
-	if((charaType == DODGE_CHARA::NONE || 
-		charaType == DODGE_CHARA::_EOT_))
-	{
-		return;
-	}
+	if(charaType == DODGE_CHARA::NONE){ return; }
 	
 	// 回避キャラと設定を保存
+	_currentDodgeChara = chara;			// 回避中キャラ保存
 	_eDodgeChara = charaType;			// 回避キャラ設定
 	_stcDodgeConfig = config->second;	// 回避設定保存
-	_currentDodgeChara = chara;			// 回避中キャラ保存
 
 	// 回避可能なら開始
 	if(CanDodge())
 	{
 		// 回避開始
 		StartDodge();
+
+		// 保存された回避設定のサウンド名から再生
+		SoundServer::GetInstance()->Play(_stcDodgeConfig.soundName, DX_PLAYTYPE_BACK);
 	}
 }
 
@@ -293,8 +270,6 @@ bool DodgeSystem::IsCharacterInvincible(std::shared_ptr<CharaBase> chara) const
 	auto currentChara = _currentDodgeChara.lock();
 	if(currentChara && currentChara == chara)
 	{
-		EnergyManager::GetInstance()->AddEnergy(2.0f);
-
 		return true;	// 無敵状態
 	}
 

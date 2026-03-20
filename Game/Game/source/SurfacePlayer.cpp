@@ -181,11 +181,12 @@ DodgeConfig SurfacePlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType = DODGE_CHARA::SURFACE_PLAYER;
-	config.invincibleDuration = 20.0f;	// 無敵時間
-	config.startTime = 2.0f;			// 開始時間
-	config.activeTime = 40.0f;			// アクティブ時間
-	config.recoveryTime = 10.0f;		// 硬直時間
-	config.dodgeMoveSpeed = 10.0f;		// 移動速度
+	config.invincibleDuration = 20.0f;			// 無敵時間
+	config.startTime = 2.0f;					// 開始時間
+	config.activeTime = 40.0f;					// アクティブ時間
+	config.recoveryTime = 10.0f;				// 硬直時間
+	config.dodgeMoveSpeed = 10.0f;				// 移動速度
+	config.soundName = "SE_SurfacePlayerDodge";	// サウンド名
 
 	return config;
 }

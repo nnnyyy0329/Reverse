@@ -137,8 +137,11 @@ void AbsorbAttack::ProcessAbsorb(std::shared_ptr<CharaBase> owner)
 
 void AbsorbAttack::ProcessEnergyAbsorb(std::shared_ptr<CharaBase> owner)
 {
+	auto energyManager = EnergyManager::GetInstance();
+
 	// ƒGƒlƒ‹ƒM[Žæ“¾
-	EnergyManager::GetInstance()->AddEnergy(AAC::ABSORB_ENERGY * _stcAbsorbConfig.energyAbsorbRate);
+	energyManager->AddEnergy(energyManager->GetAbsorbEnergy() * _stcAbsorbConfig.energyAbsorbRate);
+	//energyManager->AddEnergy(AAC::ABSORB_ENERGY * _stcAbsorbConfig.energyAbsorbRate);
 }
 
 void AbsorbAttack::ProcessHPAbsorb(std::shared_ptr<CharaBase> owner)

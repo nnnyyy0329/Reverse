@@ -45,7 +45,7 @@ void PlayerBase::InitializeDodgeData()
 	}
 
 	// プレイヤーの回避設定を登録
-	_dodgeSystem->RegisterCharaConfig(dodgeCharaType, playerDodgeConfig);
+	_dodgeSystem->RegisterDodgeCharaConfig(dodgeCharaType, playerDodgeConfig);
 }
 
 // 回避呼び出し
@@ -71,9 +71,6 @@ void PlayerBase::ProcessDodge()
 
 		// 回避開始時にスタミナを消費
 		//StaminaManager::GetInstance()->ConsumeStamina(DODGE_STAMINA_COST);
-
-		// サウンド再生
-		SoundServer::GetInstance()->Play("SE_SurfacePlayerDodge", DX_PLAYTYPE_BACK);
 	}
 }
 

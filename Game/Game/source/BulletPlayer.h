@@ -112,6 +112,11 @@ private:
 	/// @brief 弾発射処理
 	void ShootBullet();
 
+	/// @brief 弾発射サウンド再生処理
+	///
+	/// @param bulletType サウンド再生する弾タイプ
+	void ShootSoundPlay(BULLET_TYPE bulletType);
+
 	/// @brief 発射位置オフセットの取得
 	///
 	/// @return 発射位置オフセット

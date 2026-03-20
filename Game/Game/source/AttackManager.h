@@ -3,6 +3,7 @@
 #pragma once
 #include "appframe.h"
 #include "AttackBase.h"
+#include "EnergyManager.h"
 
 enum class ATTACK_OWNER_TYPE
 {
@@ -56,6 +57,9 @@ public:
 	/// @param ownerType 攻撃の所有者タイプ
 	/// @param ownerId 攻撃の所有者ID
 	void RegisterAttack(std::shared_ptr<AttackBase> attack, ATTACK_OWNER_TYPE ownerType, int ownerId);
+
+	/// @brief 回避成功時の処理
+	void ProcessEvadeSuccess();
 
 	/// @brief 攻撃の解除関数
 	///

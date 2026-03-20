@@ -174,23 +174,23 @@ bool ModeLoading::Initialize()
 
 			// ƒvƒŒƒCƒ„[
 			{
-				rs->Register("SE_GameOver",					"sound/SE/SE00.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_GameOver",				"sound/SE/SE00.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				//rs->Register("SE_",	"sound/SE/SE01.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				//rs->Register("SE_",	"sound/SE/SE02.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_SurfacePlayerDodge",		"sound/SE/SE03.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_Dead",						"sound/SE/SE04.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_",							"sound/SE/SE05.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_TransPlayerDash",			"sound/SE/SE06.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_TransPlayerDodge",			"sound/SE/SE07.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_InteriorPlayerPunch",		"sound/SE/SE08.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_",							"sound/SE/SE09.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_Absorb",					"sound/SE/SE10.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_SurfacePlayerJustDodge",	"sound/SE/SE11.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_",							"sound/SE/SE12.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_",							"sound/SE/SE13.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_",							"sound/SE/SE14.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_PiercingBullet",			"sound/SE/SE15.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_NormalBullet",				"sound/SE/SE16.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_SurfacePlayerDodge",	"sound/SE/SE03.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_Dead",					"sound/SE/SE04.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_",						"sound/SE/SE05.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_TransPlayerDash",		"sound/SE/SE06.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_TransPlayerDodge",		"sound/SE/SE07.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_InteriorPlayerPunch",	"sound/SE/SE08.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_",						"sound/SE/SE09.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_Absorb",				"sound/SE/SE10.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_Evade",				"sound/SE/SE11.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_",						"sound/SE/SE12.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_",						"sound/SE/SE13.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_",						"sound/SE/SE14.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_PiercingBullet",		"sound/SE/SE15.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_NormalBullet",			"sound/SE/SE16.mp3", RESOURCE_TYPE::Sound, 1.0f);
 			}
 
 

@@ -467,11 +467,12 @@ DodgeConfig InteriorPlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType = DODGE_CHARA::INTERIOR_PLAYER;
-	config.invincibleDuration	= 25.0f;	// 無敵時間
-	config.startTime			= 1.0f;		// 開始時間
-	config.activeTime			= 30.0f;	// アクティブ時間
-	config.recoveryTime			= 10.0f;	// 硬直時間
-	config.dodgeMoveSpeed		= 11.0f;	// 移動速度
+	config.invincibleDuration	= 25.0f;		// 無敵時間
+	config.startTime			= 1.0f;			// 開始時間
+	config.activeTime			= 30.0f;		// アクティブ時間
+	config.recoveryTime			= 10.0f;		// 硬直時間
+	config.dodgeMoveSpeed		= 11.0f;		// 移動速度
+	config.soundName = "SE_TransPlayerDodge";	// サウンド名
 
 	return config;
 }

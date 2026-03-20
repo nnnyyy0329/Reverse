@@ -89,6 +89,9 @@ bool ModeGameOver::Process()
 	auto& im = InputManager::GetInstance();
 
 	if(im.IsTrigger(INPUT_ACTION::SKIP)) {// zキー Aボタン
+
+		SoundServer::GetInstance()->Stop("SE_GameOver");
+
 		// 現在のステージ番号からリスタート
 		ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
 		if (modeGame != nullptr)

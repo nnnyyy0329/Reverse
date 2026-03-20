@@ -241,16 +241,28 @@ bool AttackManager::IsAttackRegistered(std::shared_ptr<AttackBase> attack)const
 	return false;
 }
 
-// 回避にヒットした攻撃を登録
 void AttackManager::RegisterDodgeHitAttack(std::shared_ptr<AttackBase> attack)
 {
 	if(attack == nullptr){ return; }
 
 	// 登録済みなら何もしない
-	if(IsDodgeHitAttack(attack)) { return; }	
+	if(IsDodgeHitAttack(attack)) { return; }
+
+	// 回避成功時の処理
+	ProcessEvadeSuccess();
 
 	// 回避にヒットした攻撃リストに追加
 	_dodgeHitAttacks.push_back(attack);
+}
+
+void AttackManager::ProcessEvadeSuccess()
+{
+	// エネルギー上昇
+	auto energyManager = EnergyManager::GetInstance();
+	energyManager->AddEnergy(energyManager->GetEvadeAttackEnergy());
+
+	// サウンドの再生
+	SoundServer::GetInstance()->Play("SE_Evade", DX_PLAYTYPE_BACK);
 }
 
 // 回避にヒットした攻撃かチェック

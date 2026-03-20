@@ -179,11 +179,12 @@ DodgeConfig BulletPlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType			= DODGE_CHARA::BULLET_PLAYER;
-	config.invincibleDuration	= 20.0f;	// 無敵時間
-	config.startTime			= 3.0f;		// 開始時間
-	config.activeTime			= 15.0f;	// アクティブ時間
-	config.recoveryTime			= 8.0f;		// 硬直時間
-	config.dodgeMoveSpeed		= 19.0f;	// 移動速度
+	config.invincibleDuration	= 20.0f;		// 無敵時間
+	config.startTime			= 3.0f;			// 開始時間
+	config.activeTime			= 15.0f;		// アクティブ時間
+	config.recoveryTime			= 8.0f;			// 硬直時間
+	config.dodgeMoveSpeed		= 19.0f;		// 移動速度
+	config.soundName = "SE_TransPlayerDodge";	// サウンド名
 
 	return config;
 }
@@ -273,9 +274,17 @@ void BulletPlayer::ProcessShoot()
 
 void BulletPlayer::ShootInput()
 {
-	// どちらかの発射キーが新しく押されたかどうか
-	bool isInputPress = IsShootNormalInput() || IsShootPiercingInput();	// 発射キーが押されているか
-	bool isInputNewPress = isInputPress && !_bWasShootKeyPressed;		// 発射キーが新しく押されたか
+	// 発射キーが押されているか
+	bool isInputPress = IsShootNormalInput() || IsShootPiercingInput();	
+
+	// 発射キーが新しく押されたか
+	bool isInputNewPress = isInputPress && !_bWasShootKeyPressed;
+
+	// 変身状態を維持できるか
+	bool canKeepTransState = EnergyManager::GetInstance()->CanKeepSwitchPlayer();
+
+	// 変身状態を維持できなくなったらスキップ
+	if(!canKeepTransState){ return; }
 
 	// 待機状態：新しく入力がきたら構えへ
 	if(_playerState.shootState == PLAYER_SHOOT_STATE::NONE	&&	// 現在発射構え状態でなく
@@ -415,6 +424,9 @@ void BulletPlayer::ShootBullet()
 	// 弾の発射
 	bullet->Shoot(GetBulletConfig(), GetBulletEffectConfig(), BULLET_OWNER_TYPE::BULLET_PLAYER);
 
+	// 弾のタイプに応じたサウンド再生処理
+	ShootSoundPlay(GetBulletConfig().bulletType);
+
 	// 発射時にエネルギー消費
 	EnergyManager* energyManager = EnergyManager::GetInstance();
 	if(energyManager)
@@ -425,6 +437,35 @@ void BulletPlayer::ShootBullet()
 
 	// 右腕と左腕の切り替え
 	_bIsShootFromRightArm = !_bIsShootFromRightArm; 
+}
+
+void BulletPlayer::ShootSoundPlay(BULLET_TYPE bulletType)
+{
+	// 弾のタイプに応じた発射サウンド
+	switch(bulletType)
+	{
+		case BULLET_TYPE::NORMAL: // 通常弾
+		{
+			// サウンド再生
+			SoundServer::GetInstance()->Play("SE_NormalBullet", DX_PLAYTYPE_BACK);
+
+			break;
+		}
+
+		case BULLET_TYPE::PIERCING: // 貫通弾
+		{
+			// サウンド再生
+			SoundServer::GetInstance()->Play("SE_PiercingBullet", DX_PLAYTYPE_BACK);
+
+			break;
+		}
+
+		case BULLET_TYPE::NONE:
+		default:
+		{
+			return;
+		}
+	}
 }
 
 VECTOR BulletPlayer::GetShootOffset()const
@@ -462,7 +503,7 @@ bool BulletPlayer::IsShootNormalInput()
 	auto& inputManager = InputManager::GetInstance();
 
 	// 通常弾発射ボタンが押されたら
-	if(inputManager.IsHold(INPUT_ACTION::ATTACK))
+	if(inputManager.IsHold(INPUT_ACTION::ABILITY))
 	{
 		// 弾のタイプを通常弾にセット
 		SetBulletType(BULLET_TYPE::NORMAL);
@@ -478,7 +519,7 @@ bool BulletPlayer::IsShootPiercingInput()
 	auto& inputManager = InputManager::GetInstance();
 
 	// 貫通弾発射ボタンが押されたら
-	if(inputManager.IsHold(INPUT_ACTION::ABILITY))
+	if(inputManager.IsHold(INPUT_ACTION::ATTACK))
 	{
 		// 弾のタイプを貫通弾にセット
 		SetBulletType(BULLET_TYPE::PIERCING);

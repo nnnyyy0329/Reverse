@@ -33,6 +33,7 @@ struct DodgeConfig
 	float activeTime;           // アクティブ時間
 	float recoveryTime;         // 硬直時間
 	float dodgeMoveSpeed;       // 回避移動速度
+	std::string soundName;		// サウンド名
 };
 
 class DodgeSystem
@@ -47,18 +48,8 @@ public:
 	bool Render();
 	void DebugRender();	// デバッグ情報描画
 
-	// 回避設定管理
-	void RegisterCharaConfig(DODGE_CHARA charaType, const DodgeConfig& config);	// キャラタイプ別設定登録
-
-	// 回避設定初期化
-	bool SetDodgeConfig
-	(
-		float invincibleDuration,   // 無敵持続時間
-		float startTime,			// 開始時間
-		float activeTime,			// アクティブ時間
-		float recoveryTime,			// 硬直時間
-		float dodgeMoveSpeed		// 回避移動速度
-	);
+	// 回避設定の登録
+	void RegisterDodgeCharaConfig(DODGE_CHARA charaType, const DodgeConfig& config);	// キャラタイプ別設定登録
 
 	// 回避呼び出し
 	void CallDodge(std::shared_ptr<CharaBase>chara, DODGE_CHARA charaType);
