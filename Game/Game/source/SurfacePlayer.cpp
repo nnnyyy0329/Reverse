@@ -82,13 +82,13 @@ void SurfacePlayer::DebugRender()
 }
 
 // 被ダメージ処理
-void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
+void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)
 {
 	// 表プレイヤー専用のダメージ倍率を適用
 	float resultDamage = fDamage * SPC::DAMAGE_MULTIPLIER;
 
 	// 基底クラスの被ダメージ処理呼び出し
-	PlayerBase::ApplyDamage(resultDamage, eType, attackInfo);
+	PlayerBase::ApplyDamage(resultDamage, ownerType, attackInfo);
 }
 
 // 弾での被ダメージ処理

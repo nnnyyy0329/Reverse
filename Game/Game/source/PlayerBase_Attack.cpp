@@ -423,7 +423,10 @@ void PlayerBase::EndAttackSequence()
 	}
 
 	// 状態リセット
-	_playerState.StateReset();									// 攻撃状態リセット
+	//_playerState.StateReset();									// 攻撃状態リセット
+	_playerState.absorbState = PLAYER_ABSORB_STATE::NONE;
+	_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
+	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
 	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 攻撃終了後は待機状態にする
 
 	_iComboCount = 0;				// コンボカウントリセット

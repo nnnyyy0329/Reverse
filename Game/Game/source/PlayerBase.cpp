@@ -217,10 +217,10 @@ bool PlayerBase::Render()
 }
 
 // 被ダメージ処理
-void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
+void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)
 {
 	// 親クラスの被ダメージ処理呼び出し
-	CharaBase::ApplyDamage(fDamage, eType, attackInfo);
+	CharaBase::ApplyDamage(fDamage, ownerType, attackInfo);
 
 	// 被弾状態に変更
 	_playerState.combatState = PLAYER_COMBAT_STATE::HIT;

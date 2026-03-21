@@ -114,6 +114,9 @@ public:
 	bool HasHitCharas(std::shared_ptr<CharaBase> chara)const;	// 当たったキャラを持っているかチェック
 	void ClearHitCharas();										// 当たったキャラリストクリア
 
+	// 攻撃移動の停止
+	virtual void StopAttackMovement();
+
 	// デバッグ表示
 	void DrawAttackCollision();
 
@@ -208,6 +211,9 @@ protected:
 	// 攻撃時の向き調整関係
 	float _dirAdjustSpeed;	// 向き調整速度
 	bool _canDirAdjust;		// 向き調整可能フラグ
+
+	// 攻撃移動停止用
+	bool _bCanAttackMovement;
 
 	float _fCurrentTime;	// 経過時間	
 

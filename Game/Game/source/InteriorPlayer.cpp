@@ -59,13 +59,16 @@ void InteriorPlayer::DebugRender()
 	PlayerBase::DebugRender();
 }
 
-void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
+void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)
 {
 	// ダメージに裏プレイヤー専用の倍率を適用
 	float resultDamage = fDamage * IPC::DAMAGE_MULTIPLIER;
 
 	// 基底クラスの被ダメージ処理を呼び出す
-	PlayerBase::ApplyDamage(resultDamage, eType, attackInfo);
+	PlayerBase::ApplyDamage(resultDamage, ownerType, attackInfo);
+
+	// 特定の所有者の攻撃移動を停止
+	AttackManager::GetInstance()->StopAttackMovementByOwner(ATTACK_OWNER_TYPE::INTERIOR_PLAYER);
 }
 
 void InteriorPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)

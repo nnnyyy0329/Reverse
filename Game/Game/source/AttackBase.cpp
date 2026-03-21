@@ -39,6 +39,9 @@ AttackBase::AttackBase()
 	_stcColOffset.directionScale = 1.0f;
 	_stcColOffset.useOwnerDirection = true;
 
+    // 攻撃移動停止用
+    _bCanAttackMovement = true;
+
 	// 向き調整の初期化
 	_canDirAdjust = false;
 
@@ -103,6 +106,7 @@ bool AttackBase::ProcessStartAttack()
         _fCurrentTime = 0.0f;                   // 経過時間リセット
 		_stcAttackCol.isActive = false;         // 攻撃判定は非アクティブに設定
 		_stcAttackCol.isHit = false;            // ヒットフラグリセット
+        _bCanAttackMovement = true;             // 攻撃移動可能フラグをリセット
 
         return true;
     }
@@ -115,7 +119,9 @@ bool AttackBase::ProcessStopAttack()
 {
 	_eAttackState = ATTACK_STATE::INACTIVE; // 攻撃状態を非アクティブに設定
 	_stcAttackCol.isActive = false;         // 攻撃判定を非アクティブに設定
-    _fCurrentTime = 0.0f;       // 経過時間リセット
+    _stcAttackCol.isHit = false;            // ヒットフラグリセット
+    _bCanAttackMovement = true;             // 攻撃移動可能フラグをリセット
+    _fCurrentTime = 0.0f;                   // 経過時間リセット
 
     // ヒットリストクリア
     ClearHitCharas();
@@ -189,6 +195,9 @@ void AttackBase::UpdateAttackMove()
     auto owner = GetOwner();
     if(!owner){ return; }
 
+    // 攻撃移動フラグが
+    if(!_bCanAttackMovement){ return; }
+
     // 移動速度が設定されており、現在の状態が指定された攻撃状態と一致するなら
     if(_stcAttackCol.attackMoveSpeed > 0.0f && _eAttackState == _stcAttackCol.attackState)
     {
@@ -236,6 +245,13 @@ void AttackBase::ProcessAttackMovement()
         // モデルの位置を更新
         MV1SetPosition(animManager->GetModelHandle(), newPos);
     }
+}
+
+// 攻撃移動の停止
+void AttackBase::StopAttackMovement()
+{
+    // 攻撃移動可能フラグを無効にする
+    _bCanAttackMovement = false;
 }
 
 // 攻撃コリジョンの位置更新

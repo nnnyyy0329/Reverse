@@ -241,6 +241,32 @@ bool AttackManager::IsAttackRegistered(std::shared_ptr<AttackBase> attack)const
 	return false;
 }
 
+bool AttackManager::StopAttackMovementByAttack(std::shared_ptr<AttackBase> attack)
+{
+	if(!attack) { return false; }
+
+	// “Á’è‚ÌUŒ‚ˆÚ“®‚ğ’â~
+	attack->StopAttackMovement();
+
+	return true;
+}
+
+bool AttackManager::StopAttackMovementByOwner(ATTACK_OWNER_TYPE ownerType)
+{
+	auto attackOwner = GetAttacksByOwnerType(ownerType);
+
+	for(auto& attack : attackOwner)
+	{
+		if(attack)
+		{
+			// UŒ‚ˆÚ“®‚ğ’â~
+			attack->StopAttackMovement();
+		}
+	}
+
+	return true;
+}
+
 void AttackManager::RegisterDodgeHitAttack(std::shared_ptr<AttackBase> attack)
 {
 	if(attack == nullptr){ return; }
@@ -381,7 +407,7 @@ std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAttacksByOwnerType(AT
 }
 
 // Š—LÒID‚É‚æ‚éUŒ‚æ“¾
-std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAttacksByOwner(int ownerId) const
+std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAttacksByOwnerId(int ownerId)const
 {
 	std::vector<std::shared_ptr<AttackBase>> ownerAttacks;	// Š—LÒIDUŒ‚ƒŠƒXƒg
 

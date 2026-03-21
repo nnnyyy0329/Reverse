@@ -251,7 +251,7 @@ public:
 	/// @param fDamage ダメージ量
 	/// @param eType 攻撃の所有者タイプ
 	/// @param attackInfo 攻撃コリジョン情報
-	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)override;	
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)override;
 
 	/// @brief 弾による被ダメージ処理関数
 	/// 

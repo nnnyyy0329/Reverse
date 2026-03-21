@@ -22,9 +22,9 @@ public:
 	virtual bool Render();	
 
 	// 共通関数のオーバーライド
-	virtual void DebugRender()override;																		// デバッグ情報描画
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;	// 被ダメージ処理
-	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
+	virtual void DebugRender()override;																			// デバッグ情報描画
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo) override;	// 被ダメージ処理
+	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;											// 弾による被ダメージ処理
 
 	// 純粋仮想関数のオーバーライド
 	virtual PlayerConfig			GetPlayerConfig()				override;	// 設定を取得

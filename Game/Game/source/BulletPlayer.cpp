@@ -96,13 +96,13 @@ void BulletPlayer::DebugRender()
 	DrawShootIntervalTime();
 }
 
-void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
+void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)
 {
 	// ダメージに弾プレイヤー専用の倍率を適用
 	float resultDamage = fDamage * BPC::DAMAGE_MULTIPLIER;
 
 	// 基底クラスの被ダメージ処理を呼び出す
-	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
+	PlayerBase::ApplyDamage(fDamage, ownerType, attackInfo);
 }
 
 void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)

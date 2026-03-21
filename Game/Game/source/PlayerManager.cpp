@@ -385,8 +385,8 @@ void PlayerManager::EndTransformCancel()
 {
 	if(_activePlayer)
 	{
-		// í“¬ó‘Ô‚ð’Êí‚É–ß‚·
-		_activePlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);
+		// ó‘Ô‚ð’Êí‚É–ß‚·
+		_activePlayer->SetStateReset();
 	}
 
 	if(_abilitySelectScreen)
