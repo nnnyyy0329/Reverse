@@ -76,6 +76,9 @@ public:
 	/// @brief インスタンス破棄処理
 	static void DestroyInstance();				
 
+
+	/* 基本処理 */
+
 	bool Initialize();
 	bool Terminate();
 	bool Process();

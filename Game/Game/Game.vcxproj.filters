@@ -232,6 +232,9 @@
     <ClCompile Include="source\InteriorPlayer.cpp">
       <Filter>GameObject\CharaBase\PlayerBase\Interior</Filter>
     </ClCompile>
+    <ClCompile Include="source\BulletEffectSystem.cpp">
+      <Filter>Bullet\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -453,6 +456,9 @@
     <ClInclude Include="source\ModeEndingText.h">
       <Filter>Mode\Ending</Filter>
     </ClInclude>
+    <ClInclude Include="source\BulletEffectSystem.h">
+      <Filter>Bullet\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -610,6 +616,9 @@
     </Filter>
     <Filter Include="Attack\AttackSystem\Effect">
       <UniqueIdentifier>{326a01b9-9c72-4633-8585-c04bb0a5bff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bullet\Effect">
+      <UniqueIdentifier>{a75ac53b-1d09-4f3a-a5fd-f5acd857c6ea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

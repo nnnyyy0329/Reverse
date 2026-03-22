@@ -7,9 +7,6 @@ namespace BulletConstants
 
 Bullet::Bullet() 
 {
-	_eCharaType = CHARA_TYPE::BULLET;
-	_eBulletType = BULLET_TYPE::NONE;
-
 	_stcBulletConfig.bulletType		= BULLET_TYPE::NONE;
 	_stcBulletConfig.shooterType	= CHARA_TYPE::BULLET;
 	_stcBulletConfig.startPos		= VGet(0.0f, 0.0f, 0.0f);
@@ -21,11 +18,17 @@ Bullet::Bullet()
 	_stcEffectConfig.effectName = "";
 	_stcEffectConfig.effectOffset = VGet(0.0f, 0.0f, 0.0f);
 	_stcEffectConfig.soundName = "";
+
+	_eCharaType = CHARA_TYPE::BULLET;
+	_eBulletType = BULLET_TYPE::NONE;
+
+	_effectHandle = -1;
 }
 
 Bullet::~Bullet() 
 {
-
+	// エフェクトのクリーンアップ
+	CleanupEffect();
 }
 
 bool Bullet::Initialize() 
@@ -35,6 +38,9 @@ bool Bullet::Initialize()
 
 bool Bullet::Terminate() 
 {
+	// エフェクトのクリーンアップ
+	CleanupEffect();
+
 	return true;
 }
 
@@ -47,6 +53,9 @@ bool Bullet::Process()
 
 	// 生存時間の減算処理
 	DecrementLifeTime();
+
+	// エフェクトの位置更新
+	UpdateEffectPos();
 
 	return true;
 }
@@ -91,6 +100,9 @@ void Bullet::ActivateBullet(const BulletConfig& bulletConfig, const BulletEffect
 
 	// 他の情報設定
 	SetCoordinateConfig(bulletConfig);
+
+	// エフェクト再生
+	PlayEffect(bulletEffectConfig);
 }
 
 // 弾を有効化する(演出面の引数なし)
@@ -101,6 +113,19 @@ void Bullet::ActivateBulletSimple(const BulletConfig& config)
 
 	// 他の情報設定
 	SetCoordinateConfig(config);
+}
+
+void Bullet::UpdateEffectPos()
+{
+	// エフェクトハンドルが有効な場合
+	if(_effectHandle > 0)
+	{
+		// 弾のエフェクトシステム取得
+		auto bulletEffectSystem = BulletEffectSystem::GetInstance();
+
+		// エフェクトの位置更新
+		bulletEffectSystem->UpdateBulletEffectPos(_effectHandle, _vPos);
+	}
 }
 
 // 弾情報の設定
@@ -148,8 +173,15 @@ void Bullet::PlayBulletEffect(const BulletEffectConfig& config)
 		// エフェクト再生位置を計算
 		VECTOR effectPos = VAdd(_vPos, config.effectOffset);
 
+		// 弾のエフェクトシステム取得
+		auto bulletEffectSystem = BulletEffectSystem::GetInstance();
+
 		// エフェクト再生
-		EffectServer::GetInstance()->Play(config.effectName, effectPos);
+		_effectHandle = bulletEffectSystem->PlayBulletEffect
+		(
+			config.effectName,
+			effectPos
+		);
 	}
 }
 	
@@ -159,8 +191,11 @@ void Bullet::PlayBulletSound(const BulletEffectConfig& config)
 	// サウンド名が空でない場合のみ
 	if(!config.soundName.empty())
 	{
+		// 弾のエフェクトシステム取得
+		auto bulletEffectSystem = BulletEffectSystem::GetInstance();
+
 		// サウンド再生
-		SoundServer::GetInstance()->Play(config.soundName, DX_PLAYTYPE_BACK);
+		bulletEffectSystem->PlayBulletSound(config.soundName);
 	}
 }
 
@@ -178,6 +213,26 @@ void Bullet::MoveBullet()
 void Bullet::DecrementLifeTime()
 {
 	_stcBulletConfig.lifeTime--;	// 時間を減らす
+}
+
+/// @brief エフェクトをクリーンアップ
+void Bullet::CleanupEffect()
+{
+	// エフェクトハンドルが有効な場合のみ停止
+	if(_effectHandle > 0)
+	{
+		// 弾のエフェクトシステム取得
+		auto bulletEffectSystem = BulletEffectSystem::GetInstance();
+
+		if(bulletEffectSystem)
+		{
+			// エフェクト停止
+			bulletEffectSystem->StopBulletEffect(_effectHandle);
+		}
+
+		// ハンドルを無効化
+		_effectHandle = -1;
+	}
 }
 
 // 弾の生存時間が残っているか

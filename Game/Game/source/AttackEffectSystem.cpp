@@ -29,6 +29,7 @@ void AttackEffectSystem::DestroyInstance()
 		_instance = nullptr;	// ポインタをnullptrに設定
 	}
 }
+
 AttackEffectSystem::AttackEffectSystem()
 {
 	// アクティブなエフェクトの管理マップ初期化

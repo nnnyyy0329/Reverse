@@ -1,5 +1,6 @@
 #pragma once
 #include "CharaBase.h"
+#include "BulletEffectSystem.h"
 
 // 弾の種類を管理するための列挙型
 enum class BULLET_TYPE
@@ -24,16 +25,16 @@ struct BulletConfig
 	bool isHit = false;		// ヒットしたか(初期化しておく)
 };
 
-// 弾の演出関係の構造体
-struct BulletEffectConfig
-{
-	// エフェクト
-	std::string effectName;	// エフェクト名
-	VECTOR effectOffset;	// エフェクトのオフセット
-
-	// サウンド
-	std::string soundName;	// サウンド名
-};
+//// 弾の演出関係の構造体
+//struct BulletEffectConfig
+//{
+//	// エフェクト
+//	std::string effectName;	// エフェクト名
+//	VECTOR effectOffset;	// エフェクトのオフセット
+//
+//	// サウンド
+//	std::string soundName;	// サウンド名
+//};
 
 // 弾クラス
 class Bullet : public CharaBase
@@ -56,6 +57,9 @@ public:
 	// 弾を有効化する(演出面の引数なし)
 	void ActivateBulletSimple(const BulletConfig& config);
 
+	/// @brief 弾のエフェクト位置を更新
+	void UpdateEffectPos();
+
 	// 弾情報の設定
 	void SetBulletConfig(const BulletConfig& config);
 
@@ -73,6 +77,9 @@ public:
 
 	// サウンド再生処理
 	void PlayBulletSound(const BulletEffectConfig& effectConfig);
+
+	/// @brief エフェクトをクリーンアップ
+	void CleanupEffect();
 
 	// 弾の生存時間が残っているか
 	bool IsBulletAlive()const;
@@ -107,5 +114,7 @@ protected:
 
 	CHARA_TYPE _eShooterType;	// 誰が発射した弾か
 	BULLET_TYPE _eBulletType;	// 弾の種類
+
+	int _effectHandle;	// エフェクトハンドル
 };
 

@@ -159,6 +159,7 @@
     <ClCompile Include="source\AttackEffectSystem.cpp" />
     <ClCompile Include="source\AttackManager.cpp" />
     <ClCompile Include="source\Bullet.cpp" />
+    <ClCompile Include="source\BulletEffectSystem.cpp" />
     <ClCompile Include="source\BulletManager.cpp" />
     <ClCompile Include="source\BulletPlayer.cpp" />
     <ClCompile Include="source\CameraBase.cpp" />
@@ -273,6 +274,7 @@
     <ClInclude Include="source\AttackEffectSystem.h" />
     <ClInclude Include="source\AttackManager.h" />
     <ClInclude Include="source\Bullet.h" />
+    <ClInclude Include="source\BulletEffectSystem.h" />
     <ClInclude Include="source\BulletManager.h" />
     <ClInclude Include="source\BulletPlayer.h" />
     <ClInclude Include="source\CameraBase.h" />

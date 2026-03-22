@@ -241,7 +241,7 @@ BulletEffectConfig BulletPlayer::GetBulletEffectConfig()
 	// 弾プレイヤー用の弾演出設定
 	BulletEffectConfig config;
 
-	config.effectName = "";							// エフェクトの名前
+	config.effectName = "PlayerNormalBullet";		// エフェクトの名前
 	config.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// エフェクトの発生位置オフセット
 	config.soundName = "";							// サウンドの名前
 

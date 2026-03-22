@@ -35,8 +35,8 @@ bool ModeLoading::Initialize()
 				rs->Register("SurfacePlayerAttackHit2", "effect/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 				// 弾発射プレイヤーの弾エフェクト
-				rs->Register("PlayerNormalBullet", "effect/playerBullet/SChange_Attack_B_001.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-				rs->Register("PlayerPiercingBullet", "effect/playerBullet/SChange_Attack_S_001.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+				rs->Register("PlayerNormalBullet", "effect/playerBullet/SChange_Attack_B_001.efkefc", RESOURCE_TYPE::Effect, 1.0f);
+				rs->Register("PlayerPiercingBullet", "effect/playerBullet/SChange_Attack_S_001.efkefc", RESOURCE_TYPE::Effect, 1.0f);
 
 			}
 
