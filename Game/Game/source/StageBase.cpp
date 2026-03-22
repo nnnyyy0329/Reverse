@@ -522,7 +522,7 @@ void StageBase::StopStageBGM()
 	if (_currentBGMName.empty()) return;
 
 	// BGM‚ð’âŽ~
-if (!_currentBGMName.empty()) 
+	if (!_currentBGMName.empty()) 
 	{
 		SoundServer::GetInstance()->Stop(_currentBGMName);
 	}
@@ -533,7 +533,8 @@ if (!_currentBGMName.empty())
 	if (!_bulletPlayerBGMName.empty()) 
 	{
 		SoundServer::GetInstance()->Stop(_bulletPlayerBGMName);
-	}}
+	}
+}
 
 void StageBase::DebugKillAllEnemies()
 {
