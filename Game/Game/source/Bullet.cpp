@@ -62,7 +62,7 @@ bool Bullet::Process()
 bool Bullet::Render()
 {
 	// “–‚½‚è”»’è‚Ì•`‰æ
-	CollisionRender();
+	//CollisionRender();
 
 	return true;
 }

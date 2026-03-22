@@ -19,7 +19,7 @@ namespace NormalBulletConfig
 namespace PiercingBulletConfig
 {
 	constexpr float RADIUS = 15.0f;
-	constexpr float DAMAGE = 5.0f;
+	constexpr float DAMAGE = 10.0f;
 	constexpr float SPEED = 25.0f;
 }
 
