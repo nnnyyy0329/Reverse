@@ -3,7 +3,7 @@
 #include "EnemyFactory.h"
 #include "ModeGame.h"
 #include "PathfindingManager.h"
-
+#include "ModeTextBox.h" 
 #include <nlohmann/json.hpp>
 #include <fstream>
 
@@ -318,25 +318,67 @@ void StageBase::Process()
 	// 敵の更新
 	{
 		// 敵の更新と削除処理
-		for (auto it = _stageEnemies.begin(); it != _stageEnemies.end(); ) 
+		for(auto it = _stageEnemies.begin(); it != _stageEnemies.end(); )
 		{
 			std::shared_ptr<Enemy> enemy = *it;
 
 			enemy->Process();
 
 			// 削除可能ならリストから削除
-			if (enemy->CanRemove()) 
+			if(enemy->CanRemove())
 			{
+				// ここで「倒された」判定を行う（Dead→CanRemove の流れを想定）
+				bool wasDead = enemy->IsDead();
+
+				// ステージ2（_stageNum == 1）で初めての銃型（modelName == "Ranged") を倒したとき
+				if(wasDead && !_bFirstRangedKilled && _stageNum == 1)
+				{
+					if(enemy->GetModelName() == "Ranged" || enemy->GetModelName() == "RangedEnemy")
+					{
+						_bFirstRangedKilled = true;
+						ModeTextBox::Show("Textbox_Kage", "今のやつのエネルギーでできることが増えたから試してみようぜ。", false, 100, "stage2_first_ranged");
+					}
+				}
+
 				it = _stageEnemies.erase(it);
 			}
-			else 
+			else
 			{
 				++it;
 			}
 		}
 	}
-}
 
+	// 全滅判定: 空になった時点で一度だけ通知
+	if(IsAllEnemiesDefeated() && !_bAllClearNotified)
+	{
+		_bAllClearNotified = true;
+
+		// ステージ番号に応じてメッセージを切り替え
+		if(_stageNum == 0)
+		{
+			// ステージ1 全滅時のテキストチェーン
+			ModeTextBox::ShowChain({
+				{"Textbox_Normal", "クロと同じ種族？は沢山いたけど白雪はいなかったな"},
+				{"Textbox_Kage", "もしかしたら先にいるかもな、\n今みたいにあいつらからエネルギーを奪いながら奥まで探してみようぜ。"},
+				{"Textbox_Angry", "クロ、お前、なんか企んでる？"},
+				{"Textbox_Kage", "いいや、ただ嬢ちゃんが心配なだけさ。"}
+				}, false, 100, "stage1_allclear");
+		}
+		else if(_stageNum == 1)
+		{
+			// ステージ2 全滅時のテキストチェーン
+			ModeTextBox::ShowChain({
+				{"Textbox_Scared", "さっき拾ったこの手鏡多分白雪のだ。"},
+				{"Textbox_Kage", "つまり、嬢ちゃんはここを通ったってことだな？\nちょうどこの奥が最後みたいだぜ。"}
+				}, false, 100, "stage2_allclear");
+		}
+		else
+		{
+			// 他ステージは必要に応じて追加
+		}
+	}
+}
 void StageBase::Render()
 {
 	// マップモデルの描画

@@ -94,6 +94,10 @@ protected:
 
 	int _totalEnemyCnt;// ステージ内の敵の総数
 
+	
+	bool _bFirstRangedKilled = false;
+	bool _bAllClearNotified = false;// 通知フラグ（初回撃破・全滅通知など）
+
 	std::vector<TRIGGERPOS> _triggerList;// トリガーリスト
 
 	// BGM関連

@@ -1,34 +1,45 @@
 #include "ModeGameOver.h"
 #include "ModeGame.h"
 #include "ApplicationMain.h"
-
+#include "ModeTitle.h"
 #include <cstdlib>
 
 namespace
 {
 	constexpr int MENU_COUNT = 2;
 
-	void DrawMenuItem(int x, int y, const char* text, bool selected)
+	void DrawMenuImage(int centerX, int topY, int handle, bool selected)
 	{
-		SetFontSize(48);
-
-		const int glowColor = selected ? GetColor(255, 255, 255) : GetColor(255, 0, 0);
-		const int bodyColor = selected ? GetColor(255, 255, 255) : GetColor(200, 200, 200);
-
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 120);
-		for(int dy = -2; dy <= 2; ++dy)
+		if(handle < 0)
 		{
-			for(int dx = -2; dx <= 2; ++dx)
-			{
-				if(dx == 0 && dy == 0) { continue; }
-				DrawFormatString(x + dx, y + dy, glowColor, text);
-			}
+			// ハンドルが無ければフォールバックで枠だけ描画
+			const int w = 300;
+			const int h = 64;
+			const int x = centerX - w / 2;
+			const int y = topY;
+			const int bg = selected ? GetColor(255, 255, 255) : GetColor(100, 100, 100);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, selected ? 160 : 80);
+			DrawBox(x - 8, y - 8, x + w + 8, y + h + 8, bg, TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			return;
 		}
 
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-		DrawFormatString(x, y, bodyColor, text);
+		int w = 0, h = 0;
+		GetGraphSize(handle, &w, &h);
 
-		SetFontSize(16);
+		const int x = centerX - w / 2;
+		const int y = topY;
+
+		// 選択中は薄いライトを背後に描画して強調
+		if(selected)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 140);
+			const int glowCol = GetColor(255, 255, 255);
+			DrawBox(x - 12, y - 12, x + w + 12, y + h + 12, glowCol, TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
+
+		DrawGraph(x, y, handle, TRUE);
 	}
 
 	void DrawSelectArrow(int x, int y, int size, unsigned int color)
@@ -88,19 +99,49 @@ bool ModeGameOver::Process()
 
 	auto& im = InputManager::GetInstance();
 
-	if(im.IsTrigger(INPUT_ACTION::SKIP)) {// zキー Aボタン
-		// 現在のステージ番号からリスタート
-		ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
-		if (modeGame != nullptr)
-		{
-			modeGame->RestartCurrentStage();
-		}
-
-		// このモードを削除
-		ModeServer::GetInstance()->Del(this);
+	// ↑↓で選択できるように追加
+	if(im.IsTrigger(INPUT_ACTION::MOVE_UP))
+	{
+		_menuIndex = WrapMenuIndex(_menuIndex - 1);
+	}
+	if(im.IsTrigger(INPUT_ACTION::MOVE_DOWN))
+	{
+		_menuIndex = WrapMenuIndex(_menuIndex + 1);
 	}
 
-	return true;
+	// 決定（SKIP）で選択項目に応じた処理
+	if(im.IsTrigger(INPUT_ACTION::SKIP))
+	{
+		if(_menuIndex == 0) // リトライ
+		{
+			ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
+			if(modeGame != nullptr)
+			{
+				modeGame->RestartCurrentStage();
+			}
+			ModeServer::GetInstance()->Del(this);
+		}
+		else if(_menuIndex == 1) // タイトルへ戻る
+		{
+			// BGM停止
+			SoundServer::GetInstance()->StopAll();
+
+			// 先にゲームモードを消しておく（タイトルが背後に表示されるのを防ぐ）
+			auto gm = ModeServer::GetInstance()->Get("game");
+			if(gm != nullptr)
+			{
+				ModeServer::GetInstance()->Del(gm);
+			}
+
+			// タイトルをトップに追加（優先度を大きめに）
+			ModeServer::GetInstance()->Add(new ModeTitle(), 9999, "title");
+
+			// 自分（GameOver）を削除
+			ModeServer::GetInstance()->Del(this);
+		}
+
+		return true;
+	}
 }
 
 bool ModeGameOver::Render()
@@ -112,21 +153,38 @@ bool ModeGameOver::Render()
 	DrawBox(0, 0, 1920, 1080, GetColor(0, 0, 0), TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
+	// 画像ハンドル取得
+	auto rs = ResourceServer::GetInstance();
+	const int hGameOver = rs->GetHandle("GameOver");
+	const int hRetry = rs->GetHandle("Retry");
+	const int hTitle = rs->GetHandle("Title");
 
-	SetFontSize(48);
-	DrawFormatString(720, 260, GetColor(255, 0, 0), "===== GAME OVER =====");
-	SetFontSize(16);
-	// メニュー
+	// Game Over 画像（上部に中央寄せで表示）
+	if(hGameOver >= 0)
 	{
-		const int textX = 760;
-		const int textY = 420;
-		const int lineGap = 70;
+		int w = 0, h = 0;
+		GetGraphSize(hGameOver, &w, &h);
+		const int x = (1920 - w) / 2;
+		const int y = 180;
+		DrawGraph(x, y, hGameOver, TRUE);
+	}
 
-		DrawMenuItem(textX, textY + 0 * lineGap, "ゲームリトライ", _menuIndex == 0);
-		DrawMenuItem(textX, textY + 1 * lineGap, "ゲーム終了", _menuIndex == 1);
 
-		const int arrowX = textX - 50;
-		const int arrowY = textY + _menuIndex * lineGap + 10;
+	// メニュー（画像で表示）
+	{
+		const int centerX = 960; // 中央
+		const int startY = 460;
+		const int lineGap = 140; // 画像の大きさに合わせて余裕を持たせる
+
+		// Retry（メニュー 0）
+		DrawMenuImage(centerX, startY + 0 * lineGap, hRetry, _menuIndex == 0);
+
+		// Title（メニュー 1）
+		DrawMenuImage(centerX, startY + 1 * lineGap, hTitle, _menuIndex == 1);
+
+		// 矢印も表示（画像が無くても視認性を確保）
+		const int arrowX = centerX - 300;
+		const int arrowY = startY + _menuIndex * lineGap + 20;
 		DrawSelectArrow(arrowX, arrowY, 28, GetColor(255, 255, 255));
 	}
 

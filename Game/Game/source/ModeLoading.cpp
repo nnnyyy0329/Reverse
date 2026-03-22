@@ -142,6 +142,7 @@ bool ModeLoading::Initialize()
 			// ポータル
 			rs->Register("S_Portal_0to1", "res/stage/json/S_Portal_0to1.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("S_Portal_1to2", "res/stage/json/S_Portal_1to2.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("EventB", "res/stage/json/EventB.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// 敵の移動可能範囲
 			rs->Register("Enemy_Area", "res/stage/json/Enemy_Area.mv1", RESOURCE_TYPE::Model, 1.0f);
@@ -230,7 +231,7 @@ bool ModeLoading::Initialize()
 
 		// シナリオ　
 		{
-			rs->Register("GameStartText ",  "res/Senario/story1.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText",  "res/Senario/story1.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("GameStartText1",  "res/Senario/story2.png",  RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("GameStartText2",  "res/Senario/story3.png",  RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("GameStartText3",  "res/Senario/story4.png",  RESOURCE_TYPE::Graph, 1.0f);
@@ -244,9 +245,19 @@ bool ModeLoading::Initialize()
 			rs->Register("GameStartText11", "res/Senario/story12.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 		
-	    //　テキストボックス　
+		//　テキストボックス　
 		{
-
+			rs->Register("Textbox_Aho", "res/Textbox/textboxAho.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Textbox_Kage", "res/Textbox/textboxKage.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Textbox_Angry", "res/Textbox/textboxAngry.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Textbox_Normal", "res/Textbox/textboxNormal.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Textbox_Scared", "res/Textbox/textboxScared.png", RESOURCE_TYPE::Graph, 1.0f);
+		}
+		//　ゲームオーバー
+		{
+			rs->Register("GameOver", "res/GameOver/Gameover_white.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Retry", "res/GameOver/retry_white.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Title", "res/GameOver/title_white.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 	}
 
