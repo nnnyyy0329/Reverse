@@ -1,7 +1,9 @@
 #pragma once
 #include "appframe.h"
+#include "CharaBase.h"
 
 class Enemy;
+class PlayerManager;
 
 namespace Pathfinding { class Manager; }
 
@@ -82,6 +84,8 @@ public:
 	Pathfinding::Manager* GetPathfindingManager() { return _pathfindingManager.get(); }
 	void DebugKillAllEnemies();// デバッグ：敵を全滅させる
 
+	void SetPlayerManager(std::shared_ptr<PlayerManager>player){ _playerManager = player; }// プレイヤーマネージャーセット
+
 protected:
 	std::map<std::string, int> _mapModelHandle;// マップモデル用ハンドル(名前、モデルハンドル)
 	std::vector<std::shared_ptr<Enemy>> _stageEnemies;// ステージ内の敵リスト
@@ -89,6 +93,8 @@ protected:
 	std::vector<MODELPOS> _mapModelPosList;// json読み込みで設定したマップモデルのリスト
 
 	std::vector<MODELPOS> _moveAreaList;// 敵の移動可能範囲リスト
+
+	std::shared_ptr<PlayerManager>_playerManager;// プレイヤーマネージャー
 
 	int _stageNum;// ステージ番号
 
@@ -98,11 +104,20 @@ protected:
 
 	// BGM関連
 	std::string _currentBGMName;// 再生中のBGM名
+	std::string _interiorPlayerBGMName;// 裏プレイヤーのBGM名
+	std::string _bulletPlayerBGMName;// 弾発射プレイヤーのBGM名
+	CHARA_TYPE _previousCharaType;// 前フレームのキャラタイプを記録
 	// プレイヤー初期位置
 	VECTOR _vPlayerStartPos;
 	VECTOR _vPlayerStartRot;
 
 	// 経路探索マネージャー
 	std::unique_ptr<Pathfinding::Manager> _pathfindingManager;
+
+private:
+
+	// プレイヤー変身でBGMを切り替える
+	void UpdateStageBGM(CHARA_TYPE charaType);	// 毎フレーム呼ぶBGM切り替え関数
+
 };
 

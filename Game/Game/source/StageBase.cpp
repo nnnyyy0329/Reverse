@@ -1,18 +1,21 @@
 #include "StageBase.h"
 #include "Enemy.h"
 #include "EnemyFactory.h"
+#include "PlayerManager.h"
 #include "ModeGame.h"
 #include "PathfindingManager.h"
 
 #include <nlohmann/json.hpp>
 #include <fstream>
 
-StageBase::StageBase(int stageNum) 
+StageBase::StageBase(int stageNum)
 	: _stageNum(stageNum)
 	, _totalEnemyCnt(0)
 	, _currentBGMName("")
 	, _vPlayerStartPos(VGet(0.0f, 0.0f, 0.0f))
 	, _vPlayerStartRot(VGet(0.0f, 0.0f, 0.0f))
+	, _playerManager(nullptr)
+	, _previousCharaType(CHARA_TYPE::SURFACE_PLAYER)
 {
 
 	_pathfindingManager = std::make_unique<Pathfinding::Manager>();
@@ -289,12 +292,18 @@ StageBase::StageBase(int stageNum)
 	{
 	case 0:
 		_currentBGMName = "BGM_Stage01";
+		_interiorPlayerBGMName = "BGM_PowerPlayer";
+		_bulletPlayerBGMName = "BGM_BulletPlayer";
 		break;
 	case 1:
 		_currentBGMName = "BGM_Stage02";
+		_interiorPlayerBGMName = "BGM_PowerPlayer";
+		_bulletPlayerBGMName = "BGM_BulletPlayer";
 		break;
 	case 2:
 		_currentBGMName = "BGM_Stage03";
+		_interiorPlayerBGMName = "BGM_PowerPlayer";
+		_bulletPlayerBGMName = "BGM_BulletPlayer";
 		break;
 	}
 }
@@ -307,6 +316,27 @@ StageBase::~StageBase()
 
 void StageBase::Process()
 {
+	// BGM 切り替え処理（毎フレーム実行）
+	{
+		if(_playerManager)
+		{
+			auto activePlayer = _playerManager->GetActivePlayerShared();
+			if(activePlayer)
+			{
+				CHARA_TYPE currentCharaType = activePlayer->GetCharaType();
+
+				// キャラタイプが変わったら BGM を切り替える
+				if(_previousCharaType != currentCharaType)
+				{
+					_previousCharaType = currentCharaType;
+					UpdateStageBGM(currentCharaType);
+				}
+			}
+		}
+	}
+
+
+
 	// マップモデルの更新
 	{
 		if(IsAllEnemiesDefeated())
@@ -475,10 +505,14 @@ int StageBase::GetNextStageNumFromTrigger(const std::string& triggerName)
 
 void StageBase::PlayStageBGM()
 {
-	if (_currentBGMName.empty()) return;
+	// ステージ開始時に呼ぶ初期化用
+	if(!_playerManager) return;
 
-	// ループ再生
-	auto bgmHandle = SoundServer::GetInstance()->Play(_currentBGMName, DX_PLAYTYPE_LOOP);
+	auto activePlayer = _playerManager->GetActivePlayerShared();
+	if(!activePlayer) return;
+
+	_previousCharaType = activePlayer->GetCharaType();
+	UpdateStageBGM(_previousCharaType);
 
 	// ボリューム設定
 }
@@ -488,8 +522,18 @@ void StageBase::StopStageBGM()
 	if (_currentBGMName.empty()) return;
 
 	// BGMを停止
-	SoundServer::GetInstance()->Stop(_currentBGMName);
-}
+if (!_currentBGMName.empty()) 
+	{
+		SoundServer::GetInstance()->Stop(_currentBGMName);
+	}
+	if (!_interiorPlayerBGMName.empty()) 
+	{
+		SoundServer::GetInstance()->Stop(_interiorPlayerBGMName);
+	}
+	if (!_bulletPlayerBGMName.empty()) 
+	{
+		SoundServer::GetInstance()->Stop(_bulletPlayerBGMName);
+	}}
 
 void StageBase::DebugKillAllEnemies()
 {
@@ -504,4 +548,27 @@ void StageBase::DebugKillAllEnemies()
 		// StageBase::Process の erase 条件に乗せる
 		enemy->EnableRemove();
 	}
+}
+
+void StageBase::UpdateStageBGM(CHARA_TYPE charaType)
+{
+	// 前の BGM を停止
+	StopStageBGM();
+
+	// 新しい BGM を設定
+	std::string bgmName = _currentBGMName;  // デフォルト
+
+	if(charaType == CHARA_TYPE::INTERIOR_PLAYER)
+	{
+		bgmName = _interiorPlayerBGMName;
+	}
+	else if(charaType == CHARA_TYPE::BULLET_PLAYER)
+	{
+		bgmName = _bulletPlayerBGMName;
+	}
+
+	if(bgmName.empty()) { return; }
+
+	// 新しい BGM を再生
+	SoundServer::GetInstance()->Play(bgmName, DX_PLAYTYPE_LOOP);
 }

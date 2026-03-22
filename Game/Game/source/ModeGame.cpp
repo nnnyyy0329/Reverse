@@ -99,6 +99,7 @@ bool ModeGame::Initialize()
 	// ステージ初期化
 	_currentStageNum = 0;
 	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
+	_stage->SetPlayerManager(_playerManager);
 
 	// プレイヤーアンロックマネージャー初期化
 	{
@@ -265,6 +266,8 @@ bool ModeGame::Process()
 
 		_abilitySelectManager->SetAbilitySelectScreen(_abilitySelectScreen);
 		_abilitySelectManager->SetPlayerManager(_playerManager);
+
+		_stage->SetPlayerManager(_playerManager);
 
 		// 弾発射プレイヤーにカメラマネージャーを設定
 		auto bulletPlayer = std::dynamic_pointer_cast<BulletPlayer>(_playerManager->GetPlayerByType(PLAYER_TYPE::BULLET));
