@@ -7,9 +7,6 @@ namespace BulletConstants
 
 Bullet::Bullet() 
 {
-	_eCharaType = CHARA_TYPE::BULLET;
-	_eBulletType = BULLET_TYPE::NONE;
-
 	_stcBulletConfig.bulletType		= BULLET_TYPE::NONE;
 	_stcBulletConfig.shooterType	= CHARA_TYPE::BULLET;
 	_stcBulletConfig.startPos		= VGet(0.0f, 0.0f, 0.0f);
@@ -21,6 +18,11 @@ Bullet::Bullet()
 	_stcEffectConfig.effectName = "";
 	_stcEffectConfig.effectOffset = VGet(0.0f, 0.0f, 0.0f);
 	_stcEffectConfig.soundName = "";
+
+	_eCharaType = CHARA_TYPE::BULLET;
+	_eBulletType = BULLET_TYPE::NONE;
+
+	_effectHandle = -1;
 }
 
 Bullet::~Bullet() 
@@ -35,6 +37,9 @@ bool Bullet::Initialize()
 
 bool Bullet::Terminate() 
 {
+	// エフェクトの停止
+	EffectServer::GetInstance()->Stop(_effectHandle);
+
 	return true;
 }
 
@@ -44,6 +49,9 @@ bool Bullet::Process()
 
 	// 弾の移動処理
 	MoveBullet();
+
+	// 弾のエフェクト位置更新
+	UpdateBulletEffectPos();
 
 	// 生存時間の減算処理
 	DecrementLifeTime();
@@ -91,6 +99,9 @@ void Bullet::ActivateBullet(const BulletConfig& bulletConfig, const BulletEffect
 
 	// 他の情報設定
 	SetCoordinateConfig(bulletConfig);
+
+	// エフェクトを再生
+	PlayBulletEffect(bulletEffectConfig);
 }
 
 // 弾を有効化する(演出面の引数なし)
@@ -101,6 +112,22 @@ void Bullet::ActivateBulletSimple(const BulletConfig& config)
 
 	// 他の情報設定
 	SetCoordinateConfig(config);
+}
+
+// 弾のエフェクト位置更新
+void Bullet::UpdateBulletEffectPos()
+{
+	// エフェクト名が空の場合はスキップ
+	if(_stcEffectConfig.effectName.empty())
+	{
+		return;
+	}
+
+	// エフェクト再生位置を計算
+	VECTOR effectPos = VAdd(_vPos, _stcEffectConfig.effectOffset);
+
+	// エフェクトサーバーに位置を通知
+	EffectServer::GetInstance()->SetPos(_effectHandle, effectPos);
 }
 
 // 弾情報の設定
@@ -149,7 +176,7 @@ void Bullet::PlayBulletEffect(const BulletEffectConfig& config)
 		VECTOR effectPos = VAdd(_vPos, config.effectOffset);
 
 		// エフェクト再生
-		EffectServer::GetInstance()->Play(config.effectName, effectPos);
+		_effectHandle = EffectServer::GetInstance()->Play(config.effectName, effectPos);
 	}
 }
 	

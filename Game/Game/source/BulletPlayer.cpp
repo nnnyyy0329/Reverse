@@ -239,13 +239,38 @@ BulletConfig BulletPlayer::GetBulletConfig()
 BulletEffectConfig BulletPlayer::GetBulletEffectConfig()
 {
 	// 弾プレイヤー用の弾演出設定
-	BulletEffectConfig config;
+	BulletEffectConfig effectConfig;
 
-	config.effectName = "";							// エフェクトの名前
-	config.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// エフェクトの発生位置オフセット
-	config.soundName = "";							// サウンドの名前
+	// 弾のタイプで情報を分ける
+	switch(_currentBulletType)
+	{
+		case BULLET_TYPE::NORMAL: // 通常弾
+		{
+			effectConfig.effectName = "PlayerNormalBullet";		// エフェクトの名前
+			effectConfig.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// エフェクトの発生位置オフセット
+			effectConfig.soundName = "";						// サウンドの名前
 
-	return config;
+			break;
+		}
+
+		case BULLET_TYPE::PIERCING: // 貫通弾
+		{
+			effectConfig.effectName = "PlayerPiercingBullet";	// エフェクトの名前
+			effectConfig.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// エフェクトの発生位置オフセット
+			effectConfig.soundName = "";						// サウンドの名前
+
+			break;
+		}
+
+		case BULLET_TYPE::NONE: // 弾なし
+		default:
+		{
+			break;
+		}
+	}
+
+	// エフェクト情報を返す
+	return effectConfig;
 }
 
 void BulletPlayer::DrawShootIntervalTime()
