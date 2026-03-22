@@ -187,7 +187,7 @@ private:
 	void UpdateTransformTime();									
 
 	/// @brief 変身解除タイマーを更新
-	void UpdateTransformCancelTime();							
+	void UpdateTransformCancelTime();
 
 	/// @brief 変身関連のアニメーションを再生
 	///
@@ -211,6 +211,11 @@ private:
 
 	/// @brief 待機アニメーションに戻す処理
 	void ReturnWaitAnim();
+
+	/// @brief 変身後の体力回復処理
+	///
+	/// @param 変身先のプレイヤータイプ
+	void RecoveryLifeByTransform(PLAYER_TYPE transformPlayerType);
 
 protected:
 

@@ -288,6 +288,9 @@ void PlayerManager::TransformFinishByTime()
 				// 位置と状態の引き継ぎ
 				TransferPlayerConfig(oldPlayer, _activePlayer);
 			}
+
+			// 変身後の体力回復処理
+			RecoveryLifeByTransform(_eActivePlayerType);
 		}
 
 		// 変身終了
@@ -560,4 +563,19 @@ void PlayerManager::ReturnWaitAnim()
 
 	// 待機アニメーション再生
 	PlayTransConnectionAnim(playerAnim.movement.wait);	
+}
+
+void PlayerManager::RecoveryLifeByTransform(PLAYER_TYPE transformPlayerType)
+{
+	if(!_activePlayer) { return; }
+
+	// 裏プレイヤーまたは弾プレイヤーへの変身なら
+	if(transformPlayerType == PLAYER_TYPE::INTERIOR || transformPlayerType == PLAYER_TYPE::BULLET)
+	{
+		// アクティブプレイヤーの最大体力情報取得
+		float maxLife = _activePlayer->GetPlayerConfig().maxLife;
+
+		// 体力全回復
+		_activePlayer->SetLife(maxLife);
+	}
 }
