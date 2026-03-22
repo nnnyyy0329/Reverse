@@ -204,17 +204,17 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 		return;
 	}
 
-	// プレイヤータイプごとの変身サウンド再生
-	if(targetType == PLAYER_TYPE::INTERIOR)
-	{
-		// サウンド再生
-		SoundServer::GetInstance()->Play("ChangePower", DX_PLAYTYPE_BACK);
-	}
-	else if(targetType == PLAYER_TYPE::BULLET)
-	{
-		// サウンド再生
-		SoundServer::GetInstance()->Play("ChangeBlaster", DX_PLAYTYPE_BACK);
-	}
+	//// プレイヤータイプごとの変身サウンド再生
+	//if(targetType == PLAYER_TYPE::INTERIOR)
+	//{
+	//	// サウンド再生
+	//	SoundServer::GetInstance()->Play("ChangePower", DX_PLAYTYPE_BACK);
+	//}
+	//else if(targetType == PLAYER_TYPE::BULLET)
+	//{
+	//	// サウンド再生
+	//	SoundServer::GetInstance()->Play("ChangeBlaster", DX_PLAYTYPE_BACK);
+	//}
 
 	_eTransformTarget = targetType;	// 変身先のプレイヤーをセット
 	_fTransformTime = 0.0f;			// 変身時間リセット
