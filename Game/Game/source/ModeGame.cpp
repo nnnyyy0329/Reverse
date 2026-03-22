@@ -5,6 +5,7 @@
 #include "ModeStageChange.h"
 #include "ModeGameOver.h"
 #include "ModeScenario.h"
+#include "ModeTextBox.h"
 #include "ModeLogo.h" 
 #include "ModeEndingText.h"
 #include "ModeTextBox.h"
@@ -181,6 +182,7 @@ bool ModeGame::Initialize()
 
 	_shadowMapHandle = MakeShadowMap(2048, 2048);
 
+
 	return true;
 }
 
@@ -210,6 +212,10 @@ bool ModeGame::Process()
 	{
 		StopFade(); // 以降自動的にフェードアウトしない
 	}
+
+
+	ModeServer::GetInstance()->Add(new ModeTextBox("Normal"), 100, "stage1_start_text");
+
 
 	// InputManagerから入力を取得
 	auto& im = InputManager::GetInstance();

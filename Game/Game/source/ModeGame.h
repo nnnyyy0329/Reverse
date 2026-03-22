@@ -158,4 +158,5 @@ private:
 	void RemoveLight(int lightHandle);// w’èƒ‰ƒCƒg‚ğíœ
 
 	bool _bScenarioAdded = false;
+	bool _bStage1StartTextShown = false;
 };

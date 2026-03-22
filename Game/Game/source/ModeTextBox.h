@@ -29,6 +29,7 @@ public:
 
 private:
 	std::string _graphKey;
+	std::string _text;
 	std::function<void()> _onClosed;
 
 	int _graphHandle = -1;

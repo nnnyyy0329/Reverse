@@ -11,12 +11,19 @@ ModeTextBox::ModeTextBox(const std::string& graphKey, std::function<void()> onCl
 
 ModeTextBox::ModeTextBox(const std::string& graphKey, const std::string& text, std::function<void()> onClosed, bool pauseUnderLayer)
 	: _graphKey(graphKey)
+	, _text()
 	, _onClosed(std::move(onClosed))
 	, _text(text)
 	, _pauseUnderLayer(pauseUnderLayer)
 {
 }
 
+ModeTextBox::ModeTextBox(const std::string& graphKey, const std::string& text, std::function<void()> onClosed)
+	: _graphKey(graphKey)
+	, _text(text)
+	, _onClosed(std::move(onClosed))
+{
+}
 bool ModeTextBox::Initialize()
 {
 	if(!base::Initialize()) { return false; }
@@ -71,6 +78,8 @@ bool ModeTextBox::Render()
 		DrawFormatString(20, 20, GetColor(255, 0, 0), "TextBox Graph Not Found: %s", _graphKey.c_str());
 		return true;
 	}
+
+
 
 	int w = 0;
 	int h = 0;
