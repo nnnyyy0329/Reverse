@@ -12,7 +12,7 @@ namespace InteriorPlayerConstants
 // 攻撃定数
 namespace InteriorAttackConstants
 {
-	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;		// 裏プレイヤー用コンボカウント
+	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;	// 裏プレイヤー用コンボカウント
 }
 
 // 裏プレイヤーのフレームインデックス定数

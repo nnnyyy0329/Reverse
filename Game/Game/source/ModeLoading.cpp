@@ -20,19 +20,25 @@ bool ModeLoading::Initialize()
 			rs->Register("Laser", "effect/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 
-			/* プレイヤー */
+			// プレイヤー
+			{
+				// 表プレイヤーの吸収攻撃エフェクト
+				rs->Register("SurfacePlayerAbsorb", "effect/SurfacePlayer/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
-			// 表プレイヤーの吸収攻撃エフェクト
-			rs->Register("SurfacePlayerAbsorb", "effect/SurfacePlayer/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+				// 裏プレイヤーの攻撃エフェクト
+				rs->Register("InteriorPlayerAttack_123", "effect/InteriorPlayer/NChange_004.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+				rs->Register("InteriorPlayerFourthAttack", "effect/InteriorPlayer/NChange_Fourth_Attack.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+				rs->Register("InteriorPlayerFifthAttack", "effect/InteriorPlayer/NChange_Attack.efkefc", RESOURCE_TYPE::Effect, 20.0f);
 
-			// 裏プレイヤーの攻撃エフェクト
-			rs->Register("InteriorPlayerAttack_123",	"effect/InteriorPlayer/NChange_004.efkefc",				RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("InteriorPlayerFourthAttack",	"effect/InteriorPlayer/NChange_Fourth_Attack.efkefc",	RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("InteriorPlayerFifthAttack",	"effect/InteriorPlayer/NChange_Attack.efkefc",			RESOURCE_TYPE::Effect, 20.0f);
+				// 表プレイヤーの攻撃ヒットエフェクト
+				rs->Register("SurfacePlayerAttackHit1", "effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+				rs->Register("SurfacePlayerAttackHit2", "effect/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
-			// 表プレイヤーの攻撃ヒットエフェクト
-			rs->Register("SurfacePlayerAttackHit1", "effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("SurfacePlayerAttackHit2", "effect/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+				// 弾発射プレイヤーの弾エフェクト
+				rs->Register("PlayerNormalBullet", "effect/playerBullet/SChange_Attack_B_001.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+				rs->Register("PlayerPiercingBullet", "effect/playerBullet/SChange_Attack_S_001.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+
+			}
 
 
 			// 敵

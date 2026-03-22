@@ -108,6 +108,8 @@ public:
 	/// @brief 回避にヒットした攻撃かチェック関数
 	///
 	/// @param attack チェックする攻撃オブジェクト
+	/// 
+	/// @return 
 	bool IsDodgeHitAttack(std::shared_ptr<AttackBase> attack) const;	
 
 

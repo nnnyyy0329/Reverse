@@ -49,13 +49,11 @@ bool DodgeSystem::Render()
 	return true;
 }
 
-// キャラタイプ別設定登録
 void DodgeSystem::RegisterDodgeCharaConfig(DODGE_CHARA charaType, const DodgeConfig& config)
 {
 	_charaConfigs[charaType] = config;
 }
 
-// 回避呼び出し
 void DodgeSystem::CallDodge
 (
 	std::shared_ptr<CharaBase> chara,
@@ -88,7 +86,6 @@ void DodgeSystem::CallDodge
 	}
 }
 
-// 回避開始
 void DodgeSystem::StartDodge()
 {
 	// 回避可能状態なら回避開始
@@ -102,7 +99,6 @@ void DodgeSystem::StartDodge()
 	}
 }
 
-// 回避停止
 void DodgeSystem::StopDodge()
 {
 	// 非アクティブ状態なら処理しない
@@ -113,7 +109,6 @@ void DodgeSystem::StopDodge()
 	_bIsInvincible = false;					// 無敵状態フラグを下ろす
 }
 
-// 回避状態更新
 void DodgeSystem::UpdateDodgeState()
 {
 	// 現在のキャラ
@@ -185,7 +180,6 @@ void DodgeSystem::UpdateDodgeState()
 	}
 }
 
-// 回避位置更新
 void DodgeSystem::UpdateDodgePos(std::shared_ptr<CharaBase>chara)
 {
 	if(chara == nullptr){ return; }	// キャラオブジェクトが無効なら処理しない
@@ -210,11 +204,10 @@ void DodgeSystem::UpdateDodgePos(std::shared_ptr<CharaBase>chara)
 	}
 
 	// コリジョン位置を強制的に更新
-	UpdateCharaCol(chara, newPos);
+	UpdateDodgeCharaCol(chara, newPos);
 }
 
-// キャラクターのコリジョン位置更新
-void DodgeSystem::UpdateCharaCol(std::shared_ptr<CharaBase>chara, VECTOR& pos)
+void DodgeSystem::UpdateDodgeCharaCol(std::shared_ptr<CharaBase>chara, const VECTOR& pos)
 {
 	if(chara == nullptr){ return; }
 
@@ -222,7 +215,6 @@ void DodgeSystem::UpdateCharaCol(std::shared_ptr<CharaBase>chara, VECTOR& pos)
 	chara->SetCollisionBottom(VAdd(pos, VGet(0, 10, 0)));	// コリジョン位置を更新
 }
 
-// 無敵状態更新
 void DodgeSystem::UpdateInvincible()
 {
 	// 無敵時間の管理
@@ -240,13 +232,11 @@ void DodgeSystem::UpdateInvincible()
 	}
 }
 
-// 回避可能かチェック
 bool DodgeSystem::CanDodge() const
 {
 	return (_eDodgeState == DODGE_STATE::INACTIVE);
 }
 
-// 回避中かチェック
 bool DodgeSystem::IsDodging() const
 {
 	// 回避中なら
@@ -261,7 +251,6 @@ bool DodgeSystem::IsDodging() const
 	return false;
 }
 
-// 指定キャラが無敵状態かチェック
 bool DodgeSystem::IsCharacterInvincible(std::shared_ptr<CharaBase> chara) const
 {
 	if(!chara || !_bIsInvincible){ return false; }	// キャラが無効または無敵状態でなければ無敵ではない
@@ -270,7 +259,8 @@ bool DodgeSystem::IsCharacterInvincible(std::shared_ptr<CharaBase> chara) const
 	auto currentChara = _currentDodgeChara.lock();
 	if(currentChara && currentChara == chara)
 	{
-		return true;	// 無敵状態
+		// 無敵状態
+		return true;	
 	}
 
 	return false;

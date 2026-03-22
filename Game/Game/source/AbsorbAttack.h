@@ -28,6 +28,7 @@ struct AbsorbConfig
 	bool isActive;					// 吸収攻撃がアクティブかどうか
 	std::string absorbEffectName;	// 吸収エフェクト名
 	VECTOR effectOffset;			// エフェクト位置オフセット
+	VECTOR effectRotOffset;			// エフェクト回転オフセット
 	std::string	absorbSoundName;	// 吸収サウンド名
 };
 

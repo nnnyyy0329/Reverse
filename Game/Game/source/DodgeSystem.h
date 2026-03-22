@@ -2,40 +2,41 @@
 #include "appframe.h"
 #include "CharaBase.h"
 
-// 回避キャラ
+/// @brief 回避キャラ
 enum class DODGE_CHARA
 {
 	NONE,
-	SURFACE_PLAYER,   // 表プレイヤー
-	INTERIOR_PLAYER,  // 裏プレイヤー
-	BULLET_PLAYER,    // 弾プレイヤー
+	SURFACE_PLAYER,   ///< 表プレイヤー
+	INTERIOR_PLAYER,  ///< 裏プレイヤー
+	BULLET_PLAYER,    ///< 弾プレイヤー
 	ENEMY,
 	_EOT_
 };
 
-// 回避状態列挙型
+/// @brief 回避状態列挙型
 enum class DODGE_STATE
 {
 	NONE,
-	INACTIVE,       // 非アクティブ
-	STARTUP,        // 開始
-	ACTIVE,         // 実行中
-	RECOVERY,       // 終了硬直
+	INACTIVE,       ///< 非アクティブ
+	STARTUP,        ///< 開始
+	ACTIVE,         ///< 実行中
+	RECOVERY,       ///< 終了硬直
 	_EOT_
 };
 
-// 回避設定構造体
+/// @brief 回避設定構造体
 struct DodgeConfig
 {
-	DODGE_CHARA charaType;      // 回避キャラタイプ
-	float invincibleDuration;   // 無敵持続時間
-	float startTime;            // 開始時間
-	float activeTime;           // アクティブ時間
-	float recoveryTime;         // 硬直時間
-	float dodgeMoveSpeed;       // 回避移動速度
+	DODGE_CHARA charaType;		// 回避キャラタイプ
+	float invincibleDuration;	// 無敵持続時間
+	float startTime;			// 開始時間
+	float activeTime;			// アクティブ時間
+	float recoveryTime;			// 硬直時間
+	float dodgeMoveSpeed;		// 回避移動速度
 	std::string soundName;		// サウンド名
 };
 
+/// @brief 回避システムクラス
 class DodgeSystem
 {
 public:
@@ -46,34 +47,98 @@ public:
 	bool Terminate();
 	bool Process();
 	bool Render();
-	void DebugRender();	// デバッグ情報描画
 
-	// 回避設定の登録
-	void RegisterDodgeCharaConfig(DODGE_CHARA charaType, const DodgeConfig& config);	// キャラタイプ別設定登録
+	/// @brief デバッグ情報描画
+	void DebugRender();	
 
-	// 回避呼び出し
+
+	/* 回避の登録と呼び出し */
+
+	/// @brief  回避設定の登録
+	///
+	/// @param charaType 登録するキャラタイプ
+	/// @param config 登録する回避情報
+	void RegisterDodgeCharaConfig(DODGE_CHARA charaType, const DodgeConfig& config);
+
+	/// @brief  回避呼び出し
+	///
+	/// @param chara 呼び出すキャラのポインタ
+	/// @param charaType 呼び出すキャラタイプ
 	void CallDodge(std::shared_ptr<CharaBase>chara, DODGE_CHARA charaType);
 
-	// 回避処理
-	void StartDodge();													// 回避開始
-	void StopDodge();													// 回避停止
-	void UpdateDodgeState();											// 回避状態更新
-	void UpdateDodgePos(std::shared_ptr<CharaBase>chara);				// 回避位置更新
-	void UpdateInvincible();											// 無敵状態更新
-	void UpdateCharaCol(std::shared_ptr<CharaBase>chara, VECTOR& pos);	// キャラクターのコリジョン位置更新
-	bool CanDodge() const;												// 回避可能かチェック
-	bool IsDodging() const;												// 回避中かチェック
-	bool IsCharacterInvincible(std::shared_ptr<CharaBase> chara) const;	// 指定キャラが無敵状態かチェック
 
-	// デバッグ描画
-	void InvincibleDebugRender();							// 無敵状態デバッグ描画
+	/* 回避処理 */
 
-	// ゲッターセッター
-	std::weak_ptr<CharaBase> GetCurrentDodgeChara() const { return _currentDodgeChara; }	// 現在回避中のキャラ取得
-	DODGE_CHARA GetDodgeChara() const { return _eDodgeChara; }								// 回避キャラ取得
-	DODGE_STATE GetDodgeState() const { return _eDodgeState; }								// 回避状態取得
-	void SetConfig(const DodgeConfig& config) { _stcDodgeConfig = config; }					// 回避設定設定
-	bool GetIsInvincible() const { return _bIsInvincible; }									// 無敵状態取得
+	/// @brief 回避開始
+	void StartDodge();	
+
+	/// @brief 回避停止		
+	void StopDodge();	
+
+	/// @brief 回避状態更新
+	void UpdateDodgeState();								
+
+	/// @brief 回避キャラの位置更新
+	///
+	/// @param chara 位置更新する回避キャラのポインタ
+	void UpdateDodgePos(std::shared_ptr<CharaBase>chara);
+
+	/// @brief 無敵状態更新
+	void UpdateInvincible();
+
+	/// @brief キャラクターのコリジョン位置更新
+	///
+	/// @param chara 更新するコリジョンの所有者キャラ
+	/// @param pos 更新する基準の位置
+	void UpdateDodgeCharaCol(std::shared_ptr<CharaBase>chara, const VECTOR& pos);
+
+	/// @brief 回避可能かチェック
+	///
+	/// @return 回避を始められるなら true 、始められないなら false
+	bool CanDodge() const;	
+
+	/// @brief 回避中かチェック
+	///
+	/// @return 回避中なら true 、そうでないなら false
+	bool IsDodging() const;	
+
+	/// @brief 指定キャラが無敵状態かチェック
+	/// 
+	/// @param 指定キャラ
+	/// 
+	/// @return 無敵中なら true 、無敵中でないなら false
+	bool IsCharacterInvincible(std::shared_ptr<CharaBase> chara) const;	
+
+	/// @brief 無敵状態デバッグ描画
+	void InvincibleDebugRender();
+
+
+	/* ゲッターセッター */
+
+	/// @brief 現在回避中のキャラ取得
+	///
+	/// @return 現在回避中のキャラ
+	std::weak_ptr<CharaBase> GetCurrentDodgeChara() const { return _currentDodgeChara; }	
+
+	/// @brief 回避キャラ取得
+	///
+	/// @return 回避キャラ
+	DODGE_CHARA GetDodgeChara() const { return _eDodgeChara; }					
+
+	/// @brief 回避状態取得
+	///
+	/// @return 回避状態
+	DODGE_STATE GetDodgeState() const { return _eDodgeState; }					
+
+	/// @brief 回避情報設定
+	///
+	/// @param 設定する回避情報
+	void SetConfig(const DodgeConfig& config) { _stcDodgeConfig = config; }		
+
+	/// @brief 無敵中か取得
+	///
+	/// @return 無敵中かのフラグ
+	bool GetIsInvincible() const { return _bIsInvincible; }									
 
 protected:
 	// キャラタイプ別設定管理

@@ -316,9 +316,11 @@ void PlayerManager::EndTransform()
 
 void PlayerManager::StartTransformCancel()
 {
-	if(_bIsTransformCanceling){ return; }	// すでに変身解除中なら何もしない
+	// すでに変身解除中なら何もしない
+	if(_bIsTransformCanceling){ return; }	
 
-	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	// 表プレイヤーなら何もしない
+	// 表プレイヤーなら何もしない
+	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	
 
 	// 変身解除開始
 	_bIsTransformCanceling = true;	// 変身解除フラグを有効にする
@@ -350,7 +352,8 @@ void PlayerManager::UpdateTransformCancel()
 
 void PlayerManager::SwitchPlayerByTime()
 {
-	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	// すでに表プレイヤーなら処理しない
+	// すでに表プレイヤーなら処理しない
+	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	
 
 	// 変身解除時間が最大を超えて、タイプが表プレイヤーではないなら表プレイヤーに切り替え
 	if(_fTransformCancelTime >= _fTransformCancelMaxTime)

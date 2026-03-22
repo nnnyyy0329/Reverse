@@ -58,11 +58,17 @@ bool AbsorbAttack::ProcessStartAttack()
 
 bool AbsorbAttack::ProcessStopAttack()
 {
-	if(!IsAbsorbActive()){ return false; }	// 吸収がアクティブでない場合は処理しない
+	// 吸収がアクティブでない場合は処理しない
+	if(!IsAbsorbActive()){ return false; }	
 
-	_eAttackState = ATTACK_STATE::RECOVERY;	// 状態を硬直中に遷移
-	_stcAttackCol.isActive = false;			// 攻撃判定を非アクティブにする
-	_fCurrentTime = 0.0f;		// タイマーリセット
+	// 状態を硬直中に遷移
+	_eAttackState = ATTACK_STATE::RECOVERY;	
+
+	// 攻撃判定を非アクティブにする
+	_stcAttackCol.isActive = false;			
+
+	// タイマーリセット
+	_fCurrentTime = 0.0f;					
 
 	// 吸収攻撃の停止処理は、基底クラスの攻撃停止処理を呼び出すことで完了する
 	return AttackBase::ProcessStopAttack();
@@ -73,12 +79,14 @@ void AbsorbAttack::ProcessDecrementTimer()
 	// 吸収タイマーが0以上の場合
 	if(_fAbsorbTimer > 0.0f)
 	{
-		_fAbsorbTimer -= ATC::DECREMENT_ABSORB_TIMER;	// タイマーを減算
+		// タイマーを減算
+		_fAbsorbTimer -= ATC::DECREMENT_ABSORB_TIMER;	
 
 		// 吸収量が上昇するまでの時間を、吸収時間が下回った場合
 		if(_fAbsorbTimer <= ATC::ABSORB_UP_AMOUNT_TIME && !_bIsAbsorbIncreasing)
 		{
-			_bIsAbsorbIncreasing = true;	// 吸収量が上昇するフラグを立てる
+			// 吸収量が上昇するフラグを立てる
+			_bIsAbsorbIncreasing = true;	
 		}
 	}
 }
@@ -141,7 +149,6 @@ void AbsorbAttack::ProcessEnergyAbsorb(std::shared_ptr<CharaBase> owner)
 
 	// エネルギー取得
 	energyManager->AddEnergy(energyManager->GetAbsorbEnergy() * _stcAbsorbConfig.energyAbsorbRate);
-	//energyManager->AddEnergy(AAC::ABSORB_ENERGY * _stcAbsorbConfig.energyAbsorbRate);
 }
 
 void AbsorbAttack::ProcessHPAbsorb(std::shared_ptr<CharaBase> owner)
