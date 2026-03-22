@@ -37,8 +37,7 @@ private:
 	int _frameCount = 0;
 	bool _bClose = false;
 
-	// 表示するテキスト（任意）
-	std::string _text;
+	
 
 	// true のとき下層を停止（既存挙動）。false ならゲームは継続。
 	bool _pauseUnderLayer = true;

@@ -11,19 +11,12 @@ ModeTextBox::ModeTextBox(const std::string& graphKey, std::function<void()> onCl
 
 ModeTextBox::ModeTextBox(const std::string& graphKey, const std::string& text, std::function<void()> onClosed, bool pauseUnderLayer)
 	: _graphKey(graphKey)
-	, _text()
 	, _onClosed(std::move(onClosed))
 	, _text(text)
 	, _pauseUnderLayer(pauseUnderLayer)
 {
 }
 
-ModeTextBox::ModeTextBox(const std::string& graphKey, const std::string& text, std::function<void()> onClosed)
-	: _graphKey(graphKey)
-	, _text(text)
-	, _onClosed(std::move(onClosed))
-{
-}
 bool ModeTextBox::Initialize()
 {
 	if(!base::Initialize()) { return false; }
@@ -92,7 +85,7 @@ bool ModeTextBox::Render()
 	const int marginBottom = 40;
 
 	const int maxW = screenW - marginSide * 2;
-	const int maxH =800; // Å© Ç±Ç±Çè¨Ç≥Ç≠Ç∑ÇÈÇŸÇ«ï\é¶Ç‡è¨Ç≥Ç≠Ç»ÇÈ
+	const int maxH = 800; // Å© Ç±Ç±Çè¨Ç≥Ç≠Ç∑ÇÈÇŸÇ«ï\é¶Ç‡è¨Ç≥Ç≠Ç»ÇÈ
 
 	float scaleW = static_cast<float>(maxW) / static_cast<float>(w);
 	float scaleH = static_cast<float>(maxH) / static_cast<float>(h);
@@ -112,7 +105,7 @@ bool ModeTextBox::Render()
 	if(!_text.empty())
 	{
 		const int textLeft = x + 450;
-		const int textTop = y +650;
+		const int textTop = y + 650;
 		const int lineHeight = 30;
 
 		SetFontSize(16);
