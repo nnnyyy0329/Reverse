@@ -145,10 +145,10 @@ void CameraManager::SetCameraType(CAMERA_TYPE type)
 	if (_pActiveCamera) 
 	{
 		// ‘O‚ÌƒJƒƒ‰‚Ìó‘Ô‚ðˆø‚«Œp‚®
-		_pActiveCamera->SetAngleH(prevAngleH);
-		_pActiveCamera->SetAngleV(prevAngleV);
-		_pActiveCamera->SetPos(prevPos);
-		_pActiveCamera->SetLookAtPoint(prevTarget);
+		//_pActiveCamera->SetAngleH(prevAngleH);
+		//_pActiveCamera->SetAngleV(prevAngleV);
+		//_pActiveCamera->SetPos(prevPos);
+		//_pActiveCamera->SetLookAtPoint(prevTarget);
 
 		_pActiveCamera->OnEnter();
 		_pActiveCamera->SetUp();
