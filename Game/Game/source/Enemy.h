@@ -45,7 +45,7 @@ public:
 	void ChangeState(std::shared_ptr<EnemyState> newState);
 
 	// 弾関連
-	void SpawnBullet(const BulletConfig& bulletConfig);// 発射リクエストをする
+	void SpawnBullet(const BulletConfig& bulletConfig, const BulletEffectConfig& bEffectConfig);// 発射リクエストをする
 
 	// 攻撃コリジョン関連(ステート側で呼び出し)
 	void StartAttack(const EnemyAttackSettings& settings);// 攻撃の開始

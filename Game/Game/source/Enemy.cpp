@@ -365,10 +365,10 @@ void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 	}
 }
 
-void Enemy::SpawnBullet(const BulletConfig& bulletConfig)
+void Enemy::SpawnBullet(const BulletConfig& bulletConfig, const BulletEffectConfig& bEffectConfig)
 {
 	// タイプを設定して、発射リクエストをする
-	BulletManager::GetInstance()->ShootSimple(bulletConfig, BULLET_OWNER_TYPE::ENEMY);
+	BulletManager::GetInstance()->Shoot(bulletConfig, bEffectConfig, BULLET_OWNER_TYPE::ENEMY);
 }
 
 void Enemy::StartAttack(const EnemyAttackSettings& settings)
@@ -570,7 +570,7 @@ void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
 
 	UpdateDamageCombo();
 	// ダメージステートへ遷移
-	ChangeState(std::make_unique<Common::Damage>());
+	//ChangeState(std::make_unique<Common::Damage>());
 }
 
 std::shared_ptr<EnemyState> Enemy::GetAfterDamageStateSelector(int comboCnt)

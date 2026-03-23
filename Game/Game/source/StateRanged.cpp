@@ -468,7 +468,7 @@ namespace Ranged
 		{
 			if (!_bHasShot && targetInfo.bExist)
 			{
-				owner->SpawnBullet(GetBulletConfig(owner));
+				owner->SpawnBullet(GetBulletConfig(owner), GetBulletEffectConfig());
 
 				// エフェクト
 				{
@@ -535,6 +535,16 @@ namespace Ranged
 		config.speed = BULLET_SPEED;
 		config.lifeTime = BULLET_LIFETIME;
 
+		return config;
+	}
+
+	BulletEffectConfig ShotExecute::GetBulletEffectConfig()
+	{
+		BulletEffectConfig config;
+
+		config.effectName = "PlayerNormalBullet";// エフェクトの名前
+		config.effectOffset = VGet(0.0f, 0.0f, 0.0f);// エフェクトの発生位置オフセット
+		config.soundName = "";// サウンドの名前
 		return config;
 	}
 

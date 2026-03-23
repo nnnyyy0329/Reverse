@@ -143,6 +143,7 @@ bool ModeLoading::Initialize()
 			rs->Register("stage_wall_typeDoorA", "res/stage/json/stage_wall_typeDoorA.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("stage_wall_typeDoorB", "res/stage/json/stage_wall_typeDoorB.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("stage_wall_typeDoorC", "res/stage/json/stage_wall_typeDoorC.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("noentry", "res/stage/json/noentry.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// ƒ|[ƒ^ƒ‹
 			rs->Register("S_Portal_0to1", "res/stage/json/S_Portal_0to1.mv1", RESOURCE_TYPE::Model, 1.0f);

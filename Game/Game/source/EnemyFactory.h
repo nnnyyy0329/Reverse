@@ -21,7 +21,7 @@ namespace
 	constexpr auto NORMAL_DETECT_TIME = 90.0f;// 発見硬直
 	constexpr auto NORMAL_ATTACK_TIME = 180.0f;// 攻撃時間
 	constexpr float NORMAL_COL_RADIUS = 30.0f;// コリジョン半径
-	constexpr float NORMAL_COL_HEIGHT = 100.0f;// コリジョン高さ
+	constexpr float NORMAL_COL_HEIGHT = 150.0f;// コリジョン高さ
 	constexpr float NORMAL_COL_SUB_Y = 50.0f;// 腰位置オフセット
 
 	// Ranged

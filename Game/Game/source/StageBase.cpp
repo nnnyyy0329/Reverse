@@ -17,9 +17,8 @@ StageBase::StageBase(int stageNum)
 	, _playerManager(nullptr)
 	, _previousCharaType(CHARA_TYPE::SURFACE_PLAYER)
 {
-
 	_pathfindingManager = std::make_unique<Pathfinding::Manager>();
-
+	
 	std::string path, jsonFile, jsonObjName;
 	switch (_stageNum) 
 	{
