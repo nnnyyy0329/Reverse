@@ -305,9 +305,6 @@ bool ModeGame::Process()
 		_playerUnlockManager->Process();
 		_stage->Process();
 		_dodgeSystem->Process();
-		_energyUI->Process();
-		_playerLifeBarUI->Process();
-		_staminaUI->Process();
 		_abilitySelectScreen->Process();
 		_abilitySelectManager->Process();
 		//_shieldBase->Process();
@@ -777,9 +774,11 @@ void ModeGame::RestartCurrentStage()
 void ModeGame::SetPlayerConfig(VECTOR vPos, VECTOR vRot)
 {
 	auto player = _playerManager->GetActivePlayerShared();
+	if(!player) { return; }
 
 	player->SetPos(vPos);
 
-	VECTOR vDir = VGet(sinf(vRot.y), 0.0f, cosf(vRot.y));
+	VECTOR vDir = VGet(0.0f, 0.0f, 0.0f);
+	vDir = VGet(sinf(vRot.y), 0.0f, cosf(vRot.y));
 	player->SetDir(vDir);
 }

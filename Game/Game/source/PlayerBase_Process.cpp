@@ -483,4 +483,6 @@ bool PlayerBase::IsAnimationFinishedConst()const
 		// 現在のアニメーションが終了しているか
 		return animManager->IsAnimationFinished();
 	}
+
+	return false;
 }
