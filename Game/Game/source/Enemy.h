@@ -32,7 +32,7 @@ public:
 	bool CanRemove() { return _bCanRemove; }// delete可能か
 
 	const EnemyParam& GetEnemyParam() const { return _enemyParam; }
-	void SetEnemyParam(const EnemyParam& param) { _enemyParam = param; };// パラメータを設定したときに視界のcos値を計算
+	void SetEnemyParam(const EnemyParam& param);// カプセルを設定
 
 	std::shared_ptr<CharaBase> GetTarget() { return _targetPlayer; }
 	void SetTarget(std::shared_ptr<CharaBase> target) { _targetPlayer = target; }
@@ -45,7 +45,7 @@ public:
 	void ChangeState(std::shared_ptr<EnemyState> newState);
 
 	// 弾関連
-	void SpawnBullet(const BulletConfig& bulletConfig);// 発射リクエストをする
+	void SpawnBullet(const BulletConfig& bulletConfig, const BulletEffectConfig& bEffectConfig);// 発射リクエストをする
 
 	// 攻撃コリジョン関連(ステート側で呼び出し)
 	void StartAttack(const EnemyAttackSettings& settings);// 攻撃の開始

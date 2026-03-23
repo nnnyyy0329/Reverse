@@ -97,6 +97,7 @@ namespace Ranged
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;	
 		BulletConfig GetBulletConfig(Enemy* owner);
+		BulletEffectConfig GetBulletEffectConfig();
 		const char* GetName() override { return "Ranged:ShotExecute"; }
 		STATE_PRIORITY GetPriority() override { return STATE_PRIORITY::HIGH; }
 

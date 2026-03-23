@@ -17,7 +17,7 @@ namespace EnergyDefaultConstants
 // ƒGƒlƒ‹ƒM[Šl“¾—Ê’è”
 namespace EnergyGainConstants
 {
-    constexpr float EVADE_ATTACK = 10.0f;
+    constexpr float EVADE_ATTACK = 25.0f;
     constexpr float ABSORB = 1.0f;
 }
 

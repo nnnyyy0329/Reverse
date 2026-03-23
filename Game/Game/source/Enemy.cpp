@@ -17,7 +17,7 @@ namespace
 	constexpr auto SEARCH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
 
 	// ライフバー表示設定
-	constexpr auto LIFEBAR_HEAD_OFFSET_Y = 100.0f;// ライフバーの表示位置オフセット
+	constexpr auto LIFEBAR_HEAD_OFFSET_Y = 150.0f;// ライフバーの表示位置オフセット
 	constexpr auto LIFEBAR_WORLD_WIDTH = 80.0f;// ライフバーのワールド上の幅
 	constexpr auto LIFEBAR_MAX_DIST = 1000.0f;// ライフバーを表示する最大距離
 
@@ -324,6 +324,20 @@ void Enemy::DrawLifeBar()
 	}
 }
 
+void Enemy::SetEnemyParam(const EnemyParam& param)
+{
+	_enemyParam = param;
+
+	// 敵種類ごとのカプセル設定を反映
+	_fCollisionR = param.capsule.fRadius;
+	_fCollisionHeight = param.capsule.fHeight;
+	_colSubY = param.capsule.fColSubY;
+
+	// 現在座標に対してカプセル位置を更新
+	_vCollisionBottom = VAdd(_vPos, VGet(0.0f, _fCollisionR, 0.0f));
+	_vCollisionTop = VAdd(_vPos, VGet(0.0f, _fCollisionHeight - _fCollisionR, 0.0f));
+}
+
 void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 {
 	if (!newState) { return; }
@@ -351,10 +365,10 @@ void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 	}
 }
 
-void Enemy::SpawnBullet(const BulletConfig& bulletConfig)
+void Enemy::SpawnBullet(const BulletConfig& bulletConfig, const BulletEffectConfig& bEffectConfig)
 {
 	// タイプを設定して、発射リクエストをする
-	BulletManager::GetInstance()->ShootSimple(bulletConfig, BULLET_OWNER_TYPE::ENEMY);
+	BulletManager::GetInstance()->Shoot(bulletConfig, bEffectConfig, BULLET_OWNER_TYPE::ENEMY);
 }
 
 void Enemy::StartAttack(const EnemyAttackSettings& settings)
@@ -556,7 +570,7 @@ void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
 
 	UpdateDamageCombo();
 	// ダメージステートへ遷移
-	ChangeState(std::make_unique<Common::Damage>());
+	//ChangeState(std::make_unique<Common::Damage>());
 }
 
 std::shared_ptr<EnemyState> Enemy::GetAfterDamageStateSelector(int comboCnt)

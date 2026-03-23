@@ -35,8 +35,7 @@ namespace Tank
 		const char* GetName() override { return "Tank:Attack"; }
 
 	private:
-		bool _bDoCharge = false;// 突進攻撃を行うか
-		float _fJudgeTimer = 0.0f;
+		bool _bJudgedCharge = false;// 突進攻撃を行うかの判定をしたか
 	};
 
 
@@ -201,6 +200,7 @@ namespace Tank
 	private:
 		VECTOR _vChargeDir = VGet(0.0f, 0.0f, 0.0f);// 突進方向
 		VECTOR _vChargeTarget = VGet(0.0f, 0.0f, 0.0f);// 到達座標
+		bool _bAttackStarted = false;
 	};
 
 	// 突進の後隙
