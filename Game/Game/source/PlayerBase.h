@@ -76,6 +76,15 @@ enum class PLAYER_COMBAT_STATE
 	_EOT_,
 };
 
+/// @brief プレイヤーの攻撃タイプ列挙型
+enum class PLAYER_ATTACK_TYPE
+{
+	NONE,
+	NORMAL,		///< 通常攻撃
+	ABILITY,	///< 能力攻撃
+	_EOT_,
+};
+
 /// @brief プレイヤーの基本設定をまとめた構造体
 struct PlayerConfig
 {
@@ -349,8 +358,6 @@ public:
 	/// @return 吸収攻撃システムのポインタ(デフォルトはnullptr)
 	virtual PlayerAbsorbAttackSystem* GetAbsorbAttackSystem(){ return nullptr; };
 
-
-
 	// 状態リセット
 	void SetStateReset(){ return _playerState.StateReset(); }
 
@@ -363,13 +370,66 @@ public:
 
 protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
-	virtual AttackConstants GetAttackConstants()const{ return AttackConstants{}; };	// 攻撃定数を取得
-	virtual void GetAttackColConfigs(AttackCollision configs[]){};					// 攻撃設定を取得
-	virtual void GetAttackColOffsetConfigs(AttackColOffset configs[]){};			// 攻撃コリジョンオフセット設定を取得
-	virtual void GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]){};		// 攻撃向き調整設定を取得
-	virtual AreaAttackConfig GetAreaAttackConfigs(){ return AreaAttackConfig{}; };	// 範囲攻撃設定を取得
-	virtual void GetAttackEffectConfigs(AttackEffectConfig configs[]){};				// 演出設定を取得
-	virtual void GetAttackArmConfigs(AttackArmConfig config[]){};					// 攻撃の腕設定を取得
+
+	/* 攻撃タイプごとの攻撃管理用マップ */
+
+	// 攻撃タイプごとの攻撃状態管理マップ
+	std::unordered_map<int, std::vector<PLAYER_ATTACK_STATE>>			_attackStatusesByType;
+
+	// 攻撃タイプごとの攻撃オブジェクト管理マップ
+	std::unordered_map<int, std::vector<std::shared_ptr<AttackBase>>>	_attacksByType;
+
+	// 攻撃タイプごとの攻撃コリジョン設定管理マップ
+	std::unordered_map<int, std::vector<AttackEffectConfig>>			_attackEffectConfigsByType;
+
+	// 攻撃タイプごとの攻撃向き調整設定管理マップ
+	std::unordered_map<int, std::vector<AttackArmConfig>>				_attackArmConfigsByType;
+
+	// 現在の攻撃タイプ
+	PLAYER_ATTACK_TYPE _currentAttackType = PLAYER_ATTACK_TYPE::NORMAL;	
+
+	// 攻撃タイプの初期化用の新しい仮想関数群
+	virtual void GetAttackColConfigs(PLAYER_ATTACK_TYPE type, AttackCollision configs[]) {}				// 攻撃タイプ別設定取得
+	virtual void GetNormalAttackConfigs(AttackCollision configs[]) {}									// 攻撃タイプ別設定取得
+	virtual void GetAbilityAttackConfigs(AttackCollision configs[]) {}									// 能力攻撃タイプ別設定取得
+	virtual void GetAttackEffectConfigs(PLAYER_ATTACK_TYPE type, AttackEffectConfig configs[]) {}		// 攻撃タイプ別エフェクト設定取得
+	virtual void GetNormalAttackEffectConfigs(AttackEffectConfig configs[]) {}							// 通常攻撃タイプ別エフェクト設定取得
+	virtual void GetAbilityAttackEffectConfigs(AttackEffectConfig configs[]) {}							// 能力攻撃タイプ別エフェクト設定取得
+	virtual void GetAttackColOffsetConfigs(PLAYER_ATTACK_TYPE type, AttackColOffset configs[]) {}		// 攻撃タイプ別オフセット設定取得
+	virtual void GetNormalAttackColOffsetConfigs(AttackColOffset configs[]) {}							// 通常攻撃タイプ別オフセット設定取得
+	virtual void GetAbilityAttackColOffsetConfigs(AttackColOffset configs[]) {}							// 能力攻撃タイプ別オフセット設定取得
+	virtual void GetAttackDirAdjustConfigs(PLAYER_ATTACK_TYPE type, AttackDirAdjustConfig configs[]) {}	// 攻撃タイプ別向き調整設定取得
+	virtual void GetNormalAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]) {}					// 通常攻撃タイプ別向き調整設定取得
+	virtual void GetAbilityAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]) {}					// 能力攻撃タイプ別向き調整設定取得
+	virtual void GetAttackArmConfigs(PLAYER_ATTACK_TYPE type, AttackArmConfig configs[]) {}				// 攻撃タイプ別腕情報設定取得
+	virtual void GetNormalAttackArmConfigs(AttackArmConfig configs[]) {}								// 通常攻撃タイプ別腕情報設定取得
+	virtual void GetAbilityAttackArmConfigs(AttackArmConfig configs[]) {}								// 能力攻撃タイプ別腕情報設定取得
+	virtual int GetMaxComboCountByType(PLAYER_ATTACK_TYPE type) const { return 0; }						// 攻撃タイプ別最大コンボ数取得
+
+	// 攻撃タイプの初期化
+	void InitializeAttackTypeData(PLAYER_ATTACK_TYPE type);
+
+	// 攻撃タイプのセット/ゲット
+	PLAYER_ATTACK_TYPE GetCurrentAttackType() const { return _currentAttackType; }
+	void SetCurrentAttackType(PLAYER_ATTACK_TYPE type) { _currentAttackType = type; }
+
+	// 現在の攻撃タイプに対応した配列を取得
+	std::vector<std::shared_ptr<AttackBase>>& GetCurrentAttacks();
+	std::vector<PLAYER_ATTACK_STATE>& GetCurrentAttackStatuses();
+
+	// 攻撃入力をチェックして攻撃タイプを決定
+	void ProcessAttackTypeSelection();
+
+
+
+
+	virtual AttackConstants GetAttackConstants()const{ return AttackConstants{}; }	// 攻撃定数を取得
+	//virtual AreaAttackConfig GetAreaAttackConfigs(){ return AreaAttackConfig{}; }	// 範囲攻撃設定を取得
+	virtual void GetAttackColConfigs(AttackCollision configs[]){}					// 攻撃設定を取得
+	virtual void GetAttackColOffsetConfigs(AttackColOffset configs[]){}				// 攻撃コリジョンオフセット設定を取得
+	virtual void GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]){}		// 攻撃向き調整設定を取得
+	virtual void GetAttackEffectConfigs(AttackEffectConfig configs[]){}				// 演出設定を取得
+	virtual void GetAttackArmConfigs(AttackArmConfig config[]){}					// 攻撃の腕設定を取得
 
 	// 攻撃システム
 	std::vector<std::shared_ptr<AttackBase>> _attacks;	// 攻撃配列

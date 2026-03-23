@@ -10,43 +10,27 @@ namespace IdConstants
 	constexpr int SURFACE_PLAYER_ID = 2;	// 表プレイヤーID
 }
 
-// 攻撃コリジョンの設定
-void PlayerBase::InitializeAttackData()
+
+
+
+
+// 攻撃タイプごとのデータを初期化
+void PlayerBase::InitializeAttackTypeData(PLAYER_ATTACK_TYPE type)
 {
-	// キャラタイプに応じた最大コンボ数を取得
-	int maxCombo = GetMaxComboCount();
+	int maxCombo = GetMaxComboCountByType(type);
+	if(maxCombo <= 0) return;
 
-	// コンボカウントが0ならスキップ
-	if(maxCombo <= 0)
-	{
-		_attacks.clear();
-		_attackStatuses.clear();
-		return;
-	}
+	int typeIndex = static_cast<int>(type);
 
-	// 攻撃設定配列初期化
-	InitializeAttackConfigs(maxCombo);
+	std::vector<std::shared_ptr<AttackBase>> attacks;
+	attacks.reserve(maxCombo);
 
-	// 攻撃状態を攻撃配列に入れる
-	SetAttackStateData(maxCombo);
+	std::vector<PLAYER_ATTACK_STATE> statuses;
+	std::vector<AttackEffectConfig> effectConfigs;
+	std::vector<AttackArmConfig> armConfigs;
 
-	// 攻撃コリジョンデータ作成
-	CreateAttackData(maxCombo);
-}
-
-// 攻撃設定配列初期化
-void PlayerBase::InitializeAttackConfigs(int maxCombo)
-{
-	// 攻撃配列とステータス配列を初期化
-	_attacks.clear();
-	_attackStatuses.clear();
-}
-
-// 攻撃状態を攻撃配列に入れる
-void PlayerBase::SetAttackStateData(int maxCombo)
-{
 	// 攻撃状態の定義
-	std::vector<PLAYER_ATTACK_STATE> statuses =
+	std::vector<PLAYER_ATTACK_STATE> allStatuses =
 	{
 		PLAYER_ATTACK_STATE::FIRST_ATTACK,
 		PLAYER_ATTACK_STATE::SECOND_ATTACK,
@@ -55,42 +39,30 @@ void PlayerBase::SetAttackStateData(int maxCombo)
 		PLAYER_ATTACK_STATE::FIFTH_ATTACK
 	};
 
-	// コンボカウント回数分ループ
 	for(int i = 0; i < maxCombo; ++i)
 	{
-		_attackStatuses.push_back(statuses[i]);
+		statuses.push_back(allStatuses[i]);
 	}
-}
 
-// 攻撃コリジョンデータ作成
-void PlayerBase::CreateAttackData(int maxCombo)
-{	
-	// 攻撃演出の設定配列初期化
-	_attackEffectConfigs.clear();	
-	_attackEffectConfigs.reserve(maxCombo);
-
-	_attackArmConfigs.clear();
-	_attackArmConfigs.reserve(maxCombo);
-
-	// 攻撃設定取得
-	std::vector<AttackCollision>configs(maxCombo);
-	GetAttackColConfigs(configs.data());
+	// 攻撃設定取得（攻撃タイプ別）
+	std::vector<AttackCollision> configs(maxCombo);
+	GetAttackColConfigs(type, configs.data());
 
 	// 攻撃オフセット設定取得
-	std::vector<AttackColOffset>offsets(maxCombo);
-	GetAttackColOffsetConfigs(offsets.data());
+	std::vector<AttackColOffset> offsets(maxCombo);
+	GetAttackColOffsetConfigs(type, offsets.data());
 
 	// 向き調整設定取得
-	std::vector<AttackDirAdjustConfig>dirAdjusts(maxCombo);
-	GetAttackDirAdjustConfigs(dirAdjusts.data());
+	std::vector<AttackDirAdjustConfig> dirAdjusts(maxCombo);
+	GetAttackDirAdjustConfigs(type, dirAdjusts.data());
 
 	// 攻撃エフェクト設定取得
-	std::vector<AttackEffectConfig>effectConfigs(maxCombo);
-	GetAttackEffectConfigs(effectConfigs.data());
+	std::vector<AttackEffectConfig> effectConfigsList(maxCombo);
+	GetAttackEffectConfigs(type, effectConfigsList.data());
 
 	// 攻撃の腕情報設定
-	std::vector<AttackArmConfig> armConfigs(maxCombo);
-	GetAttackArmConfigs(armConfigs.data());
+	std::vector<AttackArmConfig> armConfigsList(maxCombo);
+	GetAttackArmConfigs(type, armConfigsList.data());
 
 	// コンボカウント回数分ループ
 	for(int i = 0; i < maxCombo; ++i)
@@ -107,17 +79,27 @@ void PlayerBase::CreateAttackData(int maxCombo)
 		SetCanDirAdjustData(dirAdjusts[i], attack);
 
 		// 攻撃エフェクトデータ設定
-		SetAttackEffectData(effectConfigs[i], attack);
+		SetAttackEffectData(effectConfigsList[i], attack);
 
 		// 攻撃の腕情報設定
-		SetAttackArmData(armConfigs[i], attack);
+		SetAttackArmData(armConfigsList[i], attack);
 
 		// 攻撃配列に攻撃オブジェクトを追加
-		_attacks.push_back(attack);
+		attacks.push_back(attack);
+		effectConfigs.push_back(effectConfigsList[i]);
+		armConfigs.push_back(armConfigsList[i]);
 	}
+
+	// マップに保存
+	_attacksByType[typeIndex] = attacks;
+	_attackStatusesByType[typeIndex] = statuses;
+	_attackEffectConfigsByType[typeIndex] = effectConfigs;
+	_attackArmConfigsByType[typeIndex] = armConfigs;
 }
 
-// 攻撃コリジョンデータ設定
+
+
+// 攻撃コリジョンデータ設定 (使用しなくていい)
 void PlayerBase::SetAttackColData(AttackCollision config, std::shared_ptr<AttackBase> attack)
 {
 	if(!attack) return;
@@ -126,7 +108,7 @@ void PlayerBase::SetAttackColData(AttackCollision config, std::shared_ptr<Attack
 	attack->SetCapsuleAttackData(config);
 }
 
-// 攻撃オフセットデータ作成
+// 攻撃オフセットデータ作成 (使用しなくていい)
 void PlayerBase::SetAttackOffsetData(AttackColOffset config, std::shared_ptr<AttackBase> attack)
 {
 	if(!attack) return;
@@ -135,7 +117,7 @@ void PlayerBase::SetAttackOffsetData(AttackColOffset config, std::shared_ptr<Att
 	attack->SetCollisionOffset(config);
 }
 
-// 向き調整データ作成
+// 向き調整データ作成 (使用しなくていい)
 void PlayerBase::SetCanDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack)
 {
 	if(!attack) return;
@@ -144,7 +126,7 @@ void PlayerBase::SetCanDirAdjustData(AttackDirAdjustConfig config, std::shared_p
 	attack->SetDirAdjustData(config.canDirAdjust);	// 攻撃中の移動速度が0より大きい場合は向き調整を有効にする
 }
 
-// 攻撃エフェクトデータ設定
+// 攻撃エフェクトデータ設定 (使用しなくていい)
 void PlayerBase::SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<AttackBase> attack)
 {
 	if(!attack) return;
@@ -156,7 +138,7 @@ void PlayerBase::SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<
 	_attackEffectConfigs.push_back(config);
 }
 
-// 攻撃の腕情報設定
+// 攻撃の腕情報設定 (使用しなくていい)
 void PlayerBase::SetAttackArmData(AttackArmConfig config, std::shared_ptr<AttackBase> attack)
 {
 	if(!attack) return;
@@ -175,17 +157,36 @@ void PlayerBase::CallProcessAttack()
 	ProcessBranchAttack();
 }
 
-// 攻撃処理
+
+
+
+// 現在の攻撃タイプに対応した攻撃配列を取得
+std::vector<std::shared_ptr<AttackBase>>& PlayerBase::GetCurrentAttacks()
+{
+	int typeIndex = static_cast<int>(_currentAttackType);
+	return _attacksByType[typeIndex];
+}
+
+// 現在の攻撃タイプに対応した攻撃状態配列を取得
+std::vector<PLAYER_ATTACK_STATE>& PlayerBase::GetCurrentAttackStatuses()
+{
+	int typeIndex = static_cast<int>(_currentAttackType);
+	return _attackStatusesByType[typeIndex];
+}
+
+// 攻撃処理（ここもマップから取得）
 void PlayerBase::ProcessAttack()
 {
 	// 攻撃開始チェック
 	if(CanStartAttack())
 	{
-		// 攻撃配列が空の場合は処理をスキップ
-		if(_attacks.empty()){ return; }
+		// 現在のマップから攻撃配列を取得
+		auto& currentAttacks = GetCurrentAttacks();
+
+		if(currentAttacks.empty()){ return; }
 
 		// 1段目の攻撃開始処理
-		ProcessStartAttack(1, PLAYER_ATTACK_STATE::FIRST_ATTACK, _attacks[0]);
+		ProcessStartAttack(1, PLAYER_ATTACK_STATE::FIRST_ATTACK, currentAttacks[0]);
 	}
 }
 
@@ -197,19 +198,19 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 	attack->SetOwner(shared_from_this());
 
 	// カメラマネージャー設定
-	attack->SetCameraManager(_cameraManager);	
+	attack->SetCameraManager(_cameraManager);
 
 	// コリジョン位置更新処理
 	//ProcessAttackColPos();	
 
 	// 攻撃判定受け取り関数
-	ReceiveAttackColData();		
+	ReceiveAttackColData();
 
 	// 状態更新
 	_playerState.attackState = nextStatus;
 
 	// 攻撃処理開始
-	attack->ProcessStartAttack();		
+	attack->ProcessStartAttack();
 
 	// 攻撃エフェクト処理
 	// -1しているのは攻撃開始処理内で攻撃状態が更新されるため、次の攻撃状態を渡すため
@@ -222,20 +223,25 @@ void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStat
 	_bCanCombo = false;			// コンボフラグ初期化
 }
 
-// 攻撃の反応処理
+// 攻撃の反応処理（ここもマップから取得）
 void PlayerBase::ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBase> attack)
 {
+	// 現在のマップからエフェクト設定配列を取得
+	int typeIndex = static_cast<int>(_currentAttackType);
+	auto& currentEffectConfigs = _attackEffectConfigsByType[typeIndex];
+	auto& currentArmConfigs = _attackArmConfigsByType[typeIndex];
+
 	// 有効な攻撃インデックスかチェック
-	if((attackIndex >= 0) && (attackIndex < static_cast<int>(_attackEffectConfigs.size())))
+	if((attackIndex >= 0) && (attackIndex < static_cast<int>(currentEffectConfigs.size())))
 	{
 		// プレイヤー設定取得
 		const PlayerConfig& playerConfig = GetPlayerConfig();
-		
+
 		// 攻撃エフェクト設定取得
-		const AttackEffectConfig& config = _attackEffectConfigs[attackIndex];
+		const AttackEffectConfig& config = currentEffectConfigs[attackIndex];
 
 		// 攻撃の腕情報設定取得
-		const AttackArmConfig& armConfig = _attackArmConfigs[attackIndex];
+		const AttackArmConfig& armConfig = currentArmConfigs[attackIndex];
 
 		// モデルのハンドルを取得
 		int handle = ResourceServer::GetInstance()->GetHandle(playerConfig.modelName);
@@ -254,47 +260,40 @@ void PlayerBase::ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBa
 		// エフェクトの追跡タイプに応じて初期位置とフレームインデックスを設定
 		switch(config.attachType)
 		{
-			case EFFECT_ATTACH_TYPE::CHARACTER_OFFSET: // キャラの位置 + オフセット
+			case EFFECT_ATTACH_TYPE::CHARACTER_OFFSET:
 			{
-				// キャラクター位置 + オフセット
 				initialPos = VAdd(_vPos, config.effectOffset);
-
 				break;
 			}
 
-			case EFFECT_ATTACH_TYPE::LEFT_ARM: // 左腕
+			case EFFECT_ATTACH_TYPE::LEFT_ARM:
 			{
-				// 左腕のフレームインデックス
 				attachFrameIndex = armConfig.leftArmFrameIndex;
 				initialPos = MV1GetFramePosition(handle, attachFrameIndex);
-
 				break;
 			}
 
-			case EFFECT_ATTACH_TYPE::RIGHT_ARM: // 右腕
+			case EFFECT_ATTACH_TYPE::RIGHT_ARM:
 			{
-				// 右腕のフレームインデックス
 				attachFrameIndex = armConfig.rightArmFrameIndex;
 				initialPos = MV1GetFramePosition(handle, attachFrameIndex);
-
 				break;
 			}
 
 			case EFFECT_ATTACH_TYPE::NONE:
 			default:
-				// 処理をスキップ
 				return;
 		}
 
 		// 座標追跡エフェクト再生
 		int effectHandle = AttackEffectSystem::GetInstance()->PlayTrackedEffect
 		(
-			config,				// エフェクト設定
-			initialPos,			// 初期位置
-			_vDir,				// 向き
-			attachFrameIndex,	// フレームインデックス
-			animManager,		// アニメーションマネージャー
-			shared_from_this()	// エフェクトの追跡対象(対象の派生プレイヤーは make_shared で作成)
+			config,
+			initialPos,
+			_vDir,
+			attachFrameIndex,
+			animManager,
+			shared_from_this()
 		);
 
 		// 攻撃オブジェクトにエフェクトハンドルを設定
@@ -331,13 +330,16 @@ void PlayerBase::ProcessAttackRegister(std::shared_ptr<AttackBase> attack)
 	}
 }
 
-// 攻撃分岐処理
+// 攻撃分岐処理（ここもマップから取得）
 void PlayerBase::ProcessBranchAttack()
 {
+	// 現在のマップから攻撃配列を取得
+	auto& currentAttacks = GetCurrentAttacks();
+
 	// 現在の状態に応じて攻撃処理を分岐
 	int currentAttackIndex = GetAttackIndexByStatus(_playerState.attackState);
 
-	if((currentAttackIndex >= 0) && (currentAttackIndex < (static_cast<int>(_attacks.size()))))
+	if((currentAttackIndex >= 0) && (currentAttackIndex < static_cast<int>(currentAttacks.size())))
 	{
 		// 汎用コンボ処理
 		ProcessComboAttack(currentAttackIndex);
@@ -349,7 +351,16 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 {
 	auto& im = InputManager::GetInstance();
 
-	auto currentAttack = _attacks[attackIndex];
+	// 現在のマップから攻撃配列を取得
+	auto& currentAttacks = GetCurrentAttacks();
+
+	// 攻撃インデックスが有効範囲内かチェック
+	if(attackIndex < 0 || attackIndex >= static_cast<int>(currentAttacks.size()))
+	{
+		return;
+	}
+
+	auto currentAttack = currentAttacks[attackIndex];
 	ATTACK_STATE state = currentAttack->GetAttackState();
 
 	// 状態に応じた処理
@@ -358,7 +369,7 @@ void PlayerBase::ProcessComboAttack(int attackIndex)
 		case ATTACK_STATE::STARTUP:	// 発生前
 		{
 			// コンボ不可にする
-			_bCanCombo = false;	
+			_bCanCombo = false;
 			break;
 		}
 
@@ -405,7 +416,7 @@ void PlayerBase::ProcessAttackFinish(std::shared_ptr<AttackBase> attack)
 	}
 }
 
-// 攻撃過程終了
+// 攻撃過程終了（ここを修正してマップから取得）
 void PlayerBase::EndAttackSequence()
 {
 	// 古いステータスを保持
@@ -414,56 +425,64 @@ void PlayerBase::EndAttackSequence()
 	// AttackManagerから自分の攻撃を全て解除
 	AttackManager::GetInstance()->UnregisterAttackByOwner(GetInstanceId());
 
+	// 現在のマップから攻撃配列を取得
+	auto& currentAttacks = GetCurrentAttacks();
+
 	// 現在の攻撃インデックスを取得
 	int currentAttackIndex = GetAttackIndexByStatus(_playerState.attackState);
-	if(currentAttackIndex >= 0 && currentAttackIndex < static_cast<int>(_attacks.size()))
+	if(currentAttackIndex >= 0 && currentAttackIndex < static_cast<int>(currentAttacks.size()))
 	{
 		// 現在の攻撃オブジェクトを取得
-		auto currentAttack = _attacks[currentAttackIndex];
+		auto currentAttack = currentAttacks[currentAttackIndex];
 	}
 
 	// 状態リセット
-	//_playerState.StateReset();									// 攻撃状態リセット
 	_playerState.absorbState = PLAYER_ABSORB_STATE::NONE;
 	_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
 	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
-	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 攻撃終了後は待機状態にする
+	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;
 
-	_iComboCount = 0;				// コンボカウントリセット
-	_bCanCombo = false;				// コンボ不可にする
+	_iComboCount = 0;
+	_bCanCombo = false;
 
 	// ステータス変更後、アニメーション切り替え
-	_oldPlayerState = oldState;		// 古いステータスを攻撃状態に設定
-	ProcessPlayAnimation();			// アニメーション切り替え実行
-	_oldPlayerState = _playerState;	// 切り替え後に更新
+	_oldPlayerState = oldState;
+	ProcessPlayAnimation();
+	_oldPlayerState = _playerState;
 }
 
-// 次の攻撃へ
+// 次の攻撃へ（ここもマップから取得）
 void PlayerBase::ProcessNextAttack(int currentIndex)
 {
-	// 次の攻撃インデックスを計算
 	int nextIndex = currentIndex + 1;
 
+	// 現在のマップから攻撃配列を取得
+	auto& currentAttacks = GetCurrentAttacks();
+	auto& currentStatuses = GetCurrentAttackStatuses();
+
 	// 次の攻撃が存在する場合
-	if(nextIndex < static_cast<int>(_attacks.size()))
+	if(nextIndex < static_cast<int>(currentAttacks.size()))
 	{
-		_attacks[nextIndex]->SetCameraManager(_cameraManager);
- 		PLAYER_ATTACK_STATE nextStatus = _attackStatuses[nextIndex];						// 次の状態取得
-		ProcessStartAttack(nextIndex + 1, _attackStatuses[nextIndex], _attacks[nextIndex]);	// 次の攻撃へ
+		currentAttacks[nextIndex]->SetCameraManager(_cameraManager);
+		PLAYER_ATTACK_STATE nextStatus = currentStatuses[nextIndex];
+		ProcessStartAttack(nextIndex + 1, currentStatuses[nextIndex], currentAttacks[nextIndex]);
 	}
 }
 
-// 攻撃コリジョンの情報受け取り用関数
+// 攻撃コリジョン情報受け取り（ここもマップから取得）
 void PlayerBase::ReceiveAttackColData()
 {
+	// 現在のマップから攻撃配列を取得
+	auto& currentAttacks = GetCurrentAttacks();
+
 	// 現在の攻撃インデックスを取得
 	int attackIndex = GetAttackIndexByStatus(_playerState.attackState);
 
 	// 攻撃インデックスが有効範囲内かチェック
-	if((attackIndex >= 0) && (attackIndex < static_cast<int>(_attacks.size())))	// 番号が子クラスの攻撃番号の範囲内なら
+	if((attackIndex >= 0) && (attackIndex < static_cast<int>(currentAttacks.size())))
 	{
 		// 攻撃コリジョン情報を取得
-		AttackCollision attackCol = _attacks[attackIndex]->GetAttackCollision();
+		AttackCollision attackCol = currentAttacks[attackIndex]->GetAttackCollision();
 
 		// コリジョン情報を入れる
 		_vAttackColTop = attackCol.attackColTop;
@@ -485,9 +504,9 @@ bool PlayerBase::CanStartAttack()
 	auto& im = InputManager::GetInstance();
 
 	// 攻撃入力チェック
-	if((_playerState.IsStateMoving()		&&	// 何かしらの移動状態で
-		!_playerState.IsStateAttacking()	&&	// どの攻撃状態でもなく
-		!_playerState.IsStateCombat())		&&	// どの特殊状態でもなく
+	if((_playerState.IsStateMoving() &&	// 何かしらの移動状態で
+		!_playerState.IsStateAttacking() &&	// どの攻撃状態でもなく
+		!_playerState.IsStateCombat()) &&	// どの特殊状態でもなく
 		im.IsTrigger(INPUT_ACTION::ATTACK))		// 入力があるなら
 	{
 		// 攻撃開始可能
@@ -502,9 +521,9 @@ bool PlayerBase::CanStartAbility()
 {
 	auto& im = InputManager::GetInstance();
 	// 能力入力チェック
-	if((_playerState.IsStateMoving()		&&	// 何かしらの移動状態で
-		!_playerState.IsStateAttacking()	&&	// どの攻撃状態でもなく
-		!_playerState.IsStateCombat())		&&	// どの特殊状態でもなく
+	if((_playerState.IsStateMoving() &&	// 何かしらの移動状態で
+		!_playerState.IsStateAttacking() &&	// どの攻撃状態でもなく
+		!_playerState.IsStateCombat()) &&	// どの特殊状態でもなく
 		im.IsTrigger(INPUT_ACTION::ABILITY))	// 入力があるなら
 	{
 		// 能力開始可能
@@ -523,8 +542,8 @@ bool PlayerBase::CanNextAttack()
 	// キャラタイプに応じた最大コンボ数を取得
 	int maxComboCount = GetMaxComboCount();
 
-	if((_bCanCombo															&&	// コンボ可能で
-		_iComboCount < maxComboCount										&&	// 現在のコンボカウントが最大コンボ数より小さく
+	if((_bCanCombo &&	// コンボ可能で
+		_iComboCount < maxComboCount &&	// 現在のコンボカウントが最大コンボ数より小さく
 		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)) &&	// 被弾中でなく
 		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::TRANS_CANCEL))	// 変身解除状態でないなら
 	{
@@ -598,14 +617,15 @@ int PlayerBase::GetInstanceId()
 // 状態から攻撃インデックスを取得
 int PlayerBase::GetAttackIndexByStatus(PLAYER_ATTACK_STATE status)
 {
-	// 攻撃状態配列からインデックスを検索
-	for(size_t i = 0; i < _attackStatuses.size(); ++i)
+	// 現在のマップから攻撃状態配列を取得
+	auto& currentStatuses = GetCurrentAttackStatuses();
+
+	// 状態が一致したらインデックスを返す
+	for(size_t j = 0; j < currentStatuses.size(); ++j)
 	{
-		// 状態が一致したらインデックスを返す
-		if(_attackStatuses[i] == status)
+		if(currentStatuses[j] == status)
 		{
-			// 一致したインデックスを返す
-			return static_cast<int>(i);
+			return static_cast<int>(j);
 		}
 	}
 
@@ -628,5 +648,673 @@ int PlayerBase::GetMaxComboCount()const
 	}
 
 	// デフォルトは0
-	return 0;	
+	return 0;
 }
+
+// 攻撃入力をチェックして攻撃タイプを決定
+void PlayerBase::ProcessAttackTypeSelection()
+{
+	auto& im = InputManager::GetInstance();
+
+	if(im.IsHold(INPUT_ACTION::ATTACK))
+	{
+		SetCurrentAttackType(PLAYER_ATTACK_TYPE::NORMAL);
+	}
+	else if(im.IsHold(INPUT_ACTION::ABILITY))
+	{
+		SetCurrentAttackType(PLAYER_ATTACK_TYPE::ABILITY);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//// 攻撃コリジョンの設定
+//void PlayerBase::InitializeAttackData()
+//{
+//	// キャラタイプに応じた最大コンボ数を取得
+//	int maxCombo = GetMaxComboCount();
+//
+//	// コンボカウントが0ならスキップ
+//	if(maxCombo <= 0)
+//	{
+//		_attacks.clear();
+//		_attackStatuses.clear();
+//		return;
+//	}
+//
+//	// 攻撃設定配列初期化
+//	InitializeAttackConfigs(maxCombo);
+//
+//	// 攻撃状態を攻撃配列に入れる
+//	SetAttackStateData(maxCombo);
+//
+//	// 攻撃コリジョンデータ作成
+//	CreateAttackData(maxCombo);
+//}
+//
+//// 攻撃設定配列初期化
+//void PlayerBase::InitializeAttackConfigs(int maxCombo)
+//{
+//	// 攻撃配列とステータス配列を初期化
+//	_attacks.clear();
+//	_attackStatuses.clear();
+//}
+//
+//// 攻撃状態を攻撃配列に入れる
+//void PlayerBase::SetAttackStateData(int maxCombo)
+//{
+//	// 攻撃状態の定義
+//	std::vector<PLAYER_ATTACK_STATE> statuses =
+//	{
+//		PLAYER_ATTACK_STATE::FIRST_ATTACK,
+//		PLAYER_ATTACK_STATE::SECOND_ATTACK,
+//		PLAYER_ATTACK_STATE::THIRD_ATTACK,
+//		PLAYER_ATTACK_STATE::FOURTH_ATTACK,
+//		PLAYER_ATTACK_STATE::FIFTH_ATTACK
+//	};
+//
+//	// コンボカウント回数分ループ
+//	for(int i = 0; i < maxCombo; ++i)
+//	{
+//		// 攻撃状態を配列に追加
+//		_attackStatuses.push_back(statuses[i]);
+//	}
+//}
+//
+//// 攻撃コリジョンデータ作成
+//void PlayerBase::CreateAttackData(int maxCombo)
+//{	
+//	// 攻撃演出の設定配列初期化
+//	_attackEffectConfigs.clear();	
+//	_attackEffectConfigs.reserve(maxCombo);
+//
+//	_attackArmConfigs.clear();
+//	_attackArmConfigs.reserve(maxCombo);
+//
+//	// 攻撃設定取得
+//	std::vector<AttackCollision>configs(maxCombo);
+//	GetAttackColConfigs(configs.data());
+//
+//	// 攻撃オフセット設定取得
+//	std::vector<AttackColOffset>offsets(maxCombo);
+//	GetAttackColOffsetConfigs(offsets.data());
+//
+//	// 向き調整設定取得
+//	std::vector<AttackDirAdjustConfig>dirAdjusts(maxCombo);
+//	GetAttackDirAdjustConfigs(dirAdjusts.data());
+//
+//	// 攻撃エフェクト設定取得
+//	std::vector<AttackEffectConfig>effectConfigs(maxCombo);
+//	GetAttackEffectConfigs(effectConfigs.data());
+//
+//	// 攻撃の腕情報設定
+//	std::vector<AttackArmConfig> armConfigs(maxCombo);
+//	GetAttackArmConfigs(armConfigs.data());
+//
+//	// コンボカウント回数分ループ
+//	for(int i = 0; i < maxCombo; ++i)
+//	{
+//		auto attack = std::make_shared<AttackBase>();	// 攻撃オブジェクト作成
+//
+//		// 攻撃コリジョンデータ設定
+//		SetAttackColData(configs[i], attack);
+//
+//		// 攻撃オフセットデータ設定
+//		SetAttackOffsetData(offsets[i], attack);
+//
+//		// 向き調整データ設定
+//		SetCanDirAdjustData(dirAdjusts[i], attack);
+//
+//		// 攻撃エフェクトデータ設定
+//		SetAttackEffectData(effectConfigs[i], attack);
+//
+//		// 攻撃の腕情報設定
+//		SetAttackArmData(armConfigs[i], attack);
+//
+//		// 攻撃配列に攻撃オブジェクトを追加
+//		_attacks.push_back(attack);
+//	}
+//}
+//
+//// 攻撃コリジョンデータ設定
+//void PlayerBase::SetAttackColData(AttackCollision config, std::shared_ptr<AttackBase> attack)
+//{
+//	if(!attack) return;
+//
+//	// 攻撃コリジョンデータ設定
+//	attack->SetCapsuleAttackData(config);
+//}
+//
+//// 攻撃オフセットデータ作成
+//void PlayerBase::SetAttackOffsetData(AttackColOffset config, std::shared_ptr<AttackBase> attack)
+//{
+//	if(!attack) return;
+//
+//	// 攻撃オフセットデータ設定
+//	attack->SetCollisionOffset(config);
+//}
+//
+//// 向き調整データ作成
+//void PlayerBase::SetCanDirAdjustData(AttackDirAdjustConfig config, std::shared_ptr<AttackBase> attack)
+//{
+//	if(!attack) return;
+//
+//	// 向き調整データ設定
+//	attack->SetDirAdjustData(config.canDirAdjust);	// 攻撃中の移動速度が0より大きい場合は向き調整を有効にする
+//}
+//
+//// 攻撃エフェクトデータ設定
+//void PlayerBase::SetAttackEffectData(AttackEffectConfig config, std::shared_ptr<AttackBase> attack)
+//{
+//	if(!attack) return;
+//
+//	// 攻撃エフェクトデータ設定
+//	attack->SetAttackEffectConfig(config);
+//
+//	// 攻撃エフェクト設定配列に追加
+//	_attackEffectConfigs.push_back(config);
+//}
+//
+//// 攻撃の腕情報設定
+//void PlayerBase::SetAttackArmData(AttackArmConfig config, std::shared_ptr<AttackBase> attack)
+//{
+//	if(!attack) return;
+//
+//	// 攻撃の腕情報設定
+//	_attackArmConfigs.push_back(config);
+//}
+//
+//// 攻撃Process呼び出し用関数
+//void PlayerBase::CallProcessAttack()
+//{
+//	// 攻撃処理
+//	ProcessAttack();
+//
+//	// 攻撃分岐処理
+//	ProcessBranchAttack();
+//}
+
+//// 攻撃処理
+//void PlayerBase::ProcessAttack()
+//{
+//	// 攻撃開始チェック
+//	if(CanStartAttack())
+//	{
+//		// 攻撃配列が空の場合は処理をスキップ
+//		if(_attacks.empty()){ return; }
+//
+//		// 1段目の攻撃開始処理
+//		ProcessStartAttack(1, PLAYER_ATTACK_STATE::FIRST_ATTACK, _attacks[0]);
+//	}
+//}
+
+//// コンボ攻撃開始の処理
+//void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack)
+//{
+//	// 攻撃オブジェクトの所有者をプレイヤーに設定
+//	// プレイヤーは make_shared で生成している
+//	attack->SetOwner(shared_from_this());
+//
+//	// カメラマネージャー設定
+//	attack->SetCameraManager(_cameraManager);	
+//
+//	// コリジョン位置更新処理
+//	//ProcessAttackColPos();	
+//
+//	// 攻撃判定受け取り関数
+//	ReceiveAttackColData();		
+//
+//	// 状態更新
+//	_playerState.attackState = nextStatus;
+//
+//	// 攻撃処理開始
+//	attack->ProcessStartAttack();		
+//
+//	// 攻撃エフェクト処理
+//	// -1しているのは攻撃開始処理内で攻撃状態が更新されるため、次の攻撃状態を渡すため
+//	ProcessAttackReaction(comboCount - 1, attack);	// 攻撃反応処理
+//
+//	// 攻撃登録処理
+//	ProcessAttackRegister(attack);
+//
+//	_iComboCount = comboCount;	// コンボカウント設定
+//	_bCanCombo = false;			// コンボフラグ初期化
+//}
+
+//// 攻撃の反応処理
+//void PlayerBase::ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBase> attack)
+//{
+//	// 有効な攻撃インデックスかチェック
+//	if((attackIndex >= 0) && (attackIndex < static_cast<int>(_attackEffectConfigs.size())))
+//	{
+//		// プレイヤー設定取得
+//		const PlayerConfig& playerConfig = GetPlayerConfig();
+//		
+//		// 攻撃エフェクト設定取得
+//		const AttackEffectConfig& config = _attackEffectConfigs[attackIndex];
+//
+//		// 攻撃の腕情報設定取得
+//		const AttackArmConfig& armConfig = _attackArmConfigs[attackIndex];
+//
+//		// モデルのハンドルを取得
+//		int handle = ResourceServer::GetInstance()->GetHandle(playerConfig.modelName);
+//		if(handle <= 0){ return; }
+//
+//		// アニメーションマネージャーを取得
+//		AnimManager* animManager = GetAnimManager();
+//		if(!animManager){ return; }
+//
+//		// 初期位置
+//		VECTOR initialPos = VGet(0.0f, 0.0f, 0.0f);
+//
+//		// フレームインデックスを決定
+//		int attachFrameIndex = -1;
+//
+//		// エフェクトの追跡タイプに応じて初期位置とフレームインデックスを設定
+//		switch(config.attachType)
+//		{
+//			case EFFECT_ATTACH_TYPE::CHARACTER_OFFSET: // キャラの位置 + オフセット
+//			{
+//				// キャラクター位置 + オフセット
+//				initialPos = VAdd(_vPos, config.effectOffset);
+//
+//				break;
+//			}
+//
+//			case EFFECT_ATTACH_TYPE::LEFT_ARM: // 左腕
+//			{
+//				// 左腕のフレームインデックス
+//				attachFrameIndex = armConfig.leftArmFrameIndex;
+//				initialPos = MV1GetFramePosition(handle, attachFrameIndex);
+//
+//				break;
+//			}
+//
+//			case EFFECT_ATTACH_TYPE::RIGHT_ARM: // 右腕
+//			{
+//				// 右腕のフレームインデックス
+//				attachFrameIndex = armConfig.rightArmFrameIndex;
+//				initialPos = MV1GetFramePosition(handle, attachFrameIndex);
+//
+//				break;
+//			}
+//
+//			case EFFECT_ATTACH_TYPE::NONE:
+//			default:
+//				// 処理をスキップ
+//				return;
+//		}
+//
+//		// 座標追跡エフェクト再生
+//		int effectHandle = AttackEffectSystem::GetInstance()->PlayTrackedEffect
+//		(
+//			config,				// エフェクト設定
+//			initialPos,			// 初期位置
+//			_vDir,				// 向き
+//			attachFrameIndex,	// フレームインデックス
+//			animManager,		// アニメーションマネージャー
+//			shared_from_this()	// エフェクトの追跡対象(対象の派生プレイヤーは make_shared で作成)
+//		);
+//
+//		// 攻撃オブジェクトにエフェクトハンドルを設定
+//		attack->SetEffectHandle(effectHandle);
+//	}
+//}
+
+//// 攻撃登録処理
+//void PlayerBase::ProcessAttackRegister(std::shared_ptr<AttackBase> attack)
+//{
+//	// AttackManagerに登録
+//	std::shared_ptr<AttackBase> attackPtr = attack;
+//	if(attackPtr != nullptr)
+//	{
+//		// プレイヤーごとに情報を変えて登録する
+//		switch(_eCharaType)
+//		{
+//			case CHARA_TYPE::SURFACE_PLAYER: // 表プレイヤー
+//			{
+//				// 表プレイヤーとして登録
+//				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::SURFACE_PLAYER, GetInstanceId());
+//
+//				break;
+//			}
+//
+//			case CHARA_TYPE::INTERIOR_PLAYER: // 裏プレイヤー
+//			{
+//				// 裏プレイヤーとして登録
+//				AttackManager::GetInstance()->RegisterAttack(attackPtr, ATTACK_OWNER_TYPE::INTERIOR_PLAYER, GetInstanceId());
+//
+//				break;
+//			}
+//		}
+//	}
+//}
+
+//// 攻撃分岐処理
+//void PlayerBase::ProcessBranchAttack()
+//{
+//	// 現在の状態に応じて攻撃処理を分岐
+//	int currentAttackIndex = GetAttackIndexByStatus(_playerState.attackState);
+//
+//	if((currentAttackIndex >= 0) && (currentAttackIndex < (static_cast<int>(_attacks.size()))))
+//	{
+//		// 汎用コンボ処理
+//		ProcessComboAttack(currentAttackIndex);
+//	}
+//}
+
+//// 汎用コンボ攻撃処理
+//void PlayerBase::ProcessComboAttack(int attackIndex)
+//{
+//	auto& im = InputManager::GetInstance();
+//
+//	auto currentAttack = _attacks[attackIndex];
+//	ATTACK_STATE state = currentAttack->GetAttackState();
+//
+//	// 状態に応じた処理
+//	switch(state)
+//	{
+//		case ATTACK_STATE::STARTUP:	// 発生前
+//		{
+//			// コンボ不可にする
+//			_bCanCombo = false;	
+//			break;
+//		}
+//
+//		case ATTACK_STATE::ACTIVE:	// 攻撃判定中
+//		{
+//			// コンボ可能にする
+//			_bCanCombo = true;
+//
+//			// 次の攻撃入力があれば次の攻撃へ
+//			if(im.IsTrigger(INPUT_ACTION::ATTACK) && CanNextAttack())
+//			{
+//				//ProcessNextAttack(attackIndex);
+//			}
+//			break;
+//		}
+//
+//		case ATTACK_STATE::RECOVERY:	// 硬直中
+//		{
+//			// 次の攻撃入力があれば次の攻撃へ
+//			if(im.IsTrigger(INPUT_ACTION::ATTACK) && CanNextAttack())
+//			{
+//				ProcessNextAttack(attackIndex);
+//			}
+//			break;
+//		}
+//
+//		case ATTACK_STATE::INACTIVE:	// 攻撃終了
+//		{
+//			// 攻撃過程終了処理
+//			EndAttackSequence();
+//			break;
+//		}
+//	}
+//}
+//
+//// 攻撃終了処理
+//void PlayerBase::ProcessAttackFinish(std::shared_ptr<AttackBase> attack)
+//{
+//	// 攻撃状態が非アクティブなら攻撃過程終了
+//	if(attack->GetAttackState() == ATTACK_STATE::INACTIVE)
+//	{
+//		// 攻撃過程終了処理
+//		EndAttackSequence();
+//	}
+//}
+
+//// 攻撃過程終了
+//void PlayerBase::EndAttackSequence()
+//{
+//	// 古いステータスを保持
+//	PlayerState oldState = _playerState;
+//
+//	// AttackManagerから自分の攻撃を全て解除
+//	AttackManager::GetInstance()->UnregisterAttackByOwner(GetInstanceId());
+//
+//	// 現在の攻撃インデックスを取得
+//	int currentAttackIndex = GetAttackIndexByStatus(_playerState.attackState);
+//	if(currentAttackIndex >= 0 && currentAttackIndex < static_cast<int>(_attacks.size()))
+//	{
+//		// 現在の攻撃オブジェクトを取得
+//		auto currentAttack = _attacks[currentAttackIndex];
+//	}
+//
+//	// 状態リセット
+//	//_playerState.StateReset();									// 攻撃状態リセット
+//	_playerState.absorbState = PLAYER_ABSORB_STATE::NONE;
+//	_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
+//	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
+//	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 攻撃終了後は待機状態にする
+//
+//	_iComboCount = 0;				// コンボカウントリセット
+//	_bCanCombo = false;				// コンボ不可にする
+//
+//	// ステータス変更後、アニメーション切り替え
+//	_oldPlayerState = oldState;		// 古いステータスを攻撃状態に設定
+//	ProcessPlayAnimation();			// アニメーション切り替え実行
+//	_oldPlayerState = _playerState;	// 切り替え後に更新
+//}
+
+//// 次の攻撃へ
+//void PlayerBase::ProcessNextAttack(int currentIndex)
+//{
+//	// 次の攻撃インデックスを計算
+//	int nextIndex = currentIndex + 1;
+//
+//	// 次の攻撃が存在する場合
+//	if(nextIndex < static_cast<int>(_attacks.size()))
+//	{
+//		_attacks[nextIndex]->SetCameraManager(_cameraManager);
+// 		PLAYER_ATTACK_STATE nextStatus = _attackStatuses[nextIndex];						// 次の状態取得
+//		ProcessStartAttack(nextIndex + 1, _attackStatuses[nextIndex], _attacks[nextIndex]);	// 次の攻撃へ
+//	}
+//}
+
+//// 攻撃コリジョンの情報受け取り用関数
+//void PlayerBase::ReceiveAttackColData()
+//{
+//	// 現在の攻撃インデックスを取得
+//	int attackIndex = GetAttackIndexByStatus(_playerState.attackState);
+//
+//	// 攻撃インデックスが有効範囲内かチェック
+//	if((attackIndex >= 0) && (attackIndex < static_cast<int>(_attacks.size())))	// 番号が子クラスの攻撃番号の範囲内なら
+//	{
+//		// 攻撃コリジョン情報を取得
+//		AttackCollision attackCol = _attacks[attackIndex]->GetAttackCollision();
+//
+//		// コリジョン情報を入れる
+//		_vAttackColTop = attackCol.attackColTop;
+//		_vAttackColBottom = attackCol.attackColBottom;
+//		_fAttackColR = attackCol.attackColR;
+//	}
+//	else
+//	{
+//		// 攻撃状態でない場合は値をリセット
+//		_vAttackColTop = VGet(0.0f, 0.0f, 0.0f);
+//		_vAttackColBottom = VGet(0.0f, 0.0f, 0.0f);
+//		_fAttackColR = 0.0f;
+//	}
+//}
+
+//// 攻撃を開始できるかチェック
+//bool PlayerBase::CanStartAttack()
+//{
+//	auto& im = InputManager::GetInstance();
+//
+//	// 攻撃入力チェック
+//	if((_playerState.IsStateMoving()		&&	// 何かしらの移動状態で
+//		!_playerState.IsStateAttacking()	&&	// どの攻撃状態でもなく
+//		!_playerState.IsStateCombat())		&&	// どの特殊状態でもなく
+//		im.IsTrigger(INPUT_ACTION::ATTACK))		// 入力があるなら
+//	{
+//		// 攻撃開始可能
+//		return true;
+//	}
+//
+//	return false;
+//}
+//
+//// 能力を開始できるかチェック
+//bool PlayerBase::CanStartAbility()
+//{
+//	auto& im = InputManager::GetInstance();
+//	// 能力入力チェック
+//	if((_playerState.IsStateMoving()		&&	// 何かしらの移動状態で
+//		!_playerState.IsStateAttacking()	&&	// どの攻撃状態でもなく
+//		!_playerState.IsStateCombat())		&&	// どの特殊状態でもなく
+//		im.IsTrigger(INPUT_ACTION::ABILITY))	// 入力があるなら
+//	{
+//		// 能力開始可能
+//		return true;
+//	}
+//
+//	return false;
+//}
+//
+//// 次の攻撃が可能かチェック
+//bool PlayerBase::CanNextAttack()
+//{
+//	// コンボが可能で、最大コンボ数以下の場合のみ次の攻撃可能
+//	AttackConstants constants = GetAttackConstants();
+//
+//	// キャラタイプに応じた最大コンボ数を取得
+//	int maxComboCount = GetMaxComboCount();
+//
+//	if((_bCanCombo															&&	// コンボ可能で
+//		_iComboCount < maxComboCount										&&	// 現在のコンボカウントが最大コンボ数より小さく
+//		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)) &&	// 被弾中でなく
+//		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::TRANS_CANCEL))	// 変身解除状態でないなら
+//	{
+//		// 次の攻撃可能
+//		return true;
+//	}
+//
+//	return false;
+//}
+//
+//// 攻撃状態中かどうかをチェック
+//bool PlayerBase::IsAttacking()
+//{
+//	// 攻撃状態中かチェック
+//	if(_playerState.IsStateAttacking())
+//	{
+//		_vMove = VGet(0, 0, 0);	// 攻撃中は移動不可
+//		return true;
+//	}
+//
+//	return false;
+//}
+//
+//// 攻撃入力があったかチェック
+//bool PlayerBase::IsAttackInput()
+//{
+//	auto& im = InputManager::GetInstance();
+//
+//	// 攻撃入力があるかチェック
+//	return im.IsHold(INPUT_ACTION::ATTACK) != 0;
+//}
+//
+//// ヘルパー関数
+//std::shared_ptr<AttackBase> PlayerBase::GetAttackByStatus(PLAYER_ATTACK_STATE status)
+//{
+//	int index = GetAttackIndexByStatus(status);	// 攻撃インデックス取得
+//
+//	// インデックスが有効範囲内かチェック
+//	if(index >= 0 && index < static_cast<int>(_attacks.size()))
+//	{
+//		// インデックスに対応する攻撃を返す
+//		return _attacks[index];
+//	}
+//
+//	return nullptr;
+//}
+//
+//// ID取得関数
+//int PlayerBase::GetInstanceId()
+//{
+//	// キャラタイプに応じたIDを返す
+//	switch(_eCharaType)
+//	{
+//		case CHARA_TYPE::INTERIOR_PLAYER: // 裏プレイヤー
+//		{
+//			return IdConstants::INTERIOR_PLAYER_ID;	// 裏プレイヤーID
+//		}
+//
+//		case CHARA_TYPE::SURFACE_PLAYER: // 表プレイヤー
+//		{
+//			return IdConstants::SURFACE_PLAYER_ID;	// 表プレイヤーID
+//		}
+//
+//		default:
+//		{
+//			return 0;
+//		}
+//	}
+//}
+
+//// 状態から攻撃インデックスを取得
+//int PlayerBase::GetAttackIndexByStatus(PLAYER_ATTACK_STATE status)
+//{
+//	// 攻撃状態配列からインデックスを検索
+//	for(size_t i = 0; i < _attackStatuses.size(); ++i)
+//	{
+//		// 状態が一致したらインデックスを返す
+//		if(_attackStatuses[i] == status)
+//		{
+//			// 一致したインデックスを返す
+//			return static_cast<int>(i);
+//		}
+//	}
+//
+//	return -1; // 見つからなかった場合
+//}
+
+//// 最大攻撃コンボ取得関数
+//int PlayerBase::GetMaxComboCount()const
+//{
+//	AttackConstants constants = GetAttackConstants();	// 攻撃定数取得
+//
+//	// キャラタイプに応じた最大コンボ数を返す
+//	if(_eCharaType == CHARA_TYPE::SURFACE_PLAYER)
+//	{
+//		return constants.surfaceMaxComboCount;	// 表プレイヤー用最大コンボ数
+//	}
+//	else if(_eCharaType == CHARA_TYPE::INTERIOR_PLAYER)
+//	{
+//		return constants.interiorMaxComboCount;	// 裏プレイヤー用最大コンボ数
+//	}
+//
+//	// デフォルトは0
+//	return 0;	
+//}
+
+//// 攻撃入力をチェックして攻撃タイプを決定
+//void PlayerBase::ProcessAttackTypeSelection()
+//{
+//	auto& im = InputManager::GetInstance();
+//
+//	if(im.IsHold(INPUT_ACTION::ATTACK))
+//	{
+//		SetCurrentAttackType(PLAYER_ATTACK_TYPE::NORMAL);
+//	}
+//	else if(im.IsHold(INPUT_ACTION::ABILITY))
+//	{
+//		SetCurrentAttackType(PLAYER_ATTACK_TYPE::ABILITY);
+//	}
+//}

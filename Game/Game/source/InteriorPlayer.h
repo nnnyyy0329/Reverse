@@ -12,7 +12,8 @@ namespace InteriorPlayerConstants
 // 攻撃定数
 namespace InteriorAttackConstants
 {
-	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;	// 裏プレイヤー用コンボカウント
+	constexpr int ATTACK_COMBO_COUNT = 5;	// 裏プレイヤー用コンボカウント
+	constexpr int ABILITY_COMBO_COUNT = 1;	// 裏プレイヤー用アビリティコンボカウント
 }
 
 // 裏プレイヤーのフレームインデックス定数
@@ -96,7 +97,7 @@ public:
 	/// @brief 範囲攻撃設定を取得
 	///
 	/// @return 範囲攻撃設定構造体
-	virtual AreaAttackConfig	GetAreaAttackConfigs()										override;
+	//virtual AreaAttackConfig	GetAreaAttackConfigs()										override;
 
 	/// @brief 演出設定を取得
 	///
@@ -107,6 +108,29 @@ public:
 	///
 	/// @param configs[5] 攻撃腕設定の配列(5段階分)
 	virtual void				GetAttackArmConfigs(AttackArmConfig configs[5])				override;	
+
+
+	virtual void GetAttackColConfigs(PLAYER_ATTACK_TYPE type, AttackCollision configs[]) override;
+	virtual void GetNormalAttackConfigs(AttackCollision configs[]) override;
+	virtual void GetAbilityAttackConfigs(AttackCollision configs[]) override;
+
+	virtual void GetAttackEffectConfigs(PLAYER_ATTACK_TYPE type, AttackEffectConfig configs[]) override;
+	virtual void GetNormalAttackEffectConfigs(AttackEffectConfig configs[]) override;
+	virtual void GetAbilityAttackEffectConfigs(AttackEffectConfig configs[]) override;
+
+	virtual void GetAttackColOffsetConfigs(PLAYER_ATTACK_TYPE type, AttackColOffset configs[]) override;
+	virtual void GetNormalAttackColOffsetConfigs(AttackColOffset configs[]) override;
+	virtual void GetAbilityAttackColOffsetConfigs(AttackColOffset configs[]) override;
+
+	virtual void GetAttackDirAdjustConfigs(PLAYER_ATTACK_TYPE type, AttackDirAdjustConfig configs[]) override;
+	virtual void GetNormalAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]) override;
+	virtual void GetAbilityAttackDirAdjustConfigs(AttackDirAdjustConfig configs[]) override;
+
+	virtual void GetAttackArmConfigs(PLAYER_ATTACK_TYPE type, AttackArmConfig configs[]) override;
+	virtual void GetNormalAttackArmConfigs(AttackArmConfig configs[]) override;
+	virtual void GetAbilityAttackArmConfigs(AttackArmConfig configs[]) override;
+
+	virtual int GetMaxComboCountByType(PLAYER_ATTACK_TYPE type)const override;
 
 
 	/*****ゲッターセッター*****/

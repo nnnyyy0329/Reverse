@@ -50,7 +50,7 @@ bool PlayerBase::Initialize()
 	InitializePlayerConfig(_playerConfig);
 
 	// 攻撃データの初期化
-	InitializeAttackData();
+	//InitializeAttackData();
 
 	// 回避データの初期化
 	InitializeDodgeData();
