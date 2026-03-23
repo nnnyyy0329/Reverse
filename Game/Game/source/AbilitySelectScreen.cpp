@@ -58,7 +58,9 @@ AbilitySelectScreen::AbilitySelectScreen()
 
 AbilitySelectScreen::~AbilitySelectScreen()
 {
-
+	// ‰æ‘œ‚ÌŠJ•ú
+	DeleteGraph(_iHandle1);
+	DeleteGraph(_iHandle2);
 }
 
 bool AbilitySelectScreen::Initialize()
@@ -68,6 +70,10 @@ bool AbilitySelectScreen::Initialize()
 
 bool AbilitySelectScreen::Terminate()
 {
+	// ‰æ‘œ‚ÌŠJ•ú
+	DeleteGraph(_iHandle1);
+	DeleteGraph(_iHandle2);
+
 	return true;
 }
 

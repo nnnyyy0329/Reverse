@@ -185,6 +185,19 @@ bool ModeGame::Terminate()
 	// プレイヤー開放
 	_playerManager->Terminate();
 	_playerManager.reset();
+	_abilitySelectScreen ->Terminate();
+	_abilitySelectScreen.reset();
+	_abilitySelectManager.reset();
+	_abilityActionHint->Terminate();
+	_abilityActionHint.reset();
+	_energyUI->Terminate();
+	_energyUI.reset();
+	_playerLifeBarUI->Terminate();
+	_playerLifeBarUI.reset();
+	_staminaUI->Terminate();
+	_staminaUI.reset();
+	_dodgeSystem.reset();
+
 
 	return true;
 }
