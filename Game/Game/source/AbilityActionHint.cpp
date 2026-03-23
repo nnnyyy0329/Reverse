@@ -40,6 +40,13 @@ bool AbilityActionHint::Initialize()
 
 bool AbilityActionHint::Terminate()
 {
+	// ‰æ‘œ‚ÌŠJ•ú
+	DeleteGraph(_iHandleAbsorbAction);
+	DeleteGraph(_iHandleAoeAction);
+	DeleteGraph(_iHandlePunchAction);
+	DeleteGraph(_iHandlePiercingBulletAction);
+	DeleteGraph(_iHandleNormalBulletAction);
+
 	return true;
 }
 

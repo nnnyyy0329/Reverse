@@ -5,12 +5,6 @@
 #include "GeometryUtility.h"
 #include "AttackEffectSystem.h"
 
-// 移動関連定数
-namespace MoveConstants
-{
-	constexpr float ATTACK_MOVE_DECAY_RATE = 0.9f; // 攻撃中の移動減衰率
-}
-
 // 向き調整関連定数
 namespace DirAdjustConstants
 {
@@ -22,28 +16,31 @@ namespace DirAdjustConstants
 class CharaBase;
 class CameraManager;
 
+/// @brief 攻撃コリジョンの形状タイプ
 enum class COLLISION_TYPE
 {
-	NONE,		// なし
-	CAPSULE,	// カプセル
-	CIRCLE,		// 円
-	SPHERE,		// 球
-	BOX,		// 矩形
-	POLYGON,	// ポリゴン
-	_EOT_,		// 終端
+	NONE,		///< なし
+	CAPSULE,	///< カプセル
+	CIRCLE,		///< 円
+	SPHERE,		///< 球
+	BOX,		///< 矩形
+	POLYGON,	///< ポリゴン
+	_EOT_,		///< 終端
 };
 
-// 攻撃の状態を管理
+/// @brief 攻撃状態管理の列挙型
 enum class ATTACK_STATE
 {
-	INACTIVE,	// 非アクティブ
-	STARTUP,	// 発生前
-	ACTIVE,		// 攻撃判定中
-	RECOVERY,	// 硬直中
+	INACTIVE,	///< 非アクティブ
+	STARTUP,	///< 発生前
+	ACTIVE,		///< 攻撃判定中
+	RECOVERY,	///< 硬直中
 	_EOT_,
 };
 
 // 攻撃コリジョン情報構造体
+
+/// @brief 攻撃コリジョンの情報をまとめた構造体
 struct AttackCollision
 {
 	VECTOR attackColTop;		// カプセル攻撃コリジョンの上部
@@ -62,21 +59,21 @@ struct AttackCollision
 	bool isAttackCancelByHit;	// 被弾でキャンセルされる攻撃か
 };
 
+/// @brief 攻撃中の移動情報をまとめた構造体
+struct AttackMovement
+{
+	ATTACK_STATE attackState;	// 攻撃状態
+	VECTOR moveDir;				// 移動方向
+	float attackMoveSpeed;		// 攻撃中の移動速度
+	float decayRate;			// 減衰率
+	bool canMovement;			// 移動可能フラグ
+};
+
 // 攻撃コリジョンオフセット情報構造体
 struct AttackColOffset
 {
 	float directionScale;   // 方向スケール
 	bool useOwnerDirection; // 所有者の向きを基準とするか
-};
-
-// 攻撃移動情報構造体
-struct AttackMovement
-{
-	VECTOR moveDir;		// 移動方向
-	float moveDistance;	// 移動距離
-	float moveSpeed;	// 移動速度
-	float decayRate;	// 減衰率
-	bool canMove;		// 移動可能フラグ
 };
 
 // 攻撃のベースクラス

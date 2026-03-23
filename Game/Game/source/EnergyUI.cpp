@@ -23,6 +23,7 @@ EnergyUI::EnergyUI()
 
 EnergyUI::~EnergyUI()
 {
+	// ‰æ‘œ‚ÌŠJ•ú
 	DeleteGraph(_iEnergyFrameHandle);
 	DeleteGraph(_iEnergyHandle1);
 	DeleteGraph(_iEnergyHandle2);
@@ -36,6 +37,12 @@ bool EnergyUI::Initialize()
 
 bool EnergyUI::Terminate()
 {
+	// ‰æ‘œ‚ÌŠJ•ú
+	DeleteGraph(_iEnergyFrameHandle);
+	DeleteGraph(_iEnergyHandle1);
+	DeleteGraph(_iEnergyHandle2);
+	DeleteGraph(_iEnergyHandle3);
+
 	return true;
 }
 

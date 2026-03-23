@@ -23,6 +23,7 @@ StaminaUI::StaminaUI()
 
 StaminaUI::~StaminaUI()
 {
+	// ‰æ‘œ‚ÌŠJ•ú
 	DeleteGraph(_iStaminaFrameHandle);
 	DeleteGraph(_iStaminaHandle);
 }
@@ -34,6 +35,10 @@ bool StaminaUI::Initialize()
 
 bool StaminaUI::Terminate()
 {
+	// ‰æ‘œ‚ÌŠJ•ú
+	DeleteGraph(_iStaminaFrameHandle);
+	DeleteGraph(_iStaminaHandle);
+
 	return true;
 }
 

@@ -40,6 +40,10 @@ bool PlayerLifeBarUI::Initialize()
 
 bool PlayerLifeBarUI::Terminate()
 {
+	// ‰æ‘œ‚Ì‰ð•ú
+	DeleteGraph(_iLifeBar);
+	DeleteGraph(_iLifeBarFrame);
+
 	return true;
 }
 

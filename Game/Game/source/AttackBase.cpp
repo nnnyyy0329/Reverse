@@ -29,11 +29,11 @@ AttackBase::AttackBase()
 	_stcAttackCol.isAttackCancelByHit = false;
 
 	// 攻撃移動情報の初期化
+	_stcAttackMovement.attackState = ATTACK_STATE::INACTIVE;
 	_stcAttackMovement.moveDir = VGet(0.0f, 0.0f, 0.0f);
-	_stcAttackMovement.moveDistance = 0.0f;
-	_stcAttackMovement.moveSpeed = 0.0f;
+	_stcAttackMovement.attackMoveSpeed = 0.0f;
 	_stcAttackMovement.decayRate = 0.0f;
-	_stcAttackMovement.canMove = false;
+	_stcAttackMovement.canMovement = false;
 
 	// 攻撃コリジョンオフセットの初期化
 	_stcColOffset.directionScale = 1.0f;
