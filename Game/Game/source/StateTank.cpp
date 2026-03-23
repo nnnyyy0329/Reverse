@@ -38,7 +38,7 @@ namespace
 	constexpr auto CHARGE_EXECUTE_TIME = 90.0f;// 突進の最大時間
 	constexpr auto CHARGE_RECOVERY_TIME = 60.0f;// 突進後の硬直時間
 	constexpr auto CHARGE_SPEED = 10.0f;// 突進速度
-	constexpr auto CHARGE_DAMAGE = 5.0f;// 突進ダメージ
+	constexpr auto CHARGE_DAMAGE = 20.0f;// 突進ダメージ
 	constexpr auto CHARGE_ARRIVE_DIST = 5.0f;// 突進完了とみなす距離
 
 	constexpr auto CHARGE_ATTACK_RANGE = 640.0f;// 突進を試みる距離

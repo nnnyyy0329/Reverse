@@ -11,7 +11,7 @@ namespace
 	constexpr auto ATTACK_COLLISION_RADIUS = 40.0f;		// 攻撃コリジョン半径
 	constexpr auto ATTACK_DELAY = 10.0f;				// 攻撃発生遅延
 	constexpr auto ATTACK_DURATION = 10.0f;				// 攻撃持続時間
-	constexpr auto ATTACK_DAMAGE = 20.0f;				// 攻撃ダメージ量
+	constexpr auto ATTACK_DAMAGE = 5.0f;				// 攻撃ダメージ量
 
 	// 距離判定用定数
 	constexpr auto ATTACK_START_DISTANCE = 200.0f;		// 攻撃開始距離

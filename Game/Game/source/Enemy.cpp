@@ -17,7 +17,7 @@ namespace
 	constexpr auto SEARCH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
 
 	// ライフバー表示設定
-	constexpr auto LIFEBAR_HEAD_OFFSET_Y = 100.0f;// ライフバーの表示位置オフセット
+	constexpr auto LIFEBAR_HEAD_OFFSET_Y = 150.0f;// ライフバーの表示位置オフセット
 	constexpr auto LIFEBAR_WORLD_WIDTH = 80.0f;// ライフバーのワールド上の幅
 	constexpr auto LIFEBAR_MAX_DIST = 1000.0f;// ライフバーを表示する最大距離
 
