@@ -252,89 +252,65 @@ void Enemy::DrawLifeBar()
 {
 	if (_lifeBarHandle == -1 || _lifeBarFrameHandle == -1) { return; }
 
-	// 座標と距離の変換
-	// 敵の頭上の座標
-	VECTOR vHeadPos = VAdd(_vPos, VGet(0.0f, LIFEBAR_HEAD_OFFSET_Y, 0.0f));
+	// 敵の頭上のワールド座標を計算
+	VECTOR headPos = VAdd(_vPos, VGet(0.0f, LIFEBAR_HEAD_OFFSET_Y, 0.0f));
 
-	// カメラ座標を取得
-	VECTOR vCamPos = GetCameraPosition();
-
-	// カメラから敵までの距離
-	auto dist = VSize(VSub(vHeadPos, vCamPos));
-
-	// 距離が遠い場合は非表示
+	// カメラからの距離を計算し、遠すぎる場合は描画しない
+	VECTOR camPos = GetCameraPosition();
+	auto dist =  VSize(VSub(headPos, camPos));
 	if (dist > LIFEBAR_MAX_DIST) { return; }
 
-	// 画面上の座標に変換
-	VECTOR vPos2D = ConvWorldPosToScreenPos(vHeadPos);
-
 	// カメラ範囲外チェック
-	if (vPos2D.z < CAMERA_DEPTH_MIN || vPos2D.z > CAMERA_DEPTH_MAX) { return; }
+	VECTOR pos2D = ConvWorldPosToScreenPos(headPos);
+	if (pos2D.z < CAMERA_DEPTH_MIN || pos2D.z > CAMERA_DEPTH_MAX) { return; }
 
-	// 遠近感のスケール計算
-	// ライフバーを3D空間上でどれくらいの幅にするか
-	auto worldBarWidth = LIFEBAR_WORLD_WIDTH;
-
-	// カメラの右方向ベクトルを取得
-	MATRIX mViewMat = GetCameraViewMatrix();// ビュー行列を取得
-	VECTOR vCamRight = VGet(mViewMat.m[0][0], mViewMat.m[1][0], mViewMat.m[2][0]);
-
-	// 中心座標から、右に幅の半分だけずらした3D座標を計算
-	VECTOR vRightEdgePos = VAdd(
-		vHeadPos,
-		VScale(vCamRight, worldBarWidth / 2.0f)
-	);
-
-	// ずらした点を画面座標に変換
-	VECTOR vRightEdgePos2D = ConvWorldPosToScreenPos(vRightEdgePos);
-
-	// 画面上のピクセル幅を計算
-	auto dx = vRightEdgePos2D.x - vPos2D.x;
-	auto dy = vRightEdgePos2D.y - vPos2D.y;
-	auto halfWidth2D = sqrtf(dx * dx + dy * dy);
-
-	// 最終的な描画幅
-	int drawW = static_cast<int>(halfWidth2D * 2.0f);
-
-	// 高さは画像の比率に合わせて計算
-	int originW, originH;
-	GetGraphSize(_lifeBarHandle, &originW, &originH);
-	auto aspectScale = static_cast<float>(drawW) / static_cast<float>(originW);
-	int drawH = static_cast<int>(originH * aspectScale);
-
-	// 描画基準位置
-	// 中心座標から幅の半分を引いて左上座標を求める
-	int screenX = static_cast<int>(vPos2D.x) - (drawW / 2);
-	int screenY = static_cast<int>(vPos2D.y) - (drawH / 2);
-
-	// 描画
-	// ライフの割合
-	auto lifeRatio = _fLife / _enemyParam.fMaxLife;
+	// ライフ割合を計算(0.0～1.0にクランプ)
+	float lifeRatio = 0.0f;
+	if(_enemyParam.fMaxLife > 0.0f)
+	{
+		lifeRatio = _fLife / _enemyParam.fMaxLife;
+	}
 	if (lifeRatio < 0.0f) { lifeRatio = 0.0f; }
 	if (lifeRatio > 1.0f) { lifeRatio = 1.0f; }
 
-	// 枠
-	DrawExtendGraph(
-		screenX, screenY,
-		screenX + drawW, screenY + drawH,
+	// ライフバー画像の元サイズを取得
+	int originW = 0, originH = 0;
+	GetGraphSize(_lifeBarHandle, &originW, &originH);
+	if (originW <= 0 || originH <= 0) { return; }
+
+	// ライフバーのワールド上の半分の幅・高さを計算
+	float halfW = LIFEBAR_WORLD_WIDTH * 0.5f;
+	float halfH = (static_cast<float>(originH) / static_cast<float>(originW)) * halfW;
+
+	// フレームはフルで描画
+	DrawBillboard3D(
+		headPos,// 中心座標
+		0.5f, 0.5f,// 画像の中心
+		LIFEBAR_WORLD_WIDTH,// ワールド上の幅
+		0.0f,// 回転なし
 		_lifeBarFrameHandle,
 		TRUE
 	);
 
-	// 中身
+	// ライフバー本体は左基準で割合分だけ描画
 	if (lifeRatio > 0.0f)
-	{// ライフがあるとき
-		// 画面上で表示する幅
-		int currentDrawW = static_cast<int>(drawW * lifeRatio);
-		// 元画像から切り取る幅
-		int cutW = static_cast<int>(originW * lifeRatio);
+	{
+		// 左端からlifeRatio分だけ右端を決定
+		const float leftX = -halfW;
+		const float rightX = leftX + (lifeRatio * (halfW * 2.0f));
 
-		// ライフバー本体の描画
-		DrawRectExtendGraph(
-			screenX, screenY,
-			screenX + currentDrawW, screenY + drawH,
-			0, 0,
-			cutW, originH,
+		// 枠と重なってZ-fightingしないよう、少しだけカメラ方向にずらす
+		MATRIX viewMat = GetCameraViewMatrix();
+		VECTOR camForward = VGet(-viewMat.m[0][2], -viewMat.m[1][2], -viewMat.m[2][2]);
+		VECTOR fillPos = VAdd(headPos, VScale(camForward, 0.1f));
+
+		// 4頂点を指定して割合分だけビルボード描画
+		DrawModiBillboard3D(
+			fillPos,
+			leftX, -halfH,// 左上
+			rightX, -halfH,// 右上
+			rightX, halfH,// 右下
+			leftX, halfH,// 左下
 			_lifeBarHandle,
 			TRUE
 		);
