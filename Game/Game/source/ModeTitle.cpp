@@ -64,7 +64,7 @@ bool ModeTitle::Initialize()
 	if (!base::Initialize()) { return false; }
 	_bIsAddLoading = false;
 
-	_titleHandle = LoadGraph("res/Graph/titleprot.png");
+	_titleHandle = LoadGraph("res/Graph/Title.png");
 	_titleTextHandle = LoadGraph("res/Graph/titlelogo.png");
 	_alpha = 0;
 	_fadeState = 0; // 0:フェードイン, 1:表示, 2:フェードアウト
