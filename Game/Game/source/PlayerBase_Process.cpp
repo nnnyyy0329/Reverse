@@ -349,12 +349,12 @@ void PlayerBase::ProcessDebug()
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG3))
 	{
-		//_fLife -= 10.0f;
+		_fLife -= 10.0f;
 	}
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG1))
 	{
-		//EnergyManager::GetInstance()->ConsumeEnergy(25.0f);
+		EnergyManager::GetInstance()->ConsumeEnergy(25.0f);
 	}
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG2))
