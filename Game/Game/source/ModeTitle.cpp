@@ -71,7 +71,7 @@ bool ModeTitle::Initialize()
 	_frameCount = 0;
 
 	// 開始時に一度だけ再生
-	_bgmHandle = ResourceServer::GetInstance()->GetHandle("BGM_Title");
+	_bgmHandle = LoadSoundMem("sound/BGM/title.mp3");
 	PlaySoundMem(_bgmHandle, DX_PLAYTYPE_LOOP);
 
 	_menuIndex = 0;
