@@ -28,7 +28,7 @@ void PlayerBase::InitializeAttackData()
 	InitializeAttackConfigs(maxCombo);
 
 	// 攻撃状態を攻撃配列に入れる
-	SetAttackStatusData(maxCombo);
+	SetAttackStateData(maxCombo);
 
 	// 攻撃コリジョンデータ作成
 	CreateAttackData(maxCombo);
@@ -43,7 +43,7 @@ void PlayerBase::InitializeAttackConfigs(int maxCombo)
 }
 
 // 攻撃状態を攻撃配列に入れる
-void PlayerBase::SetAttackStatusData(int maxCombo)
+void PlayerBase::SetAttackStateData(int maxCombo)
 {
 	// 攻撃状態の定義
 	std::vector<PLAYER_ATTACK_STATE> statuses =
@@ -491,6 +491,23 @@ bool PlayerBase::CanStartAttack()
 		im.IsTrigger(INPUT_ACTION::ATTACK))		// 入力があるなら
 	{
 		// 攻撃開始可能
+		return true;
+	}
+
+	return false;
+}
+
+// 能力を開始できるかチェック
+bool PlayerBase::CanStartAbility()
+{
+	auto& im = InputManager::GetInstance();
+	// 能力入力チェック
+	if((_playerState.IsStateMoving()		&&	// 何かしらの移動状態で
+		!_playerState.IsStateAttacking()	&&	// どの攻撃状態でもなく
+		!_playerState.IsStateCombat())		&&	// どの特殊状態でもなく
+		im.IsTrigger(INPUT_ACTION::ABILITY))	// 入力があるなら
+	{
+		// 能力開始可能
 		return true;
 	}
 

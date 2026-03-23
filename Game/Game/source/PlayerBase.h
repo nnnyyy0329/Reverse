@@ -378,7 +378,7 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	// 攻撃関連の情報設定関数
 	void InitializeAttackData();				// 攻撃データ初期化
 	void InitializeAttackConfigs(int maxCombo);	// 攻撃設定配列初期化
-	void SetAttackStatusData(int maxCombo);		// 攻撃状態を攻撃配列に入れる
+	void SetAttackStateData(int maxCombo);		// 攻撃状態を攻撃配列に入れる
 	void CreateAttackData(int maxCombo);		// 攻撃コリジョンデータ作成	
 	void SetAttackColData(AttackCollision config, std::shared_ptr<AttackBase> attack);			// 攻撃コリジョン情報設定
 	void SetAttackOffsetData(AttackColOffset config, std::shared_ptr<AttackBase> attack);		// 攻撃オフセット情報設定
@@ -393,6 +393,7 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	void ProcessBranchAttack();		// 攻撃分岐処理
 	void ReceiveAttackColData();	// 攻撃コリジョンの情報受け取り関数
 	bool CanStartAttack();			// 攻撃を開始できるかチェック
+	bool CanStartAbility();			// 能力を開始できるかチェック
 	bool CanNextAttack();			// 次の攻撃が可能かチェック
 	bool IsAttacking();				// 攻撃中かチェック
 	bool IsAttackInput();			// 攻撃入力があるかチェック

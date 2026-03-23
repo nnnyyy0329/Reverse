@@ -64,7 +64,8 @@ bool ModeTitle::Initialize()
 	if (!base::Initialize()) { return false; }
 	_bIsAddLoading = false;
 
-	_titleHandle = LoadGraph("res/Graph/Title.png");
+	_titleHandle = LoadGraph("res/Graph/titleprot.png");
+	_titleTextHandle = LoadGraph("res/Graph/titlelogo.png");
 	_alpha = 0;
 	_fadeState = 0; // 0:フェードイン, 1:表示, 2:フェードアウト
 	_frameCount = 0;
@@ -152,14 +153,24 @@ bool ModeTitle::Render()
 		int scaledW = static_cast<int>(w * scale);
 		int scaledH = static_cast<int>(h * scale);
 
-		int x = (1920 - scaledW) / 2;
-		int y = (1080 - scaledH) / 2;
+		//int x = (1920 - scaledW) / 2;
+		//int y = (1080 - scaledH) / 2;
+
+		int x = 0;
+		int y = 0;
+
+		int textX = 463;
+		int textY = 343;
 
 		
 		const int a = GetFadeAlpha();
 
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, a);
-		DrawExtendGraph(x, y, x + scaledW, y + scaledH, _titleHandle, TRUE);
+		//DrawExtendGraph(x, y, x + scaledW, y + scaledH, _titleHandle, TRUE);
+
+		DrawGraph(x, y, _titleHandle, TRUE);
+		DrawGraph(textX, textY, _titleTextHandle, TRUE);
+		
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
