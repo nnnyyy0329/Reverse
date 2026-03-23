@@ -34,7 +34,7 @@ namespace
 	constexpr auto RANGED_DETECT_TIME = 60.0f;// 発見硬直
 
 	// Tank
-	constexpr auto TANK_LIFE = 1000.0f;// タンクの体力
+	constexpr auto TANK_LIFE = 1500.0f;// タンクの体力
 	constexpr auto TANK_ATTACK_RANGE = 650.0f;// 攻撃ステートに入る距離
 	constexpr auto TANK_ATTACK_LIMIT_RAMGE = 680.0f;// これ以上離れたら接近ステートへ
 	constexpr auto TANK_DETECT_TIME = 120.0f;// 発見硬直

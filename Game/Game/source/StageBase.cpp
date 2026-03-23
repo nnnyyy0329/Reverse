@@ -29,7 +29,7 @@ StageBase::StageBase(int stageNum)
 		path = "res/stage/json/"; jsonFile = "stage_01.json"; jsonObjName = "res";
 		break;
 	case 2:
-		path = "res/stage/json/"; jsonFile = "test.json"; jsonObjName = "res";
+		path = "res/stage/json/"; jsonFile = "stage_02.json"; jsonObjName = "res";
 		break;
 	}
 
@@ -347,7 +347,27 @@ void StageBase::Process()
 	{
 		if(IsAllEnemiesDefeated())
 		{
-			//_triggerList.clear();
+			switch (_stageNum)
+			{
+			case 0:
+				_mapModelHandle.erase("delete");
+				_mapModelPosList.erase(
+					std::remove_if(_mapModelPosList.begin(), _mapModelPosList.end(),
+						[](const MODELPOS& modelPos) { return modelPos.name == "delete"; }),
+					_mapModelPosList.end()
+				);
+				break;
+			case 1:
+				_mapModelHandle.erase("stage_wall_typeDoorA");
+				_mapModelPosList.erase(
+					std::remove_if(_mapModelPosList.begin(), _mapModelPosList.end(),
+						[](const MODELPOS& modelPos) { return modelPos.name == "stage_wall_typeDoorA"; }),
+					_mapModelPosList.end()
+				);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 

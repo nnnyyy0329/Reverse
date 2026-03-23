@@ -58,7 +58,7 @@ namespace
 	constexpr auto LOST_LOOK_COUNT = 3;					// 見渡し回数
 
 	// 視界チェック用定数
-	constexpr auto FAN_VISON_HALF_ANGLE = 45.0f;// 扇形視界の半角(度)
+	constexpr auto FAN_VISON_HALF_ANGLE = 60.0f;// 扇形視界の半角(度)
 	const float FAN_VISION_COS = cosf(FAN_VISON_HALF_ANGLE * DEGREE_TO_RADIAN);// cos値
 	constexpr auto TARGET_DETECT_RADIUS = 30.0f;// ターゲット検出に幅を持たせる(半径)
 

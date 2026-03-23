@@ -11,9 +11,9 @@ namespace
 	constexpr float FIRST_EXECUTE_TIME = 60.0f;// 攻撃実行時間
 	constexpr auto FIRST_RECOVERY_TIME = 30.0f;// 攻撃後の硬直時間
 	constexpr auto FIRST_ATTACK_DELAY = 30.0f;// 攻撃発生フレーム
-	constexpr auto FIRST_ATTACK_DURATION = 20.0f;// 攻撃持続フレーム
+	constexpr auto FIRST_ATTACK_DURATION = 10.0f;// 攻撃持続フレーム
 	constexpr auto FIRST_ATTACK_DAMAGE = 10.0f;// ダメージ
-	constexpr auto FIRST_EXECUTE_SPEED = 4.0f;// 攻撃実行時の前進速度
+	constexpr auto FIRST_EXECUTE_SPEED = 5.0f;// 攻撃実行時の前進速度
 
 	// 二段目攻撃
 	constexpr auto SECOND_PREPARE_TIME = 20.0f;// 攻撃準備時間
@@ -22,14 +22,14 @@ namespace
 	constexpr auto SECOND_ATTACK_DELAY = 30.0f;// 攻撃発生フレーム
 	constexpr auto SECOND_ATTACK_DURATION = 10.0f;// 攻撃持続フレーム
 	constexpr auto SECOND_ATTACK_DAMAGE = 10.0f;// ダメージ
-	constexpr auto SECOND_EXECUTE_SPEED = 4.0f;// 攻撃実行時の前進速度
+	constexpr auto SECOND_EXECUTE_SPEED = 5.0f;// 攻撃実行時の前進速度
 
 	// 三段目攻撃
 	constexpr auto THIRD_PREPARE_TIME = 20.0f;// 攻撃準備時間
 	constexpr float THIRD_EXECUTE_TIME = 60.0f;// 攻撃実行時間
 	constexpr auto THIRD_RECOVERY_TIME = 60.0f;// 攻撃後の硬直時間
 	constexpr auto THIRD_ATTACK_DELAY = 30.0f;// 攻撃発生フレーム
-	constexpr auto THIRD_ATTACK_DURATION = 20.0f;// 攻撃持続フレーム
+	constexpr auto THIRD_ATTACK_DURATION = 10.0f;// 攻撃持続フレーム
 	constexpr auto THIRD_ATTACK_DAMAGE = 20.0f;// ダメージ
 	constexpr auto THIRD_EXECUTE_SPEED = 8.0f;// 攻撃実行時の前進速度
 
@@ -44,13 +44,13 @@ namespace
 	constexpr auto CHARGE_ATTACK_RANGE = 640.0f;// 突進を試みる距離
 	constexpr auto CHARAGE_JUDGE_INTERVAL = 30.0f;// 突進判定を行う間隔(フレーム)
 	constexpr auto NORMAL_ATTACK_RANGE = 150.0f;// 通常攻撃を試みる距離
-	constexpr auto CHARGE_ATTACK_PROB = 0.5f;// 突進の発生確率(0.0〜1.0)
+	constexpr auto CHARGE_ATTACK_PROB = 0.4f;// 突進の発生確率(0.0〜1.0)
 	constexpr auto THIRD_ATTACK_PROB = 0.8f;// 三段目攻撃の発生確率(0.0〜1.0)
 
 	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;// スムーズ回転速度
 	constexpr auto FAST_ROTATE_SPEED = 10.0f;// 高速回転速度
 
-	constexpr auto ATTACK_WAIT_TIME = 30.0f;// 攻撃選択後の待機時間
+	constexpr auto ATTACK_WAIT_TIME = 10.0f;// 攻撃選択後の待機時間
 
 	// アニメーション設定
 	// アニメーション制御用定数
