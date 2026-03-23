@@ -800,9 +800,15 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 
 				if(hasHit)
 				{
-					// EventA / EventB の処理
+					// ステージ制限を取得
+					int currentStage = GetCurrentStageNum();
+
+					// EventA / EventB の処理（ステージ制限を追加）
 					if(obj.name == "EventA")
 					{
+						// EventA はステージ0のみ有効
+						if(currentStage != 0) { continue; }
+
 						ModeTextBox::ShowChain({
 							{"Textbox_Normal", "クロ、あそこにいるのがお前の仲間か？"},
 							{"Textbox_Kage", "だから仲間じゃねえって！\nこのまま近づいてLボタンを押してあいつに向かって左手をかざしてみろ"}
@@ -812,6 +818,9 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 					}
 					else if(obj.name == "EventB")
 					{
+						// EventB はステージ2のみ有効
+						if(currentStage != 2) { continue; }
+
 						// EventB: テキストを表示した後、エンディングへ移行する
 						// 最終テキスト閉鎖時に ModeEndingText を追加して現在の ModeGame を削除する
 						ModeTextBox* finalBox = new ModeTextBox(
