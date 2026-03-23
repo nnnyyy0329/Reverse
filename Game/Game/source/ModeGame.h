@@ -159,4 +159,6 @@ private:
 
 	bool _bScenarioAdded = false;
 	bool _bStage1StartTextShown = false;
+
+	bool _bTransformAvailableNotified = false; //•Ïg‰Â”\‚©
 };

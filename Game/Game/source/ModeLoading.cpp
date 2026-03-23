@@ -143,6 +143,7 @@ bool ModeLoading::Initialize()
 			rs->Register("S_Portal_0to1", "res/stage/json/S_Portal_0to1.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("S_Portal_1to2", "res/stage/json/S_Portal_1to2.mv1", RESOURCE_TYPE::Model, 1.0f);
 			rs->Register("EventB", "res/stage/json/EventB.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("EventA", "res/stage/json/EventA.mv1", RESOURCE_TYPE::Model, 1.0f);
 
 			// “G‚ÌˆÚ“®‰Â”\”ÍˆÍ
 			rs->Register("Enemy_Area", "res/stage/json/Enemy_Area.mv1", RESOURCE_TYPE::Model, 1.0f);

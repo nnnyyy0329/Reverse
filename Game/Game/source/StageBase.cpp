@@ -85,6 +85,59 @@ StageBase::StageBase(int stageNum)
 			}
 		);
 	}
+    //青いイベント読み込み
+	{
+		auto rs = ResourceServer::GetInstance();
+		// EventA を手動で追加（位置・回転・スケールは任意に設定）
+		int handleA = rs->GetHandle("EventA");
+		if (handleA != -1)
+		{
+			MODELPOS m;
+			m.name = "EventA";
+			m.pos = VGet(0.0f, 0.0f, 0.0f);             // 表示したい座標に変更
+			m.rot = VGet(0.0f, 0.0f, 0.0f);             // 回転（ラジアン）
+			m.scale = VGet(1.0f, 1.0f, 1.0f);           // スケール
+
+			m.modelHandle = MV1DuplicateModel(handleA);
+			m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
+			std::string colName = "UCX_" + m.name;
+			m.collisionFrame = MV1SearchFrame(m.modelHandle, colName.c_str());
+
+			MV1SetPosition(m.modelHandle, m.pos);
+			MV1SetRotationXYZ(m.modelHandle, m.rot);
+			MV1SetScale(m.modelHandle, m.scale);
+
+			if (m.collisionFrame != -1)
+			{
+				MV1SetupCollInfo(m.modelHandle, m.collisionFrame, 8, 8, 8);
+			}
+
+			_mapModelPosList.push_back(m);
+		}
+
+		// EventB も同様に追加する場合
+		int handleB = rs->GetHandle("EventB");
+		if (handleB != -1)
+		{
+			MODELPOS m = {};
+			m.name = "EventB";
+			m.pos = VGet(5.0f, 0.0f, 3.0f); // 例
+			m.rot = VGet(0.0f, 0.0f, 0.0f);
+			m.scale = VGet(1.0f, 1.0f, 1.0f);
+			m.modelHandle = MV1DuplicateModel(handleB);
+			m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
+			std::string colName = "UCX_" + m.name;
+			m.collisionFrame = MV1SearchFrame(m.modelHandle, colName.c_str());
+
+			MV1SetPosition(m.modelHandle, m.pos);
+			MV1SetRotationXYZ(m.modelHandle, m.rot);
+			MV1SetScale(m.modelHandle, m.scale);
+			if (m.collisionFrame != -1) MV1SetupCollInfo(m.modelHandle, m.collisionFrame, 8,8,8);
+			_mapModelPosList.push_back(m);
+		}
+	}
+	
+
 
 	// jsonファイルの読み込み(敵)
 	{
@@ -382,10 +435,25 @@ void StageBase::Process()
 void StageBase::Render()
 {
 	// マップモデルの描画
-	{
-		for (auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) {
-			//MV1DrawModel(ite->modelHandle);
+	
+
+		for(auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) 
+		{
+			//// EventA / EventB は描画しない（当たり判定だけ利用）
+			//if(ite->name == "EventA" || ite->name == "EventB")
+			//{
+			//	continue;
+			//}
+
 			MV1DrawFrame(ite->modelHandle, ite->drawFrame);
+		
+		}
+	
+
+	// 敵の描画
+	{
+		for(auto& enemy : _stageEnemies) {
+			enemy->Render();
 		}
 	}
 
@@ -543,5 +611,26 @@ void StageBase::DebugKillAllEnemies()
 
 		// StageBase::Process の erase 条件に乗せる
 		enemy->EnableRemove();
+	}
+}
+
+void StageBase::RemoveMapModelByName(const std::string& name)
+{
+	for(auto it = _mapModelPosList.begin(); it != _mapModelPosList.end(); )
+	{
+		if(it->name == name)
+		{
+			// モデルハンドルが有効なら解放
+			if(it->modelHandle > 0)
+			{
+				MV1DeleteModel(it->modelHandle);
+			}
+
+			it = _mapModelPosList.erase(it);
+		}
+		else
+		{
+			++it;
+		}
 	}
 }

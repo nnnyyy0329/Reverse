@@ -388,6 +388,19 @@ bool ModeGame::Process()
 		CheckHitBulletMap();
 	}
 
+	
+	// 初めて変身可能になったら一度だけテキストを表示
+	if (!_bTransformAvailableNotified)
+	{
+		// EnergyManager の CanSwitchPlayer() が true なら変身可能
+		auto energyMgr = EnergyManager::GetInstance();
+		if (energyMgr && energyMgr->CanSwitchPlayer())
+		{
+			_bTransformAvailableNotified = true;
+			ModeTextBox::Show("Textbox_Kage", "よし、充分盗れたぜ。\n十字キー左を押してそのままこいつをぶっ飛ばしてやれ", false, 100, "energy_ready");
+		}
+	}
+
 	// ステージ3：ボタン1つで敵全滅 → 全滅後にLOGOへ戻す
 	if(_currentStageNum == 2 && _stage)
 	{
@@ -397,13 +410,7 @@ bool ModeGame::Process()
 			_stage->DebugKillAllEnemies();
 		}
 
-		// 全滅したら最初のLOGOへ（疑似的にゲーム終了）
-		if(_stage->IsAllEnemiesDefeated())
-		{
-			ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
-			ModeServer::GetInstance()->Del(this);
-			return true;
-		}
+	
 	}
 
 	// エフェクト更新
