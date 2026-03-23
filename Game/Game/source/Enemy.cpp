@@ -77,6 +77,7 @@ Enemy::Enemy()
 
 Enemy::~Enemy()
 {
+	Terminate();
 }
 
 bool Enemy::Initialize()
@@ -97,6 +98,12 @@ bool Enemy::Initialize()
 
 bool Enemy::Terminate()
 {
+	_targetPlayer.reset();
+	_currentState.reset();
+	_attackCollision.reset();
+	_stage.reset();
+	_currentPath.clear();
+
 	return true;
 }
 

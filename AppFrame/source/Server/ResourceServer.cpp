@@ -13,6 +13,11 @@ ResourceServer* ResourceServer::GetInstance()
 	return _instance;// インスタンスを返す
 }
 
+ResourceServer::~ResourceServer()
+{
+	Terminate();
+}
+
 void ResourceServer::Register(const std::string& name, const char* path, RESOURCE_TYPE type, float fScale)
 {
 	ResourceInfo info;

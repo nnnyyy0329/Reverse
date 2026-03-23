@@ -31,6 +31,8 @@ public:
 	// シングルトンインスタンス取得
 	static ResourceServer* GetInstance();
 
+	~ResourceServer();
+
 	// 登録:リストに登録するだけ
 	void Register(const std::string& name, const char* path, RESOURCE_TYPE type, float fScale);
 
