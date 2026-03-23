@@ -1,5 +1,6 @@
 #include "ModeEndingText.h"
 #include "ModeLogo.h"
+#include "ModeEndingVideo.h"
 #include <algorithm>
 
 bool ModeEndingText::Initialize()
@@ -95,12 +96,11 @@ bool ModeEndingText::Process()
 		}
 		else
 		{
-			// サウンド停止
-			SoundServer::GetInstance()->Stop("BGM_Ending");
+		
 
 			// もう一回確定でLOGOへ
 			ModeServer::GetInstance()->Clear();
-			ModeServer::GetInstance()->Add(new ModeLogo(), 100, "logo");
+			ModeServer::GetInstance()->Add(new ModeEndingVideo(), 100, "Video");
 			return true;
 		}
 	}

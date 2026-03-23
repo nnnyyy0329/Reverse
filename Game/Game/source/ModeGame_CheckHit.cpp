@@ -809,10 +809,13 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 						// EventA はステージ0のみ有効
 						if(currentStage != 0) { continue; }
 
-						ModeTextBox::ShowChain({
+						ModeTextBox::ShowChain
+						(
+							{
 							{"Textbox_Normal", "クロ、あそこにいるのがお前の仲間か？"},
 							{"Textbox_Kage", "だから仲間じゃねえって！\nこのまま近づいてLボタンを押してあいつに向かって左手をかざしてみろ"}
-							}, false, 100, "eventa");
+							}, false, 100, "eventa"
+						);
 						// モデルは消す（当たり判定のみ利用）
 						_stage->RemoveMapModelByName(obj.name);
 					}
@@ -823,10 +826,12 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 
 						// EventB: テキストを表示した後、エンディングへ移行する
 						// 最終テキスト閉鎖時に ModeEndingText を追加して現在の ModeGame を削除する
-						ModeTextBox* finalBox = new ModeTextBox(
+						ModeTextBox* finalBox = new ModeTextBox
+						(
 							"Textbox_Scared",
 							"っ！あそこに倒れてるのって！",
-							[this]() {
+							[this]() 
+							{
 								// テキスト閉じたらエンディングモードへ
 								ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
 								// ModeGame を削除して遷移

@@ -233,6 +233,9 @@
     <ClCompile Include="source\EventCamera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeEndingVideo.cpp">
+      <Filter>Mode\EndingVideo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -455,6 +458,9 @@
     <ClInclude Include="source\EventCamera.h">
       <Filter>Camera</Filter>
     </ClInclude>
+    <ClInclude Include="source\ModeEndingVideo.h">
+      <Filter>Mode\EndingVideo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -615,6 +621,9 @@
     </Filter>
     <Filter Include="Attack\AttackSystem\Effect">
       <UniqueIdentifier>{326a01b9-9c72-4633-8585-c04bb0a5bff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\EndingVideo">
+      <UniqueIdentifier>{e0043e87-a35c-43d4-90de-67f7c8aaf5ee}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -457,11 +457,11 @@ void StageBase::Render()
 
 		for(auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) 
 		{
-			//// EventA / EventB は描画しない（当たり判定だけ利用）
-			//if(ite->name == "EventA" || ite->name == "EventB")
-			//{
-			//	continue;
-			//}
+			// EventA / EventB は描画しない（当たり判定だけ利用）
+			if(ite->name == "EventA" || ite->name == "EventB")
+			{
+				continue;
+			}
 
 			MV1DrawFrame(ite->modelHandle, ite->drawFrame);
 		
