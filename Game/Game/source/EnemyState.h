@@ -13,6 +13,14 @@ enum class STATE_PRIORITY
 	TOP = 100,// 最優先(Dead, Stun, Down)
 };
 
+// カプセルコリジョン設定
+struct EnemyCapsule
+{
+	float fRadius = 30.0f;// 半径
+	float fHeight = 100.0f;// 高さ
+	float fColSubY = 50.0f;// 腰位置オフセット
+};
+
 // 敵パラメータ構造体
 struct EnemyParam
 {
@@ -34,6 +42,8 @@ struct EnemyParam
 	float fMaxLife = 100.0f;// 最大体力
 
 	bool bTransToWander = true;// 徘徊へ遷移するかどうか
+
+	EnemyCapsule capsule;// カプセルコリジョンの設定
 
 	// 共通ステートのアニメーション名
 	const char* animDamage = "Damage";

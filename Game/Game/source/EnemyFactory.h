@@ -20,6 +20,9 @@ namespace
 	constexpr auto NORMAL_MOVE_TIME = 180.0f;// 徘徊時間
 	constexpr auto NORMAL_DETECT_TIME = 90.0f;// 発見硬直
 	constexpr auto NORMAL_ATTACK_TIME = 180.0f;// 攻撃時間
+	constexpr float NORMAL_COL_RADIUS = 30.0f;// コリジョン半径
+	constexpr float NORMAL_COL_HEIGHT = 100.0f;// コリジョン高さ
+	constexpr float NORMAL_COL_SUB_Y = 50.0f;// 腰位置オフセット
 
 	// Ranged
 	constexpr auto RANGED_VISION_RANGE = 800.0f;// 索敵距離
@@ -32,11 +35,14 @@ namespace
 
 	// Tank
 	constexpr auto TANK_LIFE = 1000.0f;// タンクの体力
-	constexpr auto TANK_ATTACK_RANGE = 500.0f;// 攻撃ステートに入る距離
-	constexpr auto TANK_ATTACK_LIMIT_RAMGE = 550.0f;// これ以上離れたら接近ステートへ
+	constexpr auto TANK_ATTACK_RANGE = 650.0f;// 攻撃ステートに入る距離
+	constexpr auto TANK_ATTACK_LIMIT_RAMGE = 680.0f;// これ以上離れたら接近ステートへ
 	constexpr auto TANK_DETECT_TIME = 120.0f;// 発見硬直
 	constexpr auto TANK_MOVE_SPEED = 5.0f;// 移動速度
 	constexpr auto TANK_IDLE_TIME = 120.0f;// 待機時間
+	constexpr float TANK_COL_RADIUS = 50.0f;// コリジョン半径
+	constexpr float TANK_COL_HEIGHT = 200.0f;// コリジョン高さ
+	constexpr float TANK_COL_SUB_Y = 75.0f;// 腰位置オフセット
 }
 
 // 敵の種類
@@ -79,6 +85,9 @@ public:
 			param.fAttackTime = NORMAL_ATTACK_TIME;
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 			param.bTransToWander = bTransToWander;
+			param.capsule.fRadius = NORMAL_COL_RADIUS;
+			param.capsule.fHeight = NORMAL_COL_HEIGHT;
+			param.capsule.fColSubY = NORMAL_COL_SUB_Y;
 
 			// 共通ステートのアニメーション名を設定
 			param.animDamage = "enemy_damage_00";
@@ -128,6 +137,9 @@ public:
 			param.fMoveTime = RANGED_MOVE_TIME;
 			param.fDetectTime = RANGED_DETECT_TIME;
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
+			param.capsule.fRadius = NORMAL_COL_RADIUS;
+			param.capsule.fHeight = NORMAL_COL_HEIGHT;
+			param.capsule.fColSubY = NORMAL_COL_SUB_Y;
 
 			// 共通ステートのアニメーション名を設定
 			param.animDamage = "Senemy_damage_00";
@@ -175,11 +187,14 @@ public:
 			param.fDetectTime = TANK_DETECT_TIME;
 			param.fMaxLife = TANK_LIFE;
 			param.fIdleTime = TANK_IDLE_TIME;
+			param.capsule.fRadius = TANK_COL_RADIUS;
+			param.capsule.fHeight = TANK_COL_HEIGHT;
+			param.capsule.fColSubY = TANK_COL_SUB_Y;
 
 			// 共通ステートのアニメーション名を設定
-			param.animDamage = "enemy_damage_00";
-			param.animDead = "enemy_dead_00";
-			param.animDown = "enemy_damage_01";
+			param.animDamage = "mainRig|HitReact01";
+			param.animDead = "mainRig|Death01";
+			param.animDown = "mainRig|HitReact01";
 
 			enemy->SetEnemyParam(param);
 

@@ -324,6 +324,20 @@ void Enemy::DrawLifeBar()
 	}
 }
 
+void Enemy::SetEnemyParam(const EnemyParam& param)
+{
+	_enemyParam = param;
+
+	// 敵種類ごとのカプセル設定を反映
+	_fCollisionR = param.capsule.fRadius;
+	_fCollisionHeight = param.capsule.fHeight;
+	_colSubY = param.capsule.fColSubY;
+
+	// 現在座標に対してカプセル位置を更新
+	_vCollisionBottom = VAdd(_vPos, VGet(0.0f, _fCollisionR, 0.0f));
+	_vCollisionTop = VAdd(_vPos, VGet(0.0f, _fCollisionHeight - _fCollisionR, 0.0f));
+}
+
 void Enemy::ChangeState(std::shared_ptr<EnemyState> newState)
 {
 	if (!newState) { return; }

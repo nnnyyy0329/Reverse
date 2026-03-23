@@ -32,7 +32,7 @@ public:
 	bool CanRemove() { return _bCanRemove; }// delete可能か
 
 	const EnemyParam& GetEnemyParam() const { return _enemyParam; }
-	void SetEnemyParam(const EnemyParam& param) { _enemyParam = param; };// パラメータを設定したときに視界のcos値を計算
+	void SetEnemyParam(const EnemyParam& param);// カプセルを設定
 
 	std::shared_ptr<CharaBase> GetTarget() { return _targetPlayer; }
 	void SetTarget(std::shared_ptr<CharaBase> target) { _targetPlayer = target; }
