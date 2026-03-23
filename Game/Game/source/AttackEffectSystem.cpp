@@ -1,4 +1,5 @@
 #include "AttackEffectSystem.h"
+#include "CharaBase.h"
 
 // シングルトンインスタンス初期化
 AttackEffectSystem* AttackEffectSystem::_instance = nullptr;
@@ -117,7 +118,8 @@ int AttackEffectSystem::PlayTrackedEffect
 	const VECTOR& initialPos,
 	const VECTOR& dir,
 	int frameIndex,
-	AnimManager* animManager
+	AnimManager* animManager,
+	std::shared_ptr<CharaBase> owner
 )
 {
 	if(!config.isActiveEffect || config.effectName.empty())
@@ -143,6 +145,9 @@ int AttackEffectSystem::PlayTrackedEffect
 	trackedInfo.effectOffset = worldOffset;
 	trackedInfo.effectRotation = config.effectRotation;
 	trackedInfo.animManager = animManager;
+	trackedInfo.owner = owner;
+	trackedInfo.useOwnerDirection = true;
+	trackedInfo.attachType = config.attachType;
 
 	_trackedEffects[handle] = trackedInfo;
 
@@ -187,40 +192,106 @@ void AttackEffectSystem::UpdateTrackedEffects()
 		return;
 	}
 
-	auto trackedEffect = _trackedEffects.begin();
-
-	// すべての追跡エフェクトを更新
-	while(trackedEffect != _trackedEffects.end())
+	for(auto& trackedEffect : _trackedEffects)
 	{
-		// 追跡エフェクト情報取得
-		TrackedEffectInfo& info = trackedEffect->second;
+		// エフェクトハンドル
+		int handle = trackedEffect.first;
 
-		// アニメーションマネージャーとフレームインデックスが有効な場合のみ位置更新
-		if(info.animManager && info.attachFrameIndex >= 0)
+		// 追跡エフェクト情報
+		TrackedEffectInfo& info = trackedEffect.second;
+
+		// オフセット計算
+		VECTOR calcEffectPos = UpdateCalculatePos(info);
+
+		// エフェクト位置更新
+		EffectServer::GetInstance()->SetPos(handle, calcEffectPos);
+
+		// 毎フレーム回転を更新
+		VECTOR calcEffectRot = UpdateCalculateRot(info);
+
+		// エフェクト回転更新
+		EffectServer::GetInstance()->SetRot(handle, calcEffectRot);
+	}
+}
+
+VECTOR AttackEffectSystem::UpdateCalculatePos(const TrackedEffectInfo& info)
+{
+	VECTOR effectPos = VGet(0.0f, 0.0f, 0.0f);
+
+	// attachType に応じた位置計算
+	switch(info.attachType)
+	{
+		case EFFECT_ATTACH_TYPE::CHARACTER_OFFSET: // キャラの位置 + オフセット
+		{
+			// キャラクター位置 + オフセット
+			auto owner = info.owner.lock();
+			if(!owner) { return VGet(0.0f, 0.0f, 0.0f); }
+
+			// 所有者の向き
+			VECTOR ownerDir = owner->GetDir();
+
+			// オフセットをワールド座標に変換
+			VECTOR calcOffset = GeometryUtility::TransOffsetToWorld(info.effectOffset, ownerDir);
+
+			// 所有者の位置にオフセットを加算
+			effectPos = VAdd(owner->GetPos(), calcOffset);
+
+			break;
+		}
+
+		case EFFECT_ATTACH_TYPE::LEFT_ARM: // 左腕フレーム位置
+		case EFFECT_ATTACH_TYPE::RIGHT_ARM:	// 右腕フレーム位置
 		{
 			// モデルハンドル取得
 			int modelHandle = info.animManager->GetModelHandle();
+			if(modelHandle < 0) { return VGet(0.0f, 0.0f, 0.0f); }
 
-			// モデルハンドルが有効な場合のみ位置更新
-			if(modelHandle >= 0)
-			{
-				// フレームインデックスから座標取得
-				VECTOR framePos = MV1GetFramePosition(modelHandle, info.attachFrameIndex);
+			// フレームインデックスから座標取得
+			VECTOR framePos = MV1GetFramePosition(modelHandle, info.attachFrameIndex);
 
-				// オフセット計算
-				VECTOR offsetPos = VAdd(framePos, info.effectOffset);
+			// オフセット計算
+			effectPos = VAdd(framePos, info.effectOffset);
 
-				// エフェクト位置更新
-				EffectServer::GetInstance()->SetPos(info.effectHandle, offsetPos);
-
-				// エフェクト回転更新
-				EffectServer::GetInstance()->SetRot(info.effectHandle, info.effectRotation);
-			}
+			break;
 		}
 
-		// 次の追跡エフェクトへ
-		++trackedEffect;
+		case EFFECT_ATTACH_TYPE::NONE:
+		default:
+		{
+			return VGet(0.0f, 0.0f, 0.0f);
+		}
 	}
+
+	// 計算後の位置を返す
+	return effectPos;
+}
+
+VECTOR AttackEffectSystem::UpdateCalculateRot(const TrackedEffectInfo& info)
+{
+	// カスタム回転をラジアンに変換して、毎フレーム回転を更新
+	VECTOR rotationToApply = VScale(info.effectRotation, DX_PI_F / 180.0f);
+
+	// 所有者の向きを使う場合
+	if(info.useOwnerDirection)
+	{
+		// 所有者の使用可能チェック
+		auto owner = info.owner.lock();
+
+		// 所有者が存在しない場合は回転なし
+		if(!owner){ return VGet(0.0f, 0.0f, 0.0f); }
+
+		// 所有者の向きから回転を計算
+		VECTOR dir = owner->GetDir();
+		VECTOR dirNorm = VNorm(dir);
+		float rotY = atan2f(dirNorm.x, dirNorm.z);
+		VECTOR ownerRotation = VGet(0.0f, rotY, 0.0f);
+
+		// カスタム回転と所有者の向きを合成
+		rotationToApply = VAdd(rotationToApply, ownerRotation);
+	}
+
+	// カスタム指定されている場合はカスタム回転
+	return rotationToApply;
 }
 
 void AttackEffectSystem::ProcessEffect(int handle, const VECTOR& dir, const VECTOR& customRotation)
@@ -228,8 +299,11 @@ void AttackEffectSystem::ProcessEffect(int handle, const VECTOR& dir, const VECT
 	// カスタム回転が指定されている場合
 	if(VSize(customRotation) > 0.0001f)
 	{
-		// カスタム回転を使用
-		EffectServer::GetInstance()->SetRot(handle, customRotation);
+		// カスタム回転をラジアンにしてから使用
+		VECTOR rotationInRadians = VScale(customRotation, DX_PI_F / 180.0f);
+
+		// カスタム回転をエフェクトに適応
+		EffectServer::GetInstance()->SetRot(handle, rotationInRadians);
 	}
 	// カスタム回転が指定されていない場合
 	else

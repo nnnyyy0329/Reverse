@@ -2,7 +2,12 @@
 
 #pragma once
 #include "PlayerBase.h"
-#include "PlayerAbsorbAttackSystem.h"
+
+// 表プレイヤー用定数
+namespace SurfacePlayerConstants
+{
+	constexpr float DAMAGE_MULTIPLIER = 3.0f;	// 表プレイヤー専用のダメージ倍率
+}
 
 // 表プレイヤー
 class SurfacePlayer : public PlayerBase
@@ -17,9 +22,9 @@ public:
 	virtual bool Render();	
 
 	// 共通関数のオーバーライド
-	virtual void DebugRender()override;																		// デバッグ情報描画
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;	// 被ダメージ処理
-	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
+	virtual void DebugRender()override;																			// デバッグ情報描画
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo) override;	// 被ダメージ処理
+	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;											// 弾による被ダメージ処理
 
 	// 純粋仮想関数のオーバーライド
 	virtual PlayerConfig			GetPlayerConfig()				override;	// 設定を取得
@@ -30,7 +35,7 @@ public:
 	virtual AttackConstants			GetAttackConstants()const		override;	// 攻撃定数を取得
 
 	const PlayerAbsorbAttackSystem* GetAbsorbAttackSystemConst()const;	// 吸収攻撃システム取得
-	PlayerAbsorbAttackSystem* GetAbsorbAttackSystem();					// 非const版
+	PlayerAbsorbAttackSystem* GetAbsorbAttackSystem()override;			// 非const版
 
 	/*****ゲッターセッター*****/
 

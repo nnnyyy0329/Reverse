@@ -241,16 +241,54 @@ bool AttackManager::IsAttackRegistered(std::shared_ptr<AttackBase> attack)const
 	return false;
 }
 
-// ‰ñ”ğ‚Éƒqƒbƒg‚µ‚½UŒ‚‚ğ“o˜^
+bool AttackManager::StopAttackMovementByAttack(std::shared_ptr<AttackBase> attack)
+{
+	if(!attack) { return false; }
+
+	// “Á’è‚ÌUŒ‚ˆÚ“®‚ğ’â~
+	attack->StopAttackMovement();
+
+	return true;
+}
+
+bool AttackManager::StopAttackMovementByOwner(ATTACK_OWNER_TYPE ownerType)
+{
+	auto attackOwner = GetAttacksByOwnerType(ownerType);
+
+	for(auto& attack : attackOwner)
+	{
+		if(attack)
+		{
+			// UŒ‚ˆÚ“®‚ğ’â~
+			attack->StopAttackMovement();
+		}
+	}
+
+	return true;
+}
+
 void AttackManager::RegisterDodgeHitAttack(std::shared_ptr<AttackBase> attack)
 {
 	if(attack == nullptr){ return; }
 
 	// “o˜^Ï‚İ‚È‚ç‰½‚à‚µ‚È‚¢
-	if(IsDodgeHitAttack(attack)) { return; }	
+	if(IsDodgeHitAttack(attack)) { return; }
+
+	// ‰ñ”ğ¬Œ÷‚Ìˆ—
+	ProcessEvadeSuccess();
 
 	// ‰ñ”ğ‚Éƒqƒbƒg‚µ‚½UŒ‚ƒŠƒXƒg‚É’Ç‰Á
 	_dodgeHitAttacks.push_back(attack);
+}
+
+void AttackManager::ProcessEvadeSuccess()
+{
+	// ƒGƒlƒ‹ƒM[ã¸
+	auto energyManager = EnergyManager::GetInstance();
+	energyManager->AddEnergy(energyManager->GetEvadeAttackEnergy());
+
+	// ƒTƒEƒ“ƒh‚ÌÄ¶
+	SoundServer::GetInstance()->Play("SE_Evade", DX_PLAYTYPE_BACK);
 }
 
 // ‰ñ”ğ‚Éƒqƒbƒg‚µ‚½UŒ‚‚©ƒ`ƒFƒbƒN
@@ -369,7 +407,7 @@ std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAttacksByOwnerType(AT
 }
 
 // Š—LÒID‚É‚æ‚éUŒ‚æ“¾
-std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAttacksByOwner(int ownerId) const
+std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAttacksByOwnerId(int ownerId)const
 {
 	std::vector<std::shared_ptr<AttackBase>> ownerAttacks;	// Š—LÒIDUŒ‚ƒŠƒXƒg
 

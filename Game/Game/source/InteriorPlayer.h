@@ -3,16 +3,20 @@
 #pragma once
 #include "PlayerBase.h"
 
-// 攻撃判定のパラメーター
+// 裏プレイヤー用定数
+namespace InteriorPlayerConstants
+{
+	constexpr float DAMAGE_MULTIPLIER = 0.75f;	// 裏プレイヤー専用のダメージ倍率
+};
+
+// 攻撃定数
 namespace InteriorAttackConstants
 {
-	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;		// 裏プレイヤー用コンボカウント
-
-	constexpr float REVERSE_EFFECT_ROT = 180.0f;	// エフェクトの回転を反転
+	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;	// 裏プレイヤー用コンボカウント
 }
 
-// 攻撃腕のパラメーター
-namespace InteriorPlayerArmConstants
+// 裏プレイヤーのフレームインデックス定数
+namespace InteriorPlayerFrameIndexConstants
 {
 	constexpr int RIGHT_ARM_FRAME_INDEX = 157;	// 右腕攻撃のフレームインデックス
 	constexpr int LEFT_ARM_FRAME_INDEX = 147;	// 左腕攻撃のフレームインデックス
@@ -38,7 +42,7 @@ public:
 	/// @param fDamage ダメージ量
 	/// @param eType 攻撃の所有者タイプ
 	/// @param attackInfo 攻撃コリジョン情報
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo) override;
 
 	/// @brief 弾による被ダメージ処理
 	///

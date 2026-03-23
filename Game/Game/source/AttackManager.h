@@ -3,6 +3,7 @@
 #pragma once
 #include "appframe.h"
 #include "AttackBase.h"
+#include "EnergyManager.h"
 
 enum class ATTACK_OWNER_TYPE
 {
@@ -57,6 +58,9 @@ public:
 	/// @param ownerId 攻撃の所有者ID
 	void RegisterAttack(std::shared_ptr<AttackBase> attack, ATTACK_OWNER_TYPE ownerType, int ownerId);
 
+	/// @brief 回避成功時の処理
+	void ProcessEvadeSuccess();
+
 	/// @brief 攻撃の解除関数
 	///
 	/// @param attack 解除する攻撃オブジェクト
@@ -76,8 +80,17 @@ public:
 	/// @brief 攻撃が登録されているかチェック関数
 	///
 	/// @param attack チェックする攻撃オブジェクト
-	bool IsAttackRegistered(std::shared_ptr<AttackBase> attack)const;									
+	bool IsAttackRegistered(std::shared_ptr<AttackBase> attack)const;	
 
+	/// @brief 特定の攻撃移動を停止
+	///
+	/// @param attack 停止対象の攻撃
+	bool StopAttackMovementByAttack(std::shared_ptr<AttackBase> attack);
+
+	/// @brief 特定の所有者の攻撃移動を停止
+	///
+	/// @param ownerType 停止対象の所有者タイプ
+	bool StopAttackMovementByOwner(ATTACK_OWNER_TYPE ownerType);
 
 	/* 回避にヒットした攻撃の登録と解除 */
 
@@ -95,6 +108,8 @@ public:
 	/// @brief 回避にヒットした攻撃かチェック関数
 	///
 	/// @param attack チェックする攻撃オブジェクト
+	/// 
+	/// @return 
 	bool IsDodgeHitAttack(std::shared_ptr<AttackBase> attack) const;	
 
 
@@ -115,9 +130,8 @@ public:
 	/// @brief 所有者IDによる攻撃取得関数
 	///
 	/// @param ownerId 取得する攻撃の所有者ID
-	std::vector<std::shared_ptr<AttackBase>> GetAttacksByOwner(int ownerId) const;						
+	std::vector<std::shared_ptr<AttackBase>> GetAttacksByOwnerId(int ownerId) const;						
 
-	// ゲッターセッター
 
 	/* ゲッターセッター */
 
@@ -158,6 +172,9 @@ private:
 
 	// シングルトン用メンバ
 	static AttackManager* _instance;
+
+	/// @brief 攻撃による移動の停止を通知する関数
+	bool NotifyStopMovementByAttack();
 
 protected:
 	std::vector<std::weak_ptr<AttackBase>> _dodgeHitAttacks;	// 回避にヒットした攻撃リスト

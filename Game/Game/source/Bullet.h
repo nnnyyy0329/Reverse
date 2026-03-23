@@ -56,6 +56,9 @@ public:
 	// 弾を有効化する(演出面の引数なし)
 	void ActivateBulletSimple(const BulletConfig& config);
 
+	// 弾のエフェクト位置更新
+	void UpdateBulletEffectPos();
+
 	// 弾情報の設定
 	void SetBulletConfig(const BulletConfig& config);
 
@@ -107,5 +110,7 @@ protected:
 
 	CHARA_TYPE _eShooterType;	// 誰が発射した弾か
 	BULLET_TYPE _eBulletType;	// 弾の種類
+
+	int _effectHandle;
 };
 

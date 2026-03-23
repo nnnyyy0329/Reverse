@@ -1,14 +1,20 @@
 #include "BulletPlayer.h"
 #include "CameraManager.h"
 
-// 弾発射設定エイリアス
-namespace BC =  BulletConstants;
+// 弾プレイヤー用定数のエイリアス
+namespace BPC = BulletPlayerConstants;
 
-// 通常弾設定エイリアス
+// 通常弾設定定数のエイリアス
 namespace NBC = NormalBulletConfig;
 
-// 貫通弾設定エイリアス
+// 貫通弾設定定数のエイリアス
 namespace PBC = PiercingBulletConfig;
+
+// 弾発射設定定数のエイリアス
+namespace BSC = BulletShootConstants;
+
+// 弾のエネルギー消費量定数のエイリアス
+namespace BCEC = BulletConsumeEnergyConstants;
 
 BulletPlayer::BulletPlayer()
 {
@@ -90,10 +96,13 @@ void BulletPlayer::DebugRender()
 	DrawShootIntervalTime();
 }
 
-void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
+void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)
 {
+	// ダメージに弾プレイヤー専用の倍率を適用
+	float resultDamage = fDamage * BPC::DAMAGE_MULTIPLIER;
+
 	// 基底クラスの被ダメージ処理を呼び出す
-	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
+	PlayerBase::ApplyDamage(fDamage, ownerType, attackInfo);
 }
 
 void BulletPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
@@ -170,11 +179,12 @@ DodgeConfig BulletPlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType			= DODGE_CHARA::BULLET_PLAYER;
-	config.invincibleDuration	= 20.0f;	// 無敵時間
-	config.startTime			= 3.0f;		// 開始時間
-	config.activeTime			= 15.0f;	// アクティブ時間
-	config.recoveryTime			= 8.0f;		// 硬直時間
-	config.dodgeMoveSpeed		= 19.0f;	// 移動速度
+	config.invincibleDuration	= 20.0f;		// 無敵時間
+	config.startTime			= 3.0f;			// 開始時間
+	config.activeTime			= 15.0f;		// アクティブ時間
+	config.recoveryTime			= 8.0f;			// 硬直時間
+	config.dodgeMoveSpeed		= 19.0f;		// 移動速度
+	config.soundName = "SE_TransPlayerDodge";	// サウンド名
 
 	return config;
 }
@@ -221,7 +231,7 @@ BulletConfig BulletPlayer::GetBulletConfig()
 	config.shooterType	= CHARA_TYPE::BULLET_PLAYER;	// キャラタイプ
 	config.startPos		= VAdd(_vPos, worldOffset);		// 発射開始位置
 	config.dir			= GetShootDirection();			// エイムカメラの向いてる方向
-	config.lifeTime		= BC::LIFE_TIME;				// 弾の自然消滅時間
+	config.lifeTime		= BSC::LIFE_TIME;				// 弾の自然消滅時間
 
 	return config;
 }
@@ -229,13 +239,38 @@ BulletConfig BulletPlayer::GetBulletConfig()
 BulletEffectConfig BulletPlayer::GetBulletEffectConfig()
 {
 	// 弾プレイヤー用の弾演出設定
-	BulletEffectConfig config;
+	BulletEffectConfig effectConfig;
 
-	config.effectName = "";							// エフェクトの名前
-	config.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// エフェクトの発生位置オフセット
-	config.soundName = "";							// サウンドの名前
+	// 弾のタイプで情報を分ける
+	switch(_currentBulletType)
+	{
+		case BULLET_TYPE::NORMAL: // 通常弾
+		{
+			effectConfig.effectName = "PlayerNormalBullet";		// エフェクトの名前
+			effectConfig.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// エフェクトの発生位置オフセット
+			effectConfig.soundName = "";						// サウンドの名前
 
-	return config;
+			break;
+		}
+
+		case BULLET_TYPE::PIERCING: // 貫通弾
+		{
+			effectConfig.effectName = "PlayerPiercingBullet";	// エフェクトの名前
+			effectConfig.effectOffset = VGet(0.0f, 0.0f, 0.0f);	// エフェクトの発生位置オフセット
+			effectConfig.soundName = "";						// サウンドの名前
+
+			break;
+		}
+
+		case BULLET_TYPE::NONE: // 弾なし
+		default:
+		{
+			break;
+		}
+	}
+
+	// エフェクト情報を返す
+	return effectConfig;
 }
 
 void BulletPlayer::DrawShootIntervalTime()
@@ -264,9 +299,17 @@ void BulletPlayer::ProcessShoot()
 
 void BulletPlayer::ShootInput()
 {
-	// どちらかの発射キーが新しく押されたかどうか
-	bool isInputPress = IsShootNormalInput() || IsShootPiercingInput();	// 発射キーが押されているか
-	bool isInputNewPress = isInputPress && !_bWasShootKeyPressed;		// 発射キーが新しく押されたか
+	// 発射キーが押されているか
+	bool isInputPress = IsShootNormalInput() || IsShootPiercingInput();	
+
+	// 発射キーが新しく押されたか
+	bool isInputNewPress = isInputPress && !_bWasShootKeyPressed;
+
+	// 変身状態を維持できるか
+	bool canKeepTransState = EnergyManager::GetInstance()->CanKeepSwitchPlayer();
+
+	// 変身状態を維持できなくなったらスキップ
+	if(!canKeepTransState){ return; }
 
 	// 待機状態：新しく入力がきたら構えへ
 	if(_playerState.shootState == PLAYER_SHOOT_STATE::NONE	&&	// 現在発射構え状態でなく
@@ -406,16 +449,48 @@ void BulletPlayer::ShootBullet()
 	// 弾の発射
 	bullet->Shoot(GetBulletConfig(), GetBulletEffectConfig(), BULLET_OWNER_TYPE::BULLET_PLAYER);
 
+	// 弾のタイプに応じたサウンド再生処理
+	ShootSoundPlay(GetBulletConfig().bulletType);
+
 	// 発射時にエネルギー消費
 	EnergyManager* energyManager = EnergyManager::GetInstance();
 	if(energyManager)
 	{
 		// エネルギーを消費
-		energyManager->ConsumeEnergy(BulletConstants::CONSUME_NORMAL_BULLET_ENERGY);
+		energyManager->ConsumeEnergy(BCEC::CONSUME_NORMAL_BULLET_ENERGY);
 	}
 
 	// 右腕と左腕の切り替え
 	_bIsShootFromRightArm = !_bIsShootFromRightArm; 
+}
+
+void BulletPlayer::ShootSoundPlay(BULLET_TYPE bulletType)
+{
+	// 弾のタイプに応じた発射サウンド
+	switch(bulletType)
+	{
+		case BULLET_TYPE::NORMAL: // 通常弾
+		{
+			// サウンド再生
+			SoundServer::GetInstance()->Play("SE_NormalBullet", DX_PLAYTYPE_BACK);
+
+			break;
+		}
+
+		case BULLET_TYPE::PIERCING: // 貫通弾
+		{
+			// サウンド再生
+			SoundServer::GetInstance()->Play("SE_PiercingBullet", DX_PLAYTYPE_BACK);
+
+			break;
+		}
+
+		case BULLET_TYPE::NONE:
+		default:
+		{
+			return;
+		}
+	}
 }
 
 VECTOR BulletPlayer::GetShootOffset()const
@@ -424,8 +499,8 @@ VECTOR BulletPlayer::GetShootOffset()const
 	VECTOR startPosOffset;
 
 	// 右腕か左腕かでオフセットを変更
-	if(_bIsShootFromRightArm){ startPosOffset = BC::RIGHT_ARM_SHOT_OFFSET; }	// 右腕
-	else{ startPosOffset = BC::LEFT_ARM_SHOT_OFFSET; }							// 左腕
+	if(_bIsShootFromRightArm){ startPosOffset = BSC::RIGHT_ARM_SHOT_OFFSET; }	// 右腕
+	else{ startPosOffset = BSC::LEFT_ARM_SHOT_OFFSET; }							// 左腕
 
 	// 発射位置オフセットを返す
 	return startPosOffset;
@@ -453,7 +528,7 @@ bool BulletPlayer::IsShootNormalInput()
 	auto& inputManager = InputManager::GetInstance();
 
 	// 通常弾発射ボタンが押されたら
-	if(inputManager.IsHold(INPUT_ACTION::ATTACK))
+	if(inputManager.IsHold(INPUT_ACTION::ABILITY))
 	{
 		// 弾のタイプを通常弾にセット
 		SetBulletType(BULLET_TYPE::NORMAL);
@@ -469,7 +544,7 @@ bool BulletPlayer::IsShootPiercingInput()
 	auto& inputManager = InputManager::GetInstance();
 
 	// 貫通弾発射ボタンが押されたら
-	if(inputManager.IsHold(INPUT_ACTION::ABILITY))
+	if(inputManager.IsHold(INPUT_ACTION::ATTACK))
 	{
 		// 弾のタイプを貫通弾にセット
 		SetBulletType(BULLET_TYPE::PIERCING);

@@ -20,19 +20,25 @@ bool ModeLoading::Initialize()
 			rs->Register("Laser", "effect/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
 
-			/* プレイヤー */
+			// プレイヤー
+			{
+				// 表プレイヤーの吸収攻撃エフェクト
+				rs->Register("SurfacePlayerAbsorb", "effect/SurfacePlayer/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
-			// 表プレイヤーの吸収攻撃エフェクト
-			rs->Register("SurfacePlayerAbsorb", "effect/SurfacePlayer/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+				// 裏プレイヤーの攻撃エフェクト
+				rs->Register("InteriorPlayerAttack_123", "effect/InteriorPlayer/NChange_004.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+				rs->Register("InteriorPlayerFourthAttack", "effect/InteriorPlayer/NChange_Fourth_Attack.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+				rs->Register("InteriorPlayerFifthAttack", "effect/InteriorPlayer/NChange_Attack.efkefc", RESOURCE_TYPE::Effect, 20.0f);
 
-			// 裏プレイヤーの攻撃エフェクト
-			rs->Register("InteriorPlayerAttack_123",	"effect/InteriorPlayer/NChange_004.efkefc",				RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("InteriorPlayerFourthAttack",	"effect/InteriorPlayer/NChange_Fourth_Attack.efkefc",	RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("InteriorPlayerFifthAttack",	"effect/InteriorPlayer/NChange_Attack.efkefc",			RESOURCE_TYPE::Effect, 20.0f);
+				// 表プレイヤーの攻撃ヒットエフェクト
+				rs->Register("SurfacePlayerAttackHit1", "effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+				rs->Register("SurfacePlayerAttackHit2", "effect/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 
-			// 表プレイヤーの攻撃ヒットエフェクト
-			rs->Register("SurfacePlayerAttackHit1", "effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
-			rs->Register("SurfacePlayerAttackHit2", "effect/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+				// 弾発射プレイヤーの弾エフェクト
+				rs->Register("PlayerNormalBullet",		"effect/playerBullet/SChange_Attack_B_001.efkefc", RESOURCE_TYPE::Effect, 4.0f);
+				rs->Register("PlayerPiercingBullet",	"effect/playerBullet/SChange_Attack_S_001.efkefc", RESOURCE_TYPE::Effect, 3.0f);
+
+			}
 
 
 			// 敵
@@ -185,28 +191,23 @@ bool ModeLoading::Initialize()
 
 			// プレイヤー
 			{
-				rs->Register("SE_", "sound/SE/se_0.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_", "sound/SE/se_1.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_", "sound/SE/se_2.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_GameOver", "sound/SE/se_3.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_", "sound/SE/se_4.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_", "sound/SE/se_5.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_", "sound/SE/se_6.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_sDodge", "sound/SE/se_7.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_PlayerDead", "sound/SE/se_8.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_", "sound/SE/se_9.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_", "sound/SE/se_10.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_Dodge", "sound/SE/se_11.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_iPlayerAttacck", "sound/SE/se_12.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_", "sound/SE/se_13.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_", "sound/SE/se_14.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_JustDodge", "sound/SE/se_15.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_TransPower", "sound/SE/se_16.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_", "sound/SE/se_17.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_TransBullet", "sound/SE/se_18.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_PiercingBullet", "sound/SE/se_19.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_NormalBullet", "sound/SE/se_20.mp3", RESOURCE_TYPE::Sound, 1.0f);
-
+				rs->Register("SE_GameOver",				"sound/SE/SE00.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				//rs->Register("SE_",	"sound/SE/SE01.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				//rs->Register("SE_",	"sound/SE/SE02.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_SurfacePlayerDodge",	"sound/SE/SE03.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_Dead",					"sound/SE/SE04.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_",						"sound/SE/SE05.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_TransPlayerDash",		"sound/SE/SE06.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_TransPlayerDodge",		"sound/SE/SE07.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_InteriorPlayerPunch",	"sound/SE/SE08.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_",						"sound/SE/SE09.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_Absorb",				"sound/SE/SE10.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_Evade",				"sound/SE/SE11.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_",						"sound/SE/SE12.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_",						"sound/SE/SE13.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_",						"sound/SE/SE14.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_PiercingBullet",		"sound/SE/SE15.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_NormalBullet",			"sound/SE/SE16.mp3", RESOURCE_TYPE::Sound, 1.0f);
 			}
 
 

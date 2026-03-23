@@ -99,6 +99,7 @@ bool ModeGame::Initialize()
 	// ステージ初期化
 	_currentStageNum = 0;
 	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
+	_stage->SetPlayerManager(_playerManager);
 
 	// プレイヤーアンロックマネージャー初期化
 	{
@@ -172,13 +173,19 @@ bool ModeGame::Terminate()
 {
 	base::Terminate();
 
+	AttackManager::DestroyInstance();
 	AttackEffectSystem::DestroyInstance();
+	EnergyManager::DestroyInstance();
+	BulletManager::DestroyInstance();
+	StaminaManager::DestroyInstance();
 
+	_stage.reset();
 
 	// ライトの終了処理
 	TerminateLights();
 
 	// プレイヤー開放
+	_playerManager->Terminate();
 	_playerManager.reset();
 
 	return true;
@@ -207,6 +214,10 @@ bool ModeGame::Process()
 			ModeGameOver* modeGameOver = new ModeGameOver();
 			ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
 			_stage->StopStageBGM();
+
+			// サウンド再生
+			SoundServer::GetInstance()->Play("SE_GameOver", DX_PLAYTYPE_BACK);
+
 			// この後の処理をスキップ
 			return true;
 		}
@@ -253,6 +264,8 @@ bool ModeGame::Process()
 
 		_abilitySelectManager->SetAbilitySelectScreen(_abilitySelectScreen);
 		_abilitySelectManager->SetPlayerManager(_playerManager);
+
+		_stage->SetPlayerManager(_playerManager);
 
 		// 弾発射プレイヤーにカメラマネージャーを設定
 		auto bulletPlayer = std::dynamic_pointer_cast<BulletPlayer>(_playerManager->GetPlayerByType(PLAYER_TYPE::BULLET));
@@ -316,7 +329,8 @@ bool ModeGame::Process()
 
 		// キャラと吸収攻撃
 		{
-			for(const auto& enemy : enemies){ CheckHitAbsorbAttack(player, enemy); }
+			auto surfacePlayer = _playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE);
+			for(const auto& enemy : enemies){ CheckHitAbsorbAttack(surfacePlayer, enemy); }
 		}
 
 		// キャラ同士
@@ -367,6 +381,7 @@ bool ModeGame::Process()
 		if(_stage->IsAllEnemiesDefeated())
 		{
 			ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
+			
 			ModeServer::GetInstance()->Del(this);
 			return true;
 		}

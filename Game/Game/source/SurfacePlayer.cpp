@@ -2,18 +2,21 @@
 
 #include "SurfacePlayer.h"
 
-namespace
-{
-	// 基礎ステータス定数
-	constexpr float GRAVITY = -0.6f;		// 重力加速度
-	constexpr float DEFAULT_LIFE = 100.0f;	// デフォルト体力
-	constexpr float MAX_LIFE = 100.0f;		// 最大体力
+// 表プレイヤー用定数のエイリアス
+namespace SPC = SurfacePlayerConstants;
 
-	// 表示用定数
-	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
-	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
-	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
-}
+//namespace
+//{
+//	// 基礎ステータス定数
+//	constexpr float GRAVITY = -0.6f;		// 重力加速度
+//	constexpr float DEFAULT_LIFE = 100.0f;	// デフォルト体力
+//	constexpr float MAX_LIFE = 100.0f;		// 最大体力
+//
+//	// 表示用定数
+//	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
+//	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
+//	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
+//}
 
 SurfacePlayer::SurfacePlayer()
 {
@@ -79,10 +82,13 @@ void SurfacePlayer::DebugRender()
 }
 
 // 被ダメージ処理
-void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
+void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)
 {
+	// 表プレイヤー専用のダメージ倍率を適用
+	float resultDamage = fDamage * SPC::DAMAGE_MULTIPLIER;
+
 	// 基底クラスの被ダメージ処理呼び出し
-	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
+	PlayerBase::ApplyDamage(resultDamage, ownerType, attackInfo);
 }
 
 // 弾での被ダメージ処理
@@ -175,11 +181,12 @@ DodgeConfig SurfacePlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType = DODGE_CHARA::SURFACE_PLAYER;
-	config.invincibleDuration = 20.0f;	// 無敵時間
-	config.startTime = 2.0f;			// 開始時間
-	config.activeTime = 40.0f;			// アクティブ時間
-	config.recoveryTime = 10.0f;		// 硬直時間
-	config.dodgeMoveSpeed = 10.0f;		// 移動速度
+	config.invincibleDuration = 20.0f;			// 無敵時間
+	config.startTime = 2.0f;					// 開始時間
+	config.activeTime = 40.0f;					// アクティブ時間
+	config.recoveryTime = 10.0f;				// 硬直時間
+	config.dodgeMoveSpeed = 10.0f;				// 移動速度
+	config.soundName = "SE_SurfacePlayerDodge";	// サウンド名
 
 	return config;
 }
@@ -216,7 +223,8 @@ void SurfacePlayer::InitializeAbsorbSystem()
 	if(!_absorbAttackSystem) { return; }
 
 	// 所有者を設定して初期化
-	_absorbAttackSystem->Initialize(shared_from_this());		
+	// CharaBase の shared_from_this() を使用するため、Initialize関数内で所有者を設定する必要がある
+	_absorbAttackSystem->Initialize(shared_from_this());
 
 	// 吸収攻撃の設定を取得して設定
 	_absorbAttackSystem->SetAbsorbConfig(GetAbsorbConfig());	
@@ -257,8 +265,9 @@ AbsorbConfig SurfacePlayer::GetAbsorbConfig()
 	config.absorbAngle		= DX_PI_F / 2.9f;			// 吸収角度
 	config.absorbDivision	= 10;						// 滑らかな描画用
 	config.absorbEffectName = "SurfacePlayerAbsorb";	// 吸収エフェクト名
-	config.effectOffset = { 0.0f, 0.0f, 0.0f };			// エフェクト位置オフセット
-	config.absorbSoundName = "sPlayerAttack";			// 吸収サウンド名
+	config.effectOffset		= VGet(0.0f, 0.0f, 0.0f);	// エフェクト位置オフセット
+	config.effectRotOffset	= VGet(0.0f, 0.0f, 0.0f);	// エフェクト回転オフセット
+	config.absorbSoundName	= "sPlayerAttack";			// 吸収サウンド名
 
 	return config;
 }

@@ -137,6 +137,7 @@ void PlayerBase::InitializeShieldData()
 	_shieldSystem = std::make_shared<PlayerShieldSystem>();
 
 	// シールド所有者設定
+	// CharaBase の shared_from_this() を使用するため、Initialize関数内で所有者を設定する必要がある
 	_shieldSystem->SetOwner(shared_from_this());
 	
 	// プレイヤー固有の設定を取得してシールドシステムに設定
@@ -216,10 +217,10 @@ bool PlayerBase::Render()
 }
 
 // 被ダメージ処理
-void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
+void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)
 {
 	// 親クラスの被ダメージ処理呼び出し
-	CharaBase::ApplyDamage(fDamage, eType, attackInfo);
+	CharaBase::ApplyDamage(fDamage, ownerType, attackInfo);
 
 	// 被弾状態に変更
 	_playerState.combatState = PLAYER_COMBAT_STATE::HIT;

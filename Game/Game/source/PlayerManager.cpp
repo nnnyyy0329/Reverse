@@ -204,17 +204,17 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 		return;
 	}
 
-	// プレイヤータイプごとの変身サウンド再生
-	if(targetType == PLAYER_TYPE::INTERIOR)
-	{
-		// サウンド再生
-		SoundServer::GetInstance()->Play("ChangePower", DX_PLAYTYPE_BACK);
-	}
-	else if(targetType == PLAYER_TYPE::BULLET)
-	{
-		// サウンド再生
-		SoundServer::GetInstance()->Play("ChangeBlaster", DX_PLAYTYPE_BACK);
-	}
+	//// プレイヤータイプごとの変身サウンド再生
+	//if(targetType == PLAYER_TYPE::INTERIOR)
+	//{
+	//	// サウンド再生
+	//	SoundServer::GetInstance()->Play("ChangePower", DX_PLAYTYPE_BACK);
+	//}
+	//else if(targetType == PLAYER_TYPE::BULLET)
+	//{
+	//	// サウンド再生
+	//	SoundServer::GetInstance()->Play("ChangeBlaster", DX_PLAYTYPE_BACK);
+	//}
 
 	_eTransformTarget = targetType;	// 変身先のプレイヤーをセット
 	_fTransformTime = 0.0f;			// 変身時間リセット
@@ -288,6 +288,9 @@ void PlayerManager::TransformFinishByTime()
 				// 位置と状態の引き継ぎ
 				TransferPlayerConfig(oldPlayer, _activePlayer);
 			}
+
+			// 変身後の体力回復処理
+			RecoveryLifeByTransform(_eActivePlayerType);
 		}
 
 		// 変身終了
@@ -313,9 +316,11 @@ void PlayerManager::EndTransform()
 
 void PlayerManager::StartTransformCancel()
 {
-	if(_bIsTransformCanceling){ return; }	// すでに変身解除中なら何もしない
+	// すでに変身解除中なら何もしない
+	if(_bIsTransformCanceling){ return; }	
 
-	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	// 表プレイヤーなら何もしない
+	// 表プレイヤーなら何もしない
+	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	
 
 	// 変身解除開始
 	_bIsTransformCanceling = true;	// 変身解除フラグを有効にする
@@ -347,7 +352,8 @@ void PlayerManager::UpdateTransformCancel()
 
 void PlayerManager::SwitchPlayerByTime()
 {
-	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	// すでに表プレイヤーなら処理しない
+	// すでに表プレイヤーなら処理しない
+	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	
 
 	// 変身解除時間が最大を超えて、タイプが表プレイヤーではないなら表プレイヤーに切り替え
 	if(_fTransformCancelTime >= _fTransformCancelMaxTime)
@@ -385,8 +391,8 @@ void PlayerManager::EndTransformCancel()
 {
 	if(_activePlayer)
 	{
-		// 戦闘状態を通常に戻す
-		_activePlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);
+		// 状態を通常に戻す
+		_activePlayer->SetStateReset();
 	}
 
 	if(_abilitySelectScreen)
@@ -560,4 +566,19 @@ void PlayerManager::ReturnWaitAnim()
 
 	// 待機アニメーション再生
 	PlayTransConnectionAnim(playerAnim.movement.wait);	
+}
+
+void PlayerManager::RecoveryLifeByTransform(PLAYER_TYPE transformPlayerType)
+{
+	if(!_activePlayer) { return; }
+
+	// 裏プレイヤーまたは弾プレイヤーへの変身なら
+	if(transformPlayerType == PLAYER_TYPE::INTERIOR || transformPlayerType == PLAYER_TYPE::BULLET)
+	{
+		// アクティブプレイヤーの最大体力情報取得
+		float maxLife = _activePlayer->GetPlayerConfig().maxLife;
+
+		// 体力全回復
+		_activePlayer->SetLife(maxLife);
+	}
 }

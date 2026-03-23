@@ -3,15 +3,29 @@
 #include "GeometryUtility.h"
 #include "AnimManager.h"
 
+// 前方宣言
+class CharaBase;
+
+// @brief エフェクトのアタッチタイプ列挙型
+enum class EFFECT_ATTACH_TYPE
+{
+	NONE,				
+	LEFT_ARM,			///< 左腕フレーム位置
+	RIGHT_ARM,			///< 右腕フレーム位置
+	CHARACTER_OFFSET,	///< キャラクター位置 + オフセット
+	_EOT_,
+};
+
 /// @brief 攻撃の演出設定構造体
 struct AttackEffectConfig
 {
 	// エフェクト設定
-	bool isActiveEffect;	// エフェクトを有効にするか
-	std::string effectName;	// エフェクト名
-	VECTOR effectOffset;	// エフェクト位置オフセット
-	VECTOR effectRotation;	// エフェクト回転
-	
+	bool isActiveEffect;			// エフェクトを有効にするか
+	std::string effectName;			// エフェクト名
+	VECTOR effectOffset;			// エフェクト位置オフセット
+	VECTOR effectRotation;			// エフェクト回転
+	EFFECT_ATTACH_TYPE attachType;	// エフェクトのアタッチタイプ
+
 	// サウンド設定
 	bool isActiveSound;		// サウンドを有効にするか
 	std::string soundName;	// サウンド名
@@ -36,11 +50,14 @@ struct EffectInstanceInfo
 /// @brief 追跡するエフェクトの情報構造体
 struct TrackedEffectInfo
 {
-	int effectHandle;			// エフェクトハンドル
-	int attachFrameIndex;		// アタッチするフレームインデックス
-	VECTOR effectOffset;		// エフェクトのオフセット
-	VECTOR effectRotation;		// エフェクトの回転
-	AnimManager* animManager;	// アニメーションマネージャー
+	int effectHandle;				// エフェクトハンドル
+	int attachFrameIndex;			// アタッチするフレームインデックス
+	VECTOR effectOffset;			// エフェクトのオフセット
+	VECTOR effectRotation;			// エフェクトの回転
+	AnimManager* animManager;		// アニメーションマネージャー
+	std::weak_ptr<CharaBase> owner;	// 所有者キャラの弱参照
+	bool useOwnerDirection = false;	// 所有者の向きを基準とするか(最初から false )
+	EFFECT_ATTACH_TYPE attachType;	// エフェクトのアタッチタイプ
 };
 
 /// @brief 攻撃の演出システムクラス
@@ -82,6 +99,7 @@ public:
 	/// @param dir エフェクトの向き（攻撃方向）
 	/// @param frameIndex 追跡するフレームのインデックス
 	/// @param animManager 追跡するアニメーションマネージャーの共有ポインタ
+	/// @param owner エフェクトの所有者キャラの共有ポインタ
 	/// 
 	/// @return 再生したエフェクトのハンドル
 	int PlayTrackedEffect
@@ -90,13 +108,24 @@ public:
 		const VECTOR& initialPos,		
 		const VECTOR& dir,
 		int frameIndex,
-		AnimManager* animManager
+		AnimManager* animManager,
+		std::shared_ptr<CharaBase> owner
 	);
 
 	/// @brief エフェクト停止処理
 	///
 	/// @param effectHandle 停止するエフェクトのハンドル
 	void StopEffect(int effectHandle);
+
+	/// @brief 追跡エフェクトの位置計算処理
+	///
+	/// @param info 追跡エフェクトの情報構造体
+	VECTOR UpdateCalculatePos(const TrackedEffectInfo& info);
+
+	/// @brief 追跡エフェクトの回転計算処理
+	///
+	/// @param info 追跡エフェクトの情報構造体
+	VECTOR UpdateCalculateRot(const TrackedEffectInfo& info);
 
 	/// @brief エフェクトの演出処理
 	///

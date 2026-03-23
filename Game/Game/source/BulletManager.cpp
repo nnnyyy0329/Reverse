@@ -203,7 +203,9 @@ void BulletManager::RemoveBullet(std::shared_ptr<Bullet> bullet)
 		if(bullets->bullet && bullets->bullet == bullet)
 		{
 			// “o˜^‚³‚ê‚½’e‚©‚çíœ
+			bullet->Terminate();
 			_registerBullets.erase(bullets);
+
 
 			break;
 		}
@@ -256,6 +258,7 @@ void BulletManager::CleanupInvalidBullets()
 		if(shouldRemove)
 		{
 			// íœ
+			bullets->bullet->Terminate();
 			bullets = _registerBullets.erase(bullets);
 		}
 		// íœ‚µ‚È‚¢‚×‚«‚È‚ç
