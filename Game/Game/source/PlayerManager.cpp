@@ -7,6 +7,15 @@
 #include "CameraManager.h"
 #include "AbilitySelectScreen.h"
 
+// 変身設定用の定数エイリアス
+namespace TC = TransformConstants;
+
+// 変身関連アニメーション設定用の定数エイリアス
+namespace TAC = TransAnimConstants;
+
+// アビリティ関連の定数エイリアス
+namespace AC = AbilityConfig;
+
 PlayerManager::PlayerManager()
 {
 	_cameraManager = nullptr;		// カメラマネージャー
@@ -398,7 +407,7 @@ void PlayerManager::EndTransformCancel()
 	if(_abilitySelectScreen)
 	{
 		// 選択されたアビリティのインデックスをリセット
-		_abilitySelectScreen->SetSelectedAbilityIndex(AbilityConfig::DEFAULT_ABILITY_INDEX);
+		_abilitySelectScreen->SetSelectedAbilityIndex(AC::DEFAULT_ABILITY_INDEX);
 	}
 
 	_abilitySelectScreen->SetSelectionState(SelectionState::NOT_SELECTION);	// 能力選択をしていない状態にする
@@ -468,12 +477,12 @@ void PlayerManager::TransferPlayerConfig(PlayerBase* oldPlayer, PlayerBase* newP
 
 void PlayerManager::UpdateTransformTime()
 {
-	_fTransformTime += TransformConstants::TRANSFORM_TIME_INCREMENT;	// 変身時間を更新
+	_fTransformTime += TC::TRANSFORM_TIME_INCREMENT;	// 変身時間を更新
 }
 
 void PlayerManager::UpdateTransformCancelTime()
 {
-	_fTransformCancelTime += TransformConstants::TRANSFORM_TIME_INCREMENT;	// 変身解除時間を更新
+	_fTransformCancelTime += TC::TRANSFORM_TIME_INCREMENT;	// 変身解除時間を更新
 }
 
 void PlayerManager::PlayTransConnectionAnim(const char* animName)
@@ -489,9 +498,9 @@ void PlayerManager::PlayTransConnectionAnim(const char* animName)
 		// アニメーション変更
 		animManager->ChangeAnimationByName
 		(
-			animName,									// アニメーション名
-			TransAnimConstants::ANIMATION_BLEND_TIME,	// ブレンド時間
-			TransAnimConstants::ANIMATION_LOOP			// ループあり
+			animName,					// アニメーション名
+			TAC::ANIMATION_BLEND_TIME,	// ブレンド時間
+			TAC::ANIMATION_LOOP			// ループあり
 		);
 
 		// 変身アニメーションの再生時間を変身時間に設定
@@ -575,10 +584,10 @@ void PlayerManager::RecoveryLifeByTransform(PLAYER_TYPE transformPlayerType)
 	// 裏プレイヤーまたは弾プレイヤーへの変身なら
 	if(transformPlayerType == PLAYER_TYPE::INTERIOR || transformPlayerType == PLAYER_TYPE::BULLET)
 	{
-		// アクティブプレイヤーの最大体力情報取得
-		float maxLife = _activePlayer->GetPlayerConfig().maxLife;
+		// アクティブプレイヤーの最大体力の半分の情報取得
+		float halfLife = (_activePlayer->GetPlayerConfig().maxLife) * (TC::TRANSFORM_LIFE_RECOVERY_RATE);
 
-		// 体力全回復
-		_activePlayer->SetLife(maxLife);
+		// 体力半回復
+		_activePlayer->SetLife(halfLife);
 	}
 }

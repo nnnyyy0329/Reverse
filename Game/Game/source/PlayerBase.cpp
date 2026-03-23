@@ -3,14 +3,6 @@
 #include "PlayerBase.h"
 #include "PlayerShieldSystem.h"
 
-// 被弾設定
-namespace HitConfig
-{
-	constexpr float HIT_SPEED = 15.0f;	// 被弾時の吹き飛び速度
-	constexpr float HIT_DECAY = 0.9f;	// 被弾時の吹き飛び減衰率
-	constexpr float HIT_TIME = 30.0f;	// 被弾時間
-}
-
 PlayerBase::PlayerBase()
 {
 	_cameraManager = nullptr;	// カメラマネージャー

@@ -92,6 +92,9 @@ public:
 
 private:
 
+	/// @brief エイムカメラの角度更新処理
+	void UpdateAimCameraAngle();
+
 	/// @brief 弾発射処理
 	void ProcessShoot()override;
 

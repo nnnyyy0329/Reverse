@@ -312,6 +312,9 @@ void PlayerBase::ProcessHit()
 		ProcessPlayAnimation();			// アニメーション切り替え実行
 		_oldPlayerState = _playerState;	// 切り替え後に更新
 
+		// 被弾時間をリセット
+		_fHitTime = HitConfig::HIT_TIME;
+
 		return;
 	}
 
@@ -346,12 +349,12 @@ void PlayerBase::ProcessDebug()
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG3))
 	{
-		_fLife -= 10.0f;
+		//_fLife -= 10.0f;
 	}
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG1))
 	{
-		EnergyManager::GetInstance()->ConsumeEnergy(25.0f);
+		//EnergyManager::GetInstance()->ConsumeEnergy(25.0f);
 	}
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG2))
