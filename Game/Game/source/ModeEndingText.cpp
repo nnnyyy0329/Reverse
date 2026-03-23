@@ -20,6 +20,9 @@ bool ModeEndingText::Initialize()
 		"意識を取り戻した後に話を聞いたが、\nどうやらあの日の記憶が曖昧みたいで、うやむやになってしまった。\n"
 		"だが、あの日は俺とクロがこれから巻き込まれることのきっかけだったとあとから気づくのだった。";
 
+	// BGM をシナリオ開始時に一度だけ再生する
+	SoundServer::GetInstance()->Play("BGM_Ending", DX_PLAYTYPE_LOOP);
+
 	// まずフェードアウトして真っ黒へ
 	StartFade(30, 0, 30); // out=30 / in=0 / wait=30（ModeBaseの実装に依存するが、ここは真っ黒にする目的）
 	_fadeOutStarted = true;
@@ -54,9 +57,6 @@ bool ModeEndingText::Process()
 	{
 		return true;
 	}
-
-	// サウンド再生
-	SoundServer::GetInstance()->Play("BGM_Ending", DX_PLAYTYPE_LOOP);
 
 	// 文字自動展開
 	if(!_textFullyShown)

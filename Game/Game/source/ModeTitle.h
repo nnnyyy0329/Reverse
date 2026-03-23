@@ -29,4 +29,7 @@ private:
 
 
 	int _menuIndex;
+
+
+	int _bgmHandle;
 };

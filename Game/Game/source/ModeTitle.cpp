@@ -70,6 +70,10 @@ bool ModeTitle::Initialize()
 	_fadeState = 0; // 0:フェードイン, 1:表示, 2:フェードアウト
 	_frameCount = 0;
 
+	// 開始時に一度だけ再生
+	_bgmHandle = ResourceServer::GetInstance()->GetHandle("BGM_Title");
+	PlaySoundMem(_bgmHandle, DX_PLAYTYPE_LOOP);
+
 	_menuIndex = 0;
 	
 	StartFade(30, 90, 30);
@@ -108,7 +112,7 @@ bool ModeTitle::Process()
 	if (im.IsTrigger(INPUT_ACTION::SKIP))
 	{
 		// サウンドBGM停止
-		SoundServer::GetInstance()->Stop("BGM_Title");
+		StopSoundMem(_bgmHandle);
 
 		switch(_menuIndex)
 		{
