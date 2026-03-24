@@ -114,7 +114,7 @@ bool ModeGame::Initialize()
 	}
 
 	// ステージ初期化
-	_currentStageNum = 2;
+	_currentStageNum = 0;
 	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
 	_stage->SetPlayerManager(_playerManager);
 
@@ -254,8 +254,14 @@ bool ModeGame::Process()
 	// 
 	// ゲームオーバーチェック
 	{
+		bool debugDeath = false; // デバッグ用全滅フラグ
+		if(im.IsTrigger(INPUT_ACTION::DEBUG3))
+		{
+			debugDeath = true;
+		}
+
 		auto activePlayer = _playerManager->GetActivePlayerShared();
-		if (activePlayer && activePlayer->GetIsDead())
+		if (activePlayer && activePlayer->GetIsDead() || debugDeath)
 		{
 			// ModeGameOverを追加
 			ModeGameOver* modeGameOver = new ModeGameOver();
@@ -598,7 +604,7 @@ bool ModeGame::Render()
 			if (_stage->GetStageNum() == 2)
 			{
 				SetFontSize(24);
-				DrawFormatString(20, 40, GetColor(255, 255, 255), "ボスを倒せ！");
+				DrawFormatString(60, 120, GetColor(255, 255, 255), "ボスを倒せ！");
 				SetFontSize(16);
 			}
 			else
@@ -606,10 +612,11 @@ bool ModeGame::Render()
 				const int current = _stage->GetCurrentEnemyCnt();
 				const int total = _stage->GetTotalEnemyCnt();
 
-			SetFontSize(24);
-			//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
-			DrawFormatString(60, 120, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
-			SetFontSize(16);
+				SetFontSize(24);
+				//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
+				DrawFormatString(60, 120, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
+				SetFontSize(16);
+			}
 		}
 	}
 
@@ -836,7 +843,6 @@ void ModeGame::RestartCurrentStage()
 		activePlayer->SetDir(vDir);
 
 		// プレイヤーのモーションリセット
-		
 	}
 
 	// オブジェクトのクリア
