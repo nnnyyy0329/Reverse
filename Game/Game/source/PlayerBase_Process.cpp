@@ -349,7 +349,7 @@ void PlayerBase::ProcessDebug()
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG3))
 	{
-		//_fLife -= 10.0f;
+		//_fLife -= 100.0f;
 	}
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG1))

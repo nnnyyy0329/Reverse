@@ -759,7 +759,9 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 
 	// オブジェクトのクリア
 	{
-		BulletManager::GetInstance()->ClearAllBullets();
+		auto bulletManager = BulletManager::GetInstance();
+		bulletManager->ClearAllBullets(bulletManager->GetAllBullets());
+
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
 
@@ -830,7 +832,9 @@ void ModeGame::RestartCurrentStage()
 
 	// オブジェクトのクリア
 	{
-		BulletManager::GetInstance()->ClearAllBullets();
+		auto bulletManager = BulletManager::GetInstance();
+		bulletManager->ClearAllBullets(bulletManager->GetAllBullets());
+
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
 
