@@ -721,6 +721,9 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
 
+	auto player = _playerManager->GetActivePlayerShared();
+	player->SetDir(VGet(0.0f, 0.0f, -1.0f));
+
 	_cameraManager->Reset();
 
 	_stage->PlayStageBGM();
