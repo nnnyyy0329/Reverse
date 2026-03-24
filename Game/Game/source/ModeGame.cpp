@@ -578,7 +578,6 @@ bool ModeGame::Render()
 		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());
 
 		AttackManager::GetInstance()->DebugRender();
-		BulletManager::GetInstance()->DebugRender();
 		EnergyManager::GetInstance()->DebugRender();
 
 		// プレイヤーデバッグ情報
@@ -616,6 +615,7 @@ bool ModeGame::Render()
 	{
 		_stage->CollisionRender();
 		AttackManager::GetInstance()->CollisionRender();
+		BulletManager::GetInstance()->DebugRender();
 
 		// プレイヤーコリジョン描画
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
@@ -642,7 +642,7 @@ bool ModeGame::Render()
 			}
 		}
 		
-		//DrawFormatString(20, 20, GetColor(255, 255, 255), "FPS: %d", static_cast<int>(s_fps + 0.5f));
+		DrawFormatString(20, 20, GetColor(255, 255, 255), "FPS: %d", static_cast<int>(s_fps + 0.5f));
 	}
 
 	_energyUI->Render();

@@ -18,6 +18,7 @@ namespace EnergyDefaultConstants
 namespace EnergyGainConstants
 {
 	constexpr float EVADE_ATTACK = 25.0f;   // UŒ‚‰ñ”ğ‚ÌƒGƒlƒ‹ƒM[Šl“¾—Ê
+	constexpr float EVADE_BULLET = 20.0f;   // ’e‰ñ”ğ‚ÌƒGƒlƒ‹ƒM[Šl“¾—Ê
 	constexpr float ABSORB = 1.0f;          // ‹zû‚ÌƒGƒlƒ‹ƒM[Šl“¾—Ê
 }
 
@@ -93,6 +94,9 @@ public:
 
     // UŒ‚‰ñ”ğ‚ÌƒGƒlƒ‹ƒM[Šl“¾—Ê
     float GetEvadeAttackEnergy()const;
+
+	// ’e‰ñ”ğ‚ÌƒGƒlƒ‹ƒM[Šl“¾—Ê
+	float GetEvadeBulletEnergy()const;
 
     // ‹zû‚ÌƒGƒlƒ‹ƒM[Šl“¾—Ê
     float GetAbsorbEnergy()const;

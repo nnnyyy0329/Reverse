@@ -138,6 +138,11 @@ float EnergyManager::GetEvadeAttackEnergy()const
 	return EGC::EVADE_ATTACK;
 }
 
+float EnergyManager::GetEvadeBulletEnergy()const
+{
+	return EGC::EVADE_BULLET;
+}
+
 float EnergyManager::GetAbsorbEnergy()const
 {
 	return EGC::ABSORB;
