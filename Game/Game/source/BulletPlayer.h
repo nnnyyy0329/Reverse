@@ -11,9 +11,9 @@ namespace BulletPlayerConstants
 namespace NormalBulletConfig
 {
 	constexpr float RADIUS = 20.0f;		// ’e”¼Œa
-	constexpr float DAMAGE = 50.0f;		// ’e‚Ìƒ_ƒ[ƒW
+	constexpr float DAMAGE = 100.0f;		// ’e‚Ìƒ_ƒ[ƒW
 	constexpr float SPEED = 20.0f;		// ’e‚Ì‘¬“x
-	constexpr float LIFE_TIME = 120.0f;	// ’e‚Ìõ–½
+	constexpr float LIFE_TIME = 60.0f;	// ’e‚Ìõ–½
 }
 
 // ŠÑ’Ê’eİ’è’è”
@@ -21,7 +21,7 @@ namespace PiercingBulletConfig
 {
 	constexpr float RADIUS = 15.0f;		// ’e”¼Œa
 	constexpr float DAMAGE = 10.0f;		// ’e‚Ìƒ_ƒ[ƒW
-	constexpr float SPEED = 25.0f;		// ’e‚Ì‘¬“x
+	constexpr float SPEED = 30.0f;		// ’e‚Ì‘¬“x
 	constexpr float LIFE_TIME = 120.0f;	// ’e‚Ìõ–½
 }
 

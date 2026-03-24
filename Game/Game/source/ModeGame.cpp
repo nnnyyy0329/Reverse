@@ -594,7 +594,7 @@ bool ModeGame::Render()
 
 			SetFontSize(24);
 			//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
-			DrawFormatString(20, 60, GetColor(255, 255, 255), "Žc‚è‚Ì“G : %d/%d", current, total);
+			DrawFormatString(60, 120, GetColor(255, 255, 255), "Žc‚è‚Ì“G : %d/%d", current, total);
 			SetFontSize(16);
 		}
 	}
