@@ -6,6 +6,9 @@ namespace EDC = EnergyDefaultConstants;
 // エネルギー獲得量定数のエイリアス
 namespace EGC = EnergyGainConstants;
 
+// エネルギー消費量定数のエイリアス
+namespace ECC = EnergyConsumeConstants;
+
 // シングルトン用メンバ初期化
 EnergyManager* EnergyManager::_instance = nullptr;
 
@@ -138,6 +141,16 @@ float EnergyManager::GetEvadeAttackEnergy()const
 float EnergyManager::GetAbsorbEnergy()const
 {
 	return EGC::ABSORB;
+}
+
+float EnergyManager::GetShootNormalBulletConsumeEnergy()const
+{
+	return ECC::SHOOT_NORMAL_BULLET;
+}
+
+float EnergyManager::GetShootPiercingBulletConsumeEnergy()const
+{
+	return ECC::SHOOT_PIERCING_BULLET;
 }
 
 void EnergyManager::DebugRender()
