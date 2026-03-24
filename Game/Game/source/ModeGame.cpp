@@ -166,6 +166,10 @@ bool ModeGame::Initialize()
 
 	_shadowMapHandle = MakeShadowMap(2048, 2048);
 
+	//SetFogEnable(TRUE);// フォグを有効にする
+	//SetFogColor(0, 0, 0);// フォグの色を設定
+	//SetFogStartEnd(500.0f, 2500.0f);// フォグの開始距離と終了距離を設定
+
 	return true;
 }
 

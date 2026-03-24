@@ -13,33 +13,35 @@ namespace
 
 	// Normal Melee
 	constexpr auto NORMAL_VISION_RANGE = 250.0f;// õ“G‹——£
-	constexpr auto NORMAL_VISION_ANGLE = 60.0f;// ‰~‚Å‚Ìõ“G
 	constexpr auto NORMAL_ATTACK_RANGE = 100.0f;// ‚±‚êˆÈ“à‚È‚çUŒ‚‚·‚é‹——£
 	constexpr auto NORMAL_CHASE_LIMIT_RANGE = 600.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ß‚ğ‚â‚ß‚é‹——£
 	constexpr auto NORMAL_IDLE_TIME = 120.0f;// ‘Ò‹@ŠÔ
 	constexpr auto NORMAL_MOVE_TIME = 180.0f;// œpœjŠÔ
 	constexpr auto NORMAL_DETECT_TIME = 90.0f;// ”­Œ©d’¼
 	constexpr auto NORMAL_ATTACK_TIME = 180.0f;// UŒ‚ŠÔ
+	constexpr float NORMAL_DAMAEGE_TIME = 56.0f;// ”íƒ_ƒŠÔ
+	constexpr float NORMAL_DAMAGE_ANIM_SPEED = 0.75f;// ”íƒ_ƒƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‘¬“x
 	constexpr float NORMAL_COL_RADIUS = 30.0f;// ƒRƒŠƒWƒ‡ƒ“”¼Œa
 	constexpr float NORMAL_COL_HEIGHT = 150.0f;// ƒRƒŠƒWƒ‡ƒ“‚‚³
 	constexpr float NORMAL_COL_SUB_Y = 50.0f;// ˜ˆÊ’uƒIƒtƒZƒbƒg
 
 	// Ranged
 	constexpr auto RANGED_VISION_RANGE = 800.0f;// õ“G‹——£
-	constexpr auto RANGED_VISION_ANGLE = 180.0f;// õ“GŠp“x(‰~Œ`)
 	constexpr auto RANGED_CHASE_LIMIT_RANGE = 1000.0f;// ‚±‚êˆÈã—£‚ê‚½‚ç’ÇÕ‚ğ‚â‚ß‚é‹——£
 	constexpr auto RANGED_MOVE_RADIUS = 0.0f;// œpœj”ÍˆÍ(ˆÚ“®‚µ‚È‚¢‚½‚ß0)
 	constexpr auto RANGED_IDLE_TIME = 120.0f;// ‘Ò‹@ŠÔ
 	constexpr auto RANGED_MOVE_TIME = 0.0f;// œpœjŠÔ(g—p‚µ‚È‚¢)
 	constexpr auto RANGED_DETECT_TIME = 60.0f;// ”­Œ©d’¼
+	constexpr float RANGED_DAMAEGE_TIME = 66.0f;// ”íƒ_ƒŠÔ
 
 	// Tank
-	constexpr auto TANK_LIFE = 1500.0f;// ƒ^ƒ“ƒN‚Ì‘Ì—Í
+	constexpr auto TANK_LIFE = 2000.0f;// ƒ^ƒ“ƒN‚Ì‘Ì—Í
 	constexpr auto TANK_ATTACK_RANGE = 650.0f;// UŒ‚ƒXƒe[ƒg‚É“ü‚é‹——£
 	constexpr auto TANK_ATTACK_LIMIT_RAMGE = 680.0f;// ‚±‚êˆÈã—£‚ê‚½‚çÚ‹ßƒXƒe[ƒg‚Ö
 	constexpr auto TANK_DETECT_TIME = 120.0f;// ”­Œ©d’¼
 	constexpr auto TANK_MOVE_SPEED = 5.0f;// ˆÚ“®‘¬“x
 	constexpr auto TANK_IDLE_TIME = 120.0f;// ‘Ò‹@ŠÔ
+	constexpr float TANK_DAMAEGE_TIME = 30.0f;// ”íƒ_ƒŠÔ
 	constexpr float TANK_COL_RADIUS = 50.0f;// ƒRƒŠƒWƒ‡ƒ“”¼Œa
 	constexpr float TANK_COL_HEIGHT = 200.0f;// ƒRƒŠƒWƒ‡ƒ“‚‚³
 	constexpr float TANK_COL_SUB_Y = 75.0f;// ˜ˆÊ’uƒIƒtƒZƒbƒg
@@ -76,13 +78,14 @@ public:
 
 			param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
 			param.fVisionRange = NORMAL_VISION_RANGE;
-			param.fVisionAngle = NORMAL_VISION_ANGLE;
 			param.fAttackRange = NORMAL_ATTACK_RANGE;
 			param.fChaseLimitRange = NORMAL_CHASE_LIMIT_RANGE;
 			param.fIdleTime = NORMAL_IDLE_TIME;
 			param.fMoveTime = NORMAL_MOVE_TIME;
 			param.fDetectTime = NORMAL_DETECT_TIME;
 			param.fAttackTime = NORMAL_ATTACK_TIME;
+			param.fDamageTime = NORMAL_DAMAEGE_TIME;
+			param.fDamageAnimSpeed = NORMAL_DAMAGE_ANIM_SPEED;
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 			param.bTransToWander = bTransToWander;
 			param.capsule.fRadius = NORMAL_COL_RADIUS;
@@ -97,7 +100,7 @@ public:
 			enemy->SetEnemyParam(param);// ƒpƒ‰ƒ[ƒ^İ’è
 
 			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
-			enemy->SetAfterDamageStateSelector([](Enemy* e, int comboCnt)->std::shared_ptr<EnemyState>
+			enemy->SetAfterDamageStateSelector([](Enemy* e)->std::shared_ptr<EnemyState>
 			{
 				if (e->GetTarget())
 				{
@@ -131,11 +134,12 @@ public:
 
 			param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
 			param.fVisionRange = RANGED_VISION_RANGE;
-			param.fVisionAngle = RANGED_VISION_ANGLE;
 			param.fChaseLimitRange = RANGED_CHASE_LIMIT_RANGE;
 			param.fIdleTime = RANGED_IDLE_TIME;
 			param.fMoveTime = RANGED_MOVE_TIME;
 			param.fDetectTime = RANGED_DETECT_TIME;
+			param.fDamageTime = RANGED_DAMAEGE_TIME;
+			param.fDamageAnimSpeed = NORMAL_DAMAGE_ANIM_SPEED;
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
 			param.capsule.fRadius = NORMAL_COL_RADIUS;
 			param.capsule.fHeight = NORMAL_COL_HEIGHT;
@@ -149,7 +153,7 @@ public:
 			enemy->SetEnemyParam(param);
 
 			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
-			enemy->SetAfterDamageStateSelector([](Enemy* e, int comboCnt)->std::shared_ptr<EnemyState>
+			enemy->SetAfterDamageStateSelector([](Enemy* e)->std::shared_ptr<EnemyState>
 			{
 				if (e->GetTarget())
 				{
@@ -187,6 +191,9 @@ public:
 			param.fDetectTime = TANK_DETECT_TIME;
 			param.fMaxLife = TANK_LIFE;
 			param.fIdleTime = TANK_IDLE_TIME;
+			param.fDamageTime = TANK_DAMAEGE_TIME;
+			param.bDownSE = false;// ƒ_ƒEƒ“SE‚È‚µ
+			param.bChangeDamageState = false;// ’e‚Å”íƒ_ƒ‘JˆÚ‚µ‚È‚¢
 			param.capsule.fRadius = TANK_COL_RADIUS;
 			param.capsule.fHeight = TANK_COL_HEIGHT;
 			param.capsule.fColSubY = TANK_COL_SUB_Y;
@@ -199,7 +206,7 @@ public:
 			enemy->SetEnemyParam(param);
 
 			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
-			enemy->SetAfterDamageStateSelector([](Enemy* e, int comboCnt)->std::shared_ptr<EnemyState>
+			enemy->SetAfterDamageStateSelector([](Enemy* e)->std::shared_ptr<EnemyState>
 			{
 				if (e->GetTarget())
 				{
