@@ -111,15 +111,15 @@ bool ModeTitle::Process()
 	// 決定
 	if (im.IsTrigger(INPUT_ACTION::SKIP))
 	{
-		// サウンドBGM停止
-		StopSoundMem(_bgmHandle);
-
 		switch(_menuIndex)
 		{
 			case 0: // スタート
 			{
 				if(!_bIsAddLoading)
 				{
+					// サウンドBGM停止
+					StopSoundMem(_bgmHandle);
+
 					_bIsAddLoading = true;
 					ModeServer::GetInstance()->Add(new ModeLoading(), 9999, "loading");
 					ModeServer::GetInstance()->Del(this);
