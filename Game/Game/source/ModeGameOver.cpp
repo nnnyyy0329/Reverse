@@ -99,13 +99,39 @@ bool ModeGameOver::Process()
 
 	auto& im = InputManager::GetInstance();
 
-	if(im.IsTrigger(INPUT_ACTION::SKIP)) {// zキー Aボタン
-		// 現在のステージ番号からリスタート
-		ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
-		if (modeGame != nullptr)
+	// ↑↓で選択できるように追加
+	if(im.IsTrigger(INPUT_ACTION::MOVE_UP))
+	{
+		_menuIndex = WrapMenuIndex(_menuIndex - 1);
+	}
+	if(im.IsTrigger(INPUT_ACTION::MOVE_DOWN))
+	{
+		_menuIndex = WrapMenuIndex(_menuIndex + 1);
+	}
+
+	// 決定（SKIP）で選択項目に応じた処理
+	if(im.IsTrigger(INPUT_ACTION::SKIP))
+	{
+		if(_menuIndex == 0) // リトライ
 		{
-			modeGame->RestartCurrentStage();
+			ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
+			if(modeGame != nullptr)
+			{
+				modeGame->RestartCurrentStage();
+			}
+			ModeServer::GetInstance()->Del(this);
 		}
+		else if(_menuIndex == 1) // タイトルへ戻る
+		{
+			// BGM停止
+			SoundServer::GetInstance()->StopAll();
+
+			// 先にゲームモードを消しておく（タイトルが背後に表示されるのを防ぐ）
+			auto gm = ModeServer::GetInstance()->Get("game");
+			if(gm != nullptr)
+			{
+				ModeServer::GetInstance()->Del(gm);
+			}
 
 			// タイトルをトップに追加（優先度を大きめに）
 			ModeServer::GetInstance()->Add(new ModeTitle(), 9999, "title");
@@ -117,7 +143,6 @@ bool ModeGameOver::Process()
 		return true;
 	}
 }
-
 bool ModeGameOver::Render()
 {
 	base::Render();

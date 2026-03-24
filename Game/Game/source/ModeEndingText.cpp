@@ -23,7 +23,7 @@ bool ModeEndingText::Initialize()
 		"そして、この日を境に俺とクロがいろんなトラブルに巻き込まれることになるのはまた別のお話";
 
 	// BGM をシナリオ開始時に一度だけ再生する
-	SoundServer::GetInstance()->Play("BGM_Ending", DX_PLAYTYPE_LOOP);
+	//SoundServer::GetInstance()->Play("BGM_Ending", DX_PLAYTYPE_LOOP);
 
 	// まずフェードアウトして真っ黒へ
 	StartFade(30, 0, 30); // out=30 / in=0 / wait=30（ModeBaseの実装に依存するが、ここは真っ黒にする目的）
