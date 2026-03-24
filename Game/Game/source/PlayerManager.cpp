@@ -587,7 +587,14 @@ void PlayerManager::RecoveryLifeByTransform(PLAYER_TYPE transformPlayerType)
 		// アクティブプレイヤーの最大体力の半分の情報取得
 		float halfLife = (_activePlayer->GetPlayerConfig().maxLife) * (TC::TRANSFORM_LIFE_RECOVERY_RATE);
 
-		// 体力半回復
-		_activePlayer->SetLife(halfLife);
+		// プレイヤーの体力を半回復
+		_activePlayer->SetLife(_activePlayer->GetLife() + halfLife);
+
+		// プレイヤーのライフが最大体力より多くなったら
+		if(_activePlayer->GetLife() >= _activePlayer->GetPlayerMaxLife())
+		{
+			// プレイヤーの体力を最大体力に固定する
+			_activePlayer->SetLife(_activePlayer->GetPlayerMaxLife());
+		}
 	}
 }

@@ -729,6 +729,8 @@ void StageBase::UpdateStageBGM(CHARA_TYPE charaType)
 
 	// �V���� BGM ��Đ�
 	SoundServer::GetInstance()->Play(bgmName, DX_PLAYTYPE_LOOP);
+}
+
 void StageBase::RemoveMapModelByName(const std::string& name)
 {
 	for(auto it = _mapModelPosList.begin(); it != _mapModelPosList.end(); )
