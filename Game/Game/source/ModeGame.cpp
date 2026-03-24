@@ -421,7 +421,7 @@ bool ModeGame::Process()
 		if (energyMgr && energyMgr->CanSwitchPlayer())
 		{
 			_bTransformAvailableNotified = true;
-			ModeTextBox::Show("Textbox_Kage", "よし、充分盗れたぜ。\n十字キー左を押してそのままこいつをぶっ飛ばしてやれ", false, 100, "energy_ready");
+			ModeTextBox::Show("Textbox_Kage", "よし、充分盗れたぜ。\n試しにBボタンを押して、そのままこいつをぶっ飛ばしてやれ", false, 100, "energy_ready");
 		}
 	}
 
@@ -431,7 +431,7 @@ bool ModeGame::Process()
 		// DEBUG3: キーボードF3 / パッドBACK
 		if(im.IsTrigger(INPUT_ACTION::DEBUG3))
 		{
-			_stage->DebugKillAllEnemies();
+			//_stage->DebugKillAllEnemies();
 		}
 
 		// 全滅したら最初のLOGOへ（疑似的にゲーム終了）
