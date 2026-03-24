@@ -162,11 +162,11 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 	{
 		configs[0].attackColTop			= {0.0f, 100.0f, 0.0f},	// コリジョン上部位置
 		configs[0].attackColBottom		= {0.0f, 20.0f, 0.0f},	// コリジョン下部位置
-		configs[0].attackColR			= 40.0f,				// 半径
+		configs[0].attackColR			= 50.0f,				// 半径
 		configs[0].attackColTop			= _vMove,				// 攻撃方向
-		configs[0].attackDelay			= 8.0f,					// 発生フレーム
-		configs[0].attackDuration		= 12.0f,				// 持続フレーム
-		configs[0].attackRecovery		= 18.0f,				// 硬直フレーム
+		configs[0].attackDelay			= 15.0f,				// 発生フレーム
+		configs[0].attackDuration		= 5.0f,					// 持続フレーム
+		configs[0].attackRecovery		= 12.0f,				// 硬直フレーム
 		configs[0].damage				= 20.0f,				// ダメージ
 		configs[0].attackState			= ATTACK_STATE::ACTIVE,	// 攻撃状態
 		configs[0].attackMoveSpeed		= 3.0f,					// 攻撃中の移動速度
@@ -181,11 +181,11 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 	{
 		configs[1].attackColTop			= {0.0f, 100.0f, 0.0f},	// コリジョン上部位置
 		configs[1].attackColBottom		= {0.0f, 20.0f, 0.0f},	// コリジョン下部位置
-		configs[1].attackColR			= 40.0f,				// 半径
+		configs[1].attackColR			= 50.0f,				// 半径
 		configs[1].attackColTop			= _vMove,				// 攻撃方向
-		configs[1].attackDelay			= 8.0f,					// 発生フレーム
-		configs[1].attackDuration		= 12.0f,				// 持続フレーム
-		configs[1].attackRecovery		= 18.0f,				// 硬直フレーム
+		configs[1].attackDelay			= 15.0f,				// 発生フレーム
+		configs[1].attackDuration		= 5.0f,					// 持続フレーム
+		configs[1].attackRecovery		= 12.0f,				// 硬直フレーム
 		configs[1].damage				= 30.0f,				// ダメージ
 		configs[1].attackState			= ATTACK_STATE::ACTIVE,	// 攻撃状態
 		configs[1].attackMoveSpeed		= 0.0f,					// 攻撃中の移動速度
@@ -200,11 +200,11 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 	{
 		configs[2].attackColTop			= {0.0f, 150.0f, 0.0f},	// コリジョン上部位置
 		configs[2].attackColBottom		= {0.0f, 20.0f, 0.0f},	// コリジョン下部位置
-		configs[2].attackColR			= 40.0f,				// 半径
+		configs[2].attackColR			= 50.0f,				// 半径
 		configs[2].attackColTop			= _vMove,				// 攻撃方向
 		configs[2].attackDelay			= 10.0f,				// 発生フレーム
-		configs[2].attackDuration		= 12.0f,				// 持続フレーム
-		configs[2].attackRecovery		= 18.0f,				// 硬直フレーム
+		configs[2].attackDuration		= 5.0f,					// 持続フレーム
+		configs[2].attackRecovery		= 16.0f,				// 硬直フレーム
 		configs[2].damage				= 50.0f,				// ダメージ
 		configs[2].attackState			= ATTACK_STATE::ACTIVE,	// 攻撃状態
 		configs[2].attackMoveSpeed		= 5.0f,					// 攻撃中の移動速度
@@ -219,7 +219,7 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 	{
 		configs[3].attackColTop			= {0.0f, 70.0f, 0.0f},	// コリジョン上部位置
 		configs[3].attackColBottom		= {0.0f, 0.0f, 0.0f},	// コリジョン下部位置
-		configs[3].attackColR			= 40.0f,				// 半径
+		configs[3].attackColR			= 50.0f,				// 半径
 		configs[3].attackColTop			= _vMove,				// 攻撃方向
 		configs[3].attackDelay			= 15.0f,				// 発生フレーム
 		configs[3].attackDuration		= 12.0f,				// 持続フレーム
@@ -339,6 +339,7 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		/* サウンド */
 		config[0].isActiveSound = true,				// サウンドを有効にするか
 		config[0].soundName		= "iPlayerAttack",	// サウンド名
+		config[0].playSoundDelay = 15.0f,			// サウンド再生の遅延時間
 		
 		/* カメラシェイク */
 		config[0].isActiveCameraShake	= true,	// カメラシェイクを有効にするか
@@ -363,6 +364,7 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		/* サウンド */
 		config[1].isActiveSound = true,				// サウンドを有効にするか
 		config[1].soundName		= "iPlayerAttack",	// サウンド名
+		config[1].playSoundDelay = 15.0f,			// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[1].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -387,6 +389,7 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		/* サウンド */
 		config[2].isActiveSound = true,				// サウンドを有効にするか
 		config[2].soundName		= "iPlayerAttack",	// サウンド名
+		config[2].playSoundDelay = 10.0f,			// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[2].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -411,6 +414,7 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		/* サウンド */
 		config[3].isActiveSound = true,				// サウンドを有効にするか
 		config[3].soundName		= "iPlayerAttack",	// サウンド名
+		config[3].playSoundDelay = 15.0f,			// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[3].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -435,6 +439,7 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		/* サウンド */
 		config[4].isActiveSound = true,				// サウンドを有効にするか
 		config[4].soundName		= "iPlayerAttack",	// サウンド名
+		config[4].playSoundDelay = 30.0f,			// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[4].isActiveCameraShake = true,	// カメラシェイクを有効にするか

@@ -64,6 +64,9 @@ bool AttackEffectSystem::Process()
 	// 追跡エフェクトの位置更新
 	UpdateTrackedEffects();
 
+	// サウンド再生の遅延時間更新処理
+	//UpdatePlaySoundDelayTime();
+
 	return true;
 }
 
@@ -122,10 +125,8 @@ int AttackEffectSystem::PlayTrackedEffect
 	std::shared_ptr<CharaBase> owner
 )
 {
-	if(!config.isActiveEffect || config.effectName.empty())
-	{
-		return -1;
-	}
+	// エフェクト設定が無効なら無効な値を返す
+	if(IsActiveEffectConfig(config) == -1){ return -1; }
 
 	// オフセット計算
 	VECTOR worldOffset = GeometryUtility::TransOffsetToWorld(config.effectOffset, dir);
@@ -148,6 +149,7 @@ int AttackEffectSystem::PlayTrackedEffect
 	trackedInfo.owner = owner;
 	trackedInfo.useOwnerDirection = true;
 	trackedInfo.attachType = config.attachType;
+	trackedInfo.playSoundDelay = config.playSoundDelay;
 
 	_trackedEffects[handle] = trackedInfo;
 
@@ -212,6 +214,30 @@ void AttackEffectSystem::UpdateTrackedEffects()
 		// エフェクト回転更新
 		EffectServer::GetInstance()->SetRot(handle, calcEffectRot);
 	}
+}
+
+void AttackEffectSystem::UpdatePlaySoundDelayTime()
+{
+	if(_trackedEffects.empty())
+	{
+		return;
+	}
+
+	//for(auto& trackedEffect : _trackedEffects)
+	//{
+	//	// 追跡エフェクト情報
+	//	TrackedEffectInfo& info = trackedEffect.second;
+
+	//	if(info.playSoundDelay > 0.0f)
+	//	{
+	//		info.playSoundDelay--;
+	//		if(info.playSoundDelay <= 0.0f)
+	//		{
+	//			// サウンド再生
+	//			SoundServer::GetInstance()->Play(info.soundName, DX_PLAYTYPE_BACK);
+	//		}
+	//	}
+	//}
 }
 
 VECTOR AttackEffectSystem::UpdateCalculatePos(const TrackedEffectInfo& info)
@@ -318,15 +344,30 @@ void AttackEffectSystem::ProcessEffect(int handle, const VECTOR& dir, const VECT
 
 void AttackEffectSystem::ProcessSound(const AttackEffectConfig& config)
 {
-	// サウンドが有効な場合のみ処理
+	// サウンドが無効な場合スキップ
 	if(!config.isActiveSound){ return; }
 
-	// サウンド名が空でない場合のみ
-	if(!config.soundName.empty())
-	{
-		// サウンド再生
-		SoundServer::GetInstance()->Play(config.soundName, DX_PLAYTYPE_BACK);
-	}
+	// サウンド名が空の場合スキップ
+	if(config.soundName.empty()){ return; }
+
+	// サウンド再生
+	SoundServer::GetInstance()->Play(config.soundName, DX_PLAYTYPE_BACK);
+
+	//// 遅延時間が設定されている場合
+	//if(config.playSoundDelay > 0.0f)
+	//{
+	//	// 遅延時間が経過していない場合はスキップ
+	//	if(!config.playSoundDelay <= 0.0f){ return; }
+
+	//	// 遅延時間経過後にサウンド再生
+	//	SoundServer::GetInstance()->Play(config.soundName, DX_PLAYTYPE_BACK);
+	//}
+	//// 遅延時間が設定されていない場合
+	//else
+	//{
+	//	// 即座にサウンド再生
+	//	SoundServer::GetInstance()->Play(config.soundName);
+	//}
 }
 
 void AttackEffectSystem::ProcessCameraShake(const AttackEffectConfig& config)
@@ -343,4 +384,16 @@ void AttackEffectSystem::ProcessHitStop(const AttackEffectConfig& config)
 	if(!config.isActiveHitStop){ return; }
 
 
+}
+
+int AttackEffectSystem::IsActiveEffectConfig(const AttackEffectConfig& config)
+{
+	if(!config.isActiveEffect || config.effectName.empty())
+	{
+		// 無効な設定
+		return -1; 
+	}
+
+	// 有効な設定
+	return 0; 
 }
