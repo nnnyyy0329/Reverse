@@ -347,8 +347,8 @@ bool ModeLoading::Render()
 		const int blockH = 36;
 		const int gap = 6;
 
-		const int barX = 420;
-		const int barY = 520;
+		const int barX = 1400;
+		const int barY = 1000;
 
 		DrawBlockLoadingBar(barX, barY, blocks, blockW, blockH, gap, progress);
 	}
@@ -358,8 +358,8 @@ bool ModeLoading::Render()
 	//nowloading    XXX %
 	{
 		SetFontSize(48);
-		const int textX = 640;
-		const int textY = 640;
+		const int textX = 1400;
+		const int textY = 900;
 
 		// åıÅiäOë§Åj: è≠ÇµìßñæÇ…ÇµÇƒâΩâÒÇ©ï`Ç≠
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 80);
