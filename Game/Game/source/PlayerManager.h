@@ -9,7 +9,8 @@
 // 変身設定用の名前空間
 namespace TransformConstants
 {
-	constexpr float TRANSFORM_TIME_INCREMENT = 1.0f;	// 変身時間の増加量
+	constexpr float TRANSFORM_TIME_INCREMENT = 1.0f;		// 変身時間の増加量
+	constexpr float TRANSFORM_LIFE_RECOVERY_RATE = 0.5f;	// 変身中の体力回復率
 }
 
 // 変身関連アニメーション設定用の名前空間

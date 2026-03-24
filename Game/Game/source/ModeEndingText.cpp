@@ -1,5 +1,6 @@
 #include "ModeEndingText.h"
 #include "ModeLogo.h"
+#include "ModeEndingVideo.h"
 #include <algorithm>
 
 bool ModeEndingText::Initialize()
@@ -10,6 +11,7 @@ bool ModeEndingText::Initialize()
 
 	_fadeOutStarted = false;
 	_textStarted = false;
+	_bgmStarted = false;
 
 	_charIndex = 0;
 	_charTimer = 0;
@@ -19,6 +21,9 @@ bool ModeEndingText::Initialize()
 		"｢白雪は旧校舎の奥で気を失っていた。\n"
 		"意識を取り戻した後に話を聞いたが、\nどうやらあの日の記憶が曖昧みたいで、なぜあそこにいたのか理由は不明のままだ。\n"
 		"そして、この日を境に俺とクロがいろんなトラブルに巻き込まれることになるのはまた別のお話";
+
+	// BGM をシナリオ開始時に一度だけ再生する
+	//SoundServer::GetInstance()->Play("BGM_Ending", DX_PLAYTYPE_LOOP);
 
 	// まずフェードアウトして真っ黒へ
 	StartFade(30, 0, 30); // out=30 / in=0 / wait=30（ModeBaseの実装に依存するが、ここは真っ黒にする目的）
@@ -56,7 +61,15 @@ bool ModeEndingText::Process()
 	}
 
 	// サウンド再生
-	SoundServer::GetInstance()->Play("BGM_Ending", DX_PLAYTYPE_LOOP);
+	if(_textStarted)
+	{
+		if(!_bgmStarted)
+		{
+			SoundServer::GetInstance()->Play("BGM_Ending", DX_PLAYTYPE_LOOP);
+			_bgmStarted = true;
+		}
+		// ...以下既存処理...
+	}
 
 	// 文字自動展開
 	if(!_textFullyShown)
@@ -78,9 +91,9 @@ bool ModeEndingText::Process()
 
 	// 入力
 	auto& im = InputManager::GetInstance();
-	const bool canInput = (_frameCount >= kInputWaitFrames);
+	
 
-	if(canInput && ( im.IsTrigger(INPUT_ACTION::ATTACK)))
+	if(im.IsTrigger(INPUT_ACTION::SKIP))
 	{
 		if(!_textFullyShown)
 		{
@@ -89,12 +102,11 @@ bool ModeEndingText::Process()
 		}
 		else
 		{
-			// サウンド停止
-			SoundServer::GetInstance()->Stop("BGM_Ending");
+		
 
 			// もう一回確定でLOGOへ
 			ModeServer::GetInstance()->Clear();
-			ModeServer::GetInstance()->Add(new ModeLogo(), 100, "logo");
+			ModeServer::GetInstance()->Add(new ModeEndingVideo(), 100, "Video");
 			return true;
 		}
 	}

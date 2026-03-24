@@ -3,14 +3,6 @@
 #include "PlayerBase.h"
 #include "PlayerShieldSystem.h"
 
-// 被弾設定
-namespace HitConfig
-{
-	constexpr float HIT_SPEED = 15.0f;	// 被弾時の吹き飛び速度
-	constexpr float HIT_DECAY = 0.9f;	// 被弾時の吹き飛び減衰率
-	constexpr float HIT_TIME = 30.0f;	// 被弾時間
-}
-
 PlayerBase::PlayerBase()
 {
 	_cameraManager = nullptr;	// カメラマネージャー
@@ -74,8 +66,8 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	int modelHandle = ResourceServer::GetInstance()->GetHandle(config.modelName);
 	_animManager.SetModelHandle(modelHandle);
 
-	_vPos = VGet(0, 0, 0);	// 位置の初期化
-	_vDir = VGet(0, 0, -1);	// 向きの初期化
+	_vPos = VGet(0.0f, 0.0f, 0.0f);	// 位置の初期化
+	//_vDir = VGet(1.0f, 0.0f, 1.0f);	// 向きの初期化
 
 	// 位置の初期化
 	_fMoveSpeed = 0.0f;			// 移動速度

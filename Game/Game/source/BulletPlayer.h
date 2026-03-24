@@ -10,17 +10,19 @@ namespace BulletPlayerConstants
 // 通常弾設定定数
 namespace NormalBulletConfig
 {
-	constexpr float RADIUS = 20.0f;
-	constexpr float DAMAGE = 50.0f;
-	constexpr float SPEED = 20.0f;
+	constexpr float RADIUS = 20.0f;		// 弾半径
+	constexpr float DAMAGE = 50.0f;		// 弾のダメージ
+	constexpr float SPEED = 20.0f;		// 弾の速度
+	constexpr float LIFE_TIME = 120.0f;	// 弾の寿命
 }
 
 // 貫通弾設定定数
 namespace PiercingBulletConfig
 {
-	constexpr float RADIUS = 15.0f;
-	constexpr float DAMAGE = 10.0f;
-	constexpr float SPEED = 25.0f;
+	constexpr float RADIUS = 15.0f;		// 弾半径
+	constexpr float DAMAGE = 10.0f;		// 弾のダメージ
+	constexpr float SPEED = 25.0f;		// 弾の速度
+	constexpr float LIFE_TIME = 120.0f;	// 弾の寿命
 }
 
 // 弾発射設定定数
@@ -28,7 +30,6 @@ namespace BulletShootConstants
 {
 	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);	// 右腕発射位置オフセット
 	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);	// 左腕発射位置オフセット
-	constexpr int LIFE_TIME = 120;							// 弾の寿命
 };
 
 // 弾のエネルギー消費量定数
@@ -91,6 +92,9 @@ public:
 	void SetCameraManager(std::shared_ptr<CameraManager>cameraManager){ _cameraManager = cameraManager; }	
 
 private:
+
+	/// @brief エイムカメラの角度更新処理
+	void UpdateAimCameraAngle();
 
 	/// @brief 弾発射処理
 	void ProcessShoot()override;

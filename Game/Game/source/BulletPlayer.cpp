@@ -49,34 +49,8 @@ bool BulletPlayer::Process()
 {
 	PlayerBase::Process();
 
-	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
-
-	if (isAiming)
-	{
-		// カメラマネージャーから現在のエイム方向を取得
-		VECTOR aimDir = _cameraManager->GetCameraDir();
-
-		// Y軸成分を無視して水平にする
-		VECTOR aimDirHorizontal = VGet(aimDir.x, 0.0f, aimDir.z);
-
-		// 正規化してプレイヤーの向きにセットする
-		if (VSquareSize(aimDirHorizontal) > 0.0f)
-		{
-			aimDirHorizontal = VNorm(aimDirHorizontal);
-
-			SetDir(aimDirHorizontal);
-		}
-	}
-	else
-	{
-		// 通常移動時
-		float moveSquare = VSquareSize(_vMove);
-		if (moveSquare > 0.0f)
-		{
-			SetDir(VNorm(_vMove));
-		}
-	}
-
+	// エイムカメラの角度更新
+	UpdateAimCameraAngle();
 
 	return true;
 }
@@ -207,6 +181,7 @@ BulletConfig BulletPlayer::GetBulletConfig()
 			config.radius		= NBC::RADIUS;			// 弾の半径
 			config.damage		= NBC::DAMAGE;			// ダメージ量
 			config.speed		= NBC::SPEED;			// 移動速度
+			config.lifeTime		= NBC::LIFE_TIME;		// 弾の自然消滅時間
 
 			break;
 		}
@@ -218,6 +193,7 @@ BulletConfig BulletPlayer::GetBulletConfig()
 			config.radius		= PBC::RADIUS;				// 弾の半径
 			config.damage		= PBC::DAMAGE;				// ダメージ量
 			config.speed		= PBC::SPEED;				// 移動速度
+			config.lifeTime		= PBC::LIFE_TIME;			// 弾の自然消滅時間
 
 			break;
 		}
@@ -231,7 +207,6 @@ BulletConfig BulletPlayer::GetBulletConfig()
 	config.shooterType	= CHARA_TYPE::BULLET_PLAYER;	// キャラタイプ
 	config.startPos		= VAdd(_vPos, worldOffset);		// 発射開始位置
 	config.dir			= GetShootDirection();			// エイムカメラの向いてる方向
-	config.lifeTime		= BSC::LIFE_TIME;				// 弾の自然消滅時間
 
 	return config;
 }
@@ -280,6 +255,47 @@ void BulletPlayer::DrawShootIntervalTime()
 
 	// 弾発射カウントを表示
 	DrawFormatString(10, 510, GetColor(255, 255, 255), "弾発射カウント: %3.2f", _shootIntervalTimer);
+}
+
+void BulletPlayer::UpdateAimCameraAngle()
+{
+	// エイムカメラが有効かどうかをチェック
+	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
+
+	// エイムカメラが有効な場合
+	if(isAiming)
+	{
+		/* エイム方向と移動方向を向きにする */
+
+		// カメラマネージャーから現在のエイム方向を取得
+		VECTOR aimDir = _cameraManager->GetCameraDir();
+
+		// Y軸成分を無視して水平にする
+		VECTOR aimDirHorizontal = VGet(aimDir.x, 0.0f, aimDir.z);
+
+		// 正規化してプレイヤーの向きにセットする
+		if(VSquareSize(aimDirHorizontal) > 0.0f)
+		{
+			// 水平方向のエイム方向を正規化
+			aimDirHorizontal = VNorm(aimDirHorizontal);
+
+			// プレイヤーの向きにセット
+			SetDir(aimDirHorizontal);
+		}
+	}
+	// そうでない場合
+	else
+	{
+		// 通常移動時
+		float moveSquare = VSquareSize(_vMove);
+
+		// 移動入力がある場合は移動方向を向きにする
+		if(moveSquare > 0.0f)
+		{
+			// 移動方向を正規化してプレイヤーの向きにセットする
+			SetDir(VNorm(_vMove));
+		}
+	}
 }
 
 void BulletPlayer::ProcessShoot()

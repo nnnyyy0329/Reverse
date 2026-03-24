@@ -28,6 +28,9 @@ bool ModeScenario::Initialize()
 	_texts[8] = "｢なんだって、クロに仲間がいるのか？｣";
 	_texts[9] = "｢そんなんじゃねぇよ。とにかくホントに嬢ちゃんがいるなら急いだがいいぜ、\nエイトお前も用心しろよ、とっておきの力を貸してやるから」";
 
+	// BGM をシナリオ開始時に一度だけ再生する
+	SoundServer::GetInstance()->Play("BGM_OpeningScenario", DX_PLAYTYPE_LOOP);
+
 	// 画像リソース取得（命名規則: "GameStartText", "GameStartText1", ...）
 	for(int i = 0; i < TEXT_COUNT; ++i)
 	{
@@ -64,10 +67,6 @@ bool ModeScenario::Process()
 	// 文字自動展開
 	if(!_textFullyShown)
 	{
-		// サウンド再生
-		SoundServer::GetInstance()->Play("BGM_OpeningScenario", DX_PLAYTYPE_LOOP);
-
-
 		_charTimer++;
 		if(_charTimer >= kCharInterval)
 		{

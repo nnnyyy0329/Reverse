@@ -53,7 +53,7 @@
       <Filter>GameObject\CharaBase</Filter>
     </ClCompile>
     <ClCompile Include="source\LightManager.cpp">
-      <Filter>Light</Filter>
+      <Filter>Mode\Light</Filter>
     </ClCompile>
     <ClCompile Include="source\ModeGame.cpp">
       <Filter>Mode\Game</Filter>
@@ -233,6 +233,9 @@
     <ClCompile Include="source\EventCamera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModeEndingVideo.cpp">
+      <Filter>Mode\EndingVideo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AbilityBase.h">
@@ -293,7 +296,7 @@
       <Filter>GameObject\CharaBase</Filter>
     </ClInclude>
     <ClInclude Include="source\LightManager.h">
-      <Filter>Light</Filter>
+      <Filter>Mode\Light</Filter>
     </ClInclude>
     <ClInclude Include="source\MenuItemBase.h">
       <Filter>Mode\Menu</Filter>
@@ -455,6 +458,9 @@
     <ClInclude Include="source\EventCamera.h">
       <Filter>Camera</Filter>
     </ClInclude>
+    <ClInclude Include="source\ModeEndingVideo.h">
+      <Filter>Mode\EndingVideo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Application">
@@ -504,9 +510,6 @@
     </Filter>
     <Filter Include="GameObject\CharaBase\Enemy\state">
       <UniqueIdentifier>{44c6c8a1-7651-4700-9499-36dde91a8f9b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Light">
-      <UniqueIdentifier>{5f3de31b-18bc-4482-b88b-2588d6bd9f6e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Mode\Load">
       <UniqueIdentifier>{35198714-23c1-46cf-8a55-86d69483f8d3}</UniqueIdentifier>
@@ -615,6 +618,12 @@
     </Filter>
     <Filter Include="Attack\AttackSystem\Effect">
       <UniqueIdentifier>{326a01b9-9c72-4633-8585-c04bb0a5bff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\EndingVideo">
+      <UniqueIdentifier>{e0043e87-a35c-43d4-90de-67f7c8aaf5ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mode\Light">
+      <UniqueIdentifier>{5f3de31b-18bc-4482-b88b-2588d6bd9f6e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

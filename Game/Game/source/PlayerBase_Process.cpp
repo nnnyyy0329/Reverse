@@ -312,6 +312,9 @@ void PlayerBase::ProcessHit()
 		ProcessPlayAnimation();			// アニメーション切り替え実行
 		_oldPlayerState = _playerState;	// 切り替え後に更新
 
+		// 被弾時間をリセット
+		_fHitTime = HitConfig::HIT_TIME;
+
 		return;
 	}
 
@@ -480,4 +483,6 @@ bool PlayerBase::IsAnimationFinishedConst()const
 		// 現在のアニメーションが終了しているか
 		return animManager->IsAnimationFinished();
 	}
+
+	return false;
 }

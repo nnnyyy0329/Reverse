@@ -17,6 +17,7 @@ public:
 protected:
 
 	int _titleHandle;        // タイトル画像ハンドル
+	int _titleTextHandle;    // タイトルテキスト画像ハンドル
 	int _alpha;             // フェード用アルファ値
 	int _fadeState;         // フェード状態
 	int _frameCount;        // フレームカウント
@@ -28,4 +29,7 @@ private:
 
 
 	int _menuIndex;
+
+
+	int _bgmHandle;
 };
