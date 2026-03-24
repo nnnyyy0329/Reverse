@@ -9,34 +9,15 @@ namespace
 
 	// ノックバック制御
 	constexpr auto DAMAGE_KNOCKBACK_SPEED = 8.0f;// ノックバック速度
-	constexpr auto DAMAGE_KNOCKBACK_TIME = 15.0f;// ノックバック時間
+	constexpr auto DAMAGE_KNOCKBACK_TIME = 12.0f;// ノックバック時間
 	constexpr auto DOWN_KNOCKBACK_SPEED = 18.0f;// ダウンノックバック速度
-	constexpr auto DOWN_KNOCKBACK_TIME = 90.0f;// ダウンノックバック時間
+	constexpr auto DOWN_KNOCKBACK_TIME = 75.0f;// ダウンノックバック時間
 	constexpr auto KNOCKBACK_DECELERATION = 0.95f;// ノックバック減速率
 
 	// 判定閾値
 	constexpr auto KNOCKBACK_MIN_DISTANCE = 0.001f;// ノックバック方向計算の最小距離
 
 	constexpr auto BLEND_FRAME = 10.0f;// アニメーションブレンドフレーム数
-
-	// 被ダメージ
-	constexpr auto DAMAGE_ANIM_LENGTH = 42.0f;// ダメージアニメーションの長さ
-	// コンボ数ごとに再生スピードを遅くする
-	constexpr float DAMAGE_ANIM_SPEEDS[] = { 1.5f, 1.0f, 0.8f, 0.5f };
-	// コンボ数から再生スピードを取得
-	float GetDamageAnimSpeed(int comboCnt)
-	{
-		int index = comboCnt - 1;// コンボは1から始まるため
-		if (index < 0) { index = 0; }
-		if (index >= 4) { index = 3; }
-		return DAMAGE_ANIM_SPEEDS[index];
-	}
-	// コンボ数からステート時間を取得
-	float GetDamageStateTime(int comboCnt)
-	{
-		// アニメージョンの長さを再生スピードで割った値を返す
-		return DAMAGE_ANIM_LENGTH / GetDamageAnimSpeed(comboCnt);
-	}
 }
 
 namespace Common
@@ -44,12 +25,10 @@ namespace Common
 	// 被ダメージ
 	void Damage::Enter(Enemy* owner) 
 	{
-		// Enter時点のコンボ数を保存
-		_comboCnt = owner->GetDamageComboCnt();
-
 		// タイマー初期化
 		_fTimer = 0.0f;
 		_fKnockbackSpeed = DAMAGE_KNOCKBACK_SPEED;
+		_param = owner->GetEnemyParam();
 
 		// ターゲット情報取得
 		auto targetInfo = GetTargetInfo(owner);
@@ -78,8 +57,7 @@ namespace Common
 
 		// ここでアニメーション設定
 		// 敵の種類ごとのアニメーション名を取得
-		const auto& param = owner->GetEnemyParam();
-		owner->GetAnimManager()->ChangeAnimationByName(param.animDamage, BLEND_FRAME, 1, GetDamageAnimSpeed(_comboCnt));
+		owner->GetAnimManager()->ChangeAnimationByName(_param.animDamage, BLEND_FRAME, 1, _param.fDamageAnimSpeed);
 	}
 
 	std::shared_ptr<EnemyState> Damage::Update(Enemy* owner) 
@@ -102,9 +80,9 @@ namespace Common
 		}
 
 		// コンボ数に応じたステート時間
-		if (_fTimer >= GetDamageStateTime(_comboCnt))
+		if (_fTimer >= owner->GetEnemyParam().fDamageTime)
 		{
-			return owner->GetAfterDamageStateSelector(_comboCnt);
+			return owner->GetAfterDamageStateSelector();
 		}
 
 		return nullptr;
@@ -189,7 +167,10 @@ namespace Common
 		owner->GetAnimManager()->ChangeAnimationByName(param.animDown, BLEND_FRAME, 1);
 
 		// SE
-		SoundServer::GetInstance()->Play("SE_En_Down", DX_PLAYTYPE_BACK);
+		if (param.bDownSE)
+		{
+			SoundServer::GetInstance()->Play("SE_En_Down", DX_PLAYTYPE_BACK);
+		}
 	}
 
 	std::shared_ptr<EnemyState> Down::Update(Enemy* owner)
@@ -214,6 +195,15 @@ namespace Common
 		// ダウン時間経過チェック
 		if (_fTimer >= DOWN_TIME)
 		{
+			// 死亡チェック
+			if(owner->IsDead())
+			{
+				// エフェクト
+				EffectServer::GetInstance()->Play("En_Dead02", owner->GetPos());
+
+				owner->EnableRemove();// オブジェクト削除可能設定
+			}
+
 			return owner->GetAfterDownStateSelector();
 		}
 

@@ -183,6 +183,9 @@ bool ModeGame::Initialize()
 
 	_shadowMapHandle = MakeShadowMap(2048, 2048);
 
+	//SetFogEnable(TRUE);// フォグを有効にする
+	//SetFogColor(0, 0, 0);// フォグの色を設定
+	//SetFogStartEnd(500.0f, 2500.0f);// フォグの開始距離と終了距離を設定
 
 	return true;
 }
@@ -759,6 +762,9 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 		BulletManager::GetInstance()->ClearAllBullets();
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
+
+	auto player = _playerManager->GetActivePlayerShared();
+	player->SetDir(VGet(0.0f, 0.0f, -1.0f));
 
 	_cameraManager->Reset();
 
