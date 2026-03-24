@@ -350,6 +350,8 @@ public:
 	PLAYER_COMBAT_STATE GetCombatState()const{ return _playerState.combatState; }		// 特殊状態取得
 	void SetCombatState(PLAYER_COMBAT_STATE state){ _playerState.combatState = state; }	// 特殊状態設定
 
+	float GetPlayerMaxLife()const{ return _playerConfig.maxLife; }	// プレイヤーの最大体力取得
+
 
 	// 吸収攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 	/// @brief 吸収攻撃システムの取得関数

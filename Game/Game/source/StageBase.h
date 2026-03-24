@@ -61,6 +61,9 @@ public:
 	// ステージ切り替え
 	int GetNextStageNumFromTrigger(const std::string& triggerName);// トリガー名から次のステージ番号を取得
 
+	// マップモデルを名前で削除（EventA/EventB の消去に使用）
+	void RemoveMapModelByName(const std::string& name);
+
 	// jsonファイルからステージデータを読み込む
 	void LoadStageDataFromJson(
 		const std::string& filePath,
@@ -99,6 +102,13 @@ protected:
 	int _stageNum;// ステージ番号
 
 	int _totalEnemyCnt;// ステージ内の敵の総数
+
+	
+	bool _bFirstRangedKilled = false;
+	bool _bAllClearNotified = false;// 通知フラグ（初回撃破・全滅通知など）
+
+	
+
 
 	std::vector<TRIGGERPOS> _triggerList;// トリガーリスト
 

@@ -181,6 +181,7 @@ BulletConfig BulletPlayer::GetBulletConfig()
 			config.radius		= NBC::RADIUS;			// 弾の半径
 			config.damage		= NBC::DAMAGE;			// ダメージ量
 			config.speed		= NBC::SPEED;			// 移動速度
+			config.lifeTime		= NBC::LIFE_TIME;		// 弾の自然消滅時間
 
 			break;
 		}
@@ -192,6 +193,7 @@ BulletConfig BulletPlayer::GetBulletConfig()
 			config.radius		= PBC::RADIUS;				// 弾の半径
 			config.damage		= PBC::DAMAGE;				// ダメージ量
 			config.speed		= PBC::SPEED;				// 移動速度
+			config.lifeTime		= PBC::LIFE_TIME;			// 弾の自然消滅時間
 
 			break;
 		}
@@ -205,7 +207,6 @@ BulletConfig BulletPlayer::GetBulletConfig()
 	config.shooterType	= CHARA_TYPE::BULLET_PLAYER;	// キャラタイプ
 	config.startPos		= VAdd(_vPos, worldOffset);		// 発射開始位置
 	config.dir			= GetShootDirection();			// エイムカメラの向いてる方向
-	config.lifeTime		= BSC::LIFE_TIME;				// 弾の自然消滅時間
 
 	return config;
 }

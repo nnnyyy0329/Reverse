@@ -13,6 +13,7 @@
 #include "AbsorbAttack.h"
 #include "ModeTextBox.h"
 #include "CameraShakeSystem.h"
+#include "ModeEndingText.h"
 
 // プレベータようパラメータ
 namespace
@@ -682,12 +683,15 @@ void ModeGame::ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage)
 }
 
 // プレイヤーとトリガーの当たり判定
+
+
+// 既存: void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 {
-	if (!player || !_stage) { return; }
+	if(!player || !_stage) { return; }
 
 	const auto& triggerList = _stage->GetTriggerList();
-	if (triggerList.empty()) { return; }
+	if(triggerList.empty()) { /* continue to check events below */ }
 
 	// プレイヤーの現在位置を取得
 	VECTOR vCurrentPos = player->GetPos();
@@ -707,10 +711,10 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 	const float constDetectionMargin = 50.0f;
 	const float detectionRadius = capsuleR + constDetectionMargin;
 
-	// 全てのトリガーを走査
-	for (const auto& trigger : triggerList)
+	// １) 既存トリガーの判定（そのまま）
+	for(const auto& trigger : triggerList)
 	{
-		if (trigger.modelHandle <= 0 || trigger.collisionFrame == -1) { continue; }
+		if(trigger.modelHandle <= 0 || trigger.collisionFrame == -1) { continue; }
 
 		// 球範囲内にあるモデルのポリゴンを取得
 		MV1_COLL_RESULT_POLY_DIM polyResult = MV1CollCheck_Sphere(
@@ -721,17 +725,17 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 		);
 
 		// ポリゴンが検出された
-		if (polyResult.HitNum > 0)
+		if(polyResult.HitNum > 0)
 		{
 			bool hasHit = false;
 
 			// 全てのポリゴンとカプセルの当たり判定
-			for (int i = 0; i < polyResult.HitNum; ++i)
+			for(int i = 0; i < polyResult.HitNum; ++i)
 			{
 				const MV1_COLL_RESULT_POLY& poly = polyResult.Dim[i];
 
 				// カプセルと三角形ポリゴンの当たり判定
-				if (HitCheck_Capsule_Triangle(
+				if(HitCheck_Capsule_Triangle(
 					vCapsuleTop, vCapsuleBottom, capsuleR,
 					poly.Position[0], poly.Position[1], poly.Position[2]))
 				{
@@ -748,15 +752,6 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 			{
 				int nextStageNum = _stage->GetNextStageNumFromTrigger(trigger.name);
 				RequestStageChange(nextStageNum);
-
-				/*auto* self = this;
-				auto modeTextBox = new ModeTextBox("GameSerif1", [self, nextStageNum]()
-					{
-						self->RequestStageChange(nextStageNum);
-					});
-
-				ModeServer::GetInstance()->Add(modeTextBox, 200, "textbox");*/
-
 				return;
 			}
 		}
@@ -766,8 +761,101 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 			MV1CollResultPolyDimTerminate(polyResult);
 		}
 	}
-}
 
+	// ２) EventA / EventB の判定と削除
+	const auto& mapObjList = _stage->GetMapModelPosList();
+	if(!mapObjList.empty())
+	{
+		for(const auto& obj : mapObjList)
+		{
+			// EventA / EventB のみチェック
+			if(obj.name != "EventA" && obj.name != "EventB") { continue; }
+			if(obj.modelHandle <= 0 || obj.collisionFrame == -1) { continue; }
+
+			MV1_COLL_RESULT_POLY_DIM polyResult = MV1CollCheck_Sphere(
+				obj.modelHandle,
+				obj.collisionFrame,
+				vCapsuleCenter,
+				detectionRadius
+			);
+
+			if(polyResult.HitNum > 0)
+			{
+				bool hasHit = false;
+
+				for(int i = 0; i < polyResult.HitNum; ++i)
+				{
+					const MV1_COLL_RESULT_POLY& poly = polyResult.Dim[i];
+
+					if(HitCheck_Capsule_Triangle(
+						vCapsuleTop, vCapsuleBottom, capsuleR,
+						poly.Position[0], poly.Position[1], poly.Position[2]))
+					{
+						hasHit = true;
+						break;
+					}
+				}
+
+				MV1CollResultPolyDimTerminate(polyResult);
+
+				if(hasHit)
+				{
+					// ステージ制限を取得
+					int currentStage = GetCurrentStageNum();
+
+					// EventA / EventB の処理（ステージ制限を追加）
+					if(obj.name == "EventA")
+					{
+						// EventA はステージ0のみ有効
+						if(currentStage != 0) { continue; }
+
+						ModeTextBox::ShowChain
+						(
+							{
+							{"Textbox_Normal", "クロ、あそこにいるのがお前の仲間か？"},
+							{"Textbox_Kage", "だから仲間じゃねえって！\nこのまま近づいてLTボタンを押してあいつに向かって左手をかざしてみろ"}
+							}, false, 100, "eventa"
+						);
+						// モデルは消す（当たり判定のみ利用）
+						_stage->RemoveMapModelByName(obj.name);
+					}
+					else if(obj.name == "EventB")
+					{
+						// EventB はステージ2のみ有効
+						if(currentStage != 2) { continue; }
+
+						// EventB: テキストを表示した後、エンディングへ移行する
+						// 最終テキスト閉鎖時に ModeEndingText を追加して現在の ModeGame を削除する
+						ModeTextBox* finalBox = new ModeTextBox
+						(
+							"Textbox_Scared",
+							"っ！あそこに倒れてるのって！",
+							[this]() 
+							{
+								// テキスト閉じたらエンディングモードへ
+								ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
+								// ModeGame を削除して遷移
+								ModeServer::GetInstance()->Del(this);
+							},
+							false
+						);
+
+						ModeServer::GetInstance()->Add(finalBox, 200, "eventb_ending");
+
+						// 当たり判定で消す（再トリガー防止）
+						_stage->RemoveMapModelByName(obj.name);
+					}
+
+					return;
+				}
+			}
+			else
+			{
+				MV1CollResultPolyDimTerminate(polyResult);
+			}
+		}
+	}
+}
 // 吸収攻撃の当たり判定チェック関数
 void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<PlayerBase> player, std::shared_ptr<CharaBase>enemy)
 {
