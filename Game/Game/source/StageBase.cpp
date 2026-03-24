@@ -464,7 +464,7 @@ void StageBase::Process()
 					if(enemy->GetModelName() == "Ranged" || enemy->GetModelName() == "RangedEnemy")
 					{
 						_bFirstRangedKilled = true;
-						ModeTextBox::Show("Textbox_Kage", "今のやつのエネルギーでできることが増えたから試してみようぜ。", false, 100, "stage2_first_ranged");
+						//ModeTextBox::Show("Textbox_Kage", "今のやつのエネルギーでできることが増えたから試してみようぜ。", false, 100, "stage2_first_ranged");
 					}
 				}
 

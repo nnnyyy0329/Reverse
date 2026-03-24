@@ -813,7 +813,7 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 						(
 							{
 							{"Textbox_Normal", "クロ、あそこにいるのがお前の仲間か？"},
-							{"Textbox_Kage", "だから仲間じゃねえって！\nこのまま近づいてLボタンを押してあいつに向かって左手をかざしてみろ"}
+							{"Textbox_Kage", "だから仲間じゃねえって！\nこのまま近づいてLTボタンを押してあいつに向かって左手をかざしてみろ"}
 							}, false, 100, "eventa"
 						);
 						// モデルは消す（当たり判定のみ利用）
