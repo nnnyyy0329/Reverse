@@ -465,16 +465,42 @@ void BulletPlayer::ShootBullet()
 	// 弾の発射
 	bullet->Shoot(GetBulletConfig(), GetBulletEffectConfig(), BULLET_OWNER_TYPE::BULLET_PLAYER);
 
+	auto bulletType = GetBulletConfig().bulletType;
+
 	// 弾のタイプに応じたサウンド再生処理
-	ShootSoundPlay(GetBulletConfig().bulletType);
+	ShootSoundPlay(bulletType);
 
 	// 発射時にエネルギー消費
 	EnergyManager* energyManager = EnergyManager::GetInstance();
-	if(energyManager)
+	if(!energyManager){ return; }
+
+	switch(bulletType)
 	{
-		// エネルギーを消費
-		energyManager->ConsumeEnergy(BCEC::CONSUME_NORMAL_BULLET_ENERGY);
+		case BULLET_TYPE::NORMAL: // 通常弾
+		{
+			// 通常弾のエネルギー消費
+			energyManager->ConsumeEnergy(energyManager->GetShootNormalBulletConsumeEnergy());
+
+			break;
+		}
+
+		case BULLET_TYPE::PIERCING: // 貫通弾
+		{
+			// 貫通弾のエネルギー消費
+			energyManager->ConsumeEnergy(energyManager->GetShootPiercingBulletConsumeEnergy());
+
+			break;
+		}
+
+		case BULLET_TYPE::NONE:
+		default:
+		{
+			return;
+		}
 	}
+
+	//// エネルギーを消費
+	//energyManager->ConsumeEnergy(BCEC::CONSUME_NORMAL_BULLET_ENERGY);
 
 	// 右腕と左腕の切り替え
 	_bIsShootFromRightArm = !_bIsShootFromRightArm; 
