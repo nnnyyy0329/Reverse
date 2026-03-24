@@ -166,7 +166,7 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 		configs[0].attackColTop			= _vMove,				// 攻撃方向
 		configs[0].attackDelay			= 15.0f,				// 発生フレーム
 		configs[0].attackDuration		= 5.0f,					// 持続フレーム
-		configs[0].attackRecovery		= 12.0f,				// 硬直フレーム
+		configs[0].attackRecovery		= 16.0f,				// 硬直フレーム
 		configs[0].damage				= 20.0f,				// ダメージ
 		configs[0].attackState			= ATTACK_STATE::ACTIVE,	// 攻撃状態
 		configs[0].attackMoveSpeed		= 3.0f,					// 攻撃中の移動速度
@@ -185,7 +185,7 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 		configs[1].attackColTop			= _vMove,				// 攻撃方向
 		configs[1].attackDelay			= 15.0f,				// 発生フレーム
 		configs[1].attackDuration		= 5.0f,					// 持続フレーム
-		configs[1].attackRecovery		= 12.0f,				// 硬直フレーム
+		configs[1].attackRecovery		= 16.0f,				// 硬直フレーム
 		configs[1].damage				= 30.0f,				// ダメージ
 		configs[1].attackState			= ATTACK_STATE::ACTIVE,	// 攻撃状態
 		configs[1].attackMoveSpeed		= 0.0f,					// 攻撃中の移動速度

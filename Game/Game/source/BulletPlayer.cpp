@@ -479,7 +479,7 @@ void BulletPlayer::ShootBullet()
 		case BULLET_TYPE::NORMAL: // 通常弾
 		{
 			// 通常弾のエネルギー消費
-			energyManager->ConsumeEnergy(energyManager->GetShootNormalBulletConsumeEnergy());
+			energyManager->ConsumeEnergy(energyManager->GetNormalBulletEnergyCost());
 
 			break;
 		}
@@ -487,7 +487,7 @@ void BulletPlayer::ShootBullet()
 		case BULLET_TYPE::PIERCING: // 貫通弾
 		{
 			// 貫通弾のエネルギー消費
-			energyManager->ConsumeEnergy(energyManager->GetShootPiercingBulletConsumeEnergy());
+			energyManager->ConsumeEnergy(energyManager->GetPiercingBulletEnergyCost());
 
 			break;
 		}
@@ -499,7 +499,7 @@ void BulletPlayer::ShootBullet()
 		}
 	}
 
-	//// エネルギーを消費
+	// エネルギーを消費
 	//energyManager->ConsumeEnergy(BCEC::CONSUME_NORMAL_BULLET_ENERGY);
 
 	// 右腕と左腕の切り替え

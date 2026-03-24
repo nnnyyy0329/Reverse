@@ -34,7 +34,10 @@ void PlayerBase::ProcessMovePlayer()
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
 	// 攻撃中は移動入力を受け付けない
-	if(IsAttacking()){ return; }					
+	if(IsAttacking()){ return; }
+
+	// 弾発射中は移動入力を受け付けない
+	if(_playerState.IsStateShooting()){ return; }
 
 	// 特殊ステート中は移動入力を受け付けない(変身関連、回避、被弾や死亡)
 	if(_playerState.IsStateCombat()){ return; }		
@@ -42,7 +45,7 @@ void PlayerBase::ProcessMovePlayer()
 	// 吸収攻撃中は移動入力を受け付けない
 	if(_playerState.IsStateAbsorbing()){ return; }	
 
-	// 発射中でエイムモードでない場合は移動入力を受け付けない
+	// エイムモードでなく、発射中の場合は移動入力を受け付けない
 	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
 	if(!isAiming && _playerState.IsStateShooting()){ return; }	
 
@@ -349,17 +352,17 @@ void PlayerBase::ProcessDebug()
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG3))
 	{
-		//_fLife -= 100.0f;
+		_fLife -= 100.0f;
 	}
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG1))
 	{
-		//EnergyManager::GetInstance()->ConsumeEnergy(25.0f);
+		EnergyManager::GetInstance()->ConsumeEnergy(25.0f);
 	}
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG2))
 	{
-		//EnergyManager::GetInstance()->AddEnergy(50.0f);
+		EnergyManager::GetInstance()->AddEnergy(50.0f);
 	}
 }
 

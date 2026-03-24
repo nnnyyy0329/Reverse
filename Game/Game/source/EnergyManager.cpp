@@ -143,12 +143,12 @@ float EnergyManager::GetAbsorbEnergy()const
 	return EGC::ABSORB;
 }
 
-float EnergyManager::GetShootNormalBulletConsumeEnergy()const
+float EnergyManager::GetNormalBulletEnergyCost()const
 {
 	return ECC::SHOOT_NORMAL_BULLET;
 }
 
-float EnergyManager::GetShootPiercingBulletConsumeEnergy()const
+float EnergyManager::GetPiercingBulletEnergyCost()const
 {
 	return ECC::SHOOT_PIERCING_BULLET;
 }

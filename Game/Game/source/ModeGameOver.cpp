@@ -130,6 +130,7 @@ bool ModeGameOver::Process()
 			auto gm = ModeServer::GetInstance()->Get("game");
 			if(gm != nullptr)
 			{
+				//gm->Terminate();
 				ModeServer::GetInstance()->Del(gm);
 			}
 

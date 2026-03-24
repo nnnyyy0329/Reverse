@@ -98,10 +98,11 @@ public:
     float GetAbsorbEnergy()const;
 
 	// 通常弾のエネルギー消費量
-	float GetShootNormalBulletConsumeEnergy()const;
+	float GetNormalBulletEnergyCost()const;
 
 	// 貫通弾のエネルギー消費量
-	float GetShootPiercingBulletConsumeEnergy()const;
+	float GetPiercingBulletEnergyCost()const;
+
 
 private:
     

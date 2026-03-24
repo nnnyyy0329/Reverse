@@ -590,6 +590,9 @@ void PlayerManager::RecoveryLifeByTransform(PLAYER_TYPE transformPlayerType)
 		// プレイヤーの体力を半回復
 		_activePlayer->SetLife(_activePlayer->GetLife() + halfLife);
 
+		// 変身時の回復サウンド再生y
+		SoundServer::GetInstance()->Play("", DX_PLAYTYPE_BACK);	
+
 		// プレイヤーのライフが最大体力より多くなったら
 		if(_activePlayer->GetLife() >= _activePlayer->GetPlayerMaxLife())
 		{

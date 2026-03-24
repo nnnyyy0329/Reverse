@@ -246,15 +246,15 @@ bool ModeGame::Process()
 
 	// Debug: ゲームパッドの右トリガー(RT)のトリガー状態で全滅（デバッグ用）
 	// InputManager の TriggerButtonState::rtTrg が true になる瞬間を検出して実行します。
-	if(im.GetTrigger().rtTrg)
-	{
-		//if(_stage)
-		//{
-		//	_stage->DebugKillAllEnemies();
-		//	// 直ちにステージの Process() を1回進めて全滅時のテキスト表示等を発動させる
-		//	_stage->Process();
-		//}
-	}
+	//if(im.GetTrigger().rtTrg)
+	//{
+	//	if(_stage)
+	//	{
+	//		_stage->DebugKillAllEnemies();
+	//		// 直ちにステージの Process() を1回進めて全滅時のテキスト表示等を発動させる
+	//		_stage->Process();
+	//	}
+	//}
 	// ゲームオーバーチェック
 	{
 		auto activePlayer = _playerManager->GetActivePlayerShared();
@@ -278,24 +278,28 @@ bool ModeGame::Process()
 	// startでメニューを開く
 	if (im.IsTrigger(INPUT_ACTION::MENU))
 	{
-		//ModeMenu* modeMenu = new ModeMenu();
-		//ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+		ModeMenu* modeMenu = new ModeMenu();
+		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 
-		//modeMenu->SetCameraManager(_cameraManager);
+		modeMenu->SetCameraManager(_cameraManager);
 
-		//// メニュー項目を作成
-		//auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
-		//auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
-		//auto useCollision = new MenuItemUseCollision(this, "UseCollision");
-		//auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+		// メニュー項目を作成
+		auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
+		auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
+		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
+		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+		auto killAllEnemies = new MenuItemDeathAllEnemies(this, "KillAllEnemies");
 
-		//// デバッグカメラ切り替え
-		//debugCamera->SetCameraManagerMenu(_cameraManager);
+		// デバッグカメラ切り替え
+		debugCamera->SetCameraManagerMenu(_cameraManager);
 
-		//modeMenu->AddMenuItem(viewDebugInfo);
-		//modeMenu->AddMenuItem(viewCollision);
-		//modeMenu->AddMenuItem(useCollision);
-		//modeMenu->AddMenuItem(debugCamera);
+		killAllEnemies->SetStageBase(_stage);
+
+		modeMenu->AddMenuItem(viewDebugInfo);
+		modeMenu->AddMenuItem(viewCollision);
+		modeMenu->AddMenuItem(useCollision);
+		modeMenu->AddMenuItem(debugCamera);
+		modeMenu->AddMenuItem(killAllEnemies);
 	}
 
 	// クラスセット

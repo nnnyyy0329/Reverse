@@ -4,6 +4,7 @@
 // 前方宣言
 class ModeGame;
 class CameraManager;
+class StageBase;
 
 class SoundServer;
 
@@ -59,6 +60,20 @@ public:
 protected:
 	std::shared_ptr<CameraManager> _cameraManager;
 
+};
+
+// 敵をすべて倒すデバッグ機能
+class MenuItemDeathAllEnemies : public MenuItemBase
+{
+public:
+	MenuItemDeathAllEnemies(void* param, std::string text) : MenuItemBase(param, text){}
+
+	void SetStageBase(std::shared_ptr<StageBase> stage);
+
+	virtual int Selected();
+
+protected:
+	std::shared_ptr<StageBase> _stage;
 };
 
 
