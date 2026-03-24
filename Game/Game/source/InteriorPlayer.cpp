@@ -337,9 +337,9 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		config[0].attachType		= EFFECT_ATTACH_TYPE::LEFT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[0].isActiveSound = true,				// サウンドを有効にするか
-		config[0].soundName		= "iPlayerAttack",	// サウンド名
-		config[0].playSoundDelay = 15.0f,			// サウンド再生の遅延時間
+		config[0].isActiveSound		= true,						// サウンドを有効にするか
+		config[0].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[0].playSoundDelay	= 15.0f,					// サウンド再生の遅延時間
 		
 		/* カメラシェイク */
 		config[0].isActiveCameraShake	= true,	// カメラシェイクを有効にするか
@@ -362,9 +362,9 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		config[1].attachType		= EFFECT_ATTACH_TYPE::RIGHT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[1].isActiveSound = true,				// サウンドを有効にするか
-		config[1].soundName		= "iPlayerAttack",	// サウンド名
-		config[1].playSoundDelay = 15.0f,			// サウンド再生の遅延時間
+		config[1].isActiveSound		= true,						// サウンドを有効にするか
+		config[1].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[1].playSoundDelay	= 15.0f,					// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[1].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -387,9 +387,9 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		config[2].attachType		= EFFECT_ATTACH_TYPE::LEFT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[2].isActiveSound = true,				// サウンドを有効にするか
-		config[2].soundName		= "iPlayerAttack",	// サウンド名
-		config[2].playSoundDelay = 10.0f,			// サウンド再生の遅延時間
+		config[2].isActiveSound		= true,						// サウンドを有効にするか
+		config[2].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[2].playSoundDelay	= 10.0f,					// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[2].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -412,9 +412,9 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		config[3].attachType		= EFFECT_ATTACH_TYPE::CHARACTER_OFFSET,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[3].isActiveSound = true,				// サウンドを有効にするか
-		config[3].soundName		= "iPlayerAttack",	// サウンド名
-		config[3].playSoundDelay = 15.0f,			// サウンド再生の遅延時間
+		config[3].isActiveSound		= true,						// サウンドを有効にするか
+		config[3].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[3].playSoundDelay	= 15.0f,					// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[3].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -437,9 +437,9 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		config[4].attachType		= EFFECT_ATTACH_TYPE::LEFT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[4].isActiveSound = true,				// サウンドを有効にするか
-		config[4].soundName		= "iPlayerAttack",	// サウンド名
-		config[4].playSoundDelay = 30.0f,			// サウンド再生の遅延時間
+		config[4].isActiveSound		= true,						// サウンドを有効にするか
+		config[4].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[4].playSoundDelay	= 30.0f,					// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[4].isActiveCameraShake = true,	// カメラシェイクを有効にするか

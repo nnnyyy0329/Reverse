@@ -203,8 +203,8 @@ bool ModeLoading::Initialize()
 				rs->Register("SE_",						"sound/SE/SE05.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_TransPlayerDash",		"sound/SE/SE06.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_TransPlayerDodge",		"sound/SE/SE07.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_InteriorPlayerPunch",	"sound/SE/SE08.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_",						"sound/SE/SE09.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_InteriorPlayerPunch",	"sound/SE/se_9.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_DamagePlayer",			"sound/SE/SE09.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_Absorb",				"sound/SE/SE10.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_Evade",				"sound/SE/SE11.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_",						"sound/SE/SE12.mp3", RESOURCE_TYPE::Sound, 1.0f);

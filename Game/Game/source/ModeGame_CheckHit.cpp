@@ -391,11 +391,14 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 	auto bulletManager = BulletManager::GetInstance();
 	if(bulletManager == nullptr){ return; }
 
-	auto bullets = bulletManager->GetAllBullets();	// 登録された弾の取得
+	// 登録された弾の取得
+	auto bullets = bulletManager->GetAllBullets();	
 
-	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
+	// 自分のキャラタイプを取得
+	CHARA_TYPE myType = chara->GetCharaType();
 
-	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
+	// 削除する弾を一時保存するリスト
+	std::vector<std::shared_ptr<Bullet>> deadBullets;
 
 	// 全弾ループ
 	for(auto& bullet : bullets)
