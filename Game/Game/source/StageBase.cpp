@@ -86,7 +86,11 @@ StageBase::StageBase(int stageNum)
 				}
 			}
 		);
+	
 	}
+
+
+
 	//青いイベント読み込み（重複を防ぐ） — ステージ0/2のみ追加する
 	if(_stageNum == 0 || _stageNum == 2)
 	{
@@ -111,17 +115,10 @@ StageBase::StageBase(int stageNum)
 
 				m.modelHandle = MV1DuplicateModel(handleA);
 				m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
-				std::string colName = "UCX_" + m.name;
-				m.collisionFrame = MV1SearchFrame(m.modelHandle, colName.c_str());
 
 				MV1SetPosition(m.modelHandle, m.pos);
 				MV1SetRotationXYZ(m.modelHandle, m.rot);
 				MV1SetScale(m.modelHandle, m.scale);
-
-				if(m.collisionFrame != -1)
-				{
-					MV1SetupCollInfo(m.modelHandle, m.collisionFrame, 8, 8, 8);
-				}
 
 				_mapModelPosList.push_back(m);
 			}
@@ -141,17 +138,10 @@ StageBase::StageBase(int stageNum)
 
 				m.modelHandle = MV1DuplicateModel(handleB);
 				m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
-				std::string colName = "UCX_" + m.name;
-				m.collisionFrame = MV1SearchFrame(m.modelHandle, colName.c_str());
 
 				MV1SetPosition(m.modelHandle, m.pos);
 				MV1SetRotationXYZ(m.modelHandle, m.rot);
 				MV1SetScale(m.modelHandle, m.scale);
-
-				if(m.collisionFrame != -1)
-				{
-					MV1SetupCollInfo(m.modelHandle, m.collisionFrame, 8, 8, 8);
-				}
 
 				_mapModelPosList.push_back(m);
 			}
@@ -464,6 +454,15 @@ void StageBase::Process()
 					{
 						_bFirstRangedKilled = true;
 						//ModeTextBox::Show("Textbox_Kage", "今のやつのエネルギーでできることが増えたから試してみようぜ。", false, 100, "stage2_first_ranged");
+					}
+				}
+
+				// ステージ3ならTankを倒したときに通知
+				if(_stageNum == 2)
+				{
+					if(enemy->GetModelName() == "Tank")
+					{
+						_bBossDefeatedNotified = true;
 					}
 				}
 

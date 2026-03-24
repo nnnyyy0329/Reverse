@@ -75,6 +75,7 @@ public:
 	int GetTotalEnemyCnt() { return _totalEnemyCnt; }// ステージ内の敵の総数を取得
 	int GetCurrentEnemyCnt() { return static_cast<int>(_stageEnemies.size()); }// 現在の敵の数を取得
 	bool IsAllEnemiesDefeated() { return _stageEnemies.empty() && _totalEnemyCnt > 0; }// すべての敵が倒されたか
+	bool IsBossDefeated() { return _bBossDefeatedNotified; }// ボスが倒されたか
 
 	// BGM関連
 	void PlayStageBGM();// ステージBGMを再生
@@ -88,6 +89,8 @@ public:
 	void DebugKillAllEnemies();// デバッグ：敵を全滅させる
 
 	void SetPlayerManager(std::shared_ptr<PlayerManager>player){ _playerManager = player; }// プレイヤーマネージャーセット
+
+	int GetStageNum() { return _stageNum; }// ステージ番号取得
 
 protected:
 	std::map<std::string, int> _mapModelHandle;// マップモデル用ハンドル(名前、モデルハンドル)
@@ -106,6 +109,7 @@ protected:
 	
 	bool _bFirstRangedKilled = false;
 	bool _bAllClearNotified = false;// 通知フラグ（初回撃破・全滅通知など）
+	bool _bBossDefeatedNotified = false;// ボス撃破通知フラグ
 
 	
 

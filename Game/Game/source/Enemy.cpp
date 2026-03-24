@@ -34,7 +34,7 @@ namespace
 	constexpr auto WALL_NORMAL_THRESHOLD = 0.3f;// 壁判定の法線Y成分閾値
 
 	// エフェクト関連
-	constexpr auto DAMAGE_EFFECT_OFFSET_Y = 50.0f;// ダメージエフェクトYオフセット
+	constexpr auto DAMAGE_EFFECT_OFFSET_Y = 80.0f;// ダメージエフェクトYオフセット
 
 	// 連続被ダメ管理
 	constexpr auto DAMAGE_COMBO_RESET_TIME = 90.0f;// この時間内に再ヒットしなければリセット

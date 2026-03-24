@@ -183,10 +183,6 @@ bool ModeGame::Initialize()
 
 	_shadowMapHandle = MakeShadowMap(2048, 2048);
 
-	//SetFogEnable(TRUE);// フォグを有効にする
-	//SetFogColor(0, 0, 0);// フォグの色を設定
-	//SetFogStartEnd(500.0f, 2500.0f);// フォグの開始距離と終了距離を設定
-
 	return true;
 }
 
@@ -243,22 +239,16 @@ bool ModeGame::Process()
 	// InputManagerから入力を取得
 	auto& im = InputManager::GetInstance();
 
-
-	// Debug: ゲームパッドの右トリガー(RT)のトリガー状態で全滅（デバッグ用）
-	// InputManager の TriggerButtonState::rtTrg が true になる瞬間を検出して実行します。
-	//if(im.GetTrigger().rtTrg)
-	//{
-	//	if(_stage)
-	//	{
-	//		_stage->DebugKillAllEnemies();
-	//		// 直ちにステージの Process() を1回進めて全滅時のテキスト表示等を発動させる
-	//		_stage->Process();
-	//	}
-	//}
 	// ゲームオーバーチェック
 	{
+		bool debugDeath = false; // デバッグ用全滅フラグ
+		if(im.IsTrigger(INPUT_ACTION::DEBUG3))
+		{
+			debugDeath = true;
+		}
+
 		auto activePlayer = _playerManager->GetActivePlayerShared();
-		if (activePlayer && activePlayer->GetIsDead())
+		if (activePlayer && activePlayer->GetIsDead() || debugDeath)
 		{
 			// ModeGameOverを追加
 			ModeGameOver* modeGameOver = new ModeGameOver();
@@ -272,8 +262,6 @@ bool ModeGame::Process()
 			return true;
 		}
 	}
-
-	// 能力選択画面のデバッグ関数
 
 	// startでメニューを開く
 	if (im.IsTrigger(INPUT_ACTION::MENU))
@@ -442,11 +430,17 @@ bool ModeGame::Process()
 		}
 
 		// 全滅したら最初のLOGOへ（疑似的にゲーム終了）
-		if(_stage->IsAllEnemiesDefeated())
+		if(_stage->IsBossDefeated())
 		{
-			ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
-			ModeServer::GetInstance()->Del(this);
-			return true;
+			static float timer = 0.0f;
+			timer += 1.0f;
+			if (timer >= 120.0f)// 2秒待ってから
+			{
+				timer = 0.0f;
+				ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
+				ModeServer::GetInstance()->Del(this);
+				return true;
+			}
 		}
 	}
 
@@ -596,13 +590,22 @@ bool ModeGame::Render()
 	{
 		if(_stage)
 		{
-			const int current = _stage->GetCurrentEnemyCnt();
-			const int total = _stage->GetTotalEnemyCnt();
+			if (_stage->GetStageNum() == 2)
+			{
+				SetFontSize(24);
+				DrawFormatString(60, 120, GetColor(255, 255, 255), "ボスを倒せ！");
+				SetFontSize(16);
+			}
+			else
+			{
+				const int current = _stage->GetCurrentEnemyCnt();
+				const int total = _stage->GetTotalEnemyCnt();
 
-			SetFontSize(24);
-			//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
-			DrawFormatString(60, 120, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
-			SetFontSize(16);
+				SetFontSize(24);
+				//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
+				DrawFormatString(60, 120, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
+				SetFontSize(16);
+			}
 		}
 	}
 
@@ -831,7 +834,6 @@ void ModeGame::RestartCurrentStage()
 		activePlayer->SetDir(vDir);
 
 		// プレイヤーのモーションリセット
-		
 	}
 
 	// オブジェクトのクリア

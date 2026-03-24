@@ -111,7 +111,7 @@ namespace
 		settings.colType = COLLISION_TYPE::CAPSULE;
 		settings.vTopOffset = VGet(0.0f, 150.0f, 100.0f);// 前方
 		settings.vBottomOffset = VGet(0.0f, 50.0f, 100.0f);
-		settings.fRadius = 30.0f;
+		settings.fRadius = 60.0f;
 		settings.fDelay = 0.0f;
 		settings.fDuration = CHARGE_EXECUTE_TIME;
 		settings.fRecovery = 0.0f;

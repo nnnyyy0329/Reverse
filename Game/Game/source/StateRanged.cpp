@@ -258,7 +258,7 @@ namespace Ranged
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Senemy_back_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -544,7 +544,7 @@ namespace Ranged
 	{
 		BulletEffectConfig config;
 
-		config.effectName = "PlayerNormalBullet";// エフェクトの名前
+		config.effectName = "Ranged_Bullet";// エフェクトの名前
 		config.effectOffset = VGet(0.0f, 0.0f, 0.0f);// エフェクトの発生位置オフセット
 		config.soundName = "";// サウンドの名前
 		return config;
