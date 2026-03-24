@@ -114,7 +114,7 @@ bool ModeGame::Initialize()
 	}
 
 	// ステージ初期化
-	_currentStageNum = 0;
+	_currentStageNum = 2;
 	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
 	_stage->SetPlayerManager(_playerManager);
 
@@ -183,10 +183,6 @@ bool ModeGame::Initialize()
 
 	_shadowMapHandle = MakeShadowMap(2048, 2048);
 
-	//SetFogEnable(TRUE);// フォグを有効にする
-	//SetFogColor(0, 0, 0);// フォグの色を設定
-	//SetFogStartEnd(500.0f, 2500.0f);// フォグの開始距離と終了距離を設定
-
 	return true;
 }
 
@@ -245,7 +241,7 @@ bool ModeGame::Process()
 
 
 	// Debug: ゲームパッドの右トリガー(RT)のトリガー状態で全滅（デバッグ用）
-// InputManager の TriggerButtonState::rtTrg が true になる瞬間を検出して実行します。
+	// InputManager の TriggerButtonState::rtTrg が true になる瞬間を検出して実行します。
 	//if(im.GetTrigger().rtTrg)
 	//{
 	//	if(_stage)
@@ -255,6 +251,7 @@ bool ModeGame::Process()
 	//		_stage->Process();
 	//	}
 	//}
+	// 
 	// ゲームオーバーチェック
 	{
 		auto activePlayer = _playerManager->GetActivePlayerShared();
@@ -438,11 +435,17 @@ bool ModeGame::Process()
 		}
 
 		// 全滅したら最初のLOGOへ（疑似的にゲーム終了）
-		if(_stage->IsAllEnemiesDefeated())
+		if(_stage->IsBossDefeated())
 		{
-			ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
-			ModeServer::GetInstance()->Del(this);
-			return true;
+			static float timer = 0.0f;
+			timer += 1.0f;
+			if (timer >= 120.0f)// 2秒待ってから
+			{
+				timer = 0.0f;
+				ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
+				ModeServer::GetInstance()->Del(this);
+				return true;
+			}
 		}
 	}
 
@@ -592,13 +595,22 @@ bool ModeGame::Render()
 	{
 		if(_stage)
 		{
-			const int current = _stage->GetCurrentEnemyCnt();
-			const int total = _stage->GetTotalEnemyCnt();
+			if (_stage->GetStageNum() == 2)
+			{
+				SetFontSize(24);
+				DrawFormatString(20, 40, GetColor(255, 255, 255), "ボスを倒せ！");
+				SetFontSize(16);
+			}
+			else
+			{
+				const int current = _stage->GetCurrentEnemyCnt();
+				const int total = _stage->GetTotalEnemyCnt();
 
-			SetFontSize(24);
-			//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
-			DrawFormatString(20, 60, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
-			SetFontSize(16);
+				SetFontSize(24);
+				//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
+				DrawFormatString(20, 60, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
+				SetFontSize(16);
+			}
 		}
 	}
 

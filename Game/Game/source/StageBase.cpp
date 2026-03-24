@@ -467,6 +467,15 @@ void StageBase::Process()
 					}
 				}
 
+				// ステージ3ならTankを倒したときに通知
+				if(_stageNum == 2)
+				{
+					if(enemy->GetModelName() == "Tank")
+					{
+						_bBossDefeatedNotified = true;
+					}
+				}
+
 				it = _stageEnemies.erase(it);
 			}
 			else

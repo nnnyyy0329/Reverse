@@ -819,32 +819,32 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 						// モデルは消す（当たり判定のみ利用）
 						_stage->RemoveMapModelByName(obj.name);
 					}
-					else if(obj.name == "EventB")
-					{
-						// EventB はステージ2のみ有効
-						if(currentStage != 2) { continue; }
+					//else if(obj.name == "EventB")
+					//{
+					//	// EventB はステージ2のみ有効
+					//	if(currentStage != 2) { continue; }
 
-						// EventB: テキストを表示した後、エンディングへ移行する
-						// 最終テキスト閉鎖時に ModeEndingText を追加して現在の ModeGame を削除する
-						ModeTextBox* finalBox = new ModeTextBox
-						(
-							"Textbox_Scared",
-							"っ！あそこに倒れてるのって！",
-							[this]() 
-							{
-								// テキスト閉じたらエンディングモードへ
-								ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
-								// ModeGame を削除して遷移
-								ModeServer::GetInstance()->Del(this);
-							},
-							false
-						);
+					//	// EventB: テキストを表示した後、エンディングへ移行する
+					//	// 最終テキスト閉鎖時に ModeEndingText を追加して現在の ModeGame を削除する
+					//	ModeTextBox* finalBox = new ModeTextBox
+					//	(
+					//		"Textbox_Scared",
+					//		"っ！あそこに倒れてるのって！",
+					//		[this]() 
+					//		{
+					//			// テキスト閉じたらエンディングモードへ
+					//			ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
+					//			// ModeGame を削除して遷移
+					//			ModeServer::GetInstance()->Del(this);
+					//		},
+					//		false
+					//	);
 
-						ModeServer::GetInstance()->Add(finalBox, 200, "eventb_ending");
+					//	ModeServer::GetInstance()->Add(finalBox, 200, "eventb_ending");
 
-						// 当たり判定で消す（再トリガー防止）
-						_stage->RemoveMapModelByName(obj.name);
-					}
+					//	// 当たり判定で消す（再トリガー防止）
+					//	_stage->RemoveMapModelByName(obj.name);
+					//}
 
 					return;
 				}
