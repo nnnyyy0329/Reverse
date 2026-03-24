@@ -8,11 +8,6 @@
 
 namespace
 {
-	// コリジョン設定
-	constexpr auto COLLISION_RADIUS = 30.0f;// カプセル半径
-	constexpr auto COLLISION_HEIGHT = 100.0f;// カプセル高さ
-	constexpr auto COLLLISION_SUB_Y = 50.0f;// 腰位置オフセット
-
 	// 索敵制御
 	constexpr auto SEARCH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
 
@@ -25,19 +20,12 @@ namespace
 	constexpr auto DEBUG_TEXT_OFFSET_Y = 150.0f;// デバッグテキスト表示位置オフセット
 	constexpr auto DEBUG_FONT_SIZE = 16;// デバッグテキストフォントサイズ
 
-	// 画面外判定
-	constexpr auto CAMERA_DEPTH_MIN = 0.0f;// カメラ深度最小値
-	constexpr auto CAMERA_DEPTH_MAX = 1.0f;// カメラ深度最大値
-
 	// 視界チェック用
 	constexpr auto SIGHT_CHECK_RADIUS = 10.0f;// 視界チェック用の球の半径
 	constexpr auto WALL_NORMAL_THRESHOLD = 0.3f;// 壁判定の法線Y成分閾値
 
 	// エフェクト関連
 	constexpr auto DAMAGE_EFFECT_OFFSET_Y = 80.0f;// ダメージエフェクトYオフセット
-
-	// 連続被ダメ管理
-	constexpr auto DAMAGE_COMBO_RESET_TIME = 90.0f;// この時間内に再ヒットしなければリセット
 
 	// 重力
 	constexpr float GRAVITY = -0.98f;// 重力加速度
@@ -56,11 +44,11 @@ Enemy::Enemy()
 	_vDir = VGet(0.0f, 0.0f, 1.0f);// 前方を向いておく
 
 	// 腰位置の設定(マップモデルとの判定用)
-	_colSubY = COLLLISION_SUB_Y;
+	_colSubY = _enemyParam.capsule.fColSubY;
 
 	// 当たり判定用(カプセル)
-	_fCollisionR = COLLISION_RADIUS;
-	_fCollisionHeight = COLLISION_HEIGHT;
+	_fCollisionR = _enemyParam.capsule.fRadius;
+	_fCollisionHeight = _enemyParam.capsule.fHeight;
 	_vCollisionBottom = VGet(0.0f, 0.0f, 0.0f);
 	_vCollisionTop = VGet(0.0f, _fCollisionHeight, 0.0f);
 
@@ -119,9 +107,6 @@ bool Enemy::Process()
 	// 索敵タイマー更新
 	UpdateSearchTimer();
 
-	// 連続被ダメリセットタイマー更新
-	UpdateDamageComboTimer();
-
 	// 索敵更新タイミングなら索敵を実行
 	if (ShouldUpdateSearch())
 	{
@@ -177,9 +162,17 @@ bool Enemy::Process()
 		_bIsOutSideMoveArea = false;
 	}
 
-	// カプセルに座標を対応させる
-	_vCollisionBottom = VAdd(_vPos, VGet(0.0f, _fCollisionR, 0.0f));// 半径分ずらして中心位置に
-	_vCollisionTop = VAdd(_vPos, VGet(0.0f, _fCollisionHeight - _fCollisionR, 0.0f));// 高さ分ずらす
+	// モデルのワールド行列を取得
+	MATRIX mModel = MV1GetMatrix(GetAnimManager()->GetModelHandle());
+
+	// ローカルオフセット位置を基準にカプセルの高さを設定
+	VECTOR vLocalOffset = VGet(0.0f, 0.0f, -25.0f);
+	VECTOR vLocalButtom = VAdd(vLocalOffset, VGet(0.0f, _fCollisionR, 0.0f));
+	VECTOR vLocalTop = VAdd(vLocalOffset, VGet(0.0f, _fCollisionHeight - _fCollisionR, 0.0f));
+
+	// ワールド座標に変換
+	_vCollisionBottom = VTransform(vLocalButtom, mModel);
+	_vCollisionTop = VTransform(vLocalTop, mModel);
 
 	return true;
 }
@@ -212,10 +205,6 @@ void Enemy::DebugRender()
 			// 攻撃可能範囲を描画
 			unsigned int attackColor = GetColor(255, 0, 0);// 赤
 			mydraw::DrawCircle3D(_vPos, _enemyParam.fAttackRange, attackColor, 16);
-
-			// 接近限界範囲を描画
-			unsigned int chaseColor = GetColor(255, 255, 0);// 黄
-			mydraw::DrawCircle3D(_vPos, _enemyParam.fChaseLimitRange, chaseColor, 16);
 		}
 	}
 
@@ -269,7 +258,7 @@ void Enemy::DrawLifeBar()
 
 	// カメラ範囲外チェック
 	VECTOR pos2D = ConvWorldPosToScreenPos(headPos);
-	if (pos2D.z < CAMERA_DEPTH_MIN || pos2D.z > CAMERA_DEPTH_MAX) { return; }
+	if (pos2D.z < 0.1 || pos2D.z > 1.0) { return; }
 
 	// ライフ割合を計算(0.0～1.0にクランプ)
 	float lifeRatio = 0.0f;
@@ -503,12 +492,9 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackColl
 	// 中断されないアクション中はDamageステートへ遷移しない
 	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::HIGH)
 	{
-		// 連続被ダメカウントは更新
-		UpdateDamageCombo();
 		return;
 	}
 
-	UpdateDamageCombo();
 	// ダメージステートへ遷移
 	ChangeState(std::make_unique<Common::Damage>());
 }
@@ -563,12 +549,9 @@ void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
 	// 中断されないアクション中はDamageステートへ遷移しない
 	if (_currentState && _currentState->GetPriority() == STATE_PRIORITY::HIGH)
 	{
-		// 連続被ダメカウントは更新
-		UpdateDamageCombo();
 		return;
 	}
 
-	UpdateDamageCombo();
 	// ダメージステートへ遷移
 	if (_enemyParam.bChangeDamageState)
 	{
@@ -774,32 +757,6 @@ bool Enemy::CorrectPosToMoveArea()
 	return false;// 補正失敗
 }
 
-void Enemy::UpdateDamageCombo()
-{
-	if (_fDamageComboResetTimer > 0.0f)
-	{
-		_damageComboCnt++;
-	}
-	else if (_fDamageComboResetTimer <= 0.0f)
-	{
-		_damageComboCnt = 1;// 初回ヒット
-	}
-
-	_fDamageComboResetTimer = DAMAGE_COMBO_RESET_TIME;// タイマーリセット
-}
-
-void Enemy::UpdateDamageComboTimer()
-{
-	if (_fDamageComboResetTimer > 0.0f)
-	{
-		_fDamageComboResetTimer--;
-		if (_fDamageComboResetTimer <= 0.0f)
-		{
-			_damageComboCnt = 0;// 時間切れでリセット
-		}
-	}
-}
-
 void Enemy::UpdatePath(VECTOR vTarget)
 {
 	auto stage = _stage.lock();
@@ -839,14 +796,14 @@ void Enemy::UpdatePath(VECTOR vTarget)
 	if (bIsHeadingToWp)
 	{
 		// 現在向かっているポイントを次の探索のスタート地点にする
-		startId = pathManager->GetNearestWaypoint(vOldTargetWp, COLLISION_RADIUS, stage.get());
+		startId = pathManager->GetNearestWaypoint(vOldTargetWp, _enemyParam.capsule.fRadius, stage.get());
 	}
 	else
 	{
-		startId = pathManager->GetNearestWaypoint(_vPos, COLLISION_RADIUS, stage.get());
+		startId = pathManager->GetNearestWaypoint(_vPos, _enemyParam.capsule.fRadius, stage.get());
 	}
 
-	int goalId = pathManager->GetNearestWaypoint(vTarget, COLLISION_RADIUS, stage.get());
+	int goalId = pathManager->GetNearestWaypoint(vTarget, _enemyParam.capsule.fRadius, stage.get());
 
 	if (startId != -1 && goalId != -1)
 	{
@@ -860,7 +817,7 @@ void Enemy::UpdatePath(VECTOR vTarget)
 			_currentPath.push_back(vTarget);
 
 			// スムージングを実行
-			_currentPath = pathManager->SmoothPath(_currentPath, COLLISION_RADIUS, stage.get());
+			_currentPath = pathManager->SmoothPath(_currentPath, _enemyParam.capsule.fRadius, stage.get());
 
 			_currentPathIndex = 0;
 		}

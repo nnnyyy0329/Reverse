@@ -114,7 +114,7 @@ bool ModeGame::Initialize()
 	}
 
 	// ステージ初期化
-	_currentStageNum = 0;
+	_currentStageNum = 2;
 	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
 	_stage->SetPlayerManager(_playerManager);
 
@@ -281,24 +281,24 @@ bool ModeGame::Process()
 	// startでメニューを開く
 	if (im.IsTrigger(INPUT_ACTION::MENU))
 	{
-		//ModeMenu* modeMenu = new ModeMenu();
-		//ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+		ModeMenu* modeMenu = new ModeMenu();
+		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 
-		//modeMenu->SetCameraManager(_cameraManager);
+		modeMenu->SetCameraManager(_cameraManager);
 
-		//// メニュー項目を作成
-		//auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
-		//auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
-		//auto useCollision = new MenuItemUseCollision(this, "UseCollision");
-		//auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+		// メニュー項目を作成
+		auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
+		auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
+		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
+		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
 
-		//// デバッグカメラ切り替え
-		//debugCamera->SetCameraManagerMenu(_cameraManager);
+		// デバッグカメラ切り替え
+		debugCamera->SetCameraManagerMenu(_cameraManager);
 
-		//modeMenu->AddMenuItem(viewDebugInfo);
-		//modeMenu->AddMenuItem(viewCollision);
-		//modeMenu->AddMenuItem(useCollision);
-		//modeMenu->AddMenuItem(debugCamera);
+		modeMenu->AddMenuItem(viewDebugInfo);
+		modeMenu->AddMenuItem(viewCollision);
+		modeMenu->AddMenuItem(useCollision);
+		modeMenu->AddMenuItem(debugCamera);
 	}
 
 	// クラスセット

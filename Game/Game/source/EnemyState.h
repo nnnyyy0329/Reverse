@@ -28,19 +28,15 @@ struct EnemyParam
 
 	float fVisionRange = 0.0f;// 敵の索敵距離
 
-	float fAttackRange = 0.0f;// これ以内なら攻撃する距離
-	float fChaseLimitRange = 0.0f;// これ以上離れたら接近をやめる距離
+	float fAttackRange = 0.0f;// 攻撃可能範囲
 
 	float fTurnSpeed = 60.0f;// 旋回速度(度 / フレーム)
 
 	float fIdleTime = 0.0f;// 待機時間
-	float fMoveTime = 0.0f;// 徘徊時間
-	float fDetectTime = 0.0f;// 発見硬直
-	float fAttackTime = 0.0f;// 攻撃時間
 	float fDamageTime = 0.0f;// 被ダメージ時間
 	float fDamageAnimSpeed = 1.0f;// 被ダメージアニメーションの再生速度
-	bool bDownSE = true;// ダウンSEを鳴らすかどうか
 	bool bChangeDamageState = true;// 被ダメ状態に遷移するかどうか
+	bool bDownSE = true;// ダウンSEを鳴らすかどうか
 
 	float fMaxLife = 100.0f;// 最大体力
 
@@ -94,10 +90,6 @@ protected:
 	// ターゲットが存在しない場合の処理(LostTargetへ)
 	template<typename LostTargetState>
 	std::shared_ptr<EnemyState> TransitionToLostNoTarget(Enemy* owner);
-
-	// 追跡限界距離チェック(これ以上離れたらLostTargetへ)
-	template<typename LostTargetState>
-	std::shared_ptr<EnemyState> TransitionToLostOverChaseLimit(Enemy* owner, float fDist);
 
 	// 移動可能範囲外チェック(範囲外ならIdleへ) : 徘徊ステート
 	template<typename IdleState>

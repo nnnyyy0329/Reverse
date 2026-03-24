@@ -12,6 +12,7 @@ namespace
 	constexpr auto LOST_NEARBY_HOME = 10.0f;			// 帰還完了判定距離
 
 	// 時間制御用定数
+	constexpr float DETECT_TIME = 60.0f;				// 発見硬直時間
 	constexpr auto WANDER_LOOK_MIN_TIME = 60.0f;		// 徘徊時の最小視線停止時間
 	constexpr auto WANDER_LOOK_RANDOM_TIME = 60.0f;		// 徘徊時の視線停止ランダム追加時間
 	constexpr auto SHOT_CHARGE_TIME = 120.0f;			// 射撃溜め時間
@@ -213,7 +214,7 @@ namespace Ranged
 		_fTimer = 0.0f;
 
 		// 時間ランダム設定
-		_fTargetTimer = CalcRandomRangeTime(owner->GetEnemyParam().fDetectTime, NOTICE_TIME_RANGE);
+		_fTargetTimer = CalcRandomRangeTime(DETECT_TIME, NOTICE_TIME_RANGE);
 
 		// ここでアニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
@@ -273,10 +274,6 @@ namespace Ranged
 			return TransitionToLostNoTarget<LostTarget>(owner);
 		}
 
-		// 追跡限界距離チェック
-		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
-		if(result) { return result; }
-
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
 		if (areaResult) { return areaResult; }
@@ -322,10 +319,6 @@ namespace Ranged
 			return TransitionToLostNoTarget<LostTarget>(owner);
 		}
 
-		// 追跡限界距離チェック
-		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
-		if (result) { return result; }
-
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
 		if (areaResult) { return areaResult; }
@@ -366,10 +359,6 @@ namespace Ranged
 
 		// タイマー更新
 		_fTimer++;
-
-		// 追跡限界距離チェック
-		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
-		if (result) { return result; }
 
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
@@ -627,10 +616,6 @@ namespace Ranged
 
 		// タイマー更新
 		_fTimer++;
-		
-		// 追跡限界距離チェック
-		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
-		if (result) { return result; }
 
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
