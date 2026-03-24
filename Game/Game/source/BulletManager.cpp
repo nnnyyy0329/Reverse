@@ -31,7 +31,7 @@ BulletManager::BulletManager()
 BulletManager::~BulletManager() 
 {
 	// ‚·‚×‚Ä‚Ì’e‚ğíœ
-	ClearAllBullets();
+	ClearAllBullets(GetAllBullets());
 }
 
 void BulletManager::Initialize()
@@ -234,9 +234,18 @@ void BulletManager::RemoveBulletByOwnerType(BULLET_OWNER_TYPE ownerType)
 }
 
 // ‚·‚×‚Ä‚Ì’e‚ğíœ
-void BulletManager::ClearAllBullets()
+void BulletManager::ClearAllBullets(std::vector<std::shared_ptr<Bullet>> bullets)
 {
-	// íœ
+	// “o˜^‚³‚ê‚½’e‚ğ‘–¸
+	for(auto& bullet : bullets)
+	{
+		if(!bullet){ continue; }
+
+		// “o˜^‚³‚ê‚½’e‚©‚çíœ
+		bullet->Terminate();
+	}
+
+	// “o˜^‚³‚ê‚½’e‚ÌƒŠƒXƒg‚ğƒNƒŠƒA
 	_registerBullets.clear();
 }
 
