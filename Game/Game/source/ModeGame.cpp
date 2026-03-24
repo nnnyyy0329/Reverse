@@ -5,8 +5,10 @@
 #include "ModeStageChange.h"
 #include "ModeGameOver.h"
 #include "ModeScenario.h"
+#include "ModeTextBox.h"
 #include "ModeLogo.h" 
 #include "ModeEndingText.h"
+#include "ModeTextBox.h"
 
 #include "CharaBase.h"
 #include "StageBase.h"
@@ -45,8 +47,23 @@ bool ModeGame::Initialize()
 {
 	StartFade(200, 90, 30);
 
+
 	if (!base::Initialize()) { return false; }
 
+	if(_currentStageNum == 0) // ステージ1開始時
+	{
+		ModeTextBox::ShowChain({
+			{"Textbox_Scared", "うわっなんだこれ！"},
+			{"Textbox_Kage", "お前に何かあったら俺もどうなるか分からねぇからな。\nと言っても、俺を薄く伸ばして覆ってるみたいなもんだから\nないよりマシって程度だけどな。っと説明は後だ、とりあえず奥に行こうぜ。"}
+			}, false, 100, "stage1_start");
+	}
+	else if(_currentStageNum == 2) // ステージ3開始時
+	{
+		ModeTextBox::ShowChain({
+			{"Textbox_Scared", "でっか！"},
+			{"Textbox_Kage", "あからさまに最後って感じたな、\nさぁ正念場だぜ。"}
+			}, false, 100, "stage3_start");
+	}
 	// Manager初期化
 	{
 		// PlayerManagerの初期化
@@ -166,6 +183,7 @@ bool ModeGame::Initialize()
 
 	_shadowMapHandle = MakeShadowMap(2048, 2048);
 
+
 	return true;
 }
 
@@ -215,9 +233,25 @@ bool ModeGame::Process()
 		StopFade(); // 以降自動的にフェードアウトしない
 	}
 
+
+	ModeServer::GetInstance()->Add(new ModeTextBox("Normal"), 100, "stage1_start_text");
+
+
 	// InputManagerから入力を取得
 	auto& im = InputManager::GetInstance();
 
+
+	// Debug: ゲームパッドの右トリガー(RT)のトリガー状態で全滅（デバッグ用）
+// InputManager の TriggerButtonState::rtTrg が true になる瞬間を検出して実行します。
+	//if(im.GetTrigger().rtTrg)
+	//{
+	//	if(_stage)
+	//	{
+	//		_stage->DebugKillAllEnemies();
+	//		// 直ちにステージの Process() を1回進めて全滅時のテキスト表示等を発動させる
+	//		_stage->Process();
+	//	}
+	//}
 	// ゲームオーバーチェック
 	{
 		auto activePlayer = _playerManager->GetActivePlayerShared();
@@ -378,6 +412,19 @@ bool ModeGame::Process()
 		CheckHitBulletMap();
 	}
 
+	
+	// 初めて変身可能になったら一度だけテキストを表示
+	if (!_bTransformAvailableNotified)
+	{
+		// EnergyManager の CanSwitchPlayer() が true なら変身可能
+		auto energyMgr = EnergyManager::GetInstance();
+		if (energyMgr && energyMgr->CanSwitchPlayer())
+		{
+			_bTransformAvailableNotified = true;
+			ModeTextBox::Show("Textbox_Kage", "よし、充分盗れたぜ。\n十字キー左を押してそのままこいつをぶっ飛ばしてやれ", false, 100, "energy_ready");
+		}
+	}
+
 	// ステージ3：ボタン1つで敵全滅 → 全滅後にLOGOへ戻す
 	if(_currentStageNum == 2 && _stage)
 	{
@@ -391,7 +438,6 @@ bool ModeGame::Process()
 		if(_stage->IsAllEnemiesDefeated())
 		{
 			ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
-			
 			ModeServer::GetInstance()->Del(this);
 			return true;
 		}
@@ -690,7 +736,7 @@ void ModeGame::RequestStageChange(int nextStageNum)
 
 void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 {
-	if (!newStage) { return; }
+	if(!newStage) { return; }
 
 	// 現在のステージ番号を更新
 	_currentStageNum = stageNum;
@@ -702,7 +748,7 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 	_stage = newStage;
 
 	// 敵の再設定
-	for (const auto& enemy : _stage->GetEnemies())
+	for(const auto& enemy : _stage->GetEnemies())
 	{
 		enemy->SetTarget(_playerManager->GetActivePlayerShared());
 		enemy->SetStage(_stage);
@@ -718,9 +764,26 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 
 	_stage->PlayStageBGM();
 	std::string name = _stage->GetCurrentBGMName();
-	if (name == "BGM_Stage02")
+	if(name == "BGM_Stage02")
 	{
 		SoundServer::GetInstance()->SetVolume(name, 128);
+	}
+
+	// ステージ開始時のテキスト表示
+	// stageNum は 0-based (0=ステージ1, 1=ステージ2, 2=ステージ3)
+	if(stageNum == 0) // ステージ1開始時
+	{
+		ModeTextBox::ShowChain({
+			{"Textbox_Scared", "うわっなんだこれ！"},
+			{"Textbox_Kage", "お前に何かあったら俺もどうなるか分からねぇからな。と言っても、俺を薄く伸ばして覆ってるみたいなもんだからないよりマシって程度だけどな。っと説明は後だ、とりあえず奥に行こうぜ。"}
+			}, false, 100, "stage1_start");
+	}
+	else if(stageNum == 2) // ステージ3開始時
+	{
+		ModeTextBox::ShowChain({
+			{"Textbox_Scared", "でっか！"},
+			{"Textbox_Kage", "あからさまに最後って感じたな、さぁ正念場だぜ。"}
+			}, false, 100, "stage3_start");
 	}
 
 	// 切り替え完了

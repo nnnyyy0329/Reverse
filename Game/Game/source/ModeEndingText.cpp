@@ -1,5 +1,6 @@
 #include "ModeEndingText.h"
 #include "ModeLogo.h"
+#include "ModeEndingVideo.h"
 #include <algorithm>
 
 bool ModeEndingText::Initialize()
@@ -10,6 +11,7 @@ bool ModeEndingText::Initialize()
 
 	_fadeOutStarted = false;
 	_textStarted = false;
+	_bgmStarted = false;
 
 	_charIndex = 0;
 	_charTimer = 0;
@@ -58,6 +60,17 @@ bool ModeEndingText::Process()
 		return true;
 	}
 
+	// サウンド再生
+	if(_textStarted)
+	{
+		if(!_bgmStarted)
+		{
+			SoundServer::GetInstance()->Play("BGM_Ending", DX_PLAYTYPE_LOOP);
+			_bgmStarted = true;
+		}
+		// ...以下既存処理...
+	}
+
 	// 文字自動展開
 	if(!_textFullyShown)
 	{
@@ -78,9 +91,9 @@ bool ModeEndingText::Process()
 
 	// 入力
 	auto& im = InputManager::GetInstance();
-	const bool canInput = (_frameCount >= kInputWaitFrames);
+	
 
-	if(canInput && ( im.IsTrigger(INPUT_ACTION::ATTACK)))
+	if(im.IsTrigger(INPUT_ACTION::SKIP))
 	{
 		if(!_textFullyShown)
 		{
@@ -89,12 +102,11 @@ bool ModeEndingText::Process()
 		}
 		else
 		{
-			// サウンド停止
-			SoundServer::GetInstance()->Stop("BGM_Ending");
+		
 
 			// もう一回確定でLOGOへ
 			ModeServer::GetInstance()->Clear();
-			ModeServer::GetInstance()->Add(new ModeLogo(), 100, "logo");
+			ModeServer::GetInstance()->Add(new ModeEndingVideo(), 100, "Video");
 			return true;
 		}
 	}

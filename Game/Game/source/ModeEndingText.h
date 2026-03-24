@@ -21,9 +21,11 @@ private:
 	// フェード制御
 	bool _fadeOutStarted = false;
 	bool _textStarted = false;
-
+	
 	// テキスト表示制御
 	int _charIndex = 0;
 	int _charTimer = 0;
 	bool _textFullyShown = false;
+	//音バグ
+	bool _bgmStarted = false;
 };

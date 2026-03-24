@@ -1,10 +1,10 @@
-#include "StageBase.h"
+ï»¿#include "StageBase.h"
 #include "Enemy.h"
 #include "EnemyFactory.h"
 #include "PlayerManager.h"
 #include "ModeGame.h"
 #include "PathfindingManager.h"
-
+#include "ModeTextBox.h" 
 #include <nlohmann/json.hpp>
 #include <fstream>
 
@@ -33,7 +33,7 @@ StageBase::StageBase(int stageNum)
 		break;
 	}
 
-	// jsonƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ(ƒ}ƒbƒv)
+	// jsonãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿(ãƒãƒƒãƒ—)
 	{
 		LoadStageDataFromJson(
 			path + jsonFile,
@@ -48,7 +48,7 @@ StageBase::StageBase(int stageNum)
 
 				if (_mapModelHandle.count(name) == 0)
 				{
-					// “Ç‚İ‚İÏ‚İ‚Ìƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹‚ğæ“¾
+					// èª­ã¿è¾¼ã¿æ¸ˆã¿ã®ãƒ¢ãƒ‡ãƒ«ãƒãƒ³ãƒ‰ãƒ«ã‚’å–å¾—
 					int handle = ResourceServer::GetInstance()->GetHandle(name);
 					if (handle != -1)
 					{
@@ -56,7 +56,7 @@ StageBase::StageBase(int stageNum)
 					}
 					//else
 					//{
-					//	// “Ç‚İ‚Ü‚ê‚Ä‚¢‚È‚¢‚È‚ç’¼Úƒ[ƒh
+					//	// èª­ã¿è¾¼ã¾ã‚Œã¦ã„ãªã„ãªã‚‰ç›´æ¥ãƒ­ãƒ¼ãƒ‰
 					//	std::string fileName = path + name + ".mv1";
 					//	_mapModelHandle[name] = MV1LoadModel(fileName.c_str());
 					//}
@@ -87,8 +87,79 @@ StageBase::StageBase(int stageNum)
 			}
 		);
 	}
+	//é’ã„ã‚¤ãƒ™ãƒ³ãƒˆèª­ã¿è¾¼ã¿ï¼ˆé‡è¤‡ã‚’é˜²ãï¼‰ â€” ã‚¹ãƒ†ãƒ¼ã‚¸0/2ã®ã¿è¿½åŠ ã™ã‚‹
+	if(_stageNum == 0 || _stageNum == 2)
+	{
+		auto rs = ResourceServer::GetInstance();
 
-	// jsonƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ(“G)
+		auto alreadyHasModel = [&](const std::string& name) -> bool {
+			return std::any_of(_mapModelPosList.begin(), _mapModelPosList.end(),
+				[&](const MODELPOS& mp) { return mp.name == name; });
+			};
+
+		// EventA ã‚’æ‰‹å‹•ã§è¿½åŠ ï¼ˆå­˜åœ¨ã—ãªã‘ã‚Œã°ï¼‰
+		if(!alreadyHasModel("EventA"))
+		{
+			int handleA = rs->GetHandle("EventA");
+			if(handleA != -1)
+			{
+				MODELPOS m = {};
+				m.name = "EventA";
+				m.pos = VGet(0.0f, 0.0f, 0.0f);
+				m.rot = VGet(0.0f, 0.0f, 0.0f);
+				m.scale = VGet(1.0f, 1.0f, 1.0f);
+
+				m.modelHandle = MV1DuplicateModel(handleA);
+				m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
+				std::string colName = "UCX_" + m.name;
+				m.collisionFrame = MV1SearchFrame(m.modelHandle, colName.c_str());
+
+				MV1SetPosition(m.modelHandle, m.pos);
+				MV1SetRotationXYZ(m.modelHandle, m.rot);
+				MV1SetScale(m.modelHandle, m.scale);
+
+				if(m.collisionFrame != -1)
+				{
+					MV1SetupCollInfo(m.modelHandle, m.collisionFrame, 8, 8, 8);
+				}
+
+				_mapModelPosList.push_back(m);
+			}
+		}
+
+		// EventB ã‚’æ‰‹å‹•ã§è¿½åŠ ï¼ˆå­˜åœ¨ã—ãªã‘ã‚Œã°ï¼‰
+		if(!alreadyHasModel("EventB"))
+		{
+			int handleB = rs->GetHandle("EventB");
+			if(handleB != -1)
+			{
+				MODELPOS m = {};
+				m.name = "EventB";
+				m.pos = VGet(5.0f, 0.0f, 3.0f);
+				m.rot = VGet(0.0f, 0.0f, 0.0f);
+				m.scale = VGet(1.0f, 1.0f, 1.0f);
+
+				m.modelHandle = MV1DuplicateModel(handleB);
+				m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
+				std::string colName = "UCX_" + m.name;
+				m.collisionFrame = MV1SearchFrame(m.modelHandle, colName.c_str());
+
+				MV1SetPosition(m.modelHandle, m.pos);
+				MV1SetRotationXYZ(m.modelHandle, m.rot);
+				MV1SetScale(m.modelHandle, m.scale);
+
+				if(m.collisionFrame != -1)
+				{
+					MV1SetupCollInfo(m.modelHandle, m.collisionFrame, 8, 8, 8);
+				}
+
+				_mapModelPosList.push_back(m);
+			}
+		}
+	}
+
+
+	// jsonãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿(æ•µ)
 	{
 		std::string enemyObjName = "enemymarker";
 
@@ -97,22 +168,22 @@ StageBase::StageBase(int stageNum)
 			enemyObjName,
 			[&](const std::string& name, const VECTOR& pos, const VECTOR& rot, const VECTOR& scale)
 			{
-				// –¼‘O‚É‰‚¶‚Ä“G‚ğ¶¬
-				if (name == "S_EnemyNA")// œpœj‚È‚µ’Êí
+				// åå‰ã«å¿œã˜ã¦æ•µã‚’ç”Ÿæˆ
+				if (name == "S_EnemyNA")// å¾˜å¾Šãªã—é€šå¸¸
 				{
 					_stageEnemies.push_back(
 						EnemyFactory::CreateEnemy(EnemyType::NORMAL, pos, rot, false)
 					);
-					_totalEnemyCnt++;// “G‚ğ’Ç‰Á‚µ‚½‚çƒJƒEƒ“ƒgƒAƒbƒv
+					_totalEnemyCnt++;// æ•µã‚’è¿½åŠ ã—ãŸã‚‰ã‚«ã‚¦ãƒ³ãƒˆã‚¢ãƒƒãƒ—
 				}
-				else if (name == "S_EnemyNB")// œpœj‚ ‚è’Êí
+				else if (name == "S_EnemyNB")// å¾˜å¾Šã‚ã‚Šé€šå¸¸
 				{
 					_stageEnemies.push_back(
 						EnemyFactory::CreateEnemy(EnemyType::NORMAL, pos, rot)
 					);
 					_totalEnemyCnt++;
 				}
-				else if (name == "S_EnemyS")// ‰“‹——£
+				else if (name == "S_EnemyS")// é è·é›¢
 				{
 					_stageEnemies.push_back(
 						EnemyFactory::CreateEnemy(EnemyType::RANGED, pos, rot)
@@ -130,7 +201,7 @@ StageBase::StageBase(int stageNum)
 		);
 	}
 
-	// ƒgƒŠƒK[
+	// ãƒˆãƒªã‚¬ãƒ¼
 	{
 		std::string trigObjName = "portalmarker";
 		
@@ -184,7 +255,7 @@ StageBase::StageBase(int stageNum)
 		);
 	}
 
-	// ƒvƒŒƒCƒ„[‰ŠúˆÊ’u
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åˆæœŸä½ç½®
 	{
 		std::string playerObjName = "playermarker";
 
@@ -195,11 +266,11 @@ StageBase::StageBase(int stageNum)
 			{
 				if(name == "S_Player")
 				{
-					// ‰ŠúˆÊ’u‚ğ•Û‘¶
+					// åˆæœŸä½ç½®ã‚’ä¿å­˜
 					_vPlayerStartPos = pos;
 					_vPlayerStartRot = rot;
 
-					// ModeGame‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾
+					// ModeGameã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—
 					ModeGame* modeGame = (ModeGame*)ModeServer::GetInstance()->Get("game");
 					if (modeGame != nullptr)
 					{
@@ -210,7 +281,7 @@ StageBase::StageBase(int stageNum)
 		);
 	}
 
-	// “G‚ÌˆÚ“®‰Â”\”ÍˆÍ
+	// æ•µã®ç§»å‹•å¯èƒ½ç¯„å›²
 	{
 		std::string areaObjName = "Area";
 
@@ -264,7 +335,7 @@ StageBase::StageBase(int stageNum)
 		);
 	}
 
-	// ƒEƒFƒCƒ|ƒCƒ“ƒg
+	// ã‚¦ã‚§ã‚¤ãƒã‚¤ãƒ³ãƒˆ
 	{
 		std::string wpObjName = "WP";
 
@@ -275,14 +346,14 @@ StageBase::StageBase(int stageNum)
 			{
 				if (name == "Sphere")
 				{
-					// Œ»İ‚Ì“o˜^”‚ğID‚Æ‚µ‚Ä•t—^‚µ‚Ä’Ç‰Á
+					// ç¾åœ¨ã®ç™»éŒ²æ•°ã‚’IDã¨ã—ã¦ä»˜ä¸ã—ã¦è¿½åŠ 
 					int nextId = static_cast<int>(_pathfindingManager->GetWaypoints().size());
 					_pathfindingManager->AddWaypoint(nextId, pos);
 				}
 			}
 		);
 
-		// ƒEƒFƒCƒ|ƒCƒ“ƒg“¯m‚Ì‚Â‚È‚ª‚è‚ğ\’z
+		// ã‚¦ã‚§ã‚¤ãƒã‚¤ãƒ³ãƒˆåŒå£«ã®ã¤ãªãŒã‚Šã‚’æ§‹ç¯‰
 		_pathfindingManager->BuildWaypointLinks(1.0f, this);
 	}
 
@@ -322,7 +393,7 @@ StageBase::~StageBase()
 
 void StageBase::Process()
 {
-	// BGM Ø‚è‘Ö‚¦ˆ—i–ˆƒtƒŒ[ƒ€Àsj
+	// BGM ï¿½Ø‚ï¿½Ö‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½j
 	{
 		if(_playerManager)
 		{
@@ -331,7 +402,7 @@ void StageBase::Process()
 			{
 				CHARA_TYPE currentCharaType = activePlayer->GetCharaType();
 
-				// ƒLƒƒƒ‰ƒ^ƒCƒv‚ª•Ï‚í‚Á‚½‚ç BGM ‚ğØ‚è‘Ö‚¦‚é
+				// ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½vï¿½ï¿½ï¿½Ï‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ BGM ï¿½ï¿½Ø‚ï¿½Ö‚ï¿½ï¿½ï¿½
 				if(_previousCharaType != currentCharaType)
 				{
 					_previousCharaType = currentCharaType;
@@ -343,7 +414,8 @@ void StageBase::Process()
 
 
 
-	// ƒ}ƒbƒvƒ‚ƒfƒ‹‚ÌXV
+	// ï¿½}ï¿½bï¿½vï¿½ï¿½ï¿½fï¿½ï¿½ï¿½ÌXï¿½V
+	// ãƒãƒƒãƒ—ãƒ¢ãƒ‡ãƒ«ã®æ›´æ–°
 	{
 		if(IsAllEnemiesDefeated())
 		{
@@ -371,39 +443,96 @@ void StageBase::Process()
 		}
 	}
 
-	// “G‚ÌXV
+	// æ•µã®æ›´æ–°
 	{
-		// “G‚ÌXV‚Æíœˆ—
-		for (auto it = _stageEnemies.begin(); it != _stageEnemies.end(); ) 
+		// æ•µã®æ›´æ–°ã¨å‰Šé™¤å‡¦ç†
+		for(auto it = _stageEnemies.begin(); it != _stageEnemies.end(); )
 		{
 			std::shared_ptr<Enemy> enemy = *it;
 
 			enemy->Process();
 
-			// íœ‰Â”\‚È‚çƒŠƒXƒg‚©‚çíœ
-			if (enemy->CanRemove()) 
+			// å‰Šé™¤å¯èƒ½ãªã‚‰ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤
+			if(enemy->CanRemove())
 			{
+				// ã“ã“ã§ã€Œå€’ã•ã‚ŒãŸã€åˆ¤å®šã‚’è¡Œã†ï¼ˆDeadâ†’CanRemove ã®æµã‚Œã‚’æƒ³å®šï¼‰
+				bool wasDead = enemy->IsDead();
+
+				// ã‚¹ãƒ†ãƒ¼ã‚¸2ï¼ˆ_stageNum == 1ï¼‰ã§åˆã‚ã¦ã®éŠƒå‹ï¼ˆmodelName == "Ranged") ã‚’å€’ã—ãŸã¨ã
+				if(wasDead && !_bFirstRangedKilled && _stageNum == 1)
+				{
+					if(enemy->GetModelName() == "Ranged" || enemy->GetModelName() == "RangedEnemy")
+					{
+						_bFirstRangedKilled = true;
+						ModeTextBox::Show("Textbox_Kage", "ä»Šã®ã‚„ã¤ã®ã‚¨ãƒãƒ«ã‚®ãƒ¼ã§ã§ãã‚‹ã“ã¨ãŒå¢—ãˆãŸã‹ã‚‰è©¦ã—ã¦ã¿ã‚ˆã†ãœã€‚", false, 100, "stage2_first_ranged");
+					}
+				}
+
 				it = _stageEnemies.erase(it);
 			}
-			else 
+			else
 			{
 				++it;
 			}
 		}
 	}
-}
 
+	// å…¨æ»…åˆ¤å®š: ç©ºã«ãªã£ãŸæ™‚ç‚¹ã§ä¸€åº¦ã ã‘é€šçŸ¥
+	if(IsAllEnemiesDefeated() && !_bAllClearNotified)
+	{
+		_bAllClearNotified = true;
+
+		// ã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·ã«å¿œã˜ã¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’åˆ‡ã‚Šæ›¿ãˆ
+		if(_stageNum == 0)
+		{
+			// ã‚¹ãƒ†ãƒ¼ã‚¸1 å…¨æ»…æ™‚ã®ãƒ†ã‚­ã‚¹ãƒˆãƒã‚§ãƒ¼ãƒ³
+			ModeTextBox::ShowChain({
+				{"Textbox_Normal", "ã‚¯ãƒ­ã¨åŒã˜ç¨®æ—ï¼Ÿã¯æ²¢å±±ã„ãŸã‘ã©ç™½é›ªã¯ã„ãªã‹ã£ãŸãª"},
+				{"Textbox_Kage", "ã‚‚ã—ã‹ã—ãŸã‚‰å…ˆã«ã„ã‚‹ã‹ã‚‚ãªã€\nä»Šã¿ãŸã„ã«ã‚ã„ã¤ã‚‰ã‹ã‚‰ã‚¨ãƒãƒ«ã‚®ãƒ¼ã‚’å¥ªã„ãªãŒã‚‰å¥¥ã¾ã§æ¢ã—ã¦ã¿ã‚ˆã†ãœã€‚"},
+				{"Textbox_Angry", "ã‚¯ãƒ­ã€ãŠå‰ã€ãªã‚“ã‹ä¼ã‚“ã§ã‚‹ï¼Ÿ"},
+				{"Textbox_Kage", "ã„ã„ã‚„ã€ãŸã å¬¢ã¡ã‚ƒã‚“ãŒå¿ƒé…ãªã ã‘ã•ã€‚"}
+				}, false, 100, "stage1_allclear");
+		}
+		else if(_stageNum == 1)
+		{
+			// ã‚¹ãƒ†ãƒ¼ã‚¸2 å…¨æ»…æ™‚ã®ãƒ†ã‚­ã‚¹ãƒˆãƒã‚§ãƒ¼ãƒ³
+			ModeTextBox::ShowChain({
+				{"Textbox_Scared", "ã•ã£ãæ‹¾ã£ãŸã“ã®æ‰‹é¡å¤šåˆ†ç™½é›ªã®ã ã€‚"},
+				{"Textbox_Kage", "ã¤ã¾ã‚Šã€å¬¢ã¡ã‚ƒã‚“ã¯ã“ã“ã‚’é€šã£ãŸã£ã¦ã“ã¨ã ãªï¼Ÿ\nã¡ã‚‡ã†ã©ã“ã®å¥¥ãŒæœ€å¾Œã¿ãŸã„ã ãœã€‚"}
+				}, false, 100, "stage2_allclear");
+		}
+		else
+		{
+			// ä»–ã‚¹ãƒ†ãƒ¼ã‚¸ã¯å¿…è¦ã«å¿œã˜ã¦è¿½åŠ 
+		}
+	}
+}
 void StageBase::Render()
 {
-	// ƒ}ƒbƒvƒ‚ƒfƒ‹‚Ì•`‰æ
-	{
-		for (auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) {
-			//MV1DrawModel(ite->modelHandle);
+	// ãƒãƒƒãƒ—ãƒ¢ãƒ‡ãƒ«ã®æç”»
+	
+
+		for(auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) 
+		{
+			// EventA / EventB ã¯æç”»ã—ãªã„ï¼ˆå½“ãŸã‚Šåˆ¤å®šã ã‘åˆ©ç”¨ï¼‰
+			if(ite->name == "EventA" || ite->name == "EventB")
+			{
+				continue;
+			}
+
 			MV1DrawFrame(ite->modelHandle, ite->drawFrame);
+		
+		}
+	
+
+	// æ•µã®æç”»
+	{
+		for(auto& enemy : _stageEnemies) {
+			enemy->Render();
 		}
 	}
 
-	// “G‚Ì•`‰æ
+	// æ•µã®æç”»
 	{
 		for (auto& enemy : _stageEnemies) {
 			enemy->Render();
@@ -413,49 +542,49 @@ void StageBase::Render()
 
 void StageBase::DebugRender()
 {
-	// “G‚ÌƒfƒoƒbƒOî•ñ•`‰æ
+	// æ•µã®ãƒ‡ãƒãƒƒã‚°æƒ…å ±æç”»
 	{
 		for (auto& enemy : _stageEnemies) {
 			enemy->DebugRender();
 		}
 	}
 
-	// “G‚Ìc”‚ğƒfƒoƒbƒO•\¦
+	// æ•µã®æ®‹æ•°ã‚’ãƒ‡ãƒãƒƒã‚°è¡¨ç¤º
 	{
 		int x = 10;
 		int y = 10;
 		int size = 20;
 
-		DrawFormatString(x, y, GetColor(255, 255, 0), "“G‘” : %d", _totalEnemyCnt); y += size;
-		DrawFormatString(x, y, GetColor(255, 255, 0), "c‚è“G” : %d", GetCurrentEnemyCnt()); y += size;
-		DrawFormatString(x, y, GetColor(255, 255, 0), "‘S–Å”»’è : %s", IsAllEnemiesDefeated() ? "True" : "False"); y += size;
+		DrawFormatString(x, y, GetColor(255, 255, 0), "æ•µç·æ•° : %d", _totalEnemyCnt); y += size;
+		DrawFormatString(x, y, GetColor(255, 255, 0), "æ®‹ã‚Šæ•µæ•° : %d", GetCurrentEnemyCnt()); y += size;
+		DrawFormatString(x, y, GetColor(255, 255, 0), "å…¨æ»…åˆ¤å®š : %s", IsAllEnemiesDefeated() ? "True" : "False"); y += size;
 	}
 }
 
 void StageBase::CollisionRender()
 {
-	// ƒ}ƒbƒvƒ‚ƒfƒ‹‚ÌƒRƒŠƒWƒ‡ƒ“•`‰æ
+	// ãƒãƒƒãƒ—ãƒ¢ãƒ‡ãƒ«ã®ã‚³ãƒªã‚¸ãƒ§ãƒ³æç”»
 	{
 		for (auto ite = _mapModelPosList.begin(); ite != _mapModelPosList.end(); ++ite) {
 			//MV1DrawFrame(ite->modelHandle, ite->collisionFrame);
 		}
 	}
 
-	// “G‚ÌƒRƒŠƒWƒ‡ƒ“•`‰æ
+	// æ•µã®ã‚³ãƒªã‚¸ãƒ§ãƒ³æç”»
 	{
 		for (auto& enemy : _stageEnemies) {
 			enemy->CollisionRender();
 		}
 	}
 
-	// ƒgƒŠƒK[î•ñ
+	// ãƒˆãƒªã‚¬ãƒ¼æƒ…å ±
 	{
 		for (auto& trig : _triggerList) {
 			MV1DrawModel(trig.modelHandle);
 		}
 	}
 
-	// “G‚ÌˆÚ“®‰Â”\”ÍˆÍ
+	// æ•µã®ç§»å‹•å¯èƒ½ç¯„å›²
 	{
 		for (auto& area : _moveAreaList) {
 			MV1DrawModel(area.modelHandle);
@@ -469,12 +598,12 @@ void StageBase::LoadStageDataFromJson(
 	std::function<void(const std::string& name, const VECTOR& pos, const VECTOR& rot, const VECTOR& scale)> onLoadItem
 )
 {
-	// ƒtƒ@ƒCƒ‹‚ğŠJ‚­
+	// ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
 	std::ifstream file(filePath);
 	nlohmann::json json;
 	file >> json;
 
-	// ƒL[‚ª‘¶İ‚µ‚È‚¢ê‡‚ÍƒXƒLƒbƒv
+	// ã‚­ãƒ¼ãŒå­˜åœ¨ã—ãªã„å ´åˆã¯ã‚¹ã‚­ãƒƒãƒ—
 	if (!json.contains(objName))
 	{
 		return;
@@ -482,26 +611,26 @@ void StageBase::LoadStageDataFromJson(
 
 	nlohmann::json stage = json.at(objName);
 
-	// ƒ‹[ƒvˆ—
+	// ãƒ«ãƒ¼ãƒ—å‡¦ç†
 	for (auto& data : stage)
 	{
 		std::string name;
 		VECTOR pos, rot, scale;
 
-		// –¼‘Oæ“¾
+		// åå‰å–å¾—
 		data.at("objectName").get_to(name);
 
-		// UE‚Í¶èÀ•WŒn/Zup ¨¶èÀ•WŒn/Yup ‚É•ÏŠ·‚µ‚Â‚Âæ“¾
+		// UEã¯å·¦æ‰‹åº§æ¨™ç³»/Zup â†’å·¦æ‰‹åº§æ¨™ç³»/Yup ã«å¤‰æ›ã—ã¤ã¤å–å¾—
 		data.at("translate").at("x").get_to(pos.x);
 		data.at("translate").at("z").get_to(pos.y);
 		data.at("translate").at("y").get_to(pos.z);
-		pos.z *= -1.0f;// À•W‚Ì•ÏŠ·
+		pos.z *= -1.0f;// åº§æ¨™ã®å¤‰æ›
 
 		VECTOR rotDeg;
 		data.at("rotate").at("x").get_to(rotDeg.x);
 		data.at("rotate").at("z").get_to(rotDeg.y);
 		data.at("rotate").at("y").get_to(rotDeg.z);
-		rot.x = rotDeg.x * DEGREE_TO_RADIAN;// ‰ñ“]‚Ídegree¨radian‚É
+		rot.x = rotDeg.x * DEGREE_TO_RADIAN;// å›è»¢ã¯degreeâ†’radianã«
 		rot.y = rotDeg.y * DEGREE_TO_RADIAN;
 		rot.z = rotDeg.z * DEGREE_TO_RADIAN;
 
@@ -509,14 +638,14 @@ void StageBase::LoadStageDataFromJson(
 		data.at("scale").at("z").get_to(scale.y);
 		data.at("scale").at("y").get_to(scale.z);
 
-		// ƒR[ƒ‹ƒoƒbƒNŠÖ”‚ğŒÄ‚Ño‚·
+		// ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯é–¢æ•°ã‚’å‘¼ã³å‡ºã™
 		onLoadItem(name, pos, rot, scale);
 	}
 }
 
 int StageBase::GetNextStageNumFromTrigger(const std::string& triggerName)
 {
-	// ƒgƒŠƒK[–¼‚É‰‚¶‚ÄŸ‚ÌƒXƒe[ƒW”Ô†‚ğ”»’è
+	// ãƒˆãƒªã‚¬ãƒ¼åã«å¿œã˜ã¦æ¬¡ã®ã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·ã‚’åˆ¤å®š
 	if (triggerName.find("S_Portal_0to1") != std::string::npos)
 	{
 		return 1;
@@ -529,7 +658,7 @@ int StageBase::GetNextStageNumFromTrigger(const std::string& triggerName)
 
 void StageBase::PlayStageBGM()
 {
-	// ƒXƒe[ƒWŠJn‚ÉŒÄ‚Ô‰Šú‰»—p
+	// ï¿½Xï¿½eï¿½[ï¿½Wï¿½Jï¿½nï¿½ï¿½ï¿½ÉŒÄ‚Ôï¿½ï¿½ï¿½ï¿½ï¿½ï¿½p
 	if(!_playerManager) return;
 
 	auto activePlayer = _playerManager->GetActivePlayerShared();
@@ -537,15 +666,17 @@ void StageBase::PlayStageBGM()
 
 	_previousCharaType = activePlayer->GetCharaType();
 	UpdateStageBGM(_previousCharaType);
+	// ãƒ«ãƒ¼ãƒ—å†ç”Ÿ
+	auto bgmHandle = SoundServer::GetInstance()->Play(_currentBGMName, DX_PLAYTYPE_LOOP);
 
-	// ƒ{ƒŠƒ…[ƒ€İ’è
+	// ãƒœãƒªãƒ¥ãƒ¼ãƒ è¨­å®š
 }
 
 void StageBase::StopStageBGM()
 {
 	if (_currentBGMName.empty()) return;
 
-	// BGM‚ğ’â~
+	// BGMï¿½ï¿½ï¿½~
 	if (!_currentBGMName.empty()) 
 	{
 		SoundServer::GetInstance()->Stop(_currentBGMName);
@@ -558,6 +689,8 @@ void StageBase::StopStageBGM()
 	{
 		SoundServer::GetInstance()->Stop(_bulletPlayerBGMName);
 	}
+	// BGMã‚’åœæ­¢
+	SoundServer::GetInstance()->Stop(_currentBGMName);
 }
 
 void StageBase::DebugKillAllEnemies()
@@ -566,22 +699,22 @@ void StageBase::DebugKillAllEnemies()
 	{
 		if(!enemy) { continue; }
 
-		// ‚Ü‚¸HP‚ğ0‚É‚µ‚Ä€–Sˆµ‚¢‚ÉŠñ‚¹‚éiŠù‘¶ƒƒWƒbƒNˆË‘¶‚Ì‚½‚ß•ÛŒ¯j
+		// ã¾ãšHPã‚’0ã«ã—ã¦æ­»äº¡æ‰±ã„ã«å¯„ã›ã‚‹ï¼ˆæ—¢å­˜ãƒ­ã‚¸ãƒƒã‚¯ä¾å­˜ã®ãŸã‚ä¿é™ºï¼‰
 		enemy->SetLife(0.0f);
 		enemy->SetIsDead(true);
 
-		// StageBase::Process ‚Ì erase ğŒ‚Éæ‚¹‚é
+		// StageBase::Process ã® erase æ¡ä»¶ã«ä¹—ã›ã‚‹
 		enemy->EnableRemove();
 	}
 }
 
 void StageBase::UpdateStageBGM(CHARA_TYPE charaType)
 {
-	// ‘O‚Ì BGM ‚ğ’â~
+	// ï¿½Oï¿½ï¿½ BGM ï¿½ï¿½ï¿½~
 	StopStageBGM();
 
-	// V‚µ‚¢ BGM ‚ğİ’è
-	std::string bgmName = _currentBGMName;  // ƒfƒtƒHƒ‹ƒg
+	// ï¿½Vï¿½ï¿½ï¿½ï¿½ BGM ï¿½ï¿½İ’ï¿½
+	std::string bgmName = _currentBGMName;  // ï¿½fï¿½tï¿½Hï¿½ï¿½ï¿½g
 
 	if(charaType == CHARA_TYPE::INTERIOR_PLAYER)
 	{
@@ -594,6 +727,25 @@ void StageBase::UpdateStageBGM(CHARA_TYPE charaType)
 
 	if(bgmName.empty()) { return; }
 
-	// V‚µ‚¢ BGM ‚ğÄ¶
+	// ï¿½Vï¿½ï¿½ï¿½ï¿½ BGM ï¿½ï¿½Äï¿½
 	SoundServer::GetInstance()->Play(bgmName, DX_PLAYTYPE_LOOP);
+void StageBase::RemoveMapModelByName(const std::string& name)
+{
+	for(auto it = _mapModelPosList.begin(); it != _mapModelPosList.end(); )
+	{
+		if(it->name == name)
+		{
+			// ãƒ¢ãƒ‡ãƒ«ãƒãƒ³ãƒ‰ãƒ«ãŒæœ‰åŠ¹ãªã‚‰è§£æ”¾
+			if(it->modelHandle > 0)
+			{
+				MV1DeleteModel(it->modelHandle);
+			}
+
+			it = _mapModelPosList.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
 }
