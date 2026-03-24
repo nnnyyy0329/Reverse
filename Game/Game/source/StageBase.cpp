@@ -666,19 +666,6 @@ int StageBase::GetNextStageNumFromTrigger(const std::string& triggerName)
 
 void StageBase::PlayStageBGM()
 {
-	//if(!_playerManager) return;
-
-	//auto activePlayer = _playerManager->GetActivePlayerShared();
-	//if(!activePlayer) return;
-
-	//_previousCharaType = activePlayer->GetCharaType();
-	//UpdateStageBGM(_previousCharaType);
-	//// ループ再生
-	//auto bgmHandle = SoundServer::GetInstance()->Play(_currentBGMName, DX_PLAYTYPE_LOOP);
-
-	//// ボリューム設定
-
-
 	// プレイヤーマネージャーが未設定の場合、デフォルト BGM を再生
 	if(!_playerManager)
 	{

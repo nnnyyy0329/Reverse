@@ -275,24 +275,24 @@ bool ModeGame::Process()
 	// startでメニューを開く
 	if (im.IsTrigger(INPUT_ACTION::MENU))
 	{
-		ModeMenu* modeMenu = new ModeMenu();
-		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+		//ModeMenu* modeMenu = new ModeMenu();
+		//ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 
-		modeMenu->SetCameraManager(_cameraManager);
+		//modeMenu->SetCameraManager(_cameraManager);
 
-		// メニュー項目を作成
-		auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
-		auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
-		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
-		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+		//// メニュー項目を作成
+		//auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
+		//auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
+		//auto useCollision = new MenuItemUseCollision(this, "UseCollision");
+		//auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
 
-		// デバッグカメラ切り替え
-		debugCamera->SetCameraManagerMenu(_cameraManager);
+		//// デバッグカメラ切り替え
+		//debugCamera->SetCameraManagerMenu(_cameraManager);
 
-		modeMenu->AddMenuItem(viewDebugInfo);
-		modeMenu->AddMenuItem(viewCollision);
-		modeMenu->AddMenuItem(useCollision);
-		modeMenu->AddMenuItem(debugCamera);
+		//modeMenu->AddMenuItem(viewDebugInfo);
+		//modeMenu->AddMenuItem(viewCollision);
+		//modeMenu->AddMenuItem(useCollision);
+		//modeMenu->AddMenuItem(debugCamera);
 	}
 
 	// クラスセット
@@ -606,11 +606,10 @@ bool ModeGame::Render()
 				const int current = _stage->GetCurrentEnemyCnt();
 				const int total = _stage->GetTotalEnemyCnt();
 
-				SetFontSize(24);
-				//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
-				DrawFormatString(20, 60, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
-				SetFontSize(16);
-			}
+			SetFontSize(24);
+			//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
+			DrawFormatString(60, 120, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
+			SetFontSize(16);
 		}
 	}
 
