@@ -172,6 +172,7 @@ public:
 			param.fDamageTime = TANK_DAMAEGE_TIME;
 			param.bDownSE = false;// ダウンSEなし
 			param.bChangeDamageState = false;// 弾で被ダメ遷移しない
+			param.bUseMoveArea = false;// 移動可能範囲を適用しない
 			param.capsule.fRadius = TANK_COL_RADIUS;
 			param.capsule.fHeight = TANK_COL_HEIGHT;
 			param.capsule.fColSubY = TANK_COL_SUB_Y;

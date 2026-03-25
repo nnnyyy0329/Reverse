@@ -41,6 +41,8 @@ struct EnemyParam
 	bool bTransToWander = true;// 徘徊へ遷移するかどうか
 	float fAggression = 0.9f;// 攻撃性 : 警戒せず接近する確率(0.0f～1.0f)
 
+	bool bUseMoveArea = true;// 移動可能範囲を適用するか
+
 	EnemyCapsule capsule;// カプセルコリジョンの設定
 
 	// 共通ステートのアニメーション名

@@ -154,18 +154,21 @@ bool Enemy::Process()
 	_vPos = VAdd(_vPos, _vMove);// 座標更新
 
 	// 移動可能範囲チェック
-	if (!CheckInsideMoveArea(_vPos))
+	if (_enemyParam.bUseMoveArea)
 	{
-		// エリア外 初期座標へ押し戻しを試みる
-		if (!CorrectPosToMoveArea())
+		if (!CheckInsideMoveArea(_vPos))
 		{
-			_vPos = _vOldPos;// 失敗なら前フレームの座標に戻す
+			// エリア外 初期座標へ押し戻しを試みる
+			if (!CorrectPosToMoveArea())
+			{
+				_vPos = _vOldPos;// 失敗なら前フレームの座標に戻す
+			}
+			_bIsOutSideMoveArea = true;// エリア外
 		}
-		_bIsOutSideMoveArea = true;// エリア外
-	}
-	else
-	{
-		_bIsOutSideMoveArea = false;
+		else
+		{
+			_bIsOutSideMoveArea = false;
+		}
 	}
 
 	// モデルのワールド行列を取得
