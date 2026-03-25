@@ -4,8 +4,12 @@
 namespace
 {
 	// 画像表示用
-	constexpr int DRAW_BAR_FRAME_X = 60;
-	constexpr int DRAW_BAR_FRAME_Y = 60;
+	//constexpr int DRAW_BAR_FRAME_X = 60;
+	//constexpr int DRAW_BAR_FRAME_Y = 60;
+
+	constexpr int DRAW_BAR_FRAME_X = 677.5f;
+	constexpr int DRAW_BAR_FRAME_Y = 1050;
+
 	constexpr int DRAW_OFFSET_X = 1;
 	constexpr int DRAW_OFFSET_Y = 1;
 
@@ -115,20 +119,15 @@ void PlayerLifeBarUI::LifeBarRender(float ratio)
 {
 	if(ratio <= 0.0f) { return; }	// �䗦��0�ȉ��̏ꍇ�͕`�悵�Ȃ�
 
-	// �摜�T�C�Y
 	int graphW, graphH;
 	GetGraphSize(_iLifeBar, &graphW, &graphH);
 
-	// �`�悷�镝
 	int clipW = static_cast<int>(graphW * ratio);
 
-	// �N���b�s���O�̈��ݒ�
 	SetDrawArea(_drawLifeBarX, _drawLifeBarY, _drawLifeBarX + clipW, _drawLifeBarY + graphH);
 
-	// ���C�t�o�[�`��
 	DrawGraph(_drawLifeBarX, _drawLifeBarY, _iLifeBar, TRUE);
 
-	// �N���b�s���O�̈����ɖ߂�
 	SetDrawAreaFull();
 
 	//if(ratio <= 0.0f) { return; }	// 比率が0以下の場合は描画しない
