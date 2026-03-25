@@ -37,10 +37,11 @@ namespace
 	constexpr auto ATTACK_RECOVERY_TIME = 120.0f;		// 攻撃後隙時間
 	constexpr auto LOST_WAIT_TIME = 60.0f;				// 帰還前の待機時間
 	constexpr float CAUTION_TIME = 180.0f;				// 警戒時間
+	constexpr float GIVE_UP_CHASE_TIME = 300.0f;		// 追跡をあきらめるまでの時間
 
 	// 速度制御用定数
 	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;			// スムーズ回転速度
-	constexpr auto ATTACK_APPROACH_SPEED = 2.0f;		// 攻撃開始時の接近速度
+	constexpr auto ATTACK_APPROACH_SPEED = 3.0f;		// 攻撃開始時の接近速度
 	constexpr auto ATTACK_EXECUTE_SPEED = 1.5f;			// 攻撃実行時の前進速度
 	constexpr auto LOST_ROTATE_SPEED = 1.5f;			// 見渡し回転速度
 	constexpr auto CAUTION_SPEED = 1.5f;				// 警戒時の前後移動速度
@@ -161,6 +162,13 @@ namespace Normal
 
 	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner)
 	{
+		// 仲間から知らせを受け取ったかチェック
+		if (owner->IsAllerted())
+		{
+			owner->SetAllerted(false);// フラグをリセット
+			return std::make_shared<Notice>();
+		}
+
 		// 索敵結果チェック
 		if (owner->IsTargetDetected())
 		{
@@ -213,6 +221,13 @@ namespace Normal
 
 	std::shared_ptr<EnemyState> Wander::Update(Enemy* owner)
 	{
+		// 仲間から知らせを受け取ったかチェック
+		if (owner->IsAllerted())
+		{
+			owner->SetAllerted(false);// フラグをリセット
+			return std::make_shared<Notice>();
+		}
+
 		// 索敵結果チェック
 		if (owner->IsTargetDetected())
 		{
@@ -276,6 +291,9 @@ namespace Normal
 		// 時間経過チェック
 		if (_fTimer >= DETECT_TIME)
 		{
+			// 周囲の敵に知らせる
+			owner->AlertAllies();
+
 			// 乱数が、攻撃性パラメータ以下なら接近、そうでなければ警戒へ遷移
 			float fRand = mymath::RandomRange(0.0f, 1.0f);
 			if(fRand <= param.fAggression)
@@ -394,6 +412,14 @@ namespace Normal
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
 		if (areaResult) { return areaResult; }
 
+		_fTimer++;
+		// 時間切れによる諦めチェック
+		if(_fTimer >= GIVE_UP_CHASE_TIME)
+		{
+			// ターゲットを見失って帰還する
+			return TransitionToLostNoTarget<LostTarget>(owner);
+		}
+
 		// 攻撃の分岐判定
 		// 近接攻撃の距離内なら、近接攻撃する
 		if (targetInfo.fDist <= ATTACK_START_DISTANCE)
@@ -428,6 +454,11 @@ namespace Normal
 		_fTimer = 0.0f;
 
 		// アニメーション設定
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_DOUBLE);
+		}
 	}
 
 	std::shared_ptr<EnemyState> AttackStart::Update(Enemy* owner)
@@ -447,6 +478,13 @@ namespace Normal
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
 		if (areaResult) { return areaResult; }
+
+		// 時間切れによる諦めチェック
+		if (_fTimer >= GIVE_UP_CHASE_TIME)
+		{
+			// ターゲットを見失って帰還する
+			return TransitionToLostNoTarget<LostTarget>(owner);
+		}
 
 		if (targetInfo.fDist <= ATTACK_EXECUTE_DISTANCE)
 		{

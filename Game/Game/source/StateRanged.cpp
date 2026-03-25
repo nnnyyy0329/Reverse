@@ -22,6 +22,7 @@ namespace
 	constexpr float SHOT_BULLET_TIME = 90.0f;			// 実際に弾が発射される時間(アニメーション準拠)
 	constexpr auto LOST_WAIT_TIME = 60.0f;				// 帰還前の待機時間
 	constexpr auto RETREAT_TIME = 120.0f;				// 後退時間
+	constexpr float GIVE_UP_CHASE_TIME = 300.0f;		// 追跡をあきらめるまでの時間
 
 	// 速度制御用定数
 	constexpr auto WANDER_ROTATE_SPEED = 2.0f;			// 徘徊時の回転速度
@@ -277,6 +278,14 @@ namespace Ranged
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
 		if (areaResult) { return areaResult; }
+
+		_fTimer++;
+		// 時間切れによる諦めチェック
+		if (_fTimer >= GIVE_UP_CHASE_TIME)
+		{
+			// ターゲットを見失って帰還する
+			return TransitionToLostNoTarget<LostTarget>(owner);
+		}
 
 		// 射撃射程内チェック
 		if (targetInfo.fDist <= APPROACH_STOP_DISTANCE)

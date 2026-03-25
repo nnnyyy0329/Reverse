@@ -5,6 +5,7 @@
 #include "StateCommon.h"
 #include "StageBase.h"
 #include "PathfindingManager.h"
+#include "StateNormal.h"
 
 namespace
 {
@@ -34,6 +35,8 @@ namespace
 	// 経路探索
 	constexpr float PATH_UPDATE_INTERVAL = 30.0f;// ルートを再計算する間隔(フレーム)
 	constexpr float WAYPOINT_REACHED_DIST = 20.0f;// ウェイポイント到達したと見なす距離
+
+	constexpr float ALERT_RADIUS = 300.0f;// 周囲の敵に知らせる範囲
 }
 
 Enemy::Enemy() 
@@ -868,4 +871,45 @@ void Enemy::UpdateCoolDowns()
 	{
 		_fSpecialAttackTimer -= 1.0f;
 	}
+}
+
+void Enemy::AlertAllies()
+{
+	if (auto stage = _stage.lock())
+	{
+		// 全敵のリストを取得
+		const auto& allEnemies = stage->GetEnemies();
+
+		for (const auto& otherEnemy : allEnemies)
+		{
+			// 自分自身、すでに死んでいる敵は除外
+			if(otherEnemy.get() == this || !otherEnemy->CanRemove() == false)
+			{
+				continue;
+			}
+
+			// 距離を計算
+			VECTOR vToOther = VSub(otherEnemy->GetPos(), this->GetPos());
+			float dist = VSize(vToOther);
+
+			// 範囲内なら、ターゲット情報を渡して発見状態にする
+			if (dist <= ALERT_RADIUS)
+			{
+				otherEnemy->OnAlerted(_targetPlayer);
+			}
+		}
+	}
+}
+
+void Enemy::OnAlerted(std::shared_ptr<CharaBase> target)
+{
+	// すでに発見済み、死亡している場合は無視
+	if (_bIsTargetDetected || !_bIsExist) { return; }
+
+	// ターゲット情報を設定
+	_targetPlayer = target;
+	_bIsTargetDetected = true;
+
+	// 知らせを受け取った
+	_bIsAllerted = true;
 }

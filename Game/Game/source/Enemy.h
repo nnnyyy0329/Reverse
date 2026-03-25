@@ -101,6 +101,13 @@ public:
 	bool CanSpecialAttack() { return _fSpecialAttackTimer <= 0.0f; }
 	void ResetCoolDowns(float time) { _fSpecialAttackTimer = time; }
 
+	// 周囲の敵にプレイヤーの存在を知らせる
+	void AlertAllies();
+	// 知らせを受け取った時の処理
+	void OnAlerted(std::shared_ptr<CharaBase> target);
+	bool IsAllerted() { return _bIsAllerted; }
+	void SetAllerted(bool flag) { _bIsAllerted = flag; }
+
 protected:
 
 	VECTOR _vHomePos;// 敵の初期座標
@@ -139,6 +146,8 @@ protected:
 	bool _bIsOutSideMoveArea = false;// エリア外へ移動しようとしたか
 
 	float _fSpecialAttackTimer = 600.0f;// 特殊攻撃CD用タイマー
+
+	bool _bIsAllerted = false;// 仲間からの知らせを受け取ったか
 
 	// 経路記憶用
 	std::vector<VECTOR> _currentPath;// 現在の経路座標リスト
