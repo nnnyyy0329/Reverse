@@ -86,11 +86,6 @@ public:
 	bool IsOutSideMoveArea() { return _bIsOutSideMoveArea; }
 	bool CorrectPosToMoveArea();// 初期座標方向へ押し戻す
 
-	// 連続被ダメカウント管理
-	int GetDamageComboCnt() { return _damageComboCnt; }
-	void UpdateDamageCombo();// 連続被ダメカウントを更新
-	void UpdateDamageComboTimer();// リセットタイマー更新
-
 	// 徐々に回転させる
 	void SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg);// 目標方向へ指定速度で回転
 

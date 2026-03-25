@@ -9,19 +9,6 @@ inline std::shared_ptr<EnemyState> EnemyState::TransitionToLostNoTarget(Enemy* o
 	return std::make_shared<LostTargetState>();
 }
 
-template<typename LostTargetState>
-inline std::shared_ptr<EnemyState> EnemyState::TransitionToLostOverChaseLimit(Enemy* owner, float fDist)
-{
-	const auto& param = owner->GetEnemyParam();
-	if (fDist > param.fChaseLimitRange)
-	{
-		owner->SetTargetDetected(false);
-		return std::make_shared<LostTargetState>();
-	}
-
-	return nullptr;
-}
-
 template<typename IdleState>
 inline std::shared_ptr<EnemyState> EnemyState::TransitionToIdleOutsideArea(Enemy* owner)
 {

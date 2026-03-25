@@ -91,62 +91,62 @@ StageBase::StageBase(int stageNum)
 
 
 
-	//青いイベント読み込み（重複を防ぐ） — ステージ0/2のみ追加する
-	if(_stageNum == 0 || _stageNum == 2)
-	{
-		auto rs = ResourceServer::GetInstance();
+	////青いイベント読み込み（重複を防ぐ） — ステージ0/2のみ追加する
+	//if(_stageNum == 0 || _stageNum == 2)
+	//{
+	//	auto rs = ResourceServer::GetInstance();
 
-		auto alreadyHasModel = [&](const std::string& name) -> bool {
-			return std::any_of(_mapModelPosList.begin(), _mapModelPosList.end(),
-				[&](const MODELPOS& mp) { return mp.name == name; });
-			};
+	//	auto alreadyHasModel = [&](const std::string& name) -> bool {
+	//		return std::any_of(_mapModelPosList.begin(), _mapModelPosList.end(),
+	//			[&](const MODELPOS& mp) { return mp.name == name; });
+	//		};
 
-		// EventA を手動で追加（存在しなければ）
-		if(!alreadyHasModel("EventA"))
-		{
-			int handleA = rs->GetHandle("EventA");
-			if(handleA != -1)
-			{
-				MODELPOS m = {};
-				m.name = "EventA";
-				m.pos = VGet(0.0f, 0.0f, 0.0f);
-				m.rot = VGet(0.0f, 0.0f, 0.0f);
-				m.scale = VGet(1.0f, 1.0f, 1.0f);
+	//	// EventA を手動で追加（存在しなければ）
+	//	if(!alreadyHasModel("EventA"))
+	//	{
+	//		int handleA = rs->GetHandle("EventA");
+	//		if(handleA != -1)
+	//		{
+	//			MODELPOS m = {};
+	//			m.name = "EventA";
+	//			m.pos = VGet(0.0f, 0.0f, 0.0f);
+	//			m.rot = VGet(0.0f, 0.0f, 0.0f);
+	//			m.scale = VGet(1.0f, 1.0f, 1.0f);
 
-				m.modelHandle = MV1DuplicateModel(handleA);
-				m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
+	//			m.modelHandle = MV1DuplicateModel(handleA);
+	//			m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
 
-				MV1SetPosition(m.modelHandle, m.pos);
-				MV1SetRotationXYZ(m.modelHandle, m.rot);
-				MV1SetScale(m.modelHandle, m.scale);
+	//			MV1SetPosition(m.modelHandle, m.pos);
+	//			MV1SetRotationXYZ(m.modelHandle, m.rot);
+	//			MV1SetScale(m.modelHandle, m.scale);
 
-				_mapModelPosList.push_back(m);
-			}
-		}
+	//			_mapModelPosList.push_back(m);
+	//		}
+	//	}
 
-		// EventB を手動で追加（存在しなければ）
-		if(!alreadyHasModel("EventB"))
-		{
-			int handleB = rs->GetHandle("EventB");
-			if(handleB != -1)
-			{
-				MODELPOS m = {};
-				m.name = "EventB";
-				m.pos = VGet(5.0f, 0.0f, 3.0f);
-				m.rot = VGet(0.0f, 0.0f, 0.0f);
-				m.scale = VGet(1.0f, 1.0f, 1.0f);
+	//	// EventB を手動で追加（存在しなければ）
+	//	if(!alreadyHasModel("EventB"))
+	//	{
+	//		int handleB = rs->GetHandle("EventB");
+	//		if(handleB != -1)
+	//		{
+	//			MODELPOS m = {};
+	//			m.name = "EventB";
+	//			m.pos = VGet(5.0f, 0.0f, 3.0f);
+	//			m.rot = VGet(0.0f, 0.0f, 0.0f);
+	//			m.scale = VGet(1.0f, 1.0f, 1.0f);
 
-				m.modelHandle = MV1DuplicateModel(handleB);
-				m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
+	//			m.modelHandle = MV1DuplicateModel(handleB);
+	//			m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
 
-				MV1SetPosition(m.modelHandle, m.pos);
-				MV1SetRotationXYZ(m.modelHandle, m.rot);
-				MV1SetScale(m.modelHandle, m.scale);
+	//			MV1SetPosition(m.modelHandle, m.pos);
+	//			MV1SetRotationXYZ(m.modelHandle, m.rot);
+	//			MV1SetScale(m.modelHandle, m.scale);
 
-				_mapModelPosList.push_back(m);
-			}
-		}
-	}
+	//			_mapModelPosList.push_back(m);
+	//		}
+	//	}
+	//}
 
 
 	// jsonファイルの読み込み(敵)
