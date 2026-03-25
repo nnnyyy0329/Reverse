@@ -222,7 +222,7 @@ bool ModeGame::Process()
 
 
 	// Debug: ゲームパッドの右トリガー(RT)のトリガー状態で全滅（デバッグ用）
-// InputManager の TriggerButtonState::rtTrg が true になる瞬間を検出して実行します。
+
 	//if(im.GetTrigger().rtTrg)
 	//{
 	//	if(_stage)
