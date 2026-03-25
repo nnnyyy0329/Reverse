@@ -28,9 +28,8 @@ PlayerLifeBarUI::PlayerLifeBarUI()
 
 PlayerLifeBarUI::~PlayerLifeBarUI()
 {
-	// 画像の解放
-	DeleteGraph(_iLifeBar);
-	DeleteGraph(_iLifeBarFrame);
+	// デストラクタ
+	Terminate();
 }
 
 bool PlayerLifeBarUI::Initialize()

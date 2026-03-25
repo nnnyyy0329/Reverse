@@ -54,7 +54,9 @@ bool ModeGame::Initialize()
 	{
 		ModeTextBox::ShowChain({
 			{"Textbox_Scared", "うわっなんだこれ！"},
-			{"Textbox_Kage", "お前に何かあったら俺もどうなるか分からねぇからな。\nと言っても、俺を薄く伸ばして覆ってるみたいなもんだから\nないよりマシって程度だけどな。っと説明は後だ、とりあえず奥に行こうぜ。"}
+			{"Textbox_Kage", "お前に何かあったら俺もどうなるか分からねぇからな。"},
+			{"Textbox_Kage", "...と言っても、俺を薄く伸ばして覆ってるみたいな \nもんだからないよりマシって程度だけどな。"},
+			{"Textbox_Kage", "っと説明は後だ、とりあえず奥に行こうぜ。" }
 			}, false, 100, "stage1_start");
 	}
 	else if(_currentStageNum == 2) // ステージ3開始時
@@ -416,19 +418,23 @@ bool ModeGame::Process()
 		if (energyMgr && energyMgr->CanSwitchPlayer())
 		{
 			_bTransformAvailableNotified = true;
-			ModeTextBox::Show("Textbox_Kage", "よし、充分盗れたぜ。\n試しにBボタンを押して、そのままこいつをぶっ飛ばしてやれ", false, 100, "energy_ready");
+			ModeTextBox::Show("Textbox_Kage", "よし、充分盗れたぜ。\n試しにBボタンを押して\nそのままこいつをぶっ飛ばしてやれ。", false, 100, "energy_ready");
 		}
 	}
+
+
+
+	// プレイヤーの初回変身時のテキスト表示処理
+	ProcessFirstTimeTransformText();
+
+	// プレイヤー初回変身解除時のテキスト表示処理
+	ProcessFirstTimeTransformCancelText();
+
+
 
 	// ステージ3：ボタン1つで敵全滅 → 全滅後にLOGOへ戻す
 	if(_currentStageNum == 2 && _stage)
 	{
-		// DEBUG3: キーボードF3 / パッドBACK
-		if(im.IsTrigger(INPUT_ACTION::DEBUG3))
-		{
-			//_stage->DebugKillAllEnemies();
-		}
-
 		// 全滅したら最初のLOGOへ（疑似的にゲーム終了）
 		if(_stage->IsBossDefeated())
 		{
@@ -443,6 +449,8 @@ bool ModeGame::Process()
 			}
 		}
 	}
+
+
 
 	// エフェクト更新
 	EffectServer::GetInstance()->Update();
@@ -860,4 +868,47 @@ void ModeGame::SetPlayerConfig(VECTOR vPos, VECTOR vRot)
 	VECTOR vDir = VGet(0.0f, 0.0f, 0.0f);
 	vDir = VGet(sinf(vRot.y), 0.0f, cosf(vRot.y));
 	player->SetDir(vDir);
+}
+
+void ModeGame::ProcessFirstTimeTransformText()
+{
+	// すでに一度でも変身プレイヤーになったことがあるなら、テキストは表示しない
+	if(_bIsTransformPlayer){ return; }
+
+	// プレイヤーのタイプが一度でも表プレイヤー以外になっていないなら
+	if(_playerManager->GetActivePlayerType() != PLAYER_TYPE::SURFACE)
+	{
+		// 一度だけ出すためにフラグを有効にする
+		_bIsTransformPlayer = true;
+
+		// 変身時のテキスト表示
+		ModeTextBox::Show
+		(
+			"Textbox_Kage",
+			{ "変身できたな。\nRTボタンかLTボタンで攻撃することができる。\nそれで敵を一掃しちまいな。" },
+			false, 
+			100,
+			"energy_ready"
+		);
+	}
+}
+
+void ModeGame::ProcessFirstTimeTransformCancelText()
+{
+	if(isCompleteTransCancel){ return; }
+
+	isCompleteTransCancel = _playerManager->GetIsTransformCancelFirstTime();
+
+	if(_playerManager->GetActivePlayerType() == PLAYER_TYPE::SURFACE && isCompleteTransCancel)
+	{
+		// 変身時のテキスト表示
+		ModeTextBox::Show
+		(
+			"Textbox_Kage",
+			{ "エネルギーが切れたな。\nもう一度エネルギー集めなおして変身するぞ。" },
+			false,
+			100,
+			"energy_ready"
+		);
+	}
 }

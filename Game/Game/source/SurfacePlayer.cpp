@@ -223,8 +223,8 @@ AbsorbConfig SurfacePlayer::GetAbsorbConfig()
 	config.absorbRate		= 1.0f;						// 吸収率
 	config.energyAbsorbRate = 10.0f;					// エネルギー吸収率
 	config.hpAbsorbRate		= 10.0f;					// HP吸収率(未使用)
-	config.absorbRange		= 190.0f;					// 吸収範囲
-	config.absorbAngle		= DX_PI_F / 2.9f;			// 吸収角度
+	config.absorbRange		= 240.0f;					// 吸収範囲
+	config.absorbAngle		= DX_PI_F / 2.5f;			// 吸収角度
 	config.absorbDivision	= 10;						// 滑らかな描画用
 	config.absorbEffectName = "SurfacePlayerAbsorb";	// 吸収エフェクト名
 	config.effectOffset		= VGet(0.0f, 0.0f, 0.0f);	// エフェクト位置オフセット

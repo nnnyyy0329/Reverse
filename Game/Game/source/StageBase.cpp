@@ -486,8 +486,8 @@ void StageBase::Process()
 			// ステージ1 全滅時のテキストチェーン
 			ModeTextBox::ShowChain({
 				{"Textbox_Normal", "クロと同じ種族？は沢山いたけど白雪はいなかったな"},
-				{"Textbox_Kage", "もしかしたら先にいるかもな、\n今みたいにあいつらからエネルギーを奪いながら奥まで探してみようぜ。"},
-				{"Textbox_Angry", "クロ、お前、なんか企んでる？"},
+				{"Textbox_Kage", "もしかしたらこの先にいるかもな。\n今みたいにあいつらからエネルギーを奪って\n倒しながら奥まで探してみようぜ。"},
+				{"Textbox_Angry", "クロ、お前なんか企んでる？"},
 				{"Textbox_Kage", "いいや、ただ嬢ちゃんが心配なだけさ。"}
 				}, false, 100, "stage1_allclear");
 		}

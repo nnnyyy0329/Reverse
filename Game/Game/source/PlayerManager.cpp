@@ -33,11 +33,13 @@ PlayerManager::PlayerManager()
 	_fTransformCancelMaxTime = 0.0f;
 	_bIsTransformCanceling = false;
 	_bEnableStateTransfer = false;
+	_bIsTransformCancelFirstTime = false;
 }
 
 PlayerManager::~PlayerManager()
 {
-	_players.clear();
+	// デストラクタ
+	Terminate();
 }
 
 bool PlayerManager::Initialize()
@@ -408,6 +410,12 @@ void PlayerManager::EndTransformCancel()
 	{
 		// 選択されたアビリティのインデックスをリセット
 		_abilitySelectScreen->SetSelectedAbilityIndex(AC::DEFAULT_ABILITY_INDEX);
+	}
+
+	if(!_bIsTransformCancelFirstTime)
+	{
+		// 最初の変身解除が完了したフラグを有効にする
+		_bIsTransformCancelFirstTime = true;	
 	}
 
 	_abilitySelectScreen->SetSelectionState(SelectionState::NOT_SELECTION);	// 能力選択をしていない状態にする

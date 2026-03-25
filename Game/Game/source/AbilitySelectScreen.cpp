@@ -61,6 +61,9 @@ AbilitySelectScreen::~AbilitySelectScreen()
 	// 画像の開放
 	DeleteGraph(_iHandle1);
 	DeleteGraph(_iHandle2);
+
+	// デストラクタ
+	Terminate();
 }
 
 bool AbilitySelectScreen::Initialize()

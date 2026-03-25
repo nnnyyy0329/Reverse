@@ -143,6 +143,8 @@ bool ModeGameOver::Process()
 
 		return true;
 	}
+
+	return true;
 }
 bool ModeGameOver::Render()
 {

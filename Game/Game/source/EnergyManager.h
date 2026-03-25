@@ -25,7 +25,7 @@ namespace EnergyGainConstants
 // エネルギー消費量定数
 namespace EnergyConsumeConstants
 {
-	constexpr float SHOOT_NORMAL_BULLET = 7.5f;	    // 通常弾のエネルギー消費量
+	constexpr float SHOOT_NORMAL_BULLET = 10.0f;	    // 通常弾のエネルギー消費量
 	constexpr float SHOOT_PIERCING_BULLET = 5.0f;	// 貫通弾のエネルギー消費量
 }
 
