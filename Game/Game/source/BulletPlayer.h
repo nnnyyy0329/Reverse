@@ -5,7 +5,7 @@
 namespace BulletPlayerConstants
 {
 	constexpr float DAMAGE_MULTIPLIER = 0.75f;	// 弾プレイヤー専用のダメージ倍率
-};
+}
 
 // 通常弾設定定数
 namespace NormalBulletConfig
@@ -30,7 +30,15 @@ namespace BulletShootConstants
 {
 	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);	// 右腕発射位置オフセット
 	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);	// 左腕発射位置オフセット
-};
+}
+
+// 弾発射リコイル設定定数
+namespace BulletRecoilConstants
+{
+	constexpr float RECOIL_MOVE_STRENGTH = 5.0f;	// リコイル移動の強さ
+	constexpr float RECOIL_MOVE_DECAY = 0.8f;		// リコイル移動の減衰率
+	constexpr int RECOIL_MOVE_DIRECTION = -1;		// リコイル移動方向
+}
 
 // 弾のエネルギー消費量定数
 namespace BulletConsumeEnergyConstants
@@ -121,6 +129,12 @@ private:
 	/// @param bulletType サウンド再生する弾タイプ
 	void ShootSoundPlay(BULLET_TYPE bulletType);
 
+	/// @brief 発射リコイル処理
+	void ShootRecoilMove();
+
+	/// @brief リコイル移動の更新処理
+	void UpdateRecoilPos();
+
 	/// @brief 発射位置オフセットの取得
 	///
 	/// @return 発射位置オフセット
@@ -146,19 +160,24 @@ private:
 	/// @return 発射間隔がマイナスならtrue、そうでなければfalse
 	bool IsShootIntervalNegative()const;
 
+
+	/* ゲッターセッター */
+
 	/// @brief 弾のタイプをセットする関数
 	///
 	/// @param bulletType セットする弾のタイプ
 	void SetBulletType(BULLET_TYPE bulletType);	
 
 
-	BULLET_TYPE _currentBulletType;	// 現在の弾の種類
 
 protected:
+
+	BULLET_TYPE _currentBulletType;	// 現在の弾の種類
 
 	std::weak_ptr<BulletManager>_bulletManager;		// 弾マネージャーの弱参照
 	std::shared_ptr<CameraManager>_cameraManager;	// カメラマネージャーの共有ポインタ
 
+	VECTOR _vRecoilVelocity;	// リコイル移動の速度
 	float _shootIntervalTimer;	// 発射間隔タイマー
 	bool _bIsShootFromRightArm;	// 右腕から発射したかどうか
 	bool _bIsReadyCompleted;	// 構えアニメーション完了フラグ

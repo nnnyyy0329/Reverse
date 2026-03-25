@@ -230,9 +230,6 @@ void AttackBase::ProcessAttackMovement()
     // ˆÚ“®—ÊŒvŽZ
     VECTOR vMove = VScale(moveDir, _stcAttackCol.attackMoveSpeed);
 
-    // Œ¸Šˆ—
-    //vMove = VScale(vMove, ATTACK_MOVE_DECAY_RATE);
-
     // ƒLƒƒƒ‰‚ÌˆÊ’u‚ð‰ÁŽZ
     VECTOR currentPos = owner->GetPos();
     VECTOR newPos = VAdd(currentPos, vMove);
