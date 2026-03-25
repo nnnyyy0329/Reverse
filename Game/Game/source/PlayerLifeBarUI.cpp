@@ -13,8 +13,8 @@ namespace
 	constexpr int DRAW_OFFSET_X = 1;
 	constexpr int DRAW_OFFSET_Y = 1;
 
-	// 追加：縦方向スケール
-	constexpr float LIFE_BAR_SCALE_Y = 0.2f;
+	//// 追加：縦方向スケール
+	//constexpr float LIFE_BAR_SCALE_Y = 0.2f;
 }
 
 PlayerLifeBarUI::PlayerLifeBarUI()
