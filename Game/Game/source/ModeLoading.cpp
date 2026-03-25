@@ -50,8 +50,7 @@ bool ModeLoading::Initialize()
 			rs->Register("Normal_Attack", "effect/NEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 			rs->Register("Normal_Attack02", "effect/en_attack_test.efkefc", RESOURCE_TYPE::Effect, 20.0f);
 			// ‰“‹——£
-			rs->Register("Ranged_Attack", "effect/SEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
-			rs->Register("Ranged_Bullet", "effect/SEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("Ranged_Bullet", "effect/SEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
 		}
 
 		// “GŠÖ˜A

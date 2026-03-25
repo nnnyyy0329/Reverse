@@ -94,7 +94,12 @@ public:
 	VECTOR GetNextWaypoint();// 次に向かうべき座標を取得
 	void ClearPath();// 記憶しているルートをクリア
 	bool HasPath() { return !_currentPath.empty(); }// ルートを持っているかどうか
-	bool IsVisible(VECTOR vTargetPos, float checkRad = 5.0f);
+	bool IsVisible(VECTOR vTargetPos, float checkRad = 25.0f);
+
+	// CD用タイマーの更新 / 取得
+	void UpdateCoolDowns();
+	bool CanSpecialAttack() { return _fSpecialAttackTimer <= 0.0f; }
+	void ResetCoolDowns(float time) { _fSpecialAttackTimer = time; }
 
 protected:
 
@@ -132,6 +137,8 @@ protected:
 	float _fDamageComboResetTimer = 0.0f;// リセットタイマー
 
 	bool _bIsOutSideMoveArea = false;// エリア外へ移動しようとしたか
+
+	float _fSpecialAttackTimer = 600.0f;// 特殊攻撃CD用タイマー
 
 	// 経路記憶用
 	std::vector<VECTOR> _currentPath;// 現在の経路座標リスト

@@ -42,7 +42,7 @@ namespace
 
 	// 弾設定用定数
 	constexpr auto BULLET_SPEED = 15.0f;				// 弾速度
-	constexpr auto BULLET_RADIUS = 10.0f;				// 弾半径
+	constexpr auto BULLET_RADIUS = 18.0f;				// 弾半径
 	constexpr auto BULLET_LIFETIME = 180;				// 弾生存時間(フレーム)
 	constexpr auto BULLET_SPAWN_OFFSET_Y = 100.0f;		// 弾発射Y座標オフセット
 	constexpr auto BULLET_SPAWN_OFFSET_Z = 50.0f;		// 弾発射前方オフセット

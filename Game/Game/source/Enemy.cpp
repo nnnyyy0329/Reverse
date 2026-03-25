@@ -107,6 +107,9 @@ bool Enemy::Process()
 	// 索敵タイマー更新
 	UpdateSearchTimer();
 
+	// CDタイマー更新
+	UpdateCoolDowns();
+
 	// 索敵更新タイミングなら索敵を実行
 	if (ShouldUpdateSearch())
 	{
@@ -196,16 +199,6 @@ void Enemy::DebugRender()
 		unsigned int color = GetColor(0, 255, 0);// 緑
 		int segments = 16;// 扇形の分割数
 		mydraw::DrawFan3D(_vPos, _vDir, fVisionRange, 60.0f, color, segments);
-	}
-
-	// 接近中の各範囲の描画
-	{
-		if (_currentState /*&& _currentState->IsChasing()*/)
-		{
-			// 攻撃可能範囲を描画
-			unsigned int attackColor = GetColor(255, 0, 0);// 赤
-			mydraw::DrawCircle3D(_vPos, _enemyParam.fAttackRange, attackColor, 16);
-		}
 	}
 
 	// デバッグ文字列の描画
@@ -772,7 +765,7 @@ void Enemy::UpdatePath(VECTOR vTarget)
 	if (!pathManager) return;
 
 	// 直接ターゲットが見えているなら、探索せずに直接向かう
-	if (!pathManager->CheckCapsuleLineObstacle(_vPos, vTarget, 5.0f, stage.get()))
+	if (!pathManager->CheckCapsuleLineObstacle(_vPos, vTarget, 25.0f, stage.get()))
 	{
 		_currentPath.clear();
 		_currentPath.push_back(vTarget);
@@ -867,4 +860,12 @@ bool Enemy::IsVisible(VECTOR vTargetPos, float checkRad)
 	if (!pathManager) { return false; }
 
 	return !pathManager->CheckCapsuleLineObstacle(_vPos, vTargetPos, checkRad, stage.get());
+}
+
+void Enemy::UpdateCoolDowns()
+{
+	if(_fSpecialAttackTimer > 0.0f)
+	{
+		_fSpecialAttackTimer -= 1.0f;
+	}
 }

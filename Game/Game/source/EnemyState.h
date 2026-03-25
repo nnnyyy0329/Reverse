@@ -28,8 +28,6 @@ struct EnemyParam
 
 	float fVisionRange = 0.0f;// 敵の索敵距離
 
-	float fAttackRange = 0.0f;// 攻撃可能範囲
-
 	float fTurnSpeed = 60.0f;// 旋回速度(度 / フレーム)
 
 	float fIdleTime = 0.0f;// 待機時間
@@ -41,6 +39,7 @@ struct EnemyParam
 	float fMaxLife = 100.0f;// 最大体力
 
 	bool bTransToWander = true;// 徘徊へ遷移するかどうか
+	float fAggression = 0.9f;// 攻撃性 : 警戒せず接近する確率(0.0f～1.0f)
 
 	EnemyCapsule capsule;// カプセルコリジョンの設定
 
