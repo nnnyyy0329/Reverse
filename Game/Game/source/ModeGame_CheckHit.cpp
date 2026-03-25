@@ -640,7 +640,7 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		// ƒJƒƒ‰‚ÌU“®
 		if(!IsPlayerCharacter(charaType) && effectConfig.isActiveCameraShake)
 		{
-			if (_cameraManager)
+			if(_cameraManager)
 			{
 				auto shake = std::make_shared<CameraShakeSystem>();
 

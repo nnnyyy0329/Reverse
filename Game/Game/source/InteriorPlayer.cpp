@@ -140,7 +140,7 @@ RenderConfig InteriorPlayer::GetRenderConfig()
 	RenderConfig config;
 
 	config.playerName = "Interior Player";				// プレイヤー名
-	config.debugColor = COLOR_U8{ 0, 255, 255, 255 };	// デバッグ描画色
+	config.debugColor = COLOR_U8{ 0, 255, 205, 255 };	// デバッグ描画色
 
 	return config;
 }

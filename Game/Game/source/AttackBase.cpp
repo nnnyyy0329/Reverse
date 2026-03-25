@@ -217,22 +217,29 @@ void AttackBase::ProcessAttackMovement()
 
     VECTOR moveDir;
 
-    // 攻撃方向が設定されている方を優先
+    // 攻撃方向が設定されている場合
     if(VSize(_stcAttackCol.attackDir) > 0.0f)
     {
+		// 攻撃方向を正規化して移動方向とする
         moveDir = VNorm(_stcAttackCol.attackDir);
     }
+	// 攻撃方向が設定されていない場合
     else
     {
+        // キャラの向きを移動方向とする
         moveDir = VNorm(currentDir);
     }
 
     // 移動量計算
     VECTOR vMove = VScale(moveDir, _stcAttackCol.attackMoveSpeed);
 
-    // キャラの位置を加算
+	// 現在の位置
     VECTOR currentPos = owner->GetPos();
+
+	// 新しい位置
     VECTOR newPos = VAdd(currentPos, vMove);
+
+	// 新しい位置を所有者キャラに適用
     owner->SetPos(newPos);
 
     // モデルの位置も更新

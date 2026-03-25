@@ -58,6 +58,10 @@ public:
 	BulletPlayer();
 	virtual ~BulletPlayer();
 
+
+
+	/* 基本関数 */
+
 	virtual bool Initialize();	// 初期化
 	virtual bool Terminate();	// 終了
 	virtual bool Process();		// 更新
@@ -82,27 +86,62 @@ public:
 	/// @param char 弾のキャラタイプ
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										
 
-	// 純粋仮想関数のオーバーライド
-	virtual PlayerConfig		GetPlayerConfig()		override;	// 設定を取得
-	virtual PlayerAnimations	GetPlayerAnimation()	override;	// アニメーション設定を取得
-	virtual RenderConfig		GetRenderConfig()		override;	// 描画設定を取得
-	virtual DodgeConfig			GetDodgeConfig()		override;	// 回避設定を取得
-	virtual BulletConfig		GetBulletConfig()		override;	// 弾発射設定を取得
-	virtual BulletEffectConfig	GetBulletEffectConfig()	override;	// 弾演出設定を取得
+
 
 	/* クラス設定 */
-
-	// カメラマネージャーをセット
 
 	/// @brief カメラマネージャーをセットする関数
 	///
 	/// @param cameraManager カメラマネージャーの共有ポインタ
 	void SetCameraManager(std::shared_ptr<CameraManager>cameraManager){ _cameraManager = cameraManager; }	
 
+
+
+	/* ゲッターセッター */
+
+	/// @brief 弾のタイプをセットする関数
+	///
+	/// @param bulletType セットする弾のタイプ
+	void SetBulletType(BULLET_TYPE bulletType);
+
+
 private:
 
-	/// @brief エイムカメラの角度更新処理
-	void UpdateAimCameraAngle();
+	/* 仮想関数のオーバーライド */
+
+	/// @brief プレイヤー設定を取得
+	///
+	/// @return プレイヤー設定構造体
+	virtual PlayerConfig		GetPlayerConfig()		override;
+
+	/// @brief プレイヤーアニメーション設定を取得
+	///
+	/// @return プレイヤーアニメーション設定構造体
+	virtual PlayerAnimations	GetPlayerAnimation()	override;
+
+	/// @brief 描画設定を取得
+	///
+	/// @return 描画設定構造体
+	virtual RenderConfig		GetRenderConfig()		override;
+
+	/// @brief 回避設定を取得
+	///
+	/// @return 回避設定構造体
+	virtual DodgeConfig			GetDodgeConfig()		override;
+
+	/// @brief 弾発射設定を取得
+	///	
+	/// @return 弾発射設定構造体
+	virtual BulletConfig		GetBulletConfig()		override;
+
+	/// @brief 弾演出設定を取得
+	///
+	/// @return 弾演出設定構造体
+	virtual BulletEffectConfig	GetBulletEffectConfig()	override;	
+
+
+
+	/* 弾発射処理 */
 
 	/// @brief 弾発射処理
 	void ProcessShoot()override;
@@ -135,6 +174,9 @@ private:
 	/// @brief リコイル移動の更新処理
 	void UpdateRecoilPos();
 
+	/// @brief エイムカメラの角度更新処理
+	void UpdateAimCameraAngle();
+
 	/// @brief 発射位置オフセットの取得
 	///
 	/// @return 発射位置オフセット
@@ -159,15 +201,6 @@ private:
 	/// 
 	/// @return 発射間隔がマイナスならtrue、そうでなければfalse
 	bool IsShootIntervalNegative()const;
-
-
-	/* ゲッターセッター */
-
-	/// @brief 弾のタイプをセットする関数
-	///
-	/// @param bulletType セットする弾のタイプ
-	void SetBulletType(BULLET_TYPE bulletType);	
-
 
 
 protected:

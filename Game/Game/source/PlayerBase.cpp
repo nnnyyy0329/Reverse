@@ -185,9 +185,6 @@ bool PlayerBase::Process()
 	// 弾発射処理の仮想関数
 	ProcessShoot();
 
-	// 吸収攻撃の仮想関数
-	ProcessAbsorb();
-
 	// 回避関係Process呼び出し用関数
 	CallProcessDodge();
 
