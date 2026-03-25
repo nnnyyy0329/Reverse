@@ -111,9 +111,6 @@ private:
 
 	/* 吸収攻撃のモーション管理用メンバ関数 */
 
-	/// @brief 吸収攻撃の処理
-	void ProcessAbsorb()override;
-	
 	/// @brief 吸収攻撃モーション切り替え条件の更新
 	void UpdateChangeAbsorbMotion();
 
