@@ -1,5 +1,6 @@
 #include "ModeTextBox.h"
 
+std::vector<ModeTextBox*> ModeTextBox::_textBox;
 
 ModeTextBox::ModeTextBox(const std::string& graphKey, std::function<void()> onClosed, bool pauseUnderLayer)
 	: _graphKey(graphKey)
@@ -15,6 +16,16 @@ ModeTextBox::ModeTextBox(const std::string& graphKey, const std::string& text, s
 	, _text(text)
 	, _pauseUnderLayer(pauseUnderLayer)
 {
+}
+
+ModeTextBox::~ModeTextBox()
+{
+	// インスタンスが破棄されるとき、静的リストからも削除する
+	auto it = std::find(_textBox.begin(), _textBox.end(), this);
+	if(it != _textBox.end())
+	{
+		_textBox.erase(it);
+	}
 }
 
 bool ModeTextBox::Initialize()
@@ -54,7 +65,7 @@ bool ModeTextBox::Process()
 	// 時間経過で自動的に閉じる場合の処理
 	if(_frameCount >= 260)
 	{
-		closeTime = (_frameCount - 360) / 60.0f;// 300フレーム(5秒)経過後、1秒かけて閉じる
+		closeTime = (_frameCount - 360) / 60.0f;// 6秒経過で完全に閉じる
 		if(closeTime >= 1.0f)
 		{
 			closeTime = 1.0f;
@@ -153,6 +164,7 @@ void ModeTextBox::Show(const std::string& graphKey, const std::string& text, boo
 {
 	ModeTextBox* box = new ModeTextBox(graphKey, text, nullptr, pauseUnderLayer);
 	ModeServer::GetInstance()->Add(box, z, instanceName.c_str());
+	_textBox.push_back(box);
 }
 
 void ModeTextBox::ShowChain(const std::vector<std::pair<std::string, std::string>>& items, bool pauseUnderLayer, int z, const std::string& baseName)
@@ -166,10 +178,12 @@ void ModeTextBox::ShowChain(const std::vector<std::pair<std::string, std::string
 		const auto& p = items[i];
 		std::string name = baseName + "_" + std::to_string(i);
 
+		// 最初は nextBox == nullptr なので、末尾のボックスが作られる。以降は、前のボックスが閉じられたときに nextBox を追加する形になる
 		if(nextBox == nullptr)
 		{
 			// 末尾
 			nextBox = new ModeTextBox(p.first, p.second, nullptr, pauseUnderLayer);
+			_textBox.push_back(nextBox);
 		}
 		else
 		{
@@ -180,10 +194,29 @@ void ModeTextBox::ShowChain(const std::vector<std::pair<std::string, std::string
 				};
 			// 新しい box を作る（閉じたら capturedNext を追加）
 			nextBox = new ModeTextBox(p.first, p.second, onClosed, pauseUnderLayer);
+			_textBox.push_back(nextBox);
 		}
 	}
 
 	// 最初のボックスを追加（名前は baseName_0）
 	std::string firstName = baseName + "_0";
 	ModeServer::GetInstance()->Add(nextBox, z, firstName.c_str());
+}
+
+void ModeTextBox::CloseAll()
+{
+	// すべてのテキストボックスを走査
+	for(ModeTextBox* box : _textBox)
+	{
+		if(box)
+		{
+			// 閉じる前のコールバックがあれば呼び出す
+			if(box->_onClosed) { box->_onClosed(); }
+
+			// テキストボックスを削除
+			ModeServer::GetInstance()->Del(box);
+		}
+	}
+
+	_textBox.clear();
 }

@@ -765,6 +765,9 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 	// 新しいステージを設定
 	_stage = newStage;
 
+	// すべてのテキストボックスを閉じる
+	ModeTextBox::CloseAll();
+
 	// 敵の再設定
 	for(const auto& enemy : _stage->GetEnemies())
 	{
@@ -827,6 +830,9 @@ void ModeGame::RestartCurrentStage()
 			enemy->SetStage(_stage);
 		}
 	}
+
+	// すべてのテキストボックスを閉じる
+	ModeTextBox::CloseAll();
 
 	// プレイヤーの初期化
 	{

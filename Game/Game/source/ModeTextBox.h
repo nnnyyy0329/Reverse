@@ -16,6 +16,8 @@ public:
 	// グラフ + 表示テキスト（改行対応）。pauseUnderLayer=false にするとゲームは継続して進行します
 	explicit ModeTextBox(const std::string& graphKey, const std::string& text, std::function<void()> onClosed = nullptr, bool pauseUnderLayer = true);
 
+	virtual ~ModeTextBox();
+
 	virtual bool Initialize() override;
 	virtual bool Terminate() override;
 	virtual bool Process() override;
@@ -26,6 +28,9 @@ public:
 
 	// 静的ヘルパー: 連続表示（items: pair<graphKey, text>）
 	static void ShowChain(const std::vector<std::pair<std::string, std::string>>& items, bool pauseUnderLayer = true, int z = 100, const std::string& baseName = "textbox_chain");
+	
+	/// @brief すべてのテキストボックスを閉じる関数
+	static void CloseAll();
 
 private:
 	std::string _graphKey;
@@ -42,5 +47,8 @@ private:
 	// true のとき下層を停止（既存挙動）。false ならゲームは継続。
 	bool _pauseUnderLayer = true;
 
-	
+
+	// 追加されたテキストボックスのインスタンスを保持する静的メンバ
+	static std::vector<ModeTextBox*>_textBox;
+
 };
