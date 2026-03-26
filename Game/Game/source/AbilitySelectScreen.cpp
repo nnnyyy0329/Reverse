@@ -6,9 +6,9 @@
 
 namespace SelectRenderConfig
 {
-	constexpr int SELECT_DRAW_X = 1500;
-	constexpr int SELECT_DRAW_Y = 850;
-	constexpr int DRAW_OFFSET_X = 10;
+	constexpr int SELECT_DRAW_X = 1480;
+	constexpr int SELECT_DRAW_Y = 874;
+	constexpr int DRAW_OFFSET_X = 37;
 	constexpr int DRAW_OFFSET_Y = 0;
 }
 

@@ -54,18 +54,23 @@ bool ModeLoading::Initialize()
 			rs->Register("SkillPiercingBullet",	"res/UI_Select/skill_piercing_bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SkillNormalBullet",	"res/UI_Select/skill_normal_bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
 
+			rs->Register("InputA",	"res/UI_Select/A_UI.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("InputY",	"res/UI_Select/Y_UI.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("InputRB", "res/UI_Select/RB_dodge.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("InputLT", "res/UI_Select/LB_UI.png",		RESOURCE_TYPE::Graph, 1.0f);
+
 			rs->Register("ActionHintTransCancel",	"res/UI_Select/action_cancel.png",	RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("ActionHintDodge",			"res/UI_Select/action_dodge.png",	RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// 入力UI 
 		{
-			rs->Register("InputA",	"res/UI_Input/input_A.png",		RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputA",	"res/UI_Input/input_A.png",		RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("InputB",	"res/UI_Input/input_B.png",		RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("InputX",	"res/UI_Input/input_X.png",		RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputY",	"res/UI_Input/input_Y.png",		RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputLT", "res/UI_Input/input_LT.png",	RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputRT", "res/UI_Input/input_RT.png",	RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputY",	"res/UI_Input/input_Y.png",		RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputLT", "res/UI_Input/input_LT.png",	RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputRT", "res/UI_Input/input_RT.png",	RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// エネルギーUI用

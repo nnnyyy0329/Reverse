@@ -5,13 +5,26 @@
 // 能力入力ヒント表示設定用の名前空間
 namespace AbilityHintConfig
 {
-	constexpr int DRAW_Y = 750;		// 描画位置Y
+	constexpr int DRAW_Y = 750;			// 描画位置Y
+	constexpr int DRAW_OFFSET_Y = -10;	// 描画位置Y
 }
 
 // アクションヒント表示設定用の名前空間
 namespace ActionHintConfig
 {
+	constexpr int DRAW_X = 1679;		// 描画位置X
+	constexpr int DRAW_Y = 910;			// 描画位置Y
+	constexpr int DRAW_OFFSET_X = 0;	// 描画位置オフセットX
+	constexpr int DRAW_OFFSET_Y = 90;	// 描画位置オフセットY
+}
 
+// バンパー入力ヒント表示設定用の名前空間
+namespace BumperHintConfig
+{
+	constexpr int DRAW_X = 1320;		// 描画位置X
+	constexpr int DRAW_Y = 1020;			// 描画位置Y
+	constexpr int DRAW_OFFSET_X = 60;	// 描画位置オフセットX
+	constexpr int DRAW_OFFSET_Y = 0;	// 描画位置オフセットY
 }
 
 /// @brief アビリティアクションヒントクラス
@@ -42,8 +55,11 @@ public:
 	/// @param secondSelectGraphCenterX 二番目に選択されたグラフの中心X座標
 	void AbilityInputHintRender(ABILITY_TYPE abilityType, float selectGraphSenterX, float secondSelectGraphCenterX);
 
-	/// @brief アクションヒント
+	/// @brief 各アクションヒントの表示
 	void ActionInputHintRender();
+
+	/// @brief バンパー入力ヒントの表示
+	void BumperInputHintRender();
 
 private:
 
@@ -58,6 +74,11 @@ protected:
 
 	int _iHandleDodgeAction;			// 回避アクションヒントのハンドル
 	int _iHandleTransCancelAction;		// 変身解除アクションヒントのハンドル
+
+	int _iHandleButtonA;				// Aボタンアクションヒントのハンドル
+	int _iHandleButtonY;				// Yボタンアクションヒントのハンドル
+	int _iHandleDodgeRB;				// RBボタン回避アクションヒントのハンドル
+	int _iHandleLB;						// LBボタンアクションヒントのハンドル
 
 };
 

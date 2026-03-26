@@ -541,6 +541,7 @@ bool ModeGame::Render()
 				_staminaUI->Render();
 				//_item->Render();
 				_abilitySelectScreen->Render();
+				_abilityActionHint->Render();
 
 				BulletManager::GetInstance()->Render();
 			}
