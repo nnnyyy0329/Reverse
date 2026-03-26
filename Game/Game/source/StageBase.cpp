@@ -86,77 +86,67 @@ StageBase::StageBase(int stageNum)
 				}
 			}
 		);
+	
 	}
-	//青いイベント読み込み（重複を防ぐ） — ステージ0/2のみ追加する
-	if(_stageNum == 0 || _stageNum == 2)
-	{
-		auto rs = ResourceServer::GetInstance();
 
-		auto alreadyHasModel = [&](const std::string& name) -> bool {
-			return std::any_of(_mapModelPosList.begin(), _mapModelPosList.end(),
-				[&](const MODELPOS& mp) { return mp.name == name; });
-			};
 
-		// EventA を手動で追加（存在しなければ）
-		if(!alreadyHasModel("EventA"))
-		{
-			int handleA = rs->GetHandle("EventA");
-			if(handleA != -1)
-			{
-				MODELPOS m = {};
-				m.name = "EventA";
-				m.pos = VGet(0.0f, 0.0f, 0.0f);
-				m.rot = VGet(0.0f, 0.0f, 0.0f);
-				m.scale = VGet(1.0f, 1.0f, 1.0f);
 
-				m.modelHandle = MV1DuplicateModel(handleA);
-				m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
-				std::string colName = "UCX_" + m.name;
-				m.collisionFrame = MV1SearchFrame(m.modelHandle, colName.c_str());
+	////青いイベント読み込み（重複を防ぐ） — ステージ0/2のみ追加する
+	//if(_stageNum == 0 || _stageNum == 2)
+	//{
+	//	auto rs = ResourceServer::GetInstance();
 
-				MV1SetPosition(m.modelHandle, m.pos);
-				MV1SetRotationXYZ(m.modelHandle, m.rot);
-				MV1SetScale(m.modelHandle, m.scale);
+	//	auto alreadyHasModel = [&](const std::string& name) -> bool {
+	//		return std::any_of(_mapModelPosList.begin(), _mapModelPosList.end(),
+	//			[&](const MODELPOS& mp) { return mp.name == name; });
+	//		};
 
-				if(m.collisionFrame != -1)
-				{
-					MV1SetupCollInfo(m.modelHandle, m.collisionFrame, 8, 8, 8);
-				}
+	//	// EventA を手動で追加（存在しなければ）
+	//	if(!alreadyHasModel("EventA"))
+	//	{
+	//		int handleA = rs->GetHandle("EventA");
+	//		if(handleA != -1)
+	//		{
+	//			MODELPOS m = {};
+	//			m.name = "EventA";
+	//			m.pos = VGet(0.0f, 0.0f, 0.0f);
+	//			m.rot = VGet(0.0f, 0.0f, 0.0f);
+	//			m.scale = VGet(1.0f, 1.0f, 1.0f);
 
-				_mapModelPosList.push_back(m);
-			}
-		}
+	//			m.modelHandle = MV1DuplicateModel(handleA);
+	//			m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
 
-		// EventB を手動で追加（存在しなければ）
-		if(!alreadyHasModel("EventB"))
-		{
-			int handleB = rs->GetHandle("EventB");
-			if(handleB != -1)
-			{
-				MODELPOS m = {};
-				m.name = "EventB";
-				m.pos = VGet(5.0f, 0.0f, 3.0f);
-				m.rot = VGet(0.0f, 0.0f, 0.0f);
-				m.scale = VGet(1.0f, 1.0f, 1.0f);
+	//			MV1SetPosition(m.modelHandle, m.pos);
+	//			MV1SetRotationXYZ(m.modelHandle, m.rot);
+	//			MV1SetScale(m.modelHandle, m.scale);
 
-				m.modelHandle = MV1DuplicateModel(handleB);
-				m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
-				std::string colName = "UCX_" + m.name;
-				m.collisionFrame = MV1SearchFrame(m.modelHandle, colName.c_str());
+	//			_mapModelPosList.push_back(m);
+	//		}
+	//	}
 
-				MV1SetPosition(m.modelHandle, m.pos);
-				MV1SetRotationXYZ(m.modelHandle, m.rot);
-				MV1SetScale(m.modelHandle, m.scale);
+	//	// EventB を手動で追加（存在しなければ）
+	//	if(!alreadyHasModel("EventB"))
+	//	{
+	//		int handleB = rs->GetHandle("EventB");
+	//		if(handleB != -1)
+	//		{
+	//			MODELPOS m = {};
+	//			m.name = "EventB";
+	//			m.pos = VGet(5.0f, 0.0f, 3.0f);
+	//			m.rot = VGet(0.0f, 0.0f, 0.0f);
+	//			m.scale = VGet(1.0f, 1.0f, 1.0f);
 
-				if(m.collisionFrame != -1)
-				{
-					MV1SetupCollInfo(m.modelHandle, m.collisionFrame, 8, 8, 8);
-				}
+	//			m.modelHandle = MV1DuplicateModel(handleB);
+	//			m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
 
-				_mapModelPosList.push_back(m);
-			}
-		}
-	}
+	//			MV1SetPosition(m.modelHandle, m.pos);
+	//			MV1SetRotationXYZ(m.modelHandle, m.rot);
+	//			MV1SetScale(m.modelHandle, m.scale);
+
+	//			_mapModelPosList.push_back(m);
+	//		}
+	//	}
+	//}
 
 
 	// jsonファイルの読み込み(敵)
@@ -496,8 +486,8 @@ void StageBase::Process()
 			// ステージ1 全滅時のテキストチェーン
 			ModeTextBox::ShowChain({
 				{"Textbox_Normal", "クロと同じ種族？は沢山いたけど白雪はいなかったな"},
-				{"Textbox_Kage", "もしかしたら先にいるかもな、\n今みたいにあいつらからエネルギーを奪いながら奥まで探してみようぜ。"},
-				{"Textbox_Angry", "クロ、お前、なんか企んでる？"},
+				{"Textbox_Kage", "もしかしたらこの先にいるかもな。\n今みたいにあいつらからエネルギーを奪って\n倒しながら奥まで探してみようぜ。"},
+				{"Textbox_Angry", "クロ、お前なんか企んでる？"},
 				{"Textbox_Kage", "いいや、ただ嬢ちゃんが心配なだけさ。"}
 				}, false, 100, "stage1_allclear");
 		}

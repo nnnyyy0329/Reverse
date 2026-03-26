@@ -60,7 +60,7 @@ bool ModeMenu::Process()
 	if (im.IsTrigger(INPUT_ACTION::DOWN)) { _curPos++; _curAnimCnt = 0; }
 
 	// カーソル位置を上下ループ
-	int itemNum = _menuItems.size();
+	int itemNum = static_cast<int>(_menuItems.size());
 	_curPos = (_curPos + itemNum) % itemNum;
 
 	// AでアイテムのSelected()を呼ぶ
@@ -97,7 +97,7 @@ bool ModeMenu::Render()
 	//SetFontSize(fontSize);
 	for (auto ite = _menuItems.begin(); ite != _menuItems.end(); ite++) 
 	{
-		int itemW = GetDrawStringWidth((*ite)->_text.c_str(), strlen((*ite)->_text.c_str()));
+		int itemW = GetDrawStringWidth((*ite)->_text.c_str(), static_cast<int>(strlen((*ite)->_text.c_str())));
 		if (w < itemW) 
 		{
 			w = itemW;

@@ -23,9 +23,8 @@ StaminaUI::StaminaUI()
 
 StaminaUI::~StaminaUI()
 {
-	// 画像の開放
-	DeleteGraph(_iStaminaFrameHandle);
-	DeleteGraph(_iStaminaHandle);
+	// デストラクタ
+	Terminate();
 }
 
 bool StaminaUI::Initialize()

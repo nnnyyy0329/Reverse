@@ -185,9 +185,6 @@ bool PlayerBase::Process()
 	// 弾発射処理の仮想関数
 	ProcessShoot();
 
-	// 吸収攻撃の仮想関数
-	ProcessAbsorb();
-
 	// 回避関係Process呼び出し用関数
 	CallProcessDodge();
 
@@ -217,6 +214,10 @@ void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const A
 	// 被弾状態に変更
 	_playerState.combatState = PLAYER_COMBAT_STATE::HIT;
 
+	// 被弾サウンドの再生
+	SoundServer::GetInstance()->Play("SE_DamagePlayer", DX_PLAYTYPE_BACK);
+	//SoundServer::GetInstance()->Play("SE_En_Damage", DX_PLAYTYPE_BACK);
+
 	// 攻撃方向を使って被弾設定初期化
 	InitializeHitConfig(attackInfo.attackDir);
 }
@@ -226,6 +227,9 @@ void PlayerBase::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 {
 	// 親クラスの被ダメージ処理呼び出し
 	CharaBase::ApplyDamageByBullet(fDamage, chara);
+
+	// 被弾サウンドの再生
+	SoundServer::GetInstance()->Play("SE_DamagePlayer", DX_PLAYTYPE_BACK);
 
 	// 被弾状態に変更
 	_playerState.combatState = PLAYER_COMBAT_STATE::HIT;

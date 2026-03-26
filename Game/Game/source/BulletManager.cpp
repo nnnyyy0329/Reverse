@@ -285,7 +285,7 @@ bool BulletManager::IsBulletRegistered(std::shared_ptr<Bullet> bullet) const
 	if(!bullet) { return false; }
 
 	// 登録された弾を走査
-	for(const auto& info : _registerBullets)
+	for(auto& info : _registerBullets)
 	{
 		// 弾が有効なら
 		if(info.bullet && info.bullet == bullet)
@@ -303,12 +303,33 @@ bool BulletManager::IsBulletRegistered(std::shared_ptr<Bullet> bullet) const
 /* 弾の回避関連 */
 
 // 回避された弾を登録
-void BulletManager::RegisterDodgeBullet(std::shared_ptr<Bullet> bullet)
+void BulletManager::RegisterDodgeBullet(std::vector<std::shared_ptr<Bullet>> bullet)
 {
-	if(!bullet || IsDodgeBullet(bullet)) { return; }	// 回避済みの弾ならスキップ
+	// 回避された弾を走査
+	for(auto& bullets : bullet)
+	{
+		// 回避済みの弾ならスキップ
+		if(!bullets || IsDodgeBullet(bullet)) { continue; }	
 
-	// 回避済みの弾に追加
-	_dodgeBullets.push_back(bullet);
+		// 回避成功時の処理
+		ProcessEvadeBullet();
+
+		// 回避済みの弾に追加
+		_dodgeBullets.push_back(bullets);
+
+		// 回避された弾は即座に削除
+		RemoveBullet(bullets);
+	}
+}
+
+void BulletManager::ProcessEvadeBullet()
+{
+	// エネルギー上昇
+	auto energyManager = EnergyManager::GetInstance();
+	energyManager->AddEnergy(energyManager->GetEvadeBulletEnergy());
+
+	// サウンドの再生
+	SoundServer::GetInstance()->Play("SE_Evade", DX_PLAYTYPE_BACK);
 }
 
 // 回避済み弾をクリア
@@ -319,18 +340,22 @@ void BulletManager::ClearDodgeBullets()
 }
 
 // 回避済みかチェック
-bool BulletManager::IsDodgeBullet(std::shared_ptr<Bullet> bullet)const
+bool BulletManager::IsDodgeBullet(std::vector<std::shared_ptr<Bullet>>bullet)const
 {
-	if(!bullet) { return false; }
-
-	// 回避済みの弾を走査
-	for(const auto& dodgedBullet : _dodgeBullets)
+	// 回避された弾を走査
+	for(auto& bullets : bullet)
 	{
-		// 回避済みの弾が有効なら
-		if(!dodgedBullet.expired() && dodgedBullet.lock() == bullet)
+		 if(!bullets) { continue; }	
+
+		 // 回避済みの弾を走査
+		for(auto& dodgedBullet : _dodgeBullets)
 		{
-			// 回避済みの弾だったのでスキップ
-			return true;
+			// 回避済みの弾が有効なら
+			if(!dodgedBullet.expired() && dodgedBullet.lock() == bullets)
+			{
+				// 回避済みの弾だったのでスキップ
+				return true;
+			}
 		}
 	}
 

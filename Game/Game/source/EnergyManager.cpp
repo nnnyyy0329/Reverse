@@ -6,6 +6,9 @@ namespace EDC = EnergyDefaultConstants;
 // エネルギー獲得量定数のエイリアス
 namespace EGC = EnergyGainConstants;
 
+// エネルギー消費量定数のエイリアス
+namespace ECC = EnergyConsumeConstants;
+
 // シングルトン用メンバ初期化
 EnergyManager* EnergyManager::_instance = nullptr;
 
@@ -67,80 +70,52 @@ bool EnergyManager::Render()
 	return true;
 }
 
-// 切り替え可能かチェック
-bool EnergyManager::CanSwitchPlayer()
-{
-	// 切り替えに必要なエネルギーが足りているか
-	if(_currentEnergy >= _switchCostEnergy)
-	{
-		// 足りている
-		return true;
-	}
-
-	return false;
-}
-
-// 切り替え維持可能かチェック
-bool EnergyManager::CanKeepSwitchPlayer()
-{
-	// 切り替え維持に必要なエネルギーが足りているか
-	if(_currentEnergy >= _switchKeepEnergy)
-	{
-		// 足りている
-		return true;
-	}
-
-	return false;
-}
-
-// ダメージをエネルギーに変換する関数
 void EnergyManager::ConvertDamageToEnergy(float damage)
 {
-	float convertEnergy = damage * _convertMultiplier;	// ダメージをエネルギーに変換
-	AddEnergy(convertEnergy);							// エネルギー追加
+	// ダメージをエネルギーに変換
+	float convertEnergy = damage * _convertMultiplier;	
+
+	// エネルギー追加
+	AddEnergy(convertEnergy);							
 }
 
-// ダメージを消費エネルギーに変換する関数
 void EnergyManager::ConvertDamageToConsumeEnergy(float damage)
 {
-	float consumeEnergy = damage * _consumeConvertMultiplier;	// ダメージを消費エネルギーに変換
-	ConsumeEnergy(consumeEnergy);								// エネルギー消費
+	// ダメージを消費エネルギーに変換
+	float consumeEnergy = damage * _consumeConvertMultiplier;	
+
+	// エネルギー消費
+	ConsumeEnergy(consumeEnergy);								
 }
 
-// エネルギー追加関数
 void EnergyManager::AddEnergy(float energy)
 {
+	// エネルギーを追加
 	_currentEnergy += energy;
 
 	// 最大エネルギーを超えた場合の処理
 	if (_currentEnergy > _maxEnergy)
 	{
-		_currentEnergy = _maxEnergy;	// 最大エネルギーを超えないようにする
+		// 最大エネルギーを超えないようにする
+		_currentEnergy = _maxEnergy;	
 	}
 }
 
 void EnergyManager::ConsumeEnergy(float energy)
 {
+	// エネルギーを消費
 	_currentEnergy -= energy;
 
 	// エネルギーが0未満にならないようにする
 	if (_currentEnergy < EDC::MIN_ENERGY)
 	{
-		_currentEnergy = EDC::MIN_ENERGY;	// エネルギーを最大値に固定
+		// エネルギーを最大値に固定
+		_currentEnergy = EDC::MIN_ENERGY;	
 	}
-}
-
-float EnergyManager::GetEvadeAttackEnergy()const
-{
-	return EGC::EVADE_ATTACK;
-}
-
-float EnergyManager::GetAbsorbEnergy()const
-{
-	return EGC::ABSORB;
 }
 
 void EnergyManager::DebugRender()
 {
+	// エネルギー量を画面に表示
 	DrawFormatString(500, 10, GetColor(255, 255, 255), "現在のエネルギー: %3.1f/%3.1f", _currentEnergy, _maxEnergy);
 }

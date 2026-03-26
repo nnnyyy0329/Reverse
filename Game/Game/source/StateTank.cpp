@@ -41,6 +41,7 @@ namespace
 	constexpr auto CHARGE_DAMAGE = 20.0f;// 突進ダメージ
 	constexpr auto CHARGE_ARRIVE_DIST = 5.0f;// 突進完了とみなす距離
 
+	constexpr float ATTACK_START_RANGE = 650.0f;// 攻撃開始距離
 	constexpr auto CHARGE_ATTACK_RANGE = 640.0f;// 突進を試みる距離
 	constexpr auto CHARAGE_JUDGE_INTERVAL = 30.0f;// 突進判定を行う間隔(フレーム)
 	constexpr auto NORMAL_ATTACK_RANGE = 150.0f;// 通常攻撃を試みる距離
@@ -251,7 +252,7 @@ namespace Tank
 		const auto& param = owner->GetEnemyParam();
 
 		// ターゲットが離れたら接近ステートへ
-		if (targetInfo.fDist > param.fChaseLimitRange)
+		if (targetInfo.fDist > ATTACK_START_RANGE)
 		{
 			return std::make_shared<Tank::Approach>();
 		}

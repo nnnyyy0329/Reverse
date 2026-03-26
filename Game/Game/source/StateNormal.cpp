@@ -19,6 +19,8 @@ namespace
 	constexpr auto LOST_NEARBY_HOME = 10.0f;			// 帰還完了判定距離
 
 	// 時間制御用定数
+	constexpr float WANDER_TIME = 1800.f;				// 徘徊時間
+	constexpr float DETECT_TIME = 90.0f;				// 発見硬直時間
 	constexpr auto ATTACK_CHARGE_TIME = 40.0f;			// 攻撃溜め時間
 	constexpr auto ATTACK_EXECUTE_TIME = 90.0f;			// 攻撃実行時間
 	constexpr auto ATTACK_RECOVERY_TIME = 90.0f;		// 攻撃後隙時間
@@ -162,7 +164,7 @@ namespace Normal
 		_fTimer = 0.0f;
 
 		// 時間ランダム設定
-		_fTargetTimer = CalcRandomRangeTime(owner->GetEnemyParam().fMoveTime, WANDER_TIME_RANGE);
+		_fTargetTimer = CalcRandomRangeTime(WANDER_TIME, WANDER_TIME_RANGE);
 
 		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
@@ -240,7 +242,7 @@ namespace Normal
 
 		const auto& param = owner->GetEnemyParam();
 		// 時間経過チェック
-		if (_fTimer >= param.fDetectTime)
+		if (_fTimer >= DETECT_TIME)
 		{
 			return std::make_shared<Approach>();
 		}
@@ -273,10 +275,6 @@ namespace Normal
 			return TransitionToLostNoTarget<LostTarget>(owner);
 		}
 
-		// 追跡限界距離チェック
-		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
-		if (result) { return result; }
-
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
 		if (areaResult) { return areaResult; }
@@ -289,7 +287,7 @@ namespace Normal
 
 		// ターゲット方向へ回転・移動
 		RotateToTarget(owner, targetInfo.vDir, SMOOTH_ROTATE_SPEED);
-		MoveToTarget(owner, targetInfo.vDir, owner->GetEnemyParam().fMoveSpeed);
+		MoveToTarget(owner, targetInfo.vDir, -owner->GetEnemyParam().fMoveSpeed);
 
 		return nullptr;
 	}
@@ -316,10 +314,6 @@ namespace Normal
 
 		// タイマー更新
 		_fTimer++;
-
-		// 追跡限界距離チェック
-		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
-		if (result) { return result; }
 
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);

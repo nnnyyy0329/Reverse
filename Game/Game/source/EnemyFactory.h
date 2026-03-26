@@ -13,12 +13,8 @@ namespace
 
 	// Normal Melee
 	constexpr auto NORMAL_VISION_RANGE = 250.0f;// 索敵距離
-	constexpr auto NORMAL_ATTACK_RANGE = 100.0f;// これ以内なら攻撃する距離
-	constexpr auto NORMAL_CHASE_LIMIT_RANGE = 600.0f;// これ以上離れたら接近をやめる距離
+	constexpr auto NORMAL_ATTACK_RANGE = 100.0f;// 攻撃可能距離
 	constexpr auto NORMAL_IDLE_TIME = 120.0f;// 待機時間
-	constexpr auto NORMAL_MOVE_TIME = 180.0f;// 徘徊時間
-	constexpr auto NORMAL_DETECT_TIME = 90.0f;// 発見硬直
-	constexpr auto NORMAL_ATTACK_TIME = 180.0f;// 攻撃時間
 	constexpr float NORMAL_DAMAEGE_TIME = 56.0f;// 被ダメ時間
 	constexpr float NORMAL_DAMAGE_ANIM_SPEED = 0.75f;// 被ダメアニメーションの再生速度
 	constexpr float NORMAL_COL_RADIUS = 30.0f;// コリジョン半径
@@ -27,17 +23,12 @@ namespace
 
 	// Ranged
 	constexpr auto RANGED_VISION_RANGE = 800.0f;// 索敵距離
-	constexpr auto RANGED_CHASE_LIMIT_RANGE = 1000.0f;// これ以上離れたら追跡をやめる距離
-	constexpr auto RANGED_MOVE_RADIUS = 0.0f;// 徘徊範囲(移動しないため0)
 	constexpr auto RANGED_IDLE_TIME = 120.0f;// 待機時間
-	constexpr auto RANGED_MOVE_TIME = 0.0f;// 徘徊時間(使用しない)
-	constexpr auto RANGED_DETECT_TIME = 60.0f;// 発見硬直
 	constexpr float RANGED_DAMAEGE_TIME = 66.0f;// 被ダメ時間
 
 	// Tank
 	constexpr auto TANK_LIFE = 2000.0f;// タンクの体力
-	constexpr auto TANK_ATTACK_RANGE = 650.0f;// 攻撃ステートに入る距離
-	constexpr auto TANK_ATTACK_LIMIT_RAMGE = 680.0f;// これ以上離れたら接近ステートへ
+	constexpr auto TANK_ATTACK_RANGE = 650.0f;// 攻撃可能距離
 	constexpr auto TANK_DETECT_TIME = 120.0f;// 発見硬直
 	constexpr auto TANK_MOVE_SPEED = 5.0f;// 移動速度
 	constexpr auto TANK_IDLE_TIME = 120.0f;// 待機時間
@@ -79,11 +70,7 @@ public:
 			param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
 			param.fVisionRange = NORMAL_VISION_RANGE;
 			param.fAttackRange = NORMAL_ATTACK_RANGE;
-			param.fChaseLimitRange = NORMAL_CHASE_LIMIT_RANGE;
 			param.fIdleTime = NORMAL_IDLE_TIME;
-			param.fMoveTime = NORMAL_MOVE_TIME;
-			param.fDetectTime = NORMAL_DETECT_TIME;
-			param.fAttackTime = NORMAL_ATTACK_TIME;
 			param.fDamageTime = NORMAL_DAMAEGE_TIME;
 			param.fDamageAnimSpeed = NORMAL_DAMAGE_ANIM_SPEED;
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
@@ -134,10 +121,7 @@ public:
 
 			param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
 			param.fVisionRange = RANGED_VISION_RANGE;
-			param.fChaseLimitRange = RANGED_CHASE_LIMIT_RANGE;
 			param.fIdleTime = RANGED_IDLE_TIME;
-			param.fMoveTime = RANGED_MOVE_TIME;
-			param.fDetectTime = RANGED_DETECT_TIME;
 			param.fDamageTime = RANGED_DAMAEGE_TIME;
 			param.fDamageAnimSpeed = NORMAL_DAMAGE_ANIM_SPEED;
 			param.fMaxLife = DEFAULT_ENEMY_MAX_LIFE;
@@ -187,8 +171,6 @@ public:
 
 			param.fMoveSpeed = TANK_MOVE_SPEED;
 			param.fAttackRange = TANK_ATTACK_RANGE;
-			param.fChaseLimitRange = TANK_ATTACK_LIMIT_RAMGE;
-			param.fDetectTime = TANK_DETECT_TIME;
 			param.fMaxLife = TANK_LIFE;
 			param.fIdleTime = TANK_IDLE_TIME;
 			param.fDamageTime = TANK_DAMAEGE_TIME;

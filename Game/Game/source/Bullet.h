@@ -20,7 +20,7 @@ struct BulletConfig
 	float radius;			// 当たり判定の半径
 	float damage;			// ダメージ量
 	float speed;			// 移動速度
-	int lifeTime;			// 寿命
+	float lifeTime;			// 寿命
 	bool isHit = false;		// ヒットしたか(初期化しておく)
 };
 
