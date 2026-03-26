@@ -1,18 +1,7 @@
 #include "AbilityActionHint.h"
 
-// 描画位置設定用の名前空間
-namespace RenderConfig
-{
-	constexpr int DRAW_Y = 750;		// 描画位置Y
-}
-
-// アクションヒントの選択インデックス設定用の名前空間
-namespace SelectedIndexConfig
-{
-	constexpr int SURFACE_PLAYER_INDEX = 0;		// 表プレイヤーのインデックス
-	constexpr int BULLET_PLAYER_INDEX = 1;		// 弾プレイヤーのインデックス
-	constexpr int INTERIOR_PLAYER_INDEX = 2;	// 裏プレイヤーのインデックス
-}
+// 能力入力ヒント表示用の定数エイリアス
+namespace AHC = AbilityHintConfig;
 
 AbilityActionHint::AbilityActionHint()
 {
@@ -21,6 +10,9 @@ AbilityActionHint::AbilityActionHint()
 	_iHandlePunchAction				= ResourceServer::GetInstance()->GetHandle("SkillPunch");
 	_iHandlePiercingBulletAction	= ResourceServer::GetInstance()->GetHandle("SkillPiercingBullet");
 	_iHandleNormalBulletAction		= ResourceServer::GetInstance()->GetHandle("SkillNormalBullet");
+
+	_iHandleDodgeAction				= ResourceServer::GetInstance()->GetHandle("ActionHintDodge");
+	_iHandleTransCancelAction		= ResourceServer::GetInstance()->GetHandle("ActionHintTransCancel");
 }
 
 AbilityActionHint::~AbilityActionHint()
@@ -37,11 +29,14 @@ bool AbilityActionHint::Initialize()
 bool AbilityActionHint::Terminate()
 {
 	// 画像の開放
+
 	DeleteGraph(_iHandleAbsorbAction);
 	DeleteGraph(_iHandleAoeAction);
 	DeleteGraph(_iHandlePunchAction);
 	DeleteGraph(_iHandlePiercingBulletAction);
 	DeleteGraph(_iHandleNormalBulletAction);
+	DeleteGraph(_iHandleDodgeAction);
+	DeleteGraph(_iHandleTransCancelAction);
 
 	return true;
 }
@@ -56,7 +51,7 @@ bool AbilityActionHint::Render()
 	return true;
 }
 
-void AbilityActionHint::ActionHintRender(ABILITY_TYPE abilityType, float selectGraphSenterX, float secondSelectGraphCenterX)
+void AbilityActionHint::AbilityInputHintRender(ABILITY_TYPE abilityType, float selectGraphSenterX, float secondSelectGraphCenterX)
 {
 	// 画像のサイズを取得
 	int graphW, graphH;
@@ -73,7 +68,7 @@ void AbilityActionHint::ActionHintRender(ABILITY_TYPE abilityType, float selectG
 			/* 表プレイヤーのアクションヒントを描画 */
 
 			// 吸収攻撃アクションヒントを描画
-			DrawGraph(static_cast<int>(selectGraphSenterX - graphCenterX), RenderConfig::DRAW_Y, _iHandleAbsorbAction, TRUE);
+			DrawGraph(static_cast<int>(selectGraphSenterX - graphCenterX), AHC::DRAW_Y, _iHandleAbsorbAction, TRUE);
 
 			break;
 		}
@@ -83,10 +78,10 @@ void AbilityActionHint::ActionHintRender(ABILITY_TYPE abilityType, float selectG
 			/* 弾プレイヤーのアクションヒントを描画 */
 
 			// 通常弾アクションヒントを描画
-			DrawGraph(static_cast<int>(selectGraphSenterX - graphCenterX), RenderConfig::DRAW_Y, _iHandleNormalBulletAction, TRUE);
+			DrawGraph(static_cast<int>(selectGraphSenterX - graphCenterX), AHC::DRAW_Y, _iHandleNormalBulletAction, TRUE);
 
 			// 貫通弾アクションヒントを描画
-			DrawGraph(static_cast<int>(secondSelectGraphCenterX - graphCenterX), RenderConfig::DRAW_Y, _iHandlePiercingBulletAction, TRUE);
+			DrawGraph(static_cast<int>(secondSelectGraphCenterX - graphCenterX), AHC::DRAW_Y, _iHandlePiercingBulletAction, TRUE);
 
 			break;
 		}
@@ -96,10 +91,10 @@ void AbilityActionHint::ActionHintRender(ABILITY_TYPE abilityType, float selectG
 			/* 裏プレイヤーのアクションヒントを描画 */
 
 			// 範囲攻撃アクションヒントを描画
-			//DrawGraph(static_cast<int>(selectGraphSenterX - graphCenterX), RenderConfig::DRAW_Y, _iHandleAoeAction, TRUE);
+			//DrawGraph(static_cast<int>(selectGraphSenterX - graphCenterX), AHC::DRAW_Y, _iHandleAoeAction, TRUE);
 
 			// 打撃攻撃アクションヒントを描画
-			DrawGraph(static_cast<int>(secondSelectGraphCenterX - graphCenterX), RenderConfig::DRAW_Y, _iHandlePunchAction, TRUE);
+			DrawGraph(static_cast<int>(secondSelectGraphCenterX - graphCenterX), AHC::DRAW_Y, _iHandlePunchAction, TRUE);
 
 			break;
 		}
@@ -107,4 +102,9 @@ void AbilityActionHint::ActionHintRender(ABILITY_TYPE abilityType, float selectG
 		default:
 			break;
 	}
+}
+
+void AbilityActionHint::ActionInputHintRender()
+{
+
 }

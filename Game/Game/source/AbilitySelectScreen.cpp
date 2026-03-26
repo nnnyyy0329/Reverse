@@ -237,7 +237,7 @@ void AbilitySelectScreen::ActionHintRender()
 	// 選択されたアビリティに応じてアクションヒントを描画
 	if(_abilityActionHint)
 	{
-		_abilityActionHint->ActionHintRender(GetSelectedAbility(), _fDrawCenterX, _fSecondDrawCenterX);
+		_abilityActionHint->AbilityInputHintRender(GetSelectedAbility(), _fDrawCenterX, _fSecondDrawCenterX);
 	}
 }
 

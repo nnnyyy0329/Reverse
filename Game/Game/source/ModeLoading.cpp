@@ -44,10 +44,6 @@ bool ModeLoading::Initialize()
 
 		// ”\—Í‘I‘ð‰æ–Ê—p
 		{
-			rs->Register("select1", "res/SelectItem/normal.png",	RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("select2", "res/SelectItem/melee.png",		RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("select3", "res/SelectItem/bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
-
 			rs->Register("SelectChain",		"res/UI_Select/ability_lock_chain.png", RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SelectPower",		"res/UI_Select/select_power.png",		RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SelectBlaster",	"res/UI_Select/select_blaster.png",		RESOURCE_TYPE::Graph, 1.0f);
@@ -57,6 +53,9 @@ bool ModeLoading::Initialize()
 			rs->Register("SkillPunch",			"res/UI_Select/skill_punch.png",			RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SkillPiercingBullet",	"res/UI_Select/skill_piercing_bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("SkillNormalBullet",	"res/UI_Select/skill_normal_bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
+
+			rs->Register("ActionHintTransCancel",	"res/UI_Select/action_cancel.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("ActionHintDodge",			"res/UI_Select/action_dodge.png",	RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// “ü—ÍUI 
