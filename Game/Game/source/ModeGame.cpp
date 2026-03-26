@@ -424,7 +424,8 @@ bool ModeGame::Process()
 		}
 	}
 
-
+	// 特定の位置にプレイヤーが到達したらテキスト表示処理
+	OnPlayerEnterPositionText();
 
 	// プレイヤーの初回変身時のテキスト表示処理
 	ProcessFirstTimeTransformText();
@@ -873,6 +874,39 @@ void ModeGame::SetPlayerConfig(VECTOR vPos, VECTOR vRot)
 	player->SetDir(vDir);
 }
 
+// (バグにより無理やり表示)
+void ModeGame::OnPlayerEnterPositionText()
+{
+	// ステージ1以外では表示しない
+	if(_stage->GetStageNum() != 0){ return; } 
+
+	// すでに一度でもプレイヤーが到達したことがあるなら、再度表示しない
+	if(_bPlayerEnteredPositionText){ return; }
+
+	// プレイヤー取得
+	auto activePlayer = _playerManager->GetActivePlayerShared();
+
+	// 到達地点のX座標
+	VECTOR enterPos = VGet(-660.0f, 0.0f, 0.0f);
+
+	// プレイヤーが特定の位置に到達したときのテキスト表示
+	if(activePlayer->GetPos().x >= enterPos.x)
+	{
+		// 到達フラグ有効
+		_bPlayerEnteredPositionText = true;
+
+		ModeTextBox::ShowChain
+		(
+			{
+			{"Textbox_Normal", "クロ、あそこにいるのがお前の仲間か？"},
+			{"Textbox_Kage", "だから仲間じゃねえって！\nこのまま近づいてLTボタンを押してあいつに向かって左手をかざしてみろ"}}, 
+			false, 
+			100,
+			"eventa"
+		);
+	}
+}
+
 void ModeGame::ProcessFirstTimeTransformText()
 {
 	// すでに一度でも変身プレイヤーになったことがあるなら、テキストは表示しない
@@ -898,11 +932,11 @@ void ModeGame::ProcessFirstTimeTransformText()
 
 void ModeGame::ProcessFirstTimeTransformCancelText()
 {
-	if(isCompleteTransCancel){ return; }
+	if(_isCompleteTransCancel){ return; }
 
-	isCompleteTransCancel = _playerManager->GetIsTransformCancelFirstTime();
+	_isCompleteTransCancel = _playerManager->GetIsTransformCancelFirstTime();
 
-	if(_playerManager->GetActivePlayerType() == PLAYER_TYPE::SURFACE && isCompleteTransCancel)
+	if(_playerManager->GetActivePlayerType() == PLAYER_TYPE::SURFACE && _isCompleteTransCancel)
 	{
 		// 変身時のテキスト表示
 		ModeTextBox::Show

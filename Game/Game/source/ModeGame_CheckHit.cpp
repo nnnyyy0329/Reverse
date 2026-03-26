@@ -841,13 +841,14 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 						// EventA はステージ0のみ有効
 						if(currentStage != 0) { continue; }
 
-						ModeTextBox::ShowChain
+						/*ModeTextBox::ShowChain
 						(
 							{
 							{"Textbox_Normal", "クロ、あそこにいるのがお前の仲間か？"},
 							{"Textbox_Kage", "だから仲間じゃねえって！\nこのまま近づいてLTボタンを押してあいつに向かって左手をかざしてみろ"}
 							}, false, 100, "eventa"
-						);
+						);*/
+
 						// モデルは消す（当たり判定のみ利用）
 						_stage->RemoveMapModelByName(obj.name);
 					}

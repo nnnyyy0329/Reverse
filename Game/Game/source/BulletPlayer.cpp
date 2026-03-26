@@ -167,10 +167,10 @@ DodgeConfig BulletPlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType			= DODGE_CHARA::BULLET_PLAYER;
-	config.invincibleDuration	= 20.0f;		// 無敵時間
+	config.invincibleDuration	= 12.0f;		// 無敵時間
 	config.startTime			= 3.0f;			// 開始時間
-	config.activeTime			= 15.0f;		// アクティブ時間
-	config.recoveryTime			= 8.0f;			// 硬直時間
+	config.activeTime			= 19.0f;		// アクティブ時間
+	config.recoveryTime			= 6.0f;			// 硬直時間
 	config.dodgeMoveSpeed		= 19.0f;		// 移動速度
 	config.soundName = "SE_TransPlayerDodge";	// サウンド名
 

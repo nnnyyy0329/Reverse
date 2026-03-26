@@ -1,6 +1,19 @@
 #pragma once
 #include "appframe.h"
 
+// プレイヤーライフバーUI表示の設定用名前空間
+namespace PlayerLifeBarConfig
+{
+	constexpr int DRAW_BAR_FRAME_X = 677.5f;
+	constexpr int DRAW_BAR_FRAME_Y = 1030;
+	constexpr int DRAW_OFFSET_X = 1;
+	constexpr int DRAW_OFFSET_Y = 1;
+
+	//// 追加：縦方向スケール
+	//constexpr float LIFE_BAR_SCALE_Y = 0.2f;
+}
+
+// 点滅エフェクトの設定用名前空間
 namespace FlashEffectConfig
 {
 	constexpr float FLASH_SPEED = 0.5f;			// 点滅速度(フレーム)

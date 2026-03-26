@@ -28,8 +28,8 @@ namespace PiercingBulletConfig
 // 弾発射設定定数
 namespace BulletShootConstants
 {
-	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);	// 右腕発射位置オフセット
-	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);	// 左腕発射位置オフセット
+	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 100, 0);	// 右腕発射位置オフセット
+	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 100, 0);	// 左腕発射位置オフセット
 }
 
 // 弾発射リコイル設定定数

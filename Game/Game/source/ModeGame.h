@@ -72,6 +72,9 @@ public:
 	void SetPlayerConfig(VECTOR vPos, VECTOR vRot);// jsonからの設定を適用(プレイヤー)
 	int GetCurrentStageNum() { return _currentStageNum; }
 
+	// 特定の位置にプレイヤーが到達したらテキスト表示処理
+	void OnPlayerEnterPositionText();
+
 	// プレイヤーの初回変身時のテキスト表示処理
 	void ProcessFirstTimeTransformText();
 
@@ -173,7 +176,8 @@ private:
 	bool _bTransformAvailableNotified = false; //変身可能か
 
 
-	// プレイヤーが変身したかどうか
-	bool _bIsTransformPlayer = false;
-	bool isCompleteTransCancel = false;
+	// テキスト表示関連
+	bool _bPlayerEnteredPositionText = false;	// プレイヤーが特定の位置に入ったか
+	bool _bIsTransformPlayer = false;			// プレイヤーが変身しているか
+	bool _isCompleteTransCancel = false;		// プレイヤーが初回変身解除を完了したか
 };

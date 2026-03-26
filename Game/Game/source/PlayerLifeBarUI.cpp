@@ -1,31 +1,18 @@
 ﻿#include "PlayerLifeBarUI.h"
 #include "PlayerManager.h"
 
-namespace
-{
-	// 画像表示用
-	//constexpr int DRAW_BAR_FRAME_X = 60;
-	//constexpr int DRAW_BAR_FRAME_Y = 60;
-
-	constexpr int DRAW_BAR_FRAME_X = 677.5f;
-	constexpr int DRAW_BAR_FRAME_Y = 1050;
-
-	constexpr int DRAW_OFFSET_X = 1;
-	constexpr int DRAW_OFFSET_Y = 1;
-
-	//// 追加：縦方向スケール
-	//constexpr float LIFE_BAR_SCALE_Y = 0.2f;
-}
+// 体力バー表示設定定数のエイリアス
+namespace PLBC = PlayerLifeBarConfig;
 
 PlayerLifeBarUI::PlayerLifeBarUI()
 {
 	_iLifeBar = ResourceServer::GetInstance()->GetHandle("PlayerLifeBar");
 	_iLifeBarFrame = ResourceServer::GetInstance()->GetHandle("PlayerLifeBarFrame");
 
-	_drawLifeBarX = DRAW_BAR_FRAME_X + DRAW_OFFSET_X;	// ライフバーの描画位置X
-	_drawLifeBarY = DRAW_BAR_FRAME_Y + DRAW_OFFSET_Y;	// ライフバーの描画位置Y
-	_drawLifeBarFrameX = DRAW_BAR_FRAME_X;				// ライフバーフレームの描画位置X
-	_drawLifeBarFrameY = DRAW_BAR_FRAME_Y;				// ライフバーフレームの描画位置Y
+	_drawLifeBarX = PLBC::DRAW_BAR_FRAME_X + PLBC::DRAW_OFFSET_X;	// ライフバーの描画位置X
+	_drawLifeBarY = PLBC::DRAW_BAR_FRAME_Y + PLBC::DRAW_OFFSET_Y;	// ライフバーの描画位置Y
+	_drawLifeBarFrameX = PLBC::DRAW_BAR_FRAME_X;					// ライフバーフレームの描画位置X
+	_drawLifeBarFrameY = PLBC::DRAW_BAR_FRAME_Y;					// ライフバーフレームの描画位置Y
 
 	_flashTimer = 0.0f;		// 点滅タイマー
 	_flashDuration = 0.0f;	// 点滅継続時間
