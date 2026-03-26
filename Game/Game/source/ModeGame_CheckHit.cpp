@@ -159,7 +159,7 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 
 					// コリジョンフレームの法線が内向きのため、逆方向へ押し出す
 					// 小さい距離で何度も押し出し
-					const float pushDist = 1.0f;
+					const float pushDist = 1.5f;
 					VECTOR push = VScale(wallNormXZ, -pushDist);
 
 					// 計算した押し出しベクトルを即座に反映

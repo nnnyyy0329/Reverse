@@ -5,10 +5,10 @@ namespace
 {
 	// ステート時間
 	constexpr auto DEAD_TIME = 60.0f;// 死亡時間
-	constexpr auto DOWN_TIME = 90.0f;// ダウン時間
+	constexpr auto DOWN_TIME =120.0f;// ダウン時間
 
 	// ノックバック制御
-	constexpr auto DAMAGE_KNOCKBACK_SPEED = 8.0f;// ノックバック速度
+	constexpr auto DAMAGE_KNOCKBACK_SPEED = 7.0f;// ノックバック速度
 	constexpr auto DAMAGE_KNOCKBACK_TIME = 12.0f;// ノックバック時間
 	constexpr auto DOWN_KNOCKBACK_SPEED = 18.0f;// ダウンノックバック速度
 	constexpr auto DOWN_KNOCKBACK_TIME = 75.0f;// ダウンノックバック時間

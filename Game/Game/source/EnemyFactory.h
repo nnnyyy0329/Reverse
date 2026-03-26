@@ -13,11 +13,10 @@ namespace
 
 	// Normal Melee
 	constexpr auto NORMAL_VISION_RANGE = 250.0f;// 索敵距離
-	constexpr auto NORMAL_ATTACK_RANGE = 100.0f;// 攻撃可能距離
 	constexpr auto NORMAL_IDLE_TIME = 120.0f;// 待機時間
 	constexpr float NORMAL_DAMAEGE_TIME = 56.0f;// 被ダメ時間
 	constexpr float NORMAL_DAMAGE_ANIM_SPEED = 0.75f;// 被ダメアニメーションの再生速度
-	constexpr float NORMAL_COL_RADIUS = 30.0f;// コリジョン半径
+	constexpr float NORMAL_COL_RADIUS = 35.0f;// コリジョン半径
 	constexpr float NORMAL_COL_HEIGHT = 150.0f;// コリジョン高さ
 	constexpr float NORMAL_COL_SUB_Y = 50.0f;// 腰位置オフセット
 
@@ -28,7 +27,6 @@ namespace
 
 	// Tank
 	constexpr auto TANK_LIFE = 2000.0f;// タンクの体力
-	constexpr auto TANK_ATTACK_RANGE = 650.0f;// 攻撃可能距離
 	constexpr auto TANK_DETECT_TIME = 120.0f;// 発見硬直
 	constexpr auto TANK_MOVE_SPEED = 5.0f;// 移動速度
 	constexpr auto TANK_IDLE_TIME = 120.0f;// 待機時間
@@ -69,7 +67,6 @@ public:
 
 			param.fMoveSpeed = DEFAULT_ENEMY_SPEED;
 			param.fVisionRange = NORMAL_VISION_RANGE;
-			param.fAttackRange = NORMAL_ATTACK_RANGE;
 			param.fIdleTime = NORMAL_IDLE_TIME;
 			param.fDamageTime = NORMAL_DAMAEGE_TIME;
 			param.fDamageAnimSpeed = NORMAL_DAMAGE_ANIM_SPEED;
@@ -91,7 +88,7 @@ public:
 			{
 				if (e->GetTarget())
 				{
-					return std::make_shared<Normal::Approach>();
+					return std::make_shared<Normal::Caution>();
 				}
 
 				return std::make_shared<Normal::Idle>();
@@ -107,7 +104,7 @@ public:
 
 				if (e->GetTarget())
 				{
-					return std::make_shared<Normal::Approach>();
+					return std::make_shared<Normal::Caution>();
 				}
 
 				return std::make_shared<Normal::Idle>();
@@ -170,12 +167,12 @@ public:
 			enemy->SetModelName("Tank");
 
 			param.fMoveSpeed = TANK_MOVE_SPEED;
-			param.fAttackRange = TANK_ATTACK_RANGE;
 			param.fMaxLife = TANK_LIFE;
 			param.fIdleTime = TANK_IDLE_TIME;
 			param.fDamageTime = TANK_DAMAEGE_TIME;
 			param.bDownSE = false;// ダウンSEなし
 			param.bChangeDamageState = false;// 弾で被ダメ遷移しない
+			param.bUseMoveArea = false;// 移動可能範囲を適用しない
 			param.capsule.fRadius = TANK_COL_RADIUS;
 			param.capsule.fHeight = TANK_COL_HEIGHT;
 			param.capsule.fColSubY = TANK_COL_SUB_Y;

@@ -35,6 +35,19 @@ namespace Normal
 		const char* GetName() override { return "Normal:Notice"; }
 	};
 
+	// Œx‰ú(ŠÔ‡‚¢‚ğæ‚é)
+	class Caution : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Normal:Caution"; }
+		bool IsChasing() override { return true; }
+
+	private:
+		float _fStrafeDir;// ‰¡ˆÚ“®•ûŒü(-1:¶, 1:‰E)
+	};
+
 	// Ú‹ß
 	class Approach : public EnemyState
 	{
@@ -84,6 +97,38 @@ namespace Normal
 		void Enter(Enemy* owner) override;
 		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
 		const char* GetName() override { return "Normal:AttackRecovery"; }
+	};
+
+	// ”ò‚Ñ‚©‚©‚èUŒ‚—­‚ß
+	class JumpAttackCharge : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Normal:JumpAttackCharge"; }
+	};
+
+	// ”ò‚Ñ‚©‚©‚èUŒ‚Às
+	class JumpAttackExecute : public EnemyState
+	{
+	public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		void Exit(Enemy* owner) override;
+		const char* GetName() override { return "Normal:JumpAttackExecute"; }
+
+	private:
+		bool _bHasCollision;// UŒ‚ƒRƒŠƒWƒ‡ƒ“‚ğo‚µ‚½‚©
+		VECTOR _vJumpDir;// ”ò‚Ñ‚©‚©‚è‚Ì•ûŒü
+	};
+
+	// ”ò‚Ñ‚©‚©‚èUŒ‚ŒãŒ„
+	class JumpAttackRecovery : public EnemyState
+	{
+		public:
+		void Enter(Enemy* owner) override;
+		std::shared_ptr<EnemyState> Update(Enemy* owner) override;
+		const char* GetName() override { return "Normal:JumpAttackRecovery"; }
 	};
 
 	// ƒ^[ƒQƒbƒg‚ğŒ©¸‚Á‚½‚Æ‚«

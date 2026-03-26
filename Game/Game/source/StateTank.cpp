@@ -190,7 +190,7 @@ namespace Tank
 		const auto& param = owner->GetEnemyParam();
 
 		// 攻撃可能範囲に入ったら攻撃ステートへ
-		if (targetInfo.fDist <= param.fAttackRange)
+		if (targetInfo.fDist <= ATTACK_START_RANGE)
 		{
 			// 無限ループ防止のため、ここでも判定
 			if (owner->IsVisible(targetInfo.target->GetPos(), 5.0f))

@@ -30,55 +30,68 @@ void ResourceServer::Register(const std::string& name, const char* path, RESOURC
 
 void ResourceServer::StartLoadAsync()
 {
-	_totalCnt = static_cast<int>(_loadList.size());// 総ロード数を保存
+	_totalCnt = static_cast<int>(_loadList.size());
+	_asyncTotalCnt = 0;
 
-	// DXライブラリの非同期ロードをONにする
-	SetUseASyncLoadFlag(TRUE);
-
-	// リストの先頭から順にロードを開始する
+	// 1 同期ロード
+	SetUseASyncLoadFlag(FALSE);
 	for (auto& res : _loadList) {
 		int handle = -1;
 
 		switch (res.type) {
-		case RESOURCE_TYPE::Graph:// 画像
-				handle = LoadGraph(res.path.c_str());
-				break;
-		case RESOURCE_TYPE::Model:// 3Dモデル
-			handle = MV1LoadModel(res.path.c_str());
-			break;
-		case RESOURCE_TYPE::Effect:// エフェクト
-			SetUseASyncLoadFlag(FALSE);
-			// EffectServer経由でロード
+		case RESOURCE_TYPE::Effect:
 			EffectServer::GetInstance()->Load(res.name, res.path.c_str(), res.fScale);
-			handle = 0;// ハンドルはEffectServer側で管理する
-			SetUseASyncLoadFlag(TRUE);
+			handle = 0;
 			break;
-		case RESOURCE_TYPE::Sound:// サウンド
-			// SoundServer経由で読み込む（SoundServerが内部でハンドル管理）
+		case RESOURCE_TYPE::Sound:
 			SoundServer::GetInstance()->Load(res.name, res.path.c_str());
-			handle = 0; // SoundServer側で管理するためここでは 0 をセット
+			handle = 0;
+			break;
+		default:
 			break;
 		}
 
-		// マップに登録
 		if (handle != -1) {
 			_handleMap[res.name] = handle;
-			res.handle = handle;// 念のためにリストにも保存
+			res.handle = handle;
 		}
 	}
 
-	// 非同期ロードをOFFに戻す
+	// 2 非同期ロード
+	SetUseASyncLoadFlag(TRUE);
+	for (auto& res : _loadList) {
+		int handle = -1;
+
+		switch (res.type) {
+		case RESOURCE_TYPE::Graph:
+			++_asyncTotalCnt;
+			handle = LoadGraph(res.path.c_str());
+			break;
+		case RESOURCE_TYPE::Model:
+			++_asyncTotalCnt;
+			handle = MV1LoadModel(res.path.c_str());
+			break;
+		default:
+			break;
+		}
+
+		if (handle != -1) {
+			_handleMap[res.name] = handle;
+			res.handle = handle;
+		}
+	}
 	SetUseASyncLoadFlag(FALSE);
 }
 
 float ResourceServer::GetLoadProgress()
 {
-	int remain = GetASyncLoadNum();// 非同期読み込み中の処理の数を取得
+	if (_asyncTotalCnt <= 0) { return 1.0f; }
 
-	if (_totalCnt == 0) return 1.0f;// ロードするものがない場合は完了
+	int remain = GetASyncLoadNum();
+	if (remain < 0) { remain = 0; }
+	if (remain > _asyncTotalCnt) { remain = _asyncTotalCnt; }
 
-	// 総数 - 残り / 総数 = 進捗率
-	return static_cast<float>(_totalCnt - remain) / static_cast<float>(_totalCnt);
+	return static_cast<float>(_asyncTotalCnt - remain) / static_cast<float>(_asyncTotalCnt);
 }
 
 bool ResourceServer::IsLoadComplete()

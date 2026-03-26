@@ -54,5 +54,6 @@ private:
 	std::map<std::string, int> _handleMap;// 検索用マップ<名前、ハンドル>
 
 	int _totalCnt = 0;// 総ロード数
+	int _asyncTotalCnt = 0;
 };
 
