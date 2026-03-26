@@ -29,6 +29,7 @@ struct AttackEffectConfig
 	// サウンド設定
 	bool isActiveSound;		// サウンドを有効にするか
 	std::string soundName;	// サウンド名
+	float playSoundDelay;	// サウンド再生の遅延時間(フレーム)
 
 	// カメラシェイク設定
 	bool isActiveCameraShake;	// カメラシェイクを有効にするか
@@ -58,6 +59,7 @@ struct TrackedEffectInfo
 	std::weak_ptr<CharaBase> owner;	// 所有者キャラの弱参照
 	bool useOwnerDirection = false;	// 所有者の向きを基準とするか(最初から false )
 	EFFECT_ATTACH_TYPE attachType;	// エフェクトのアタッチタイプ
+	float playSoundDelay;			// サウンド再生の遅延時間
 };
 
 /// @brief 攻撃の演出システムクラス
@@ -149,6 +151,11 @@ public:
 	/// @param config 攻撃演出設定
 	void ProcessHitStop(const AttackEffectConfig& config);
 
+	/// @brief 有効なエフェクト情報かどうかのチェック関数
+	///
+	/// @param config 攻撃演出設定
+	int IsActiveEffectConfig(const AttackEffectConfig& config);
+
 	/* クラスの設定 */
 
 private:
@@ -160,10 +167,11 @@ private:
 	// シングルトンインスタンス
 	static AttackEffectSystem* _instance;
 
-
 	/// @brief 追跡エフェクトの位置更新処理
 	void UpdateTrackedEffects();
 
+	/// @brief サウンド再生の遅延時間更新処理
+	void UpdatePlaySoundDelayTime();
 
 	// エフェクト管理関係
 	std::map<int, EffectInstanceInfo> _activeEffects;	// アクティブなエフェクトの管理マップ

@@ -27,7 +27,6 @@ struct EnemyParam
 	float fMoveSpeed = 2.0f;// 敵の基本移動速度
 
 	float fVisionRange = 0.0f;// 敵の索敵距離
-	float fVisionAngle = 0.0f;// 敵の視界の角度
 
 	float fAttackRange = 0.0f;// これ以内なら攻撃する距離
 	float fChaseLimitRange = 0.0f;// これ以上離れたら接近をやめる距離
@@ -38,6 +37,10 @@ struct EnemyParam
 	float fMoveTime = 0.0f;// 徘徊時間
 	float fDetectTime = 0.0f;// 発見硬直
 	float fAttackTime = 0.0f;// 攻撃時間
+	float fDamageTime = 0.0f;// 被ダメージ時間
+	float fDamageAnimSpeed = 1.0f;// 被ダメージアニメーションの再生速度
+	bool bDownSE = true;// ダウンSEを鳴らすかどうか
+	bool bChangeDamageState = true;// 被ダメ状態に遷移するかどうか
 
 	float fMaxLife = 100.0f;// 最大体力
 

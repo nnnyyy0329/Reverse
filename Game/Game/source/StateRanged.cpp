@@ -58,7 +58,7 @@ namespace
 	constexpr auto LOST_LOOK_COUNT = 3;					// 見渡し回数
 
 	// 視界チェック用定数
-	constexpr auto FAN_VISON_HALF_ANGLE = 60.0f;// 扇形視界の半角(度)
+	constexpr auto FAN_VISON_HALF_ANGLE = 75.0f;// 扇形視界の半角(度)
 	const float FAN_VISION_COS = cosf(FAN_VISON_HALF_ANGLE * DEGREE_TO_RADIAN);// cos値
 	constexpr auto TARGET_DETECT_RADIUS = 30.0f;// ターゲット検出に幅を持たせる(半径)
 
@@ -258,7 +258,7 @@ namespace Ranged
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Senemy_back_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -519,7 +519,9 @@ namespace Ranged
 		vSpawnPos = VAdd(vSpawnPos, VScale(vDir, BULLET_SPAWN_OFFSET_Z));
 
 		// ターゲットへの方向計算
-		VECTOR vToTarget = VSub(targetInfo.target->GetPos(), vSpawnPos);
+		VECTOR vTargetPos = targetInfo.target->GetPos();
+		vTargetPos.y = vSpawnPos.y;// 水平な方向を計算するためにYを揃える
+		VECTOR vToTarget = VSub(vTargetPos, vSpawnPos);
 		VECTOR vBulletDir = VNorm(vToTarget);
 
 		// 弾の情報
@@ -542,7 +544,7 @@ namespace Ranged
 	{
 		BulletEffectConfig config;
 
-		config.effectName = "PlayerNormalBullet";// エフェクトの名前
+		config.effectName = "Ranged_Bullet";// エフェクトの名前
 		config.effectOffset = VGet(0.0f, 0.0f, 0.0f);// エフェクトの発生位置オフセット
 		config.soundName = "";// サウンドの名前
 		return config;

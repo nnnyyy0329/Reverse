@@ -66,7 +66,7 @@ public:
 	void RemoveBulletByOwnerType(BULLET_OWNER_TYPE ownerType);
 
 	// ‚·‚×‚Ä‚Ì’e‚ğíœ
-	void ClearAllBullets();
+	void ClearAllBullets(std::vector<std::shared_ptr<Bullet>>);
 
 	// –³Œø‚È’e‚Ìíœ
 	void CleanupInvalidBullets();	

@@ -62,9 +62,9 @@ public:
 
 
 	// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è‚·‚é
-	using AfterDamageStateSelector = std::function<std::shared_ptr<EnemyState>(Enemy*, int)>;
+	using AfterDamageStateSelector = std::function<std::shared_ptr<EnemyState>(Enemy*)>;
 	void SetAfterDamageStateSelector(AfterDamageStateSelector selector) { _afterDamageStateSelector = selector; }
-	std::shared_ptr<EnemyState> GetAfterDamageStateSelector(int comboCnt);
+	std::shared_ptr<EnemyState> GetAfterDamageStateSelector();
 	// ƒ_ƒEƒ“Œã‚Ì‘JˆÚæ‚ğŒˆ’è‚·‚é
 	using AfterDownStateSelector = std::function<std::shared_ptr<EnemyState>(Enemy*)>;
 	void SetAfterDownStateSelector(AfterDownStateSelector selector) { _afterDownStateSelector = selector; }

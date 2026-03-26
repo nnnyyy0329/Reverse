@@ -393,7 +393,7 @@ StageBase::~StageBase()
 
 void StageBase::Process()
 {
-	// BGM �؂�ւ������i���t���[�����s�j
+	// プレイヤーの状態に応じたBGM切り替え
 	{
 		if(_playerManager)
 		{
@@ -414,7 +414,6 @@ void StageBase::Process()
 
 
 
-	// �}�b�v���f���̍X�V
 	// マップモデルの更新
 	{
 		if(IsAllEnemiesDefeated())
@@ -465,6 +464,15 @@ void StageBase::Process()
 					{
 						_bFirstRangedKilled = true;
 						//ModeTextBox::Show("Textbox_Kage", "今のやつのエネルギーでできることが増えたから試してみようぜ。", false, 100, "stage2_first_ranged");
+					}
+				}
+
+				// ステージ3ならTankを倒したときに通知
+				if(_stageNum == 2)
+				{
+					if(enemy->GetModelName() == "Tank")
+					{
+						_bBossDefeatedNotified = true;
 					}
 				}
 
@@ -658,18 +666,31 @@ int StageBase::GetNextStageNumFromTrigger(const std::string& triggerName)
 
 void StageBase::PlayStageBGM()
 {
-	// �X�e�[�W�J�n���ɌĂԏ������p
-	if(!_playerManager) return;
+	// プレイヤーマネージャーが未設定の場合、デフォルト BGM を再生
+	if(!_playerManager)
+	{
+		// プレイヤーマネージャーなしで直接 BGM を再生
+		if(!_currentBGMName.empty())
+		{
+			SoundServer::GetInstance()->Play(_currentBGMName, DX_PLAYTYPE_LOOP);
+		}
+		return;
+	}
 
 	auto activePlayer = _playerManager->GetActivePlayerShared();
-	if(!activePlayer) return;
+	if(!activePlayer)
+	{
+		// アクティブプレイヤーが取得できない場合も BGM を再生
+		if(!_currentBGMName.empty())
+		{
+			SoundServer::GetInstance()->Play(_currentBGMName, DX_PLAYTYPE_LOOP);
+		}
+		return;
+	}
 
+	// アクティブプレイヤーに応じた BGM を再生
 	_previousCharaType = activePlayer->GetCharaType();
 	UpdateStageBGM(_previousCharaType);
-	// ループ再生
-	auto bgmHandle = SoundServer::GetInstance()->Play(_currentBGMName, DX_PLAYTYPE_LOOP);
-
-	// ボリューム設定
 }
 
 void StageBase::StopStageBGM()

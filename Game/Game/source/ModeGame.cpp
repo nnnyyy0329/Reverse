@@ -183,7 +183,6 @@ bool ModeGame::Initialize()
 
 	_shadowMapHandle = MakeShadowMap(2048, 2048);
 
-
 	return true;
 }
 
@@ -242,7 +241,7 @@ bool ModeGame::Process()
 
 
 	// Debug: ゲームパッドの右トリガー(RT)のトリガー状態で全滅（デバッグ用）
-// InputManager の TriggerButtonState::rtTrg が true になる瞬間を検出して実行します。
+	// InputManager の TriggerButtonState::rtTrg が true になる瞬間を検出して実行します。
 	//if(im.GetTrigger().rtTrg)
 	//{
 	//	if(_stage)
@@ -252,10 +251,17 @@ bool ModeGame::Process()
 	//		_stage->Process();
 	//	}
 	//}
+	// 
 	// ゲームオーバーチェック
 	{
+		bool debugDeath = false; // デバッグ用全滅フラグ
+		if(im.IsTrigger(INPUT_ACTION::DEBUG3))
+		{
+			debugDeath = true;
+		}
+
 		auto activePlayer = _playerManager->GetActivePlayerShared();
-		if (activePlayer && activePlayer->GetIsDead())
+		if (activePlayer && activePlayer->GetIsDead() || debugDeath)
 		{
 			// ModeGameOverを追加
 			ModeGameOver* modeGameOver = new ModeGameOver();
@@ -275,24 +281,24 @@ bool ModeGame::Process()
 	// startでメニューを開く
 	if (im.IsTrigger(INPUT_ACTION::MENU))
 	{
-		ModeMenu* modeMenu = new ModeMenu();
-		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+		//ModeMenu* modeMenu = new ModeMenu();
+		//ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 
-		modeMenu->SetCameraManager(_cameraManager);
+		//modeMenu->SetCameraManager(_cameraManager);
 
-		// メニュー項目を作成
-		auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
-		auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
-		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
-		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+		//// メニュー項目を作成
+		//auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
+		//auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
+		//auto useCollision = new MenuItemUseCollision(this, "UseCollision");
+		//auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
 
-		// デバッグカメラ切り替え
-		debugCamera->SetCameraManagerMenu(_cameraManager);
+		//// デバッグカメラ切り替え
+		//debugCamera->SetCameraManagerMenu(_cameraManager);
 
-		modeMenu->AddMenuItem(viewDebugInfo);
-		modeMenu->AddMenuItem(viewCollision);
-		modeMenu->AddMenuItem(useCollision);
-		modeMenu->AddMenuItem(debugCamera);
+		//modeMenu->AddMenuItem(viewDebugInfo);
+		//modeMenu->AddMenuItem(viewCollision);
+		//modeMenu->AddMenuItem(useCollision);
+		//modeMenu->AddMenuItem(debugCamera);
 	}
 
 	// クラスセット
@@ -435,11 +441,17 @@ bool ModeGame::Process()
 		}
 
 		// 全滅したら最初のLOGOへ（疑似的にゲーム終了）
-		if(_stage->IsAllEnemiesDefeated())
+		if(_stage->IsBossDefeated())
 		{
-			ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
-			ModeServer::GetInstance()->Del(this);
-			return true;
+			static float timer = 0.0f;
+			timer += 1.0f;
+			if (timer >= 120.0f)// 2秒待ってから
+			{
+				timer = 0.0f;
+				ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
+				ModeServer::GetInstance()->Del(this);
+				return true;
+			}
 		}
 	}
 
@@ -589,13 +601,22 @@ bool ModeGame::Render()
 	{
 		if(_stage)
 		{
-			const int current = _stage->GetCurrentEnemyCnt();
-			const int total = _stage->GetTotalEnemyCnt();
+			if (_stage->GetStageNum() == 2)
+			{
+				SetFontSize(24);
+				DrawFormatString(60, 120, GetColor(255, 255, 255), "ボスを倒せ！");
+				SetFontSize(16);
+			}
+			else
+			{
+				const int current = _stage->GetCurrentEnemyCnt();
+				const int total = _stage->GetTotalEnemyCnt();
 
-			SetFontSize(24);
-			//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
-			DrawFormatString(60, 120, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
-			SetFontSize(16);
+				SetFontSize(24);
+				//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
+				DrawFormatString(60, 120, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
+				SetFontSize(16);
+			}
 		}
 	}
 
@@ -756,9 +777,14 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 
 	// オブジェクトのクリア
 	{
-		BulletManager::GetInstance()->ClearAllBullets();
+		auto bulletManager = BulletManager::GetInstance();
+		bulletManager->ClearAllBullets(bulletManager->GetAllBullets());
+
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
+
+	auto player = _playerManager->GetActivePlayerShared();
+	player->SetDir(VGet(0.0f, 0.0f, -1.0f));
 
 	_cameraManager->Reset();
 
@@ -819,12 +845,13 @@ void ModeGame::RestartCurrentStage()
 		activePlayer->SetDir(vDir);
 
 		// プレイヤーのモーションリセット
-		
 	}
 
 	// オブジェクトのクリア
 	{
-		BulletManager::GetInstance()->ClearAllBullets();
+		auto bulletManager = BulletManager::GetInstance();
+		bulletManager->ClearAllBullets(bulletManager->GetAllBullets());
+
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
 

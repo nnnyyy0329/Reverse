@@ -17,7 +17,7 @@ namespace
 	constexpr auto SEARCH_INTERVAL = 10.0f;// 索敵を行う間隔(フレーム)
 
 	// ライフバー表示設定
-	constexpr auto LIFEBAR_HEAD_OFFSET_Y = 150.0f;// ライフバーの表示位置オフセット
+	constexpr auto LIFEBAR_HEAD_OFFSET_Y = 10.0f;// ライフバーの表示位置オフセット
 	constexpr auto LIFEBAR_WORLD_WIDTH = 80.0f;// ライフバーのワールド上の幅
 	constexpr auto LIFEBAR_MAX_DIST = 1000.0f;// ライフバーを表示する最大距離
 
@@ -34,7 +34,7 @@ namespace
 	constexpr auto WALL_NORMAL_THRESHOLD = 0.3f;// 壁判定の法線Y成分閾値
 
 	// エフェクト関連
-	constexpr auto DAMAGE_EFFECT_OFFSET_Y = 50.0f;// ダメージエフェクトYオフセット
+	constexpr auto DAMAGE_EFFECT_OFFSET_Y = 80.0f;// ダメージエフェクトYオフセット
 
 	// 連続被ダメ管理
 	constexpr auto DAMAGE_COMBO_RESET_TIME = 90.0f;// この時間内に再ヒットしなければリセット
@@ -200,10 +200,9 @@ void Enemy::DebugRender()
 	// 索敵範囲を描画
 	{
 		auto fVisionRange = _enemyParam.fVisionRange;// 索敵距離
-		auto fVisionAngle = _enemyParam.fVisionAngle;// 索敵角度(半分)
 		unsigned int color = GetColor(0, 255, 0);// 緑
 		int segments = 16;// 扇形の分割数
-		mydraw::DrawFan3D(_vPos, _vDir, fVisionRange, fVisionAngle, color, segments);
+		mydraw::DrawFan3D(_vPos, _vDir, fVisionRange, 60.0f, color, segments);
 	}
 
 	// 接近中の各範囲の描画
@@ -260,7 +259,8 @@ void Enemy::DrawLifeBar()
 	if (_lifeBarHandle == -1 || _lifeBarFrameHandle == -1) { return; }
 
 	// 敵の頭上のワールド座標を計算
-	VECTOR headPos = VAdd(_vPos, VGet(0.0f, LIFEBAR_HEAD_OFFSET_Y, 0.0f));
+	// カプセルの大きさで判断
+	VECTOR headPos = VAdd(_vPos, VGet(0.0f, _fCollisionHeight + LIFEBAR_HEAD_OFFSET_Y, 0.0f));
 
 	// カメラからの距離を計算し、遠すぎる場合は描画しない
 	VECTOR camPos = GetCameraPosition();
@@ -570,14 +570,17 @@ void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
 
 	UpdateDamageCombo();
 	// ダメージステートへ遷移
-	//ChangeState(std::make_unique<Common::Damage>());
+	if (_enemyParam.bChangeDamageState)
+	{
+		ChangeState(std::make_unique<Common::Damage>());
+	}
 }
 
-std::shared_ptr<EnemyState> Enemy::GetAfterDamageStateSelector(int comboCnt)
+std::shared_ptr<EnemyState> Enemy::GetAfterDamageStateSelector()
 {
 	if (_afterDamageStateSelector)
 	{
-		return _afterDamageStateSelector(this, comboCnt);
+		return _afterDamageStateSelector(this);
 	}
 
 	return nullptr;
