@@ -1,5 +1,7 @@
 #include "ModeTextBox.h"
 
+ModeTextBox* ModeTextBox::_lpActive = nullptr;
+std::deque<ModeTextBox::QueueItem> ModeTextBox::_queue;
 
 ModeTextBox::ModeTextBox(const std::string& graphKey, std::function<void()> onClosed, bool pauseUnderLayer)
 	: _graphKey(graphKey)
@@ -26,11 +28,24 @@ bool ModeTextBox::Initialize()
 
 	_graphHandle = ResourceServer::GetInstance()->GetHandle(_graphKey);
 
+	// 念のため（Add経由以外で生成されても破綻しにくくする）
+	if(_lpActive == nullptr)
+	{
+		_lpActive = this;
+	}
+
 	return true;
 }
 
 bool ModeTextBox::Terminate()
 {
+	// 外部要因で消された場合でもキューが進むようにする
+	if(_lpActive == this)
+	{
+		_lpActive = nullptr;
+		TryDequeueAndShow();
+	}
+
 	base::Terminate();
 	return true;
 }
@@ -62,14 +77,24 @@ bool ModeTextBox::Process()
 		}
 	}
 
-	if(im.IsTrigger(INPUT_ACTION::SKIP))
+	if(canInput && im.IsTrigger(INPUT_ACTION::SKIP))
 	{
 		_bClose = true;
 	}
 
 	if(_bClose)
 	{
+		// 「消えてから次を表示」を成立させるため、ここでアクティブ解除 → 次を予約
+		if(_lpActive == this)
+		{
+			_lpActive = nullptr;
+		}
+
 		if(_onClosed) { _onClosed(); }
+
+		// 次のテキストボックスを予約（次フレームの ProcessInit で削除→追加の順に処理される）
+		TryDequeueAndShow();
+
 		ModeServer::GetInstance()->Del(this);
 	}
 
@@ -83,8 +108,6 @@ bool ModeTextBox::Render()
 		DrawFormatString(20, 20, GetColor(255, 0, 0), "TextBox Graph Not Found: %s", _graphKey.c_str());
 		return true;
 	}
-
-
 
 	int w = 0;
 	int h = 0;
@@ -149,41 +172,55 @@ bool ModeTextBox::Render()
 
 // static helpers
 
+void ModeTextBox::Enqueue(const QueueItem& item)
+{
+	_queue.push_back(item);
+}
+
+void ModeTextBox::TryDequeueAndShow()
+{
+	if(_lpActive != nullptr) { return; }
+	if(_queue.empty()) { return; }
+
+	const QueueItem item = _queue.front();
+	_queue.pop_front();
+
+	ModeTextBox* box = new ModeTextBox(item.graphKey, item.text, nullptr, item.pauseUnderLayer);
+
+	// Addした瞬間に「表示予定」扱いにして、同フレーム中の追加要求をキューに回す
+	_lpActive = box;
+
+	ModeServer::GetInstance()->Add(box, item.z, item.instanceName.c_str());
+}
+
 void ModeTextBox::Show(const std::string& graphKey, const std::string& text, bool pauseUnderLayer, int z, const std::string& instanceName)
 {
-	ModeTextBox* box = new ModeTextBox(graphKey, text, nullptr, pauseUnderLayer);
-	ModeServer::GetInstance()->Add(box, z, instanceName.c_str());
+	QueueItem item;
+	item.graphKey = graphKey;
+	item.text = text;
+	item.pauseUnderLayer = pauseUnderLayer;
+	item.z = z;
+	item.instanceName = instanceName;
+
+	Enqueue(item);
+	TryDequeueAndShow();
 }
 
 void ModeTextBox::ShowChain(const std::vector<std::pair<std::string, std::string>>& items, bool pauseUnderLayer, int z, const std::string& baseName)
 {
 	if(items.empty()) return;
 
-	// 末尾から先に生成して、前の onClosed で次を追加する方式
-	ModeTextBox* nextBox = nullptr;
-	for(int i = static_cast<int>(items.size()) - 1; i >= 0; --i)
+	for(size_t i = 0; i < items.size(); ++i)
 	{
-		const auto& p = items[i];
-		std::string name = baseName + "_" + std::to_string(i);
+		QueueItem item;
+		item.graphKey = items[i].first;
+		item.text = items[i].second;
+		item.pauseUnderLayer = pauseUnderLayer;
+		item.z = z;
+		item.instanceName = baseName + "_" + std::to_string(i);
 
-		if(nextBox == nullptr)
-		{
-			// 末尾
-			nextBox = new ModeTextBox(p.first, p.second, nullptr, pauseUnderLayer);
-		}
-		else
-		{
-			// 現在のボックスが閉じられたら nextBox を追加する
-			ModeTextBox* capturedNext = nextBox;
-			auto onClosed = [capturedNext, z, name]() {
-				ModeServer::GetInstance()->Add(capturedNext, z, name.c_str());
-				};
-			// 新しい box を作る（閉じたら capturedNext を追加）
-			nextBox = new ModeTextBox(p.first, p.second, onClosed, pauseUnderLayer);
-		}
+		Enqueue(item);
 	}
 
-	// 最初のボックスを追加（名前は baseName_0）
-	std::string firstName = baseName + "_0";
-	ModeServer::GetInstance()->Add(nextBox, z, firstName.c_str());
+	TryDequeueAndShow();
 }
