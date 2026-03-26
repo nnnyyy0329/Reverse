@@ -68,11 +68,11 @@ bool ModeLoading::Initialize()
 		// “ü—ÍUI 
 		{
 			//rs->Register("InputA",	"res/UI_Input/input_A.png",		RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputB",	"res/UI_Input/input_B.png",		RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputX",	"res/UI_Input/input_X.png",		RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputY",	"res/UI_Input/input_Y.png",		RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputLT", "res/UI_Input/input_LT.png",	RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputRT", "res/UI_Input/input_RT.png",	RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputB",	"res/UI_Input/input_B.png",		RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputX",	"res/UI_Input/input_X.png",		RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputY",	"res/UI_Input/input_Y.png",		RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputLT","res/UI_Input/input_LT.png",	RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputRT", "res/UI_Input/input_RT.png",	RESOURCE_TYPE::Graph, 1.0f);
 		
 		}
 
