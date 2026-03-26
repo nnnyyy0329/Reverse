@@ -34,7 +34,7 @@ namespace
 	constexpr float DETECT_TIME = 30.0f;				// î≠å©çdíºéûä‘
 	constexpr auto ATTACK_CHARGE_TIME = 40.0f;			// çUåÇó≠Çﬂéûä‘
 	constexpr auto ATTACK_EXECUTE_TIME = 90.0f;			// çUåÇé¿çséûä‘
-	constexpr auto ATTACK_RECOVERY_TIME = 120.0f;		// çUåÇå„åÑéûä‘
+	constexpr auto ATTACK_RECOVERY_TIME = 180.0f;		// çUåÇå„åÑéûä‘
 	constexpr auto LOST_WAIT_TIME = 60.0f;				// ãAä“ëOÇÃë“ã@éûä‘
 	constexpr float CAUTION_TIME = 180.0f;				// åxâ˙éûä‘
 	constexpr float GIVE_UP_CHASE_TIME = 300.0f;		// í«ê’ÇÇ†Ç´ÇÁÇﬂÇÈÇ‹Ç≈ÇÃéûä‘
@@ -442,7 +442,7 @@ namespace Normal
 
 		// É^Å[ÉQÉbÉgï˚å¸Ç÷âÒì]ÅEà⁄ìÆ
 		RotateToTarget(owner, targetInfo.vDir, SMOOTH_ROTATE_SPEED);
-		MoveToTarget(owner, targetInfo.vDir, owner->GetEnemyParam().fMoveSpeed * 1.5f);// è≠Çµë¨Ç≠
+		MoveToTarget(owner, targetInfo.vDir, owner->GetEnemyParam().fMoveSpeed * 1.2f);// è≠Çµë¨Ç≠
 
 		return nullptr;
 	}

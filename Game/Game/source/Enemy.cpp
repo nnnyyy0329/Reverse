@@ -732,7 +732,7 @@ bool Enemy::CorrectPosToMoveArea()
 	float dist = VSize(VSub(_vHomePos, _vPos));
 
 	// 初期座標方向へ少しづつ移動して、範囲内かチェック
-	const float correctStep = 5.0f;// 補正ステップ距離
+	const float correctStep = 1.5f;// 補正ステップ距離
 	const int correctMaxSteps = 20;// 最大試行回数
 
 	for (int i = 1; i <= correctMaxSteps; ++i)

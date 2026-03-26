@@ -142,6 +142,6 @@ private:
 
 	// トリガー
 	TriggerButtonState _trigger;
-	float _triggerMin = 0.3f;// トリガー閾値
+	float _triggerMin = 0.1f;// トリガー閾値
 };
 
