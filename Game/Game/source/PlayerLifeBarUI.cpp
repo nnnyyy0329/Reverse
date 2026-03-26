@@ -4,8 +4,8 @@
 namespace
 {
 	// ‰æ‘œ•\Ž¦—p
-	constexpr int DRAW_BAR_FRAME_X = 60;
-	constexpr int DRAW_BAR_FRAME_Y = 60;
+	constexpr int DRAW_BAR_FRAME_X = 677.5f;
+	constexpr int DRAW_BAR_FRAME_Y = 1050;
 	constexpr int DRAW_OFFSET_X = 1;
 	constexpr int DRAW_OFFSET_Y = 1;
 
