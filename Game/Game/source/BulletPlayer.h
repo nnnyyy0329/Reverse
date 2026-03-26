@@ -40,13 +40,6 @@ namespace BulletRecoilConstants
 	constexpr int RECOIL_MOVE_DIRECTION = -1;		// リコイル移動方向
 }
 
-// 弾のエネルギー消費量定数
-namespace BulletConsumeEnergyConstants
-{
-	constexpr float CONSUME_NORMAL_BULLET_ENERGY = 5.0f;	// 通常弾のエネルギー消費量
-	constexpr float CONSUME_PIERCING_BULLET_ENERGY = 10.0f;	// 貫通弾のエネルギー消費量
-}
-
 // 前方宣言
 class CameraManager;
 

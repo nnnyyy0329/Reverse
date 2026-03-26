@@ -27,6 +27,10 @@ PlayerLifeBarUI::PlayerLifeBarUI()
 	_drawLifeBarFrameX = DRAW_BAR_FRAME_X;				// ライフバーフレームの描画位置X
 	_drawLifeBarFrameY = DRAW_BAR_FRAME_Y;				// ライフバーフレームの描画位置Y
 
+	_flashTimer = 0.0f;		// 点滅タイマー
+	_flashDuration = 0.0f;	// 点滅継続時間
+	_isFlashing = false;	// 点滅中フラグ
+
 	_playerManager = nullptr;
 }
 
@@ -52,6 +56,9 @@ bool PlayerLifeBarUI::Terminate()
 
 bool PlayerLifeBarUI::Process()
 {
+	// 点滅エフェクトの更新
+	UpdateFlashEffect();
+
 	return true;
 }
 
@@ -107,8 +114,12 @@ void PlayerLifeBarUI::BarRatioCalculation()
 
 	// 体力の比率を計算
 	float lifeRatio = currentLife / maxLife;
-	if(lifeRatio > 1.0f){ lifeRatio = 1.0f; }	// 上限チェック
-	if(lifeRatio < 0.0f){ lifeRatio = 0.0f; }	// 下限チェック
+
+	// 上限チェック
+	if(lifeRatio > 1.0f){ lifeRatio = 1.0f; }	
+
+	// 下限チェック
+	if(lifeRatio < 0.0f){ lifeRatio = 0.0f; }	
 
 	// ライフバーゲージ表示関数
 	LifeBarRender(lifeRatio);
@@ -117,18 +128,28 @@ void PlayerLifeBarUI::BarRatioCalculation()
 // ライフバー描画
 void PlayerLifeBarUI::LifeBarRender(float ratio)
 {
-	if(ratio <= 0.0f) { return; }	// �䗦��0�ȉ��̏ꍇ�͕`�悵�Ȃ�
+	// 体力の比率が0以下の場合は描画しない
+	if(ratio <= 0.0f) { return; }
 
+	// 画像サイズを取得
 	int graphW, graphH;
 	GetGraphSize(_iLifeBar, &graphW, &graphH);
 
+	// 描画する幅を計算
 	int clipW = static_cast<int>(graphW * ratio);
 
+	// バー矩形を設定
 	SetDrawArea(_drawLifeBarX, _drawLifeBarY, _drawLifeBarX + clipW, _drawLifeBarY + graphH);
 
+	// ライフバーを描画
 	DrawGraph(_drawLifeBarX, _drawLifeBarY, _iLifeBar, TRUE);
 
+	// 描画領域を全体に戻す
 	SetDrawAreaFull();
+
+	// 点滅エフェクトの描画
+	FlashEffectRender(clipW, graphH);
+
 
 	//if(ratio <= 0.0f) { return; }	// 比率が0以下の場合は描画しない
 
@@ -195,4 +216,52 @@ void PlayerLifeBarUI::LifeBarRender(float ratio)
 	//	DrawBox(x0 + clipW, y0, x1, y1, GetColor(0, 0, 0), TRUE);
 	//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	//}
+}
+
+void PlayerLifeBarUI::StartFlashEffect(float duration)
+{
+	_isFlashing = true;
+	_flashTimer = 0.0f;
+	_flashDuration = duration;
+}
+
+void PlayerLifeBarUI::UpdateFlashEffect()
+{
+	// 点滅中なら更新
+	if(_isFlashing)
+	{
+		// フレームタイム
+		_flashTimer += 1.0f;	
+
+		// 点滅タイマーが継続時間を超えたら点滅終了
+		if(_flashTimer >= _flashDuration)
+		{
+			_isFlashing = false;
+			_flashTimer = 0.0f;
+		}
+	}
+}
+
+void PlayerLifeBarUI::FlashEffectRender(int clipW, int graphH)
+{
+	// 点滅フラグが有効なら
+	if(_isFlashing)
+	{
+		// サインカーブで0～1の値を生成
+		float blendAlpha = fabsf(sinf(_flashTimer / _flashDuration * DX_PI_F)) * FlashEffectConfig::FLASH_MAX_ALPHA;
+
+		// 点滅のアルファ値を設定
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(blendAlpha));
+
+		// 点滅用の矩形を設定(ライフバーと同じ位置・サイズ)
+		SetDrawArea(_drawLifeBarX, _drawLifeBarY, _drawLifeBarX + clipW, _drawLifeBarY + graphH);
+
+		DrawBox(_drawLifeBarX, _drawLifeBarY, _drawLifeBarX + clipW, _drawLifeBarY + graphH, GetColor(255, 255, 255), TRUE);
+
+		// 描画領域を全体に戻す
+		SetDrawAreaFull();
+
+		// ブレンドモードを元に戻す
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
 }

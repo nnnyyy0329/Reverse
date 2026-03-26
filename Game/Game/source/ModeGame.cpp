@@ -299,6 +299,7 @@ bool ModeGame::Process()
 
 		_playerManager->SetCameraManager(_cameraManager);				// カメラマネージャーを設定
 		_playerManager->SetAbilitySelectScreen(_abilitySelectScreen);	// 能力選択画面を設定
+		_playerManager->SetPlayerLifeBarUI(_playerLifeBarUI);			// ライフバーUIを設定
 
 		_playerLifeBarUI->SetPlayerManager(_playerManager);
 
@@ -338,6 +339,7 @@ bool ModeGame::Process()
 		_dodgeSystem->Process();
 		_abilitySelectScreen->Process();
 		_abilitySelectManager->Process();
+		_playerLifeBarUI->Process();
 		//_shieldBase->Process();
 
 		// シングルトンインスタンスの更新

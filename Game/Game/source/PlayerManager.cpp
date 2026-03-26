@@ -6,6 +6,7 @@
 #include "EnergyManager.h"
 #include "CameraManager.h"
 #include "AbilitySelectScreen.h"
+#include "PlayerLifeBarUI.h"
 
 // 変身設定用の定数エイリアス
 namespace TC = TransformConstants;
@@ -20,6 +21,7 @@ PlayerManager::PlayerManager()
 {
 	_cameraManager = nullptr;		// カメラマネージャー
 	_abilitySelectScreen = nullptr;	// アビリティ選択画面
+	_playerLifeBarUI = nullptr;		// プレイヤーライフバーUI
 
 	_activePlayer = nullptr;
 	_eActivePlayerType = PLAYER_TYPE::SURFACE;
@@ -602,7 +604,10 @@ void PlayerManager::RecoveryLifeByTransform(PLAYER_TYPE transformPlayerType)
 		_activePlayer->SetLife(_activePlayer->GetLife() + halfLife);
 
 		// 変身時の回復サウンド再生y
-		SoundServer::GetInstance()->Play("HealthLife", DX_PLAYTYPE_BACK);	
+		SoundServer::GetInstance()->Play("HealthLife", DX_PLAYTYPE_BACK);
+
+		// 体力UIの回復点滅
+		_playerLifeBarUI->StartFlashEffect();
 
 		// プレイヤーのライフが最大体力より多くなったら
 		if(_activePlayer->GetLife() >= _activePlayer->GetPlayerMaxLife())

@@ -17,9 +17,6 @@ namespace BSC = BulletShootConstants;
 // 弾発射リコイル設定定数のエイリアス
 namespace BRC = BulletRecoilConstants;
 
-// 弾のエネルギー消費量定数のエイリアス
-namespace BCEC = BulletConsumeEnergyConstants;
-
 BulletPlayer::BulletPlayer()
 {
 	_eCharaType = CHARA_TYPE::BULLET_PLAYER;
@@ -468,9 +465,6 @@ void BulletPlayer::ShootBullet()
 			return;
 		}
 	}
-
-	// エネルギーを消費
-	//energyManager->ConsumeEnergy(BCEC::CONSUME_NORMAL_BULLET_ENERGY);
 
 	// 右腕と左腕の切り替え
 	_bIsShootFromRightArm = !_bIsShootFromRightArm; 

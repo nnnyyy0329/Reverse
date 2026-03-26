@@ -30,6 +30,7 @@ namespace AbilityConfig
 // 前方宣言
 class CameraManager;
 class AbilitySelectScreen;
+class PlayerLifeBarUI;
 
 /// @brief プレイヤータイプ列挙型
 enum class PLAYER_TYPE
@@ -196,6 +197,11 @@ public:
 	/// @param abilityScreen 設定するAbilitySelectScreen
 	void SetAbilitySelectScreen(std::shared_ptr<AbilitySelectScreen> abilityScreen){_abilitySelectScreen = abilityScreen;}
 
+	/// @brief プレイヤーライフバーUIを設定
+	///
+	/// @param playerLifeBarUI 設定するPlayerLifeBarUI
+	void SetPlayerLifeBarUI(std::shared_ptr<PlayerLifeBarUI> playerLifeBarUI) { _playerLifeBarUI = playerLifeBarUI; }
+
 private:
 
 	/// @brief 変身タイマーを更新
@@ -238,6 +244,7 @@ protected:
 	
 	std::shared_ptr<CameraManager> _cameraManager;				// カメラマネージャー
 	std::shared_ptr<AbilitySelectScreen> _abilitySelectScreen;	// 能力選択画面
+	std::shared_ptr<PlayerLifeBarUI> _playerLifeBarUI;			// プレイヤーライフバーUI
 
 	// アクティブプレイヤー
 	PlayerBase* _activePlayer;
