@@ -179,9 +179,9 @@ bool ModeLoading::Initialize()
 				rs->Register("SE_DamagePlayer",			"sound/SE/SE09.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_Absorb",				"sound/SE/SE10.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_Evade",				"sound/SE/SE11.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_",						"sound/SE/SE12.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_TransformPower",						"sound/SE/SE12.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_",						"sound/SE/SE13.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_",						"sound/SE/SE14.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_TransformBlaster",						"sound/SE/SE14.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_PiercingBullet",		"sound/SE/SE15.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_NormalBullet",			"sound/SE/SE16.mp3", RESOURCE_TYPE::Sound, 1.0f);
 			}

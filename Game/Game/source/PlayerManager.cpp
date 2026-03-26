@@ -215,17 +215,17 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 		return;
 	}
 
-	//// プレイヤータイプごとの変身サウンド再生
-	//if(targetType == PLAYER_TYPE::INTERIOR)
-	//{
-	//	// サウンド再生
-	//	SoundServer::GetInstance()->Play("ChangePower", DX_PLAYTYPE_BACK);
-	//}
-	//else if(targetType == PLAYER_TYPE::BULLET)
-	//{
-	//	// サウンド再生
-	//	SoundServer::GetInstance()->Play("ChangeBlaster", DX_PLAYTYPE_BACK);
-	//}
+	// プレイヤータイプごとの変身サウンド再生
+	if(targetType == PLAYER_TYPE::INTERIOR)
+	{
+		// サウンド再生
+		SoundServer::GetInstance()->Play("SE_TransformPower", DX_PLAYTYPE_BACK);
+	}
+	else if(targetType == PLAYER_TYPE::BULLET)
+	{
+		// サウンド再生
+		SoundServer::GetInstance()->Play("SE_TransformBlaster", DX_PLAYTYPE_BACK);
+	}
 
 	_eTransformTarget = targetType;	// 変身先のプレイヤーをセット
 	_fTransformTime = 0.0f;			// 変身時間リセット
@@ -594,6 +594,9 @@ void PlayerManager::RecoveryLifeByTransform(PLAYER_TYPE transformPlayerType)
 	{
 		// アクティブプレイヤーの最大体力の半分の情報取得
 		float halfLife = (_activePlayer->GetPlayerConfig().maxLife) * (TC::TRANSFORM_LIFE_RECOVERY_RATE);
+
+		// プレイヤーの体力が最大体力以上なら回復処理を行わない
+		if(_activePlayer->GetLife() >= _activePlayer->GetPlayerMaxLife()){ return; }
 
 		// プレイヤーの体力を半回復
 		_activePlayer->SetLife(_activePlayer->GetLife() + halfLife);
