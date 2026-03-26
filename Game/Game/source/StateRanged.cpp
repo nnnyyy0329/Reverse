@@ -17,7 +17,7 @@ namespace
 	constexpr auto WANDER_LOOK_RANDOM_TIME = 60.0f;		// 徘徊時の視線停止ランダム追加時間
 	constexpr auto SHOT_CHARGE_TIME = 120.0f;			// 射撃溜め時間
 	constexpr auto SHOT_EXECUTE_TIME = 130.0f;			// 射撃実行時間
-	constexpr auto SHOT_RECOVERY_TIME = 60.0f;			// 射撃後隙時間
+	constexpr auto SHOT_RECOVERY_TIME = 120.0f;			// 射撃後隙時間
 	constexpr auto SHOT_INTERVAL_TIME = 90.0f;			// 射撃間隔時間
 	constexpr float SHOT_BULLET_TIME = 90.0f;			// 実際に弾が発射される時間(アニメーション準拠)
 	constexpr auto LOST_WAIT_TIME = 60.0f;				// 帰還前の待機時間
