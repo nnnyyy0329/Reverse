@@ -375,7 +375,7 @@ bool ModeLoading::Render()
 			for(int dx = -2; dx <= 2; ++dx)
 			{
 				if(dx == 0 && dy == 0) { continue; }
-				DrawFormatString(textX + dx, textY + dy, glowColor, "now loading");
+				DrawFormatString(textX + dx, textY + dy, glowColor, "Now Loading");
 				DrawFormatString(textX + dx, textY + 50 + dy, glowColor, "Progress: %.2f%%", progress * 100.0f);
 			}
 		}
