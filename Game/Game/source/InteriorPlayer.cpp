@@ -243,7 +243,7 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 		configs[4].attackDelay			= 30.0f,				// 発生フレーム
 		configs[4].attackDuration		= 30.0f,				// 持続フレーム
 		configs[4].attackRecovery		= 0.0f,					// 硬直フレーム
-		configs[4].damage				= 100.0f,				// ダメージ
+		configs[4].damage				= 200.0f,				// ダメージ
 		configs[4].attackState			= ATTACK_STATE::ACTIVE,	// 攻撃状態
 		configs[4].attackMoveSpeed		= 15.0f,				// 攻撃中の移動速度
 		configs[4].isActive				= false,				// アクティブかどうか

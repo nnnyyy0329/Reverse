@@ -10,10 +10,10 @@ namespace BulletPlayerConstants
 // ’Êí’eİ’è’è”
 namespace NormalBulletConfig
 {
-	constexpr float RADIUS = 20.0f;		// ’e”¼Œa
+	constexpr float RADIUS = 30.0f;		// ’e”¼Œa
 	constexpr float DAMAGE = 100.0f;		// ’e‚Ìƒ_ƒ[ƒW
 	constexpr float SPEED = 20.0f;		// ’e‚Ì‘¬“x
-	constexpr float LIFE_TIME = 60.0f;	// ’e‚Ìõ–½
+	constexpr float LIFE_TIME = 30.0f;	// ’e‚Ìõ–½
 }
 
 // ŠÑ’Ê’eİ’è’è”
