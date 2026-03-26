@@ -234,10 +234,6 @@ bool ModeGame::Process()
 		StopFade(); // 以降自動的にフェードアウトしない
 	}
 
-
-	//ModeServer::GetInstance()->Add(new ModeTextBox("Normal"), 100, "stage1_start_text");
-
-
 	// InputManagerから入力を取得
 	auto& im = InputManager::GetInstance();
 
