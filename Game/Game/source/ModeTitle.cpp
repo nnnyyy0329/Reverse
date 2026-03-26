@@ -6,7 +6,7 @@
 
 namespace
 {
-	constexpr int MENU_COUNT = 3;
+	constexpr int MENU_COUNT = 2;
 	
 
 	void DrawMenuItem(int x, int y, const char* text, bool selected)
@@ -126,12 +126,12 @@ bool ModeTitle::Process()
 				}
 				break;
 			}
-			case 1: // オプション(仮)
-			{
-				// TODO: 後で ModeOption 等に差し替え
-				break;
-			}
-			case 2: // ゲーム終了
+			//case 1: // オプション(仮)
+			//{
+			//	// TODO: 後で ModeOption 等に差し替え
+			//	break;
+			//}
+			case 1: // ゲーム終了
 			{
 				ExitGame();
 				break;
@@ -185,8 +185,8 @@ bool ModeTitle::Render()
 		const int lineGap = 70;
 
 		DrawMenuItem(textX, textY + 0 * lineGap, "ゲームスタート"  , _menuIndex == 0);
-		DrawMenuItem(textX, textY + 1 * lineGap, "オプション", _menuIndex == 1);
-		DrawMenuItem(textX, textY + 2 * lineGap, "ゲーム終了", _menuIndex == 2);
+		/*DrawMenuItem(textX, textY + 1 * lineGap, "オプション", _menuIndex == 1);*/
+		DrawMenuItem(textX, textY + 1 * lineGap, "ゲーム終了", _menuIndex == 1);
 
 		// 選択中の左に ▶ を出す
 		const int arrowX = textX - 50;
