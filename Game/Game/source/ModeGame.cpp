@@ -235,7 +235,7 @@ bool ModeGame::Process()
 	}
 
 
-	ModeServer::GetInstance()->Add(new ModeTextBox("Normal"), 100, "stage1_start_text");
+	//ModeServer::GetInstance()->Add(new ModeTextBox("Normal"), 100, "stage1_start_text");
 
 
 	// InputManagerから入力を取得
@@ -801,6 +801,14 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 			{"Textbox_Kage", "お前に何かあったら俺もどうなるか分からねぇからな。と言っても、俺を薄く伸ばして覆ってるみたいなもんだからないよりマシって程度だけどな。っと説明は後だ、とりあえず奥に行こうぜ。"}
 			}, false, 100, "stage1_start");
 	}
+	else if(stageNum == 1) //ステージ2開始時
+	{
+		ModeTextBox::ShowChain
+		({
+			{"Textbox_Kage", "敵の攻撃をタイミングよく回避してもエネルギーを奪えるぜ。"}
+			},false,100, "stage2_start");
+	}
+
 	else if(stageNum == 2) // ステージ3開始時
 	{
 		ModeTextBox::ShowChain({
@@ -808,7 +816,7 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 			{"Textbox_Kage", "あからさまに最後って感じたな、さぁ正念場だぜ。"}
 			}, false, 100, "stage3_start");
 	}
-
+	
 	// 切り替え完了
 	_bIsStageChanging = false;
 }
