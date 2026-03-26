@@ -338,17 +338,18 @@ public:
 	void InitializeAnimation();									// アニメーション初期化
 
 	// 共通処理
-	void CallProcess();						// Process呼び出し用関数
-	void ProcessMovePlayer();				// 移動処理
-	void ProcessInputMove();				// 移動入力処理
-	void ProcessCollisionPos();				// コリジョン位置更新処理
-	void ProcessStatusAnimation();			// 状態別アニメーション処理
-	void ProcessPlayAnimation();			// アニメーション処理
-	void ProcessReturnNormalMotion();		// 通常モーションに戻す処理
-	void ProcessHit();						// 被弾処理
-	void ProcessDebug();					// デバッグ処理
-	bool IsHitStop();						// 被弾硬直中かチェック
-	bool IsAnimationFinishedConst()const;	// アニメーションが終了したかの処理
+	void CallProcess();							// Process呼び出し用関数
+	void ProcessMovePlayer();					// 移動処理
+	void ProcessInputMove();					// 移動入力処理
+	void ProcessInput(int inputX, int inputY);	// 入力処理
+	void ProcessCollisionPos();					// コリジョン位置更新処理
+	void ProcessStatusAnimation();				// 状態別アニメーション処理
+	void ProcessPlayAnimation();				// アニメーション処理
+	void ProcessReturnNormalMotion();			// 通常モーションに戻す処理
+	void ProcessHit();							// 被弾処理
+	void ProcessDebug();						// デバッグ処理
+	bool IsHitStop();							// 被弾硬直中かチェック
+	bool IsAnimationFinishedConst()const;		// アニメーションが終了したかの処理
 
 	// デバッグ描画共通
 	void DebugRender();				// デバッグ情報描画

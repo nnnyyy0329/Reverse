@@ -8,7 +8,6 @@ namespace AnimConfig
 	const float BLEND_TIME = 3.5f;	// アニメーションのブレンド時間
 }
 
-// 共通関数呼び出し
 void PlayerBase::CallProcess()
 {
 	// プレイヤー移動処理
@@ -27,7 +26,6 @@ void PlayerBase::CallProcess()
 	ProcessDebug();
 }
 
-// プレイヤー移動処理
 void PlayerBase::ProcessMovePlayer()
 {
 	_vOldPos = _vPos;	// 前フレームの位置を保存
@@ -76,7 +74,6 @@ void PlayerBase::ProcessMovePlayer()
 	}
 }
 
-// 入力に応じた移動処理
 void PlayerBase::ProcessInputMove()
 {
 	auto& im = InputManager::GetInstance();
@@ -94,46 +91,72 @@ void PlayerBase::ProcessInputMove()
 		// 弾発射ステートならスキップ
 		if(_playerState.IsStateShooting()){ return; }
 
-		_bIsDashInput = !_bIsDashInput;// ダッシュ入力フラグを切り替える
+		// ダッシュ入力フラグを切り替える
+		_bIsDashInput = !_bIsDashInput;
 	}
 
-	const AnalogState& analog = im.GetAnalog();
-	float analogMin = im.GetAnalogMin();
+	const AnalogState& analog = im.GetAnalog();	// アナログ入力の状態を取得
+	float analogMin = im.GetAnalogMin();		// アナログ入力の最小値
 
-	float digitalX = 0.0f;
-	float digitalY = 0.0f;
+	float digitalX = 0.0f;	// デジタル入力のX成分
+	float digitalY = 0.0f;	// デジタル入力のY成分
+
+	// キーボード入力
 	/*if (im.IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
 	if (im.IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
 	if (im.IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
 	if (im.IsHold(INPUT_ACTION::MOVE_RIGHT)) { digitalX = 1.0f; }*/
 	
 	// アナログ入力による移動、なければデジタル入力
+	//float inputX = (analog.lx) > analogMin ? analog.lx : digitalX;
+	//float inputY = (analog.ly) > analogMin ? analog.ly : digitalY;
 	float inputX = (abs(analog.lx) > analogMin) ? analog.lx : digitalX;
 	float inputY = (abs(analog.ly) > analogMin) ? analog.ly : digitalY;
 
+	// 入力があるなら
 	if(inputX != 0.0f || inputY != 0.0f)
 	{
-		float currentCameraAngle;// 現在のカメラの水平角度
+		// 入力処理
+		ProcessInput(inputX, inputY);
+	}
+	// 移動入力がないなら
+	else
+	{
+		_bIsDashInput = false;	// ダッシュ入力フラグを下げる
+	}
+}
 
-		if(_cameraManager)
-		{
-			// 現在のカメラの水平角度を取得して移動方向を変換する
-			currentCameraAngle = _cameraManager->GetCurrentCameraAngleH();
-		}
-		// なければプレイヤーのカメラ角度を使用する
-		else
-		{
-			currentCameraAngle = _cameraAngle;
-		}
+void PlayerBase::ProcessInput(int inputX, int inputY)
+{
+	float currentCameraAngle;// 現在のカメラの水平角度
 
-		VECTOR cameraForward;// カメラの向いている方向のベクトル
-		VECTOR cameraRight;	// カメラの右方向のベクトル
+	if(_cameraManager)
+	{
+		// 現在のカメラの水平角度を取得して移動方向を変換する
+		currentCameraAngle = _cameraManager->GetCurrentCameraAngleH();
+	}
+	// なければプレイヤーのカメラ角度を使用する
+	else
+	{
+		currentCameraAngle = _cameraAngle;
+	}
 
-		// XZ平面における前方ベクトル
-		cameraForward = VGet(sinf(currentCameraAngle), 0.0f, cosf(currentCameraAngle));
-		// 前方ベクトルから時計回りに90度回した右方向ベクトル
-		cameraRight = VGet(cosf(currentCameraAngle), 0.0f, -sinf(currentCameraAngle));
+	VECTOR cameraForward;// カメラの向いている方向のベクトル
+	VECTOR cameraRight;	// カメラの右方向のベクトル
 
+	// XZ平面における前方ベクトル
+	cameraForward = VGet(sinf(currentCameraAngle), 0.0f, cosf(currentCameraAngle));
+	// 前方ベクトルから時計回りに90度回した右方向ベクトル
+	cameraRight = VGet(cosf(currentCameraAngle), 0.0f, -sinf(currentCameraAngle));
+
+	// スティックの傾きに応じてダッシュフラグを立てる
+	if(inputX > 0.925f || inputX < -0.925f || inputY > 0.925f || inputY < -0.925f)
+	{
+		_bIsDashInput = true;
+	}
+	// スティックがニュートラルに近いならダッシュフラグを下げる
+	else
+	{
 		// 移動量を計算
 		_vMove = VAdd
 		(
@@ -154,14 +177,8 @@ void PlayerBase::ProcessInputMove()
 			_fMoveSpeed += _playerConfig.dashMoveSpeed;
 		}
 	}
-	// 移動入力がないなら
-	else
-	{
-		_bIsDashInput = false;	// ダッシュ入力フラグを下げる
-	}
 }
 
-// 状態変化アニメーション処理
 void PlayerBase::ProcessStatusAnimation()
 {
 	// 攻撃ステート、先頭ステート時はここで再生処理
@@ -232,7 +249,6 @@ void PlayerBase::ProcessStatusAnimation()
 	ProcessPlayAnimation();
 }
 
-// アニメーション処理
 void PlayerBase::ProcessPlayAnimation()
 {
 	// ステータスが変化していなければ処理しない
@@ -252,7 +268,6 @@ void PlayerBase::ProcessPlayAnimation()
 	}
 }
 
-// 通常モーションに戻す処理
 void PlayerBase::ProcessReturnNormalMotion()
 {
 	// 攻撃状態と戦闘状態を通常に戻す
@@ -264,7 +279,6 @@ void PlayerBase::ProcessReturnNormalMotion()
 	ProcessPlayAnimation();
 }
 
-// コリジョン位置更新処理
 void PlayerBase::ProcessCollisionPos()
 {
 	AnimManager* animManager = GetAnimManager();
@@ -288,7 +302,6 @@ void PlayerBase::ProcessCollisionPos()
 	}
 }
 
-// 被弾処理
 void PlayerBase::ProcessHit()
 {
 	if(_playerState.combatState != PLAYER_COMBAT_STATE::HIT){ return; }	// 被弾状態でない場合は処理しない
@@ -345,7 +358,6 @@ void PlayerBase::ProcessHit()
 	}
 }
 
-// デバッグ処理
 void PlayerBase::ProcessDebug()
 {
 	auto& im = InputManager::GetInstance();
@@ -366,7 +378,6 @@ void PlayerBase::ProcessDebug()
 	}
 }
 
-// 被弾硬直中かチェック
 bool PlayerBase::IsHitStop()
 {
 	// 被弾硬直中かチェック
@@ -380,10 +391,11 @@ bool PlayerBase::IsHitStop()
 
 const char* PlayerBase::GetCurrentAnimationName() const
 {
-	/* 優先度: 戦闘状態 > 攻撃状態 > 発射状態 > 移動状態 */ 
+	/* 優先度: 特殊状態 > 攻撃状態 > 発射状態 > 移動状態 */ 
 
 	if(_playerState.combatState != PLAYER_COMBAT_STATE::NONE)
 	{
+		// 戦闘状態に応じたアニメーション名を返す
 		switch(_playerState.combatState)
 		{
 			case PLAYER_COMBAT_STATE::TRANSFORM:	return _playerAnim.combat.transform;	// 変身
@@ -397,6 +409,7 @@ const char* PlayerBase::GetCurrentAnimationName() const
 
 	if(_playerState.attackState != PLAYER_ATTACK_STATE::NONE)
 	{
+		// 攻撃状態に応じたアニメーション名を返す
 		switch(_playerState.attackState)
 		{
 			case PLAYER_ATTACK_STATE::FIRST_ATTACK:		return _playerAnim.attack.firstAttack;		// 1段目攻撃
@@ -412,6 +425,7 @@ const char* PlayerBase::GetCurrentAnimationName() const
 
 	if(_playerState.shootState != PLAYER_SHOOT_STATE::NONE)
 	{
+		// 発射状態に応じたアニメーション名を返す
 		switch(_playerState.shootState)
 		{
 			case PLAYER_SHOOT_STATE::SHOOT_READY:		return _playerAnim.shoot.shootReady;	// 発射構え
@@ -423,6 +437,7 @@ const char* PlayerBase::GetCurrentAnimationName() const
 
 	if(_playerState.absorbState != PLAYER_ABSORB_STATE::NONE)
 	{
+		// 吸収攻撃状態に応じたアニメーション名を返す
 		switch(_playerState.absorbState)
 		{
 			case PLAYER_ABSORB_STATE::ABSORB_READY:		return _playerAnim.absorb.absorbReady;	// 吸収開始
@@ -431,21 +446,25 @@ const char* PlayerBase::GetCurrentAnimationName() const
 		}
 	}
 
-	switch(_playerState.movementState)
+	if(_playerState.movementState != PLAYER_MOVEMENT_STATE::NONE)
 	{
-		case PLAYER_MOVEMENT_STATE::WAIT:			return _playerAnim.movement.wait;		// 待機
-		case PLAYER_MOVEMENT_STATE::WALK:			return _playerAnim.movement.walk;		// 歩行
-		case PLAYER_MOVEMENT_STATE::RUN:			return _playerAnim.movement.run;		// 走行
-		case PLAYER_MOVEMENT_STATE::JUMP_UP:		return _playerAnim.movement.jumpUp;		// ジャンプ（上昇）
-		case PLAYER_MOVEMENT_STATE::JUMP_DOWN:		return _playerAnim.movement.jumpDown;	// ジャンプ（下降）
-		case PLAYER_MOVEMENT_STATE::CROUCH_WAIT:	return _playerAnim.movement.crouchWait;	// しゃがみ待機
-		case PLAYER_MOVEMENT_STATE::CROUCH_WALK:	return _playerAnim.movement.crouchWalk;	// しゃがみ歩行
+		// 移動状態に応じたアニメーション名を返す
+		switch(_playerState.movementState)
+		{
+			case PLAYER_MOVEMENT_STATE::WAIT:			return _playerAnim.movement.wait;		// 待機
+			case PLAYER_MOVEMENT_STATE::WALK:			return _playerAnim.movement.walk;		// 歩行
+			case PLAYER_MOVEMENT_STATE::RUN:			return _playerAnim.movement.run;		// 走行
+			case PLAYER_MOVEMENT_STATE::JUMP_UP:		return _playerAnim.movement.jumpUp;		// ジャンプ（上昇）
+			case PLAYER_MOVEMENT_STATE::JUMP_DOWN:		return _playerAnim.movement.jumpDown;	// ジャンプ（下降）
+			case PLAYER_MOVEMENT_STATE::CROUCH_WAIT:	return _playerAnim.movement.crouchWait;	// しゃがみ待機
+			case PLAYER_MOVEMENT_STATE::CROUCH_WALK:	return _playerAnim.movement.crouchWalk;	// しゃがみ歩行
+		}
 	}
 
+	// どの状態にも当てはまらない場合はnullptrを返す
 	return nullptr;
 }
 
-// ループカウント取得関数
 int PlayerBase::GetLoopCount() const
 {
 	// 1: 1回再生 、 0: ループ再生
@@ -465,7 +484,6 @@ int PlayerBase::GetLoopCount() const
 	return 0;
 }
 
-// 状態変化チェック
 bool PlayerBase::HasStateChanged()const
 {
 	// ステートが変化しているならtrue
@@ -476,7 +494,6 @@ bool PlayerBase::HasStateChanged()const
 			_oldPlayerState.combatState   != _playerState.combatState);		// 戦闘状態
 }
 
-// アニメーションが終了したか
 bool PlayerBase::IsAnimationFinishedConst()const
 {
 	// アニメーションマネージャーの取得

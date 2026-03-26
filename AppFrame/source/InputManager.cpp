@@ -18,12 +18,12 @@ void InputManager::Update()
 	// アナログスティック、ハットスイッチ
 	DINPUT_JOYSTATE di;
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &di);
-	_analog.lx = static_cast<float>(di.X) / 1000.0f;
-	_analog.ly = static_cast<float>(di.Y) / 1000.0f;
-	_analog.rx = static_cast<float>(di.Rx) / 1000.0f;
-	_analog.ry = static_cast<float>(di.Ry) / 1000.0f;
-	_analog.lz = static_cast<float>(di.Z) / 1000.0f;
-	_analog.rz = static_cast<float>(di.Rz) / 1000.0f;
+	_analog.lx = static_cast<float>(di.X) / 800.0f;
+	_analog.ly = static_cast<float>(di.Y) / 800.0f;
+	_analog.rx = static_cast<float>(di.Rx) / 800.0f;
+	_analog.ry = static_cast<float>(di.Ry) / 800.0f;
+	_analog.lz = static_cast<float>(di.Z) / 800.0f;
+	_analog.rz = static_cast<float>(di.Rz) / 800.0f;
 
 	_hat.oldAngle = _hat.angle;
 	_hat.angle = static_cast<int>(di.POV[0]);
