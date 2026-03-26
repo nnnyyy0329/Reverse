@@ -65,9 +65,14 @@ bool ModeTitle::Initialize()
 	_bIsAddLoading = false;
 
 	_titleHandle = LoadGraph("res/Graph/Title.png");
+	_titleTextHandle = LoadGraph("res/Graph/titlelogo.png");
 	_alpha = 0;
 	_fadeState = 0; // 0:フェードイン, 1:表示, 2:フェードアウト
 	_frameCount = 0;
+
+	// 開始時に一度だけ再生
+	_bgmHandle = LoadSoundMem("sound/BGM/title.mp3");
+	PlaySoundMem(_bgmHandle, DX_PLAYTYPE_LOOP);
 
 	_menuIndex = 0;
 	
@@ -106,15 +111,15 @@ bool ModeTitle::Process()
 	// 決定
 	if (im.IsTrigger(INPUT_ACTION::SKIP))
 	{
-		// サウンドBGM停止
-		SoundServer::GetInstance()->Stop("BGM_Title");
-
 		switch(_menuIndex)
 		{
 			case 0: // スタート
 			{
 				if(!_bIsAddLoading)
 				{
+					// サウンドBGM停止
+					StopSoundMem(_bgmHandle);
+
 					_bIsAddLoading = true;
 					ModeServer::GetInstance()->Add(new ModeLoading(), 9999, "loading");
 					ModeServer::GetInstance()->Del(this);
@@ -152,14 +157,24 @@ bool ModeTitle::Render()
 		int scaledW = static_cast<int>(w * scale);
 		int scaledH = static_cast<int>(h * scale);
 
-		int x = (1920 - scaledW) / 2;
-		int y = (1080 - scaledH) / 2;
+		//int x = (1920 - scaledW) / 2;
+		//int y = (1080 - scaledH) / 2;
+
+		int x = 0;
+		int y = 0;
+
+		int textX = 463;
+		int textY = 343;
 
 		
 		const int a = GetFadeAlpha();
 
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, a);
-		DrawExtendGraph(x, y, x + scaledW, y + scaledH, _titleHandle, TRUE);
+		//DrawExtendGraph(x, y, x + scaledW, y + scaledH, _titleHandle, TRUE);
+
+		DrawGraph(x, y, _titleHandle, TRUE);
+		DrawGraph(textX, textY, _titleTextHandle, TRUE);
+		
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
@@ -169,7 +184,7 @@ bool ModeTitle::Render()
 		const int textY = 820;
 		const int lineGap = 70;
 
-		DrawMenuItem(textX, textY + 0 * lineGap, "スタート"  , _menuIndex == 0);
+		DrawMenuItem(textX, textY + 0 * lineGap, "ゲームスタート"  , _menuIndex == 0);
 		DrawMenuItem(textX, textY + 1 * lineGap, "オプション", _menuIndex == 1);
 		DrawMenuItem(textX, textY + 2 * lineGap, "ゲーム終了", _menuIndex == 2);
 
@@ -178,6 +193,6 @@ bool ModeTitle::Render()
 		const int arrowY = textY + _menuIndex * lineGap + 10;
 		DrawSelectArrow(arrowX, arrowY, 28, GetColor(255, 255, 255));
 	}
-
+	
 	return true;
 }

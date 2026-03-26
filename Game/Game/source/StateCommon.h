@@ -19,8 +19,7 @@ namespace Common
 	private:
 		VECTOR _vKnockbackDir;// ノックバック方向
 		float _fKnockbackSpeed;// ノックバック速度
-
-		int _comboCnt = 0;// Enter時のコンボ数
+		EnemyParam _param;
 	};
 
 

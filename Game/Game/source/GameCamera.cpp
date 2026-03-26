@@ -46,6 +46,25 @@ void GameCamera::DebugRender()
 	DrawFormatString(x, y + 40, GetColor(255, 255, 255), "AngleH: %3.2f  AngleV: %3.2f  Dist: %3.2f", _fAngleH, _fAngleV, _fDistance);
 }
 
+void GameCamera::OnEnter()
+{
+	// カメラが切り替わったときの初期化処理
+	_fAutoFollowTimer = 0.0f;
+	if (_targetObject)
+	{
+		// ターゲットの真後ろにセット
+		_fAngleH = _targetObject->GetRotY();
+		_vTarget = CalculateLookAtPoint();
+		UpdatePosFromAngle();
+	}
+	else
+	{
+		// ターゲットがいない場合はデフォルト位置にセット
+		_fAngleH = DEFAULT_ANGLE_H;
+		UpdatePosFromAngle();
+	}
+}
+
 void GameCamera::SetTarget(std::shared_ptr<PlayerBase> target)
 {
 	_targetObject = target;

@@ -7,6 +7,15 @@
 #include "CameraManager.h"
 #include "AbilitySelectScreen.h"
 
+// 変身設定用の定数エイリアス
+namespace TC = TransformConstants;
+
+// 変身関連アニメーション設定用の定数エイリアス
+namespace TAC = TransAnimConstants;
+
+// アビリティ関連の定数エイリアス
+namespace AC = AbilityConfig;
+
 PlayerManager::PlayerManager()
 {
 	_cameraManager = nullptr;		// カメラマネージャー
@@ -24,11 +33,13 @@ PlayerManager::PlayerManager()
 	_fTransformCancelMaxTime = 0.0f;
 	_bIsTransformCanceling = false;
 	_bEnableStateTransfer = false;
+	_bIsTransformCancelFirstTime = false;
 }
 
 PlayerManager::~PlayerManager()
 {
-	_players.clear();
+	// デストラクタ
+	Terminate();
 }
 
 bool PlayerManager::Initialize()
@@ -204,17 +215,17 @@ void PlayerManager::StartTransform(PLAYER_TYPE targetType)
 		return;
 	}
 
-	// プレイヤータイプごとの変身サウンド再生
-	if(targetType == PLAYER_TYPE::INTERIOR)
-	{
-		// サウンド再生
-		SoundServer::GetInstance()->Play("ChangePower", DX_PLAYTYPE_BACK);
-	}
-	else if(targetType == PLAYER_TYPE::BULLET)
-	{
-		// サウンド再生
-		SoundServer::GetInstance()->Play("ChangeBlaster", DX_PLAYTYPE_BACK);
-	}
+	//// プレイヤータイプごとの変身サウンド再生
+	//if(targetType == PLAYER_TYPE::INTERIOR)
+	//{
+	//	// サウンド再生
+	//	SoundServer::GetInstance()->Play("ChangePower", DX_PLAYTYPE_BACK);
+	//}
+	//else if(targetType == PLAYER_TYPE::BULLET)
+	//{
+	//	// サウンド再生
+	//	SoundServer::GetInstance()->Play("ChangeBlaster", DX_PLAYTYPE_BACK);
+	//}
 
 	_eTransformTarget = targetType;	// 変身先のプレイヤーをセット
 	_fTransformTime = 0.0f;			// 変身時間リセット
@@ -288,6 +299,9 @@ void PlayerManager::TransformFinishByTime()
 				// 位置と状態の引き継ぎ
 				TransferPlayerConfig(oldPlayer, _activePlayer);
 			}
+
+			// 変身後の体力回復処理
+			RecoveryLifeByTransform(_eActivePlayerType);
 		}
 
 		// 変身終了
@@ -313,9 +327,11 @@ void PlayerManager::EndTransform()
 
 void PlayerManager::StartTransformCancel()
 {
-	if(_bIsTransformCanceling){ return; }	// すでに変身解除中なら何もしない
+	// すでに変身解除中なら何もしない
+	if(_bIsTransformCanceling){ return; }	
 
-	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	// 表プレイヤーなら何もしない
+	// 表プレイヤーなら何もしない
+	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	
 
 	// 変身解除開始
 	_bIsTransformCanceling = true;	// 変身解除フラグを有効にする
@@ -347,7 +363,8 @@ void PlayerManager::UpdateTransformCancel()
 
 void PlayerManager::SwitchPlayerByTime()
 {
-	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	// すでに表プレイヤーなら処理しない
+	// すでに表プレイヤーなら処理しない
+	if(_eActivePlayerType == PLAYER_TYPE::SURFACE){ return; }	
 
 	// 変身解除時間が最大を超えて、タイプが表プレイヤーではないなら表プレイヤーに切り替え
 	if(_fTransformCancelTime >= _fTransformCancelMaxTime)
@@ -385,14 +402,20 @@ void PlayerManager::EndTransformCancel()
 {
 	if(_activePlayer)
 	{
-		// 戦闘状態を通常に戻す
-		_activePlayer->SetCombatState(PLAYER_COMBAT_STATE::NONE);
+		// 状態を通常に戻す
+		_activePlayer->SetStateReset();
 	}
 
 	if(_abilitySelectScreen)
 	{
 		// 選択されたアビリティのインデックスをリセット
-		_abilitySelectScreen->SetSelectedAbilityIndex(AbilityConfig::DEFAULT_ABILITY_INDEX);
+		_abilitySelectScreen->SetSelectedAbilityIndex(AC::DEFAULT_ABILITY_INDEX);
+	}
+
+	if(!_bIsTransformCancelFirstTime)
+	{
+		// 最初の変身解除が完了したフラグを有効にする
+		_bIsTransformCancelFirstTime = true;	
 	}
 
 	_abilitySelectScreen->SetSelectionState(SelectionState::NOT_SELECTION);	// 能力選択をしていない状態にする
@@ -462,12 +485,12 @@ void PlayerManager::TransferPlayerConfig(PlayerBase* oldPlayer, PlayerBase* newP
 
 void PlayerManager::UpdateTransformTime()
 {
-	_fTransformTime += TransformConstants::TRANSFORM_TIME_INCREMENT;	// 変身時間を更新
+	_fTransformTime += TC::TRANSFORM_TIME_INCREMENT;	// 変身時間を更新
 }
 
 void PlayerManager::UpdateTransformCancelTime()
 {
-	_fTransformCancelTime += TransformConstants::TRANSFORM_TIME_INCREMENT;	// 変身解除時間を更新
+	_fTransformCancelTime += TC::TRANSFORM_TIME_INCREMENT;	// 変身解除時間を更新
 }
 
 void PlayerManager::PlayTransConnectionAnim(const char* animName)
@@ -483,9 +506,9 @@ void PlayerManager::PlayTransConnectionAnim(const char* animName)
 		// アニメーション変更
 		animManager->ChangeAnimationByName
 		(
-			animName,									// アニメーション名
-			TransAnimConstants::ANIMATION_BLEND_TIME,	// ブレンド時間
-			TransAnimConstants::ANIMATION_LOOP			// ループあり
+			animName,					// アニメーション名
+			TAC::ANIMATION_BLEND_TIME,	// ブレンド時間
+			TAC::ANIMATION_LOOP			// ループあり
 		);
 
 		// 変身アニメーションの再生時間を変身時間に設定
@@ -560,4 +583,29 @@ void PlayerManager::ReturnWaitAnim()
 
 	// 待機アニメーション再生
 	PlayTransConnectionAnim(playerAnim.movement.wait);	
+}
+
+void PlayerManager::RecoveryLifeByTransform(PLAYER_TYPE transformPlayerType)
+{
+	if(!_activePlayer) { return; }
+
+	// 裏プレイヤーまたは弾プレイヤーへの変身なら
+	if(transformPlayerType == PLAYER_TYPE::INTERIOR || transformPlayerType == PLAYER_TYPE::BULLET)
+	{
+		// アクティブプレイヤーの最大体力の半分の情報取得
+		float halfLife = (_activePlayer->GetPlayerConfig().maxLife) * (TC::TRANSFORM_LIFE_RECOVERY_RATE);
+
+		// プレイヤーの体力を半回復
+		_activePlayer->SetLife(_activePlayer->GetLife() + halfLife);
+
+		// 変身時の回復サウンド再生y
+		SoundServer::GetInstance()->Play("HealthLife", DX_PLAYTYPE_BACK);	
+
+		// プレイヤーのライフが最大体力より多くなったら
+		if(_activePlayer->GetLife() >= _activePlayer->GetPlayerMaxLife())
+		{
+			// プレイヤーの体力を最大体力に固定する
+			_activePlayer->SetLife(_activePlayer->GetPlayerMaxLife());
+		}
+	}
 }

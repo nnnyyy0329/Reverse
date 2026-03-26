@@ -2,6 +2,7 @@
 #include "ModeGame.h"
 #include "ModeMenu.h"
 #include "CameraManager.h"
+#include "StageBase.h"
 
 #include <Server/SoundServer.h> // 音量制御のため追加
 
@@ -60,6 +61,24 @@ int MenuDebugCamera::Selected()
 
 	return 0;
 }
+
+void MenuItemDeathAllEnemies::SetStageBase(std::shared_ptr<StageBase> stage)
+{
+	_stage = stage;
+}
+
+int MenuItemDeathAllEnemies::Selected()
+{
+	if (_stage)
+	{
+		_stage->DebugKillAllEnemies();
+		// 直ちにステージの Process() を1回進めて全滅時のテキスト表示等を発動させる
+		_stage->Process();
+	}
+
+	return 0;
+}
+
 
 // MenuItemNumber 実装（音量対応版）
 MenuItemNumber::MenuItemNumber(void* param, const std::string& name, int initValue, int minValue, int maxValue, bool linkToVolume)

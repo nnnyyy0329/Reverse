@@ -31,6 +31,8 @@ public:
 	// シングルトンインスタンス取得
 	static ResourceServer* GetInstance();
 
+	~ResourceServer();
+
 	// 登録:リストに登録するだけ
 	void Register(const std::string& name, const char* path, RESOURCE_TYPE type, float fScale);
 
@@ -52,5 +54,6 @@ private:
 	std::map<std::string, int> _handleMap;// 検索用マップ<名前、ハンドル>
 
 	int _totalCnt = 0;// 総ロード数
+	int _asyncTotalCnt = 0;
 };
 

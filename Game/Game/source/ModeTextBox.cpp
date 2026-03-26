@@ -50,6 +50,18 @@ bool ModeTextBox::Process()
 	const int kInputWaitFrames = 10;
 	const bool canInput = (_frameCount >= kInputWaitFrames);
 
+	float closeTime = 0.0f;
+	// 時間経過で自動的に閉じる場合の処理
+	if(_frameCount >= 260)
+	{
+		closeTime = (_frameCount - 360) / 60.0f;// 300フレーム(5秒)経過後、1秒かけて閉じる
+		if(closeTime >= 1.0f)
+		{
+			closeTime = 1.0f;
+			_bClose = true;
+		}
+	}
+
 	if(im.IsTrigger(INPUT_ACTION::SKIP))
 	{
 		_bClose = true;
@@ -108,7 +120,7 @@ bool ModeTextBox::Render()
 		const int textTop = y + 650;
 		const int lineHeight = 30;
 
-		SetFontSize(16);
+		SetFontSize(22);
 		size_t pos = 0;
 		size_t lineIndex = 0;
 		while(pos <= _text.size())

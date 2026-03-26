@@ -31,7 +31,7 @@ BulletManager::BulletManager()
 BulletManager::~BulletManager() 
 {
 	// ‚·‚×‚Ä‚Ì’e‚ğíœ
-	ClearAllBullets();
+	ClearAllBullets(GetAllBullets());
 }
 
 void BulletManager::Initialize()
@@ -203,7 +203,9 @@ void BulletManager::RemoveBullet(std::shared_ptr<Bullet> bullet)
 		if(bullets->bullet && bullets->bullet == bullet)
 		{
 			// “o˜^‚³‚ê‚½’e‚©‚çíœ
+			bullet->Terminate();
 			_registerBullets.erase(bullets);
+
 
 			break;
 		}
@@ -232,9 +234,18 @@ void BulletManager::RemoveBulletByOwnerType(BULLET_OWNER_TYPE ownerType)
 }
 
 // ‚·‚×‚Ä‚Ì’e‚ğíœ
-void BulletManager::ClearAllBullets()
+void BulletManager::ClearAllBullets(std::vector<std::shared_ptr<Bullet>> bullets)
 {
-	// íœ
+	// “o˜^‚³‚ê‚½’e‚ğ‘–¸
+	for(auto& bullet : bullets)
+	{
+		if(!bullet){ continue; }
+
+		// “o˜^‚³‚ê‚½’e‚©‚çíœ
+		bullet->Terminate();
+	}
+
+	// “o˜^‚³‚ê‚½’e‚ÌƒŠƒXƒg‚ğƒNƒŠƒA
 	_registerBullets.clear();
 }
 
@@ -256,6 +267,7 @@ void BulletManager::CleanupInvalidBullets()
 		if(shouldRemove)
 		{
 			// íœ
+			bullets->bullet->Terminate();
 			bullets = _registerBullets.erase(bullets);
 		}
 		// íœ‚µ‚È‚¢‚×‚«‚È‚ç
@@ -273,7 +285,7 @@ bool BulletManager::IsBulletRegistered(std::shared_ptr<Bullet> bullet) const
 	if(!bullet) { return false; }
 
 	// “o˜^‚³‚ê‚½’e‚ğ‘–¸
-	for(const auto& info : _registerBullets)
+	for(auto& info : _registerBullets)
 	{
 		// ’e‚ª—LŒø‚È‚ç
 		if(info.bullet && info.bullet == bullet)
@@ -291,12 +303,33 @@ bool BulletManager::IsBulletRegistered(std::shared_ptr<Bullet> bullet) const
 /* ’e‚Ì‰ñ”ğŠÖ˜A */
 
 // ‰ñ”ğ‚³‚ê‚½’e‚ğ“o˜^
-void BulletManager::RegisterDodgeBullet(std::shared_ptr<Bullet> bullet)
+void BulletManager::RegisterDodgeBullet(std::vector<std::shared_ptr<Bullet>> bullet)
 {
-	if(!bullet || IsDodgeBullet(bullet)) { return; }	// ‰ñ”ğÏ‚İ‚Ì’e‚È‚çƒXƒLƒbƒv
+	// ‰ñ”ğ‚³‚ê‚½’e‚ğ‘–¸
+	for(auto& bullets : bullet)
+	{
+		// ‰ñ”ğÏ‚İ‚Ì’e‚È‚çƒXƒLƒbƒv
+		if(!bullets || IsDodgeBullet(bullet)) { continue; }	
 
-	// ‰ñ”ğÏ‚İ‚Ì’e‚É’Ç‰Á
-	_dodgeBullets.push_back(bullet);
+		// ‰ñ”ğ¬Œ÷‚Ìˆ—
+		ProcessEvadeBullet();
+
+		// ‰ñ”ğÏ‚İ‚Ì’e‚É’Ç‰Á
+		_dodgeBullets.push_back(bullets);
+
+		// ‰ñ”ğ‚³‚ê‚½’e‚Í‘¦À‚Éíœ
+		RemoveBullet(bullets);
+	}
+}
+
+void BulletManager::ProcessEvadeBullet()
+{
+	// ƒGƒlƒ‹ƒM[ã¸
+	auto energyManager = EnergyManager::GetInstance();
+	energyManager->AddEnergy(energyManager->GetEvadeBulletEnergy());
+
+	// ƒTƒEƒ“ƒh‚ÌÄ¶
+	SoundServer::GetInstance()->Play("SE_Evade", DX_PLAYTYPE_BACK);
 }
 
 // ‰ñ”ğÏ‚İ’e‚ğƒNƒŠƒA
@@ -307,18 +340,22 @@ void BulletManager::ClearDodgeBullets()
 }
 
 // ‰ñ”ğÏ‚İ‚©ƒ`ƒFƒbƒN
-bool BulletManager::IsDodgeBullet(std::shared_ptr<Bullet> bullet)const
+bool BulletManager::IsDodgeBullet(std::vector<std::shared_ptr<Bullet>>bullet)const
 {
-	if(!bullet) { return false; }
-
-	// ‰ñ”ğÏ‚İ‚Ì’e‚ğ‘–¸
-	for(const auto& dodgedBullet : _dodgeBullets)
+	// ‰ñ”ğ‚³‚ê‚½’e‚ğ‘–¸
+	for(auto& bullets : bullet)
 	{
-		// ‰ñ”ğÏ‚İ‚Ì’e‚ª—LŒø‚È‚ç
-		if(!dodgedBullet.expired() && dodgedBullet.lock() == bullet)
+		 if(!bullets) { continue; }	
+
+		 // ‰ñ”ğÏ‚İ‚Ì’e‚ğ‘–¸
+		for(auto& dodgedBullet : _dodgeBullets)
 		{
-			// ‰ñ”ğÏ‚İ‚Ì’e‚¾‚Á‚½‚Ì‚ÅƒXƒLƒbƒv
-			return true;
+			// ‰ñ”ğÏ‚İ‚Ì’e‚ª—LŒø‚È‚ç
+			if(!dodgedBullet.expired() && dodgedBullet.lock() == bullets)
+			{
+				// ‰ñ”ğÏ‚İ‚Ì’e‚¾‚Á‚½‚Ì‚ÅƒXƒLƒbƒv
+				return true;
+			}
 		}
 	}
 

@@ -9,7 +9,8 @@
 // 変身設定用の名前空間
 namespace TransformConstants
 {
-	constexpr float TRANSFORM_TIME_INCREMENT = 1.0f;	// 変身時間の増加量
+	constexpr float TRANSFORM_TIME_INCREMENT = 1.0f;		// 変身時間の増加量
+	constexpr float TRANSFORM_LIFE_RECOVERY_RATE = 0.5f;	// 変身時の体力回復率
 }
 
 // 変身関連アニメーション設定用の名前空間
@@ -44,8 +45,11 @@ enum class PLAYER_TYPE
 class PlayerManager
 {
 public:
+
 	PlayerManager();
 	virtual ~PlayerManager();
+
+	/* 基本関数 */
 
 	bool Initialize();
 	bool Terminate();
@@ -57,6 +61,7 @@ public:
 
 	/// @brief デバッグ描画
 	bool DebugRender();
+
 
 
 	/* プレイヤー管理 */
@@ -73,6 +78,7 @@ public:
 	/// 
 	/// @param ability	切り替えのトリガーとなるアビリティのタイプ
 	void SwitchPlayerByAbility(ABILITY_TYPE ability);							
+
 
 
 	/* プレイヤー切り替え管理 */	//--- 今後クラス分け予定--------------------------------------
@@ -95,6 +101,7 @@ public:
 	/// @param oldPlayer 切り替え前のプレイヤー
 	/// @param newPlayer 切り替え後のプレイヤー
 	void TransferPlayerConfig(PlayerBase* oldPlayer, PlayerBase* newPlayer);
+
 
 
 	/* 変身管理 */		//--- 今後クラス分け予定 --------------------------------------
@@ -124,6 +131,7 @@ public:
 	bool IsTransforming() const { return _bIsTransforming; }	
 
 
+
 	/* 変身解除管理 */		// --- 今後クラス分け予定--------------------------------------
 
 	/// @brief 変身解除開始処理
@@ -144,7 +152,8 @@ public:
 	bool IsTransformCanceling() const { return _bIsTransformCanceling; }	
 
 
-	/*****ゲッターセッター*****/
+
+	/* ゲッターセッター */
 
 	/// @brief アクティブプレイヤー取得(生ポインタ版)
 	/// 
@@ -168,6 +177,12 @@ public:
 	/// @return アクティブプレイヤーのタイプ
 	PLAYER_TYPE GetActivePlayerType() const { return _eActivePlayerType; }	
 
+	/// @brief プレイヤーの初回変身解除フラグを取得
+	///	
+	/// @return プレイヤーが初めて変身解除したかどうか。初めてならtrue、そうでないならfalse
+	bool GetIsTransformCancelFirstTime() const { return _bIsTransformCancelFirstTime; }
+
+
 
 	/* クラスセット */
 
@@ -187,7 +202,7 @@ private:
 	void UpdateTransformTime();									
 
 	/// @brief 変身解除タイマーを更新
-	void UpdateTransformCancelTime();							
+	void UpdateTransformCancelTime();
 
 	/// @brief 変身関連のアニメーションを再生
 	///
@@ -211,6 +226,11 @@ private:
 
 	/// @brief 待機アニメーションに戻す処理
 	void ReturnWaitAnim();
+
+	/// @brief 変身後の体力回復処理
+	///
+	/// @param 変身先のプレイヤータイプ
+	void RecoveryLifeByTransform(PLAYER_TYPE transformPlayerType);
 
 protected:
 
@@ -237,4 +257,6 @@ protected:
 	// プレイヤー切り替え時の状態引き継ぎフラグ
 	bool _bEnableStateTransfer;		
 
+	// プレイヤーが初めて変身解除したかどうか
+	bool _bIsTransformCancelFirstTime;
 };

@@ -20,6 +20,8 @@ public:
 	void Process() override;
 	void DebugRender() override;	
 
+	void OnEnter() override;
+
 	void SetTarget(std::shared_ptr<PlayerBase> target) override;
 
 	void ApplyShake(const VECTOR& shakeOffset) override;

@@ -28,7 +28,7 @@ void PlayerBase::InitializeAttackData()
 	InitializeAttackConfigs(maxCombo);
 
 	// 攻撃状態を攻撃配列に入れる
-	SetAttackStatusData(maxCombo);
+	SetAttackStateData(maxCombo);
 
 	// 攻撃コリジョンデータ作成
 	CreateAttackData(maxCombo);
@@ -43,7 +43,7 @@ void PlayerBase::InitializeAttackConfigs(int maxCombo)
 }
 
 // 攻撃状態を攻撃配列に入れる
-void PlayerBase::SetAttackStatusData(int maxCombo)
+void PlayerBase::SetAttackStateData(int maxCombo)
 {
 	// 攻撃状態の定義
 	std::vector<PLAYER_ATTACK_STATE> statuses =
@@ -192,8 +192,11 @@ void PlayerBase::ProcessAttack()
 // コンボ攻撃開始の処理
 void PlayerBase::ProcessStartAttack(int comboCount, PLAYER_ATTACK_STATE nextStatus, std::shared_ptr<AttackBase> attack)
 {
-	// オブジェクト設定
+	// 攻撃オブジェクトの所有者をプレイヤーに設定
+	// プレイヤーは make_shared で生成している
 	attack->SetOwner(shared_from_this());
+
+	// カメラマネージャー設定
 	attack->SetCameraManager(_cameraManager);	
 
 	// コリジョン位置更新処理
@@ -238,52 +241,49 @@ void PlayerBase::ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBa
 		int handle = ResourceServer::GetInstance()->GetHandle(playerConfig.modelName);
 		if(handle <= 0){ return; }
 
-		// フレームインデックスを決定
-		int attachFrameIndex = -1;
-		switch(armConfig.useFromBody)
-		{
-			case 2:	// 腕以外を使用する場合
-			//{
-			//	// 現在の位置をエフェクトの座標とする
-			//	effectPos = _vPos;
-
-			//	break;
-			//}
-
-			case 1:	// 右腕を使用する場合
-			{
-				// 腕情報設定の右腕のフレームインデックスを使用
-				attachFrameIndex = armConfig.rightArmFrameIndex;
-
-				break;
-			}
-
-			case 0:	// 左腕を使用する場合
-			{
-				// 腕情報設定の左腕のフレームインデックスを使用
-				attachFrameIndex = armConfig.leftArmFrameIndex;
-
-				break;
-			}
-
-			case -1:	// 再生しない場合
-			default:
-			{
-				break;
-			}
-		}
-
-		// 初期位置
-		VECTOR initialPos = VGet(0, 0, 0);
-
 		// アニメーションマネージャーを取得
 		AnimManager* animManager = GetAnimManager();
+		if(!animManager){ return; }
 
-		// フレームインデックスが有効で、アニメーションマネージャーが存在する場合
-		if(attachFrameIndex >= 0 && animManager)
+		// 初期位置
+		VECTOR initialPos = VGet(0.0f, 0.0f, 0.0f);
+
+		// フレームインデックスを決定
+		int attachFrameIndex = -1;
+
+		// エフェクトの追跡タイプに応じて初期位置とフレームインデックスを設定
+		switch(config.attachType)
 		{
-			// フレームインデックスから座標を取得して初期位置とする
-			initialPos = MV1GetFramePosition(handle, attachFrameIndex);
+			case EFFECT_ATTACH_TYPE::CHARACTER_OFFSET: // キャラの位置 + オフセット
+			{
+				// キャラクター位置 + オフセット
+				initialPos = VAdd(_vPos, config.effectOffset);
+
+				break;
+			}
+
+			case EFFECT_ATTACH_TYPE::LEFT_ARM: // 左腕
+			{
+				// 左腕のフレームインデックス
+				attachFrameIndex = armConfig.leftArmFrameIndex;
+				initialPos = MV1GetFramePosition(handle, attachFrameIndex);
+
+				break;
+			}
+
+			case EFFECT_ATTACH_TYPE::RIGHT_ARM: // 右腕
+			{
+				// 右腕のフレームインデックス
+				attachFrameIndex = armConfig.rightArmFrameIndex;
+				initialPos = MV1GetFramePosition(handle, attachFrameIndex);
+
+				break;
+			}
+
+			case EFFECT_ATTACH_TYPE::NONE:
+			default:
+				// 処理をスキップ
+				return;
 		}
 
 		// 座標追跡エフェクト再生
@@ -293,7 +293,8 @@ void PlayerBase::ProcessAttackReaction(int attackIndex, std::shared_ptr<AttackBa
 			initialPos,			// 初期位置
 			_vDir,				// 向き
 			attachFrameIndex,	// フレームインデックス
-			animManager			// アニメーションマネージャー
+			animManager,		// アニメーションマネージャー
+			shared_from_this()	// エフェクトの追跡対象(対象の派生プレイヤーは make_shared で作成)
 		);
 
 		// 攻撃オブジェクトにエフェクトハンドルを設定
@@ -422,7 +423,10 @@ void PlayerBase::EndAttackSequence()
 	}
 
 	// 状態リセット
-	_playerState.StateReset();									// 攻撃状態リセット
+	//_playerState.StateReset();									// 攻撃状態リセット
+	_playerState.absorbState = PLAYER_ABSORB_STATE::NONE;
+	_playerState.shootState = PLAYER_SHOOT_STATE::NONE;
+	_playerState.attackState = PLAYER_ATTACK_STATE::NONE;
 	_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	// 攻撃終了後は待機状態にする
 
 	_iComboCount = 0;				// コンボカウントリセット
@@ -487,6 +491,23 @@ bool PlayerBase::CanStartAttack()
 		im.IsTrigger(INPUT_ACTION::ATTACK))		// 入力があるなら
 	{
 		// 攻撃開始可能
+		return true;
+	}
+
+	return false;
+}
+
+// 能力を開始できるかチェック
+bool PlayerBase::CanStartAbility()
+{
+	auto& im = InputManager::GetInstance();
+	// 能力入力チェック
+	if((_playerState.IsStateMoving()		&&	// 何かしらの移動状態で
+		!_playerState.IsStateAttacking()	&&	// どの攻撃状態でもなく
+		!_playerState.IsStateCombat())		&&	// どの特殊状態でもなく
+		im.IsTrigger(INPUT_ACTION::ABILITY))	// 入力があるなら
+	{
+		// 能力開始可能
 		return true;
 	}
 

@@ -1,22 +1,24 @@
 ﻿#include "StageBase.h"
 #include "Enemy.h"
 #include "EnemyFactory.h"
+#include "PlayerManager.h"
 #include "ModeGame.h"
 #include "PathfindingManager.h"
 #include "ModeTextBox.h" 
 #include <nlohmann/json.hpp>
 #include <fstream>
 
-StageBase::StageBase(int stageNum) 
+StageBase::StageBase(int stageNum)
 	: _stageNum(stageNum)
 	, _totalEnemyCnt(0)
 	, _currentBGMName("")
 	, _vPlayerStartPos(VGet(0.0f, 0.0f, 0.0f))
 	, _vPlayerStartRot(VGet(0.0f, 0.0f, 0.0f))
+	, _playerManager(nullptr)
+	, _previousCharaType(CHARA_TYPE::SURFACE_PLAYER)
 {
-
 	_pathfindingManager = std::make_unique<Pathfinding::Manager>();
-
+	
 	std::string path, jsonFile, jsonObjName;
 	switch (_stageNum) 
 	{
@@ -27,7 +29,7 @@ StageBase::StageBase(int stageNum)
 		path = "res/stage/json/"; jsonFile = "stage_01.json"; jsonObjName = "res";
 		break;
 	case 2:
-		path = "res/stage/json/"; jsonFile = "test.json"; jsonObjName = "res";
+		path = "res/stage/json/"; jsonFile = "stage_02.json"; jsonObjName = "res";
 		break;
 	}
 
@@ -84,78 +86,8 @@ StageBase::StageBase(int stageNum)
 				}
 			}
 		);
+	
 	}
-	//青いイベント読み込み（重複を防ぐ） — ステージ0/2のみ追加する
-	if(_stageNum == 0 || _stageNum == 2)
-	{
-		auto rs = ResourceServer::GetInstance();
-
-		auto alreadyHasModel = [&](const std::string& name) -> bool {
-			return std::any_of(_mapModelPosList.begin(), _mapModelPosList.end(),
-				[&](const MODELPOS& mp) { return mp.name == name; });
-			};
-
-		// EventA を手動で追加（存在しなければ）
-		if(!alreadyHasModel("EventA"))
-		{
-			int handleA = rs->GetHandle("EventA");
-			if(handleA != -1)
-			{
-				MODELPOS m = {};
-				m.name = "EventA";
-				m.pos = VGet(0.0f, 0.0f, 0.0f);
-				m.rot = VGet(0.0f, 0.0f, 0.0f);
-				m.scale = VGet(1.0f, 1.0f, 1.0f);
-
-				m.modelHandle = MV1DuplicateModel(handleA);
-				m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
-				std::string colName = "UCX_" + m.name;
-				m.collisionFrame = MV1SearchFrame(m.modelHandle, colName.c_str());
-
-				MV1SetPosition(m.modelHandle, m.pos);
-				MV1SetRotationXYZ(m.modelHandle, m.rot);
-				MV1SetScale(m.modelHandle, m.scale);
-
-				if(m.collisionFrame != -1)
-				{
-					MV1SetupCollInfo(m.modelHandle, m.collisionFrame, 8, 8, 8);
-				}
-
-				_mapModelPosList.push_back(m);
-			}
-		}
-
-		// EventB を手動で追加（存在しなければ）
-		if(!alreadyHasModel("EventB"))
-		{
-			int handleB = rs->GetHandle("EventB");
-			if(handleB != -1)
-			{
-				MODELPOS m = {};
-				m.name = "EventB";
-				m.pos = VGet(5.0f, 0.0f, 3.0f);
-				m.rot = VGet(0.0f, 0.0f, 0.0f);
-				m.scale = VGet(1.0f, 1.0f, 1.0f);
-
-				m.modelHandle = MV1DuplicateModel(handleB);
-				m.drawFrame = MV1SearchFrame(m.modelHandle, m.name.c_str());
-				std::string colName = "UCX_" + m.name;
-				m.collisionFrame = MV1SearchFrame(m.modelHandle, colName.c_str());
-
-				MV1SetPosition(m.modelHandle, m.pos);
-				MV1SetRotationXYZ(m.modelHandle, m.rot);
-				MV1SetScale(m.modelHandle, m.scale);
-
-				if(m.collisionFrame != -1)
-				{
-					MV1SetupCollInfo(m.modelHandle, m.collisionFrame, 8, 8, 8);
-				}
-
-				_mapModelPosList.push_back(m);
-			}
-		}
-	}
-
 
 	// jsonファイルの読み込み(敵)
 	{
@@ -321,7 +253,7 @@ StageBase::StageBase(int stageNum)
 
 					if (area.collisionFrame != -1)
 					{
-						MV1SetupCollInfo(area.modelHandle, area.collisionFrame, 4, 4, 4);
+						MV1SetupCollInfo(area.modelHandle, area.collisionFrame, 8, 8, 8);
 					}
 				}
 
@@ -360,12 +292,18 @@ StageBase::StageBase(int stageNum)
 	{
 	case 0:
 		_currentBGMName = "BGM_Stage01";
+		_interiorPlayerBGMName = "BGM_PowerPlayer";
+		_bulletPlayerBGMName = "BGM_BulletPlayer";
 		break;
 	case 1:
 		_currentBGMName = "BGM_Stage02";
+		_interiorPlayerBGMName = "BGM_PowerPlayer";
+		_bulletPlayerBGMName = "BGM_BulletPlayer";
 		break;
 	case 2:
 		_currentBGMName = "BGM_Stage03";
+		_interiorPlayerBGMName = "BGM_PowerPlayer";
+		_bulletPlayerBGMName = "BGM_BulletPlayer";
 		break;
 	}
 }
@@ -373,16 +311,64 @@ StageBase::StageBase(int stageNum)
 StageBase::~StageBase()
 {
 	StopStageBGM();
+
+	_mapModelHandle.clear();
+	_stageEnemies.clear();
+	_mapModelPosList.clear();
+	_moveAreaList.clear();
+	_triggerList.clear();
+	_pathfindingManager.reset();
 }
 
 
 void StageBase::Process()
 {
+	// プレイヤーの状態に応じたBGM切り替え
+	{
+		if(_playerManager)
+		{
+			auto activePlayer = _playerManager->GetActivePlayerShared();
+			if(activePlayer)
+			{
+				CHARA_TYPE currentCharaType = activePlayer->GetCharaType();
+
+				// �L�����^�C�v���ς������ BGM ��؂�ւ���
+				if(_previousCharaType != currentCharaType)
+				{
+					_previousCharaType = currentCharaType;
+					UpdateStageBGM(currentCharaType);
+				}
+			}
+		}
+	}
+
+
+
 	// マップモデルの更新
 	{
 		if(IsAllEnemiesDefeated())
 		{
-			//_triggerList.clear();
+			switch (_stageNum)
+			{
+			case 0:
+				_mapModelHandle.erase("delete");
+				_mapModelPosList.erase(
+					std::remove_if(_mapModelPosList.begin(), _mapModelPosList.end(),
+						[](const MODELPOS& modelPos) { return modelPos.name == "delete"; }),
+					_mapModelPosList.end()
+				);
+				break;
+			case 1:
+				_mapModelHandle.erase("stage_wall_typeDoorA");
+				_mapModelPosList.erase(
+					std::remove_if(_mapModelPosList.begin(), _mapModelPosList.end(),
+						[](const MODELPOS& modelPos) { return modelPos.name == "stage_wall_typeDoorA"; }),
+					_mapModelPosList.end()
+				);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
@@ -407,7 +393,16 @@ void StageBase::Process()
 					if(enemy->GetModelName() == "Ranged" || enemy->GetModelName() == "RangedEnemy")
 					{
 						_bFirstRangedKilled = true;
-						ModeTextBox::Show("Textbox_Kage", "今のやつのエネルギーでできることが増えたから試してみようぜ。", false, 100, "stage2_first_ranged");
+						//ModeTextBox::Show("Textbox_Kage", "今のやつのエネルギーでできることが増えたから試してみようぜ。", false, 100, "stage2_first_ranged");
+					}
+				}
+
+				// ステージ3ならTankを倒したときに通知
+				if(_stageNum == 2)
+				{
+					if(enemy->GetModelName() == "Tank")
+					{
+						_bBossDefeatedNotified = true;
 					}
 				}
 
@@ -431,8 +426,8 @@ void StageBase::Process()
 			// ステージ1 全滅時のテキストチェーン
 			ModeTextBox::ShowChain({
 				{"Textbox_Normal", "クロと同じ種族？は沢山いたけど白雪はいなかったな"},
-				{"Textbox_Kage", "もしかしたら先にいるかもな、\n今みたいにあいつらからエネルギーを奪いながら奥まで探してみようぜ。"},
-				{"Textbox_Angry", "クロ、お前、なんか企んでる？"},
+				{"Textbox_Kage", "もしかしたらこの先にいるかもな。\n今みたいにあいつらからエネルギーを奪って\n倒しながら奥まで探してみようぜ。"},
+				{"Textbox_Angry", "クロ、お前なんか企んでる？"},
 				{"Textbox_Kage", "いいや、ただ嬢ちゃんが心配なだけさ。"}
 				}, false, 100, "stage1_allclear");
 		}
@@ -601,18 +596,50 @@ int StageBase::GetNextStageNumFromTrigger(const std::string& triggerName)
 
 void StageBase::PlayStageBGM()
 {
-	if (_currentBGMName.empty()) return;
+	// プレイヤーマネージャーが未設定の場合、デフォルト BGM を再生
+	if(!_playerManager)
+	{
+		// プレイヤーマネージャーなしで直接 BGM を再生
+		if(!_currentBGMName.empty())
+		{
+			SoundServer::GetInstance()->Play(_currentBGMName, DX_PLAYTYPE_LOOP);
+		}
+		return;
+	}
 
-	// ループ再生
-	auto bgmHandle = SoundServer::GetInstance()->Play(_currentBGMName, DX_PLAYTYPE_LOOP);
+	auto activePlayer = _playerManager->GetActivePlayerShared();
+	if(!activePlayer)
+	{
+		// アクティブプレイヤーが取得できない場合も BGM を再生
+		if(!_currentBGMName.empty())
+		{
+			SoundServer::GetInstance()->Play(_currentBGMName, DX_PLAYTYPE_LOOP);
+		}
+		return;
+	}
 
-	// ボリューム設定
+	// アクティブプレイヤーに応じた BGM を再生
+	_previousCharaType = activePlayer->GetCharaType();
+	UpdateStageBGM(_previousCharaType);
 }
 
 void StageBase::StopStageBGM()
 {
 	if (_currentBGMName.empty()) return;
 
+	// BGM���~
+	if (!_currentBGMName.empty()) 
+	{
+		SoundServer::GetInstance()->Stop(_currentBGMName);
+	}
+	if (!_interiorPlayerBGMName.empty()) 
+	{
+		SoundServer::GetInstance()->Stop(_interiorPlayerBGMName);
+	}
+	if (!_bulletPlayerBGMName.empty()) 
+	{
+		SoundServer::GetInstance()->Stop(_bulletPlayerBGMName);
+	}
 	// BGMを停止
 	SoundServer::GetInstance()->Stop(_currentBGMName);
 }
@@ -630,6 +657,29 @@ void StageBase::DebugKillAllEnemies()
 		// StageBase::Process の erase 条件に乗せる
 		enemy->EnableRemove();
 	}
+}
+
+void StageBase::UpdateStageBGM(CHARA_TYPE charaType)
+{
+	// �O�� BGM ���~
+	StopStageBGM();
+
+	// �V���� BGM ��ݒ�
+	std::string bgmName = _currentBGMName;  // �f�t�H���g
+
+	if(charaType == CHARA_TYPE::INTERIOR_PLAYER)
+	{
+		bgmName = _interiorPlayerBGMName;
+	}
+	else if(charaType == CHARA_TYPE::BULLET_PLAYER)
+	{
+		bgmName = _bulletPlayerBGMName;
+	}
+
+	if(bgmName.empty()) { return; }
+
+	// �V���� BGM ��Đ�
+	SoundServer::GetInstance()->Play(bgmName, DX_PLAYTYPE_LOOP);
 }
 
 void StageBase::RemoveMapModelByName(const std::string& name)

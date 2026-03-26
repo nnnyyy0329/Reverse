@@ -14,8 +14,11 @@ private:
 	bool _bIsAddGame = false;
 	bool _bIsAddScenario = false;
 
+	bool _isLoadStarted = false;
+	bool _hasFirstRender = false;
 
 	int _frameCount = 0;
+	float _displayProgress = 0.0f;
 
 	int _seHandle;
 };

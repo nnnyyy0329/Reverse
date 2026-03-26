@@ -2,96 +2,168 @@
 
 #pragma once
 #include "PlayerBase.h"
-#include "PlayerAbsorbAttackSystem.h"
 
-// 表プレイヤー
+// 表プレイヤー用定数
+namespace SurfacePlayerConstants
+{
+	constexpr float DAMAGE_MULTIPLIER = 3.0f;	// 表プレイヤー専用のダメージ倍率
+}
+
+/// @brief 表プレイヤークラス
 class SurfacePlayer : public PlayerBase
 {
 public:
+
 	SurfacePlayer();
 	virtual ~SurfacePlayer();
+
+
+
+	/* 基本関数 */
 
 	virtual bool Initialize();
 	virtual bool Terminate();
 	virtual bool Process();	
 	virtual bool Render();	
 
-	// 共通関数のオーバーライド
-	virtual void DebugRender()override;																		// デバッグ情報描画
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;	// 被ダメージ処理
-	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										// 弾による被ダメージ処理
+	/// @brief デバッグ描画
+	virtual void DebugRender() override;
 
-	// 純粋仮想関数のオーバーライド
-	virtual PlayerConfig			GetPlayerConfig()				override;	// 設定を取得
-	virtual PlayerAnimations		GetPlayerAnimation()			override;	// アニメーション設定を取得
-	virtual RenderConfig			GetRenderConfig()				override;	// 描画設定を取得
-	virtual DodgeConfig				GetDodgeConfig()				override;	// 回避設定を取得
-	virtual ShieldConfig			GetShieldConfig()				override;	// シールド設定を取得
-	virtual AttackConstants			GetAttackConstants()const		override;	// 攻撃定数を取得
+	/// @brief 被ダメージ処理
+	/// 
+	/// @param fDamage ダメージ量
+	/// @param eType 攻撃の所有者タイプ
+	/// @param attackInfo 攻撃コリジョン情報
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo) override;
 
-	const PlayerAbsorbAttackSystem* GetAbsorbAttackSystemConst()const;	// 吸収攻撃システム取得
-	PlayerAbsorbAttackSystem* GetAbsorbAttackSystem();					// 非const版
+	/// @brief 弾による被ダメージ処理
+	///
+	/// @param fDamage ダメージ量
+	/// @param char 弾のキャラタイプ
+	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara) override;
 
-	/*****ゲッターセッター*****/
+
+
+	/* ゲッターセッター */
+
 
 private:
-	// 吸収攻撃システム
-	std::unique_ptr<PlayerAbsorbAttackSystem> _absorbAttackSystem;
 
-	// 吸収攻撃関連
-	AbsorbConfig GetAbsorbConfig();	// 吸収攻撃設定取得
-	void MakeAbsorbSystem();		// 吸収攻撃システム生成
-	void InitializeAbsorbSystem();	// 吸収攻撃システム初期化
-	void ProcessAbsorbSystem();		// 吸収攻撃システム処理
-	void AbsorbSystemDebugRender();	// 吸収攻撃システムデバッグ描画
+	/* 仮想関数のオーバーライド */
+
+	/// @brief プレイヤー設定を取得
+	///
+	/// @return プレイヤー設定構造体
+	virtual PlayerConfig		GetPlayerConfig()		override;
+
+	/// @brief プレイヤーアニメーション設定を取得
+	///
+	/// @return プレイヤーアニメーション設定構造体
+	virtual PlayerAnimations	GetPlayerAnimation()	override;
+
+	/// @brief 描画設定を取得
+	///
+	/// @return 描画設定構造体
+	virtual RenderConfig		GetRenderConfig()		override;
+
+	/// @brief 回避設定を取得
+	///
+	/// @return 回避設定構造体
+	virtual DodgeConfig			GetDodgeConfig()		override;
+
+	/// @brief シールド設定を取得
+	///
+	/// @return シールド設定構造体
+	virtual ShieldConfig		GetShieldConfig()		override;
+
+	/// @brief 吸収攻撃システムのconst版ゲッター
+	///
+	/// @return 吸収攻撃システムのconstポインタ
+	const PlayerAbsorbAttackSystem* GetAbsorbAttackSystemConst() const;
+
+	/// @brief 吸収攻撃システムの非const版ゲッター
+	///
+	/// @return 吸収攻撃システムのポインタ
+	PlayerAbsorbAttackSystem* GetAbsorbAttackSystem() override;
+
+
+
+	/* 吸収攻撃関連 */
+	
+	/// @brief 吸収攻撃設定を取得
+	///
+	/// @return 吸収攻撃設定構造体
+	AbsorbConfig GetAbsorbConfig();
+
+	/// @brief 吸収攻撃システムの生成
+	void MakeAbsorbSystem();		
+	
+	/// @brief 吸収攻撃システムの初期化
+	void InitializeAbsorbSystem();
+
+	/// @brief 吸収攻撃システムの処理
+	void ProcessAbsorbSystem();		
+	
+	/// @brief 吸収攻撃システムのデバッグ描画
+	void AbsorbSystemDebugRender();	
+
+
 
 	/* 吸収攻撃のモーション管理用メンバ関数 */
 
-	// 吸収攻撃処理
-	void ProcessAbsorb()override;
-	
-	// 吸収攻撃モーション切り替え条件処理
-	void ProcessChangeAbsorbMotion();
+	/// @brief 吸収攻撃モーション切り替え条件の更新
+	void UpdateChangeAbsorbMotion();
 
-	// 構え状態に移行
+	/// @brief 吸収攻撃の構え状態に移行する処理
 	void StartAbsorbReadyState();
 
-	// 構えモーション終了時の処理
+	/// @brief 吸収構えモーションが終了したときの処理
 	void ProcessAbsorbReadyCompleted();
 
-	// 吸収終了時の処理
+	/// @brief 吸収終了状態の処理
 	void ProcessAbsorbFinish();
 
-	// 吸収停止処理
+	/// @brief 吸収攻撃の停止処理
 	void StopAbsorb();
 
-	// 吸収構えキャンセル処理
+	/// @brief 吸収構えのキャンセル処理
 	void CancelAbsorbReady();
 
-	// 吸収終了時に通常モーションに戻す処理
+	/// @brief 吸収終了時に通常モーションに戻す処理
 	void ReturnNormalMotion();
-
-	// 吸収攻撃の入力チェック
-	bool IsAbsorbInput()const;
-
-	// 吸収攻撃がアクティブかどうか
-	bool IsAbsorbActive() const;
-
-	// 吸収終了状態中に入力がされたかどうか
-	bool IsInputInAbsorbFinishState()const;
-
-	// 吸収状態が終了状態かどうか
-	bool IsAbsorbEndState()const;
 	
-	// 吸収アニメーション再生時間デバッグ表示
+	/// @brief 吸収アニメーションの再生時間をデバッグ表示する関数
 	void DebugDrawAbsorbAnimationTime();
 
-	/* 吸収攻撃のモーション管理用メンバ変数 */
+	/// @brief 吸収攻撃の入力チェック
+	///
+	/// @return 吸収攻撃の入力がされているならtrue、されていないならfalse
+	bool IsAbsorbInput() const { return (InputManager::GetInstance().IsHold(INPUT_ACTION::ABILITY)) != 0; }
 
-	bool _bIsAbsorbReadyCompleted = false;	// 吸収構えアニメーション完了フラグ
-	bool _bWasAbsorbKeyPressed = false;		// 前フレームで吸収攻撃キーが押されていたか
+	/// @brief 吸収攻撃がアクティブかどうかをチェック
+	///
+	/// @return 吸収攻撃システムが存在し、かつ吸収攻撃がアクティブならtrue、そうでないならfalse
+	bool IsAbsorbActive() const { return _absorbAttackSystem && _absorbAttackSystem->IsAbsorbActive(); }
+
+	/// @brief 吸収終了状態中に吸収攻撃の入力がされているかどうかをチェック
+	///
+	/// @return 吸収攻撃の入力がされていて、かつ吸収終了状態で、アニメーションが終了していないならtrue、そうでないならfalse
+	bool IsInputInAbsorbFinishState() const { return (IsAbsorbInput() && IsAbsorbEndState() && !IsAnimationFinishedConst()); }
+
+	/// @brief 吸収状態が終了状態かどうかをチェック
+	///
+	/// @return 何かしらの吸収状態で、吸収状態が終了状態ならtrue、そうでないならfalse
+	bool IsAbsorbEndState() const { return _playerState.IsStateAbsorbing() && _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_END; }
+
+
+
+	std::unique_ptr<PlayerAbsorbAttackSystem> _absorbAttackSystem;	// 吸収攻撃システム
 
 protected:
+
+	// 吸収攻撃のモーション管理用メンバ変数
+	bool _bIsAbsorbReadyCompleted;	// 吸収構えアニメーション完了フラグ
+	bool _bWasAbsorbKeyPressed;		// 前フレームで吸収攻撃キーが押されていたか
 
 };
 

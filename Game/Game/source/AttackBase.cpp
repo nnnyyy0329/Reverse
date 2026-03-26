@@ -29,15 +29,18 @@ AttackBase::AttackBase()
 	_stcAttackCol.isAttackCancelByHit = false;
 
 	// 攻撃移動情報の初期化
+	_stcAttackMovement.attackState = ATTACK_STATE::INACTIVE;
 	_stcAttackMovement.moveDir = VGet(0.0f, 0.0f, 0.0f);
-	_stcAttackMovement.moveDistance = 0.0f;
-	_stcAttackMovement.moveSpeed = 0.0f;
+	_stcAttackMovement.attackMoveSpeed = 0.0f;
 	_stcAttackMovement.decayRate = 0.0f;
-	_stcAttackMovement.canMove = false;
+	_stcAttackMovement.canMovement = false;
 
 	// 攻撃コリジョンオフセットの初期化
 	_stcColOffset.directionScale = 1.0f;
 	_stcColOffset.useOwnerDirection = true;
+
+    // 攻撃移動停止用
+    _bCanAttackMovement = true;
 
 	// 向き調整の初期化
 	_canDirAdjust = false;
@@ -103,6 +106,7 @@ bool AttackBase::ProcessStartAttack()
         _fCurrentTime = 0.0f;                   // 経過時間リセット
 		_stcAttackCol.isActive = false;         // 攻撃判定は非アクティブに設定
 		_stcAttackCol.isHit = false;            // ヒットフラグリセット
+        _bCanAttackMovement = true;             // 攻撃移動可能フラグをリセット
 
         return true;
     }
@@ -115,7 +119,9 @@ bool AttackBase::ProcessStopAttack()
 {
 	_eAttackState = ATTACK_STATE::INACTIVE; // 攻撃状態を非アクティブに設定
 	_stcAttackCol.isActive = false;         // 攻撃判定を非アクティブに設定
-    _fCurrentTime = 0.0f;       // 経過時間リセット
+    _stcAttackCol.isHit = false;            // ヒットフラグリセット
+    _bCanAttackMovement = true;             // 攻撃移動可能フラグをリセット
+    _fCurrentTime = 0.0f;                   // 経過時間リセット
 
     // ヒットリストクリア
     ClearHitCharas();
@@ -189,6 +195,9 @@ void AttackBase::UpdateAttackMove()
     auto owner = GetOwner();
     if(!owner){ return; }
 
+    // 攻撃移動フラグが
+    if(!_bCanAttackMovement){ return; }
+
     // 移動速度が設定されており、現在の状態が指定された攻撃状態と一致するなら
     if(_stcAttackCol.attackMoveSpeed > 0.0f && _eAttackState == _stcAttackCol.attackState)
     {
@@ -208,25 +217,29 @@ void AttackBase::ProcessAttackMovement()
 
     VECTOR moveDir;
 
-    // 攻撃方向が設定されている方を優先
+    // 攻撃方向が設定されている場合
     if(VSize(_stcAttackCol.attackDir) > 0.0f)
     {
+		// 攻撃方向を正規化して移動方向とする
         moveDir = VNorm(_stcAttackCol.attackDir);
     }
+	// 攻撃方向が設定されていない場合
     else
     {
+        // キャラの向きを移動方向とする
         moveDir = VNorm(currentDir);
     }
 
     // 移動量計算
     VECTOR vMove = VScale(moveDir, _stcAttackCol.attackMoveSpeed);
 
-    // 減衰処理
-    //vMove = VScale(vMove, ATTACK_MOVE_DECAY_RATE);
-
-    // キャラの位置を加算
+	// 現在の位置
     VECTOR currentPos = owner->GetPos();
+
+	// 新しい位置
     VECTOR newPos = VAdd(currentPos, vMove);
+
+	// 新しい位置を所有者キャラに適用
     owner->SetPos(newPos);
 
     // モデルの位置も更新
@@ -236,6 +249,13 @@ void AttackBase::ProcessAttackMovement()
         // モデルの位置を更新
         MV1SetPosition(animManager->GetModelHandle(), newPos);
     }
+}
+
+// 攻撃移動の停止
+void AttackBase::StopAttackMovement()
+{
+    // 攻撃移動可能フラグを無効にする
+    _bCanAttackMovement = false;
 }
 
 // 攻撃コリジョンの位置更新
@@ -608,9 +628,9 @@ void AttackBase::DrawAttackCollision()
         {
             DrawCircle
             (
-                static_cast<float>(_stcAttackCol.attackColTop.x),   // 中心X座標
-                static_cast<float>(_stcAttackCol.attackColTop.y),   // 中心Y座標
-                _stcAttackCol.attackColR,                           // 半径
+                static_cast<int>(_stcAttackCol.attackColTop.x), // 中心X座標
+                static_cast<int>(_stcAttackCol.attackColTop.y), // 中心Y座標
+                static_cast<int>(_stcAttackCol.attackColR),     // 半径
                 GetColor(0, 255, 0),
                 TRUE
             );

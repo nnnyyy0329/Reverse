@@ -144,11 +144,14 @@ void CameraManager::SetCameraType(CAMERA_TYPE type)
 	// 新しいカメラの開始処理
 	if (_pActiveCamera) 
 	{
-		// 前のカメラの状態を引き継ぐ
-		_pActiveCamera->SetAngleH(prevAngleH);
-		_pActiveCamera->SetAngleV(prevAngleV);
-		_pActiveCamera->SetPos(prevPos);
-		_pActiveCamera->SetLookAtPoint(prevTarget);
+		if (_ePrevCameraType != CAMERA_TYPE::EVENT_CAMERA)
+		{
+			// 前のカメラの状態を引き継ぐ
+			_pActiveCamera->SetAngleH(prevAngleH);
+			_pActiveCamera->SetAngleV(prevAngleV);
+			_pActiveCamera->SetPos(prevPos);
+			_pActiveCamera->SetLookAtPoint(prevTarget);
+		}
 
 		_pActiveCamera->OnEnter();
 		_pActiveCamera->SetUp();

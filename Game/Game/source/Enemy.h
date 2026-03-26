@@ -32,7 +32,7 @@ public:
 	bool CanRemove() { return _bCanRemove; }// delete可能か
 
 	const EnemyParam& GetEnemyParam() const { return _enemyParam; }
-	void SetEnemyParam(const EnemyParam& param) { _enemyParam = param; };// パラメータを設定したときに視界のcos値を計算
+	void SetEnemyParam(const EnemyParam& param);// カプセルを設定
 
 	std::shared_ptr<CharaBase> GetTarget() { return _targetPlayer; }
 	void SetTarget(std::shared_ptr<CharaBase> target) { _targetPlayer = target; }
@@ -45,7 +45,7 @@ public:
 	void ChangeState(std::shared_ptr<EnemyState> newState);
 
 	// 弾関連
-	void SpawnBullet(const BulletConfig& bulletConfig);// 発射リクエストをする
+	void SpawnBullet(const BulletConfig& bulletConfig, const BulletEffectConfig& bEffectConfig);// 発射リクエストをする
 
 	// 攻撃コリジョン関連(ステート側で呼び出し)
 	void StartAttack(const EnemyAttackSettings& settings);// 攻撃の開始
@@ -62,9 +62,9 @@ public:
 
 
 	// 被ダメ後の遷移先を決定する
-	using AfterDamageStateSelector = std::function<std::shared_ptr<EnemyState>(Enemy*, int)>;
+	using AfterDamageStateSelector = std::function<std::shared_ptr<EnemyState>(Enemy*)>;
 	void SetAfterDamageStateSelector(AfterDamageStateSelector selector) { _afterDamageStateSelector = selector; }
-	std::shared_ptr<EnemyState> GetAfterDamageStateSelector(int comboCnt);
+	std::shared_ptr<EnemyState> GetAfterDamageStateSelector();
 	// ダウン後の遷移先を決定する
 	using AfterDownStateSelector = std::function<std::shared_ptr<EnemyState>(Enemy*)>;
 	void SetAfterDownStateSelector(AfterDownStateSelector selector) { _afterDownStateSelector = selector; }
@@ -86,11 +86,6 @@ public:
 	bool IsOutSideMoveArea() { return _bIsOutSideMoveArea; }
 	bool CorrectPosToMoveArea();// 初期座標方向へ押し戻す
 
-	// 連続被ダメカウント管理
-	int GetDamageComboCnt() { return _damageComboCnt; }
-	void UpdateDamageCombo();// 連続被ダメカウントを更新
-	void UpdateDamageComboTimer();// リセットタイマー更新
-
 	// 徐々に回転させる
 	void SmoothRotateTo(VECTOR vTargetDir, float turnSpeedDeg);// 目標方向へ指定速度で回転
 
@@ -99,7 +94,19 @@ public:
 	VECTOR GetNextWaypoint();// 次に向かうべき座標を取得
 	void ClearPath();// 記憶しているルートをクリア
 	bool HasPath() { return !_currentPath.empty(); }// ルートを持っているかどうか
-	bool IsVisible(VECTOR vTargetPos, float checkRad = 5.0f);
+	bool IsVisible(VECTOR vTargetPos, float checkRad = 25.0f);
+
+	// CD用タイマーの更新 / 取得
+	void UpdateCoolDowns();
+	bool CanSpecialAttack() { return _fSpecialAttackTimer <= 0.0f; }
+	void ResetCoolDowns(float time) { _fSpecialAttackTimer = time; }
+
+	// 周囲の敵にプレイヤーの存在を知らせる
+	void AlertAllies();
+	// 知らせを受け取った時の処理
+	void OnAlerted(std::shared_ptr<CharaBase> target);
+	bool IsAllerted() { return _bIsAllerted; }
+	void SetAllerted(bool flag) { _bIsAllerted = flag; }
 
 protected:
 
@@ -137,6 +144,10 @@ protected:
 	float _fDamageComboResetTimer = 0.0f;// リセットタイマー
 
 	bool _bIsOutSideMoveArea = false;// エリア外へ移動しようとしたか
+
+	float _fSpecialAttackTimer = 600.0f;// 特殊攻撃CD用タイマー
+
+	bool _bIsAllerted = false;// 仲間からの知らせを受け取ったか
 
 	// 経路記憶用
 	std::vector<VECTOR> _currentPath;// 現在の経路座標リスト

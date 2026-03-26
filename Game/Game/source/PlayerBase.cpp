@@ -3,14 +3,6 @@
 #include "PlayerBase.h"
 #include "PlayerShieldSystem.h"
 
-// 被弾設定
-namespace HitConfig
-{
-	constexpr float HIT_SPEED = 15.0f;	// 被弾時の吹き飛び速度
-	constexpr float HIT_DECAY = 0.9f;	// 被弾時の吹き飛び減衰率
-	constexpr float HIT_TIME = 30.0f;	// 被弾時間
-}
-
 PlayerBase::PlayerBase()
 {
 	_cameraManager = nullptr;	// カメラマネージャー
@@ -74,8 +66,8 @@ void PlayerBase::InitializePlayerConfig(PlayerConfig& config)
 	int modelHandle = ResourceServer::GetInstance()->GetHandle(config.modelName);
 	_animManager.SetModelHandle(modelHandle);
 
-	_vPos = VGet(0, 0, 0);	// 位置の初期化
-	_vDir = VGet(0, 0, -1);	// 向きの初期化
+	_vPos = VGet(0.0f, 0.0f, 0.0f);	// 位置の初期化
+	//_vDir = VGet(1.0f, 0.0f, 1.0f);	// 向きの初期化
 
 	// 位置の初期化
 	_fMoveSpeed = 0.0f;			// 移動速度
@@ -137,6 +129,7 @@ void PlayerBase::InitializeShieldData()
 	_shieldSystem = std::make_shared<PlayerShieldSystem>();
 
 	// シールド所有者設定
+	// CharaBase の shared_from_this() を使用するため、Initialize関数内で所有者を設定する必要がある
 	_shieldSystem->SetOwner(shared_from_this());
 	
 	// プレイヤー固有の設定を取得してシールドシステムに設定
@@ -192,9 +185,6 @@ bool PlayerBase::Process()
 	// 弾発射処理の仮想関数
 	ProcessShoot();
 
-	// 吸収攻撃の仮想関数
-	ProcessAbsorb();
-
 	// 回避関係Process呼び出し用関数
 	CallProcessDodge();
 
@@ -216,13 +206,17 @@ bool PlayerBase::Render()
 }
 
 // 被ダメージ処理
-void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
+void PlayerBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)
 {
 	// 親クラスの被ダメージ処理呼び出し
-	CharaBase::ApplyDamage(fDamage, eType, attackInfo);
+	CharaBase::ApplyDamage(fDamage, ownerType, attackInfo);
 
 	// 被弾状態に変更
 	_playerState.combatState = PLAYER_COMBAT_STATE::HIT;
+
+	// 被弾サウンドの再生
+	SoundServer::GetInstance()->Play("SE_DamagePlayer", DX_PLAYTYPE_BACK);
+	//SoundServer::GetInstance()->Play("SE_En_Damage", DX_PLAYTYPE_BACK);
 
 	// 攻撃方向を使って被弾設定初期化
 	InitializeHitConfig(attackInfo.attackDir);
@@ -233,6 +227,9 @@ void PlayerBase::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 {
 	// 親クラスの被ダメージ処理呼び出し
 	CharaBase::ApplyDamageByBullet(fDamage, chara);
+
+	// 被弾サウンドの再生
+	SoundServer::GetInstance()->Play("SE_DamagePlayer", DX_PLAYTYPE_BACK);
 
 	// 被弾状態に変更
 	_playerState.combatState = PLAYER_COMBAT_STATE::HIT;

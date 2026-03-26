@@ -1,16 +1,20 @@
-#include "PlayerLifeBarUI.h"
+ï»¿#include "PlayerLifeBarUI.h"
 #include "PlayerManager.h"
 
 namespace
 {
-	// ‰æ‘œ•\¦—p
-	constexpr int DRAW_BAR_FRAME_X = 316;
-	constexpr int DRAW_BAR_FRAME_Y = 1000;
+	// ç”»åƒè¡¨ç¤ºç”¨
+	//constexpr int DRAW_BAR_FRAME_X = 60;
+	//constexpr int DRAW_BAR_FRAME_Y = 60;
+
+	constexpr int DRAW_BAR_FRAME_X = 677.5f;
+	constexpr int DRAW_BAR_FRAME_Y = 1050;
+
 	constexpr int DRAW_OFFSET_X = 1;
 	constexpr int DRAW_OFFSET_Y = 1;
 
-	// ’Ç‰ÁFc•ûŒüƒXƒP[ƒ‹
-	constexpr float LIFE_BAR_SCALE_Y = 0.2f;
+	//// è¿½åŠ ï¼šç¸¦æ–¹å‘ã‚¹ã‚±ãƒ¼ãƒ«
+	//constexpr float LIFE_BAR_SCALE_Y = 0.2f;
 }
 
 PlayerLifeBarUI::PlayerLifeBarUI()
@@ -18,19 +22,18 @@ PlayerLifeBarUI::PlayerLifeBarUI()
 	_iLifeBar = ResourceServer::GetInstance()->GetHandle("PlayerLifeBar");
 	_iLifeBarFrame = ResourceServer::GetInstance()->GetHandle("PlayerLifeBarFrame");
 
-	_drawLifeBarX = DRAW_BAR_FRAME_X + DRAW_OFFSET_X;	// ƒ‰ƒCƒtƒo[‚Ì•`‰æˆÊ’uX
-	_drawLifeBarY = DRAW_BAR_FRAME_Y + DRAW_OFFSET_Y;	// ƒ‰ƒCƒtƒo[‚Ì•`‰æˆÊ’uY
-	_drawLifeBarFrameX = DRAW_BAR_FRAME_X;				// ƒ‰ƒCƒtƒo[ƒtƒŒ[ƒ€‚Ì•`‰æˆÊ’uX
-	_drawLifeBarFrameY = DRAW_BAR_FRAME_Y;				// ƒ‰ƒCƒtƒo[ƒtƒŒ[ƒ€‚Ì•`‰æˆÊ’uY
+	_drawLifeBarX = DRAW_BAR_FRAME_X + DRAW_OFFSET_X;	// ãƒ©ã‚¤ãƒ•ãƒãƒ¼ã®æç”»ä½ç½®X
+	_drawLifeBarY = DRAW_BAR_FRAME_Y + DRAW_OFFSET_Y;	// ãƒ©ã‚¤ãƒ•ãƒãƒ¼ã®æç”»ä½ç½®Y
+	_drawLifeBarFrameX = DRAW_BAR_FRAME_X;				// ãƒ©ã‚¤ãƒ•ãƒãƒ¼ãƒ•ãƒ¬ãƒ¼ãƒ ã®æç”»ä½ç½®X
+	_drawLifeBarFrameY = DRAW_BAR_FRAME_Y;				// ãƒ©ã‚¤ãƒ•ãƒãƒ¼ãƒ•ãƒ¬ãƒ¼ãƒ ã®æç”»ä½ç½®Y
 
 	_playerManager = nullptr;
 }
 
 PlayerLifeBarUI::~PlayerLifeBarUI()
 {
-	// ‰æ‘œ‚Ì‰ğ•ú
-	DeleteGraph(_iLifeBar);
-	DeleteGraph(_iLifeBarFrame);
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	Terminate();
 }
 
 bool PlayerLifeBarUI::Initialize()
@@ -40,6 +43,10 @@ bool PlayerLifeBarUI::Initialize()
 
 bool PlayerLifeBarUI::Terminate()
 {
+	// ç”»åƒã®è§£æ”¾
+	DeleteGraph(_iLifeBar);
+	DeleteGraph(_iLifeBarFrame);
+
 	return true;
 }
 
@@ -50,127 +57,142 @@ bool PlayerLifeBarUI::Process()
 
 bool PlayerLifeBarUI::Render()
 {
-	// Zƒoƒbƒtƒ@–³Œø‰»
+	// Zãƒãƒƒãƒ•ã‚¡ç„¡åŠ¹åŒ–
 	SetUseZBuffer3D(FALSE);
 
-	// ƒ‰ƒCƒtƒo[ƒtƒŒ[ƒ€•`‰æ
+	// ãƒ©ã‚¤ãƒ•ãƒãƒ¼ãƒ•ãƒ¬ãƒ¼ãƒ æç”»
 	LifeBarRenderFrame();
 
-	// ƒ‰ƒCƒtƒo[”ä—¦ŒvZ
+	// ãƒ©ã‚¤ãƒ•ãƒãƒ¼æ¯”ç‡è¨ˆç®—
 	BarRatioCalculation();
 
-	// Zƒoƒbƒtƒ@—LŒø‰»
+	// Zãƒãƒƒãƒ•ã‚¡æœ‰åŠ¹åŒ–
 	SetUseZBuffer3D(TRUE);
 
 	return true;
 }
 
-// ƒ‰ƒCƒtƒo[ƒtƒŒ[ƒ€•`‰æ
+// ãƒ©ã‚¤ãƒ•ãƒãƒ¼ãƒ•ãƒ¬ãƒ¼ãƒ æç”»
 void PlayerLifeBarUI::LifeBarRenderFrame()
 {
-	// ƒ‰ƒCƒtƒo[‚ÌƒtƒŒ[ƒ€•`‰æ
-	int w = 0;
-	int h = 0;
-	GetGraphSize(_iLifeBarFrame, &w, &h);
+	DrawGraph(_drawLifeBarFrameX, _drawLifeBarFrameY, _iLifeBarFrame, TRUE);
 
-	const int drawH = static_cast<int>(h * LIFE_BAR_SCALE_Y);
+	//// ãƒ©ã‚¤ãƒ•ãƒãƒ¼ã®ãƒ•ãƒ¬ãƒ¼ãƒ æç”»
+	//int w = 0;
+	//int h = 0;
+	//GetGraphSize(_iLifeBarFrame, &w, &h);
 
-	DrawExtendGraph(
-		_drawLifeBarFrameX,
-		_drawLifeBarFrameY,
-		_drawLifeBarFrameX + w,
-		_drawLifeBarFrameY + drawH,
-		_iLifeBarFrame,
-		TRUE
-	);
+	//const int drawH = static_cast<int>(h * LIFE_BAR_SCALE_Y);
+
+	//DrawExtendGraph(
+	//	_drawLifeBarFrameX,
+	//	_drawLifeBarFrameY,
+	//	_drawLifeBarFrameX + w,
+	//	_drawLifeBarFrameY + drawH,
+	//	_iLifeBarFrame,
+	//	TRUE
+	//);
 }
 
-// ƒ‰ƒCƒtƒo[”ä—¦ŒvZ
+// ãƒ©ã‚¤ãƒ•ãƒãƒ¼æ¯”ç‡è¨ˆç®—
 void PlayerLifeBarUI::BarRatioCalculation()
 {
 	if(_playerManager == nullptr){ return; }	
 
-	// ƒvƒŒƒCƒ„[‚Ì‘Ì—Í‚ğæ“¾
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½“åŠ›ã‚’å–å¾—
 	float currentLife = _playerManager->GetActivePlayerShared()->GetLife();
 	float maxLife = _playerManager->GetActivePlayerShared()->GetMaxLife();
 
-	if(maxLife <= 0.0f){ return; }	// Å‘å‘Ì—Í‚ª0ˆÈ‰º‚Ìê‡‚Í•`‰æ‚µ‚È‚¢
+	if(maxLife <= 0.0f){ return; }	// æœ€å¤§ä½“åŠ›ãŒ0ä»¥ä¸‹ã®å ´åˆã¯æç”»ã—ãªã„
 
-	// ‘Ì—Í‚Ì”ä—¦‚ğŒvZ
+	// ä½“åŠ›ã®æ¯”ç‡ã‚’è¨ˆç®—
 	float lifeRatio = currentLife / maxLife;
-	if(lifeRatio > 1.0f){ lifeRatio = 1.0f; }	// ãŒÀƒ`ƒFƒbƒN
-	if(lifeRatio < 0.0f){ lifeRatio = 0.0f; }	// ‰ºŒÀƒ`ƒFƒbƒN
+	if(lifeRatio > 1.0f){ lifeRatio = 1.0f; }	// ä¸Šé™ãƒã‚§ãƒƒã‚¯
+	if(lifeRatio < 0.0f){ lifeRatio = 0.0f; }	// ä¸‹é™ãƒã‚§ãƒƒã‚¯
 
-	// ƒ‰ƒCƒtƒo[ƒQ[ƒW•\¦ŠÖ”
+	// ãƒ©ã‚¤ãƒ•ãƒãƒ¼ã‚²ãƒ¼ã‚¸è¡¨ç¤ºé–¢æ•°
 	LifeBarRender(lifeRatio);
 }
 
-// ƒ‰ƒCƒtƒo[•`‰æ
+// ãƒ©ã‚¤ãƒ•ãƒãƒ¼æç”»
 void PlayerLifeBarUI::LifeBarRender(float ratio)
 {
-	if(ratio <= 0.0f) { return; }	// ”ä—¦‚ª0ˆÈ‰º‚Ìê‡‚Í•`‰æ‚µ‚È‚¢
+	if(ratio <= 0.0f) { return; }	// ï¿½ä—¦ï¿½ï¿½0ï¿½È‰ï¿½ï¿½Ìê‡ï¿½Í•`ï¿½æ‚µï¿½È‚ï¿½
 
-	// ‰æ‘œƒTƒCƒY
 	int graphW, graphH;
 	GetGraphSize(_iLifeBar, &graphW, &graphH);
 
-	// •`‰æ‚·‚é•
-	const int drawH = static_cast<int>(graphH * LIFE_BAR_SCALE_Y);
-	const int clipW = static_cast<int>(graphW * ratio);
+	int clipW = static_cast<int>(graphW * ratio);
 
-	// ƒo[‹éŒ`iÀÛ‚Ì•\¦‚‚³‚Í drawHj
-	const int x0 = _drawLifeBarX;
-	const int y0 = _drawLifeBarY;
-	const int x1 = _drawLifeBarX + graphW;
-	const int y1 = _drawLifeBarY + drawH;
+	SetDrawArea(_drawLifeBarX, _drawLifeBarY, _drawLifeBarX + clipW, _drawLifeBarY + graphH);
 
-	// 1) ‰eiƒhƒƒbƒvƒVƒƒƒhƒEj: ­‚µ‰E‰º‚ÉƒYƒ‰‚µ‚ÄˆÃ‚­•`‚­
-	{
-		const int shadowOffsetX = 2;
-		const int shadowOffsetY = 2;
+	DrawGraph(_drawLifeBarX, _drawLifeBarY, _iLifeBar, TRUE);
 
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
-		SetDrawArea(x0 + shadowOffsetX, y0 + shadowOffsetY, x0 + shadowOffsetX + clipW, y0 + shadowOffsetY + drawH);
-		DrawExtendGraph(
-			x0 + shadowOffsetX,
-			y0 + shadowOffsetY,
-			x1 + shadowOffsetX,
-			y1 + shadowOffsetY,
-			_iLifeBar,
-			TRUE
-		);
-		SetDrawAreaFull();
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	}
+	SetDrawAreaFull();
 
-	// 2) –{‘Ìi]—ˆ‚Ç‚¨‚èƒNƒŠƒbƒv‚µ‚Ä•`‰æj
-	{
-		SetDrawArea(x0, y0, x0 + clipW, y0 + drawH);
-		DrawExtendGraph(x0, y0, x1, y1, _iLifeBar, TRUE);
-		SetDrawAreaFull();
-	}
+	//if(ratio <= 0.0f) { return; }	// æ¯”ç‡ãŒ0ä»¥ä¸‹ã®å ´åˆã¯æç”»ã—ãªã„
 
-	// 3) ã–ÊƒnƒCƒ‰ƒCƒgi×‚¢”’‘Ñj
-	{
-		const int highlightH = 3;
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 70);
-		DrawBox(x0, y0, x0 + clipW, y0 + highlightH, GetColor(255, 255, 255), TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	}
+	//// ç”»åƒã‚µã‚¤ã‚º
+	//int graphW, graphH;
+	//GetGraphSize(_iLifeBar, &graphW, &graphH);
 
-	// 4) ‰º–Ê‚Ì‰ei×‚¢•‘Ñj
-	{
-		const int shadeH = 3;
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 70);
-		DrawBox(x0, y1 - shadeH, x0 + clipW, y1, GetColor(0, 0, 0), TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	}
+	//// æç”»ã™ã‚‹å¹…
+	//const int drawH = static_cast<int>(graphH * LIFE_BAR_SCALE_Y);
+	//const int clipW = static_cast<int>(graphW * ratio);
 
-	// 5)i”CˆÓjŒ¸‚Á‚½•”•ª‚ğˆÃ‚­‚µ‚Äuav‚Á‚Û‚­‚·‚é
-	if(clipW < graphW)
-	{
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 60);
-		DrawBox(x0 + clipW, y0, x1, y1, GetColor(0, 0, 0), TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	}
+	//// ãƒãƒ¼çŸ©å½¢ï¼ˆå®Ÿéš›ã®è¡¨ç¤ºé«˜ã•ã¯ drawHï¼‰
+	//const int x0 = _drawLifeBarX;
+	//const int y0 = _drawLifeBarY;
+	//const int x1 = _drawLifeBarX + graphW;
+	//const int y1 = _drawLifeBarY + drawH;
+
+	//// 1) å½±ï¼ˆãƒ‰ãƒ­ãƒƒãƒ—ã‚·ãƒ£ãƒ‰ã‚¦ï¼‰: å°‘ã—å³ä¸‹ã«ã‚ºãƒ©ã—ã¦æš—ãæã
+	//{
+	//	const int shadowOffsetX = 2;
+	//	const int shadowOffsetY = 2;
+
+	//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
+	//	SetDrawArea(x0 + shadowOffsetX, y0 + shadowOffsetY, x0 + shadowOffsetX + clipW, y0 + shadowOffsetY + drawH);
+	//	DrawExtendGraph(
+	//		x0 + shadowOffsetX,
+	//		y0 + shadowOffsetY,
+	//		x1 + shadowOffsetX,
+	//		y1 + shadowOffsetY,
+	//		_iLifeBar,
+	//		TRUE
+	//	);
+	//	SetDrawAreaFull();
+	//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	//}
+
+	//// 2) æœ¬ä½“ï¼ˆå¾“æ¥ã©ãŠã‚Šã‚¯ãƒªãƒƒãƒ—ã—ã¦æç”»ï¼‰
+	//{
+	//	SetDrawArea(x0, y0, x0 + clipW, y0 + drawH);
+	//	DrawExtendGraph(x0, y0, x1, y1, _iLifeBar, TRUE);
+	//	SetDrawAreaFull();
+	//}
+
+	//// 3) ä¸Šé¢ãƒã‚¤ãƒ©ã‚¤ãƒˆï¼ˆç´°ã„ç™½å¸¯ï¼‰
+	//{
+	//	const int highlightH = 3;
+	//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 70);
+	//	DrawBox(x0, y0, x0 + clipW, y0 + highlightH, GetColor(255, 255, 255), TRUE);
+	//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	//}
+
+	//// 4) ä¸‹é¢ã®å½±ï¼ˆç´°ã„é»’å¸¯ï¼‰
+	//{
+	//	const int shadeH = 3;
+	//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 70);
+	//	DrawBox(x0, y1 - shadeH, x0 + clipW, y1, GetColor(0, 0, 0), TRUE);
+	//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	//}
+
+	//// 5)ï¼ˆä»»æ„ï¼‰æ¸›ã£ãŸéƒ¨åˆ†ã‚’æš—ãã—ã¦ã€Œæºã€ã£ã½ãã™ã‚‹
+	//if(clipW < graphW)
+	//{
+	//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 60);
+	//	DrawBox(x0 + clipW, y0, x1, y1, GetColor(0, 0, 0), TRUE);
+	//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	//}
 }

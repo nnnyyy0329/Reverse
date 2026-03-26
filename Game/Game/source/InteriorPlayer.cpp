@@ -2,11 +2,14 @@
 
 #include "InteriorPlayer.h"
 
-// 定数のエイリアス
-namespace IA = InteriorAttackConstants;
+// 裏プレイヤー用定数のエイリアス
+namespace IPC = InteriorPlayerConstants;
 
-// 腕の定数のエイリアス
-namespace IPA = InteriorPlayerArmConstants;
+// 攻撃定数のエイリアス
+namespace IAC = InteriorAttackConstants;
+
+// 裏プレイヤーのフレームインデックス定数のエイリアス
+namespace IPFIC = InteriorPlayerFrameIndexConstants;
 
 InteriorPlayer::InteriorPlayer()
 {
@@ -56,10 +59,16 @@ void InteriorPlayer::DebugRender()
 	PlayerBase::DebugRender();
 }
 
-void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
+void InteriorPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)
 {
+	// ダメージに裏プレイヤー専用の倍率を適用
+	float resultDamage = fDamage * IPC::DAMAGE_MULTIPLIER;
+
 	// 基底クラスの被ダメージ処理を呼び出す
-	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
+	PlayerBase::ApplyDamage(resultDamage, ownerType, attackInfo);
+
+	// 特定の所有者の攻撃移動を停止
+	AttackManager::GetInstance()->StopAttackMovementByOwner(ATTACK_OWNER_TYPE::INTERIOR_PLAYER);
 }
 
 void InteriorPlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
@@ -131,7 +140,7 @@ RenderConfig InteriorPlayer::GetRenderConfig()
 	RenderConfig config;
 
 	config.playerName = "Interior Player";				// プレイヤー名
-	config.debugColor = COLOR_U8{ 0, 255, 255, 255 };	// デバッグ描画色
+	config.debugColor = COLOR_U8{ 0, 255, 205, 255 };	// デバッグ描画色
 
 	return config;
 }
@@ -141,7 +150,7 @@ AttackConstants InteriorPlayer::GetAttackConstants()const
 	// InteriorPlayer専用の攻撃定数
 	AttackConstants constants;
 
-	constants.interiorMaxComboCount = InteriorAttackConstants::INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
+	constants.interiorMaxComboCount = IAC::INTERIOR_MAX_COMBO_COUNT;	// 裏プレイヤー用コンボカウント
 
 	return constants;
 }
@@ -153,12 +162,12 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 	{
 		configs[0].attackColTop			= {0.0f, 100.0f, 0.0f},	// コリジョン上部位置
 		configs[0].attackColBottom		= {0.0f, 20.0f, 0.0f},	// コリジョン下部位置
-		configs[0].attackColR			= 40.0f,				// 半径
+		configs[0].attackColR			= 50.0f,				// 半径
 		configs[0].attackColTop			= _vMove,				// 攻撃方向
-		configs[0].attackDelay			= 8.0f,					// 発生フレーム
-		configs[0].attackDuration		= 12.0f,				// 持続フレーム
-		configs[0].attackRecovery		= 18.0f,				// 硬直フレーム
-		configs[0].damage				= 20.0f,				// ダメージ
+		configs[0].attackDelay			= 15.0f,				// 発生フレーム
+		configs[0].attackDuration		= 5.0f,					// 持続フレーム
+		configs[0].attackRecovery		= 16.0f,				// 硬直フレーム
+		configs[0].damage				= 25.0f,				// ダメージ
 		configs[0].attackState			= ATTACK_STATE::ACTIVE,	// 攻撃状態
 		configs[0].attackMoveSpeed		= 3.0f,					// 攻撃中の移動速度
 		configs[0].isActive				= false,				// アクティブかどうか
@@ -172,12 +181,12 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 	{
 		configs[1].attackColTop			= {0.0f, 100.0f, 0.0f},	// コリジョン上部位置
 		configs[1].attackColBottom		= {0.0f, 20.0f, 0.0f},	// コリジョン下部位置
-		configs[1].attackColR			= 40.0f,				// 半径
+		configs[1].attackColR			= 50.0f,				// 半径
 		configs[1].attackColTop			= _vMove,				// 攻撃方向
-		configs[1].attackDelay			= 8.0f,					// 発生フレーム
-		configs[1].attackDuration		= 12.0f,				// 持続フレーム
-		configs[1].attackRecovery		= 18.0f,				// 硬直フレーム
-		configs[1].damage				= 30.0f,				// ダメージ
+		configs[1].attackDelay			= 15.0f,				// 発生フレーム
+		configs[1].attackDuration		= 5.0f,					// 持続フレーム
+		configs[1].attackRecovery		= 16.0f,				// 硬直フレーム
+		configs[1].damage				= 35.0f,				// ダメージ
 		configs[1].attackState			= ATTACK_STATE::ACTIVE,	// 攻撃状態
 		configs[1].attackMoveSpeed		= 0.0f,					// 攻撃中の移動速度
 		configs[1].isActive				= false,				// アクティブかどうか
@@ -191,11 +200,11 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 	{
 		configs[2].attackColTop			= {0.0f, 150.0f, 0.0f},	// コリジョン上部位置
 		configs[2].attackColBottom		= {0.0f, 20.0f, 0.0f},	// コリジョン下部位置
-		configs[2].attackColR			= 40.0f,				// 半径
+		configs[2].attackColR			= 50.0f,				// 半径
 		configs[2].attackColTop			= _vMove,				// 攻撃方向
 		configs[2].attackDelay			= 10.0f,				// 発生フレーム
-		configs[2].attackDuration		= 12.0f,				// 持続フレーム
-		configs[2].attackRecovery		= 18.0f,				// 硬直フレーム
+		configs[2].attackDuration		= 5.0f,					// 持続フレーム
+		configs[2].attackRecovery		= 16.0f,				// 硬直フレーム
 		configs[2].damage				= 50.0f,				// ダメージ
 		configs[2].attackState			= ATTACK_STATE::ACTIVE,	// 攻撃状態
 		configs[2].attackMoveSpeed		= 5.0f,					// 攻撃中の移動速度
@@ -210,7 +219,7 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 	{
 		configs[3].attackColTop			= {0.0f, 70.0f, 0.0f},	// コリジョン上部位置
 		configs[3].attackColBottom		= {0.0f, 0.0f, 0.0f},	// コリジョン下部位置
-		configs[3].attackColR			= 40.0f,				// 半径
+		configs[3].attackColR			= 50.0f,				// 半径
 		configs[3].attackColTop			= _vMove,				// 攻撃方向
 		configs[3].attackDelay			= 15.0f,				// 発生フレーム
 		configs[3].attackDuration		= 12.0f,				// 持続フレーム
@@ -249,28 +258,28 @@ void InteriorPlayer::GetAttackColOffsetConfigs(AttackColOffset configs[5])
 	// 第1攻撃
 	configs[0] =
 	{
-		configs[0].directionScale		= 100.0f,	// 方向スケール
+		configs[0].directionScale		= 75.0f,	// 方向スケール
 		configs[0].useOwnerDirection	= true,		// 所有者の向きを基準とするか
 	};
 
 	// 第2攻撃
 	configs[1] =
 	{
-		configs[1].directionScale		= 100.0f,	// 方向スケール
+		configs[1].directionScale		= 75.0f,	// 方向スケール
 		configs[1].useOwnerDirection	= true,		// 所有者の向きを基準とするか
 	};
 
 	// 第3攻撃
 	configs[2] =
 	{
-		configs[2].directionScale		= 100.0f,	// 方向スケール
+		configs[2].directionScale		= 75.0f,	// 方向スケール
 		configs[2].useOwnerDirection	= true,		// 所有者の向きを基準とするか
 	};
 
 	// 第4攻撃
 	configs[3] =
 	{
-		configs[3].directionScale		= 100.0f,	// 方向スケール
+		configs[3].directionScale		= 75.0f,	// 方向スケール
 		configs[3].useOwnerDirection	= true,		// 所有者の向きを基準とするか
 	};
 
@@ -321,14 +330,16 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 	config[0] =
 	{
 		/* エフェクト */
-		config[0].isActiveEffect	= true,										// エフェクトを有効にするか
-		config[0].effectName		= "InteriorPlayerAttack_123",				// エフェクト名
-		config[0].effectOffset		= { 0.0f, 0.0f, 0.0f },						// エフェクト位置オフセット
-		config[0].effectRotation	= { 0.0f, IA::REVERSE_EFFECT_ROT, 0.0f },	// エフェクト回転オフセット
+		config[0].isActiveEffect	= true,							// エフェクトを有効にするか
+		config[0].effectName		= "InteriorPlayerAttack_123",	// エフェクト名
+		config[0].effectOffset		= { 0.0f, 0.0f, 0.0f },			// エフェクト位置オフセット
+		config[0].effectRotation	= { 0.0f, 180.0f, 0.0f },		// エフェクト回転オフセット
+		config[0].attachType		= EFFECT_ATTACH_TYPE::LEFT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[0].isActiveSound = true,				// サウンドを有効にするか
-		config[0].soundName		= "iPlayerAttack",	// サウンド名
+		config[0].isActiveSound		= true,						// サウンドを有効にするか
+		config[0].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[0].playSoundDelay	= 15.0f,					// サウンド再生の遅延時間
 		
 		/* カメラシェイク */
 		config[0].isActiveCameraShake	= true,	// カメラシェイクを有効にするか
@@ -344,14 +355,16 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 	config[1] =
 	{
 		/* エフェクト */
-		config[1].isActiveEffect	= true,										// エフェクトを有効にするか
-		config[1].effectName		= "InteriorPlayerAttack_123",				// エフェクト名
-		config[1].effectOffset		= { 0.0f, 0.0f, 0.0f },						// エフェクト位置オフセット
-		config[1].effectRotation	= { 0.0f, IA::REVERSE_EFFECT_ROT, 0.0f },	// エフェクト回転オフセット
+		config[1].isActiveEffect	= true,								// エフェクトを有効にするか
+		config[1].effectName		= "InteriorPlayerAttack_123",		// エフェクト名
+		config[1].effectOffset		= { 0.0f, 0.0f, 0.0f },				// エフェクト位置オフセット
+		config[1].effectRotation	= { 0.0f, 90.0f, 0.0f },			// エフェクト回転オフセット
+		config[1].attachType		= EFFECT_ATTACH_TYPE::RIGHT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[1].isActiveSound = true,				// サウンドを有効にするか
-		config[1].soundName		= "iPlayerAttack",	// サウンド名
+		config[1].isActiveSound		= true,						// サウンドを有効にするか
+		config[1].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[1].playSoundDelay	= 15.0f,					// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[1].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -367,14 +380,16 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 	config[2] =
 	{
 		/* エフェクト */
-		config[2].isActiveEffect	= true,										// エフェクトを有効にするか
-		config[2].effectName		= "InteriorPlayerAttack_123",				// エフェクト名
-		config[2].effectOffset		= { 0.0f, 0.0f, 0.0f },						// エフェクト位置オフセット
-		config[2].effectRotation	= { 0.0f, IA::REVERSE_EFFECT_ROT, 0.0f },	// エフェクト回転オフセット
+		config[2].isActiveEffect	= true,							// エフェクトを有効にするか
+		config[2].effectName		= "InteriorPlayerAttack_123",	// エフェクト名
+		config[2].effectOffset		= { 0.0f, 0.0f, 0.0f },			// エフェクト位置オフセット
+		config[2].effectRotation	= { 90.0f, 0.0f, 0.0f },		// エフェクト回転オフセット
+		config[2].attachType		= EFFECT_ATTACH_TYPE::LEFT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[2].isActiveSound = true,				// サウンドを有効にするか
-		config[2].soundName		= "iPlayerAttack",	// サウンド名
+		config[2].isActiveSound		= true,						// サウンドを有効にするか
+		config[2].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[2].playSoundDelay	= 10.0f,					// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[2].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -390,14 +405,16 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 	config[3] =
 	{
 		/* エフェクト */
-		config[3].isActiveEffect	= true,							// エフェクトを有効にするか
-		config[3].effectName		= "InteriorPlayerFourthAttack",	// エフェクト名
-		config[3].effectOffset		= { 0.0f, 0.0f, 0.0f },			// エフェクト位置オフセット
-		config[3].effectRotation	= { 0.0f, 90.0f, 0.0f },		// エフェクト回転オフセット
+		config[3].isActiveEffect	= true,									// エフェクトを有効にするか
+		config[3].effectName		= "InteriorPlayerFourthAttack",			// エフェクト名
+		config[3].effectOffset		= { 0.0f, 150.0f, 0.0f },				// エフェクト位置オフセット
+		config[3].effectRotation	= { 0.0f, -90.0f, 0.0f },				// エフェクト回転オフセット
+		config[3].attachType		= EFFECT_ATTACH_TYPE::CHARACTER_OFFSET,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[3].isActiveSound = true,				// サウンドを有効にするか
-		config[3].soundName		= "iPlayerAttack",	// サウンド名
+		config[3].isActiveSound		= true,						// サウンドを有効にするか
+		config[3].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[3].playSoundDelay	= 15.0f,					// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[3].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -413,14 +430,16 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 	config[4] =
 	{
 		/* エフェクト */
-		config[4].isActiveEffect	= true,										// エフェクトを有効にするか
-		config[4].effectName		= "InteriorPlayerFifthAttack",				// エフェクト名
-		config[4].effectOffset		= { 0.0f, 0.0f, 0.0f },						// エフェクト位置オフセット
-		config[4].effectRotation	= { 0.0f, IA::REVERSE_EFFECT_ROT, 0.0f },	// エフェクト回転オフセット
+		config[4].isActiveEffect	= true,							// エフェクトを有効にするか
+		config[4].effectName		= "InteriorPlayerFifthAttack",	// エフェクト名
+		config[4].effectOffset		= { 0.0f, 0.0f, 0.0f },			// エフェクト位置オフセット
+		config[4].effectRotation	= { 0.0f, 180.0f, 0.0f },		// エフェクト回転オフセット
+		config[4].attachType		= EFFECT_ATTACH_TYPE::LEFT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[4].isActiveSound = true,				// サウンドを有効にするか
-		config[4].soundName		= "iPlayerAttack",	// サウンド名
+		config[4].isActiveSound		= true,						// サウンドを有効にするか
+		config[4].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[4].playSoundDelay	= 30.0f,					// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[4].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -456,11 +475,12 @@ DodgeConfig InteriorPlayer::GetDodgeConfig()
 	DodgeConfig config;
 
 	config.charaType = DODGE_CHARA::INTERIOR_PLAYER;
-	config.invincibleDuration	= 25.0f;	// 無敵時間
-	config.startTime			= 1.0f;		// 開始時間
-	config.activeTime			= 30.0f;	// アクティブ時間
-	config.recoveryTime			= 10.0f;	// 硬直時間
-	config.dodgeMoveSpeed		= 11.0f;	// 移動速度
+	config.invincibleDuration	= 25.0f;		// 無敵時間
+	config.startTime			= 1.0f;			// 開始時間
+	config.activeTime			= 30.0f;		// アクティブ時間
+	config.recoveryTime			= 10.0f;		// 硬直時間
+	config.dodgeMoveSpeed		= 11.0f;		// 移動速度
+	config.soundName = "SE_TransPlayerDodge";	// サウンド名
 
 	return config;
 }
@@ -470,40 +490,35 @@ void InteriorPlayer::GetAttackArmConfigs(AttackArmConfig configs[5])
 	// 第1攻撃
 	configs[0] =
 	{
-		configs[0].useFromBody = 0,									// 左腕を使用
-		configs[0].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
-		configs[0].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[0].rightArmFrameIndex = IPFIC::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[0].leftArmFrameIndex = IPFIC::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
 
 	// 第2攻撃
 	configs[1] =
 	{
-		configs[1].useFromBody = 1,									// 右腕を使用
-		configs[1].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
-		configs[1].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[1].rightArmFrameIndex = IPFIC::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[1].leftArmFrameIndex = IPFIC::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
 
 	// 第3攻撃
 	configs[2] =
 	{
-		configs[2].useFromBody = 0,									// 左腕を使用
-		configs[2].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
-		configs[2].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[2].rightArmFrameIndex = IPFIC::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[2].leftArmFrameIndex = IPFIC::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
 
 	// 第4攻撃
 	configs[3] =
 	{
-		configs[3].useFromBody = 2,									// 左腕を使用
-		configs[3].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
-		configs[3].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[3].rightArmFrameIndex = IPFIC::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[3].leftArmFrameIndex = IPFIC::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
 
 	// 第5攻撃
 	configs[4] =
 	{
-		configs[4].useFromBody = 0,									// 左腕を使用
-		configs[4].rightArmFrameIndex = IPA::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
-		configs[4].leftArmFrameIndex = IPA::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[4].rightArmFrameIndex = IPFIC::RIGHT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
+		configs[4].leftArmFrameIndex = IPFIC::LEFT_ARM_FRAME_INDEX,	// 攻撃腕位置オフセット
 	};
 }

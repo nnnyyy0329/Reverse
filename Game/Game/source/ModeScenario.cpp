@@ -17,16 +17,19 @@ bool ModeScenario::Initialize()
 	_loadedCount = 0;
 
 	// セリフを設定（ユーザー提供文）
-	_texts[0] = "｢なぁ、エイトもう帰ろうぜ〜、見たいテレビがあるんだよな〜。」";
-	_texts[1] = "｢ちょっ、クロ！あんま外で喋んなって言ってるだろ！\nそれに白雪に借りたノートを返さないきゃだし。」";
+	_texts[0] = "「 なぁエイト、もう帰ろうぜ？ 見たいテレビがあるんだよな～。」";
+	_texts[1] = "「 ちょっ、クロ！あんま外で喋んなって言ってるだろ！」\n「 それに白雪に借りたノートを返さないとだし。」";
 	_texts[2] = "信じて貰えないかもしれないが俺の左腕には自分とは別の意思がある。\n正確には幼い頃の事故でできた黒い\"痣\"なんだが、\n今までは何ともなかったのに突然喋りだしたときは正直かなり驚いた。\n今はもう慣れてとりあえずクロと呼んでいる。";
-	_texts[3] = "｢エイトとやたら仲良いあの嬢ちゃんか。」";
-	_texts[4] = "｢幼なじみだからな、\nテスト前に借りたノートを返さないと白雪が困るだろ。」";
-	_texts[5] = "｢でもよぉ、下の階にもいなかったしこんなとこにホントにいるのか？\nこっちの方に行ってたって言ったヤツの見間違」";
-	_texts[6] = "｢？、どうしたんだ？｣";
-	_texts[7] = "｢いや、エイトやっぱり進もうぜ。\nこの奥からうまそ、、、同族の匂いがした。」";
-	_texts[8] = "｢なんだって、クロに仲間がいるのか？｣";
-	_texts[9] = "｢そんなんじゃねぇよ。とにかくホントに嬢ちゃんがいるなら急いだがいいぜ、\nエイトお前も用心しろよ、とっておきの力を貸してやるから」";
+	_texts[3] = "「 エイトとやたら仲良いあの嬢ちゃんか。」";
+	_texts[4] = "「 幼なじみだからな、テスト前に借りたノートを返さないと白雪が困るだろ。」";
+	_texts[5] = "「 でもよぉ、下の階にもいなかったしこんなとこにホントにいるのか？\nこっちの方に行ってたって言ったヤツの見間違 」";
+	_texts[6] = "「 ...どうしたんだ？｣";
+	_texts[7] = "「 いや、エイトやっぱり進もうぜ。\nこの奥からうまそ...同族の匂いがした。」";
+	_texts[8] = "「 なんだって、クロに仲間がいるのか？｣";
+	_texts[9] = "「 そんなんじゃねぇよ。とにかくホントに嬢ちゃんがいるなら急いだがいいぜ。\nエイトお前も用心しろよ。とっておきの力を貸してやるから」";
+
+	// BGM をシナリオ開始時に一度だけ再生する
+	SoundServer::GetInstance()->Play("BGM_OpeningScenario", DX_PLAYTYPE_LOOP);
 
 	// 画像リソース取得（命名規則: "GameStartText", "GameStartText1", ...）
 	for(int i = 0; i < TEXT_COUNT; ++i)
@@ -64,10 +67,6 @@ bool ModeScenario::Process()
 	// 文字自動展開
 	if(!_textFullyShown)
 	{
-		// サウンド再生
-		SoundServer::GetInstance()->Play("BGM_OpeningScenario", DX_PLAYTYPE_LOOP);
-
-
 		_charTimer++;
 		if(_charTimer >= kCharInterval)
 		{
@@ -124,6 +123,40 @@ bool ModeScenario::Process()
 	return true;
 }
 
+//bool ModeScenario::Render()
+//{
+//	ClearDrawScreen();
+//
+//	// 画像描画（ページ範囲内ならそのハンドルを描画）
+//	const int handle = (_pageIndex >= 0 && _pageIndex < TEXT_COUNT) ? _textHandles[_pageIndex] : -1;
+//	if(handle >= 0)
+//	{
+//		int w = 0;
+//		int h = 0;
+//		GetGraphSize(handle, &w, &h);
+//
+//		const int x = (1920 - w) / 2;
+//		const int y = (1080 - h) / 2;
+//
+//		DrawGraph(x, y, handle, TRUE);
+//	}
+//
+//	// セリフ表示（1文字ずつ）
+//	const std::string& curText = (_pageIndex >= 0 && _pageIndex < TEXT_COUNT) ? _texts[_pageIndex] : std::string();
+//	int showCount = std::max(0, std::min(_charIndex, static_cast<int>(curText.size())));
+//	std::string display = curText.substr(0, showCount);
+//
+//	// 表示位置は必要に応じて調整してください
+//	SetFontSize(38);
+//	DrawFormatString(320, 820, GetColor(255, 255, 255), "%s", display.c_str());
+//	SetFontSize(16);
+//
+//
+//
+//	return true;
+//}
+
+
 bool ModeScenario::Render()
 {
 	ClearDrawScreen();
@@ -148,11 +181,26 @@ bool ModeScenario::Render()
 	std::string display = curText.substr(0, showCount);
 
 	// 表示位置は必要に応じて調整してください
-	SetFontSize(28);
-	DrawFormatString(320, 820, GetColor(255, 255, 255), "%s", display.c_str());
+	int fontSize = 34;
+	SetFontSize(fontSize);
+
+	const int baseX = 320;
+	const int baseY = 820;
+
+	// 行間調整: フォントサイズに追加でスペースを入れる
+	int extraSpacing = 18; // ここを大きくすると改行時のY移動量が増える
+	int lineSpacing = fontSize + extraSpacing;
+
+	std::istringstream iss(display);
+	std::string line;
+	int lineIndex = 0;
+	while(std::getline(iss, line))
+	{
+		DrawFormatString(baseX, baseY + lineIndex * lineSpacing, GetColor(255, 255, 255), "%s", line.c_str());
+		++lineIndex;
+	}
+
 	SetFontSize(16);
-
-
 
 	return true;
 }

@@ -80,7 +80,7 @@ void CharaBase::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const Attack
 }
 
 // ’e‚É‚æ‚é”íƒ_ƒ[ƒWˆ—
-void CharaBase::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
+void CharaBase::ApplyDamageByBullet(float fDamage, CHARA_TYPE charaType)
 {
 	if (_fLife <= 0.0f) return;	// ‘Ì—Í‚ª0‚È‚ç–³Œø
 

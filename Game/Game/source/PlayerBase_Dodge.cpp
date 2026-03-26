@@ -45,7 +45,7 @@ void PlayerBase::InitializeDodgeData()
 	}
 
 	// プレイヤーの回避設定を登録
-	_dodgeSystem->RegisterCharaConfig(dodgeCharaType, playerDodgeConfig);
+	_dodgeSystem->RegisterDodgeCharaConfig(dodgeCharaType, playerDodgeConfig);
 }
 
 // 回避呼び出し

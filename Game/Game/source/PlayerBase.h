@@ -7,6 +7,15 @@
 #include "DodgeSystem.h"
 #include "BulletManager.h"
 #include "PlayerShieldSystem.h"
+#include "PlayerAbsorbAttackSystem.h"
+
+// 被弾設定
+namespace HitConfig
+{
+	constexpr float HIT_SPEED = 15.0f;	// 被弾時の吹き飛び速度
+	constexpr float HIT_DECAY = 0.9f;	// 被弾時の吹き飛び減衰率
+	constexpr float HIT_TIME = 30.0f;	// 被弾時間
+}
 
 // 前方宣言
 class CameraManager;
@@ -119,7 +128,6 @@ struct AttackDirAdjustConfig
 /// @brief 攻撃時にどちらの腕で攻撃するかの設定をまとめた構造体
 struct AttackArmConfig
 {
-	int useFromBody;		// どの部位で再生するか(2 : 腕以外、1 : 右腕、0 : 左腕、-1 : 再生しない)
 	int rightArmFrameIndex;	// 右腕攻撃のフレームインデックス
 	int leftArmFrameIndex;	// 左腕攻撃のフレームインデックス
 };
@@ -209,21 +217,78 @@ struct PlayerState
 	PLAYER_ABSORB_STATE		absorbState;	// 吸収攻撃状態
 	PLAYER_COMBAT_STATE		combatState;	// 特殊状態
 
-	// 状態チェック関数
-	bool IsStateAttacking() const { return attackState	 != PLAYER_ATTACK_STATE::NONE; }	// 攻撃状態かどうか
-	bool IsStateMoving()	const { return movementState != PLAYER_MOVEMENT_STATE::NONE; }	// 移動状態かどうか
-	bool IsStateShooting()	const { return shootState	 != PLAYER_SHOOT_STATE::NONE; }		// 発射状態かどうか
-	bool IsStateAbsorbing()	const { return absorbState	 != PLAYER_ABSORB_STATE::NONE; }	// 吸収攻撃状態かどうか
-	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }	// 特殊状態かどうか
 
-	// 特定の状態かどうかをチェックする関数
-	bool IsInMovementState(PLAYER_MOVEMENT_STATE state)	const { return movementState == state; }	// 特定の移動状態かチェック
-	bool IsInAttackState(PLAYER_ATTACK_STATE state)		const { return attackState == state; }		// 特定の攻撃状態かチェック
-	bool IsInShootState(PLAYER_SHOOT_STATE state)		const { return shootState == state; }		// 特定の発射状態かチェック
-	bool IsInAbsorbState(PLAYER_ABSORB_STATE state)		const { return absorbState == state; }		// 特定の吸収状態かチェック
-	bool IsInCombatState(PLAYER_COMBAT_STATE state)		const { return combatState == state; }		// 特定の特殊状態かチェック
 
-	// 状態リセット関数
+	/* 状態チェック関数 */
+	
+	/// @brief 攻撃状態かどうかをチェックする関数
+	///
+	/// @return 何かしらの攻撃状態であればtrue、そうでなければfalse
+	bool IsStateAttacking() const { return attackState != PLAYER_ATTACK_STATE::NONE; }
+
+	/// @brief 移動状態かどうかをチェックする関数
+	///
+	/// @return 何かしらの移動状態であればtrue、そうでなければfalse
+	bool IsStateMoving()	const { return movementState != PLAYER_MOVEMENT_STATE::NONE; }
+
+	/// @brief 発射状態かどうかをチェックする関数
+	///
+	/// @return 何かしらの発射状態であればtrue、そうでなければfalse
+	bool IsStateShooting()	const { return shootState != PLAYER_SHOOT_STATE::NONE; }		
+	
+	/// @brief 吸収攻撃状態かどうかをチェックする関数
+	///
+	/// @return 何かしらの吸収攻撃状態であればtrue、そうでなければfalse
+	bool IsStateAbsorbing()	const { return absorbState != PLAYER_ABSORB_STATE::NONE; }
+
+	/// @brief 特殊状態かどうかをチェックする関数
+	///
+	/// @return 何かしらの特殊状態であればtrue、そうでなければfalse
+	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }	
+
+
+
+	/* 特定の状態かどうかをチェックする関数 */
+	
+	/// @brief 特定の移動状態かどうかをチェックする関数
+	///
+	/// @param state チェックしたい移動状態
+	/// 
+	/// @return 指定した移動状態であればtrue、そうでなければfalse
+	bool IsInMovementState(PLAYER_MOVEMENT_STATE state)	const { return movementState == state; }	
+	
+	/// @brief 特定の攻撃状態かどうかをチェックする関数
+	///
+	/// @param state チェックしたい攻撃状態
+	///		
+	/// @return 指定した攻撃状態であればtrue、そうでなければfalse
+	bool IsInAttackState(PLAYER_ATTACK_STATE state)		const { return attackState == state; }	
+
+	/// @brief 特定の発射状態かどうかをチェックする関数	
+	///
+	/// @param state チェックしたい発射状態
+	/// 
+	/// @return 指定した発射状態であればtrue、そうでなければfalse
+	bool IsInShootState(PLAYER_SHOOT_STATE state)		const { return shootState == state; }	
+
+	/// @brief 特定の吸収攻撃状態かどうかをチェックする関数
+	///
+	/// @param state チェックしたい吸収攻撃状態
+	/// 
+	/// @return 指定した吸収攻撃状態であればtrue、そうでなければfalse
+	bool IsInAbsorbState(PLAYER_ABSORB_STATE state)		const { return absorbState == state; }	
+
+	/// @brief 特定の特殊状態かどうかをチェックする関数
+	///
+	/// @param state チェックしたい特殊状態
+	/// 
+	/// @return 指定した特殊状態であればtrue、そうでなければfalse
+	bool IsInCombatState(PLAYER_COMBAT_STATE state)		const { return combatState == state; }		
+
+
+	/* 状態リセット関数 */
+
+	/// @brief 状態をすべてリセットする関数
 	void StateReset()
 	{
 		movementState = PLAYER_MOVEMENT_STATE::NONE;
@@ -238,8 +303,13 @@ struct PlayerState
 class PlayerBase : public CharaBase
 {
 public:
+
 	PlayerBase();
 	virtual ~PlayerBase();
+
+
+
+	/* 基本関数 */
 
 	virtual bool	Initialize();	// 初期化
 	virtual bool	Terminate();	// 終了
@@ -251,7 +321,7 @@ public:
 	/// @param fDamage ダメージ量
 	/// @param eType 攻撃の所有者タイプ
 	/// @param attackInfo 攻撃コリジョン情報
-	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)override;	
+	virtual void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)override;
 
 	/// @brief 弾による被ダメージ処理関数
 	/// 
@@ -342,6 +412,17 @@ public:
 	PLAYER_COMBAT_STATE GetCombatState()const{ return _playerState.combatState; }		// 特殊状態取得
 	void SetCombatState(PLAYER_COMBAT_STATE state){ _playerState.combatState = state; }	// 特殊状態設定
 
+	float GetPlayerMaxLife()const{ return _playerConfig.maxLife; }	// プレイヤーの最大体力取得
+
+
+	// 吸収攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
+	/// @brief 吸収攻撃システムの取得関数
+	///
+	/// @return 吸収攻撃システムのポインタ(デフォルトはnullptr)
+	virtual PlayerAbsorbAttackSystem* GetAbsorbAttackSystem(){ return nullptr; };
+
+
+
 	// 状態リセット
 	void SetStateReset(){ return _playerState.StateReset(); }
 
@@ -369,7 +450,7 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	// 攻撃関連の情報設定関数
 	void InitializeAttackData();				// 攻撃データ初期化
 	void InitializeAttackConfigs(int maxCombo);	// 攻撃設定配列初期化
-	void SetAttackStatusData(int maxCombo);		// 攻撃状態を攻撃配列に入れる
+	void SetAttackStateData(int maxCombo);		// 攻撃状態を攻撃配列に入れる
 	void CreateAttackData(int maxCombo);		// 攻撃コリジョンデータ作成	
 	void SetAttackColData(AttackCollision config, std::shared_ptr<AttackBase> attack);			// 攻撃コリジョン情報設定
 	void SetAttackOffsetData(AttackColOffset config, std::shared_ptr<AttackBase> attack);		// 攻撃オフセット情報設定
@@ -384,6 +465,7 @@ protected:	// 攻撃関係 --- 今後クラスで分ける予定 ------------------------------
 	void ProcessBranchAttack();		// 攻撃分岐処理
 	void ReceiveAttackColData();	// 攻撃コリジョンの情報受け取り関数
 	bool CanStartAttack();			// 攻撃を開始できるかチェック
+	bool CanStartAbility();			// 能力を開始できるかチェック
 	bool CanNextAttack();			// 次の攻撃が可能かチェック
 	bool IsAttacking();				// 攻撃中かチェック
 	bool IsAttackInput();			// 攻撃入力があるかチェック
@@ -417,10 +499,6 @@ protected:	// 弾発射関係 --- 今後クラスで分ける予定 ----------------------------
 	virtual BulletEffectConfig GetBulletEffectConfig(){ return BulletEffectConfig{}; }	// 弾演出設定の取得
 
 	virtual void ProcessShoot(){};	// 発射処理の仮想関数
-
-protected:	// 吸収攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
-
-	virtual void ProcessAbsorb(){};	// 吸収攻撃の仮想関数
 
 protected:	// 回避関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
@@ -523,54 +601,54 @@ protected:
 
 
 
-// まだ未使用のクラスたち
-class PlayerInput
-{
-public:
-
-	// 入力状態の取得
-	bool IsMoving() const;
-	bool IsDashing() const;
-	bool IsAttackPressed() const;
-	bool IsDodgePressed() const;
-
-	// 入力状態を設定する
-	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
-	{
-		_key = key;
-		_trg = trg;
-		_lx = lx;
-		_ly = ly;
-		_rx = rx;
-		_ry = ry;
-		_analogMin = analogMin;
-	}
-
-protected:
-	// 入力関係
-	int _key = 0;
-	int _trg = 0;
-	float _lx = 0.0f;
-	float _ly = 0.0f;
-	float _rx = 0.0f;
-	float _ry = 0.0f;
-	float _analogMin = 0.0f;
-};
-
-class PlayerMove
-{
-public:
-	void InitializePlayerConfig(PlayerConfig& config);	// プレイヤー設定初期化
-	void ProcessMovement(const PlayerInput& input, float cameraAngle);
-
-protected:
-	PlayerConfig _config;
-};
-
-class PlayerAnimator
-{
-
-};
+//// まだ未使用のクラスたち
+//class PlayerInput
+//{
+//public:
+//
+//	// 入力状態の取得
+//	bool IsMoving() const;
+//	bool IsDashing() const;
+//	bool IsAttackPressed() const;
+//	bool IsDodgePressed() const;
+//
+//	// 入力状態を設定する
+//	void SetInput(int key, int trg, float lx, float ly, float rx, float ry, float analogMin)
+//	{
+//		_key = key;
+//		_trg = trg;
+//		_lx = lx;
+//		_ly = ly;
+//		_rx = rx;
+//		_ry = ry;
+//		_analogMin = analogMin;
+//	}
+//
+//protected:
+//	// 入力関係
+//	int _key = 0;
+//	int _trg = 0;
+//	float _lx = 0.0f;
+//	float _ly = 0.0f;
+//	float _rx = 0.0f;
+//	float _ry = 0.0f;
+//	float _analogMin = 0.0f;
+//};
+//
+//class PlayerMove
+//{
+//public:
+//	void InitializePlayerConfig(PlayerConfig& config);	// プレイヤー設定初期化
+//	void ProcessMovement(const PlayerInput& input, float cameraAngle);
+//
+//protected:
+//	PlayerConfig _config;
+//};
+//
+//class PlayerAnimator
+//{
+//
+//};
 
 //class PlayerDraw
 //{

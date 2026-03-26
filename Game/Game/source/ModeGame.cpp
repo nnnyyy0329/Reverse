@@ -54,7 +54,9 @@ bool ModeGame::Initialize()
 	{
 		ModeTextBox::ShowChain({
 			{"Textbox_Scared", "うわっなんだこれ！"},
-			{"Textbox_Kage", "お前に何かあったら俺もどうなるか分からねぇからな。\nと言っても、俺を薄く伸ばして覆ってるみたいなもんだから\nないよりマシって程度だけどな。っと説明は後だ、とりあえず奥に行こうぜ。"}
+			{"Textbox_Kage", "お前に何かあったら俺もどうなるか分からねぇからな。"},
+			{"Textbox_Kage", "...と言っても、俺を薄く伸ばして覆ってるみたいな \nもんだからないよりマシって程度だけどな。"},
+			{"Textbox_Kage", "っと説明は後だ、とりあえず奥に行こうぜ。" }
 			}, false, 100, "stage1_start");
 	}
 	else if(_currentStageNum == 2) // ステージ3開始時
@@ -116,6 +118,7 @@ bool ModeGame::Initialize()
 	// ステージ初期化
 	_currentStageNum = 0;
 	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
+	_stage->SetPlayerManager(_playerManager);
 
 	// プレイヤーアンロックマネージャー初期化
 	{
@@ -182,7 +185,6 @@ bool ModeGame::Initialize()
 
 	_shadowMapHandle = MakeShadowMap(2048, 2048);
 
-
 	return true;
 }
 
@@ -190,14 +192,33 @@ bool ModeGame::Terminate()
 {
 	base::Terminate();
 
+	AttackManager::DestroyInstance();
 	AttackEffectSystem::DestroyInstance();
+	EnergyManager::DestroyInstance();
+	BulletManager::DestroyInstance();
+	StaminaManager::DestroyInstance();
 
+	_stage.reset();
 
 	// ライトの終了処理
 	TerminateLights();
 
 	// プレイヤー開放
+	_playerManager->Terminate();
 	_playerManager.reset();
+	_abilitySelectScreen ->Terminate();
+	_abilitySelectScreen.reset();
+	_abilitySelectManager.reset();
+	_abilityActionHint->Terminate();
+	_abilityActionHint.reset();
+	_energyUI->Terminate();
+	_energyUI.reset();
+	_playerLifeBarUI->Terminate();
+	_playerLifeBarUI.reset();
+	_staminaUI->Terminate();
+	_staminaUI.reset();
+	_dodgeSystem.reset();
+
 
 	return true;
 }
@@ -220,33 +241,29 @@ bool ModeGame::Process()
 	// InputManagerから入力を取得
 	auto& im = InputManager::GetInstance();
 
-
-	// Debug: ゲームパッドの右トリガー(RT)のトリガー状態で全滅（デバッグ用）
-
-	//if(im.GetTrigger().rtTrg)
-	//{
-	//	if(_stage)
-	//	{
-	//		_stage->DebugKillAllEnemies();
-	//		// 直ちにステージの Process() を1回進めて全滅時のテキスト表示等を発動させる
-	//		_stage->Process();
-	//	}
-	//}
 	// ゲームオーバーチェック
 	{
+		bool debugDeath = false; // デバッグ用全滅フラグ
+		if(im.IsTrigger(INPUT_ACTION::DEBUG3))
+		{
+			debugDeath = true;
+		}
+
 		auto activePlayer = _playerManager->GetActivePlayerShared();
-		if (activePlayer && activePlayer->GetIsDead())
+		if (activePlayer && activePlayer->GetIsDead() || debugDeath)
 		{
 			// ModeGameOverを追加
 			ModeGameOver* modeGameOver = new ModeGameOver();
 			ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
 			_stage->StopStageBGM();
+
+			// サウンド再生
+			SoundServer::GetInstance()->Play("SE_GameOver", DX_PLAYTYPE_BACK);
+
 			// この後の処理をスキップ
 			return true;
 		}
 	}
-
-	// 能力選択画面のデバッグ関数
 
 	// startでメニューを開く
 	if (im.IsTrigger(INPUT_ACTION::MENU))
@@ -261,14 +278,18 @@ bool ModeGame::Process()
 		auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
 		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
 		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+		auto killAllEnemies = new MenuItemDeathAllEnemies(this, "KillAllEnemies");
 
 		// デバッグカメラ切り替え
 		debugCamera->SetCameraManagerMenu(_cameraManager);
+
+		killAllEnemies->SetStageBase(_stage);
 
 		modeMenu->AddMenuItem(viewDebugInfo);
 		modeMenu->AddMenuItem(viewCollision);
 		modeMenu->AddMenuItem(useCollision);
 		modeMenu->AddMenuItem(debugCamera);
+		modeMenu->AddMenuItem(killAllEnemies);
 	}
 
 	// クラスセット
@@ -287,6 +308,8 @@ bool ModeGame::Process()
 
 		_abilitySelectManager->SetAbilitySelectScreen(_abilitySelectScreen);
 		_abilitySelectManager->SetPlayerManager(_playerManager);
+
+		_stage->SetPlayerManager(_playerManager);
 
 		// 弾発射プレイヤーにカメラマネージャーを設定
 		auto bulletPlayer = std::dynamic_pointer_cast<BulletPlayer>(_playerManager->GetPlayerByType(PLAYER_TYPE::BULLET));
@@ -313,9 +336,6 @@ bool ModeGame::Process()
 		_playerUnlockManager->Process();
 		_stage->Process();
 		_dodgeSystem->Process();
-		_energyUI->Process();
-		_playerLifeBarUI->Process();
-		_staminaUI->Process();
 		_abilitySelectScreen->Process();
 		_abilitySelectManager->Process();
 		//_shieldBase->Process();
@@ -350,7 +370,8 @@ bool ModeGame::Process()
 
 		// キャラと吸収攻撃
 		{
-			for(const auto& enemy : enemies){ CheckHitAbsorbAttack(player, enemy); }
+			auto surfacePlayer = _playerManager->GetPlayerByType(PLAYER_TYPE::SURFACE);
+			for(const auto& enemy : enemies){ CheckHitAbsorbAttack(surfacePlayer, enemy); }
 		}
 
 		// キャラ同士
@@ -397,21 +418,39 @@ bool ModeGame::Process()
 		if (energyMgr && energyMgr->CanSwitchPlayer())
 		{
 			_bTransformAvailableNotified = true;
-			ModeTextBox::Show("Textbox_Kage", "よし、充分盗れたぜ。\n十字キー左を押してそのままこいつをぶっ飛ばしてやれ", false, 100, "energy_ready");
+			ModeTextBox::Show("Textbox_Kage", "よし、充分盗れたぜ。\n試しにBボタンを押して\nそのままこいつをぶっ飛ばしてやれ。", false, 100, "energy_ready");
 		}
 	}
+
+
+
+	// プレイヤーの初回変身時のテキスト表示処理
+	ProcessFirstTimeTransformText();
+
+	// プレイヤー初回変身解除時のテキスト表示処理
+	ProcessFirstTimeTransformCancelText();
+
+
 
 	// ステージ3：ボタン1つで敵全滅 → 全滅後にLOGOへ戻す
 	if(_currentStageNum == 2 && _stage)
 	{
-		// DEBUG3: キーボードF3 / パッドBACK
-		if(im.IsTrigger(INPUT_ACTION::DEBUG3))
+		// 全滅したら最初のLOGOへ（疑似的にゲーム終了）
+		if(_stage->IsBossDefeated())
 		{
-			_stage->DebugKillAllEnemies();
+			static float timer = 0.0f;
+			timer += 1.0f;
+			if (timer >= 120.0f)// 2秒待ってから
+			{
+				timer = 0.0f;
+				ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
+				ModeServer::GetInstance()->Del(this);
+				return true;
+			}
 		}
-
-	
 	}
+
+
 
 	// エフェクト更新
 	EffectServer::GetInstance()->Update();
@@ -547,7 +586,6 @@ bool ModeGame::Render()
 		DrawFormatString(10, 100, GetColor(255, 255, 255), "有効なライト : %d", _lights.size());
 
 		AttackManager::GetInstance()->DebugRender();
-		BulletManager::GetInstance()->DebugRender();
 		EnergyManager::GetInstance()->DebugRender();
 
 		// プレイヤーデバッグ情報
@@ -559,12 +597,22 @@ bool ModeGame::Render()
 	{
 		if(_stage)
 		{
-			const int current = _stage->GetCurrentEnemyCnt();
-			const int total = _stage->GetTotalEnemyCnt();
+			if (_stage->GetStageNum() == 2)
+			{
+				SetFontSize(24);
+				DrawFormatString(60, 120, GetColor(255, 255, 255), "ボスを倒せ！");
+				SetFontSize(16);
+			}
+			else
+			{
+				const int current = _stage->GetCurrentEnemyCnt();
+				const int total = _stage->GetTotalEnemyCnt();
 
-			SetFontSize(24);
-			DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
-			SetFontSize(16);
+				SetFontSize(24);
+				//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
+				DrawFormatString(60, 120, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
+				SetFontSize(16);
+			}
 		}
 	}
 
@@ -575,6 +623,7 @@ bool ModeGame::Render()
 	{
 		_stage->CollisionRender();
 		AttackManager::GetInstance()->CollisionRender();
+		BulletManager::GetInstance()->DebugRender();
 
 		// プレイヤーコリジョン描画
 		std::shared_ptr<PlayerBase> activePlayer = _playerManager->GetActivePlayerShared();
@@ -725,9 +774,14 @@ void ModeGame::ChangeStage(std::shared_ptr<StageBase> newStage, int stageNum)
 
 	// オブジェクトのクリア
 	{
-		BulletManager::GetInstance()->ClearAllBullets();
+		auto bulletManager = BulletManager::GetInstance();
+		bulletManager->ClearAllBullets(bulletManager->GetAllBullets());
+
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
+
+	auto player = _playerManager->GetActivePlayerShared();
+	player->SetDir(VGet(0.0f, 0.0f, -1.0f));
 
 	_cameraManager->Reset();
 
@@ -788,12 +842,13 @@ void ModeGame::RestartCurrentStage()
 		activePlayer->SetDir(vDir);
 
 		// プレイヤーのモーションリセット
-		
 	}
 
 	// オブジェクトのクリア
 	{
-		BulletManager::GetInstance()->ClearAllBullets();
+		auto bulletManager = BulletManager::GetInstance();
+		bulletManager->ClearAllBullets(bulletManager->GetAllBullets());
+
 		AttackManager::GetInstance()->ClearAllAttacks();
 	}
 
@@ -806,9 +861,54 @@ void ModeGame::RestartCurrentStage()
 void ModeGame::SetPlayerConfig(VECTOR vPos, VECTOR vRot)
 {
 	auto player = _playerManager->GetActivePlayerShared();
+	if(!player) { return; }
 
 	player->SetPos(vPos);
 
-	VECTOR vDir = VGet(sinf(vRot.y), 0.0f, cosf(vRot.y));
+	VECTOR vDir = VGet(0.0f, 0.0f, 0.0f);
+	vDir = VGet(sinf(vRot.y), 0.0f, cosf(vRot.y));
 	player->SetDir(vDir);
+}
+
+void ModeGame::ProcessFirstTimeTransformText()
+{
+	// すでに一度でも変身プレイヤーになったことがあるなら、テキストは表示しない
+	if(_bIsTransformPlayer){ return; }
+
+	// プレイヤーのタイプが一度でも表プレイヤー以外になっていないなら
+	if(_playerManager->GetActivePlayerType() != PLAYER_TYPE::SURFACE)
+	{
+		// 一度だけ出すためにフラグを有効にする
+		_bIsTransformPlayer = true;
+
+		// 変身時のテキスト表示
+		ModeTextBox::Show
+		(
+			"Textbox_Kage",
+			{ "変身できたな。\nRTボタンかLTボタンで攻撃することができる。\nそれで敵を一掃しちまいな。" },
+			false, 
+			100,
+			"energy_ready"
+		);
+	}
+}
+
+void ModeGame::ProcessFirstTimeTransformCancelText()
+{
+	if(isCompleteTransCancel){ return; }
+
+	isCompleteTransCancel = _playerManager->GetIsTransformCancelFirstTime();
+
+	if(_playerManager->GetActivePlayerType() == PLAYER_TYPE::SURFACE && isCompleteTransCancel)
+	{
+		// 変身時のテキスト表示
+		ModeTextBox::Show
+		(
+			"Textbox_Kage",
+			{ "エネルギーが切れたな。\nもう一度エネルギー集めなおして変身するぞ。" },
+			false,
+			100,
+			"energy_ready"
+		);
+	}
 }

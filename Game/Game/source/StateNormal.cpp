@@ -5,30 +5,47 @@
 namespace
 {
 	// 攻撃コリジョン設定用定数
-	constexpr auto ATTACK_COLLISION_OFFSET_Z = 80.0f;	// 攻撃コリジョン前方オフセット
+	constexpr auto ATTACK_COLLISION_OFFSET_Z = 90.0f;	// 攻撃コリジョン前方オフセット
 	constexpr auto ATTACK_COLLISION_OFFSET_Y = 60.0f;	// 攻撃コリジョンY位置オフセット
 	constexpr auto ATTACK_COLLISION_HEIGHT = 60.0f;		// 攻撃コリジョン高さ
 	constexpr auto ATTACK_COLLISION_RADIUS = 40.0f;		// 攻撃コリジョン半径
 	constexpr auto ATTACK_DELAY = 10.0f;				// 攻撃発生遅延
 	constexpr auto ATTACK_DURATION = 10.0f;				// 攻撃持続時間
-	constexpr auto ATTACK_DAMAGE = 20.0f;				// 攻撃ダメージ量
+	constexpr auto ATTACK_DAMAGE = 5.0f;				// 攻撃ダメージ量
+
+	// 飛びかかり攻撃
+	constexpr float JUMP_ATTACK_MIN_DISTANCE = 150.0f;	// 飛びかかり攻撃の最小距離
+	constexpr float JUMP_ATTACK_MAX_DISTANCE = 300.0f;	// 飛びかかり攻撃の最大距離
+	constexpr float JUMP_ATTACK_CHARGE_TIME = 30.0f;	// 飛びかかり攻撃の溜め時間
+	constexpr float JUMP_ATTACK_EXECUTE_TIME = 40.0f;	// 飛びかかり実行時間
+	constexpr float JUMP_ATTACK_RECOVERY_TIME = 180.0f;	// 飛びかかりの後隙
+	constexpr float JUMP_ATTACK_SPEED = 6.0f;			// 飛びかかりの移動速度
+	constexpr float JUMP_ATTACK_PROB = 0.1f;			// 飛びかかり攻撃の選択確率
+	constexpr float JUMP_ATTACK_DELAY = 20.0f;			// 飛びかかり攻撃の攻撃発生遅延
 
 	// 距離判定用定数
 	constexpr auto ATTACK_START_DISTANCE = 200.0f;		// 攻撃開始距離
-	constexpr auto ATTACK_EXECUTE_DISTANCE = 80.0f;		// 攻撃実行可能距離
+	constexpr auto ATTACK_EXECUTE_DISTANCE = 90.0f;		// 攻撃実行可能距離
 	constexpr auto LOST_NEARBY_HOME = 10.0f;			// 帰還完了判定距離
+	constexpr float CAUTION_DISTANCE = 300.0f;			// 警戒時に保つ距離
 
 	// 時間制御用定数
+	constexpr float WANDER_TIME = 180.f;				// 徘徊時間
+	constexpr float DETECT_TIME = 30.0f;				// 発見硬直時間
 	constexpr auto ATTACK_CHARGE_TIME = 40.0f;			// 攻撃溜め時間
 	constexpr auto ATTACK_EXECUTE_TIME = 90.0f;			// 攻撃実行時間
-	constexpr auto ATTACK_RECOVERY_TIME = 90.0f;		// 攻撃後隙時間
+	constexpr auto ATTACK_RECOVERY_TIME = 180.0f;		// 攻撃後隙時間
 	constexpr auto LOST_WAIT_TIME = 60.0f;				// 帰還前の待機時間
+	constexpr float CAUTION_TIME = 180.0f;				// 警戒時間
+	constexpr float GIVE_UP_CHASE_TIME = 300.0f;		// 追跡をあきらめるまでの時間
 
 	// 速度制御用定数
 	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;			// スムーズ回転速度
-	constexpr auto ATTACK_APPROACH_SPEED = 2.0f;		// 攻撃開始時の接近速度
+	constexpr auto ATTACK_APPROACH_SPEED = 3.0f;		// 攻撃開始時の接近速度
 	constexpr auto ATTACK_EXECUTE_SPEED = 1.5f;			// 攻撃実行時の前進速度
 	constexpr auto LOST_ROTATE_SPEED = 1.5f;			// 見渡し回転速度
+	constexpr auto CAUTION_SPEED = 1.5f;				// 警戒時の前後移動速度
+	constexpr float CAUTION_STRAFE_SPEED = 1.0f;		// 警戒時の回り込み速度
 
 	// 時間ランダム幅定数
 	constexpr auto IDLE_TIME_RANGE = 30.0f;				// 待機時間のランダム幅
@@ -38,18 +55,19 @@ namespace
 	// 見渡し関連
 	constexpr auto LOST_LOOK_ARRIVE_THRESHOLD = 2.0f;	// 見渡し到達判定角度
 	constexpr auto LOST_LOOK_ANGLE = 45.0f;				// 見渡し回転角度
-	constexpr auto LOST_LOOK_COUNT = 3;					// 見渡し回数
+	constexpr auto LOST_LOOK_COUNT = 2;					// 見渡し回数
 
 	// 視界チェック用定数
-	constexpr auto FAN_VISON_HALF_ANGLE = 45.0f;// 扇形視界の半角(度)
+	constexpr auto FAN_VISON_HALF_ANGLE = 60.0f;// 扇形視界の半角(度)
 	const float FAN_VISION_COS = cosf(FAN_VISON_HALF_ANGLE * DEGREE_TO_RADIAN);// cos値
 	constexpr auto TARGET_DETECT_RADIUS = 20.0f;// ターゲット検出に幅を持たせる(半径)
 
 	// アニメーション制御用定数
-	constexpr auto BLEND_FRAME = 5.0f;					// アニメーションブレンドフレーム数
+	constexpr auto BLEND_FRAME = 10.0f;					// アニメーションブレンドフレーム数
 	constexpr auto ANIM_LOOP_COUNT = 0;					// アニメーションループ回数(0=無限)
 	constexpr auto ANIM_PLAY_COUNT = 1;					// アニメーション再生回数
-	constexpr auto ANIM_SPEED_FAST = 1.5f;				// アニメーション再生速度(速い)
+	constexpr float ANIM_SPEED_DOUBLE = 2.0f;			// アニメーション再生速度(倍速)
+	constexpr float ANIM_SPEED_HALF = 0.5f;				// アニメーション再生速度(半速)
 
 	// エフェクト関連
 	constexpr auto ATTACK_EFFECT_OFFSET_Y = 100.0f;		// 攻撃エフェクトYオフセット
@@ -71,8 +89,25 @@ namespace
 		return settings;
 	}
 
+	// 飛びかかり攻撃コリジョン設定生成
+	EnemyAttackSettings MakeJumpAttackSettings()
+	{
+		EnemyAttackSettings settings;
+		settings.colType = COLLISION_TYPE::CAPSULE;
+		settings.vTopOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y + ATTACK_COLLISION_HEIGHT, ATTACK_COLLISION_OFFSET_Z);
+		settings.vBottomOffset = VGet(0.0f, ATTACK_COLLISION_OFFSET_Y, ATTACK_COLLISION_OFFSET_Z);
+		settings.fRadius = ATTACK_COLLISION_RADIUS;
+		settings.fDelay = JUMP_ATTACK_DELAY;
+		settings.fDuration = ATTACK_DURATION;
+		settings.fRecovery = 0.0f;
+		settings.fDamage = ATTACK_DAMAGE * 1.5f;// ダメージ変えるかも
+		settings.ownerId = 0;
+		return settings;
+	}
+
 	// 定数として保存
 	const EnemyAttackSettings NORMAL_ATTACK_SETTINGS = MakeNormalAttackSettings();
+	const EnemyAttackSettings JUMP_ATTACK_SETTINGS = MakeJumpAttackSettings();
 }
 
 namespace Normal
@@ -127,6 +162,13 @@ namespace Normal
 
 	std::shared_ptr<EnemyState> Idle::Update(Enemy* owner)
 	{
+		// 仲間から知らせを受け取ったかチェック
+		if (owner->IsAllerted())
+		{
+			owner->SetAllerted(false);// フラグをリセット
+			return std::make_shared<Notice>();
+		}
+
 		// 索敵結果チェック
 		if (owner->IsTargetDetected())
 		{
@@ -162,7 +204,7 @@ namespace Normal
 		_fTimer = 0.0f;
 
 		// 時間ランダム設定
-		_fTargetTimer = CalcRandomRangeTime(owner->GetEnemyParam().fMoveTime, WANDER_TIME_RANGE);
+		_fTargetTimer = CalcRandomRangeTime(WANDER_TIME, WANDER_TIME_RANGE);
 
 		// アニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
@@ -179,6 +221,13 @@ namespace Normal
 
 	std::shared_ptr<EnemyState> Wander::Update(Enemy* owner)
 	{
+		// 仲間から知らせを受け取ったかチェック
+		if (owner->IsAllerted())
+		{
+			owner->SetAllerted(false);// フラグをリセット
+			return std::make_shared<Notice>();
+		}
+
 		// 索敵結果チェック
 		if (owner->IsTargetDetected())
 		{
@@ -219,7 +268,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_look_00", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_FAST);
+			animManager->ChangeAnimationByName("Nenemy_look_00", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_DOUBLE);
 		}
 
 		// SE
@@ -240,7 +289,93 @@ namespace Normal
 
 		const auto& param = owner->GetEnemyParam();
 		// 時間経過チェック
-		if (_fTimer >= param.fDetectTime)
+		if (_fTimer >= DETECT_TIME)
+		{
+			// 周囲の敵に知らせる
+			owner->AlertAllies();
+
+			// 乱数が、攻撃性パラメータ以下なら接近、そうでなければ警戒へ遷移
+			float fRand = mymath::RandomRange(0.0f, 1.0f);
+			if(fRand <= param.fAggression)
+			{
+				return std::make_shared<Approach>();
+			}
+			else
+			{
+				return std::make_shared<Caution>();
+			}
+		}
+
+		return nullptr;
+	}
+
+	// 警戒
+	void Caution::Enter(Enemy* owner)
+	{
+		_fTimer = 0.0f;
+
+		// 左右どちらに回り込むかをランダムに決定
+		_fStrafeDir = (mymath::RandomRange(0.0f, 1.0f) > 0.5f) ? -1.0f : 1.0f;
+
+		// アニメーション設定
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+		}
+	}
+
+	std::shared_ptr<EnemyState> Caution::Update(Enemy* owner)
+	{
+		auto targetInfo = GetTargetInfo(owner);
+
+		if (!targetInfo.bExist)
+		{
+			return TransitionToLostNoTarget<LostTarget>(owner);
+		}
+
+		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
+		if (areaResult) { return areaResult; }
+
+		// 常にターゲットの方向を向く
+		RotateToTarget(owner, targetInfo.vDir, SMOOTH_ROTATE_SPEED);
+
+		// 移動ベクトル計算
+		VECTOR vMove = VGet(0.0f, 0.0f, 0.0f);
+
+		// 一定距離を保つように前後移動
+		float fDistDiff = targetInfo.fDist - CAUTION_DISTANCE;
+		if (fDistDiff > 20.0f)
+		{
+			// 遠いので近づく
+			vMove = VAdd(vMove, VScale(targetInfo.vDir, CAUTION_SPEED));
+		}
+		else
+		{
+			// 近いので離れる
+			vMove = VAdd(vMove, VScale(targetInfo.vDir, -CAUTION_SPEED));
+		}
+
+		// 回り込みの左右移動
+		// ターゲットへの方向ベクトルから右方向ベクトルを作る
+		VECTOR vRight = VGet(targetInfo.vDir.z, 0.0f, targetInfo.vDir.x);
+		vMove = VAdd(vMove, VScale(vRight, _fStrafeDir * CAUTION_STRAFE_SPEED));
+
+		// 移動処理
+		float fMoveSize = VSize(vMove);
+		if (fMoveSize > 0.01f)
+		{
+			VECTOR vMoveDir = VNorm(vMove);
+			MoveToTarget(owner, vMoveDir, CAUTION_SPEED);
+		}
+		else
+		{
+			StopMove(owner);
+		}
+
+		_fTimer++;
+
+		if (_fTimer >= CAUTION_TIME)
 		{
 			return std::make_shared<Approach>();
 		}
@@ -258,7 +393,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_DOUBLE);
 		}
 	}
 
@@ -273,23 +408,41 @@ namespace Normal
 			return TransitionToLostNoTarget<LostTarget>(owner);
 		}
 
-		// 追跡限界距離チェック
-		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
-		if (result) { return result; }
-
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
 		if (areaResult) { return areaResult; }
 
-		// 攻撃開始距離チェック
+		_fTimer++;
+		// 時間切れによる諦めチェック
+		if(_fTimer >= GIVE_UP_CHASE_TIME)
+		{
+			// ターゲットを見失って帰還する
+			return TransitionToLostNoTarget<LostTarget>(owner);
+		}
+
+		// 攻撃の分岐判定
+		// 近接攻撃の距離内なら、近接攻撃する
 		if (targetInfo.fDist <= ATTACK_START_DISTANCE)
 		{
 			return std::make_shared<AttackStart>();
 		}
 
+		// 飛びかかり攻撃の距離内なら、確率で飛びかかりへ派生する
+		if (targetInfo.fDist >= JUMP_ATTACK_MIN_DISTANCE && targetInfo.fDist <= JUMP_ATTACK_MAX_DISTANCE)
+		{
+			// CDがあがっているかつ、一定間隔に一度、抽選を行う
+			if (owner->CanSpecialAttack() && static_cast<int>(_fTimer) % 120 == 0)
+			{
+				if (mymath::RandomRange(0.0f, 1.0f) < JUMP_ATTACK_PROB)
+				{
+					return std::make_shared<JumpAttackCharge>();
+				}
+			}
+		}
+
 		// ターゲット方向へ回転・移動
 		RotateToTarget(owner, targetInfo.vDir, SMOOTH_ROTATE_SPEED);
-		MoveToTarget(owner, targetInfo.vDir, owner->GetEnemyParam().fMoveSpeed);
+		MoveToTarget(owner, targetInfo.vDir, owner->GetEnemyParam().fMoveSpeed * 1.2f);// 少し速く
 
 		return nullptr;
 	}
@@ -301,6 +454,11 @@ namespace Normal
 		_fTimer = 0.0f;
 
 		// アニメーション設定
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_DOUBLE);
+		}
 	}
 
 	std::shared_ptr<EnemyState> AttackStart::Update(Enemy* owner)
@@ -308,7 +466,7 @@ namespace Normal
 		// ターゲット情報取得
 		auto targetInfo = GetTargetInfo(owner);
 
-		// ターゲット存在チェック
+		// ターゲットを見失った
 		if (!targetInfo.bExist)
 		{
 			return TransitionToLostNoTarget<LostTarget>(owner);
@@ -317,13 +475,16 @@ namespace Normal
 		// タイマー更新
 		_fTimer++;
 
-		// 追跡限界距離チェック
-		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
-		if (result) { return result; }
-
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
 		if (areaResult) { return areaResult; }
+
+		// 時間切れによる諦めチェック
+		if (_fTimer >= GIVE_UP_CHASE_TIME)
+		{
+			// ターゲットを見失って帰還する
+			return TransitionToLostNoTarget<LostTarget>(owner);
+		}
 
 		if (targetInfo.fDist <= ATTACK_EXECUTE_DISTANCE)
 		{
@@ -471,10 +632,135 @@ namespace Normal
 		// 移動停止
 		StopMove(owner);
 
+		const auto& param = owner->GetEnemyParam();
 		// 後隙時間終了チェック
 		if (_fTimer >= ATTACK_RECOVERY_TIME)
 		{
-			return std::make_shared<Approach>();
+			// 乱数が、攻撃性パラメータ以下なら接近、そうでなければ警戒へ遷移
+			float fRand = mymath::RandomRange(0.0f, 1.0f);
+			if (fRand <= param.fAggression)
+			{
+				return std::make_shared<Approach>();
+			}
+			else
+			{
+				return std::make_shared<Caution>();
+			}
+		}
+
+		return nullptr;
+	}
+
+	// 飛びかかり攻撃溜め
+	void JumpAttackCharge::Enter(Enemy* owner)
+	{
+		_fTimer = 0.0f;
+
+		// アニメーション設定
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			animManager->ChangeAnimationByName("enemy_attack_00", BLEND_FRAME, ANIM_PLAY_COUNT);
+		}
+	}
+
+	std::shared_ptr<EnemyState> JumpAttackCharge::Update(Enemy* owner)
+	{
+		_fTimer++;
+
+		StopMove(owner);
+
+		// 溜め中はターゲットの方向を向く
+		auto targetInfo = GetTargetInfo(owner);
+		if(targetInfo.bExist)
+		{
+			RotateToTarget(owner, targetInfo.vDir, SMOOTH_ROTATE_SPEED);
+		}
+
+		if(_fTimer >= JUMP_ATTACK_CHARGE_TIME)
+		{
+			return std::make_shared<JumpAttackExecute>();
+		}
+
+		return nullptr;
+	}
+
+	// 飛びかかり攻撃実行
+	void JumpAttackExecute::Enter(Enemy* owner)
+	{
+		_fTimer = 0.0f;
+		_bHasCollision = false;
+		// 飛びかかりの瞬間の向きを保存し、軌道を固定する
+		_vJumpDir = owner->GetDir();
+
+		// 飛びかかり後は、しばらく再使用不可にする
+		owner->ResetCoolDowns(1200.0f);
+
+		owner->StartAttack(JUMP_ATTACK_SETTINGS);
+		_bHasCollision = true;
+	}
+
+	std::shared_ptr<EnemyState> JumpAttackExecute::Update(Enemy* owner)
+	{
+		_fTimer++;
+
+		// 保存した方向へ突進する
+		MoveToTarget(owner, _vJumpDir, JUMP_ATTACK_SPEED);
+
+		if (_bHasCollision)
+		{
+			owner->UpdateAttackTransform(JUMP_ATTACK_SETTINGS);
+		}
+
+		if (_fTimer >= JUMP_ATTACK_EXECUTE_TIME)
+		{
+			return std::make_shared<JumpAttackRecovery>();
+		}
+
+		return nullptr;
+	}
+
+	void JumpAttackExecute::Exit(Enemy* owner)
+	{
+		if (_bHasCollision)
+		{
+			owner->StopAttack();
+			_bHasCollision = false;
+		}
+	}
+
+	// 飛びかかり攻撃後隙
+	void JumpAttackRecovery::Enter(Enemy* owner)
+	{
+		_fTimer = 0.0f;
+		StopMove(owner);
+
+		AnimManager* animManager = owner->GetAnimManager();
+		if (animManager)
+		{
+			animManager->ChangeAnimationByName("enemy_idle_01", BLEND_FRAME, ANIM_LOOP_COUNT);
+		}
+	}
+
+	std::shared_ptr<EnemyState> JumpAttackRecovery::Update(Enemy* owner)
+	{
+		_fTimer++;
+		StopMove(owner);
+
+		const auto& param = owner->GetEnemyParam();
+		// 後隙時間終了チェック
+		if (_fTimer >= ATTACK_RECOVERY_TIME)
+		{
+			// 乱数が、攻撃性パラメータ以下なら接近、そうでなければ警戒へ遷移
+			float fRand = mymath::RandomRange(0.0f, 1.0f);
+			if (fRand <= param.fAggression)
+			{
+				return std::make_shared<Approach>();
+			}
+			else
+			{
+				return std::make_shared<Caution>();
+			}
 		}
 
 		return nullptr;
@@ -503,7 +789,7 @@ namespace Normal
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Nenemy_miss_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("Nenemy_miss_00", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
 		}
 	}
 

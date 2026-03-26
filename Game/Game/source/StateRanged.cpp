@@ -12,15 +12,17 @@ namespace
 	constexpr auto LOST_NEARBY_HOME = 10.0f;			// 帰還完了判定距離
 
 	// 時間制御用定数
+	constexpr float DETECT_TIME = 60.0f;				// 発見硬直時間
 	constexpr auto WANDER_LOOK_MIN_TIME = 60.0f;		// 徘徊時の最小視線停止時間
 	constexpr auto WANDER_LOOK_RANDOM_TIME = 60.0f;		// 徘徊時の視線停止ランダム追加時間
 	constexpr auto SHOT_CHARGE_TIME = 120.0f;			// 射撃溜め時間
 	constexpr auto SHOT_EXECUTE_TIME = 130.0f;			// 射撃実行時間
-	constexpr auto SHOT_RECOVERY_TIME = 60.0f;			// 射撃後隙時間
+	constexpr auto SHOT_RECOVERY_TIME = 120.0f;			// 射撃後隙時間
 	constexpr auto SHOT_INTERVAL_TIME = 90.0f;			// 射撃間隔時間
 	constexpr float SHOT_BULLET_TIME = 90.0f;			// 実際に弾が発射される時間(アニメーション準拠)
 	constexpr auto LOST_WAIT_TIME = 60.0f;				// 帰還前の待機時間
 	constexpr auto RETREAT_TIME = 120.0f;				// 後退時間
+	constexpr float GIVE_UP_CHASE_TIME = 300.0f;		// 追跡をあきらめるまでの時間
 
 	// 速度制御用定数
 	constexpr auto WANDER_ROTATE_SPEED = 2.0f;			// 徘徊時の回転速度
@@ -41,7 +43,7 @@ namespace
 
 	// 弾設定用定数
 	constexpr auto BULLET_SPEED = 15.0f;				// 弾速度
-	constexpr auto BULLET_RADIUS = 10.0f;				// 弾半径
+	constexpr auto BULLET_RADIUS = 18.0f;				// 弾半径
 	constexpr auto BULLET_LIFETIME = 180;				// 弾生存時間(フレーム)
 	constexpr auto BULLET_SPAWN_OFFSET_Y = 100.0f;		// 弾発射Y座標オフセット
 	constexpr auto BULLET_SPAWN_OFFSET_Z = 50.0f;		// 弾発射前方オフセット
@@ -58,7 +60,7 @@ namespace
 	constexpr auto LOST_LOOK_COUNT = 3;					// 見渡し回数
 
 	// 視界チェック用定数
-	constexpr auto FAN_VISON_HALF_ANGLE = 45.0f;// 扇形視界の半角(度)
+	constexpr auto FAN_VISON_HALF_ANGLE = 75.0f;// 扇形視界の半角(度)
 	const float FAN_VISION_COS = cosf(FAN_VISON_HALF_ANGLE * DEGREE_TO_RADIAN);// cos値
 	constexpr auto TARGET_DETECT_RADIUS = 30.0f;// ターゲット検出に幅を持たせる(半径)
 
@@ -213,7 +215,7 @@ namespace Ranged
 		_fTimer = 0.0f;
 
 		// 時間ランダム設定
-		_fTargetTimer = CalcRandomRangeTime(owner->GetEnemyParam().fDetectTime, NOTICE_TIME_RANGE);
+		_fTargetTimer = CalcRandomRangeTime(DETECT_TIME, NOTICE_TIME_RANGE);
 
 		// ここでアニメーション設定
 		AnimManager* animManager = owner->GetAnimManager();
@@ -258,7 +260,7 @@ namespace Ranged
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("Senemy_back_00", BLEND_FRAME, ANIM_LOOP_COUNT);
+			animManager->ChangeAnimationByName("enemy_walk_01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
 	}
 
@@ -273,13 +275,17 @@ namespace Ranged
 			return TransitionToLostNoTarget<LostTarget>(owner);
 		}
 
-		// 追跡限界距離チェック
-		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
-		if(result) { return result; }
-
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
 		if (areaResult) { return areaResult; }
+
+		_fTimer++;
+		// 時間切れによる諦めチェック
+		if (_fTimer >= GIVE_UP_CHASE_TIME)
+		{
+			// ターゲットを見失って帰還する
+			return TransitionToLostNoTarget<LostTarget>(owner);
+		}
 
 		// 射撃射程内チェック
 		if (targetInfo.fDist <= APPROACH_STOP_DISTANCE)
@@ -322,10 +328,6 @@ namespace Ranged
 			return TransitionToLostNoTarget<LostTarget>(owner);
 		}
 
-		// 追跡限界距離チェック
-		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
-		if (result) { return result; }
-
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
 		if (areaResult) { return areaResult; }
@@ -366,10 +368,6 @@ namespace Ranged
 
 		// タイマー更新
 		_fTimer++;
-
-		// 追跡限界距離チェック
-		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
-		if (result) { return result; }
 
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);
@@ -468,7 +466,7 @@ namespace Ranged
 		{
 			if (!_bHasShot && targetInfo.bExist)
 			{
-				owner->SpawnBullet(GetBulletConfig(owner));
+				owner->SpawnBullet(GetBulletConfig(owner), GetBulletEffectConfig());
 
 				// エフェクト
 				{
@@ -519,7 +517,9 @@ namespace Ranged
 		vSpawnPos = VAdd(vSpawnPos, VScale(vDir, BULLET_SPAWN_OFFSET_Z));
 
 		// ターゲットへの方向計算
-		VECTOR vToTarget = VSub(targetInfo.target->GetPos(), vSpawnPos);
+		VECTOR vTargetPos = targetInfo.target->GetPos();
+		vTargetPos.y = vSpawnPos.y;// 水平な方向を計算するためにYを揃える
+		VECTOR vToTarget = VSub(vTargetPos, vSpawnPos);
 		VECTOR vBulletDir = VNorm(vToTarget);
 
 		// 弾の情報
@@ -535,6 +535,16 @@ namespace Ranged
 		config.speed = BULLET_SPEED;
 		config.lifeTime = BULLET_LIFETIME;
 
+		return config;
+	}
+
+	BulletEffectConfig ShotExecute::GetBulletEffectConfig()
+	{
+		BulletEffectConfig config;
+
+		config.effectName = "Ranged_Bullet";// エフェクトの名前
+		config.effectOffset = VGet(0.0f, 0.0f, 0.0f);// エフェクトの発生位置オフセット
+		config.soundName = "";// サウンドの名前
 		return config;
 	}
 
@@ -615,10 +625,6 @@ namespace Ranged
 
 		// タイマー更新
 		_fTimer++;
-		
-		// 追跡限界距離チェック
-		auto result = TransitionToLostOverChaseLimit<LostTarget>(owner, targetInfo.fDist);
-		if (result) { return result; }
 
 		// 移動可能範囲外チェック
 		auto areaResult = TransitionToLostOutsideArea<LostTarget>(owner);

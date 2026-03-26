@@ -23,8 +23,8 @@ StaminaUI::StaminaUI()
 
 StaminaUI::~StaminaUI()
 {
-	DeleteGraph(_iStaminaFrameHandle);
-	DeleteGraph(_iStaminaHandle);
+	// デストラクタ
+	Terminate();
 }
 
 bool StaminaUI::Initialize()
@@ -34,6 +34,10 @@ bool StaminaUI::Initialize()
 
 bool StaminaUI::Terminate()
 {
+	// 画像の開放
+	DeleteGraph(_iStaminaFrameHandle);
+	DeleteGraph(_iStaminaHandle);
+
 	return true;
 }
 

@@ -13,27 +13,37 @@ enum class STATE_PRIORITY
 	TOP = 100,// 最優先(Dead, Stun, Down)
 };
 
+// カプセルコリジョン設定
+struct EnemyCapsule
+{
+	float fRadius = 30.0f;// 半径
+	float fHeight = 100.0f;// 高さ
+	float fColSubY = 50.0f;// 腰位置オフセット
+};
+
 // 敵パラメータ構造体
 struct EnemyParam
 {
 	float fMoveSpeed = 2.0f;// 敵の基本移動速度
 
 	float fVisionRange = 0.0f;// 敵の索敵距離
-	float fVisionAngle = 0.0f;// 敵の視界の角度
-
-	float fAttackRange = 0.0f;// これ以内なら攻撃する距離
-	float fChaseLimitRange = 0.0f;// これ以上離れたら接近をやめる距離
 
 	float fTurnSpeed = 60.0f;// 旋回速度(度 / フレーム)
 
 	float fIdleTime = 0.0f;// 待機時間
-	float fMoveTime = 0.0f;// 徘徊時間
-	float fDetectTime = 0.0f;// 発見硬直
-	float fAttackTime = 0.0f;// 攻撃時間
+	float fDamageTime = 0.0f;// 被ダメージ時間
+	float fDamageAnimSpeed = 1.0f;// 被ダメージアニメーションの再生速度
+	bool bChangeDamageState = true;// 被ダメ状態に遷移するかどうか
+	bool bDownSE = true;// ダウンSEを鳴らすかどうか
 
 	float fMaxLife = 100.0f;// 最大体力
 
 	bool bTransToWander = true;// 徘徊へ遷移するかどうか
+	float fAggression = 0.9f;// 攻撃性 : 警戒せず接近する確率(0.0f～1.0f)
+
+	bool bUseMoveArea = true;// 移動可能範囲を適用するか
+
+	EnemyCapsule capsule;// カプセルコリジョンの設定
 
 	// 共通ステートのアニメーション名
 	const char* animDamage = "Damage";
@@ -81,10 +91,6 @@ protected:
 	// ターゲットが存在しない場合の処理(LostTargetへ)
 	template<typename LostTargetState>
 	std::shared_ptr<EnemyState> TransitionToLostNoTarget(Enemy* owner);
-
-	// 追跡限界距離チェック(これ以上離れたらLostTargetへ)
-	template<typename LostTargetState>
-	std::shared_ptr<EnemyState> TransitionToLostOverChaseLimit(Enemy* owner, float fDist);
 
 	// 移動可能範囲外チェック(範囲外ならIdleへ) : 徘徊ステート
 	template<typename IdleState>

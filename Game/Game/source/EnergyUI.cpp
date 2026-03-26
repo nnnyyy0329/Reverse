@@ -23,10 +23,8 @@ EnergyUI::EnergyUI()
 
 EnergyUI::~EnergyUI()
 {
-	DeleteGraph(_iEnergyFrameHandle);
-	DeleteGraph(_iEnergyHandle1);
-	DeleteGraph(_iEnergyHandle2);
-	DeleteGraph(_iEnergyHandle3);
+	// デストラクタ
+	Terminate();
 }
 
 bool EnergyUI::Initialize()
@@ -36,6 +34,12 @@ bool EnergyUI::Initialize()
 
 bool EnergyUI::Terminate()
 {
+	// 画像の開放
+	DeleteGraph(_iEnergyFrameHandle);
+	DeleteGraph(_iEnergyHandle1);
+	DeleteGraph(_iEnergyHandle2);
+	DeleteGraph(_iEnergyHandle3);
+
 	return true;
 }
 

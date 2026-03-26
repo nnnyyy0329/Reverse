@@ -45,13 +45,16 @@ struct LightInfo
 class ModeGame : public ModeBase
 {
 	typedef ModeBase base;
+
 public:
+
+	/* 基本関数 */
 	virtual bool Initialize();
 	virtual bool Terminate();
 	virtual bool Process();
 	virtual bool Render();
 
-	// デバッグ関連
+	/* デバッグ関連 */
 	bool GetDebugViewDebugInfo() { return _bViewDebugInfo; }
 	void SetDebugViewDebugInfo(bool bView) { _bViewDebugInfo = bView; }
 	bool GetDebugViewCollision() { return _bViewCollision; }
@@ -69,7 +72,14 @@ public:
 	void SetPlayerConfig(VECTOR vPos, VECTOR vRot);// jsonからの設定を適用(プレイヤー)
 	int GetCurrentStageNum() { return _currentStageNum; }
 
+	// プレイヤーの初回変身時のテキスト表示処理
+	void ProcessFirstTimeTransformText();
+
+	// プレイヤー初回変身解除時のテキスト表示処理
+	void ProcessFirstTimeTransformCancelText();
+
 protected:
+
 	// スマートポインタで管理する
 	// 同じオブジェクトを共有して、すべての参照がなくなったら解放される
 	std::shared_ptr<StageBase>				_stage;					// ステージ
@@ -109,6 +119,7 @@ protected:
 	int _shadowMapHandle;
 
 private:
+
 	void CheckCollisionCharaMap	(std::shared_ptr<CharaBase> chara);// キャラとマップの当たり判定
 	void CheckCollisionCharaChara(std::shared_ptr<CharaBase> chara1, std::shared_ptr<CharaBase> chara2);// キャラ同士の当たり判定
 	void CheckCollisionCameraMap();// カメラとマップの当たり判定
@@ -128,7 +139,7 @@ private:
 	void ConvertEnergy				(std::shared_ptr<AttackBase> attack, float damage);							
 
 	// 吸収攻撃の当たり判定チェック関数
-	void CheckHitAbsorbAttack(std::shared_ptr<CharaBase> player, std::shared_ptr<CharaBase>enemy);
+	void CheckHitAbsorbAttack		(std::shared_ptr<PlayerBase> player, std::shared_ptr<CharaBase>enemy);
 
 	// キャラと吸収攻撃の当たり判定
 	void CheckHitCharaAbsorbAttack	(std::shared_ptr<CharaBase> chara, std::shared_ptr<PlayerBase> owner, PlayerAbsorbAttackSystem* absorbSystem);
@@ -159,6 +170,10 @@ private:
 
 	bool _bScenarioAdded = false;
 	bool _bStage1StartTextShown = false;
-
 	bool _bTransformAvailableNotified = false; //変身可能か
+
+
+	// プレイヤーが変身したかどうか
+	bool _bIsTransformPlayer = false;
+	bool isCompleteTransCancel = false;
 };

@@ -59,6 +59,9 @@ public:
 	// ’e‚Ì“o˜^
 	void RegisterBullet(std::shared_ptr<Bullet>bullet, BULLET_OWNER_TYPE ownerType);
 
+	/// @brief ’e‰ñ”ğŒã‚Ìˆ—
+	void ProcessEvadeBullet();	
+
 	// ’e‚ğíœ
 	void RemoveBullet(std::shared_ptr<Bullet> bullet);	
 
@@ -66,7 +69,7 @@ public:
 	void RemoveBulletByOwnerType(BULLET_OWNER_TYPE ownerType);
 
 	// ‚·‚×‚Ä‚Ì’e‚ğíœ
-	void ClearAllBullets();
+	void ClearAllBullets(std::vector<std::shared_ptr<Bullet>>);
 
 	// –³Œø‚È’e‚Ìíœ
 	void CleanupInvalidBullets();	
@@ -78,13 +81,13 @@ public:
 	/* ’e‚Ì‰ñ”ğŠÖ˜A */
 
 	// ‰ñ”ğ‚³‚ê‚½’e‚ğ“o˜^
-	void RegisterDodgeBullet(std::shared_ptr<Bullet> bullet);	
+	void RegisterDodgeBullet(std::vector<std::shared_ptr<Bullet>> bullet);
 
 	// ‰ñ”ğÏ‚İ’e‚ğƒNƒŠƒA
 	void ClearDodgeBullets();									
 
 	// ‰ñ”ğÏ‚İ‚©ƒ`ƒFƒbƒN
-	bool IsDodgeBullet(std::shared_ptr<Bullet> bullet)const;	
+	bool IsDodgeBullet(std::vector<std::shared_ptr<Bullet>> bullet)const;
 
 
 	/* ’eİ’èŠÖ˜A */

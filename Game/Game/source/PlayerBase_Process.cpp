@@ -8,7 +8,12 @@ namespace AnimConfig
 	const float BLEND_TIME = 3.5f;	// アニメーションのブレンド時間
 }
 
-// 共通関数呼び出し
+namespace InputConfig 
+{
+	constexpr float DashInputMin = 0.925f;	// ダッシュ入力とみなすアナログ入力の最小値
+	constexpr float WalkInputMin = 0.001f;	// 歩き入力とみなすアナログ入力の最大値
+}
+
 void PlayerBase::CallProcess()
 {
 	// プレイヤー移動処理
@@ -27,14 +32,16 @@ void PlayerBase::CallProcess()
 	ProcessDebug();
 }
 
-// プレイヤー移動処理
 void PlayerBase::ProcessMovePlayer()
 {
 	_vOldPos = _vPos;	// 前フレームの位置を保存
 	_vMove = { 0,0,0 };	// 移動方向を決める
 
 	// 攻撃中は移動入力を受け付けない
-	if(IsAttacking()){ return; }					
+	if(IsAttacking()){ return; }
+
+	// 弾発射中は移動入力を受け付けない
+	if(_playerState.IsStateShooting()){ return; }
 
 	// 特殊ステート中は移動入力を受け付けない(変身関連、回避、被弾や死亡)
 	if(_playerState.IsStateCombat()){ return; }		
@@ -42,7 +49,7 @@ void PlayerBase::ProcessMovePlayer()
 	// 吸収攻撃中は移動入力を受け付けない
 	if(_playerState.IsStateAbsorbing()){ return; }	
 
-	// 発射中でエイムモードでない場合は移動入力を受け付けない
+	// エイムモードでなく、発射中の場合は移動入力を受け付けない
 	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
 	if(!isAiming && _playerState.IsStateShooting()){ return; }	
 
@@ -73,7 +80,6 @@ void PlayerBase::ProcessMovePlayer()
 	}
 }
 
-// 入力に応じた移動処理
 void PlayerBase::ProcessInputMove()
 {
 	auto& im = InputManager::GetInstance();
@@ -94,11 +100,13 @@ void PlayerBase::ProcessInputMove()
 		_bIsDashInput = !_bIsDashInput;// ダッシュ入力フラグを切り替える
 	}
 
-	const AnalogState& analog = im.GetAnalog();
-	float analogMin = im.GetAnalogMin();
+	const AnalogState& analog = im.GetAnalog();	// アナログ入力の状態を取得
+	float analogMin = im.GetAnalogMin();		// アナログ入力の最小値
 
-	float digitalX = 0.0f;
-	float digitalY = 0.0f;
+	float digitalX = 0.0f;	// デジタル入力の移動方向
+	float digitalY = 0.0f;	// デジタル入力の移動方向
+
+	// キーボード入力
 	/*if (im.IsHold(INPUT_ACTION::MOVE_UP)) { digitalY = -1.0f; }
 	if (im.IsHold(INPUT_ACTION::MOVE_DOWN)) { digitalY = 1.0f; }
 	if (im.IsHold(INPUT_ACTION::MOVE_LEFT)) { digitalX = -1.0f; }
@@ -108,41 +116,43 @@ void PlayerBase::ProcessInputMove()
 	float inputX = (abs(analog.lx) > analogMin) ? analog.lx : digitalX;
 	float inputY = (abs(analog.ly) > analogMin) ? analog.ly : digitalY;
 
-	if(inputX != 0.0f || inputY != 0.0f)
+	// スティックの入力値 (InputManagerで既に -1.0~1.0 に正規化済み)
+	float lx = analog.lx;
+	float ly = analog.ly;
+
+	// 入力の強さ（ベクトルの長さ）を計算
+	float inputLength = sqrtf(lx * lx + ly * ly);
+
+	// 入力の強さが歩き入力とみなす値より大きいか
+	if(inputLength > InputConfig::WalkInputMin)
 	{
-		float currentCameraAngle;// 現在のカメラの水平角度
+		// カメラ角度の取得
+		float currentCameraAngle = _cameraManager ? _cameraManager->GetCurrentCameraAngleH() : _cameraAngle;
 
-		if(_cameraManager)
-		{
-			// 現在のカメラの水平角度を取得して移動方向を変換する
-			currentCameraAngle = _cameraManager->GetCurrentCameraAngleH();
-		}
-		// なければプレイヤーのカメラ角度を使用する
-		else
-		{
-			currentCameraAngle = _cameraAngle;
-		}
+		// カメラの向きに基づいて前方向のベクトルを計算
+		VECTOR cameraForward = VGet(sinf(currentCameraAngle), 0.0f, cosf(currentCameraAngle));
 
-		VECTOR cameraForward;// カメラの向いている方向のベクトル
-		VECTOR cameraRight;	// カメラの右方向のベクトル
+		// カメラの向きに基づいて右方向ベクトルを計算
+		VECTOR cameraRight = VGet(cosf(currentCameraAngle), 0.0f, -sinf(currentCameraAngle));
 
-		// XZ平面における前方ベクトル
-		cameraForward = VGet(sinf(currentCameraAngle), 0.0f, cosf(currentCameraAngle));
-		// 前方ベクトルから時計回りに90度回した右方向ベクトル
-		cameraRight = VGet(cosf(currentCameraAngle), 0.0f, -sinf(currentCameraAngle));
+		// スティックの入力に基づいて移動方向を計算
+		_vMove = VAdd(VScale(cameraForward, -ly), VScale(cameraRight, lx));
 
-		// 移動量を計算
-		_vMove = VAdd
-		(
-			VScale(cameraForward, -inputY),// 前後移動
-			VScale(cameraRight, inputX)// 左右移動
-		);
-
-		// 正規化
+		// 方向を正規化
 		float len = VSize(_vMove);
 		if(len > 0.0f)
 		{
 			_vMove = VScale(_vMove, 1.0f / len);
+		}
+
+		// スティックの傾きがダッシュになる値より大きいか
+		bool isStickDash = (inputLength >= InputConfig::DashInputMin);
+
+		// 射撃中でなく、ダッシュの傾きになっているなら
+		if(!_playerState.IsStateShooting() && isStickDash)
+		{
+			// ダッシュフラグを立てる
+			_bIsDashInput = true;
 		}
 
 		// ダッシュ入力があれば移動速度を上げる
@@ -151,14 +161,13 @@ void PlayerBase::ProcessInputMove()
 			_fMoveSpeed += _playerConfig.dashMoveSpeed;
 		}
 	}
-	// 移動入力がないなら
 	else
 	{
-		_bIsDashInput = false;	// ダッシュ入力フラグを下げる
+		// ダッシュフラグを下す
+		_bIsDashInput = false;
 	}
 }
 
-// 状態変化アニメーション処理
 void PlayerBase::ProcessStatusAnimation()
 {
 	// 攻撃ステート、先頭ステート時はここで再生処理
@@ -174,7 +183,8 @@ void PlayerBase::ProcessStatusAnimation()
 		return;
 	}
 
-	_oldPlayerState = _playerState;	// 処理前のステータスを保存しておく
+	// 処理前のステータスを保存しておく
+	_oldPlayerState = _playerState;	
 
 	// 空中ならジャンプステータス
 	if(!_bIsStanding)
@@ -312,6 +322,9 @@ void PlayerBase::ProcessHit()
 		ProcessPlayAnimation();			// アニメーション切り替え実行
 		_oldPlayerState = _playerState;	// 切り替え後に更新
 
+		// 被弾時間をリセット
+		_fHitTime = HitConfig::HIT_TIME;
+
 		return;
 	}
 
@@ -346,7 +359,7 @@ void PlayerBase::ProcessDebug()
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG3))
 	{
-		_fLife -= 10.0f;
+		_fLife -= 100.0f;
 	}
 
 	if (im.IsTrigger(INPUT_ACTION::DEBUG1))
@@ -480,4 +493,6 @@ bool PlayerBase::IsAnimationFinishedConst()const
 		// 現在のアニメーションが終了しているか
 		return animManager->IsAnimationFinished();
 	}
+
+	return false;
 }

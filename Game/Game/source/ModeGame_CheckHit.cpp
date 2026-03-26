@@ -159,7 +159,7 @@ void ModeGame::CheckCollisionCharaMap(std::shared_ptr<CharaBase> chara)
 
 					// コリジョンフレームの法線が内向きのため、逆方向へ押し出す
 					// 小さい距離で何度も押し出し
-					const float pushDist = 1.0f;
+					const float pushDist = 1.5f;
 					VECTOR push = VScale(wallNormXZ, -pushDist);
 
 					// 計算した押し出しベクトルを即座に反映
@@ -380,14 +380,25 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 {
 	if(!chara) { return; }
 
-	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
+	// 無敵状態かチェック
+	bool isInvincible = false;
+	if(_dodgeSystem && _dodgeSystem->IsCharacterInvincible(chara))
+	{
+		isInvincible = true;
+	}
 
+	// 弾マネージャーのインスタンスを取得
 	auto bulletManager = BulletManager::GetInstance();
 	if(bulletManager == nullptr){ return; }
 
-	auto bullets = bulletManager->GetAllBullets();	// 登録された弾の取得
+	// 登録された弾の取得
+	auto bullets = bulletManager->GetAllBullets();	
 
-	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
+	// 自分のキャラタイプを取得
+	CHARA_TYPE myType = chara->GetCharaType();
+
+	// 削除する弾を一時保存するリスト
+	std::vector<std::shared_ptr<Bullet>> deadBullets;
 
 	// 全弾ループ
 	for(auto& bullet : bullets)
@@ -412,6 +423,18 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 		{
 			// 同一所有者の弾ならスキップ
 			if(IsSameOwnerBullet(myType, bulletShooterType)){ continue; }
+
+			// 無敵状態の場合
+			if(isInvincible)
+			{
+				// 回避した弾として登録
+				bulletManager->RegisterDodgeBullet(bullets);
+
+				// 無敵状態を解除（1回だけ無敵になる）
+				isInvincible = false;
+
+				return;
+			}
 
 			// 弾の設定からダメージを取得
 			float damage = bulletConfig.damage;
@@ -562,8 +585,11 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 
 	// 無敵状態かチェック
 	bool isInvincible = false;
+
+	// 回避システムが存在し、かつキャラが無敵状態の場合
 	if(_dodgeSystem && _dodgeSystem->IsCharacterInvincible(chara))
 	{
+		// 無敵状態の場合は回避ヒット扱いにして登録
 		isInvincible = true;
 	}
 
@@ -583,16 +609,24 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		// ヒットフラグを有効にする
 		attack->SetHitFlag(true);
 
-		// 無敵状態の場合は回避ヒット扱いにして登録
+		// 無敵状態の場合
 		if(isInvincible)
 		{
+			// 回避ヒット攻撃として登録
 			_attackManager->RegisterDodgeHitAttack(attack);
+
+			// 無敵状態を解除
 			isInvincible = false;
+
+			// ヒット処理は行わずに終了
 			return;
 		}
 
-		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
-		auto charaType = chara->GetCharaType();							// キャラのタイプ取得
+		// 攻撃の所有者タイプ取得
+		auto ownerType = _attackManager->GetAttackOwnerType(attack);	
+
+		// キャラのタイプ取得
+		auto charaType = chara->GetCharaType();							
 
 		// 自分に攻撃しているかどうか
 		if(OwnerIsAttackingOwner(charaType, ownerType)) { return; }
@@ -606,7 +640,7 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		// カメラの振動
 		if(!IsPlayerCharacter(charaType) && effectConfig.isActiveCameraShake)
 		{
-			if (_cameraManager)
+			if(_cameraManager)
 			{
 				auto shake = std::make_shared<CameraShakeSystem>();
 
@@ -683,8 +717,6 @@ void ModeGame::ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage)
 }
 
 // プレイヤーとトリガーの当たり判定
-
-
 // 既存: void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 {
@@ -813,38 +845,38 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 						(
 							{
 							{"Textbox_Normal", "クロ、あそこにいるのがお前の仲間か？"},
-							{"Textbox_Kage", "だから仲間じゃねえって！\nこのまま近づいてLボタンを押してあいつに向かって左手をかざしてみろ"}
+							{"Textbox_Kage", "だから仲間じゃねえって！\nこのまま近づいてLTボタンを押してあいつに向かって左手をかざしてみろ"}
 							}, false, 100, "eventa"
 						);
 						// モデルは消す（当たり判定のみ利用）
 						_stage->RemoveMapModelByName(obj.name);
 					}
-					else if(obj.name == "EventB")
-					{
-						// EventB はステージ2のみ有効
-						if(currentStage != 2) { continue; }
+					//else if(obj.name == "EventB")
+					//{
+					//	// EventB はステージ2のみ有効
+					//	if(currentStage != 2) { continue; }
 
-						// EventB: テキストを表示した後、エンディングへ移行する
-						// 最終テキスト閉鎖時に ModeEndingText を追加して現在の ModeGame を削除する
-						ModeTextBox* finalBox = new ModeTextBox
-						(
-							"Textbox_Scared",
-							"っ！あそこに倒れてるのって！",
-							[this]() 
-							{
-								// テキスト閉じたらエンディングモードへ
-								ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
-								// ModeGame を削除して遷移
-								ModeServer::GetInstance()->Del(this);
-							},
-							false
-						);
+					//	// EventB: テキストを表示した後、エンディングへ移行する
+					//	// 最終テキスト閉鎖時に ModeEndingText を追加して現在の ModeGame を削除する
+					//	ModeTextBox* finalBox = new ModeTextBox
+					//	(
+					//		"Textbox_Scared",
+					//		"っ！あそこに倒れてるのって！",
+					//		[this]() 
+					//		{
+					//			// テキスト閉じたらエンディングモードへ
+					//			ModeServer::GetInstance()->Add(new ModeEndingText(), 100, "ending");
+					//			// ModeGame を削除して遷移
+					//			ModeServer::GetInstance()->Del(this);
+					//		},
+					//		false
+					//	);
 
-						ModeServer::GetInstance()->Add(finalBox, 200, "eventb_ending");
+					//	ModeServer::GetInstance()->Add(finalBox, 200, "eventb_ending");
 
-						// 当たり判定で消す（再トリガー防止）
-						_stage->RemoveMapModelByName(obj.name);
-					}
+					//	// 当たり判定で消す（再トリガー防止）
+					//	_stage->RemoveMapModelByName(obj.name);
+					//}
 
 					return;
 				}
@@ -856,24 +888,21 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 		}
 	}
 }
+
 // 吸収攻撃の当たり判定チェック関数
-void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<CharaBase> player, std::shared_ptr<CharaBase>enemy)
+void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<PlayerBase> player, std::shared_ptr<CharaBase>enemy)
 {
 	if(!player || !enemy){ return; }
-	
-	// SurfacePlayerかチェック
-	auto surfacePlayer = std:: dynamic_pointer_cast<SurfacePlayer>(player);
-	if(!surfacePlayer){ return; }
 
 	// 吸収攻撃システムを取得
-	PlayerAbsorbAttackSystem* absorbSystemConst = surfacePlayer->GetAbsorbAttackSystem();
+	PlayerAbsorbAttackSystem* absorbSystemConst = player->GetAbsorbAttackSystem();
 	if(!absorbSystemConst) { return; }
 
 	// 吸収攻撃がアクティブかチェック
 	if(!absorbSystemConst->IsAbsorbActive()){ return; }
 
 	// 吸収の所有者を渡して判定
-	CheckHitCharaAbsorbAttack(enemy, surfacePlayer, absorbSystemConst);
+	CheckHitCharaAbsorbAttack(enemy, player, absorbSystemConst);
 }
 
 // キャラと吸収攻撃の当たり判定
@@ -900,8 +929,8 @@ void ModeGame::CheckHitCharaAbsorbAttack(std::shared_ptr<CharaBase> chara, std::
 	{
 		if(!config.isActive){ return; }	// 吸収攻撃が有効でない場合は当たらない
 
-		// プレイヤーの吸収状態が構えではないならスキップ
-		if(owner->GetAbsorbState() != PLAYER_ABSORB_STATE::ABSORB_READY ||
+		// プレイヤーの吸収状態が構えか有効状態ではないならスキップ
+		if(owner->GetAbsorbState() != PLAYER_ABSORB_STATE::ABSORB_READY &&
 			owner->GetAbsorbState() != PLAYER_ABSORB_STATE::ABSORB_ACTIVE)
 		{
 			return; 

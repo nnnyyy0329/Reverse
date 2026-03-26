@@ -58,7 +58,12 @@ AbilitySelectScreen::AbilitySelectScreen()
 
 AbilitySelectScreen::~AbilitySelectScreen()
 {
+	// 画像の開放
+	DeleteGraph(_iHandle1);
+	DeleteGraph(_iHandle2);
 
+	// デストラクタ
+	Terminate();
 }
 
 bool AbilitySelectScreen::Initialize()
@@ -68,6 +73,10 @@ bool AbilitySelectScreen::Initialize()
 
 bool AbilitySelectScreen::Terminate()
 {
+	// 画像の開放
+	DeleteGraph(_iHandle1);
+	DeleteGraph(_iHandle2);
+
 	return true;
 }
 
@@ -200,9 +209,27 @@ void AbilitySelectScreen::SelectRender()
 	_fDrawCenterX = static_cast<float>(selectX[0] + graphW / 2.0f);
 	_fSecondDrawCenterX = static_cast<float>(selectX[1] + graphW / 2.0f);
 
-	// アビリティ画像を描画
-	DrawGraph(selectX[0], selectY, _iHandle2, TRUE);
-	DrawGraph(selectX[1], selectY, _iHandle1, TRUE);
+	/* アビリティ画像を描画 */
+
+	// プレイヤー切り替え可能なら通常描画
+	if(EnergyManager::GetInstance()->CanSwitchPlayer() && _playerManager->GetActivePlayerType() == PLAYER_TYPE::SURFACE)
+	{
+		// プレイヤー切り替え可能な場合は両方のアビリティを表示
+		DrawGraph(selectX[0], selectY, _iHandle2, TRUE);
+		DrawGraph(selectX[1], selectY, _iHandle1, TRUE);
+	}
+	// プレイヤー切り替え不可能なら薄暗く表示
+	else
+	{
+		// 薄暗く表示
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+
+		DrawGraph(selectX[0], selectY, _iHandle2, TRUE);
+		DrawGraph(selectX[1], selectY, _iHandle1, TRUE);
+
+		// 無色に戻す
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
 }
 
 void AbilitySelectScreen::ActionHintRender()
@@ -210,7 +237,7 @@ void AbilitySelectScreen::ActionHintRender()
 	// 選択されたアビリティに応じてアクションヒントを描画
 	if(_abilityActionHint)
 	{
-		_abilityActionHint->ActionHintRender(GetSelectedAbility(), _fDrawCenterX, _fSecondDrawCenterX);
+		_abilityActionHint->AbilityInputHintRender(GetSelectedAbility(), _fDrawCenterX, _fSecondDrawCenterX);
 	}
 }
 

@@ -3,16 +3,20 @@
 #pragma once
 #include "PlayerBase.h"
 
-// 攻撃判定のパラメーター
+// 裏プレイヤー用定数
+namespace InteriorPlayerConstants
+{
+	constexpr float DAMAGE_MULTIPLIER = 0.75f;	// 裏プレイヤー専用のダメージ倍率
+};
+
+// 攻撃定数
 namespace InteriorAttackConstants
 {
-	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;		// 裏プレイヤー用コンボカウント
-
-	constexpr float REVERSE_EFFECT_ROT = 180.0f;	// エフェクトの回転を反転
+	constexpr int INTERIOR_MAX_COMBO_COUNT = 5;	// 裏プレイヤー用コンボカウント
 }
 
-// 攻撃腕のパラメーター
-namespace InteriorPlayerArmConstants
+// 裏プレイヤーのフレームインデックス定数
+namespace InteriorPlayerFrameIndexConstants
 {
 	constexpr int RIGHT_ARM_FRAME_INDEX = 157;	// 右腕攻撃のフレームインデックス
 	constexpr int LEFT_ARM_FRAME_INDEX = 147;	// 左腕攻撃のフレームインデックス
@@ -24,6 +28,10 @@ class InteriorPlayer : public PlayerBase
 public:
 	InteriorPlayer();
 	virtual ~InteriorPlayer();
+
+
+
+	/* 基本関数 */
 
 	virtual bool Initialize();
 	virtual bool Terminate();
@@ -38,7 +46,7 @@ public:
 	/// @param fDamage ダメージ量
 	/// @param eType 攻撃の所有者タイプ
 	/// @param attackInfo 攻撃コリジョン情報
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo) override;
 
 	/// @brief 弾による被ダメージ処理
 	///
@@ -47,8 +55,14 @@ public:
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;
 
 
-	/* 純粋仮想関数のオーバーライド */
-	
+
+	/* ゲッターセッター */
+
+
+private:
+
+	/* 仮想関数のオーバーライド */
+
 	/// @brief プレイヤー設定を取得
 	///
 	/// @return プレイヤー設定構造体
@@ -62,17 +76,17 @@ public:
 	/// @brief 描画設定を取得
 	///
 	/// @return 描画設定構造体
-	virtual RenderConfig		GetRenderConfig()											override;	
+	virtual RenderConfig		GetRenderConfig()											override;
 
 	/// @brief 回避設定を取得
 	///
 	/// @return 回避設定構造体
-	virtual DodgeConfig			GetDodgeConfig()											override;	
+	virtual DodgeConfig			GetDodgeConfig()											override;
 
 	/// @brief 攻撃定数を取得
 	///
 	/// @return 攻撃定数構造体
-	virtual AttackConstants		GetAttackConstants()const									override;	
+	virtual AttackConstants		GetAttackConstants()const									override;
 
 	/// @brief 攻撃コリジョン設定を取得
 	///
@@ -102,10 +116,8 @@ public:
 	/// @brief 攻撃腕設定を取得
 	///
 	/// @param configs[5] 攻撃腕設定の配列(5段階分)
-	virtual void				GetAttackArmConfigs(AttackArmConfig configs[5])				override;	
+	virtual void				GetAttackArmConfigs(AttackArmConfig configs[5])				override;
 
-
-	/*****ゲッターセッター*****/
 
 protected:
 

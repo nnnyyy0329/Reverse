@@ -2,18 +2,8 @@
 
 #include "SurfacePlayer.h"
 
-namespace
-{
-	// 基礎ステータス定数
-	constexpr float GRAVITY = -0.6f;		// 重力加速度
-	constexpr float DEFAULT_LIFE = 100.0f;	// デフォルト体力
-	constexpr float MAX_LIFE = 100.0f;		// 最大体力
-
-	// 表示用定数
-	constexpr int DRAW_SIZE_OFFSET = 16;	// 描画サイズオフセット
-	constexpr int DRAW_OFFSET_X = 900;		// 描画Xオフセット
-	constexpr int DRAW_OFFSET_Y = 0;		// 描画Yオフセット
-}
+// 表プレイヤー用定数のエイリアス
+namespace SPC = SurfacePlayerConstants;
 
 SurfacePlayer::SurfacePlayer()
 {
@@ -68,7 +58,6 @@ bool SurfacePlayer::Render()
 	return true;
 }
 
-// デバッグ描画
 void SurfacePlayer::DebugRender()
 {
 	// コリジョン描画
@@ -78,21 +67,21 @@ void SurfacePlayer::DebugRender()
 	AbsorbSystemDebugRender();
 }
 
-// 被ダメージ処理
-void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo)
+void SurfacePlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)
 {
+	// 表プレイヤー専用のダメージ倍率を適用
+	float resultDamage = fDamage * SPC::DAMAGE_MULTIPLIER;
+
 	// 基底クラスの被ダメージ処理呼び出し
-	PlayerBase::ApplyDamage(fDamage, eType, attackInfo);
+	PlayerBase::ApplyDamage(resultDamage, ownerType, attackInfo);
 }
 
-// 弾での被ダメージ処理
 void SurfacePlayer::ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)
 {
 	// 基底クラスの弾での被ダメージ処理呼び出し
 	PlayerBase::ApplyDamageByBullet(fDamage, chara);
 }
 
-// 表プレイヤーの情報設定
 PlayerConfig SurfacePlayer::GetPlayerConfig()
 {
 	// 表プレイヤー用の設定
@@ -118,7 +107,6 @@ PlayerConfig SurfacePlayer::GetPlayerConfig()
 	return config;
 }
 
-// 表プレイヤーのアニメーション設定
 PlayerAnimations SurfacePlayer::GetPlayerAnimation()
 {
 	// 表プレイヤー用のアニメーション設定
@@ -145,7 +133,6 @@ PlayerAnimations SurfacePlayer::GetPlayerAnimation()
 	return animation;
 }
 
-// 表示設定
 RenderConfig SurfacePlayer::GetRenderConfig()
 {
 	// 表プレイヤー用の表示設定
@@ -157,34 +144,22 @@ RenderConfig SurfacePlayer::GetRenderConfig()
 	return config;
 }
 
-// 攻撃判定のパラメーター
-AttackConstants SurfacePlayer::GetAttackConstants()const
-{
-	// SurfacePlayer専用の攻撃定数
-	AttackConstants constants;
-
-	constants.surfaceMaxComboCount = 0;		// 表プレイヤー用コンボカウント
-
-	return constants;
-}
-
-// 回避設定データ構造体
 DodgeConfig SurfacePlayer::GetDodgeConfig()
 {
 	// 表プレイヤー用の回避設定
 	DodgeConfig config;
 
 	config.charaType = DODGE_CHARA::SURFACE_PLAYER;
-	config.invincibleDuration = 20.0f;	// 無敵時間
-	config.startTime = 2.0f;			// 開始時間
-	config.activeTime = 40.0f;			// アクティブ時間
-	config.recoveryTime = 10.0f;		// 硬直時間
-	config.dodgeMoveSpeed = 10.0f;		// 移動速度
+	config.invincibleDuration = 20.0f;			// 無敵時間
+	config.startTime = 2.0f;					// 開始時間
+	config.activeTime = 40.0f;					// アクティブ時間
+	config.recoveryTime = 10.0f;				// 硬直時間
+	config.dodgeMoveSpeed = 10.0f;				// 移動速度
+	config.soundName = "SE_SurfacePlayerDodge";	// サウンド名
 
 	return config;
 }
 
-// シールド設定を取得
 ShieldConfig SurfacePlayer::GetShieldConfig()
 {
 	// デフォルトの設定を返す
@@ -203,37 +178,33 @@ ShieldConfig SurfacePlayer::GetShieldConfig()
 	return config;
 }
 
-// 吸収攻撃システムの初期化
 void SurfacePlayer::MakeAbsorbSystem()
 {
 	// 吸収攻撃システムの生成
 	_absorbAttackSystem = std::make_unique<PlayerAbsorbAttackSystem>();
 }
 
-// 吸収攻撃システムの初期化
 void SurfacePlayer::InitializeAbsorbSystem()
 {
 	if(!_absorbAttackSystem) { return; }
 
 	// 所有者を設定して初期化
-	_absorbAttackSystem->Initialize(shared_from_this());		
+	// CharaBase の shared_from_this() を使用するため、Initialize関数内で所有者を設定する必要がある
+	_absorbAttackSystem->Initialize(shared_from_this());
 
 	// 吸収攻撃の設定を取得して設定
 	_absorbAttackSystem->SetAbsorbConfig(GetAbsorbConfig());	
 }
 
-// 吸収攻撃システムの更新
 void SurfacePlayer::ProcessAbsorbSystem()
 {
 	if(!_absorbAttackSystem){ return; }
 
-	//if(_playerState.absorbState != PLAYER_ABSORB_STATE::ABSORB_READY){ return; }
-
 	// 回避状態の時は吸収の入力処理をスキップ
 	if(_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DODGE)){ return; }
 
-	// 吸収攻撃モーションの切り替え条件処理
-	ProcessChangeAbsorbMotion();
+	// 吸収攻撃モーションの切り替え条件の更新
+	UpdateChangeAbsorbMotion();
 
 	// 入力処理
 	_absorbAttackSystem->ProcessAbsorbInput();	
@@ -245,7 +216,6 @@ void SurfacePlayer::ProcessAbsorbSystem()
 	_bWasAbsorbKeyPressed = IsAbsorbInput();
 }
 
-// 吸収攻撃設定取得
 AbsorbConfig SurfacePlayer::GetAbsorbConfig()
 {
 	AbsorbConfig config;
@@ -253,29 +223,27 @@ AbsorbConfig SurfacePlayer::GetAbsorbConfig()
 	config.absorbRate		= 1.0f;						// 吸収率
 	config.energyAbsorbRate = 10.0f;					// エネルギー吸収率
 	config.hpAbsorbRate		= 10.0f;					// HP吸収率(未使用)
-	config.absorbRange		= 190.0f;					// 吸収範囲
-	config.absorbAngle		= DX_PI_F / 2.9f;			// 吸収角度
+	config.absorbRange		= 240.0f;					// 吸収範囲
+	config.absorbAngle		= DX_PI_F / 2.5f;			// 吸収角度
 	config.absorbDivision	= 10;						// 滑らかな描画用
 	config.absorbEffectName = "SurfacePlayerAbsorb";	// 吸収エフェクト名
-	config.effectOffset = { 0.0f, 0.0f, 0.0f };			// エフェクト位置オフセット
-	config.absorbSoundName = "sPlayerAttack";			// 吸収サウンド名
+	config.effectOffset		= VGet(0.0f, 0.0f, 0.0f);	// エフェクト位置オフセット
+	config.effectRotOffset	= VGet(0.0f, 0.0f, 0.0f);	// エフェクト回転オフセット
+	config.absorbSoundName	= "sPlayerAttack";			// 吸収サウンド名
 
 	return config;
 }
 
-// 吸収攻撃システム取得
 const PlayerAbsorbAttackSystem* SurfacePlayer::GetAbsorbAttackSystemConst()const
 {
 	return _absorbAttackSystem.get();
 }
 
-// 非const版
 PlayerAbsorbAttackSystem* SurfacePlayer::GetAbsorbAttackSystem()
 {
 	return _absorbAttackSystem.get();
 }
 
-// 吸収攻撃システムのデバッグ描画
 void SurfacePlayer::AbsorbSystemDebugRender()
 {
 	if(_absorbAttackSystem)
@@ -287,15 +255,7 @@ void SurfacePlayer::AbsorbSystemDebugRender()
 	DebugDrawAbsorbAnimationTime();
 }
 
-// 吸収攻撃処理
-void SurfacePlayer::ProcessAbsorb()
-{
-	// 吸収攻撃モーションの切り替え条件処理
-	//_absorbAttackSystem->ProcessAbsorb();
-}
-
-// 吸収攻撃モーション切り替え条件処理
-void SurfacePlayer::ProcessChangeAbsorbMotion()
+void SurfacePlayer::UpdateChangeAbsorbMotion()
 {
 	// 吸収終了時に通常モーションに戻す処理
 	ReturnNormalMotion();
@@ -334,7 +294,6 @@ void SurfacePlayer::ProcessChangeAbsorbMotion()
 	}
 }
 
-// 構え状態に移行
 void SurfacePlayer::StartAbsorbReadyState()
 {
 	// 吸収構え状態に移行
@@ -345,7 +304,6 @@ void SurfacePlayer::StartAbsorbReadyState()
 	ProcessPlayAnimation();
 }
 
-// 構えモーション終了時の処理
 void SurfacePlayer::ProcessAbsorbReadyCompleted()
 {
 	// 構えモーション終了
@@ -361,7 +319,6 @@ void SurfacePlayer::ProcessAbsorbReadyCompleted()
 	ProcessPlayAnimation();
 }
 
-// 吸収終了処理
 void SurfacePlayer::ProcessAbsorbFinish()
 {
 	// 押していて吸収が始まっていたら停止
@@ -378,7 +335,6 @@ void SurfacePlayer::ProcessAbsorbFinish()
 	}
 }
 
-// 吸収停止処理
 void SurfacePlayer::StopAbsorb()
 {
 	// 吸収攻撃停止処理
@@ -391,7 +347,6 @@ void SurfacePlayer::StopAbsorb()
 	ProcessPlayAnimation();
 }
 
-// 吸収構えキャンセル処理
 void SurfacePlayer::CancelAbsorbReady()
 {
 	// 状態を吸収終了にする
@@ -401,7 +356,6 @@ void SurfacePlayer::CancelAbsorbReady()
 	ProcessPlayAnimation();
 }
 
-// 吸収終了時に通常モーションに戻す処理
 void SurfacePlayer::ReturnNormalMotion()
 {
 	// 吸収終了状態なら通常モーションに戻す
@@ -416,37 +370,6 @@ void SurfacePlayer::ReturnNormalMotion()
 	}
 }
 
-// 吸収攻撃の入力チェック
-bool SurfacePlayer::IsAbsorbInput()const
-{
-	// 吸収攻撃の入力チェック
-	return (InputManager::GetInstance().IsHold(INPUT_ACTION::ABILITY)) != 0;
-}
-
-// 吸収攻撃がアクティブかどうか
-bool SurfacePlayer::IsAbsorbActive() const
-{
-	if(!_absorbAttackSystem) { return false; }
-
-	// 吸収攻撃システムに吸収がアクティブかどうかを問い合わせる
-	return _absorbAttackSystem->IsAbsorbActive();
-}
-
-// 吸収終了状態中に入力がされたかどうか
-bool SurfacePlayer::IsInputInAbsorbFinishState()const
-{
-	// 吸収終了状態中に入力がされたかどうか
-	return (IsAbsorbInput() && IsAbsorbEndState() && !IsAnimationFinishedConst());
-}
-
-// 吸収終了状態かどうか
-bool SurfacePlayer::IsAbsorbEndState()const
-{
-	// 吸収終了状態かどうか
-	return _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_END;
-}
-
-// 吸収アニメーション再生時間デバッグ表示
 void SurfacePlayer::DebugDrawAbsorbAnimationTime()
 {
 	if(!_absorbAttackSystem) { return; }

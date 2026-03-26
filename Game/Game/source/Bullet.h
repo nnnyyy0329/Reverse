@@ -20,7 +20,7 @@ struct BulletConfig
 	float radius;			// 当たり判定の半径
 	float damage;			// ダメージ量
 	float speed;			// 移動速度
-	int lifeTime;			// 寿命
+	float lifeTime;			// 寿命
 	bool isHit = false;		// ヒットしたか(初期化しておく)
 };
 
@@ -55,6 +55,9 @@ public:
 
 	// 弾を有効化する(演出面の引数なし)
 	void ActivateBulletSimple(const BulletConfig& config);
+
+	// 弾のエフェクト位置更新
+	void UpdateBulletEffectPos();
 
 	// 弾情報の設定
 	void SetBulletConfig(const BulletConfig& config);
@@ -107,5 +110,7 @@ protected:
 
 	CHARA_TYPE _eShooterType;	// 誰が発射した弾か
 	BULLET_TYPE _eBulletType;	// 弾の種類
+
+	int _effectHandle;
 };
 

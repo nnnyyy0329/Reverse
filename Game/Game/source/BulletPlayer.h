@@ -1,35 +1,50 @@
 #pragma once
 #include "PlayerBase.h"
 
-// 弾発射に関する定数
-namespace BulletConstants
+// 弾プレイヤー用定数
+namespace BulletPlayerConstants
+{
+	constexpr float DAMAGE_MULTIPLIER = 0.75f;	// 弾プレイヤー専用のダメージ倍率
+}
+
+// 通常弾設定定数
+namespace NormalBulletConfig
+{
+	constexpr float RADIUS = 20.0f;		// 弾半径
+	constexpr float DAMAGE = 100.0f;		// 弾のダメージ
+	constexpr float SPEED = 20.0f;		// 弾の速度
+	constexpr float LIFE_TIME = 60.0f;	// 弾の寿命
+}
+
+// 貫通弾設定定数
+namespace PiercingBulletConfig
+{
+	constexpr float RADIUS = 15.0f;		// 弾半径
+	constexpr float DAMAGE = 10.0f;		// 弾のダメージ
+	constexpr float SPEED = 30.0f;		// 弾の速度
+	constexpr float LIFE_TIME = 120.0f;	// 弾の寿命
+}
+
+// 弾発射設定定数
+namespace BulletShootConstants
+{
+	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);	// 右腕発射位置オフセット
+	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);	// 左腕発射位置オフセット
+}
+
+// 弾発射リコイル設定定数
+namespace BulletRecoilConstants
+{
+	constexpr float RECOIL_MOVE_STRENGTH = 5.0f;	// リコイル移動の強さ
+	constexpr float RECOIL_MOVE_DECAY = 0.8f;		// リコイル移動の減衰率
+	constexpr int RECOIL_MOVE_DIRECTION = -1;		// リコイル移動方向
+}
+
+// 弾のエネルギー消費量定数
+namespace BulletConsumeEnergyConstants
 {
 	constexpr float CONSUME_NORMAL_BULLET_ENERGY = 5.0f;	// 通常弾のエネルギー消費量
 	constexpr float CONSUME_PIERCING_BULLET_ENERGY = 10.0f;	// 貫通弾のエネルギー消費量
-}
-
-// 弾発射設定
-namespace BulletConstants
-{
-	const VECTOR RIGHT_ARM_SHOT_OFFSET = VGet(25, 80, 0);
-	const VECTOR LEFT_ARM_SHOT_OFFSET = VGet(-15, 80, 0);
-	constexpr float LIFE_TIME = 120.0f;
-};
-
-// 通常弾設定
-namespace NormalBulletConfig
-{
-	constexpr float RADIUS = 20.0f;
-	constexpr float DAMAGE = 50.0f;
-	constexpr float SPEED = 20.0f;
-}
-
-// 貫通弾設定
-namespace PiercingBulletConfig
-{
-	constexpr float RADIUS = 15.0f;
-	constexpr float DAMAGE = 30.0f;
-	constexpr float SPEED = 25.0f;
 }
 
 // 前方宣言
@@ -42,6 +57,10 @@ public:
 
 	BulletPlayer();
 	virtual ~BulletPlayer();
+
+
+
+	/* 基本関数 */
 
 	virtual bool Initialize();	// 初期化
 	virtual bool Terminate();	// 終了
@@ -59,7 +78,7 @@ public:
 	/// @param fDamage ダメージ量
 	/// @param eType 攻撃の所有者タイプ
 	/// @param attackInfo 攻撃コリジョン情報
-	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackCollision& attackInfo) override;	
+	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo) override;
 
 	/// @brief 弾による被ダメージ処理
 	///
@@ -67,24 +86,62 @@ public:
 	/// @param char 弾のキャラタイプ
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										
 
-	// 純粋仮想関数のオーバーライド
-	virtual PlayerConfig		GetPlayerConfig()		override;	// 設定を取得
-	virtual PlayerAnimations	GetPlayerAnimation()	override;	// アニメーション設定を取得
-	virtual RenderConfig		GetRenderConfig()		override;	// 描画設定を取得
-	virtual DodgeConfig			GetDodgeConfig()		override;	// 回避設定を取得
-	virtual BulletConfig		GetBulletConfig()		override;	// 弾発射設定を取得
-	virtual BulletEffectConfig	GetBulletEffectConfig()	override;	// 弾演出設定を取得
+
 
 	/* クラス設定 */
-
-	// カメラマネージャーをセット
 
 	/// @brief カメラマネージャーをセットする関数
 	///
 	/// @param cameraManager カメラマネージャーの共有ポインタ
 	void SetCameraManager(std::shared_ptr<CameraManager>cameraManager){ _cameraManager = cameraManager; }	
 
+
+
+	/* ゲッターセッター */
+
+	/// @brief 弾のタイプをセットする関数
+	///
+	/// @param bulletType セットする弾のタイプ
+	void SetBulletType(BULLET_TYPE bulletType);
+
+
 private:
+
+	/* 仮想関数のオーバーライド */
+
+	/// @brief プレイヤー設定を取得
+	///
+	/// @return プレイヤー設定構造体
+	virtual PlayerConfig		GetPlayerConfig()		override;
+
+	/// @brief プレイヤーアニメーション設定を取得
+	///
+	/// @return プレイヤーアニメーション設定構造体
+	virtual PlayerAnimations	GetPlayerAnimation()	override;
+
+	/// @brief 描画設定を取得
+	///
+	/// @return 描画設定構造体
+	virtual RenderConfig		GetRenderConfig()		override;
+
+	/// @brief 回避設定を取得
+	///
+	/// @return 回避設定構造体
+	virtual DodgeConfig			GetDodgeConfig()		override;
+
+	/// @brief 弾発射設定を取得
+	///	
+	/// @return 弾発射設定構造体
+	virtual BulletConfig		GetBulletConfig()		override;
+
+	/// @brief 弾演出設定を取得
+	///
+	/// @return 弾演出設定構造体
+	virtual BulletEffectConfig	GetBulletEffectConfig()	override;	
+
+
+
+	/* 弾発射処理 */
 
 	/// @brief 弾発射処理
 	void ProcessShoot()override;
@@ -105,6 +162,20 @@ private:
 
 	/// @brief 弾発射処理
 	void ShootBullet();
+
+	/// @brief 弾発射サウンド再生処理
+	///
+	/// @param bulletType サウンド再生する弾タイプ
+	void ShootSoundPlay(BULLET_TYPE bulletType);
+
+	/// @brief 発射リコイル処理
+	void ShootRecoilMove();
+
+	/// @brief リコイル移動の更新処理
+	void UpdateRecoilPos();
+
+	/// @brief エイムカメラの角度更新処理
+	void UpdateAimCameraAngle();
 
 	/// @brief 発射位置オフセットの取得
 	///
@@ -131,19 +202,15 @@ private:
 	/// @return 発射間隔がマイナスならtrue、そうでなければfalse
 	bool IsShootIntervalNegative()const;
 
-	/// @brief 弾のタイプをセットする関数
-	///
-	/// @param bulletType セットする弾のタイプ
-	void SetBulletType(BULLET_TYPE bulletType);	
-
-
-	BULLET_TYPE _currentBulletType;	// 現在の弾の種類
 
 protected:
+
+	BULLET_TYPE _currentBulletType;	// 現在の弾の種類
 
 	std::weak_ptr<BulletManager>_bulletManager;		// 弾マネージャーの弱参照
 	std::shared_ptr<CameraManager>_cameraManager;	// カメラマネージャーの共有ポインタ
 
+	VECTOR _vRecoilVelocity;	// リコイル移動の速度
 	float _shootIntervalTimer;	// 発射間隔タイマー
 	bool _bIsShootFromRightArm;	// 右腕から発射したかどうか
 	bool _bIsReadyCompleted;	// 構えアニメーション完了フラグ

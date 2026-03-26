@@ -9,53 +9,53 @@ namespace
 	// 一段目攻撃
 	constexpr auto FIRST_PREPARE_TIME = 60.0f;// 攻撃準備時間
 	constexpr float FIRST_EXECUTE_TIME = 60.0f;// 攻撃実行時間
-	constexpr auto FIRST_RECOVERY_TIME = 10.0f;// 攻撃後の硬直時間
-	constexpr auto FIRST_ATTACK_DELAY = 5.0f;// 攻撃発生フレーム
-	constexpr auto FIRST_ATTACK_DURATION = 40.0f;// 攻撃持続フレーム
-	constexpr auto FIRST_ATTACK_DAMAGE = 1.0f;// ダメージ
-	constexpr auto FIRST_EXECUTE_SPEED = 4.0f;// 攻撃実行時の前進速度
+	constexpr auto FIRST_RECOVERY_TIME = 30.0f;// 攻撃後の硬直時間
+	constexpr auto FIRST_ATTACK_DELAY = 30.0f;// 攻撃発生フレーム
+	constexpr auto FIRST_ATTACK_DURATION = 10.0f;// 攻撃持続フレーム
+	constexpr auto FIRST_ATTACK_DAMAGE = 10.0f;// ダメージ
+	constexpr auto FIRST_EXECUTE_SPEED = 5.0f;// 攻撃実行時の前進速度
 
 	// 二段目攻撃
 	constexpr auto SECOND_PREPARE_TIME = 20.0f;// 攻撃準備時間
 	constexpr float SECOND_EXECUTE_TIME = 60.0f;// 攻撃実行時間
-	constexpr auto SECOND_RECOVERY_TIME = 90.0f;// 攻撃後の硬直時間
-	constexpr auto SECOND_ATTACK_DELAY = 8.0f;// 攻撃発生フレーム
-	constexpr auto SECOND_ATTACK_DURATION = 40.0f;// 攻撃持続フレーム
-	constexpr auto SECOND_ATTACK_DAMAGE = 1.0f;// ダメージ
-	constexpr auto SECOND_EXECUTE_SPEED = 4.0f;// 攻撃実行時の前進速度
+	constexpr auto SECOND_RECOVERY_TIME = 30.0f;// 攻撃後の硬直時間
+	constexpr auto SECOND_ATTACK_DELAY = 30.0f;// 攻撃発生フレーム
+	constexpr auto SECOND_ATTACK_DURATION = 10.0f;// 攻撃持続フレーム
+	constexpr auto SECOND_ATTACK_DAMAGE = 10.0f;// ダメージ
+	constexpr auto SECOND_EXECUTE_SPEED = 5.0f;// 攻撃実行時の前進速度
 
 	// 三段目攻撃
 	constexpr auto THIRD_PREPARE_TIME = 20.0f;// 攻撃準備時間
 	constexpr float THIRD_EXECUTE_TIME = 60.0f;// 攻撃実行時間
-	constexpr auto THIRD_RECOVERY_TIME = 90.0f;// 攻撃後の硬直時間
-	constexpr auto THIRD_ATTACK_DELAY = 8.0f;// 攻撃発生フレーム
-	constexpr auto THIRD_ATTACK_DURATION = 40.0f;// 攻撃持続フレーム
-	constexpr auto THIRD_ATTACK_DAMAGE = 1.0f;// ダメージ
-	constexpr auto THIRD_EXECUTE_SPEED = 4.0f;// 攻撃実行時の前進速度
+	constexpr auto THIRD_RECOVERY_TIME = 60.0f;// 攻撃後の硬直時間
+	constexpr auto THIRD_ATTACK_DELAY = 30.0f;// 攻撃発生フレーム
+	constexpr auto THIRD_ATTACK_DURATION = 10.0f;// 攻撃持続フレーム
+	constexpr auto THIRD_ATTACK_DAMAGE = 20.0f;// ダメージ
+	constexpr auto THIRD_EXECUTE_SPEED = 8.0f;// 攻撃実行時の前進速度
 
 	// 突進攻撃
 	constexpr auto CHARGE_PREPARE_TIME = 10.0f;// 突進準備時間
 	constexpr auto CHARGE_EXECUTE_TIME = 90.0f;// 突進の最大時間
-	constexpr auto CHARGE_RECOVERY_TIME = 90.0f;// 突進後の硬直時間
-	constexpr auto CHARGE_SPEED = 8.0f;// 突進速度
-	constexpr auto CHARGE_DAMAGE = 2.0f;// 突進ダメージ
-	constexpr auto CHARGE_ARRIVE_DIST = 20.0f;// 突進完了とみなす距離
+	constexpr auto CHARGE_RECOVERY_TIME = 60.0f;// 突進後の硬直時間
+	constexpr auto CHARGE_SPEED = 10.0f;// 突進速度
+	constexpr auto CHARGE_DAMAGE = 20.0f;// 突進ダメージ
+	constexpr auto CHARGE_ARRIVE_DIST = 5.0f;// 突進完了とみなす距離
 
-	constexpr auto CHARGE_ATTACK_RANGE = 500.0f;// 突進を試みる距離
+	constexpr float ATTACK_START_RANGE = 650.0f;// 攻撃開始距離
+	constexpr auto CHARGE_ATTACK_RANGE = 640.0f;// 突進を試みる距離
 	constexpr auto CHARAGE_JUDGE_INTERVAL = 30.0f;// 突進判定を行う間隔(フレーム)
 	constexpr auto NORMAL_ATTACK_RANGE = 150.0f;// 通常攻撃を試みる距離
-	constexpr auto CHARGE_ATTACK_PROB = 4.0f;// 突進の発生確率(0.0〜1.0)
-	constexpr auto THIRD_ATTACK_PROB = 4.0f;// 三段目攻撃の発生確率(0.0〜1.0)
+	constexpr auto CHARGE_ATTACK_PROB = 0.4f;// 突進の発生確率(0.0〜1.0)
+	constexpr auto THIRD_ATTACK_PROB = 0.8f;// 三段目攻撃の発生確率(0.0〜1.0)
 
 	constexpr auto SMOOTH_ROTATE_SPEED = 5.0f;// スムーズ回転速度
 	constexpr auto FAST_ROTATE_SPEED = 10.0f;// 高速回転速度
 
-	constexpr auto ATTACK_APPROACH_SPEED = 2.0f;// 攻撃開始時の接近速度
-	constexpr auto ATTACK_WAIT_TIME = 30.0f;// 攻撃選択後の待機時間
+	constexpr auto ATTACK_WAIT_TIME = 10.0f;// 攻撃選択後の待機時間
 
 	// アニメーション設定
 	// アニメーション制御用定数
-	constexpr auto BLEND_FRAME = 5.0f;// アニメーションブレンドフレーム数
+	constexpr auto BLEND_FRAME = 10.0f;// アニメーションブレンドフレーム数
 	constexpr auto ANIM_LOOP_COUNT = 0;// アニメーションループ回数(0=無限)
 	constexpr auto ANIM_PLAY_COUNT = 1;// アニメーション再生回数
 	constexpr auto ANIM_SPEED_HALF = 0.5f;// アニメーション再生速度(半分)
@@ -65,8 +65,8 @@ namespace
 	{
 		EnemyAttackSettings settings;
 		settings.colType = COLLISION_TYPE::CAPSULE;
-		settings.vTopOffset = VGet(50.0f, 120.0f, 100.0f);// 右手前方
-		settings.vBottomOffset = VGet(50.0f, 30.0f, 100.0f);
+		settings.vTopOffset = VGet(0.0f, 150.0f, 100.0f);// 前方
+		settings.vBottomOffset = VGet(0.0f, 50.0f, 100.0f);
 		settings.fRadius = 70.0f;
 		settings.fDelay = FIRST_ATTACK_DELAY;
 		settings.fDuration = FIRST_ATTACK_DURATION;
@@ -80,8 +80,8 @@ namespace
 	{
 		EnemyAttackSettings settings;
 		settings.colType = COLLISION_TYPE::CAPSULE;
-		settings.vTopOffset = VGet(-50.0f, 130.0f, 110.0f);// 左手前方
-		settings.vBottomOffset = VGet(-50.0f, 40.0f, 110.0f);
+		settings.vTopOffset = VGet(0.0f, 150.0f, 100.0f);// 前方
+		settings.vBottomOffset = VGet(0.0f, 50.0f, 100.0f);
 		settings.fRadius = 80.0f;
 		settings.fDelay = SECOND_ATTACK_DELAY;
 		settings.fDuration = SECOND_ATTACK_DURATION;
@@ -91,9 +91,41 @@ namespace
 		return settings;
 	}
 
+	EnemyAttackSettings MakeThirdAttackSettings()
+	{
+		EnemyAttackSettings settings;
+		settings.colType = COLLISION_TYPE::CAPSULE;
+		settings.vTopOffset = VGet(0.0f, 150.0f, 100.0f);// 前方
+		settings.vBottomOffset = VGet(0.0f, 50.0f, 100.0f);
+		settings.fRadius = 90.0f;
+		settings.fDelay = THIRD_ATTACK_DELAY;
+		settings.fDuration = THIRD_ATTACK_DURATION;
+		settings.fRecovery = 0.0f;
+		settings.fDamage = THIRD_ATTACK_DAMAGE;
+		settings.ownerId = 0;
+		return settings;
+	}
+
+	EnemyAttackSettings MakeChargeAttackSettings()
+	{
+		EnemyAttackSettings settings;
+		settings.colType = COLLISION_TYPE::CAPSULE;
+		settings.vTopOffset = VGet(0.0f, 150.0f, 100.0f);// 前方
+		settings.vBottomOffset = VGet(0.0f, 50.0f, 100.0f);
+		settings.fRadius = 60.0f;
+		settings.fDelay = 0.0f;
+		settings.fDuration = CHARGE_EXECUTE_TIME;
+		settings.fRecovery = 0.0f;
+		settings.fDamage = CHARGE_DAMAGE;
+		settings.ownerId = 0;
+		return settings;
+	}
+
 	// 定数として保存
 	const EnemyAttackSettings FIRST_ATTACK_SETTINGS = MakeFirstAttackSettings();
 	const EnemyAttackSettings SECOND_ATTACK_SETTINGS = MakeSecondAttackSettings();
+	const EnemyAttackSettings THIRD_ATTACK_SETTINGS = MakeThirdAttackSettings();
+	const EnemyAttackSettings CHARGE_ATTACK_SETTINGS = MakeChargeAttackSettings();
 }
 
 namespace Tank
@@ -158,7 +190,7 @@ namespace Tank
 		const auto& param = owner->GetEnemyParam();
 
 		// 攻撃可能範囲に入ったら攻撃ステートへ
-		if (targetInfo.fDist <= param.fAttackRange)
+		if (targetInfo.fDist <= ATTACK_START_RANGE)
 		{
 			// 無限ループ防止のため、ここでも判定
 			if (owner->IsVisible(targetInfo.target->GetPos(), 5.0f))
@@ -206,8 +238,7 @@ namespace Tank
 	void Tank::Attack::Enter(Enemy* owner)
 	{
 		_fTimer = 0.0f;
-		_bDoCharge = false;
-		_fJudgeTimer = 30.0f;
+		_bJudgedCharge = false;
 	}
 
 	std::shared_ptr<EnemyState> Tank::Attack::Update(Enemy* owner)
@@ -221,7 +252,7 @@ namespace Tank
 		const auto& param = owner->GetEnemyParam();
 
 		// ターゲットが離れたら接近ステートへ
-		if (targetInfo.fDist > param.fChaseLimitRange)
+		if (targetInfo.fDist > ATTACK_START_RANGE)
 		{
 			return std::make_shared<Tank::Approach>();
 		}
@@ -239,32 +270,21 @@ namespace Tank
 			return std::make_shared<Tank::FirstAttackPrepare>();
 		}
 
-		// 突進可能距離内で一定間隔ごとに判定を行う
-		if (targetInfo.fDist <= CHARGE_ATTACK_RANGE)
+		// 突進可能距離内で一度だけ判定する
+		if (targetInfo.fDist <= CHARGE_ATTACK_RANGE && !_bJudgedCharge)
 		{
-			_fJudgeTimer++;
+			_bJudgedCharge = true;
 
-			if (_fJudgeTimer >= CHARAGE_JUDGE_INTERVAL)
+			// 突進攻撃を行うかの判定
+			if (mymath::RandomRange(0.0f, 1.0f) < CHARGE_ATTACK_PROB)
 			{
-				_fJudgeTimer = 0.0f;
-
-				if(mymath::RandomRange(0.0f, 1.0f) < CHARGE_ATTACK_PROB)
-				{
-					// 突進攻撃 : 遷移時点のターゲット座標を渡す
-					// ターゲット位置の少し先まで
-					VECTOR vOvershoot = VAdd(targetInfo.target->GetPos(), VScale(targetInfo.vDir, 50.0f));
-					StopMove(owner);
-					return std::make_shared<Tank::ChargePrepare>(vOvershoot);
-				}
+				StopMove(owner);
+				return std::make_shared<Tank::ChargePrepare>(targetInfo.target->GetPos());
 			}
-		}
-		else
-		{
-			_fJudgeTimer = 0.0f;
 		}
 
 		RotateToTarget(owner, targetInfo.vDir, SMOOTH_ROTATE_SPEED);
-		MoveToTarget(owner, targetInfo.vDir, ATTACK_APPROACH_SPEED);
+		MoveToTarget(owner, targetInfo.vDir, param.fMoveSpeed);
 
 		return nullptr;
 	}
@@ -372,7 +392,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("mainRig|Idle01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
+			//animManager->ChangeAnimationByName("mainRig|Idle01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
 		}
 	}
 
@@ -404,7 +424,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("mainRig|Idle01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
+			//animManager->ChangeAnimationByName("mainRig|Idle01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
 		}
 	}
 
@@ -498,7 +518,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("mainRig|Idle01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
+			//animManager->ChangeAnimationByName("mainRig|Idle01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
 		}
 	}
 
@@ -541,7 +561,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("mainRig|Idle01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
+			//animManager->ChangeAnimationByName("mainRig|Idle01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
 		}
 	}
 
@@ -575,11 +595,11 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("mainRig|Attack03", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_HALF);
+			animManager->ChangeAnimationByName("mainRig|Attack04", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_HALF);
 		}
 
 		// 攻撃コリジョン生成
-		// owner->StartAttack(THIRD_ATTACK_SETTINGS);
+		 owner->StartAttack(THIRD_ATTACK_SETTINGS);
 		_bAttackStarted = true;
 	}
 
@@ -600,7 +620,7 @@ namespace Tank
 
 		if (_bAttackStarted)
 		{
-			// owner->UpdateAttackTransform(THIRD_ATTACK_SETTINGS);
+			 owner->UpdateAttackTransform(THIRD_ATTACK_SETTINGS);
 		}
 
 		if(_fTimer >= THIRD_EXECUTE_TIME)
@@ -615,7 +635,7 @@ namespace Tank
 	{
 		if (_bAttackStarted)
 		{
-			// owner->StopAttack();
+			 owner->StopAttack();
 			_bAttackStarted = false;
 		}
 		StopMove(owner);
@@ -631,7 +651,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("mainRig|Idle01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
+			//animManager->ChangeAnimationByName("mainRig|Idle01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
 		}
 	}
 
@@ -661,7 +681,7 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("mainRig|Idle01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
+			//animManager->ChangeAnimationByName("mainRig|Idle01", BLEND_FRAME, ANIM_LOOP_COUNT, ANIM_SPEED_HALF);
 		}
 	}
 
@@ -698,6 +718,7 @@ namespace Tank
 	void Tank::ChargeExecute::Enter(Enemy* owner)
 	{
 		_fTimer = 0.0f;
+		_bAttackStarted = false;
 
 		owner->SetDir(_vChargeDir);
 
@@ -705,13 +726,22 @@ namespace Tank
 		AnimManager* animManager = owner->GetAnimManager();
 		if (animManager)
 		{
-			animManager->ChangeAnimationByName("mainRig|Attack04", BLEND_FRAME, ANIM_PLAY_COUNT, ANIM_SPEED_HALF);
+			animManager->ChangeAnimationByName("mainRig|Run01", BLEND_FRAME, ANIM_LOOP_COUNT);
 		}
+
+		// 攻撃コリジョン生成
+		owner->StartAttack(CHARGE_ATTACK_SETTINGS);
+		_bAttackStarted = true;
 	}
 
 	std::shared_ptr<EnemyState> Tank::ChargeExecute::Update(Enemy* owner)
 	{
 		_fTimer++;
+
+		if (_bAttackStarted)
+		{
+			owner->UpdateAttackTransform(CHARGE_ATTACK_SETTINGS);
+		}
 
 		// 突進先の座標への水平距離
 		VECTOR vToTarget = VSub(_vChargeTarget, owner->GetPos());
@@ -735,6 +765,11 @@ namespace Tank
 
 	void Tank::ChargeExecute::Exit(Enemy* owner)
 	{
+		if (_bAttackStarted)
+		{
+			owner->StopAttack();
+			_bAttackStarted = false;
+		}
 		StopMove(owner);
 	}
 
