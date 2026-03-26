@@ -17,13 +17,13 @@ bool ModeEndingText::Initialize()
 	_charTimer = 0;
 	_textFullyShown = false;
 
+	_nextGraphHandle = ResourceServer::GetInstance()->GetHandle("A_NEXT");
+
 	_text =
 		"｢白雪は旧校舎の奥で気を失っていた。\n"
 		"意識を取り戻した後に話を聞いたが、どうやら記憶が曖昧みたいだった。\n"
 		"そして、この日を境に俺とクロがいろんなトラブルに巻き込まれることになるのは\nまた別のお話ー。";
 
-	// BGM をシナリオ開始時に一度だけ再生する
-	//SoundServer::GetInstance()->Play("BGM_Ending", DX_PLAYTYPE_LOOP);
 
 	// まずフェードアウトして真っ黒へ
 	StartFade(30, 0, 30); // out=30 / in=0 / wait=30（ModeBaseの実装に依存するが、ここは真っ黒にする目的）
@@ -133,5 +133,15 @@ bool ModeEndingText::Render()
 		SetFontSize(16);
 	}
 
+	if(_textStarted && _textFullyShown)
+	{
+		const int marginLeft	= 40;
+		const int marginBottom	= 55;
+
+		const int nx = marginLeft;
+		const int ny = 1080 - marginBottom;
+
+		DrawGraph(nx, ny, _nextGraphHandle, TRUE);
+	}
 	return true;
 }

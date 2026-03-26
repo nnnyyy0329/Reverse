@@ -16,6 +16,9 @@ bool ModeScenario::Initialize()
 	_textFullyShown = false;
 	_loadedCount = 0;
 
+	_nextGraphHandle = ResourceServer::GetInstance()->GetHandle("A_NEXT");
+
+
 	// セリフを設定（ユーザー提供文）
 	_texts[0] = "「 なぁエイト、もう帰ろうぜ？ 見たいテレビがあるんだよな～。」▼";
 	_texts[1] = "「 ちょっ、クロ！あんま外で喋んなって言ってるだろ！」\n「 それに白雪に借りたノートを返さないとだし。」▼";
@@ -123,38 +126,6 @@ bool ModeScenario::Process()
 	return true;
 }
 
-//bool ModeScenario::Render()
-//{
-//	ClearDrawScreen();
-//
-//	// 画像描画（ページ範囲内ならそのハンドルを描画）
-//	const int handle = (_pageIndex >= 0 && _pageIndex < TEXT_COUNT) ? _textHandles[_pageIndex] : -1;
-//	if(handle >= 0)
-//	{
-//		int w = 0;
-//		int h = 0;
-//		GetGraphSize(handle, &w, &h);
-//
-//		const int x = (1920 - w) / 2;
-//		const int y = (1080 - h) / 2;
-//
-//		DrawGraph(x, y, handle, TRUE);
-//	}
-//
-//	// セリフ表示（1文字ずつ）
-//	const std::string& curText = (_pageIndex >= 0 && _pageIndex < TEXT_COUNT) ? _texts[_pageIndex] : std::string();
-//	int showCount = std::max(0, std::min(_charIndex, static_cast<int>(curText.size())));
-//	std::string display = curText.substr(0, showCount);
-//
-//	// 表示位置は必要に応じて調整してください
-//	SetFontSize(38);
-//	DrawFormatString(320, 820, GetColor(255, 255, 255), "%s", display.c_str());
-//	SetFontSize(16);
-//
-//
-//
-//	return true;
-//}
 
 
 bool ModeScenario::Render()
@@ -202,5 +173,16 @@ bool ModeScenario::Render()
 
 	SetFontSize(16);
 
+
+	if(_textFullyShown )
+	{
+		const int marginLeft = 1470;
+		const int marginBottom = 70;
+
+		const int nx = marginLeft;
+		const int ny = 1080  - marginBottom;
+
+		DrawGraph(nx, ny, _nextGraphHandle, TRUE);
+	}
 	return true;
 }
