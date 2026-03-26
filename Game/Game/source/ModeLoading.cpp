@@ -181,19 +181,23 @@ bool ModeLoading::Initialize()
 			rs->Register("SE_Ranged_Shot",		"sound/SE/en_ranged/en_ranged_shot.mp3",	RESOURCE_TYPE::Sound, 1.0f);
 			rs->Register("SE_En_Notice",		"sound/SE/en_common/en_common_notice.mp3",	RESOURCE_TYPE::Sound, 1.0f);
 
-			// プレイヤーの攻撃
-			rs->Register("sPlayerAttack",	"sound/SE/sPlayerAttack/absorb2.mp3",			RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("iPlayerAttack",	"sound/SE/iPlayerAttack/iPlayerAttack1.mp3",	RESOURCE_TYPE::Sound, 1.0f);
-
-			// プレイヤー変身
-			rs->Register("ChangePower",		"sound/SE/changePlayer/knuckleSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
-			rs->Register("ChangeBlaster",	"sound/SE/changePlayer/blasterSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
-
-
 			// その他SE
 
 			// プレイヤー
 			{
+				// プレイヤーの攻撃
+				rs->Register("sPlayerAttack",	"sound/SE/sPlayerAttack/absorb2.mp3",			RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("iPlayerAttack",	"sound/SE/iPlayerAttack/iPlayerAttack1.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+				
+				// プレイヤー変身
+				rs->Register("ChangePower",		"sound/SE/changePlayer/knuckleSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("ChangeBlaster",	"sound/SE/changePlayer/blasterSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
+
+				// プレイヤー体力回復
+				rs->Register("HealthLife",		"sound/SE/RecoveryLife.mp3", RESOURCE_TYPE::Sound, 1.0f);
+
+
+
 				rs->Register("SE_GameOver",				"sound/SE/SE00.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				//rs->Register("SE_",	"sound/SE/SE01.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				//rs->Register("SE_",	"sound/SE/SE02.mp3", RESOURCE_TYPE::Sound, 1.0f);
@@ -202,8 +206,8 @@ bool ModeLoading::Initialize()
 				rs->Register("SE_",						"sound/SE/SE05.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_TransPlayerDash",		"sound/SE/SE06.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_TransPlayerDodge",		"sound/SE/SE07.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_InteriorPlayerPunch",	"sound/SE/SE08.mp3", RESOURCE_TYPE::Sound, 1.0f);
-				rs->Register("SE_",						"sound/SE/SE09.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_InteriorPlayerPunch",	"sound/SE/se_9.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_DamagePlayer",			"sound/SE/SE09.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_Absorb",				"sound/SE/SE10.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_Evade",				"sound/SE/SE11.mp3", RESOURCE_TYPE::Sound, 1.0f);
 				rs->Register("SE_",						"sound/SE/SE12.mp3", RESOURCE_TYPE::Sound, 1.0f);

@@ -380,14 +380,25 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 {
 	if(!chara) { return; }
 
-	CHARA_TYPE myType = chara->GetCharaType();// 自分のキャラタイプを取得
+	// 無敵状態かチェック
+	bool isInvincible = false;
+	if(_dodgeSystem && _dodgeSystem->IsCharacterInvincible(chara))
+	{
+		isInvincible = true;
+	}
 
+	// 弾マネージャーのインスタンスを取得
 	auto bulletManager = BulletManager::GetInstance();
 	if(bulletManager == nullptr){ return; }
 
-	auto bullets = bulletManager->GetAllBullets();	// 登録された弾の取得
+	// 登録された弾の取得
+	auto bullets = bulletManager->GetAllBullets();	
 
-	std::vector<std::shared_ptr<Bullet>> deadBullets;// 削除する弾を一時保存するリスト
+	// 自分のキャラタイプを取得
+	CHARA_TYPE myType = chara->GetCharaType();
+
+	// 削除する弾を一時保存するリスト
+	std::vector<std::shared_ptr<Bullet>> deadBullets;
 
 	// 全弾ループ
 	for(auto& bullet : bullets)
@@ -412,6 +423,18 @@ void ModeGame::CheckHitCharaBullet(std::shared_ptr<CharaBase> chara)
 		{
 			// 同一所有者の弾ならスキップ
 			if(IsSameOwnerBullet(myType, bulletShooterType)){ continue; }
+
+			// 無敵状態の場合
+			if(isInvincible)
+			{
+				// 回避した弾として登録
+				bulletManager->RegisterDodgeBullet(bullets);
+
+				// 無敵状態を解除（1回だけ無敵になる）
+				isInvincible = false;
+
+				return;
+			}
 
 			// 弾の設定からダメージを取得
 			float damage = bulletConfig.damage;
@@ -562,8 +585,11 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 
 	// 無敵状態かチェック
 	bool isInvincible = false;
+
+	// 回避システムが存在し、かつキャラが無敵状態の場合
 	if(_dodgeSystem && _dodgeSystem->IsCharacterInvincible(chara))
 	{
+		// 無敵状態の場合は回避ヒット扱いにして登録
 		isInvincible = true;
 	}
 
@@ -583,16 +609,24 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		// ヒットフラグを有効にする
 		attack->SetHitFlag(true);
 
-		// 無敵状態の場合は回避ヒット扱いにして登録
+		// 無敵状態の場合
 		if(isInvincible)
 		{
+			// 回避ヒット攻撃として登録
 			_attackManager->RegisterDodgeHitAttack(attack);
+
+			// 無敵状態を解除
 			isInvincible = false;
+
+			// ヒット処理は行わずに終了
 			return;
 		}
 
-		auto ownerType = _attackManager->GetAttackOwnerType(attack);	// 攻撃の所有者タイプ取得
-		auto charaType = chara->GetCharaType();							// キャラのタイプ取得
+		// 攻撃の所有者タイプ取得
+		auto ownerType = _attackManager->GetAttackOwnerType(attack);	
+
+		// キャラのタイプ取得
+		auto charaType = chara->GetCharaType();							
 
 		// 自分に攻撃しているかどうか
 		if(OwnerIsAttackingOwner(charaType, ownerType)) { return; }
@@ -606,7 +640,7 @@ void ModeGame::CheckHitCharaAttackCol(std::shared_ptr<CharaBase> chara, std::sha
 		// カメラの振動
 		if(!IsPlayerCharacter(charaType) && effectConfig.isActiveCameraShake)
 		{
-			if (_cameraManager)
+			if(_cameraManager)
 			{
 				auto shake = std::make_shared<CameraShakeSystem>();
 
@@ -683,8 +717,6 @@ void ModeGame::ConvertEnergy(std::shared_ptr<AttackBase> attack, float damage)
 }
 
 // プレイヤーとトリガーの当たり判定
-
-
 // 既存: void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 {
@@ -856,6 +888,7 @@ void ModeGame::CheckHitPlayerTrigger(std::shared_ptr<CharaBase> player)
 		}
 	}
 }
+
 // 吸収攻撃の当たり判定チェック関数
 void ModeGame::CheckHitAbsorbAttack(std::shared_ptr<PlayerBase> player, std::shared_ptr<CharaBase>enemy)
 {

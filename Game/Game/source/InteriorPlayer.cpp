@@ -140,7 +140,7 @@ RenderConfig InteriorPlayer::GetRenderConfig()
 	RenderConfig config;
 
 	config.playerName = "Interior Player";				// プレイヤー名
-	config.debugColor = COLOR_U8{ 0, 255, 255, 255 };	// デバッグ描画色
+	config.debugColor = COLOR_U8{ 0, 255, 205, 255 };	// デバッグ描画色
 
 	return config;
 }
@@ -166,8 +166,8 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 		configs[0].attackColTop			= _vMove,				// 攻撃方向
 		configs[0].attackDelay			= 15.0f,				// 発生フレーム
 		configs[0].attackDuration		= 5.0f,					// 持続フレーム
-		configs[0].attackRecovery		= 12.0f,				// 硬直フレーム
-		configs[0].damage				= 20.0f,				// ダメージ
+		configs[0].attackRecovery		= 16.0f,				// 硬直フレーム
+		configs[0].damage				= 25.0f,				// ダメージ
 		configs[0].attackState			= ATTACK_STATE::ACTIVE,	// 攻撃状態
 		configs[0].attackMoveSpeed		= 3.0f,					// 攻撃中の移動速度
 		configs[0].isActive				= false,				// アクティブかどうか
@@ -185,8 +185,8 @@ void InteriorPlayer::GetAttackColConfigs(AttackCollision configs[5])
 		configs[1].attackColTop			= _vMove,				// 攻撃方向
 		configs[1].attackDelay			= 15.0f,				// 発生フレーム
 		configs[1].attackDuration		= 5.0f,					// 持続フレーム
-		configs[1].attackRecovery		= 12.0f,				// 硬直フレーム
-		configs[1].damage				= 30.0f,				// ダメージ
+		configs[1].attackRecovery		= 16.0f,				// 硬直フレーム
+		configs[1].damage				= 35.0f,				// ダメージ
 		configs[1].attackState			= ATTACK_STATE::ACTIVE,	// 攻撃状態
 		configs[1].attackMoveSpeed		= 0.0f,					// 攻撃中の移動速度
 		configs[1].isActive				= false,				// アクティブかどうか
@@ -258,28 +258,28 @@ void InteriorPlayer::GetAttackColOffsetConfigs(AttackColOffset configs[5])
 	// 第1攻撃
 	configs[0] =
 	{
-		configs[0].directionScale		= 100.0f,	// 方向スケール
+		configs[0].directionScale		= 75.0f,	// 方向スケール
 		configs[0].useOwnerDirection	= true,		// 所有者の向きを基準とするか
 	};
 
 	// 第2攻撃
 	configs[1] =
 	{
-		configs[1].directionScale		= 100.0f,	// 方向スケール
+		configs[1].directionScale		= 75.0f,	// 方向スケール
 		configs[1].useOwnerDirection	= true,		// 所有者の向きを基準とするか
 	};
 
 	// 第3攻撃
 	configs[2] =
 	{
-		configs[2].directionScale		= 100.0f,	// 方向スケール
+		configs[2].directionScale		= 75.0f,	// 方向スケール
 		configs[2].useOwnerDirection	= true,		// 所有者の向きを基準とするか
 	};
 
 	// 第4攻撃
 	configs[3] =
 	{
-		configs[3].directionScale		= 100.0f,	// 方向スケール
+		configs[3].directionScale		= 75.0f,	// 方向スケール
 		configs[3].useOwnerDirection	= true,		// 所有者の向きを基準とするか
 	};
 
@@ -337,9 +337,9 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		config[0].attachType		= EFFECT_ATTACH_TYPE::LEFT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[0].isActiveSound = true,				// サウンドを有効にするか
-		config[0].soundName		= "iPlayerAttack",	// サウンド名
-		config[0].playSoundDelay = 15.0f,			// サウンド再生の遅延時間
+		config[0].isActiveSound		= true,						// サウンドを有効にするか
+		config[0].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[0].playSoundDelay	= 15.0f,					// サウンド再生の遅延時間
 		
 		/* カメラシェイク */
 		config[0].isActiveCameraShake	= true,	// カメラシェイクを有効にするか
@@ -362,9 +362,9 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		config[1].attachType		= EFFECT_ATTACH_TYPE::RIGHT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[1].isActiveSound = true,				// サウンドを有効にするか
-		config[1].soundName		= "iPlayerAttack",	// サウンド名
-		config[1].playSoundDelay = 15.0f,			// サウンド再生の遅延時間
+		config[1].isActiveSound		= true,						// サウンドを有効にするか
+		config[1].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[1].playSoundDelay	= 15.0f,					// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[1].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -387,9 +387,9 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		config[2].attachType		= EFFECT_ATTACH_TYPE::LEFT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[2].isActiveSound = true,				// サウンドを有効にするか
-		config[2].soundName		= "iPlayerAttack",	// サウンド名
-		config[2].playSoundDelay = 10.0f,			// サウンド再生の遅延時間
+		config[2].isActiveSound		= true,						// サウンドを有効にするか
+		config[2].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[2].playSoundDelay	= 10.0f,					// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[2].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -412,9 +412,9 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		config[3].attachType		= EFFECT_ATTACH_TYPE::CHARACTER_OFFSET,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[3].isActiveSound = true,				// サウンドを有効にするか
-		config[3].soundName		= "iPlayerAttack",	// サウンド名
-		config[3].playSoundDelay = 15.0f,			// サウンド再生の遅延時間
+		config[3].isActiveSound		= true,						// サウンドを有効にするか
+		config[3].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[3].playSoundDelay	= 15.0f,					// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[3].isActiveCameraShake = true,	// カメラシェイクを有効にするか
@@ -437,9 +437,9 @@ void InteriorPlayer::GetAttackEffectConfigs(AttackEffectConfig config[5])
 		config[4].attachType		= EFFECT_ATTACH_TYPE::LEFT_ARM,	// エフェクトの追従方法
 
 		/* サウンド */
-		config[4].isActiveSound = true,				// サウンドを有効にするか
-		config[4].soundName		= "iPlayerAttack",	// サウンド名
-		config[4].playSoundDelay = 30.0f,			// サウンド再生の遅延時間
+		config[4].isActiveSound		= true,						// サウンドを有効にするか
+		config[4].soundName			= "SE_InteriorPlayerPunch",	// サウンド名
+		config[4].playSoundDelay	= 30.0f,					// サウンド再生の遅延時間
 
 		/* カメラシェイク */
 		config[4].isActiveCameraShake = true,	// カメラシェイクを有効にするか

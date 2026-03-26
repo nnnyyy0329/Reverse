@@ -33,11 +33,13 @@ PlayerManager::PlayerManager()
 	_fTransformCancelMaxTime = 0.0f;
 	_bIsTransformCanceling = false;
 	_bEnableStateTransfer = false;
+	_bIsTransformCancelFirstTime = false;
 }
 
 PlayerManager::~PlayerManager()
 {
-	_players.clear();
+	// デストラクタ
+	Terminate();
 }
 
 bool PlayerManager::Initialize()
@@ -410,6 +412,12 @@ void PlayerManager::EndTransformCancel()
 		_abilitySelectScreen->SetSelectedAbilityIndex(AC::DEFAULT_ABILITY_INDEX);
 	}
 
+	if(!_bIsTransformCancelFirstTime)
+	{
+		// 最初の変身解除が完了したフラグを有効にする
+		_bIsTransformCancelFirstTime = true;	
+	}
+
 	_abilitySelectScreen->SetSelectionState(SelectionState::NOT_SELECTION);	// 能力選択をしていない状態にする
 	_fTransformCancelTime = 0.0f;											// 変身解除時間リセット
 	_bIsTransformCanceling = false;											// 変身解除フラグ無効
@@ -589,6 +597,9 @@ void PlayerManager::RecoveryLifeByTransform(PLAYER_TYPE transformPlayerType)
 
 		// プレイヤーの体力を半回復
 		_activePlayer->SetLife(_activePlayer->GetLife() + halfLife);
+
+		// 変身時の回復サウンド再生y
+		SoundServer::GetInstance()->Play("HealthLife", DX_PLAYTYPE_BACK);	
 
 		// プレイヤーのライフが最大体力より多くなったら
 		if(_activePlayer->GetLife() >= _activePlayer->GetPlayerMaxLife())

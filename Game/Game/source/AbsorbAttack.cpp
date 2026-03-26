@@ -180,6 +180,8 @@ void AbsorbAttack::ProcessAbsorbEffect(const VECTOR& ownerPos)
 		//VECTOR rotation = VGet(0.0f, rotY, 0.0f);				// エフェクトの回転量を設定
 		//EffectServer::GetInstance()->SetRot(handle, rotation);	// 回転量をエフェクトに適応
 
+		// エネルギーが最大までたまっていたらスキップ
+		if(EnergyManager::GetInstance()->IsMaxEnergy()){ return; }
 
 		// 吸収エフェクト再生
 		EffectServer::GetInstance()->Play(_stcAbsorbConfig.absorbEffectName, ownerPos);
@@ -190,6 +192,9 @@ void AbsorbAttack::ProcessAbsorbSound(std::shared_ptr<CharaBase> owner)
 {
 	// サウンド名が設定されている場合のみ再生
 	if(_stcAbsorbConfig.absorbSoundName.empty()){ return; }
+
+	// エネルギーが最大までたまっていたらスキップ
+	if(EnergyManager::GetInstance()->IsMaxEnergy()){ return; }
 
 	// サウンド再生
 	SoundServer::GetInstance()->Play(_stcAbsorbConfig.absorbSoundName, DX_PLAYTYPE_BACK);

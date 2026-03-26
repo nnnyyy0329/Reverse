@@ -18,16 +18,18 @@ namespace EnergyDefaultConstants
 namespace EnergyGainConstants
 {
 	constexpr float EVADE_ATTACK = 25.0f;   // 攻撃回避時のエネルギー獲得量
+	constexpr float EVADE_BULLET = 20.0f;   // 弾回避時のエネルギー獲得量
 	constexpr float ABSORB = 1.0f;          // 吸収時のエネルギー獲得量
 }
 
 // エネルギー消費量定数
 namespace EnergyConsumeConstants
 {
-	constexpr float SHOOT_NORMAL_BULLET = 7.5f;	    // 通常弾のエネルギー消費量
+	constexpr float SHOOT_NORMAL_BULLET = 10.0f;	    // 通常弾のエネルギー消費量
 	constexpr float SHOOT_PIERCING_BULLET = 5.0f;	// 貫通弾のエネルギー消費量
 }
 
+/// @brief エネルギーマネージャークラス
 class EnergyManager
 {
 public:
@@ -37,71 +39,113 @@ public:
     {
         // 静的ローカル変数シングルトン
         static EnergyManager instance;
-
         return &instance;
     }
     static void CreateInstance();	// インスタンス作成
     static void DestroyInstance();	// インスタンス破棄
 
+
+	/* 基本関数 */
+
     bool Initialize();
     bool Terminate();
     bool Process();
     bool Render();
+
+	/// @brief デバッグ描画
     void DebugRender();
 
 
     /* エネルギー管理関数 */
 
-    // ダメージをエネルギーに変換する関数
+	/// @brief ダメージをエネルギーに変換する関数
+    ///
+	/// @param damage ダメージ量
     void ConvertDamageToEnergy(float damage);
 
-    // ダメージを消費エネルギーに変換する関数
+	/// @brief ダメージを消費エネルギーに変換する関数
+	///
+	/// @param damage ダメージ量
     void ConvertDamageToConsumeEnergy(float damage);
 
-    // エネルギー追加関数
+	/// @brief エネルギー追加関数
+	///
+	/// @param energy 追加するエネルギー量
     void AddEnergy(float Energy);                   
 
-    // エネルギー消費関数
+	/// @brief エネルギー消費関数
+	///
+	/// @param energy 消費するエネルギー量
     void ConsumeEnergy(float energy);
 
-    // 切り替え可能かチェック
-    bool CanSwitchPlayer();
+	/// @brief 切り替え可能かチェック
+    ///
+	/// @return 切り替え可能ならtrue、そうでなければfalse
+	bool CanSwitchPlayer() const { return _currentEnergy >= _switchCostEnergy; }
 
-    // 切り替え維持可能かチェック
-    bool CanKeepSwitchPlayer();
+	/// @brief 切り替え維持可能かチェック
+	///
+	/// @return 切り替え維持可能ならtrue、そうでなければfalse
+	bool CanKeepSwitchPlayer() const { return _currentEnergy >= _switchKeepEnergy; }
+
+	/// @brief エネルギーが最大まで達しているかチェック
+	///
+	/// @return エネルギーが最大まで達しているならtrue、そうでなければfalse
+	bool IsMaxEnergy() const { return _currentEnergy >= _maxEnergy; }
 
 
     /* ゲッターセッター */
 
-    // 現在のエネルギーの取得
+	/// @brief 現在のエネルギーの取得
+	///
+	/// @return 現在のエネルギー量
     float GetCurrentEnergy() const { return _currentEnergy; }       
 
-    // 現在のエネルギーの設定
+	/// @brief 現在のエネルギーの設定
+	///
+	/// @param energy 設定するエネルギー量
     void SetCurrentEnergy(float energy){ _currentEnergy = energy; } 
 
-    // 最大のエネルギーの取得
+	/// @brief 最大のエネルギーの取得
+	///
+	/// @return 最大のエネルギー量
     float GetMaxEnergy() const { return _maxEnergy; }       
 
-    // 最大のエネルギーの設定
-    void SetMaxEnergy(float energy){ _maxEnergy = energy; } 
-
-    // 切り替えエネルギーの取得
+	/// @brief 切り替えに必要なエネルギーの取得
+    /// 
+	/// @return 切り替えに必要なエネルギー量
     float GetSwitchCostEnergy() const { return _switchCostEnergy; } 
 
-    // 切り替え維持エネルギーの取得
+	/// @brief 切り替え状態維持に必要なエネルギーの取得
+	///
+	/// @return 切り替え状態維持に必要なエネルギー量
 	float GetSwitchKeepEnergy() const { return _switchKeepEnergy; }   
 
-    // 攻撃回避時のエネルギー獲得量
-    float GetEvadeAttackEnergy()const;
+	/// @brief 攻撃回避時のエネルギー獲得量の取得
+	///
+	/// @return 攻撃回避時のエネルギー獲得量
+	float GetEvadeAttackEnergy() const { return EnergyGainConstants::EVADE_ATTACK; }
 
-    // 吸収時のエネルギー獲得量
-    float GetAbsorbEnergy()const;
+	/// @brief 弾回避時のエネルギー獲得量の取得
+	///
+	/// @return 弾回避時のエネルギー獲得量
+	float GetEvadeBulletEnergy() const { return EnergyGainConstants::EVADE_BULLET; }
 
-	// 通常弾のエネルギー消費量
-	float GetShootNormalBulletConsumeEnergy()const;
+	/// @brief 吸収時のエネルギー獲得量の取得
+	///
+	/// @return 吸収時のエネルギー獲得量
+	float GetAbsorbEnergy() const { return EnergyGainConstants::ABSORB; }
 
-	// 貫通弾のエネルギー消費量
-	float GetShootPiercingBulletConsumeEnergy()const;
+	/// @brief 通常弾のエネルギー消費量の取得
+	///
+	/// @return 通常弾のエネルギー消費量
+	float GetNormalBulletEnergyCost() const { return EnergyConsumeConstants::SHOOT_NORMAL_BULLET; }
+
+	/// @brief 貫通弾のエネルギー消費量の取得
+	///
+	/// @return 貫通弾のエネルギー消費量
+	float GetPiercingBulletEnergyCost() const { return EnergyConsumeConstants::SHOOT_PIERCING_BULLET; }
+
 
 private:
     

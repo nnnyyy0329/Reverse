@@ -128,7 +128,7 @@ bool ModeEndingText::Render()
 		const int showCount = std::max(0, std::min(_charIndex, static_cast<int>(_text.size())));
 		const std::string display = _text.substr(0, showCount);
 
-		SetFontSize(28);
+		SetFontSize(40);
 		DrawFormatString(120, 780, GetColor(255, 255, 255), "%s", display.c_str());
 		SetFontSize(16);
 	}

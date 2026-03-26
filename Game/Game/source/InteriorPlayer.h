@@ -29,6 +29,10 @@ public:
 	InteriorPlayer();
 	virtual ~InteriorPlayer();
 
+
+
+	/* 基本関数 */
+
 	virtual bool Initialize();
 	virtual bool Terminate();
 	virtual bool Process();	
@@ -51,8 +55,14 @@ public:
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;
 
 
-	/* 純粋仮想関数のオーバーライド */
-	
+
+	/* ゲッターセッター */
+
+
+private:
+
+	/* 仮想関数のオーバーライド */
+
 	/// @brief プレイヤー設定を取得
 	///
 	/// @return プレイヤー設定構造体
@@ -66,17 +76,17 @@ public:
 	/// @brief 描画設定を取得
 	///
 	/// @return 描画設定構造体
-	virtual RenderConfig		GetRenderConfig()											override;	
+	virtual RenderConfig		GetRenderConfig()											override;
 
 	/// @brief 回避設定を取得
 	///
 	/// @return 回避設定構造体
-	virtual DodgeConfig			GetDodgeConfig()											override;	
+	virtual DodgeConfig			GetDodgeConfig()											override;
 
 	/// @brief 攻撃定数を取得
 	///
 	/// @return 攻撃定数構造体
-	virtual AttackConstants		GetAttackConstants()const									override;	
+	virtual AttackConstants		GetAttackConstants()const									override;
 
 	/// @brief 攻撃コリジョン設定を取得
 	///
@@ -106,10 +116,8 @@ public:
 	/// @brief 攻撃腕設定を取得
 	///
 	/// @param configs[5] 攻撃腕設定の配列(5段階分)
-	virtual void				GetAttackArmConfigs(AttackArmConfig configs[5])				override;	
+	virtual void				GetAttackArmConfigs(AttackArmConfig configs[5])				override;
 
-
-	/*****ゲッターセッター*****/
 
 protected:
 

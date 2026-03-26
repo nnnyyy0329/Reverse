@@ -217,21 +217,78 @@ struct PlayerState
 	PLAYER_ABSORB_STATE		absorbState;	// 吸収攻撃状態
 	PLAYER_COMBAT_STATE		combatState;	// 特殊状態
 
-	// 状態チェック関数
-	bool IsStateAttacking() const { return attackState	 != PLAYER_ATTACK_STATE::NONE; }	// 攻撃状態かどうか
-	bool IsStateMoving()	const { return movementState != PLAYER_MOVEMENT_STATE::NONE; }	// 移動状態かどうか
-	bool IsStateShooting()	const { return shootState	 != PLAYER_SHOOT_STATE::NONE; }		// 発射状態かどうか
-	bool IsStateAbsorbing()	const { return absorbState	 != PLAYER_ABSORB_STATE::NONE; }	// 吸収攻撃状態かどうか
-	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }	// 特殊状態かどうか
 
-	// 特定の状態かどうかをチェックする関数
-	bool IsInMovementState(PLAYER_MOVEMENT_STATE state)	const { return movementState == state; }	// 特定の移動状態かチェック
-	bool IsInAttackState(PLAYER_ATTACK_STATE state)		const { return attackState == state; }		// 特定の攻撃状態かチェック
-	bool IsInShootState(PLAYER_SHOOT_STATE state)		const { return shootState == state; }		// 特定の発射状態かチェック
-	bool IsInAbsorbState(PLAYER_ABSORB_STATE state)		const { return absorbState == state; }		// 特定の吸収状態かチェック
-	bool IsInCombatState(PLAYER_COMBAT_STATE state)		const { return combatState == state; }		// 特定の特殊状態かチェック
 
-	// 状態リセット関数
+	/* 状態チェック関数 */
+	
+	/// @brief 攻撃状態かどうかをチェックする関数
+	///
+	/// @return 何かしらの攻撃状態であればtrue、そうでなければfalse
+	bool IsStateAttacking() const { return attackState != PLAYER_ATTACK_STATE::NONE; }
+
+	/// @brief 移動状態かどうかをチェックする関数
+	///
+	/// @return 何かしらの移動状態であればtrue、そうでなければfalse
+	bool IsStateMoving()	const { return movementState != PLAYER_MOVEMENT_STATE::NONE; }
+
+	/// @brief 発射状態かどうかをチェックする関数
+	///
+	/// @return 何かしらの発射状態であればtrue、そうでなければfalse
+	bool IsStateShooting()	const { return shootState != PLAYER_SHOOT_STATE::NONE; }		
+	
+	/// @brief 吸収攻撃状態かどうかをチェックする関数
+	///
+	/// @return 何かしらの吸収攻撃状態であればtrue、そうでなければfalse
+	bool IsStateAbsorbing()	const { return absorbState != PLAYER_ABSORB_STATE::NONE; }
+
+	/// @brief 特殊状態かどうかをチェックする関数
+	///
+	/// @return 何かしらの特殊状態であればtrue、そうでなければfalse
+	bool IsStateCombat()	const { return combatState	 != PLAYER_COMBAT_STATE::NONE; }	
+
+
+
+	/* 特定の状態かどうかをチェックする関数 */
+	
+	/// @brief 特定の移動状態かどうかをチェックする関数
+	///
+	/// @param state チェックしたい移動状態
+	/// 
+	/// @return 指定した移動状態であればtrue、そうでなければfalse
+	bool IsInMovementState(PLAYER_MOVEMENT_STATE state)	const { return movementState == state; }	
+	
+	/// @brief 特定の攻撃状態かどうかをチェックする関数
+	///
+	/// @param state チェックしたい攻撃状態
+	///		
+	/// @return 指定した攻撃状態であればtrue、そうでなければfalse
+	bool IsInAttackState(PLAYER_ATTACK_STATE state)		const { return attackState == state; }	
+
+	/// @brief 特定の発射状態かどうかをチェックする関数	
+	///
+	/// @param state チェックしたい発射状態
+	/// 
+	/// @return 指定した発射状態であればtrue、そうでなければfalse
+	bool IsInShootState(PLAYER_SHOOT_STATE state)		const { return shootState == state; }	
+
+	/// @brief 特定の吸収攻撃状態かどうかをチェックする関数
+	///
+	/// @param state チェックしたい吸収攻撃状態
+	/// 
+	/// @return 指定した吸収攻撃状態であればtrue、そうでなければfalse
+	bool IsInAbsorbState(PLAYER_ABSORB_STATE state)		const { return absorbState == state; }	
+
+	/// @brief 特定の特殊状態かどうかをチェックする関数
+	///
+	/// @param state チェックしたい特殊状態
+	/// 
+	/// @return 指定した特殊状態であればtrue、そうでなければfalse
+	bool IsInCombatState(PLAYER_COMBAT_STATE state)		const { return combatState == state; }		
+
+
+	/* 状態リセット関数 */
+
+	/// @brief 状態をすべてリセットする関数
 	void StateReset()
 	{
 		movementState = PLAYER_MOVEMENT_STATE::NONE;
@@ -246,8 +303,13 @@ struct PlayerState
 class PlayerBase : public CharaBase
 {
 public:
+
 	PlayerBase();
 	virtual ~PlayerBase();
+
+
+
+	/* 基本関数 */
 
 	virtual bool	Initialize();	// 初期化
 	virtual bool	Terminate();	// 終了
@@ -437,11 +499,6 @@ protected:	// 弾発射関係 --- 今後クラスで分ける予定 ----------------------------
 	virtual BulletEffectConfig GetBulletEffectConfig(){ return BulletEffectConfig{}; }	// 弾演出設定の取得
 
 	virtual void ProcessShoot(){};	// 発射処理の仮想関数
-
-protected:	// 吸収攻撃関係 --- 今後クラスで分ける予定 ------------------------------------------------------
-
-	/// @brief 吸収攻撃処理の仮想関数
-	virtual void ProcessAbsorb(){};	
 
 protected:	// 回避関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 

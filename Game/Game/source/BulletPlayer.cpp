@@ -1,5 +1,6 @@
 #include "BulletPlayer.h"
 #include "CameraManager.h"
+#include "CameraShakeSystem.h"
 
 // 弾プレイヤー用定数のエイリアス
 namespace BPC = BulletPlayerConstants;
@@ -13,6 +14,9 @@ namespace PBC = PiercingBulletConfig;
 // 弾発射設定定数のエイリアス
 namespace BSC = BulletShootConstants;
 
+// 弾発射リコイル設定定数のエイリアス
+namespace BRC = BulletRecoilConstants;
+
 // 弾のエネルギー消費量定数のエイリアス
 namespace BCEC = BulletConsumeEnergyConstants;
 
@@ -20,10 +24,11 @@ BulletPlayer::BulletPlayer()
 {
 	_eCharaType = CHARA_TYPE::BULLET_PLAYER;
 
-	_shootIntervalTimer = 0.0f;		// 発射間隔タイマー
-	_bIsShootFromRightArm = false;	// 右腕から発射したかどうか
-	_bIsReadyCompleted = false;		// 構えアニメーション完了フラグ
-	_bWasShootKeyPressed = false;	// 前フレームで発射キーが押されていたか
+	_vRecoilVelocity = VGet(0.0f, 0.0f, 0.0f);	// リコイル移動の速度
+	_shootIntervalTimer = 0.0f;					// 発射間隔タイマー
+	_bIsShootFromRightArm = false;				// 右腕から発射したかどうか
+	_bIsReadyCompleted = false;					// 構えアニメーション完了フラグ
+	_bWasShootKeyPressed = false;				// 前フレームで発射キーが押されていたか
 
 	_currentBulletType = BULLET_TYPE::NORMAL;	// 初期の弾の種類は通常弾
 }
@@ -52,6 +57,9 @@ bool BulletPlayer::Process()
 	// エイムカメラの角度更新
 	UpdateAimCameraAngle();
 
+	// リコイル移動の更新
+	UpdateRecoilPos();
+
 	return true;
 }
 
@@ -68,6 +76,15 @@ void BulletPlayer::DebugRender()
 
 	// 弾発射時間のデバッグ表示
 	DrawShootIntervalTime();
+}
+
+void BulletPlayer::DrawShootIntervalTime()
+{
+	// 発射間隔がマイナスなら表示しない
+	if(IsShootIntervalNegative()){ return; }
+
+	// 弾発射カウントを表示
+	DrawFormatString(10, 510, GetColor(255, 255, 255), "弾発射カウント: %3.2f", _shootIntervalTimer);
 }
 
 void BulletPlayer::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo)
@@ -142,7 +159,7 @@ RenderConfig BulletPlayer::GetRenderConfig()
 	RenderConfig config;
 
 	config.playerName = "Bullet Player";				// プレイヤー名
-	config.debugColor = COLOR_U8{ 0, 255, 255, 255 };	// デバッグ描画色
+	config.debugColor = COLOR_U8{ 0, 205, 255, 205 };	// デバッグ描画色
 
 	return config;
 }
@@ -246,56 +263,6 @@ BulletEffectConfig BulletPlayer::GetBulletEffectConfig()
 
 	// エフェクト情報を返す
 	return effectConfig;
-}
-
-void BulletPlayer::DrawShootIntervalTime()
-{
-	// 発射間隔がマイナスなら表示しない
-	if(IsShootIntervalNegative()){ return; }
-
-	// 弾発射カウントを表示
-	DrawFormatString(10, 510, GetColor(255, 255, 255), "弾発射カウント: %3.2f", _shootIntervalTimer);
-}
-
-void BulletPlayer::UpdateAimCameraAngle()
-{
-	// エイムカメラが有効かどうかをチェック
-	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
-
-	// エイムカメラが有効な場合
-	if(isAiming)
-	{
-		/* エイム方向と移動方向を向きにする */
-
-		// カメラマネージャーから現在のエイム方向を取得
-		VECTOR aimDir = _cameraManager->GetCameraDir();
-
-		// Y軸成分を無視して水平にする
-		VECTOR aimDirHorizontal = VGet(aimDir.x, 0.0f, aimDir.z);
-
-		// 正規化してプレイヤーの向きにセットする
-		if(VSquareSize(aimDirHorizontal) > 0.0f)
-		{
-			// 水平方向のエイム方向を正規化
-			aimDirHorizontal = VNorm(aimDirHorizontal);
-
-			// プレイヤーの向きにセット
-			SetDir(aimDirHorizontal);
-		}
-	}
-	// そうでない場合
-	else
-	{
-		// 通常移動時
-		float moveSquare = VSquareSize(_vMove);
-
-		// 移動入力がある場合は移動方向を向きにする
-		if(moveSquare > 0.0f)
-		{
-			// 移動方向を正規化してプレイヤーの向きにセットする
-			SetDir(VNorm(_vMove));
-		}
-	}
 }
 
 void BulletPlayer::ProcessShoot()
@@ -413,6 +380,9 @@ void BulletPlayer::TransToShootState()
 	// 弾の発射
 	ShootBullet();
 
+	// 発射リコイル処理
+	ShootRecoilMove();
+
 	// 発射間隔の設定
 	AnimManager* animManager = GetAnimManager();
 	_shootIntervalTimer = animManager->GetCurrentAnimTotalTime();
@@ -479,7 +449,7 @@ void BulletPlayer::ShootBullet()
 		case BULLET_TYPE::NORMAL: // 通常弾
 		{
 			// 通常弾のエネルギー消費
-			energyManager->ConsumeEnergy(energyManager->GetShootNormalBulletConsumeEnergy());
+			energyManager->ConsumeEnergy(energyManager->GetNormalBulletEnergyCost());
 
 			break;
 		}
@@ -487,7 +457,7 @@ void BulletPlayer::ShootBullet()
 		case BULLET_TYPE::PIERCING: // 貫通弾
 		{
 			// 貫通弾のエネルギー消費
-			energyManager->ConsumeEnergy(energyManager->GetShootPiercingBulletConsumeEnergy());
+			energyManager->ConsumeEnergy(energyManager->GetPiercingBulletEnergyCost());
 
 			break;
 		}
@@ -499,7 +469,7 @@ void BulletPlayer::ShootBullet()
 		}
 	}
 
-	//// エネルギーを消費
+	// エネルギーを消費
 	//energyManager->ConsumeEnergy(BCEC::CONSUME_NORMAL_BULLET_ENERGY);
 
 	// 右腕と左腕の切り替え
@@ -531,6 +501,79 @@ void BulletPlayer::ShootSoundPlay(BULLET_TYPE bulletType)
 		default:
 		{
 			return;
+		}
+	}
+}
+
+void BulletPlayer::ShootRecoilMove()
+{
+	// 発射方向を取得
+	VECTOR shootDir = GetShootDirection();
+
+	// 発射方向と逆向きでスケール計算
+	VECTOR recoilDir = VScale(shootDir, static_cast<float>(BRC::RECOIL_MOVE_DIRECTION));
+
+	// 移動ベクトルの正規化
+	if(VSquareSize(recoilDir) > 0.0f)
+	{
+		// リコイル移動の速度を計算
+		_vRecoilVelocity = VScale(VNorm(recoilDir), BRC::RECOIL_MOVE_STRENGTH);
+	}
+}
+
+void BulletPlayer::UpdateRecoilPos()
+{
+	// プレイヤーの位置にリコイル移動を加算
+	_vPos = VAdd(_vPos, _vRecoilVelocity);
+
+	// リコイル移動ベクトルの減衰
+	_vRecoilVelocity = VScale(_vRecoilVelocity, BRC::RECOIL_MOVE_DECAY);
+
+	// リコイル移動ベクトルが小さくなったら
+	if(VSquareSize(_vRecoilVelocity) < 0.01f)
+	{
+		// リコイル移動ベクトルをゼロにして停止
+		_vRecoilVelocity = VGet(0.0f, 0.0f, 0.0f);
+	}
+}
+
+void BulletPlayer::UpdateAimCameraAngle()
+{
+	// エイムカメラが有効かどうかをチェック
+	bool isAiming = (_cameraManager && _cameraManager->GetCameraType() == CAMERA_TYPE::AIM_CAMERA);
+
+	// エイムカメラが有効な場合
+	if(isAiming)
+	{
+		/* エイム方向と移動方向を向きにする */
+
+		// カメラマネージャーから現在のエイム方向を取得
+		VECTOR aimDir = _cameraManager->GetCameraDir();
+
+		// Y軸成分を無視して水平にする
+		VECTOR aimDirHorizontal = VGet(aimDir.x, 0.0f, aimDir.z);
+
+		// 正規化してプレイヤーの向きにセットする
+		if(VSquareSize(aimDirHorizontal) > 0.0f)
+		{
+			// 水平方向のエイム方向を正規化
+			aimDirHorizontal = VNorm(aimDirHorizontal);
+
+			// プレイヤーの向きにセット
+			SetDir(aimDirHorizontal);
+		}
+	}
+	// そうでない場合
+	else
+	{
+		// 通常移動時
+		float moveSquare = VSquareSize(_vMove);
+
+		// 移動入力がある場合は移動方向を向きにする
+		if(moveSquare > 0.0f)
+		{
+			// 移動方向を正規化してプレイヤーの向きにセットする
+			SetDir(VNorm(_vMove));
 		}
 	}
 }
