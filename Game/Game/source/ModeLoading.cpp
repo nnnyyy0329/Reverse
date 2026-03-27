@@ -21,21 +21,21 @@ bool ModeLoading::Initialize()
 		// 敵関連
 		{
 			// モデル
-			rs->Register("Normal", "res/Enemy/SK_enemy_00_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("Ranged", "res/Enemy/SK_enemy_01_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("Tank", "res/Enemy/test_0317.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("Normal", "res/Enemy/SK_enemy_00_multimotion.mv1",	RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("Ranged", "res/Enemy/SK_enemy_01_multimotion.mv1",	RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("Tank", "res/Enemy/test_0317.mv1",					RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
-			rs->Register("LifeBar", "res/GameUI/EnemyLifeBar.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("LifeBar", "res/GameUI/EnemyLifeBar.png",			 RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("LifeBarFrame", "res/GameUI/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// プレイヤー関連
 		{
 			// プレイヤーモデル
-			rs->Register("SurfacePlayer",	"res/Player/SK_player_03_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("InteriorPlayer",	"res/Player/SK_player_04_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
-			rs->Register("BulletPlayer",	"res/Player/SK_player_05_multimotion.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SurfacePlayer",		"res/Player/SK_player_03_multimotion.mv1",	RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("InteriorPlayer",		"res/Player/SK_player_04_multimotion.mv1",	RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("BulletPlayer",		"res/Player/SK_player_05_multimotion.mv1",	RESOURCE_TYPE::Model, 1.0f);
 
 			// ライフバー
 			rs->Register("PlayerLifeBar",		"res/Player/UI/player_life_bar.png",		RESOURCE_TYPE::Graph, 1.0f);
@@ -44,15 +44,9 @@ bool ModeLoading::Initialize()
 
 		// 能力選択画面用
 		{
-			rs->Register("SelectChain",		"res/UI_Select/ability_lock_chain.png", RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SelectPower",		"res/UI_Select/select_power.png",		RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SelectBlaster",	"res/UI_Select/select_blaster.png",		RESOURCE_TYPE::Graph, 1.0f);
-
-			rs->Register("SkillAbsorb",			"res/UI_Select/skill_absorb.png",			RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SkillAoe",			"res/UI_Select/skill_aoe.png",				RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SkillPunch",			"res/UI_Select/skill_punch.png",			RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SkillPiercingBullet",	"res/UI_Select/skill_piercing_bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("SkillNormalBullet",	"res/UI_Select/skill_normal_bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SelectChain",				"res/UI_Select/ability_lock_chain.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SelectPower",				"res/UI_Select/select_power.png",			RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SelectBlaster",			"res/UI_Select/select_blaster.png",			RESOURCE_TYPE::Graph, 1.0f);
 
 			rs->Register("InputA",	"res/UI_Select/A_UI.png",		RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("InputY",	"res/UI_Select/Y_UI.png",		RESOURCE_TYPE::Graph, 1.0f);
@@ -61,16 +55,25 @@ bool ModeLoading::Initialize()
 
 			rs->Register("ActionHintTransCancel",	"res/UI_Select/action_cancel.png",	RESOURCE_TYPE::Graph, 1.0f);
 			rs->Register("ActionHintDodge",			"res/UI_Select/action_dodge.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillAbsorb",				"res/UI_Select/skill_absorb.png",			RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillAoe",				"res/UI_Select/skill_aoe.png",				RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillPunch",				"res/UI_Select/skill_punch.png",			RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillPiercingBullet",		"res/UI_Select/skill_piercing_bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillNormalBullet",		"res/UI_Select/skill_normal_bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("ActionHintTransCancel",	"res/UI_Select/action_cancel.png",			RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("ActionHintDodge",			"res/UI_Select/action_dodge.png",			RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("A_NEXT",					"res/UI_Select/A_NEXT.png",					RESOURCE_TYPE::Graph, 1.0f);
 		}
 
 		// 入力UI 
 		{
 			//rs->Register("InputA",	"res/UI_Input/input_A.png",		RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputB",	"res/UI_Input/input_B.png",		RESOURCE_TYPE::Graph, 1.0f);
-			rs->Register("InputX",	"res/UI_Input/input_X.png",		RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputB",	"res/UI_Input/input_B.png",		RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputX",	"res/UI_Input/input_X.png",		RESOURCE_TYPE::Graph, 1.0f);
 			//rs->Register("InputY",	"res/UI_Input/input_Y.png",		RESOURCE_TYPE::Graph, 1.0f);
-			//rs->Register("InputLT", "res/UI_Input/input_LT.png",	RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputLT","res/UI_Input/input_LT.png",	RESOURCE_TYPE::Graph, 1.0f);
 			//rs->Register("InputRT", "res/UI_Input/input_RT.png",	RESOURCE_TYPE::Graph, 1.0f);
+		
 		}
 
 		// エネルギーUI用

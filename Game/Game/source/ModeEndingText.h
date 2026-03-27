@@ -18,14 +18,15 @@ private:
 	std::string _text;
 	int _frameCount = 0;
 
-	// フェード制御
+
 	bool _fadeOutStarted = false;
-	bool _textStarted = false;
+	bool _textStarted = false;	// フェード制御
 	
-	// テキスト表示制御
 	int _charIndex = 0;
 	int _charTimer = 0;
-	bool _textFullyShown = false;
-	//音バグ
-	bool _bgmStarted = false;
+	bool _textFullyShown = false;// テキスト表示制御
+	
+	bool _bgmStarted = false;//音バグ対応
+
+	int _nextGraphHandle = -1;// 「A_NEXT」表示用
 };
