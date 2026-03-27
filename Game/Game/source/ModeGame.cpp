@@ -116,7 +116,7 @@ bool ModeGame::Initialize()
 	}
 
 	// ステージ初期化
-	_currentStageNum = 2;
+	_currentStageNum = 0;
 	_stage = std::make_shared<StageBase>(_currentStageNum);// ステージ番号で切り替え
 	_stage->SetPlayerManager(_playerManager);
 
@@ -239,26 +239,26 @@ bool ModeGame::Process()
 
 	// ゲームオーバーチェック
 	{
-		//bool debugDeath = false; // デバッグ用全滅フラグ
-		//if(im.IsTrigger(INPUT_ACTION::DEBUG3))
-		//{
-		//	//debugDeath = true;
-		//}
+		bool debugDeath = false; // デバッグ用全滅フラグ
+		if(im.IsTrigger(INPUT_ACTION::DEBUG3))
+		{
+			//debugDeath = true;
+		}
 
-		//auto activePlayer = _playerManager->GetActivePlayerShared();
-		//if (activePlayer && activePlayer->GetIsDead() || debugDeath)
-		//{
-		//	// ModeGameOverを追加
-		//	ModeGameOver* modeGameOver = new ModeGameOver();
-		//	ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
-		//	_stage->StopStageBGM();
+		auto activePlayer = _playerManager->GetActivePlayerShared();
+		if (activePlayer && activePlayer->GetIsDead() || debugDeath)
+		{
+			// ModeGameOverを追加
+			ModeGameOver* modeGameOver = new ModeGameOver();
+			ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
+			_stage->StopStageBGM();
 
-		//	// サウンド再生
-		//	SoundServer::GetInstance()->Play("SE_GameOver", DX_PLAYTYPE_BACK);
+			// サウンド再生
+			SoundServer::GetInstance()->Play("SE_GameOver", DX_PLAYTYPE_BACK);
 
-		//	// この後の処理をスキップ
-		//	return true;
-		//}
+			// この後の処理をスキップ
+			return true;
+		}
 	}
 
 	// startでメニューを開く
