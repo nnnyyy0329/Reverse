@@ -796,10 +796,10 @@ namespace Normal
 	std::shared_ptr<EnemyState> LostTarget::Update(Enemy* owner)
 	{
 		// Äõ“G
-		if (owner->IsTargetDetected())
-		{
-			return std::make_shared<Notice>();
-		}
+		//if (owner->IsTargetDetected())
+		//{
+		//	return std::make_shared<Notice>();
+		//}
 
 		StopMove(owner);
 
