@@ -899,7 +899,7 @@ void ModeGame::OnPlayerEnterPositionText()
 		(
 			{
 			{"Textbox_Normal", "クロ、あそこにいるのがお前の仲間か？"},
-			{"Textbox_Kage", "だから仲間じゃねえって！\nこのまま近づいてLTボタンを押してあいつに向かって左手をかざしてみろ"}}, 
+			{"Textbox_Kage", "だから仲間じゃねえって！\nこのまま近づいてLTボタンを長押しして\nあいつに向かって左手をかざしてみろ。"}}, 
 			false, 
 			100,
 			"eventa"

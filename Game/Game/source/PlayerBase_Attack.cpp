@@ -488,7 +488,7 @@ bool PlayerBase::CanStartAttack()
 	if((_playerState.IsStateMoving()		&&	// 何かしらの移動状態で
 		!_playerState.IsStateAttacking()	&&	// どの攻撃状態でもなく
 		!_playerState.IsStateCombat())		&&	// どの特殊状態でもなく
-		im.IsTrigger(INPUT_ACTION::ATTACK))		// 入力があるなら
+		im.IsTrigger(INPUT_ACTION::ATTACK))		// 攻撃入力があるなら
 	{
 		// 攻撃開始可能
 		return true;
@@ -525,8 +525,8 @@ bool PlayerBase::CanNextAttack()
 
 	if((_bCanCombo															&&	// コンボ可能で
 		_iComboCount < maxComboCount										&&	// 現在のコンボカウントが最大コンボ数より小さく
-		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)) &&	// 被弾中でなく
-		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::TRANS_CANCEL))	// 変身解除状態でないなら
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT))			&&	// 被弾中でなく
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::TRANS_CANCEL))		// 変身解除状態でないなら
 	{
 		// 次の攻撃可能
 		return true;
