@@ -239,54 +239,54 @@ bool ModeGame::Process()
 
 	// ゲームオーバーチェック
 	{
-		bool debugDeath = false; // デバッグ用全滅フラグ
-		if(im.IsTrigger(INPUT_ACTION::DEBUG3))
-		{
-			debugDeath = true;
-		}
+		//bool debugDeath = false; // デバッグ用全滅フラグ
+		//if(im.IsTrigger(INPUT_ACTION::DEBUG3))
+		//{
+		//	//debugDeath = true;
+		//}
 
-		auto activePlayer = _playerManager->GetActivePlayerShared();
-		if (activePlayer && activePlayer->GetIsDead() || debugDeath)
-		{
-			// ModeGameOverを追加
-			ModeGameOver* modeGameOver = new ModeGameOver();
-			ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
-			_stage->StopStageBGM();
+		//auto activePlayer = _playerManager->GetActivePlayerShared();
+		//if (activePlayer && activePlayer->GetIsDead() || debugDeath)
+		//{
+		//	// ModeGameOverを追加
+		//	ModeGameOver* modeGameOver = new ModeGameOver();
+		//	ModeServer::GetInstance()->Add(modeGameOver, 100, "gameover");
+		//	_stage->StopStageBGM();
 
-			// サウンド再生
-			SoundServer::GetInstance()->Play("SE_GameOver", DX_PLAYTYPE_BACK);
+		//	// サウンド再生
+		//	SoundServer::GetInstance()->Play("SE_GameOver", DX_PLAYTYPE_BACK);
 
-			// この後の処理をスキップ
-			return true;
-		}
+		//	// この後の処理をスキップ
+		//	return true;
+		//}
 	}
 
 	// startでメニューを開く
-	if (im.IsTrigger(INPUT_ACTION::MENU))
-	{
-		ModeMenu* modeMenu = new ModeMenu();
-		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+	//if (im.IsTrigger(INPUT_ACTION::MENU))
+	//{
+	//	ModeMenu* modeMenu = new ModeMenu();
+	//	ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 
-		modeMenu->SetCameraManager(_cameraManager);
+	//	modeMenu->SetCameraManager(_cameraManager);
 
-		// メニュー項目を作成
-		auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
-		auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
-		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
-		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
-		auto killAllEnemies = new MenuItemDeathAllEnemies(this, "KillAllEnemies");
+	//	// メニュー項目を作成
+	//	auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
+	//	auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
+	//	auto useCollision = new MenuItemUseCollision(this, "UseCollision");
+	//	auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+	//	auto killAllEnemies = new MenuItemDeathAllEnemies(this, "KillAllEnemies");
 
-		// デバッグカメラ切り替え
-		debugCamera->SetCameraManagerMenu(_cameraManager);
+	//	// デバッグカメラ切り替え
+	//	debugCamera->SetCameraManagerMenu(_cameraManager);
 
-		killAllEnemies->SetStageBase(_stage);
+	//	killAllEnemies->SetStageBase(_stage);
 
-		modeMenu->AddMenuItem(viewDebugInfo);
-		modeMenu->AddMenuItem(viewCollision);
-		modeMenu->AddMenuItem(useCollision);
-		modeMenu->AddMenuItem(debugCamera);
-		modeMenu->AddMenuItem(killAllEnemies);
-	}
+	//	modeMenu->AddMenuItem(viewDebugInfo);
+	//	modeMenu->AddMenuItem(viewCollision);
+	//	modeMenu->AddMenuItem(useCollision);
+	//	modeMenu->AddMenuItem(debugCamera);
+	//	modeMenu->AddMenuItem(killAllEnemies);
+	//}
 
 	// クラスセット
 	{
@@ -650,7 +650,7 @@ bool ModeGame::Render()
 			}
 		}
 		
-		DrawFormatString(20, 20, GetColor(255, 255, 255), "FPS: %d", static_cast<int>(s_fps + 0.5f));
+		//DrawFormatString(20, 20, GetColor(255, 255, 255), "FPS: %d", static_cast<int>(s_fps + 0.5f));
 	}
 
 	_energyUI->Render();
