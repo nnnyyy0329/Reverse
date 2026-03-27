@@ -12,7 +12,7 @@ namespace
 	constexpr auto FIRST_RECOVERY_TIME = 30.0f;// 攻撃後の硬直時間
 	constexpr auto FIRST_ATTACK_DELAY = 30.0f;// 攻撃発生フレーム
 	constexpr auto FIRST_ATTACK_DURATION = 10.0f;// 攻撃持続フレーム
-	constexpr auto FIRST_ATTACK_DAMAGE = 10.0f;// ダメージ
+	constexpr auto FIRST_ATTACK_DAMAGE = 8.0f;// ダメージ
 	constexpr auto FIRST_EXECUTE_SPEED = 5.0f;// 攻撃実行時の前進速度
 
 	// 二段目攻撃
@@ -21,7 +21,7 @@ namespace
 	constexpr auto SECOND_RECOVERY_TIME = 30.0f;// 攻撃後の硬直時間
 	constexpr auto SECOND_ATTACK_DELAY = 30.0f;// 攻撃発生フレーム
 	constexpr auto SECOND_ATTACK_DURATION = 10.0f;// 攻撃持続フレーム
-	constexpr auto SECOND_ATTACK_DAMAGE = 10.0f;// ダメージ
+	constexpr auto SECOND_ATTACK_DAMAGE = 8.0f;// ダメージ
 	constexpr auto SECOND_EXECUTE_SPEED = 5.0f;// 攻撃実行時の前進速度
 
 	// 三段目攻撃
@@ -30,7 +30,7 @@ namespace
 	constexpr auto THIRD_RECOVERY_TIME = 60.0f;// 攻撃後の硬直時間
 	constexpr auto THIRD_ATTACK_DELAY = 30.0f;// 攻撃発生フレーム
 	constexpr auto THIRD_ATTACK_DURATION = 10.0f;// 攻撃持続フレーム
-	constexpr auto THIRD_ATTACK_DAMAGE = 20.0f;// ダメージ
+	constexpr auto THIRD_ATTACK_DAMAGE = 12.0f;// ダメージ
 	constexpr auto THIRD_EXECUTE_SPEED = 8.0f;// 攻撃実行時の前進速度
 
 	// 突進攻撃
@@ -38,7 +38,7 @@ namespace
 	constexpr auto CHARGE_EXECUTE_TIME = 90.0f;// 突進の最大時間
 	constexpr auto CHARGE_RECOVERY_TIME = 60.0f;// 突進後の硬直時間
 	constexpr auto CHARGE_SPEED = 10.0f;// 突進速度
-	constexpr auto CHARGE_DAMAGE = 20.0f;// 突進ダメージ
+	constexpr auto CHARGE_DAMAGE = 5.0f;// 突進ダメージ
 	constexpr auto CHARGE_ARRIVE_DIST = 5.0f;// 突進完了とみなす距離
 
 	constexpr float ATTACK_START_RANGE = 650.0f;// 攻撃開始距離
