@@ -1,3 +1,6 @@
+// 担当者 : 松田
+// 担当箇所 : ステージ切り替え関連
+
 #include "AppFrame.h"
 #include "../../Application/ApplicationMain.h"
 #include "ModeGame.h"

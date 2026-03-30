@@ -1,3 +1,5 @@
+// íSìñé“ : èºìc
+
 #pragma once
 #include "appframe.h"
 
@@ -41,6 +43,8 @@ namespace Pathfinding
 
 	private:
 		float GetDistance(VECTOR p1, VECTOR p2);
+
+		int GetWaypointIndexById(int id) const;
 
 		std::vector<Waypoint> _waypoints;
 	};

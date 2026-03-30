@@ -1,4 +1,6 @@
-﻿#include "StateTank.h"
+﻿// 担当者 : 松田
+
+#include "StateTank.h"
 #include "../Enemy.h"
 #include "StateCommon.h"
 #include "../EnemyAttackSettings.h"

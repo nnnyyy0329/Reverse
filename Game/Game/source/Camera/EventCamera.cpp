@@ -1,3 +1,5 @@
+// ’S“–Ò : ¼“c
+
 #include "EventCamera.h"
 
 EventCamera::EventCamera()

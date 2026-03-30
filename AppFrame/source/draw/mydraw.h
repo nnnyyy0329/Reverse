@@ -1,3 +1,5 @@
+// íSìñé“ : èºìc
+
 #pragma once
 #include "DxLib.h"
 #include "../math/mymath.h"

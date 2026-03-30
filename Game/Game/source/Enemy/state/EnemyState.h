@@ -1,3 +1,5 @@
+// 担当者 : 松田
+
 #pragma once
 #include "appframe.h"
 
@@ -101,10 +103,10 @@ protected:
 	std::shared_ptr<EnemyState> TransitionToLostOutsideArea(Enemy* owner);
 
 	// ターゲット方向へ回転
-	void RotateToTarget(Enemy* onwer, const VECTOR& vDir, float fRotSpeed);
+	void RotateToTarget(Enemy* owner, const VECTOR& vDir, float fRotSpeed);
 
 	// ターゲット方向へ移動
-	void MoveToTarget(Enemy* onwer, const VECTOR& vDir, float fMoveSpeed);
+	void MoveToTarget(Enemy* owner, const VECTOR& vDir, float fMoveSpeed);
 
 	// 移動停止
 	void StopMove(Enemy* owner);

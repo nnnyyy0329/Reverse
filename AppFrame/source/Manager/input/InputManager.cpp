@@ -1,3 +1,5 @@
+// 担当者 : 松田
+
 #include "InputManager.h"
 
 // シングルトンインスタンスの実体

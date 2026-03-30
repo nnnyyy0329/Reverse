@@ -1,3 +1,6 @@
+// ’S“–Ò : ¼“c
+// ’S“–‰ÓŠ : CheckCollisionCharaMap, CheckCollisionCharaChara, CheckCollisionCameraMap
+
 #include "ModeGame.h"
 #include "../../CharaBase.h"
 #include "../../Stage/StageBase.h"

@@ -9,7 +9,6 @@ class PlayerManager;
 class PlayerUnlockManager;
 
 class AttackBase;
-//class ShieldBase;
 class StageBase;
 class DodgeSystem;
 
@@ -24,8 +23,6 @@ class LightManager;
 class PlayerLifeBarUI;
 class EnergyUI;
 class StaminaUI;
-
-//class Item;
 
 class AbilitySelectScreen;
 class AbilitySelectManager;

@@ -1,3 +1,5 @@
+// íSìñé“ : èºìc
+
 #include "ModeStageChange.h"
 #include "../game/ModeGame.h"
 #include "../../Stage/StageBase.h"

@@ -1,3 +1,5 @@
+// ’S“–Ò : ¼“c
+
 #include "StateRanged.h"
 #include "../Enemy.h"
 #include "EnemyState_impl.h"

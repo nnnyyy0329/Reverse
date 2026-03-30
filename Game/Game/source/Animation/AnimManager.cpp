@@ -1,3 +1,5 @@
+// 担当者 : 松田
+
 #include "AnimManager.h"
 
 AnimManager::AnimManager()
@@ -157,23 +159,37 @@ bool AnimManager::ChangeAnimationByName(const char* animName, float fBlendFrame,
 		return false;
 	}
 
+	float blendFrame = (fBlendFrame > 0.0f) ? fBlendFrame : 0.0f;
+
 	// 既存のアニメーションをブレンド終了状態に
-	for (auto& anim : _activeAnims)
+	if (blendFrame <= 0.0f)
 	{
-		if (anim->fCloseTime <= 0.0f)
+		// 即切り替えの場合は古いアニメーションをすぐにデタッチ
+		for (auto& anim : _activeAnims)
 		{
-			// 現在のブレンド率を計算する
-			float currentBlendRate = 1.0f;
-
-			// フェードインの途中なら、ブレンド率は1.0f未満になる
-			if(anim->fFadeInTotalTime > 0.0f && anim->fFadeInTime < anim->fFadeInTotalTime)
+			DetachAnimation(anim.get());
+		}
+		_activeAnims.clear();
+	}
+	else
+	{
+		for (auto& anim : _activeAnims)
+		{
+			if (anim->fCloseTime <= 0.0f)
 			{
-				currentBlendRate = anim->fFadeInTime / anim->fFadeInTotalTime;
-			}
+				// 現在のブレンド率を計算する
+				float currentBlendRate = 1.0f;
 
-			// フェードアウトの残り時間を、現在のブレンド率に応じて短くする
-			anim->fCloseTime = fBlendFrame * currentBlendRate;
-			anim->fCloseTotalTime = fBlendFrame;
+				// フェードインの途中なら、ブレンド率は1.0f未満になる
+				if (anim->fFadeInTotalTime > 0.0f && anim->fFadeInTime < anim->fFadeInTotalTime)
+				{
+					currentBlendRate = anim->fFadeInTime / anim->fFadeInTotalTime;
+				}
+
+				// フェードアウトの残り時間を、現在のブレンド率に応じて短くする
+				anim->fCloseTime = fBlendFrame * currentBlendRate;
+				anim->fCloseTotalTime = fBlendFrame;
+			}
 		}
 	}
 

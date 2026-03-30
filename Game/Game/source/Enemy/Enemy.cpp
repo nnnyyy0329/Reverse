@@ -1,3 +1,5 @@
+// 担当者 : 松田
+
 #include "Enemy.h"
 #include "../BulletManager.h"
 #include "../AttackBase.h"
@@ -114,7 +116,7 @@ bool Enemy::Process()
 	UpdateCoolDowns();
 
 	// 索敵更新タイミングなら索敵を実行
-	if (ShouldUpdateSearch())
+	if (ShouldUpdateSearch() && _currentState)
 	{
 		// ステートが索敵処理を持っていれば実行
 		_currentState->UpdateSearch(this);

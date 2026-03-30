@@ -1,3 +1,5 @@
+// 担当者 : 松田
+
 #include "StateNormal.h"
 #include "../Enemy.h"
 #include "EnemyState_impl.h"
@@ -358,7 +360,7 @@ namespace Normal
 
 		// 回り込みの左右移動
 		// ターゲットへの方向ベクトルから右方向ベクトルを作る
-		VECTOR vRight = VGet(targetInfo.vDir.z, 0.0f, targetInfo.vDir.x);
+		VECTOR vRight = VGet(targetInfo.vDir.z, 0.0f, -targetInfo.vDir.x);
 		vMove = VAdd(vMove, VScale(vRight, _fStrafeDir * CAUTION_STRAFE_SPEED));
 
 		// 移動処理

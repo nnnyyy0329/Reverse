@@ -1,3 +1,5 @@
+// ’S“–Ò : ¼“c
+
 #include "CameraBase.h"
 
 CameraBase::CameraBase()

@@ -1,3 +1,5 @@
+// íSìñé“ : èºìc
+
 #include "GameCamera.h"
 #include "../PlayerBase.h"
 
@@ -19,7 +21,7 @@ GameCamera::GameCamera()
 	_fFarClip = 10000.f;
 	_fDistance = DEFAULT_DISTANCE;
 	_fAngleH = DEFAULT_ANGLE_H;
-	_fAngleV = -DEFAULT_ANGLE_V;// è≠Çµå©â∫ÇÎÇµ
+	_fAngleV = DEFAULT_ANGLE_V;// è≠Çµå©â∫ÇÎÇµ
 
 	_lookAtSettings.worldOffset = VGet(0.0f, TARGET_OFFSET_Y, 0.0f);
 	_lookAtSettings.localOffset = VGet(0.0f, 0.0f, 0.0f);

@@ -1,3 +1,5 @@
+// 担当者 : 松田
+
 #include "PathfindingManager.h"
 #include "../../Stage/StageBase.h"
 
@@ -26,6 +28,18 @@ namespace Pathfinding
 	float Manager::GetDistance(VECTOR p1, VECTOR p2)
 	{
 		return VSize(VSub(p1, p2));
+	}
+
+	int Manager::GetWaypointIndexById(int id) const
+	{
+		for (size_t i = 0; i < _waypoints.size(); ++i)
+		{
+			if (_waypoints[i].id == id)
+			{
+				return static_cast<int>(i);
+			}
+		}
+		return -1;
 	}
 
 	// 経路探索のスタート、ゴールを決める

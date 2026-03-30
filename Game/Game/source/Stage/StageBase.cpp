@@ -1,4 +1,7 @@
-﻿#include "StageBase.h"
+﻿// 担当者 : 松田
+// 担当箇所 : マップモデルの読み込み、敵の生成
+
+#include "StageBase.h"
 #include "../Enemy/Enemy.h"
 #include "../Enemy/EnemyFactory.h"
 #include "../PlayerManager.h"
@@ -466,13 +469,6 @@ void StageBase::Render()
 	// 敵の描画
 	{
 		for(auto& enemy : _stageEnemies) {
-			enemy->Render();
-		}
-	}
-
-	// 敵の描画
-	{
-		for (auto& enemy : _stageEnemies) {
 			enemy->Render();
 		}
 	}

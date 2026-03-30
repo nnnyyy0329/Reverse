@@ -1,3 +1,5 @@
+// ’S“–Ò : ¼“c
+
 #include "LightManager.h"
 
 LightManager::LightManager()

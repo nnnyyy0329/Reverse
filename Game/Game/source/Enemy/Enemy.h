@@ -1,3 +1,5 @@
+// íSìñé“ : èºìc
+
 #pragma once
 
 #include "../CharaBase.h"
