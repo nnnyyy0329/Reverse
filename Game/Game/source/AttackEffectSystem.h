@@ -1,7 +1,7 @@
 #pragma once
 #include "appframe.h"
 #include "GeometryUtility.h"
-#include "AnimManager.h"
+#include "animation/AnimManager.h"
 
 // ‘O•ûéŒ¾
 class CharaBase;

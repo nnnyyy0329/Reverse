@@ -1,6 +1,6 @@
 #pragma once
 #include "appframe.h"
-#include "EnemyFactory.h"
+#include "Enemy/EnemyFactory.h"
 
 // 敵の状態変化を受け取るインターフェース
 class EnemyObserver

@@ -1,0 +1,405 @@
+#include "ModeLoading.h"
+#include "../scenario/ModeScenario.h"
+
+bool ModeLoading::Initialize() 
+{
+	if (!base::Initialize()) { return false; }
+	_bIsAddGame = false;
+	_isLoadStarted = false;
+	_hasFirstRender = false;
+	_frameCount = 0;
+	_displayProgress = 0.0f;
+
+	_seHandle = LoadSoundMem("sound/SE/loading.mp3");
+	//PlaySoundMem(_seHandle, DX_PLAYTYPE_BACK);
+
+	// リソースの登録
+	{
+		auto rs = ResourceServer::GetInstance();
+
+		// 敵関連
+		{
+			// モデル
+			rs->Register("Normal", "res/Enemy/SK_enemy_00_multimotion.mv1",	RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("Ranged", "res/Enemy/SK_enemy_01_multimotion.mv1",	RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("Tank", "res/Enemy/test_0317.mv1",					RESOURCE_TYPE::Model, 1.0f);
+
+			// ライフバー
+			rs->Register("LifeBar", "res/GameUI/EnemyLifeBar.png",			 RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("LifeBarFrame", "res/GameUI/EnemyLifeBarFrame.png", RESOURCE_TYPE::Graph, 1.0f);
+		}
+
+		// プレイヤー関連
+		{
+			// プレイヤーモデル
+			rs->Register("SurfacePlayer",		"res/Player/SK_player_03_multimotion.mv1",	RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("InteriorPlayer",		"res/Player/SK_player_04_multimotion.mv1",	RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("BulletPlayer",		"res/Player/SK_player_05_multimotion.mv1",	RESOURCE_TYPE::Model, 1.0f);
+
+			// ライフバー
+			rs->Register("PlayerLifeBar",		"res/Player/UI/player_life_bar.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("PlayerLifeBarFrame",	"res/Player/UI/player_life_bar_frame.png",	RESOURCE_TYPE::Graph, 1.0f);
+		}
+
+		// 能力選択画面用
+		{
+			rs->Register("SelectChain",				"res/UI_Select/ability_lock_chain.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SelectPower",				"res/UI_Select/select_power.png",			RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SelectBlaster",			"res/UI_Select/select_blaster.png",			RESOURCE_TYPE::Graph, 1.0f);
+
+			rs->Register("InputA",	"res/UI_Select/A_UI.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("InputY",	"res/UI_Select/Y_UI.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("InputRB", "res/UI_Select/RB_dodge.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("InputLT", "res/UI_Select/LB_UI.png",		RESOURCE_TYPE::Graph, 1.0f);
+
+			rs->Register("ActionHintTransCancel",	"res/UI_Select/action_cancel.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("ActionHintDodge",			"res/UI_Select/action_dodge.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillAbsorb",				"res/UI_Select/skill_absorb.png",			RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillAoe",				"res/UI_Select/skill_aoe.png",				RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillPunch",				"res/UI_Select/skill_punch.png",			RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillPiercingBullet",		"res/UI_Select/skill_piercing_bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("SkillNormalBullet",		"res/UI_Select/skill_normal_bullet.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("ActionHintTransCancel",	"res/UI_Select/action_cancel.png",			RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("ActionHintDodge",			"res/UI_Select/action_dodge.png",			RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("A_NEXT",					"res/UI_Select/A_NEXT.png",					RESOURCE_TYPE::Graph, 1.0f);
+		}
+
+		// 入力UI 
+		{
+			//rs->Register("InputA",	"res/UI_Input/input_A.png",		RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputB",	"res/UI_Input/input_B.png",		RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputX",	"res/UI_Input/input_X.png",		RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputY",	"res/UI_Input/input_Y.png",		RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputLT","res/UI_Input/input_LT.png",	RESOURCE_TYPE::Graph, 1.0f);
+			//rs->Register("InputRT", "res/UI_Input/input_RT.png",	RESOURCE_TYPE::Graph, 1.0f);
+		
+		}
+
+		// エネルギーUI用
+		{
+			rs->Register("EnergyFrame", "res/Energy/energy_frame.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy1",		"res/Energy/energy_1r.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy2",		"res/Energy/energy_2r.png",		RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Energy3",		"res/Energy/energy_3r.png",		RESOURCE_TYPE::Graph, 1.0f);
+		}
+
+		// スタミナUI用
+		{
+			rs->Register("StaminaFrame",	"res/StaminaUI/staminaFrame.png",	RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Stamina",			"res/StaminaUI/Stamina.png",		RESOURCE_TYPE::Graph, 1.0f);
+		}
+
+		// ステージモデル
+		{
+			// ステージ1のモデル
+			rs->Register("stage_fioor_1", "res/stage/json/stage_fioor_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_type_1", "res/stage/json/stage_wall_type_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_typeDoor_1", "res/stage/json/stage_wall_typeDoor_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_typeOutside_1", "res/stage/json/stage_wall_typeOutside_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_typeOutside_2", "res/stage/json/stage_wall_typeOutside_2.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_pillar_1", "res/stage/json/stage_pillar_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_door_close_1", "res/stage/json/stage_door_close_1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("object_tana", "res/stage/json/object_tana.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("object_locker", "res/stage/json/object_locker.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("object_kyodan", "res/stage/json/object_kyodan.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("object_blackboard", "res/stage/json/object_blackboard.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_MERGED_BigB", "res/stage/json/SM_MERGED_BigB.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_walltypeZ", "res/stage/json/SM_walltypeZ.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_MERGED_BigD", "res/stage/json/SM_MERGED_BigD.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_MERGED_locker", "res/stage/json/SM_MERGED_locker.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_MERGED_locker", "res/stage/json/SM_MERGED_locker.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("SM_stairs", "res/stage/json/SM_stairs.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_floorA", "res/stage/json/stage_floorA.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_floorB", "res/stage/json/stage_floorB.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_typeDoorA", "res/stage/json/stage_wall_typeDoorA.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_typeDoorB", "res/stage/json/stage_wall_typeDoorB.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("stage_wall_typeDoorC", "res/stage/json/stage_wall_typeDoorC.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("noentry", "res/stage/json/noentry.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("delete", "res/stage/json/delete.mv1", RESOURCE_TYPE::Model, 1.0f);
+
+			// ポータル
+			rs->Register("S_Portal_0to1", "res/stage/json/S_Portal_0to1.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("S_Portal_1to2", "res/stage/json/S_Portal_1to2.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("EventB", "res/stage/json/EventB.mv1", RESOURCE_TYPE::Model, 1.0f);
+			rs->Register("EventA", "res/stage/json/EventA.mv1", RESOURCE_TYPE::Model, 1.0f);
+
+			// 敵の移動可能範囲
+			rs->Register("Enemy_Area", "res/stage/json/Enemy_Area.mv1", RESOURCE_TYPE::Model, 1.0f);
+
+			// スカイスフィア
+			rs->Register("skysphereA", "res/skysphere/skysphereA.mv1", RESOURCE_TYPE::Model, 1.0f);
+		}
+
+		// 音関連
+		{
+			// BGM
+			rs->Register("BGM_Title",			"sound/BGM/title.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_OpeningScenario",	"sound/BGM/story.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Stage01",			"sound/BGM/stage1.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Stage02",			"sound/BGM/stage2.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Stage03",			"sound/BGM/stage3.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_Ending",			"sound/BGM/ending.mp3", RESOURCE_TYPE::Sound, 1.0f);
+
+			// キャラBGM
+			rs->Register("BGM_PowerPlayer",		"sound/BGM/transPowerPlayer.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("BGM_BulletPlayer",	"sound/BGM/transBulletPlayer.mp3", RESOURCE_TYPE::Sound, 1.0f);
+
+			// SE
+			rs->Register("SE_En_Damage",		"sound/SE/en_common/en_damage.mp3",			RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_En_Dead",			"sound/SE/en_common/en_dead.mp3",			RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_En_Down",			"sound/SE/en_common/en_down.mp3",			RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_Melee_Attanck",	"sound/SE/en_melee/en_melee_attack.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_Ranged_Shot",		"sound/SE/en_ranged/en_ranged_shot.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_En_Notice",		"sound/SE/en_common/en_common_notice.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+
+			// その他SE
+
+			// プレイヤー
+			{
+				// プレイヤーの攻撃
+				rs->Register("sPlayerAttack",	"sound/SE/sPlayerAttack/absorb2.mp3",			RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("iPlayerAttack",	"sound/SE/iPlayerAttack/iPlayerAttack1.mp3",	RESOURCE_TYPE::Sound, 1.0f);
+				
+				// プレイヤー変身
+				rs->Register("ChangePower",		"sound/SE/changePlayer/knuckleSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("ChangeBlaster",	"sound/SE/changePlayer/blasterSE.mp3", RESOURCE_TYPE::Sound, 1.0f);
+
+				// プレイヤー体力回復
+				rs->Register("HealthLife",		"sound/SE/RecoveryLife.mp3", RESOURCE_TYPE::Sound, 1.0f);
+
+
+
+				rs->Register("SE_GameOver",				"sound/SE/SE00.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				//rs->Register("SE_",	"sound/SE/SE01.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				//rs->Register("SE_",	"sound/SE/SE02.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_SurfacePlayerDodge",	"sound/SE/SE03.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_Dead",					"sound/SE/SE04.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_",						"sound/SE/SE05.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_TransPlayerDash",		"sound/SE/SE06.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_TransPlayerDodge",		"sound/SE/SE07.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_InteriorPlayerPunch",	"sound/SE/se_9.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_DamagePlayer",			"sound/SE/SE09.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_Absorb",				"sound/SE/SE10.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_Evade",				"sound/SE/SE11.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_TransformPower",						"sound/SE/SE12.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_",						"sound/SE/SE13.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_TransformBlaster",						"sound/SE/SE14.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_PiercingBullet",		"sound/SE/SE15.mp3", RESOURCE_TYPE::Sound, 1.0f);
+				rs->Register("SE_NormalBullet",			"sound/SE/SE16.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			}
+
+
+			rs->Register("SE_", "sound/SE/se_21.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_22.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_23.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_24.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_25.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_26.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_27.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_28.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_29.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_30.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_31.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_32.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_33.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_34.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_35.mp3", RESOURCE_TYPE::Sound, 1.0f);
+			rs->Register("SE_", "sound/SE/se_36.mp3", RESOURCE_TYPE::Sound, 1.0f);
+		}
+
+		// シナリオ　
+		{
+			rs->Register("GameStartText",  "res/Senario/story1.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText1",  "res/Senario/story2.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText2",  "res/Senario/story3.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText3",  "res/Senario/story4.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText4",  "res/Senario/story5.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText5",  "res/Senario/story6.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText6",  "res/Senario/story7.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText7",  "res/Senario/story8.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText8",  "res/Senario/story9.png",  RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText9",  "res/Senario/story10.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText10", "res/Senario/story11.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("GameStartText11", "res/Senario/story12.png", RESOURCE_TYPE::Graph, 1.0f);
+		}
+		
+		//　テキストボックス　
+		{
+			rs->Register("Textbox_Aho", "res/Textbox/textboxAho.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Textbox_Kage", "res/Textbox/textboxKage.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Textbox_Angry", "res/Textbox/textboxAngry.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Textbox_Normal", "res/Textbox/textboxNormal.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Textbox_Scared", "res/Textbox/textboxScared.png", RESOURCE_TYPE::Graph, 1.0f);
+		}
+		//　ゲームオーバー
+		{
+			rs->Register("GameOver", "res/GameOver/Gameover_white.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Retry", "res/GameOver/retry_white.png", RESOURCE_TYPE::Graph, 1.0f);
+			rs->Register("Title", "res/GameOver/title_white.png", RESOURCE_TYPE::Graph, 1.0f);
+		}
+
+		// エフェクト
+		{
+			rs->Register("Laser", "effect/Laser01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+
+
+			// プレイヤー
+			{
+				// 表プレイヤーの吸収攻撃エフェクト
+				rs->Register("SurfacePlayerAbsorb", "effect/SurfacePlayer/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+
+				// 裏プレイヤーの攻撃エフェクト
+				rs->Register("InteriorPlayerAttack_123", "effect/InteriorPlayer/NChange_004.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+				rs->Register("InteriorPlayerFourthAttack", "effect/InteriorPlayer/NChange_Fourth_Attack.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+				rs->Register("InteriorPlayerFifthAttack", "effect/InteriorPlayer/NChange_Attack.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+
+				// 表プレイヤーの攻撃ヒットエフェクト
+				rs->Register("SurfacePlayerAttackHit1", "effect/Absorb_Hit_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+				rs->Register("SurfacePlayerAttackHit2", "effect/Absorb_Hit_01.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+
+				// 弾発射プレイヤーの弾エフェクト
+				rs->Register("PlayerNormalBullet", "effect/playerBullet/SChange_Attack_B_001.efkefc", RESOURCE_TYPE::Effect, 4.0f);
+				rs->Register("PlayerPiercingBullet", "effect/playerBullet/SChange_Attack_S_001.efkefc", RESOURCE_TYPE::Effect, 3.0f);
+
+			}
+
+
+			// 敵
+			// 共通
+			rs->Register("En_Damage", "effect/SChange_Hit_00.efkefc", RESOURCE_TYPE::Effect, 5.0f);
+			rs->Register("En_Damage02", "effect/en_damage_test.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			rs->Register("En_Dead02", "effect/en_dead_test.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			// 一般
+			rs->Register("Normal_Attack", "effect/NEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+			rs->Register("Normal_Attack02", "effect/en_attack_test.efkefc", RESOURCE_TYPE::Effect, 20.0f);
+			// 遠距離
+			rs->Register("Ranged_Bullet", "effect/SEnemy_Attack_00.efkefc", RESOURCE_TYPE::Effect, 10.0f);
+		}
+	}
+
+	return true;
+}
+
+namespace
+{
+	void DrawBlockLoadingBar(int x, int y, int blocks, int blockW, int blockH, int gap, float progress)
+	{
+		if(blocks <= 0) { return; }
+        if(progress < 0.0f) { progress = 0.0f; }
+		if(progress > 1.0f) { progress = 1.0f; }
+
+		// 進行度
+		const int filled = static_cast<int>(progress * static_cast<float>(blocks) );    
+		// ブロックの色
+		const int colFilled = GetColor(0, 120, 255);                                    
+		const int colEmpty = GetColor(170, 170, 170);
+		// ブロックの間隔
+		for(int i = 0; i < blocks; ++i)
+		{
+			const int bx = x + i * (blockW + gap);
+			const int by = y;
+
+			const int col = (i < filled) ? colFilled : colEmpty;
+			DrawBox(bx, by, bx + blockW, by + blockH, col, TRUE);
+		}
+	}
+}
+
+bool ModeLoading::Terminate() 
+{
+	base::Terminate();
+
+	return true;
+}
+
+bool ModeLoading::Process()
+{
+	_frameCount++;
+
+	if (!_isLoadStarted)
+	{
+		if (_hasFirstRender)
+		{
+			ResourceServer::GetInstance()->StartLoadAsync();
+			_isLoadStarted = true;
+		}
+		return true;
+	}
+
+	const float rawProgress = ResourceServer::GetInstance()->GetLoadProgress();
+	if (rawProgress > _displayProgress) {
+		const float delta = rawProgress - _displayProgress;
+		_displayProgress += delta * 0.15f;
+		if (_displayProgress > rawProgress) { _displayProgress = rawProgress; }
+	}
+
+	if (!_bIsAddGame &&
+		ResourceServer::GetInstance()->IsLoadComplete() &&
+		_displayProgress >= 0.999f &&
+		_frameCount >= 30)
+	{
+		StopSoundMem(_seHandle);
+		_bIsAddGame = true;
+
+		ModeServer::GetInstance()->Add(new ModeScenario(), 1, "scenario");
+		ModeServer::GetInstance()->Del(this);
+	}
+	return true;
+}
+
+
+
+
+
+
+
+bool ModeLoading::Render()
+{
+	ClearDrawScreen();
+	_hasFirstRender = true;
+
+	if (_bIsAddGame) { return true; }
+
+	const float progress = _isLoadStarted ? _displayProgress : 0.0f;
+
+	{
+		const int blocks = 26;
+		const int blockW = 12;
+		const int blockH = 36;
+		const int gap = 6;
+		const int barX = 1400;
+		const int barY = 1000;
+
+		DrawBlockLoadingBar(barX, barY, blocks, blockW, blockH, gap, progress);
+	}
+
+	{
+		SetFontSize(48);
+		const int textX = 1400;
+		const int textY = 900;
+
+		const bool isBlinkOn = ((GetNowCount() / 600) % 2) == 0;
+
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 80);
+		const int glowColor = GetColor(255, 0, 255);
+
+		for (int dy = -2; dy <= 2; ++dy) {
+			for (int dx = -2; dx <= 2; ++dx) {
+				if (dx == 0 && dy == 0) { continue; }
+				if (isBlinkOn) {
+					DrawFormatString(textX + dx, textY + dy, glowColor, "now loading");
+				}
+				DrawFormatString(textX + dx, textY + 50 + dy, glowColor, "Progress: %.2f%%", progress * 100.0f);
+			}
+		}
+
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		const int textColor = GetColor(255, 255, 255);
+		DrawFormatString(textX, textY, textColor, "now loading");
+		DrawFormatString(textX, textY + 50, textColor, "Progress: %.2f%%", progress * 100.0f);
+
+		SetFontSize(16);
+	}
+
+	return true;
+}

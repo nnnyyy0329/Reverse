@@ -10,12 +10,6 @@
     <ClCompile Include="source\AbilitySelectScreen.cpp">
       <Filter>Ability\Select</Filter>
     </ClCompile>
-    <ClCompile Include="source\ApplicationGlobal.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ApplicationMain.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
     <ClCompile Include="source\AttackBase.cpp">
       <Filter>Attack</Filter>
     </ClCompile>
@@ -28,14 +22,8 @@
     <ClCompile Include="source\BulletManager.cpp">
       <Filter>Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="source\DebugCamera.cpp">
-      <Filter>Camera</Filter>
-    </ClCompile>
     <ClCompile Include="source\DodgeSystem.cpp">
       <Filter>Dodge</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Enemy.cpp">
-      <Filter>GameObject\CharaBase\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="source\EnergyManager.cpp">
       <Filter>Energy</Filter>
@@ -43,56 +31,14 @@
     <ClCompile Include="source\EnergyUI.cpp">
       <Filter>Energy</Filter>
     </ClCompile>
-    <ClCompile Include="source\GameCamera.cpp">
-      <Filter>Camera</Filter>
-    </ClCompile>
     <ClCompile Include="source\GameObjectBase.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
     <ClCompile Include="source\CharaBase.cpp">
       <Filter>GameObject\CharaBase</Filter>
     </ClCompile>
-    <ClCompile Include="source\LightManager.cpp">
-      <Filter>Mode\Light</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeGame.cpp">
-      <Filter>Mode\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeGame_CheckHit.cpp">
-      <Filter>Mode\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeMenu.cpp">
-      <Filter>Mode\Menu</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeLoading.cpp">
-      <Filter>Mode\Load</Filter>
-    </ClCompile>
-    <ClCompile Include="source\StateCommon.cpp">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
-    </ClCompile>
-    <ClCompile Include="source\StateMelee.cpp">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
-    </ClCompile>
-    <ClCompile Include="source\StateRanged.cpp">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
-    </ClCompile>
     <ClCompile Include="source\SurfacePlayer.cpp">
       <Filter>GameObject\CharaBase\PlayerBase\Surface</Filter>
-    </ClCompile>
-    <ClCompile Include="source\StageBase.cpp">
-      <Filter>Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Item.cpp">
-      <Filter>GameObject\CharaBase\Item</Filter>
-    </ClCompile>
-    <ClCompile Include="source\AnimManager.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="source\MenuItemBase.cpp">
-      <Filter>Mode\Menu</Filter>
-    </ClCompile>
-    <ClCompile Include="source\StateTank.cpp">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerBase.cpp">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
@@ -108,9 +54,6 @@
     </ClCompile>
     <ClCompile Include="source\BulletPlayer.cpp">
       <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeStageChange.cpp">
-      <Filter>Mode\StageChange</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerBase_Dodge.cpp">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
@@ -136,23 +79,11 @@
     <ClCompile Include="source\PlayerBase_Shield.cpp">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClCompile>
-    <ClCompile Include="source\EnemyState.cpp">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeTitle.cpp">
-      <Filter>Mode\Title</Filter>
-    </ClCompile>
-    <ClCompile Include="source\AimCamera.cpp">
-      <Filter>Camera</Filter>
-    </ClCompile>
     <ClCompile Include="source\PlayerAttackSystem.cpp">
       <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Attack</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerBase_Death.cpp">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeGameOver.cpp">
-      <Filter>Mode\GameOver</Filter>
     </ClCompile>
     <ClCompile Include="source\PlayerLifeBarUI.cpp">
       <Filter>GameObject\CharaBase\Player\LifeBar</Filter>
@@ -172,12 +103,6 @@
     <ClCompile Include="source\PlayerTransformSystem.cpp">
       <Filter>GameObject\CharaBase\Player\ManagerSystem</Filter>
     </ClCompile>
-    <ClCompile Include="source\ModeScenario.cpp">
-      <Filter>Mode\Scenario</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeLogo.cpp">
-      <Filter>Mode\Logo</Filter>
-    </ClCompile>
     <ClCompile Include="source\AbsorbAttack.cpp">
       <Filter>Attack\AbsorbAttack</Filter>
     </ClCompile>
@@ -190,50 +115,122 @@
     <ClCompile Include="source\EnemyObserver.cpp">
       <Filter>GameObject\CharaBase\Enemy\Observer</Filter>
     </ClCompile>
-    <ClCompile Include="source\StateNormal.cpp">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeTextBox.cpp">
-      <Filter>Mode\ModeTextBox</Filter>
-    </ClCompile>
     <ClCompile Include="source\AbilitySelectManager.cpp">
       <Filter>Ability\Select</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PathfindingManager.cpp">
-      <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
-    </ClCompile>
-    <ClCompile Include="source\CameraBase.cpp">
-      <Filter>Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="source\CameraManager.cpp">
-      <Filter>Camera\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="source\CameraShakeSystem.cpp">
-      <Filter>Camera\Addon</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ICameraAddon.cpp">
-      <Filter>Camera\Addon</Filter>
-    </ClCompile>
-    <ClCompile Include="source\CameraDollyAddon.cpp">
-      <Filter>Camera\Addon</Filter>
     </ClCompile>
     <ClCompile Include="source\AbilityActionHint.cpp">
       <Filter>Ability\Action</Filter>
     </ClCompile>
-    <ClCompile Include="source\ModeEndingText.cpp">
-      <Filter>Mode\Ending</Filter>
-    </ClCompile>
     <ClCompile Include="source\InteriorPlayer.cpp">
       <Filter>GameObject\CharaBase\PlayerBase\Interior</Filter>
     </ClCompile>
-    <ClCompile Include="source\EventCamera.cpp">
-      <Filter>Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModeEndingVideo.cpp">
-      <Filter>Mode\EndingVideo</Filter>
-    </ClCompile>
     <ClCompile Include="source\AttackEffectSystem.cpp">
       <Filter>Attack\AttackSystem\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Animation\AnimManager.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Application\ApplicationGlobal.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Application\ApplicationMain.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera\AimCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera\CameraBase.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera\DebugCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera\EventCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera\GameCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera\Manager\CameraManager.cpp">
+      <Filter>Camera\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera\Addon\CameraDollyAddon.cpp">
+      <Filter>Camera\Addon</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera\Addon\CameraShakeSystem.cpp">
+      <Filter>Camera\Addon</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera\Addon\ICameraAddon.cpp">
+      <Filter>Camera\Addon</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Enemy\Enemy.cpp">
+      <Filter>GameObject\CharaBase\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Enemy\state\EnemyState.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Enemy\state\StateCommon.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Enemy\state\StateMelee.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Enemy\state\StateNormal.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Enemy\state\StateRanged.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Enemy\state\StateTank.cpp">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Enemy\Astar\PathfindingManager.cpp">
+      <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Light\LightManager.cpp">
+      <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\ending\ModeEndingText.cpp">
+      <Filter>Mode\Ending</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\endingvideo\ModeEndingVideo.cpp">
+      <Filter>Mode\EndingVideo</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\game\ModeGame.cpp">
+      <Filter>Mode\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\game\ModeGame_CheckHit.cpp">
+      <Filter>Mode\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\gameover\ModeGameOver.cpp">
+      <Filter>Mode\GameOver</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\loading\ModeLoading.cpp">
+      <Filter>Mode\Load</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\logo\ModeLogo.cpp">
+      <Filter>Mode\Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\menu\MenuItemBase.cpp">
+      <Filter>Mode\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\menu\ModeMenu.cpp">
+      <Filter>Mode\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\textbox\ModeTextBox.cpp">
+      <Filter>Mode\ModeTextBox</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\scenario\ModeScenario.cpp">
+      <Filter>Mode\Scenario</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\stagechange\ModeStageChange.cpp">
+      <Filter>Mode\StageChange</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mode\title\ModeTitle.cpp">
+      <Filter>Mode\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Stage\StageBase.cpp">
+      <Filter>Stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -245,12 +242,6 @@
     </ClInclude>
     <ClInclude Include="source\AbilitySelectScreen.h">
       <Filter>Ability\Select</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ApplicationGlobal.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ApplicationMain.h">
-      <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="source\AttackBase.h">
       <Filter>Attack</Filter>
@@ -264,20 +255,8 @@
     <ClInclude Include="source\BulletManager.h">
       <Filter>Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="source\DebugCamera.h">
-      <Filter>Camera</Filter>
-    </ClInclude>
     <ClInclude Include="source\DodgeSystem.h">
       <Filter>Dodge</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Enemy.h">
-      <Filter>GameObject\CharaBase\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="source\EnemyAttackSettings.h">
-      <Filter>GameObject\CharaBase\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="source\EnemyFactory.h">
-      <Filter>GameObject\CharaBase\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="source\EnergyManager.h">
       <Filter>Energy</Filter>
@@ -285,38 +264,11 @@
     <ClInclude Include="source\EnergyUI.h">
       <Filter>Energy</Filter>
     </ClInclude>
-    <ClInclude Include="source\GameCamera.h">
-      <Filter>Camera</Filter>
-    </ClInclude>
     <ClInclude Include="source\GameObjectBase.h">
       <Filter>GameObject</Filter>
     </ClInclude>
     <ClInclude Include="source\CharaBase.h">
       <Filter>GameObject\CharaBase</Filter>
-    </ClInclude>
-    <ClInclude Include="source\LightManager.h">
-      <Filter>Mode\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="source\MenuItemBase.h">
-      <Filter>Mode\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeGame.h">
-      <Filter>Mode\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeMenu.h">
-      <Filter>Mode\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeLoading.h">
-      <Filter>Mode\Load</Filter>
-    </ClInclude>
-    <ClInclude Include="source\StateRanged.h">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
-    </ClInclude>
-    <ClInclude Include="source\StateCommon.h">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
-    </ClInclude>
-    <ClInclude Include="source\StateMelee.h">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
     </ClInclude>
     <ClInclude Include="source\InteriorPlayer.h">
       <Filter>GameObject\CharaBase\PlayerBase\Interior</Filter>
@@ -324,29 +276,11 @@
     <ClInclude Include="source\SurfacePlayer.h">
       <Filter>GameObject\CharaBase\PlayerBase\Surface</Filter>
     </ClInclude>
-    <ClInclude Include="source\StageBase.h">
-      <Filter>Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Item.h">
-      <Filter>GameObject\CharaBase\Item</Filter>
-    </ClInclude>
     <ClInclude Include="source\PlayerBase.h">
       <Filter>GameObject\CharaBase\PlayerBase</Filter>
     </ClInclude>
     <ClInclude Include="source\BulletPlayer.h">
       <Filter>GameObject\CharaBase\PlayerBase\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="source\EnemyState.h">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
-    </ClInclude>
-    <ClInclude Include="source\AnimManager.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="source\StateTank.h">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeStageChange.h">
-      <Filter>Mode\StageChange</Filter>
     </ClInclude>
     <ClInclude Include="source\ShieldBase.h">
       <Filter>Shield</Filter>
@@ -366,20 +300,8 @@
     <ClInclude Include="source\PlayerShieldSystem.h">
       <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Shield</Filter>
     </ClInclude>
-    <ClInclude Include="source\EnemyState_impl.h">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeTitle.h">
-      <Filter>Mode\Title</Filter>
-    </ClInclude>
-    <ClInclude Include="source\AimCamera.h">
-      <Filter>Camera</Filter>
-    </ClInclude>
     <ClInclude Include="source\PlayerAttackSystem.h">
       <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\Attack</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeGameOver.h">
-      <Filter>Mode\GameOver</Filter>
     </ClInclude>
     <ClInclude Include="source\PlayerLifeBarUI.h">
       <Filter>GameObject\CharaBase\Player\LifeBar</Filter>
@@ -405,59 +327,131 @@
     <ClInclude Include="source\PlayerAbsorbAttackSystem.h">
       <Filter>GameObject\CharaBase\PlayerBase\PlayerSystem\AbsorbAttack</Filter>
     </ClInclude>
-    <ClInclude Include="source\ModeScenario.h">
-      <Filter>Mode\Scenario</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeLogo.h">
-      <Filter>Mode\Logo</Filter>
-    </ClInclude>
     <ClInclude Include="source\PlayerUnlockManager.h">
       <Filter>GameObject\CharaBase\Player\AbilityUnlocck</Filter>
     </ClInclude>
     <ClInclude Include="source\EnemyObserver.h">
       <Filter>GameObject\CharaBase\Enemy\Observer</Filter>
     </ClInclude>
-    <ClInclude Include="source\StateNormal.h">
-      <Filter>GameObject\CharaBase\Enemy\state</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeTextBox.h">
-      <Filter>Mode\ModeTextBox</Filter>
-    </ClInclude>
     <ClInclude Include="source\AbilitySelectManager.h">
       <Filter>Ability\Select</Filter>
-    </ClInclude>
-    <ClInclude Include="source\PathfindingManager.h">
-      <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
-    </ClInclude>
-    <ClInclude Include="source\CameraBase.h">
-      <Filter>Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="source\CameraManager.h">
-      <Filter>Camera\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="source\CameraShakeSystem.h">
-      <Filter>Camera\Addon</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ICameraAddon.h">
-      <Filter>Camera\Addon</Filter>
-    </ClInclude>
-    <ClInclude Include="source\CameraDollyAddon.h">
-      <Filter>Camera\Addon</Filter>
     </ClInclude>
     <ClInclude Include="source\AbilityActionHint.h">
       <Filter>Ability\Action</Filter>
     </ClInclude>
-    <ClInclude Include="source\ModeEndingText.h">
-      <Filter>Mode\Ending</Filter>
-    </ClInclude>
-    <ClInclude Include="source\EventCamera.h">
-      <Filter>Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModeEndingVideo.h">
-      <Filter>Mode\EndingVideo</Filter>
-    </ClInclude>
     <ClInclude Include="source\AttackEffectSystem.h">
       <Filter>Attack\AttackSystem\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Animation\AnimManager.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Application\ApplicationGlobal.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Application\ApplicationMain.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Camera\AimCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Camera\CameraBase.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Camera\DebugCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Camera\EventCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Camera\GameCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Camera\Manager\CameraManager.h">
+      <Filter>Camera\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Camera\Addon\CameraDollyAddon.h">
+      <Filter>Camera\Addon</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Camera\Addon\CameraShakeSystem.h">
+      <Filter>Camera\Addon</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Camera\Addon\ICameraAddon.h">
+      <Filter>Camera\Addon</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy\Enemy.h">
+      <Filter>GameObject\CharaBase\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy\EnemyAttackSettings.h">
+      <Filter>GameObject\CharaBase\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy\EnemyFactory.h">
+      <Filter>GameObject\CharaBase\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy\state\EnemyState.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy\state\EnemyState_impl.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy\state\StateCommon.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy\state\StateMelee.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy\state\StateNormal.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy\state\StateRanged.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy\state\StateTank.h">
+      <Filter>GameObject\CharaBase\Enemy\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy\Astar\PathfindingManager.h">
+      <Filter>GameObject\CharaBase\Enemy\A%2a</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Light\LightManager.h">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mode\ending\ModeEndingText.h">
+      <Filter>Mode\Ending</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mode\endingvideo\ModeEndingVideo.h">
+      <Filter>Mode\EndingVideo</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mode\game\ModeGame.h">
+      <Filter>Mode\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mode\gameover\ModeGameOver.h">
+      <Filter>Mode\GameOver</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mode\loading\ModeLoading.h">
+      <Filter>Mode\Load</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mode\logo\ModeLogo.h">
+      <Filter>Mode\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mode\menu\MenuItemBase.h">
+      <Filter>Mode\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mode\menu\ModeMenu.h">
+      <Filter>Mode\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mode\textbox\ModeTextBox.h">
+      <Filter>Mode\ModeTextBox</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mode\scenario\ModeScenario.h">
+      <Filter>Mode\Scenario</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mode\stagechange\ModeStageChange.h">
+      <Filter>Mode\StageChange</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mode\title\ModeTitle.h">
+      <Filter>Mode\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Stage\StageBase.h">
+      <Filter>Stage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -511,9 +505,6 @@
     </Filter>
     <Filter Include="Mode\Load">
       <UniqueIdentifier>{35198714-23c1-46cf-8a55-86d69483f8d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\CharaBase\Item">
-      <UniqueIdentifier>{cc558430-6e86-44d5-adb4-dee6afa34d11}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameObject\CharaBase\PlayerBase">
       <UniqueIdentifier>{ac63fc4d-34ba-4f2c-bfa7-d1ac08909c3d}</UniqueIdentifier>
@@ -617,7 +608,7 @@
     <Filter Include="Mode\EndingVideo">
       <UniqueIdentifier>{e0043e87-a35c-43d4-90de-67f7c8aaf5ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Mode\Light">
+    <Filter Include="Light">
       <UniqueIdentifier>{5f3de31b-18bc-4482-b88b-2588d6bd9f6e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

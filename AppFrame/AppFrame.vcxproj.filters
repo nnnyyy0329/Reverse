@@ -19,9 +19,6 @@
     <Filter Include="Manager\Component">
       <UniqueIdentifier>{e2d5dff1-1578-4f71-ad91-6fe0837b0092}</UniqueIdentifier>
     </Filter>
-    <Filter Include="a">
-      <UniqueIdentifier>{194dde9a-395d-4ede-97b1-e3bcd6951d8a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Server">
       <UniqueIdentifier>{662623ac-6fcc-4c94-83b4-49a6d0f569b3}</UniqueIdentifier>
     </Filter>
@@ -100,6 +97,9 @@
     <ClCompile Include="source\InputManager.cpp">
       <Filter>Manager\Input</Filter>
     </ClCompile>
+    <ClCompile Include="source\Manager\input\InputManager.cpp">
+      <Filter>Manager\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\CFile\CFile.h">
@@ -120,17 +120,10 @@
     <ClInclude Include="source\math\mymath.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="source\memo.h" />
     <ClInclude Include="source\Manager\ComponentManager.h">
       <Filter>Manager\Component</Filter>
     </ClInclude>
     <ClInclude Include="source\appframe.h" />
-    <ClInclude Include="source\template\aliastemplate.h">
-      <Filter>a</Filter>
-    </ClInclude>
-    <ClInclude Include="source\template\container.h">
-      <Filter>a</Filter>
-    </ClInclude>
     <ClInclude Include="source\Server\EffectServer.h">
       <Filter>Server\Effect</Filter>
     </ClInclude>
@@ -170,6 +163,9 @@
     </ClInclude>
     <ClInclude Include="source\draw\mydraw.h">
       <Filter>draw</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Manager\input\InputManager.h">
+      <Filter>Manager\Input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

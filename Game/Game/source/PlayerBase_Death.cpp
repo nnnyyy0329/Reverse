@@ -1,6 +1,6 @@
 #include "PlayerBase.h"
-#include "CameraManager.h"
-#include "CameraDollyAddon.h"
+#include "Camera/Manager/CameraManager.h"
+#include "Camera/Addon/CameraDollyAddon.h"
 
 void PlayerBase::CallDeath()
 {

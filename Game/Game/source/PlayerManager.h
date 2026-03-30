@@ -3,7 +3,7 @@
 #pragma once
 #include "appframe.h"
 #include "PlayerBase.h"
-#include "AnimManager.h"
+#include "Animation/AnimManager.h"
 #include "AbilityBase.h"
 
 // •Ïgİ’è—p‚Ì–¼‘O‹óŠÔ

@@ -4,7 +4,7 @@
 #include "SurfacePlayer.h"
 #include "InteriorPlayer.h"
 #include "EnergyManager.h"
-#include "CameraManager.h"
+#include "Camera/Manager/CameraManager.h"
 #include "AbilitySelectScreen.h"
 #include "PlayerLifeBarUI.h"
 

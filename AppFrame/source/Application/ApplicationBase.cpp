@@ -1,5 +1,5 @@
 ﻿#include "ApplicationBase.h"
-#include "../InputManager.h"
+#include "../Manager/input/InputManager.h"
 
 ApplicationBase	*ApplicationBase::_lpInstance = NULL;
 

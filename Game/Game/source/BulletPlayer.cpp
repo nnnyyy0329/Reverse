@@ -1,6 +1,6 @@
 #include "BulletPlayer.h"
-#include "CameraManager.h"
-#include "CameraShakeSystem.h"
+#include "Camera/Manager/CameraManager.h"
+#include "Camera/Addon/CameraShakeSystem.h"
 
 // 弾プレイヤー用定数のエイリアス
 namespace BPC = BulletPlayerConstants;

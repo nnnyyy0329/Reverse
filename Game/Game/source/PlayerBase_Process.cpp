@@ -1,7 +1,7 @@
 ﻿// 担当 : 成田
 
 #include "PlayerBase.h"
-#include "CameraManager.h" 
+#include "Camera/Manager/CameraManager.h" 
 
 namespace AnimConfig
 {

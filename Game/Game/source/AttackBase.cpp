@@ -2,7 +2,7 @@
 
 #include "AttackBase.h"
 #include "CharaBase.h"
-#include "CameraManager.h"
+#include "Camera/Manager/CameraManager.h"
 
 AttackBase::AttackBase()
 {    

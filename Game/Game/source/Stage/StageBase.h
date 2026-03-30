@@ -1,0 +1,137 @@
+#pragma once
+#include "appframe.h"
+#include "../CharaBase.h"
+
+class Enemy;
+class PlayerManager;
+
+namespace Pathfinding { class Manager; }
+
+class StageBase
+{
+public:
+	// マップモデルの設定情報
+	struct MODELPOS 
+	{
+		std::string name;// 名前
+		VECTOR pos;// 位置
+		VECTOR rot;// 回転
+		VECTOR scale;// スケール
+		int modelHandle;// モデルハンドル
+		int drawFrame;// 描画フレーム
+		int collisionFrame;// コリジョンフレーム
+	};
+
+	// 敵の座標設定情報
+	struct ENEMYPOS
+	{
+		std::string typeName;// 敵の種類
+		VECTOR vPos;// 位置
+		VECTOR vRot;// 回転
+	};
+
+	// トリガーの設定情報
+	struct TRIGGERPOS
+	{
+		std::string name;// トリガー名
+		VECTOR vPos;// 位置
+		VECTOR vRot;// 回転
+		VECTOR vScale;// スケール
+		int modelHandle;// モデルハンドル
+		int drawFrame;// 描画フレーム
+		int collisionFrame;// コリジョンフレーム
+	};
+
+	StageBase(int stageNum);
+	virtual ~StageBase();
+
+	virtual void Process();
+	virtual void Render();
+	virtual void DebugRender();
+	virtual void CollisionRender();
+
+	const std::vector<std::shared_ptr<Enemy>>& GetEnemies() const { return _stageEnemies; }
+	const std::vector<MODELPOS>& GetMapModelPosList() const { return _mapModelPosList; }
+	const std::vector<TRIGGERPOS>& GetTriggerList() const { return _triggerList; }
+	const std::vector<MODELPOS>& GetMoveAreaList() const { return _moveAreaList; }
+
+	// 非const敵リスト
+	std::vector<std::shared_ptr<Enemy>>& GetEnemies() { return _stageEnemies; }
+
+	// ステージ切り替え
+	int GetNextStageNumFromTrigger(const std::string& triggerName);// トリガー名から次のステージ番号を取得
+
+	// マップモデルを名前で削除（EventA/EventB の消去に使用）
+	void RemoveMapModelByName(const std::string& name);
+
+	// jsonファイルからステージデータを読み込む
+	void LoadStageDataFromJson(
+		const std::string& filePath,
+		const std::string& objName,
+		std::function<void(const std::string& name, const VECTOR& pos, const VECTOR& rot, const VECTOR& scale)> onLoadItem
+	);
+
+	// 敵の残数管理
+	int GetTotalEnemyCnt() { return _totalEnemyCnt; }// ステージ内の敵の総数を取得
+	int GetCurrentEnemyCnt() { return static_cast<int>(_stageEnemies.size()); }// 現在の敵の数を取得
+	bool IsAllEnemiesDefeated() { return _stageEnemies.empty() && _totalEnemyCnt > 0; }// すべての敵が倒されたか
+	bool IsBossDefeated() { return _bBossDefeatedNotified; }// ボスが倒されたか
+
+	// BGM関連
+	void PlayStageBGM();// ステージBGMを再生
+	void StopStageBGM();// ステージBGMを停止
+	std::string GetCurrentBGMName() { return _currentBGMName; }// 現在のBGM名を取得
+
+	VECTOR GetPlayerStartPos() { return _vPlayerStartPos; }
+	VECTOR GetPlayerStartRot() { return _vPlayerStartRot; }
+
+	Pathfinding::Manager* GetPathfindingManager() { return _pathfindingManager.get(); }
+	void DebugKillAllEnemies();// デバッグ：敵を全滅させる
+
+	void SetPlayerManager(std::shared_ptr<PlayerManager>player){ _playerManager = player; }// プレイヤーマネージャーセット
+
+	int GetStageNum() { return _stageNum; }// ステージ番号取得
+
+protected:
+	std::map<std::string, int> _mapModelHandle;// マップモデル用ハンドル(名前、モデルハンドル)
+	std::vector<std::shared_ptr<Enemy>> _stageEnemies;// ステージ内の敵リスト
+
+	std::vector<MODELPOS> _mapModelPosList;// json読み込みで設定したマップモデルのリスト
+
+	std::vector<MODELPOS> _moveAreaList;// 敵の移動可能範囲リスト
+
+	std::shared_ptr<PlayerManager>_playerManager;// プレイヤーマネージャー
+
+	int _stageNum;// ステージ番号
+
+	int _totalEnemyCnt;// ステージ内の敵の総数
+
+	
+	bool _bFirstRangedKilled = false;
+	bool _bAllClearNotified = false;// 通知フラグ（初回撃破・全滅通知など）
+	bool _bBossDefeatedNotified = false;// ボス撃破通知フラグ
+
+	
+
+
+	std::vector<TRIGGERPOS> _triggerList;// トリガーリスト
+
+	// BGM関連
+	std::string _currentBGMName;// 再生中のBGM名
+	std::string _interiorPlayerBGMName;// 裏プレイヤーのBGM名
+	std::string _bulletPlayerBGMName;// 弾発射プレイヤーのBGM名
+	CHARA_TYPE _previousCharaType;// 前フレームのキャラタイプを記録
+	// プレイヤー初期位置
+	VECTOR _vPlayerStartPos;
+	VECTOR _vPlayerStartRot;
+
+	// 経路探索マネージャー
+	std::unique_ptr<Pathfinding::Manager> _pathfindingManager;
+
+private:
+
+	// プレイヤー変身でBGMを切り替える
+	void UpdateStageBGM(CHARA_TYPE charaType);	// 毎フレーム呼ぶBGM切り替え関数
+
+};
+
