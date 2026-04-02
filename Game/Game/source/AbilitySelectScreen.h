@@ -1,9 +1,41 @@
-
+/*****************************************
+* file	 AbilitySelectScreen.h
+* brief  能力選択画面クラス
+* author 成田 悠真
+* date   2026/1/24
+******************************************/
 
 #pragma once
+
 #include "appframe.h"
 #include "AbilityBase.h" 
 
+// 選択描画の定数
+namespace SelectRenderConfig
+{
+	constexpr int SELECT_DRAW_X = 1480;
+	constexpr int SELECT_DRAW_Y = 874;
+	constexpr int DRAW_OFFSET_X = 37;
+	constexpr int DRAW_OFFSET_Y = 0;
+}
+
+// 選択肢の定数
+namespace SelectConstants
+{
+	constexpr int MIN_SELECT = 0;	// 最小選択肢
+	constexpr int MAX_SELECT = 2;	// 最大選択肢
+	constexpr int BLINK_SPEED = 15;	// 点滅速度
+}
+
+// 選択インデックスの定数
+namespace SelectConfig
+{
+	constexpr int SELECT_SURFACE_ABILITY_INDEX = 0;		// 表プレイヤーのアビリティインデックス
+	constexpr int SELECT_BULLET_ABILITY_INDEX = 1;		// 弾プレイヤーのアビリティインデックス
+	constexpr int SELECT_INTERIOR_ABILITY_INDEX = 2;	// 裏プレイヤーのアビリティインデックス
+}
+
+// 前方宣言
 class PlayerManager;
 class PlayerUnlockManager;
 class AbilityActionHint;
@@ -23,8 +55,12 @@ enum class SelectionState
 class AbilitySelectScreen
 {
 public:
+
 	AbilitySelectScreen();
 	virtual ~AbilitySelectScreen();
+
+
+	/* 基本関数 */
 
 	bool Initialize();
 	bool Terminate();

@@ -1,16 +1,27 @@
-// 担当 : 成田
+/*****************************************
+* file	 AbilityManager.h
+* brief  能力管理クラス
+* author 成田 悠真
+* date   2025/12/27
+******************************************/
 
 #pragma once
 #include "appframe.h"
 #include "AbilityBase.h"
 
-class PlayerBase;  // 前方宣言
+// 前方宣言
+class PlayerBase;  
 
+/// @brief 能力管理クラス
 class AbilityManager
 {
 public:
+
 	AbilityManager();
 	virtual ~AbilityManager();
+
+
+	/* 基本関数 */
 
 	bool Initialize();
 	bool Terminate();
@@ -24,6 +35,7 @@ public:
 	//ABILITY_TYPE GetAbilityType() const;							// 能力タイプ取得
 
 protected:
-	std::unique_ptr<AbilityBase> _ability;
-	PlayerBase* _playerBase;
+
+	std::unique_ptr<AbilityBase> _ability;	// 能力
+	PlayerBase* _playerBase;				// 能力を持つプレイヤーへのポインタ
 };

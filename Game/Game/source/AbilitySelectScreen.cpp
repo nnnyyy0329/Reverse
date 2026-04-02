@@ -4,28 +4,6 @@
 #include "PlayerUnlockManager.h"
 #include "AbilityActionHint.h"
 
-namespace SelectRenderConfig
-{
-	constexpr int SELECT_DRAW_X = 1480;
-	constexpr int SELECT_DRAW_Y = 874;
-	constexpr int DRAW_OFFSET_X = 37;
-	constexpr int DRAW_OFFSET_Y = 0;
-}
-
-namespace SelectConstants
-{
-	constexpr int MIN_SELECT = 0;	// 最小選択肢
-	constexpr int MAX_SELECT = 2;	// 最大選択肢
-	constexpr int BLINK_SPEED = 15;	// 点滅速度
-}
-
-namespace SelectConfig
-{
-	constexpr int SELECT_SURFACE_ABILITY_INDEX = 0;	// 表プレイヤーのアビリティインデックス
-	constexpr int SELECT_BULLET_ABILITY_INDEX = 1;		// 弾プレイヤーのアビリティインデックス
-	constexpr int SELECT_INTERIOR_ABILITY_INDEX = 2;	// 裏プレイヤーのアビリティインデックス
-}
-
 AbilitySelectScreen::AbilitySelectScreen()
 {
 	_playerManager = nullptr;		// プレイヤーマネージャー
