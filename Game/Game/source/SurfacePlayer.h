@@ -1,15 +1,20 @@
-// ’S“– : ¬“c
+ï»¿/*****************************************
+* file	 SurfacePlayer.h
+* briefÂ  è¡¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¯ãƒ©ã‚¹
+* author æˆç”° æ‚ çœŸ
+* dateÂ Â  2025/12/09
+******************************************/
 
 #pragma once
 #include "PlayerBase.h"
 
-// •\ƒvƒŒƒCƒ„[—p’è”
+// è¡¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç”¨å®šæ•°
 namespace SurfacePlayerConstants
 {
-	constexpr float DAMAGE_MULTIPLIER = 5.0f;	// •\ƒvƒŒƒCƒ„[ê—p‚Ìƒ_ƒ[ƒW”{—¦
+	constexpr float DAMAGE_MULTIPLIER = 5.0f;	// è¡¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å°‚ç”¨ã®ãƒ€ãƒ¡ãƒ¼ã‚¸å€çŽ‡
 }
 
-/// @brief •\ƒvƒŒƒCƒ„[ƒNƒ‰ƒX
+/// @brief è¡¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¯ãƒ©ã‚¹
 class SurfacePlayer : public PlayerBase
 {
 public:
@@ -18,152 +23,148 @@ public:
 	virtual ~SurfacePlayer();
 
 
-
-	/* Šî–{ŠÖ” */
+	/* åŸºæœ¬é–¢æ•° */
 
 	virtual bool Initialize();
 	virtual bool Terminate();
 	virtual bool Process();	
 	virtual bool Render();	
 
-	/// @brief ƒfƒoƒbƒO•`‰æ
+	/// @brief ãƒ‡ãƒãƒƒã‚°æç”»
 	virtual void DebugRender() override;
 
-	/// @brief ”íƒ_ƒ[ƒWˆ—
+	/// @brief è¢«ãƒ€ãƒ¡ãƒ¼ã‚¸å‡¦ç†
 	/// 
-	/// @param fDamage ƒ_ƒ[ƒW—Ê
-	/// @param eType UŒ‚‚ÌŠ—LŽÒƒ^ƒCƒv
-	/// @param attackInfo UŒ‚ƒRƒŠƒWƒ‡ƒ“î•ñ
+	/// @param fDamage ãƒ€ãƒ¡ãƒ¼ã‚¸é‡
+	/// @param eType æ”»æ’ƒã®æ‰€æœ‰è€…ã‚¿ã‚¤ãƒ—
+	/// @param attackInfo æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³æƒ…å ±
 	void ApplyDamage(float fDamage, ATTACK_OWNER_TYPE ownerType, const AttackCollision& attackInfo) override;
 
-	/// @brief ’e‚É‚æ‚é”íƒ_ƒ[ƒWˆ—
+	/// @brief å¼¾ã«ã‚ˆã‚‹è¢«ãƒ€ãƒ¡ãƒ¼ã‚¸å‡¦ç†
 	///
-	/// @param fDamage ƒ_ƒ[ƒW—Ê
-	/// @param char ’e‚ÌƒLƒƒƒ‰ƒ^ƒCƒv
+	/// @param fDamage ãƒ€ãƒ¡ãƒ¼ã‚¸é‡
+	/// @param char å¼¾ã®ã‚­ãƒ£ãƒ©ã‚¿ã‚¤ãƒ—
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara) override;
 
 
-
-	/* ƒQƒbƒ^[ƒZƒbƒ^[ */
+	/* ã‚²ãƒƒã‚¿ãƒ¼ã‚»ãƒƒã‚¿ãƒ¼ */
 
 
 private:
 
-	/* ‰¼‘zŠÖ”‚ÌƒI[ƒo[ƒ‰ƒCƒh */
+	/* ä»®æƒ³é–¢æ•°ã®ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ */
 
-	/// @brief ƒvƒŒƒCƒ„[Ý’è‚ðŽæ“¾
+	/// @brief ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è¨­å®šã‚’å–å¾—
 	///
-	/// @return ƒvƒŒƒCƒ„[Ý’è\‘¢‘Ì
+	/// @return ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è¨­å®šæ§‹é€ ä½“
 	virtual PlayerConfig		GetPlayerConfig()		override;
 
-	/// @brief ƒvƒŒƒCƒ„[ƒAƒjƒ[ƒVƒ‡ƒ“Ý’è‚ðŽæ“¾
+	/// @brief ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³è¨­å®šã‚’å–å¾—
 	///
-	/// @return ƒvƒŒƒCƒ„[ƒAƒjƒ[ƒVƒ‡ƒ“Ý’è\‘¢‘Ì
+	/// @return ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³è¨­å®šæ§‹é€ ä½“
 	virtual PlayerAnimations	GetPlayerAnimation()	override;
 
-	/// @brief •`‰æÝ’è‚ðŽæ“¾
+	/// @brief æç”»è¨­å®šã‚’å–å¾—
 	///
-	/// @return •`‰æÝ’è\‘¢‘Ì
+	/// @return æç”»è¨­å®šæ§‹é€ ä½“
 	virtual RenderConfig		GetRenderConfig()		override;
 
-	/// @brief ‰ñ”ðÝ’è‚ðŽæ“¾
+	/// @brief å›žé¿è¨­å®šã‚’å–å¾—
 	///
-	/// @return ‰ñ”ðÝ’è\‘¢‘Ì
+	/// @return å›žé¿è¨­å®šæ§‹é€ ä½“
 	virtual DodgeConfig			GetDodgeConfig()		override;
 
-	/// @brief ƒV[ƒ‹ƒhÝ’è‚ðŽæ“¾
+	/// @brief ã‚·ãƒ¼ãƒ«ãƒ‰è¨­å®šã‚’å–å¾—
 	///
-	/// @return ƒV[ƒ‹ƒhÝ’è\‘¢‘Ì
+	/// @return ã‚·ãƒ¼ãƒ«ãƒ‰è¨­å®šæ§‹é€ ä½“
 	virtual ShieldConfig		GetShieldConfig()		override;
 
-	/// @brief ‹zŽûUŒ‚ƒVƒXƒeƒ€‚Ìconst”ÅƒQƒbƒ^[
+	/// @brief å¸åŽæ”»æ’ƒã‚·ã‚¹ãƒ†ãƒ ã®constç‰ˆã‚²ãƒƒã‚¿ãƒ¼
 	///
-	/// @return ‹zŽûUŒ‚ƒVƒXƒeƒ€‚Ìconstƒ|ƒCƒ“ƒ^
+	/// @return å¸åŽæ”»æ’ƒã‚·ã‚¹ãƒ†ãƒ ã®constãƒã‚¤ãƒ³ã‚¿
 	const PlayerAbsorbAttackSystem* GetAbsorbAttackSystemConst() const;
 
-	/// @brief ‹zŽûUŒ‚ƒVƒXƒeƒ€‚Ì”ñconst”ÅƒQƒbƒ^[
+	/// @brief å¸åŽæ”»æ’ƒã‚·ã‚¹ãƒ†ãƒ ã®éžconstç‰ˆã‚²ãƒƒã‚¿ãƒ¼
 	///
-	/// @return ‹zŽûUŒ‚ƒVƒXƒeƒ€‚Ìƒ|ƒCƒ“ƒ^
+	/// @return å¸åŽæ”»æ’ƒã‚·ã‚¹ãƒ†ãƒ ã®ãƒã‚¤ãƒ³ã‚¿
 	PlayerAbsorbAttackSystem* GetAbsorbAttackSystem() override;
 
 
-
-	/* ‹zŽûUŒ‚ŠÖ˜A */
+	/* å¸åŽæ”»æ’ƒé–¢é€£ */
 	
-	/// @brief ‹zŽûUŒ‚Ý’è‚ðŽæ“¾
+	/// @brief å¸åŽæ”»æ’ƒè¨­å®šã‚’å–å¾—
 	///
-	/// @return ‹zŽûUŒ‚Ý’è\‘¢‘Ì
+	/// @return å¸åŽæ”»æ’ƒè¨­å®šæ§‹é€ ä½“
 	AbsorbConfig GetAbsorbConfig();
 
-	/// @brief ‹zŽûUŒ‚ƒVƒXƒeƒ€‚Ì¶¬
+	/// @brief å¸åŽæ”»æ’ƒã‚·ã‚¹ãƒ†ãƒ ã®ç”Ÿæˆ
 	void MakeAbsorbSystem();		
 	
-	/// @brief ‹zŽûUŒ‚ƒVƒXƒeƒ€‚Ì‰Šú‰»
+	/// @brief å¸åŽæ”»æ’ƒã‚·ã‚¹ãƒ†ãƒ ã®åˆæœŸåŒ–
 	void InitializeAbsorbSystem();
 
-	/// @brief ‹zŽûUŒ‚ƒVƒXƒeƒ€‚Ìˆ—
+	/// @brief å¸åŽæ”»æ’ƒã‚·ã‚¹ãƒ†ãƒ ã®å‡¦ç†
 	void ProcessAbsorbSystem();		
 	
-	/// @brief ‹zŽûUŒ‚ƒVƒXƒeƒ€‚ÌƒfƒoƒbƒO•`‰æ
+	/// @brief å¸åŽæ”»æ’ƒã‚·ã‚¹ãƒ†ãƒ ã®ãƒ‡ãƒãƒƒã‚°æç”»
 	void AbsorbSystemDebugRender();	
 
 
+	/* å¸åŽæ”»æ’ƒã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ç®¡ç†ç”¨ãƒ¡ãƒ³ãƒé–¢æ•° */
 
-	/* ‹zŽûUŒ‚‚Ìƒ‚[ƒVƒ‡ƒ“ŠÇ——pƒƒ“ƒoŠÖ” */
-
-	/// @brief ‹zŽûUŒ‚ƒ‚[ƒVƒ‡ƒ“Ø‚è‘Ö‚¦ðŒ‚ÌXV
+	/// @brief å¸åŽæ”»æ’ƒãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³åˆ‡ã‚Šæ›¿ãˆæ¡ä»¶ã®æ›´æ–°
 	void UpdateChangeAbsorbMotion();
 
-	/// @brief ‹zŽûUŒ‚‚Ì\‚¦ó‘Ô‚ÉˆÚs‚·‚éˆ—
+	/// @brief å¸åŽæ”»æ’ƒã®æ§‹ãˆçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹å‡¦ç†
 	void StartAbsorbReadyState();
 
-	/// @brief ‹zŽû\‚¦ƒ‚[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚Æ‚«‚Ìˆ—
+	/// @brief å¸åŽæ§‹ãˆãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã¨ãã®å‡¦ç†
 	void ProcessAbsorbReadyCompleted();
 
-	/// @brief ‹zŽûI—¹ó‘Ô‚Ìˆ—
+	/// @brief å¸åŽçµ‚äº†çŠ¶æ…‹ã®å‡¦ç†
 	void ProcessAbsorbFinish();
 
-	/// @brief ‹zŽûUŒ‚‚Ì’âŽ~ˆ—
+	/// @brief å¸åŽæ”»æ’ƒã®åœæ­¢å‡¦ç†
 	void StopAbsorb();
 
-	/// @brief ‹zŽû\‚¦‚ÌƒLƒƒƒ“ƒZƒ‹ˆ—
+	/// @brief å¸åŽæ§‹ãˆã®ã‚­ãƒ£ãƒ³ã‚»ãƒ«å‡¦ç†
 	void CancelAbsorbReady();
 
-	/// @brief ‹zŽûI—¹Žž‚É’Êíƒ‚[ƒVƒ‡ƒ“‚É–ß‚·ˆ—
+	/// @brief å¸åŽçµ‚äº†æ™‚ã«é€šå¸¸ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã«æˆ»ã™å‡¦ç†
 	void ReturnNormalMotion();
 	
-	/// @brief ‹zŽûƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶ŽžŠÔ‚ðƒfƒoƒbƒO•\Ž¦‚·‚éŠÖ”
+	/// @brief å¸åŽã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿæ™‚é–“ã‚’ãƒ‡ãƒãƒƒã‚°è¡¨ç¤ºã™ã‚‹é–¢æ•°
 	void DebugDrawAbsorbAnimationTime();
 
-	/// @brief ‹zŽûUŒ‚‚Ì“ü—Íƒ`ƒFƒbƒN
+	/// @brief å¸åŽæ”»æ’ƒã®å…¥åŠ›ãƒã‚§ãƒƒã‚¯
 	///
-	/// @return ‹zŽûUŒ‚‚Ì“ü—Í‚ª‚³‚ê‚Ä‚¢‚é‚È‚çtrueA‚³‚ê‚Ä‚¢‚È‚¢‚È‚çfalse
+	/// @return å¸åŽæ”»æ’ƒã®å…¥åŠ›ãŒã•ã‚Œã¦ã„ã‚‹ãªã‚‰trueã€ã•ã‚Œã¦ã„ãªã„ãªã‚‰false
 	bool IsAbsorbInput() const { return (InputManager::GetInstance().IsHold(INPUT_ACTION::ABILITY)) != 0; }
 
-	/// @brief ‹zŽûUŒ‚‚ªƒAƒNƒeƒBƒu‚©‚Ç‚¤‚©‚ðƒ`ƒFƒbƒN
+	/// @brief å¸åŽæ”»æ’ƒãŒã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯
 	///
-	/// @return ‹zŽûUŒ‚ƒVƒXƒeƒ€‚ª‘¶Ý‚µA‚©‚Â‹zŽûUŒ‚‚ªƒAƒNƒeƒBƒu‚È‚çtrueA‚»‚¤‚Å‚È‚¢‚È‚çfalse
+	/// @return å¸åŽæ”»æ’ƒã‚·ã‚¹ãƒ†ãƒ ãŒå­˜åœ¨ã—ã€ã‹ã¤å¸åŽæ”»æ’ƒãŒã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªã‚‰trueã€ãã†ã§ãªã„ãªã‚‰false
 	bool IsAbsorbActive() const { return _absorbAttackSystem && _absorbAttackSystem->IsAbsorbActive(); }
 
-	/// @brief ‹zŽûI—¹ó‘Ô’†‚É‹zŽûUŒ‚‚Ì“ü—Í‚ª‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ðƒ`ƒFƒbƒN
+	/// @brief å¸åŽçµ‚äº†çŠ¶æ…‹ä¸­ã«å¸åŽæ”»æ’ƒã®å…¥åŠ›ãŒã•ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯
 	///
-	/// @return ‹zŽûUŒ‚‚Ì“ü—Í‚ª‚³‚ê‚Ä‚¢‚ÄA‚©‚Â‹zŽûI—¹ó‘Ô‚ÅAƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚Ä‚¢‚È‚¢‚È‚çtrueA‚»‚¤‚Å‚È‚¢‚È‚çfalse
+	/// @return å¸åŽæ”»æ’ƒã®å…¥åŠ›ãŒã•ã‚Œã¦ã„ã¦ã€ã‹ã¤å¸åŽçµ‚äº†çŠ¶æ…‹ã§ã€ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ã¦ã„ãªã„ãªã‚‰trueã€ãã†ã§ãªã„ãªã‚‰false
 	bool IsInputInAbsorbFinishState() const { return (IsAbsorbInput() && IsAbsorbEndState() && !IsAnimationFinishedConst()); }
 
-	/// @brief ‹zŽûó‘Ô‚ªI—¹ó‘Ô‚©‚Ç‚¤‚©‚ðƒ`ƒFƒbƒN
+	/// @brief å¸åŽçŠ¶æ…‹ãŒçµ‚äº†çŠ¶æ…‹ã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯
 	///
-	/// @return ‰½‚©‚µ‚ç‚Ì‹zŽûó‘Ô‚ÅA‹zŽûó‘Ô‚ªI—¹ó‘Ô‚È‚çtrueA‚»‚¤‚Å‚È‚¢‚È‚çfalse
+	/// @return ä½•ã‹ã—ã‚‰ã®å¸åŽçŠ¶æ…‹ã§ã€å¸åŽçŠ¶æ…‹ãŒçµ‚äº†çŠ¶æ…‹ãªã‚‰trueã€ãã†ã§ãªã„ãªã‚‰false
 	bool IsAbsorbEndState() const { return _playerState.IsStateAbsorbing() && _playerState.absorbState == PLAYER_ABSORB_STATE::ABSORB_END; }
 
 
 
-	std::unique_ptr<PlayerAbsorbAttackSystem> _absorbAttackSystem;	// ‹zŽûUŒ‚ƒVƒXƒeƒ€
+	std::unique_ptr<PlayerAbsorbAttackSystem> _absorbAttackSystem;	// å¸åŽæ”»æ’ƒã‚·ã‚¹ãƒ†ãƒ 
 
 protected:
 
-	// ‹zŽûUŒ‚‚Ìƒ‚[ƒVƒ‡ƒ“ŠÇ——pƒƒ“ƒo•Ï”
-	bool _bIsAbsorbReadyCompleted;	// ‹zŽû\‚¦ƒAƒjƒ[ƒVƒ‡ƒ“Š®—¹ƒtƒ‰ƒO
-	bool _bWasAbsorbKeyPressed;		// ‘OƒtƒŒ[ƒ€‚Å‹zŽûUŒ‚ƒL[‚ª‰Ÿ‚³‚ê‚Ä‚¢‚½‚©
+	// å¸åŽæ”»æ’ƒã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ç®¡ç†ç”¨ãƒ¡ãƒ³ãƒå¤‰æ•°
+	bool _bIsAbsorbReadyCompleted;	// å¸åŽæ§‹ãˆã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å®Œäº†ãƒ•ãƒ©ã‚°
+	bool _bWasAbsorbKeyPressed;		// å‰ãƒ•ãƒ¬ãƒ¼ãƒ ã§å¸åŽæ”»æ’ƒã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ãŸã‹
 
 };
 
