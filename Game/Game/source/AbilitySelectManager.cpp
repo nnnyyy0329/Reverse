@@ -23,19 +23,16 @@ bool AbilitySelectManager::Process()
 	return true;
 }
 
-// 能力選択画面のセット
 void AbilitySelectManager::SetAbilitySelectScreen(std::shared_ptr<AbilitySelectScreen> selectScreen)
 {
 	_abilitySelectScreen = selectScreen;
 }
 
-// プレイヤーマネージャーのセット
 void AbilitySelectManager::SetPlayerManager(std::shared_ptr<PlayerManager> playerManager)
 {
 	_playerManager = playerManager;
 }
 
-// アビリティ選択処理
 void AbilitySelectManager::AbilitySelection()
 {
 	// クラスがセットされていない場合は処理しない
@@ -58,7 +55,6 @@ void AbilitySelectManager::AbilitySelection()
 	}
 }
 
-// エネルギーによるプレイヤー切り替えかどうかのチェック
 bool AbilitySelectManager::IsSwitchPlayerByEnergy()
 {
 	EnergyManager* energyManager = EnergyManager::GetInstance();

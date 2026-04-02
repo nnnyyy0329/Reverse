@@ -1,10 +1,5 @@
 #include "Bullet.h"
 
-namespace BulletConstants
-{
-
-}
-
 Bullet::Bullet() 
 {
 	_stcBulletConfig.bulletType		= BULLET_TYPE::NONE;
@@ -73,7 +68,6 @@ void Bullet::DebugRender()
 	CollisionRender();
 }
 
-// 当たり判定の描画
 void Bullet::CollisionRender() 
 {
 	// 当たり判定のsphereを描画
@@ -88,7 +82,6 @@ void Bullet::CollisionRender()
 	);
 }
 
-// 弾を有効化する
 void Bullet::ActivateBullet(const BulletConfig& bulletConfig, const BulletEffectConfig& bulletEffectConfig)
 {
 	// 弾情報の設定
@@ -104,7 +97,6 @@ void Bullet::ActivateBullet(const BulletConfig& bulletConfig, const BulletEffect
 	PlayBulletEffect(bulletEffectConfig);
 }
 
-// 弾を有効化する(演出面の引数なし)
 void Bullet::ActivateBulletSimple(const BulletConfig& config)
 {
 	// 弾情報の設定
@@ -114,7 +106,6 @@ void Bullet::ActivateBulletSimple(const BulletConfig& config)
 	SetCoordinateConfig(config);
 }
 
-// 弾のエフェクト位置更新
 void Bullet::UpdateBulletEffectPos()
 {
 	// エフェクト名が空の場合はスキップ
@@ -130,7 +121,6 @@ void Bullet::UpdateBulletEffectPos()
 	EffectServer::GetInstance()->SetPos(_effectHandle, effectPos);
 }
 
-// 弾情報の設定
 void Bullet::SetBulletConfig(const BulletConfig& config)
 {
 	_stcBulletConfig = config;	// 情報の設定
@@ -141,13 +131,11 @@ void Bullet::SetBulletConfig(const BulletConfig& config)
 	_fCollisionR = config.radius;		// 弾半径
 }
 
-// 弾の演出関連の情報設定
 void Bullet::SetEffectConfig(const BulletEffectConfig& config)
 {
 	_stcEffectConfig = config;	// 情報設定
 }
 
-// 他の情報設定
 void Bullet::SetCoordinateConfig(const BulletConfig& config)
 {
 	_vPos		= config.startPos;				// 位置
@@ -157,7 +145,6 @@ void Bullet::SetCoordinateConfig(const BulletConfig& config)
 	_fMoveSpeed = config.speed;
 }
 
-// ヒット時の演出処理
 void Bullet::PlayEffect(const BulletEffectConfig& config)
 {
 	// エフェクト再生処理
@@ -166,7 +153,7 @@ void Bullet::PlayEffect(const BulletEffectConfig& config)
 	// サウンド再生処理
 	PlayBulletSound(config);
 }
-// エフェクト再生処理
+
 void Bullet::PlayBulletEffect(const BulletEffectConfig& config)
 {
 	// エフェクト名が空でない場合のみ
@@ -180,7 +167,6 @@ void Bullet::PlayBulletEffect(const BulletEffectConfig& config)
 	}
 }
 	
-// サウンド再生処理
 void Bullet::PlayBulletSound(const BulletEffectConfig& config)
 {
 	// サウンド名が空でない場合のみ
@@ -191,7 +177,6 @@ void Bullet::PlayBulletSound(const BulletEffectConfig& config)
 	}
 }
 
-// 弾の移動処理
 void Bullet::MoveBullet()
 {
 	// 前フレームの位置を保存
@@ -201,13 +186,11 @@ void Bullet::MoveBullet()
 	_vPos = VAdd(_vPos, _vMove);
 }
 
-// 弾の生存時間の減算処理
 void Bullet::DecrementLifeTime()
 {
 	_stcBulletConfig.lifeTime--;	// 時間を減らす
 }
 
-// 弾の生存時間が残っているか
 bool Bullet::IsBulletAlive()const
 {
 	// 	// 生存時間が残っているなら

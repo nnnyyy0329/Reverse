@@ -1,24 +1,18 @@
 #include "StaminaUI.h"
 #include "StaminaManager.h"
 
-namespace
-{
-	// 画像表示用
-	const int DRAW_BAR_FRAME_X = 216;
-	const int DRAW_BAR_FRAME_Y = 1000;
-	const int DRAW_OFFSET_X = 15;
-	const int DRAW_OFFSET_Y = 5;
-}
+// スタミナUI表示設定用定数のエイリアス
+namespace RC = RenderConfig;
 
 StaminaUI::StaminaUI()
 {
 	_iStaminaFrameHandle = ResourceServer::GetInstance()->GetHandle("StaminaFrame");
 	_iStaminaHandle = ResourceServer::GetInstance()->GetHandle("Stamina");
 
-	_drawStaminaBarX = DRAW_BAR_FRAME_X + DRAW_OFFSET_X;
-	_drawStaminaBarY = DRAW_BAR_FRAME_Y + DRAW_OFFSET_Y;
-	_drawStaminaBarFrameX = DRAW_BAR_FRAME_X;
-	_drawStaminaBarFrameY = DRAW_BAR_FRAME_Y;
+	_drawStaminaBarX = RC::DRAW_BAR_FRAME_X + RC::DRAW_OFFSET_X;
+	_drawStaminaBarY = RC::DRAW_BAR_FRAME_Y + RC::DRAW_OFFSET_Y;
+	_drawStaminaBarFrameX = RC::DRAW_BAR_FRAME_X;
+	_drawStaminaBarFrameY = RC::DRAW_BAR_FRAME_Y;
 }
 
 StaminaUI::~StaminaUI()
@@ -63,20 +57,19 @@ bool StaminaUI::Render()
 	return true;
 }
 
-// スタミナフレーム表示関数
 void StaminaUI::StaminaFrameRender()
 {
 	DrawGraph(_drawStaminaBarFrameX, _drawStaminaBarFrameY, _iStaminaFrameHandle, TRUE);
 }
 
-// ゲージ表示比率計算関数
 void StaminaUI::GaugeRatioCalculation()
 {
 	// スタミナマネージャーから現在のスタミナ量を取得
 	float currentStamina = StaminaManager::GetInstance()->GetCurrentStamina();
 	float maxStamina = StaminaManager::GetInstance()->GetMaxStamina();
 
-	if(maxStamina <= 0.0f) return;  // 最大スタミナが0以下の場合は描画しない
+	// 最大スタミナが0以下の場合は描画しない
+	if(maxStamina <= 0.0f) return;  
 
 	// スタミナの比率を計算
 	float staminaRatio = currentStamina / maxStamina;
@@ -87,10 +80,10 @@ void StaminaUI::GaugeRatioCalculation()
 	StaminaGaugeRender(staminaRatio);
 }
 
-// スタミナゲージ表示関数
 void StaminaUI::StaminaGaugeRender(float ratio)
 {
-	if(ratio <= 0.0f){ return; }	// 比率が0以下の場合は描画しない
+	// 比率が0以下の場合は描画しない
+	if(ratio <= 0.0f){ return; }	
 
 	// 画像サイズ
 	int graphW, graphH;

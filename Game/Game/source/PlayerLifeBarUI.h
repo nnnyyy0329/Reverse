@@ -1,3 +1,10 @@
+/*****************************************
+* file   PlayerLifeBarUI.h
+* brief  プレイヤーライフバーUIクラス
+* author 成田 悠真
+* date   2026/01/30
+******************************************/
+
 #pragma once
 #include "appframe.h"
 
@@ -8,6 +15,9 @@ namespace PlayerLifeBarConfig
 	constexpr int DRAW_BAR_FRAME_Y = 1030;
 	constexpr int DRAW_OFFSET_X = 1;
 	constexpr int DRAW_OFFSET_Y = 1;
+
+
+	/* ひんさんが追加していたコード */
 
 	//// 追加：縦方向スケール
 	//constexpr float LIFE_BAR_SCALE_Y = 0.2f;
@@ -21,9 +31,10 @@ namespace FlashEffectConfig
 	constexpr float FLASH_MAX_ALPHA = 200.0f;	// 点滅の最大アルファ値
 }
 
+// 前方宣言
 class PlayerManager;
 
-// プレイヤーライフバーUIクラス
+/// @brief プレイヤーライフバーUIクラス
 class PlayerLifeBarUI
 {
 public:
@@ -42,13 +53,15 @@ public:
 
 	/*ライフバー描画関係関数 */
 
-	// ライフバーフレーム描画
+	/// @brief ライフバーフレームの描画
 	void LifeBarRenderFrame();
 
-	// ライフバー比率計算
+	/// @brief ライフバーの表示比率計算
 	void BarRatioCalculation();
 
-	// ライフバー描画
+	/// @brief ライフバーの描画
+	///
+	/// @param ratio ライフバーの表示比率
 	void LifeBarRender(float ratio);
 	
 	/// @brief 点滅エフェクトの開始
@@ -56,18 +69,25 @@ public:
 	/// @param duration 点滅継続時間(フレーム)。FlashEffectConfig::FLASH_DURATIONを初期で使用
 	void StartFlashEffect(float duration = FlashEffectConfig::FLASH_DURATION);
 
-	// 点滅中の更新
+	/// @brief 点滅エフェクトの更新
 	void UpdateFlashEffect();
 
-	// 点滅エフェクトの描画
+	/// @brief 点滅エフェクトの描画
+	///
+	/// @param clipW 点滅エフェクトのクリップ幅
+	/// @param graphH 点滅エフェクトのグラフ高さ
 	void FlashEffectRender(int clipW, int graphH);
+
 
 	/* クラスのセット関係関数 */
 
-	// プレイヤー管理クラスの設定
+	/// @brief プレイヤーマネージャーの設定関数
+	///
+	/// @param playerManager 設定するプレイヤーマネージャーのshared_ptr
 	void SetPlayerManager(std::shared_ptr<PlayerManager> playerManager){ _playerManager = playerManager; }
 
 protected:
+
 	// プレイヤーマネージャー
 	std::shared_ptr<PlayerManager> _playerManager; 
 

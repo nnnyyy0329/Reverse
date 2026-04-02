@@ -1,16 +1,23 @@
+/*****************************************
+* file   Bullet.h
+* brief  弾クラス
+* author 成田 悠真
+* date   2026/01/15
+******************************************/
+
 #pragma once
 #include "CharaBase.h"
 
-// 弾の種類を管理するための列挙型
+/// @brief 弾の種類を管理するための列挙型
 enum class BULLET_TYPE
 {
 	NONE,
-	NORMAL,		// 通常弾
-	PIERCING,	// 貫通弾
+	NORMAL,		///< 通常弾
+	PIERCING,	///< 貫通弾
 	_EOT_,
 };
 
-// 弾の情報構造体
+/// @brief 弾の情報構造体
 struct BulletConfig
 {
 	BULLET_TYPE bulletType;	// 弾の種類
@@ -24,7 +31,7 @@ struct BulletConfig
 	bool isHit = false;		// ヒットしたか(初期化しておく)
 };
 
-// 弾の演出関係の構造体
+/// @brief 弾の演出関係の構造体
 struct BulletEffectConfig
 {
 	// エフェクト
@@ -35,69 +42,112 @@ struct BulletEffectConfig
 	std::string soundName;	// サウンド名
 };
 
-// 弾クラス
+/// @brief 弾クラス
 class Bullet : public CharaBase
 {
 public:
+
 	Bullet();
 	virtual ~Bullet();
+
+
+	/* 基本関数 */
 
 	virtual bool Initialize();	// 初期化
 	virtual bool Terminate();	// 終了
 	virtual bool Process();		// 更新	
 	virtual bool Render();		// 描画
 
-	virtual void DebugRender();		// デバッグ描画
-	void CollisionRender();			// コリジョン描画
 
-	// 弾を有効化する
+	/* デバッグ関数 */
+	
+	/// @brief デバッグ描画関数
+	virtual void DebugRender();		
+	
+	/// @brief コリジョン描画関数
+	void CollisionRender();	
+
+
+	/* 弾の処理関係関数 */
+
+	/// @brief 弾を有効化する関数
+	///
+	/// @param config 弾の情報構造体
+	/// @param effectConfig 弾の演出関係の構造体
 	void ActivateBullet(const BulletConfig& config, const BulletEffectConfig& effectConfig);
 
-	// 弾を有効化する(演出面の引数なし)
+	/// @brief 弾を有効化する関数(演出面の引数なし)
+	///
+	/// @param config 弾の情報構造体
 	void ActivateBulletSimple(const BulletConfig& config);
 
-	// 弾のエフェクト位置更新
+	/// @brief 弾のエフェクト位置更新関数
 	void UpdateBulletEffectPos();
 
-	// 弾情報の設定
+	/// @brief 弾の情報設定関数
+	///
+	/// @param config 弾の情報構造体
 	void SetBulletConfig(const BulletConfig& config);
 
-	// 弾の演出関連の情報設定
+	/// @brief 弾の演出関連の情報設定関数
+	///
+	/// @param config 弾の演出関連の構造体
 	void SetEffectConfig(const BulletEffectConfig& config);
 
-	// 位置関係の情報設定
+	/// @brief 弾の位置関係の情報設定関数
+	///
+	/// @param config 弾の情報構造体
 	void SetCoordinateConfig(const BulletConfig& config);
 
-	// ヒット時の演出処理
+	/// @brief ヒット時の演出処理関数
+	///
+	/// @param effectConfig 弾の演出関連の構造体
 	void PlayEffect(const BulletEffectConfig& effectConfig);
 
-	// エフェクト再生処理
+	/// @brief 弾のエフェクト再生処理関数
+	///
+	/// @param effectConfig 弾の演出関連の構造体
 	void PlayBulletEffect(const BulletEffectConfig& effectConfig);
 
-	// サウンド再生処理
+	/// @brief 弾のサウンド再生処理関数
+	///
+	/// @param effectConfig 弾の演出関連の構造体
 	void PlayBulletSound(const BulletEffectConfig& effectConfig);
 
-	// 弾の生存時間が残っているか
+	/// @brief 弾の生存時間が残っているかをチェックする関数
+	///
+	/// @return 生存時間が残っている場合はtrue、そうでない場合はfalse
 	bool IsBulletAlive()const;
 
 
 	/* ゲッターセッター */
 
-	// 情報設定
+	/// @brief 弾の情報構造体を取得する関数
+	///
+	/// @return 弾の情報構造体
 	const BulletConfig& GetBulletConfig() const { return _stcBulletConfig; }
 
-	// エフェクト設定
+	/// @brief 弾の演出関連の構造体を取得する関数
+	///
+	/// @return 弾の演出関連の構造体
 	const BulletEffectConfig& GetBulletEffectConfig() const { return _stcEffectConfig; }
 
-	CHARA_TYPE GetShooterType() const { return _eShooterType; }	// 弾の発射者を取得
-	BULLET_TYPE GetBulletType() const { return _eBulletType; }	// 弾の種類を取得
+	/// @brief 弾の発射者を取得する関数
+	///
+	/// @return 弾の発射者のキャラタイプ
+	CHARA_TYPE GetShooterType() const { return _eShooterType; }	
+	
+	/// @brief 弾の種類を取得する関数
+	///
+	/// @return 弾の種類
+	BULLET_TYPE GetBulletType() const { return _eBulletType; }	
 
 private:
-
-	// 弾の移動処理
+	
+	/// @brief 弾の移動処理関数
 	void MoveBullet();
 
-	// 弾の生存時間の減算処理
+	/// @brief 弾の生存時間を減算する関数
 	void DecrementLifeTime();
 
 protected:

@@ -1,4 +1,9 @@
-﻿
+﻿/*****************************************
+* file	 AbilitySelectManager.h
+* brief  アビリティ選択管理クラス
+* author 成田 悠真
+* date   2026/03/02
+******************************************/
 
 #pragma once
 #include "appframe.h"

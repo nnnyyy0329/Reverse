@@ -1,4 +1,9 @@
-// 担当 : 成田
+/*****************************************
+* file   EnergyManager.h
+* brief  エネルギーマネージャークラス
+* author 成田 悠真
+* date   2026/01/18
+******************************************/
 
 #pragma once
 #include "appframe.h"
@@ -34,15 +39,20 @@ class EnergyManager
 {
 public:
 
-    // シングルトン
-    static EnergyManager* GetInstance()	// インスタンス取得
+	/* シングルトン関数 */
+
+	/// @brief インスタンス取得関数
+    static EnergyManager* GetInstance()	
     {
-        // 静的ローカル変数シングルトン
-        static EnergyManager instance;
-        return &instance;
+		static EnergyManager instance;	// 静的ローカル変数としてインスタンスを生成
+		return &instance;				// インスタンスのアドレスを返す	
     }
-    static void CreateInstance();	// インスタンス作成
-    static void DestroyInstance();	// インスタンス破棄
+
+	/// @brief インスタンス生成関数
+    static void CreateInstance();	
+
+	/// @brief インスタンス破棄関数
+    static void DestroyInstance();	
 
 
 	/* 基本関数 */

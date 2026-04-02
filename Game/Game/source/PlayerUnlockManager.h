@@ -99,11 +99,19 @@ private:
 	/// @param ability 解放するアビリティの種類
 	void UnlockAbility(ABILITY_TYPE ability);
 
-	std::map<EnemyType, int> _killCounts;						// 敵タイプごとの撃破数管理マップ
-	std::set<ABILITY_TYPE> _unlockedAbilities;					// 解放済みアビリティ
-	std::vector<UnlockCondition> _unlockConditions;				// 解放条件リスト
-	std::string EnemyTypeToString(EnemyType type) const;		// 敵タイプを文字列に変換
-	std::string AbilityTypeToString(ABILITY_TYPE type) const;	// アビリティタイプを文字列に変換
+	/// @brief 敵タイプを文字列に変換する関数
+	///
+	/// @param type 変換する敵タイプ
+	std::string EnemyTypeToString(EnemyType type) const;		
+		
+	/// @brief アビリティタイプを文字列に変換する関数
+	///
+	/// @param type 変換するアビリティタイプ
+	std::string AbilityTypeToString(ABILITY_TYPE type) const;	
+
+	std::map<EnemyType, int> _killCounts;			// 敵タイプごとの撃破数管理マップ
+	std::set<ABILITY_TYPE> _unlockedAbilities;		// 解放済みアビリティ
+	std::vector<UnlockCondition> _unlockConditions;	// 解放条件リスト
 
 	// 解放時のコールバック
 	UnlockCallback _unlockCallback;	

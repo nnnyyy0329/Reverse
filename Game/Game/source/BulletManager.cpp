@@ -3,7 +3,6 @@
 // ƒVƒ“ƒOƒ‹ƒgƒ“—pƒƒ“ƒo‰Šú‰»
 BulletManager* BulletManager::_instance = nullptr;
 
-// ƒCƒ“ƒXƒ^ƒ“ƒXì¬
 void BulletManager::CreateInstance()
 {
 	if(_instance == nullptr)
@@ -13,7 +12,6 @@ void BulletManager::CreateInstance()
 	}
 }
 
-// ƒCƒ“ƒXƒ^ƒ“ƒX”jŠü
 void BulletManager::DestroyInstance()
 {
 	if(_instance != nullptr)
@@ -78,7 +76,6 @@ void BulletManager::CollisionRender()
 
 /* ’e”­ËŠÖ˜A */
 
-// “o˜^‚³‚ê‚½‹…‚ÌXV
 void BulletManager::UpdateBullet()
 {
 	// “o˜^‚³‚ê‚½’e‚ÌXV
@@ -94,7 +91,6 @@ void BulletManager::UpdateBullet()
 	CleanupInvalidBullets();
 }
 
-// “o˜^‚³‚ê‚½’e‚Ì•`‰æ
 void BulletManager::RenderBullet()
 {
 	// “o˜^‚³‚ê‚½’e‚Ì•`‰æ
@@ -107,8 +103,7 @@ void BulletManager::RenderBullet()
 	}
 }
 
-// ’e‚Ì”­Ë
-std::shared_ptr<Bullet> BulletManager::Shoot(const BulletConfig& bulletConfig, const BulletEffectConfig& bEffectConfig, BULLET_OWNER_TYPE ownerType)
+std::shared_ptr<Bullet> BulletManager::Shoot(const BulletConfig& bulletConfig, const BulletEffectConfig& bulletEffectConfig, BULLET_OWNER_TYPE ownerType)
 {
 	// ’e‚ğ¶¬
 	auto bullet = std::make_shared<Bullet>();
@@ -118,7 +113,7 @@ std::shared_ptr<Bullet> BulletManager::Shoot(const BulletConfig& bulletConfig, c
 	modifiedConfig.shooterType = ConvertOwnerTypeToCharType(ownerType);	// •ÏŠ·
 
 	// ’e‚ğ”­Ë
-	bullet->ActivateBullet(modifiedConfig, bEffectConfig);
+	bullet->ActivateBullet(modifiedConfig, bulletEffectConfig);
 
 	// ’e‚ğ“o˜^
 	RegisterBullet(bullet, ownerType);
@@ -126,7 +121,6 @@ std::shared_ptr<Bullet> BulletManager::Shoot(const BulletConfig& bulletConfig, c
 	return bullet;
 }
 
-// ’e‚Ì”­Ë(‰‰o–Ê‚Ìˆø”‚È‚µ”Å)
 std::shared_ptr<Bullet> BulletManager::ShootSimple(const BulletConfig& bulletConfig, BULLET_OWNER_TYPE ownerType)
 {
 	// ’e‚ğ¶¬
@@ -145,7 +139,6 @@ std::shared_ptr<Bullet> BulletManager::ShootSimple(const BulletConfig& bulletCon
 	return bullet;
 }
 
-// Š—LÒ‚ğƒLƒƒƒ‰ƒ^ƒCƒv‚É•ÏŠ·
 CHARA_TYPE BulletManager::ConvertOwnerTypeToCharType(BULLET_OWNER_TYPE ownerType)
 {
 	// BULLET_OWNER_TYPE ‚ğ CHARA_TYPE ‚É•ÏŠ·
@@ -176,7 +169,6 @@ CHARA_TYPE BulletManager::ConvertOwnerTypeToCharType(BULLET_OWNER_TYPE ownerType
 
 /* ’eŠÇ—ŠÖ˜A */
 
-// ’e‚Ì“o˜^
 void BulletManager::RegisterBullet(std::shared_ptr<Bullet> bullet, BULLET_OWNER_TYPE ownerType)
 {
 	if(!bullet){ return; }
@@ -191,7 +183,6 @@ void BulletManager::RegisterBullet(std::shared_ptr<Bullet> bullet, BULLET_OWNER_
 	_registerBullets.push_back(info);
 }
 
-// ’e‚ğíœ
 void BulletManager::RemoveBullet(std::shared_ptr<Bullet> bullet)
 {
 	if(!bullet){ return; }
@@ -212,7 +203,6 @@ void BulletManager::RemoveBullet(std::shared_ptr<Bullet> bullet)
 	}
 }
 
-// ’e‚ğŠ—LÒƒ^ƒCƒv‚Åíœ
 void BulletManager::RemoveBulletByOwnerType(BULLET_OWNER_TYPE ownerType)
 {
 	// “o˜^‚³‚ê‚½’e‚ğ‘–¸
@@ -233,7 +223,6 @@ void BulletManager::RemoveBulletByOwnerType(BULLET_OWNER_TYPE ownerType)
 	}
 }
 
-// ‚·‚×‚Ä‚Ì’e‚ğíœ
 void BulletManager::ClearAllBullets(std::vector<std::shared_ptr<Bullet>> bullets)
 {
 	// “o˜^‚³‚ê‚½’e‚ğ‘–¸
@@ -249,7 +238,6 @@ void BulletManager::ClearAllBullets(std::vector<std::shared_ptr<Bullet>> bullets
 	_registerBullets.clear();
 }
 
-// –³Œø‚È’e‚Ìíœ
 void BulletManager::CleanupInvalidBullets()
 {
 	// “o˜^‚³‚ê‚½’e‚ğ‘–¸
@@ -279,7 +267,6 @@ void BulletManager::CleanupInvalidBullets()
 	}
 }
 
-// ’e‚ª“o˜^Ï‚İ‚©ƒ`ƒFƒbƒN
 bool BulletManager::IsBulletRegistered(std::shared_ptr<Bullet> bullet) const
 {
 	if(!bullet) { return false; }
@@ -302,7 +289,6 @@ bool BulletManager::IsBulletRegistered(std::shared_ptr<Bullet> bullet) const
 
 /* ’e‚Ì‰ñ”ğŠÖ˜A */
 
-// ‰ñ”ğ‚³‚ê‚½’e‚ğ“o˜^
 void BulletManager::RegisterDodgeBullet(std::vector<std::shared_ptr<Bullet>> bullet)
 {
 	// ‰ñ”ğ‚³‚ê‚½’e‚ğ‘–¸
@@ -332,14 +318,12 @@ void BulletManager::ProcessEvadeBullet()
 	SoundServer::GetInstance()->Play("SE_Evade", DX_PLAYTYPE_BACK);
 }
 
-// ‰ñ”ğÏ‚İ’e‚ğƒNƒŠƒA
 void BulletManager::ClearDodgeBullets()
 {
 	// íœ
 	_dodgeBullets.clear();
 }
 
-// ‰ñ”ğÏ‚İ‚©ƒ`ƒFƒbƒN
 bool BulletManager::IsDodgeBullet(std::vector<std::shared_ptr<Bullet>>bullet)const
 {
 	// ‰ñ”ğ‚³‚ê‚½’e‚ğ‘–¸
@@ -392,7 +376,6 @@ bool BulletManager::UpdateBulletEffectConfig(std::shared_ptr<Bullet> bullet, con
 
 /* î•ñæ“¾ŠÖ˜A */
 
-// Š—LÒƒ^ƒCƒv‚Å’e‚Ìæ“¾
 std::vector<std::shared_ptr<Bullet>> BulletManager::GetBulletsByOwnerType(BULLET_OWNER_TYPE ownerType)const
 {
 	std::vector<std::shared_ptr<Bullet>> result;	// ’e
@@ -411,7 +394,6 @@ std::vector<std::shared_ptr<Bullet>> BulletManager::GetBulletsByOwnerType(BULLET
 	return result;
 }
 
-// ‚·‚×‚Ä‚Ì’e‚Ìæ“¾
 std::vector<std::shared_ptr<Bullet>> BulletManager::GetAllBullets()const
 {
 	std::vector<std::shared_ptr<Bullet>> result;	// ’e
@@ -431,7 +413,6 @@ std::vector<std::shared_ptr<Bullet>> BulletManager::GetAllBullets()const
 	return result;
 }
 
-// Š—LÒƒ^ƒCƒv‚Ìæ“¾
 BULLET_OWNER_TYPE BulletManager::GetBulletOwnerType(std::shared_ptr<Bullet> bullet)const
 {
 	if(!bullet) { return BULLET_OWNER_TYPE::NONE; }

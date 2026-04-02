@@ -28,13 +28,11 @@ bool PlayerUnlockManager::Process()
 	return true;
 }
 
-// 敵撃破通知
 void PlayerUnlockManager::NotifyEnemyDefeated(EnemyType enemyType)
 {
 	_killCounts[enemyType]++;	// 撃破数をカウントアップ
 }
 
-// 解放条件を追加
 void PlayerUnlockManager::AddUnlockCondition(EnemyType enemyType, int killCount, ABILITY_TYPE ability, const std::string& description)
 {
 	UnlockCondition condition;
@@ -47,19 +45,16 @@ void PlayerUnlockManager::AddUnlockCondition(EnemyType enemyType, int killCount,
 	_unlockConditions.push_back(condition);	// 解放条件リストに追加
 }
 
-// 解放時のコールバック設定
 void PlayerUnlockManager::SetUnlockCallback(UnlockCallback callback)
 {
 	_unlockCallback = callback;	// コールバックを設定
 }
 
-// プレイヤーが解放されているかチェック
 bool PlayerUnlockManager::IsAbilityUnlocked(ABILITY_TYPE ability) const
 {
 	return _unlockedAbilities.find(ability) != _unlockedAbilities.end();	// 解放されているかチェック
 }
 
-// 解放条件を追加
 int PlayerUnlockManager::GetKillCount(EnemyType enemyType) const
 {
 	// 敵タイプに対応する撃破数を取得
@@ -77,13 +72,11 @@ int PlayerUnlockManager::GetKillCount(EnemyType enemyType) const
 	}
 }
 
-// 全ての解放条件を取得
 const std::vector<UnlockCondition>& PlayerUnlockManager::GetUnlockConditions() const
 {
 	return _unlockConditions;	// 解放条件リストを返す
 }
 
-// 解放条件のチェック
 void PlayerUnlockManager::CheckUnlockConditions()
 {
 	for(auto& condition : _unlockConditions)
@@ -105,7 +98,6 @@ void PlayerUnlockManager::CheckUnlockConditions()
 	}
 }
 
-// アビリティの解放処理
 void PlayerUnlockManager::UnlockAbility(ABILITY_TYPE ability)
 {
 	_unlockedAbilities.insert(ability);	// アビリティを解放済みにする
@@ -113,23 +105,22 @@ void PlayerUnlockManager::UnlockAbility(ABILITY_TYPE ability)
 	// コールバックが設定されている場合は呼び出す
 	if(_unlockCallback)
 	{
-		_unlockCallback(ability);	// 解放されたアビリティをコールバックに渡す
+		// 解放されたアビリティをコールバックに渡す
+		_unlockCallback(ability);	
 	}
 }
 
-// デバッグ用の強制解放
 void PlayerUnlockManager::ForceUnlock(ABILITY_TYPE ability)
 {
-	UnlockAbility(ability);	// アビリティを強制的に解放
+	// アビリティを強制的に解放
+	UnlockAbility(ability);	
 }
 
-// デバッグ描画
 void PlayerUnlockManager::DebugRender()
 {
 
 }
 
-// 敵タイプを文字列に変換
 std::string PlayerUnlockManager::EnemyTypeToString(EnemyType type) const
 {
 	switch(type)
@@ -141,7 +132,6 @@ std::string PlayerUnlockManager::EnemyTypeToString(EnemyType type) const
 	}
 }
 
-// アビリティタイプを文字列に変換
 std::string PlayerUnlockManager::AbilityTypeToString(ABILITY_TYPE type) const
 {
 	switch(type)

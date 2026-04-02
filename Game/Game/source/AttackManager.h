@@ -1,20 +1,26 @@
-// 担当 : 成田
+/*****************************************
+* file   AttackManager.h
+* brief  攻撃管理クラス
+* author 成田 悠真
+* date   2026/01/16
+******************************************/
 
 #pragma once
 #include "appframe.h"
 #include "AttackBase.h"
 #include "EnergyManager.h"
 
+/// @brief 攻撃の所有者タイプ列挙型
 enum class ATTACK_OWNER_TYPE
 {
 	NONE,
-	SURFACE_PLAYER,		// 表プレイヤー
-	INTERIOR_PLAYER,	// 裏プレイヤー
-	ENEMY,				// 敵
+	SURFACE_PLAYER,		///< 表プレイヤー
+	INTERIOR_PLAYER,	///< 裏プレイヤー
+	ENEMY,				///< 敵
 	_EOT_,
 };
 
-// 攻撃情報構造体
+/// @brief 攻撃情報構造体
 struct ATTACK_INFO
 {
 	std::weak_ptr<AttackBase> attack;	// 攻撃オブジェクト
@@ -28,14 +34,23 @@ class AttackManager
 {
 public:
 
-	// シングルトン
-	static AttackManager* GetInstance()	// インスタンス取得
+	/* シングルトン関連関数 */
+
+	/// @brief インスタンス取得関数
+	static AttackManager* GetInstance()
 	{
 		static AttackManager instance;	// 静的インスタンス
 		return &instance;				// インスタンスを返す
 	}
-	static void CreateInstance();			// インスタンス作成
-	static void DestroyInstance();			// インスタンス破棄
+
+	/// @brief インスタンス作成関数
+	static void CreateInstance();			
+
+	/// @brief インスタンス破棄関数
+	static void DestroyInstance();			
+
+
+	/* 基本関数 */
 
 	bool Initialize();		
 	bool Terminate();		
@@ -80,16 +95,22 @@ public:
 	/// @brief 攻撃が登録されているかチェック関数
 	///
 	/// @param attack チェックする攻撃オブジェクト
+	/// 
+	/// @return 指定された攻撃が登録されているならtrue、そうでなければfalse
 	bool IsAttackRegistered(std::shared_ptr<AttackBase> attack)const;	
 
 	/// @brief 特定の攻撃移動を停止
 	///
 	/// @param attack 停止対象の攻撃
+	/// 
+	/// @return 攻撃移動の停止が通知されたならtrue、そうでなければfalse
 	bool StopAttackMovementByAttack(std::shared_ptr<AttackBase> attack);
 
 	/// @brief 特定の所有者の攻撃移動を停止
 	///
 	/// @param ownerType 停止対象の所有者タイプ
+	/// 
+	/// @return 攻撃移動の停止が通知されたならtrue、そうでなければfalse
 	bool StopAttackMovementByOwner(ATTACK_OWNER_TYPE ownerType);
 
 	/* 回避にヒットした攻撃の登録と解除 */
@@ -109,7 +130,7 @@ public:
 	///
 	/// @param attack チェックする攻撃オブジェクト
 	/// 
-	/// @return 
+	/// @return 指定された攻撃が回避にヒットした攻撃ならtrue、そうでなければfalse
 	bool IsDodgeHitAttack(std::shared_ptr<AttackBase> attack) const;	
 
 
@@ -174,6 +195,8 @@ private:
 	static AttackManager* _instance;
 
 	/// @brief 攻撃による移動の停止を通知する関数
+	///
+	/// @return 攻撃による移動の停止が通知されたかどうか
 	bool NotifyStopMovementByAttack();
 
 protected:

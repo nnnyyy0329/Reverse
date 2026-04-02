@@ -1,3 +1,10 @@
+/*****************************************
+* file   AttackEffectSystem.h
+* brief  攻撃の演出システムクラス
+* author 成田 悠真
+* date   2026/03/09
+******************************************/
+
 #pragma once
 #include "appframe.h"
 #include "GeometryUtility.h"
@@ -37,8 +44,8 @@ struct AttackEffectConfig
 	float cameraShakeDuration;	// カメラシェイクの持続時間
 
 	// ヒットストップ設定
-	bool isActiveHitStop;		// ヒットストップを有効にするか
-	float hitStopDuration;		// ヒットストップの持続時間
+	bool isActiveHitStop;	// ヒットストップを有効にするか
+	float hitStopDuration;	// ヒットストップの持続時間
 };
 
 /// @brief エフェクトのインスタンス情報構造体
@@ -70,18 +77,21 @@ public:
 	/* シングルトンアクセス */
 
 	/// @brief インスタンス取得処理
-	static AttackEffectSystem* GetInstance();	
+	static AttackEffectSystem* GetInstance();
 
 	/// @brief インスタンス生成処理
-	static void CreateInstance();				
+	static void CreateInstance();
 
 	/// @brief インスタンス破棄処理
-	static void DestroyInstance();				
+	static void DestroyInstance();
 
-	bool Initialize();
-	bool Terminate();
-	bool Process();
-	bool Render();
+
+	/* 基本関数 */
+
+	bool Initialize();	// 初期化
+	bool Terminate();	// 終了
+	bool Process();		// 更新
+	bool Render();		// 描画
 
 	/* 攻撃演出処理関数 */
 
@@ -122,11 +132,15 @@ public:
 	/// @brief 追跡エフェクトの位置計算処理
 	///
 	/// @param info 追跡エフェクトの情報構造体
+	/// 
+	/// @return 計算されたエフェクトの位置
 	VECTOR UpdateCalculatePos(const TrackedEffectInfo& info);
 
 	/// @brief 追跡エフェクトの回転計算処理
 	///
 	/// @param info 追跡エフェクトの情報構造体
+	/// 
+	/// @return 計算されたエフェクトの回転
 	VECTOR UpdateCalculateRot(const TrackedEffectInfo& info);
 
 	/// @brief エフェクトの演出処理
@@ -154,9 +168,12 @@ public:
 	/// @brief 有効なエフェクト情報かどうかのチェック関数
 	///
 	/// @param config 攻撃演出設定
+	/// 
+	/// @return エフェクトが有効な設定であればtrue、そうでなければfalse
 	int IsActiveEffectConfig(const AttackEffectConfig& config);
 
 	/* クラスの設定 */
+
 
 private:
 

@@ -66,7 +66,6 @@ bool PlayerLifeBarUI::Render()
 	return true;
 }
 
-// ライフバーフレーム描画
 void PlayerLifeBarUI::LifeBarRenderFrame()
 {
 	DrawGraph(_drawLifeBarFrameX, _drawLifeBarFrameY, _iLifeBarFrame, TRUE);
@@ -88,7 +87,6 @@ void PlayerLifeBarUI::LifeBarRenderFrame()
 	//);
 }
 
-// ライフバー比率計算
 void PlayerLifeBarUI::BarRatioCalculation()
 {
 	if(_playerManager == nullptr){ return; }	
@@ -112,7 +110,6 @@ void PlayerLifeBarUI::BarRatioCalculation()
 	LifeBarRender(lifeRatio);
 }
 
-// ライフバー描画
 void PlayerLifeBarUI::LifeBarRender(float ratio)
 {
 	// 体力の比率が0以下の場合は描画しない
@@ -137,6 +134,8 @@ void PlayerLifeBarUI::LifeBarRender(float ratio)
 	// 点滅エフェクトの描画
 	FlashEffectRender(clipW, graphH);
 
+
+	/* ひんさんが追加していたコード */
 
 	//if(ratio <= 0.0f) { return; }	// 比率が0以下の場合は描画しない
 

@@ -5,7 +5,6 @@
 // シングルトン用メンバ初期化
 AttackManager* AttackManager::_instance = nullptr;
 
-// インスタンス作成
 void AttackManager::CreateInstance()
 {
 	if(_instance == nullptr)
@@ -15,7 +14,6 @@ void AttackManager::CreateInstance()
 	}
 }
 
-// インスタンス破棄
 void AttackManager::DestroyInstance()
 {
 	if(_instance != nullptr)
@@ -96,7 +94,6 @@ void AttackManager::CollisionRender()
 	}
 }
 
-// 攻撃の登録
 void AttackManager::RegisterAttack(std::shared_ptr<AttackBase> attack, ATTACK_OWNER_TYPE ownerType, int ownerId)
 {
 	if(attack == nullptr){ return; }
@@ -115,7 +112,6 @@ void AttackManager::RegisterAttack(std::shared_ptr<AttackBase> attack, ATTACK_OW
 	_registeredAttacks.push_back(attackInfo);		// リストに追加
 }
 
-// 攻撃の解除
 void AttackManager::UnregisterAttack(std::shared_ptr<AttackBase> attack)
 {
 	if(attack == nullptr){ return; }
@@ -153,7 +149,6 @@ void AttackManager::UnregisterAttack(std::shared_ptr<AttackBase> attack)
 	}
 }
 
-// 所有者による攻撃解除
 void AttackManager::UnregisterAttackByOwner(int ownerId)
 {
 	// 登録リストから該当する所有者IDの攻撃を無効化
@@ -174,14 +169,12 @@ void AttackManager::UnregisterAttackByOwner(int ownerId)
 	}
 }
 
-// 全ての攻撃解除
 void AttackManager::ClearAllAttacks()
 {
 	// 登録リストをクリア
 	_registeredAttacks.clear();
 }
 
-// 無効な攻撃の削除//
 void AttackManager::CleanupInvalidAttacks()
 {
 	// 通常のforループで無効な攻撃を削除
@@ -223,7 +216,6 @@ void AttackManager::CleanupInvalidAttacks()
 	}
 }
 
-// 攻撃が登録されているかチェック
 bool AttackManager::IsAttackRegistered(std::shared_ptr<AttackBase> attack)const
 {
 	if(attack == nullptr){ return false; }
@@ -291,7 +283,6 @@ void AttackManager::ProcessEvadeSuccess()
 	SoundServer::GetInstance()->Play("SE_Evade", DX_PLAYTYPE_BACK);
 }
 
-// 回避にヒットした攻撃かチェック
 bool AttackManager::IsDodgeHitAttack(std::shared_ptr<AttackBase> attack) const
 {
 	if(attack == nullptr){ return false; }
@@ -309,14 +300,12 @@ bool AttackManager::IsDodgeHitAttack(std::shared_ptr<AttackBase> attack) const
 	return false;
 }
 
-// 回避にヒットした攻撃をクリア
 void AttackManager::ClearDodgeHitAttacks()
 {
 	// リストクリア
 	_dodgeHitAttacks.clear();
 }
 
-// 回避にヒットした攻撃のクリーンアップ
 void AttackManager::CleanupDodgeHitAttacks()
 {
 	// 通常のforループで無効な攻撃を削除
@@ -358,7 +347,6 @@ void AttackManager::CleanupDodgeHitAttacks()
 	}
 }
 
-// 全てのアクティブな攻撃を取得
 std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAllActiveAttacks()const
 {
 	std::vector<std::shared_ptr<AttackBase>> activeAttacks;	// アクティブ攻撃リスト
@@ -382,7 +370,6 @@ std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAllActiveAttacks()con
 	return activeAttacks;
 }
 
-// 所有者タイプによる攻撃取得
 std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAttacksByOwnerType(ATTACK_OWNER_TYPE ownerType)const
 {
 	std::vector<std::shared_ptr<AttackBase>> ownerAttacks;	// 所有者タイプ攻撃リスト
@@ -406,7 +393,6 @@ std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAttacksByOwnerType(AT
 	return ownerAttacks;
 }
 
-// 所有者IDによる攻撃取得
 std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAttacksByOwnerId(int ownerId)const
 {
 	std::vector<std::shared_ptr<AttackBase>> ownerAttacks;	// 所有者ID攻撃リスト
@@ -430,7 +416,6 @@ std::vector<std::shared_ptr<AttackBase>> AttackManager::GetAttacksByOwnerId(int 
 	return ownerAttacks;
 }
 
-// アクティブ攻撃数取得
 int AttackManager::GetActiveAttackCount() const
 {
 	int count = 0;	// アクティブ攻撃数カウンタ
@@ -455,7 +440,6 @@ int AttackManager::GetActiveAttackCount() const
 	return count;
 }
 
-// 攻撃の所有者タイプを取得
 ATTACK_OWNER_TYPE AttackManager::GetAttackOwnerType(std::shared_ptr<AttackBase> attack) const
 {
 	if(attack == nullptr) { return ATTACK_OWNER_TYPE::NONE; }
@@ -474,7 +458,6 @@ ATTACK_OWNER_TYPE AttackManager::GetAttackOwnerType(std::shared_ptr<AttackBase> 
 	return ATTACK_OWNER_TYPE::NONE;
 }
 
-// 攻撃の所有者IDを取得
 int AttackManager::GetAttackOwnerId(std::shared_ptr<AttackBase> attack) const
 {
 	if(attack == nullptr) { return -1; }
