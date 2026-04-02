@@ -1,5 +1,9 @@
-// ƒRƒ“ƒ|[ƒlƒ“ƒgŠÇ—‚Ì”Ä—pŠÖ”
-// ’Ç‰Á : ¬“c
+ï»¿/*****************************************
+* fileÂ Â  ComponentManager.h
+* briefÂ  ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆç®¡ç†ã‚¯ãƒ©ã‚¹
+* author æˆç”° æ‚ çœŸ
+* dateÂ Â  2025/11/21
+******************************************/
 
 #pragma once
 #include <vector>
@@ -7,104 +11,143 @@
 #include <algorithm>
 #include <type_traits>
 
-// ƒRƒ“ƒ|[ƒlƒ“ƒgŠÇ—‚Ì‚½‚ß‚ÌƒNƒ‰ƒX
+
 template<typename BaseType>
 
+/// @brief ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆç®¡ç†ã‚¯ãƒ©ã‚¹
 class ComponentManager
 {
 public:
-	// ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ’Ç‰Á
+
+	/// @brief ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’è¿½åŠ 
+	///
+	/// @param component è¿½åŠ ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®ãƒ¦ãƒ‹ãƒ¼ã‚¯ãƒã‚¤ãƒ³ã‚¿
 	void AddComponent(std::unique_ptr<BaseType> component)
 	{
-		_components.push_back(std::move(component));	// ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ’Ç‰Á
+		// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’è¿½åŠ 
+		_components.push_back(std::move(component));	
 	}
 
-	// “Á’è‚ÌŒ^‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚ğæ“¾
+	// ç‰¹å®šã®å‹ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’å–å¾—
+
+	/// @brief ç‰¹å®šã®å‹ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’å–å¾—
+	///
+	/// @tparam T å–å¾—ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®å‹
+	/// 
+	/// @return æŒ‡å®šã•ã‚ŒãŸå‹ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®ãƒã‚¤ãƒ³ã‚¿ã€è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆã¯ nullptr
 	template<typename T>
 	T* GetComponent()
 	{
-		// T‚ªBaseType‚ğŒp³‚µ‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
-		static_assert(std::is_base_of<BaseType, T>::value, "BaseType ‚ğ T ‚ÍŒp³‚µ‚Ä‚¢‚Ü‚¹‚ñ");
+		// TãŒBaseTypeã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
+		static_assert(std::is_base_of<BaseType, T>::value, "BaseType ã‚’ T ã¯ç¶™æ‰¿ã—ã¦ã„ã¾ã›ã‚“");
 
-		// ƒRƒ“ƒ|[ƒlƒ“ƒg”z—ñ‚ğ‘–¸‚µ‚Ä“Á’è‚ÌŒ^‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ’T‚·
+		// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆé…åˆ—ã‚’èµ°æŸ»ã—ã¦ç‰¹å®šã®å‹ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’æ¢ã™
 		for(auto& component : _components)
 		{
-			// “®“IƒLƒƒƒXƒg‚ğ‚İ‚é
-			if(auto specific_component = dynamic_cast<T*>(component.get()))	// TŒ^‚ÉƒLƒƒƒXƒg‚Å‚«‚½ê‡
+			// å‹•çš„ã‚­ãƒ£ã‚¹ãƒˆã‚’è©¦ã¿ã‚‹
+			if(auto specific_component = dynamic_cast<T*>(component.get()))	// Tå‹ã«ã‚­ãƒ£ã‚¹ãƒˆã§ããŸå ´åˆ
 			{
-				return specific_component; // Œ©‚Â‚©‚Á‚½ê‡‚Íƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+				// è¦‹ã¤ã‹ã£ãŸå ´åˆã¯ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
+				return specific_component; 
 			}
 		}
 
-		return nullptr; // Œ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡‚Í nullptr ‚ğ•Ô‚·
+		// è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆã¯ nullptr ã‚’è¿”ã™
+		return nullptr; 
 	}
 
-	// “Á’è‚ÌŒ^‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ‘S‚Äæ“¾
+	/// @brief ç‰¹å®šã®å‹ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’å…¨ã¦å–å¾—
+	///
+	/// @tparam T å–å¾—ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®å‹
+	/// 
+	/// @return æŒ‡å®šã•ã‚ŒãŸå‹ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®ãƒã‚¤ãƒ³ã‚¿ã‚’æ ¼ç´ã—ãŸãƒ™ã‚¯ã‚¿ãƒ¼
 	template<typename T>
 	std::vector<T*> GetComponents()
 	{
-		// T‚ªBaseType‚ğŒp³‚µ‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
-		static_assert(std::is_base_of<BaseType, T>::value, "BaseType ‚ğ T ‚ÍŒp³‚µ‚Ä‚¢‚Ü‚¹‚ñ");
+		// TãŒBaseTypeã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
+		static_assert(std::is_base_of<BaseType, T>::value, "BaseType ã‚’ T ã¯ç¶™æ‰¿ã—ã¦ã„ã¾ã›ã‚“");
 
-		std::vector<T*> result; // Œ‹‰Ê‚ğŠi”[‚·‚éƒxƒNƒ^[
+		// çµæœã‚’æ ¼ç´ã™ã‚‹ãƒ™ã‚¯ã‚¿ãƒ¼
+		std::vector<T*> result; 
 
-		// ƒRƒ“ƒ|[ƒlƒ“ƒg”z—ñ‚ğ‘–¸‚µ‚Ä“Á’è‚ÌŒ^‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ’T‚·
+		// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆé…åˆ—ã‚’èµ°æŸ»ã—ã¦ç‰¹å®šã®å‹ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’æ¢ã™
 		for(auto& component : _components)
 		{
-			// “®“IƒLƒƒƒXƒg‚ğ‚İ‚é
-			if(auto specific_component = dynamic_cast<T*>(component.get())) // TŒ^‚ÉƒLƒƒƒXƒg‚Å‚«‚½ê‡
+			// å‹•çš„ã‚­ãƒ£ã‚¹ãƒˆã‚’è©¦ã¿ã‚‹
+			if(auto specific_component = dynamic_cast<T*>(component.get())) // Tå‹ã«ã‚­ãƒ£ã‚¹ãƒˆã§ããŸå ´åˆ
 			{
-				result.push_back(specific_component); // Œ©‚Â‚©‚Á‚½ê‡‚ÍŒ‹‰Ê‚É’Ç‰Á
+				// è¦‹ã¤ã‹ã£ãŸå ´åˆã¯çµæœã«è¿½åŠ 
+				result.push_back(specific_component); 
 			}
 		}
 
-		return result; // Œ‹‰Ê‚ÌƒxƒNƒ^[‚ğ•Ô‚·
+		// çµæœã®ãƒ™ã‚¯ã‚¿ãƒ¼ã‚’è¿”ã™
+		return result; 
 	}
 
-	// ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ‘S‚Äæ“¾
+	/// @brief ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’å…¨ã¦å–å¾—
+	///
+	/// @return å…¨ã¦ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®ãƒ¦ãƒ‹ãƒ¼ã‚¯ãƒã‚¤ãƒ³ã‚¿ã‚’æ ¼ç´ã—ãŸãƒ™ã‚¯ã‚¿ãƒ¼
 	const std::vector<std::unique_ptr<BaseType>>& GetAllComponents() const
 	{ 
+		// å…¨ã¦ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’è¿”ã™
 		return _components;
 	}
 
-	// ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğíœ
+	// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’å‰Šé™¤
+
+	/// @brief ç‰¹å®šã®å‹ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’å‰Šé™¤
+	///
+	/// @tparam T å‰Šé™¤ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®å‹
+	/// 
+	/// @return å‰Šé™¤ã«æˆåŠŸã—ãŸå ´åˆã¯ trueã€è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆã¯ false
 	template<typename T>
 	bool RemoveComponent()
 	{
-		// T‚ªBaseType‚ğŒp³‚µ‚Ä‚¢‚é‚±‚Æ‚ğŠm”F
-		static_assert(std::is_base_of<BaseType, T>::value, "BaseType ‚ğ T ‚ÍŒp³‚µ‚Ä‚¢‚Ü‚¹‚ñ");
+		// TãŒBaseTypeã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèª
+		static_assert(std::is_base_of<BaseType, T>::value, "BaseType ã‚’ T ã¯ç¶™æ‰¿ã—ã¦ã„ã¾ã›ã‚“");
 
-		// w’è‚³‚ê‚½Œ^‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚ğŒŸõ
+		// æŒ‡å®šã•ã‚ŒãŸå‹ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’æ¤œç´¢
 		auto it = std::find_if(_components.begin(), _components.end(), [](const auto& component)
 		{
-			// “®“IƒLƒƒƒXƒg‚ğ‚İ‚é
-			return dynamic_cast<T*>(component.get()) != nullptr;	// TŒ^‚ÉƒLƒƒƒXƒg‚Å‚«‚½ê‡
+			// å‹•çš„ã‚­ãƒ£ã‚¹ãƒˆã‚’è©¦ã¿ã‚‹
+			return dynamic_cast<T*>(component.get()) != nullptr;	// Tå‹ã«ã‚­ãƒ£ã‚¹ãƒˆã§ããŸå ´åˆ
 		});
 
-		// ƒRƒ“ƒ|[ƒlƒ“ƒg‚ªŒ©‚Â‚©‚Á‚½ê‡
-		if(it != _components.end())	// Œ©‚Â‚©‚Á‚½ê‡
+		// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒè¦‹ã¤ã‹ã£ãŸå ´åˆ
+		if(it != _components.end())
 		{
-			_components.erase(it);	// Œ©‚Â‚©‚Á‚½ê‡‚Ííœ
-			return true;			// íœ¬Œ÷‚ğ•Ô‚·
+			// è¦‹ã¤ã‹ã£ãŸå ´åˆã¯å‰Šé™¤
+			_components.erase(it);	
+
+			// å‰Šé™¤æˆåŠŸã‚’è¿”ã™
+			return true;			
 		}
 
-		// Œ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡‚Ííœ¸”s‚ğ•Ô‚·
+		// è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆã¯å‰Šé™¤å¤±æ•—ã‚’è¿”ã™
 		return false; 
 	}
 
-	// ‘S‚Ä‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚ğƒNƒŠƒA
+	/// @brief å…¨ã¦ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ã‚¯ãƒªã‚¢
 	void ClearComponents()
-	{ 
+	{
+
+		// å…¨ã¦ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’å‰Šé™¤
 		_components.clear();
 	}
 
-	// ƒRƒ“ƒ|[ƒlƒ“ƒg”‚ğæ“¾
+	/// @brief ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆæ•°ã‚’å–å¾—
+	///
+	/// @return ç¾åœ¨ç®¡ç†ã•ã‚Œã¦ã„ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®æ•°
 	size_t GetComponentCount() const
 	{
+		// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®æ•°ã‚’è¿”ã™
 		return _components.size(); 
 	}
 
 private:
-	std::vector<std::unique_ptr<BaseType>> _components; // ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì”z—ñ
+
+	// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®é…åˆ—
+	std::vector<std::unique_ptr<BaseType>> _components; 
 };
 

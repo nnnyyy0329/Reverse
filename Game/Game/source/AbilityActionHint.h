@@ -1,33 +1,40 @@
+ï»¿/*****************************************
+* file	 AbilityActionHint.h
+* briefÂ  ã‚¢ãƒ“ãƒªãƒ†ã‚£ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã‚¯ãƒ©ã‚¹
+* author æˆç”° æ‚ çœŸ
+* dateÂ Â  2026/3/12
+******************************************/
+
 #pragma once
 #include "appframe.h"
 #include "AbilityBase.h"
 
-// ”\—Í“ü—Íƒqƒ“ƒg•\¦İ’è—p‚Ì–¼‘O‹óŠÔ
+// èƒ½åŠ›å…¥åŠ›ãƒ’ãƒ³ãƒˆè¡¨ç¤ºè¨­å®šç”¨ã®åå‰ç©ºé–“
 namespace AbilityHintConfig
 {
-	constexpr int DRAW_Y = 750;			// •`‰æˆÊ’uY
-	constexpr int DRAW_OFFSET_Y = -10;	// •`‰æˆÊ’uY
+	constexpr int DRAW_Y = 750;			// æç”»ä½ç½®Y
+	constexpr int DRAW_OFFSET_Y = -10;	// æç”»ä½ç½®Y
 }
 
-// ƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg•\¦İ’è—p‚Ì–¼‘O‹óŠÔ
+// ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆè¡¨ç¤ºè¨­å®šç”¨ã®åå‰ç©ºé–“
 namespace ActionHintConfig
 {
-	constexpr int DRAW_X = 1679;		// •`‰æˆÊ’uX
-	constexpr int DRAW_Y = 910;			// •`‰æˆÊ’uY
-	constexpr int DRAW_OFFSET_X = 0;	// •`‰æˆÊ’uƒIƒtƒZƒbƒgX
-	constexpr int DRAW_OFFSET_Y = 90;	// •`‰æˆÊ’uƒIƒtƒZƒbƒgY
+	constexpr int DRAW_X = 1679;		// æç”»ä½ç½®X
+	constexpr int DRAW_Y = 910;			// æç”»ä½ç½®Y
+	constexpr int DRAW_OFFSET_X = 0;	// æç”»ä½ç½®ã‚ªãƒ•ã‚»ãƒƒãƒˆX
+	constexpr int DRAW_OFFSET_Y = 90;	// æç”»ä½ç½®ã‚ªãƒ•ã‚»ãƒƒãƒˆY
 }
 
-// ƒoƒ“ƒp[“ü—Íƒqƒ“ƒg•\¦İ’è—p‚Ì–¼‘O‹óŠÔ
+// ãƒãƒ³ãƒ‘ãƒ¼å…¥åŠ›ãƒ’ãƒ³ãƒˆè¡¨ç¤ºè¨­å®šç”¨ã®åå‰ç©ºé–“
 namespace BumperHintConfig
 {
-	constexpr int DRAW_X = 1320;		// •`‰æˆÊ’uX
-	constexpr int DRAW_Y = 1020;			// •`‰æˆÊ’uY
-	constexpr int DRAW_OFFSET_X = 60;	// •`‰æˆÊ’uƒIƒtƒZƒbƒgX
-	constexpr int DRAW_OFFSET_Y = 0;	// •`‰æˆÊ’uƒIƒtƒZƒbƒgY
+	constexpr int DRAW_X = 1320;		// æç”»ä½ç½®X
+	constexpr int DRAW_Y = 1020;			// æç”»ä½ç½®Y
+	constexpr int DRAW_OFFSET_X = 60;	// æç”»ä½ç½®ã‚ªãƒ•ã‚»ãƒƒãƒˆX
+	constexpr int DRAW_OFFSET_Y = 0;	// æç”»ä½ç½®ã‚ªãƒ•ã‚»ãƒƒãƒˆY
 }
 
-/// @brief ƒAƒrƒŠƒeƒBƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒgƒNƒ‰ƒX
+/// @brief ã‚¢ãƒ“ãƒªãƒ†ã‚£ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã‚¯ãƒ©ã‚¹
 class AbilityActionHint
 {
 public:
@@ -36,8 +43,7 @@ public:
 	virtual ~AbilityActionHint();
 
 
-
-	/* Šî–{ŠÖ” */
+	/* åŸºæœ¬é–¢æ•° */
 
 	bool Initialize();
 	bool Terminate();
@@ -45,20 +51,19 @@ public:
 	bool Render();
 
 
+	/* ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆè¡¨ç¤ºé–¢ä¿‚é–¢æ•° */
 
-	/* ƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg•\¦ŠÖŒWŠÖ” */
-
-	/// @brief ƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ì•\¦
+	/// @brief ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®è¡¨ç¤º
 	///
-	/// @param abilityType ƒAƒrƒŠƒeƒB‚Ìí—Ş
-	/// @param selectGraphSenterX ‘I‘ğƒOƒ‰ƒt‚Ì’†SXÀ•W
-	/// @param secondSelectGraphCenterX “ñ”Ô–Ú‚É‘I‘ğ‚³‚ê‚½ƒOƒ‰ƒt‚Ì’†SXÀ•W
+	/// @param abilityType ã‚¢ãƒ“ãƒªãƒ†ã‚£ã®ç¨®é¡
+	/// @param selectGraphSenterX é¸æŠã‚°ãƒ©ãƒ•ã®ä¸­å¿ƒXåº§æ¨™
+	/// @param secondSelectGraphCenterX äºŒç•ªç›®ã«é¸æŠã•ã‚ŒãŸã‚°ãƒ©ãƒ•ã®ä¸­å¿ƒXåº§æ¨™
 	void AbilityInputHintRender(ABILITY_TYPE abilityType, float selectGraphSenterX, float secondSelectGraphCenterX);
 
-	/// @brief ŠeƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ì•\¦
+	/// @brief å„ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®è¡¨ç¤º
 	void ActionInputHintRender();
 
-	/// @brief ƒoƒ“ƒp[“ü—Íƒqƒ“ƒg‚Ì•\¦
+	/// @brief ãƒãƒ³ãƒ‘ãƒ¼å…¥åŠ›ãƒ’ãƒ³ãƒˆã®è¡¨ç¤º
 	void BumperInputHintRender();
 
 private:
@@ -66,19 +71,19 @@ private:
 
 protected:
 
-	int _iHandleAbsorbAction;			// ‹zûUŒ‚ƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ìƒnƒ“ƒhƒ‹
-	int _iHandleAoeAction;				// ”ÍˆÍUŒ‚ƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ìƒnƒ“ƒhƒ‹
-	int _iHandlePunchAction;			// ‘ÅŒ‚UŒ‚ƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ìƒnƒ“ƒhƒ‹
-	int _iHandlePiercingBulletAction;	// ŠÑ’Ê’eƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ìƒnƒ“ƒhƒ‹
-	int _iHandleNormalBulletAction;		// ’Êí’eƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ìƒnƒ“ƒhƒ‹
+	int _iHandleAbsorbAction;			// å¸åæ”»æ’ƒã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«
+	int _iHandleAoeAction;				// ç¯„å›²æ”»æ’ƒã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«
+	int _iHandlePunchAction;			// æ‰“æ’ƒæ”»æ’ƒã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«
+	int _iHandlePiercingBulletAction;	// è²«é€šå¼¾ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«
+	int _iHandleNormalBulletAction;		// é€šå¸¸å¼¾ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«
 
-	int _iHandleDodgeAction;			// ‰ñ”ğƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ìƒnƒ“ƒhƒ‹
-	int _iHandleTransCancelAction;		// •Ïg‰ğœƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ìƒnƒ“ƒhƒ‹
+	int _iHandleDodgeAction;			// å›é¿ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«
+	int _iHandleTransCancelAction;		// å¤‰èº«è§£é™¤ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«
 
-	int _iHandleButtonA;				// Aƒ{ƒ^ƒ“ƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ìƒnƒ“ƒhƒ‹
-	int _iHandleButtonY;				// Yƒ{ƒ^ƒ“ƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ìƒnƒ“ƒhƒ‹
-	int _iHandleDodgeRB;				// RBƒ{ƒ^ƒ“‰ñ”ğƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ìƒnƒ“ƒhƒ‹
-	int _iHandleLB;						// LBƒ{ƒ^ƒ“ƒAƒNƒVƒ‡ƒ“ƒqƒ“ƒg‚Ìƒnƒ“ƒhƒ‹
+	int _iHandleButtonA;				// Aãƒœã‚¿ãƒ³ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«
+	int _iHandleButtonY;				// Yãƒœã‚¿ãƒ³ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«
+	int _iHandleDodgeRB;				// RBãƒœã‚¿ãƒ³å›é¿ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«
+	int _iHandleLB;						// LBãƒœã‚¿ãƒ³ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒ’ãƒ³ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«
 
 };
 

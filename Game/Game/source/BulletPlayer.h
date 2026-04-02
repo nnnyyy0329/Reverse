@@ -1,3 +1,10 @@
+/*****************************************
+* file	 BulletPlayer.h
+* brief? 弾発射プレイヤークラス
+* author 成田 悠真
+* date?? 2026/1/30
+******************************************/
+
 #pragma once
 #include "PlayerBase.h"
 
@@ -52,7 +59,6 @@ public:
 	virtual ~BulletPlayer();
 
 
-
 	/* 基本関数 */
 
 	virtual bool Initialize();	// 初期化
@@ -80,14 +86,12 @@ public:
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										
 
 
-
 	/* クラス設定 */
 
 	/// @brief カメラマネージャーをセットする関数
 	///
 	/// @param cameraManager カメラマネージャーの共有ポインタ
 	void SetCameraManager(std::shared_ptr<CameraManager>cameraManager){ _cameraManager = cameraManager; }	
-
 
 
 	/* ゲッターセッター */
@@ -131,7 +135,6 @@ private:
 	///
 	/// @return 弾演出設定構造体
 	virtual BulletEffectConfig	GetBulletEffectConfig()	override;	
-
 
 
 	/* 弾発射処理 */

@@ -1,63 +1,71 @@
-#pragma once// .h‚Ìæ“ª‚É‹LqB#include‚Å‚±‚Ìƒtƒ@ƒCƒ‹‚ğ‰½“x“Ç‚İ‚İ‚µ‚Ä‚àA1“x‚µ‚©“Ç‚İ‚Ü‚È‚¢
+ï»¿/*****************************************
+* fileÂ Â  mymath.h
+* briefÂ  å½“ãŸã‚Šåˆ¤å®šé–¢ä¿‚ã‚¯ãƒ©ã‚¹
+* author æ¾ç”° æ–—çœŸ
+*		 æˆç”° æ‚ çœŸ
+* date	 
+******************************************/
+
+#pragma once// .hã®å…ˆé ­ã«è¨˜è¿°ã€‚#includeã§ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½•åº¦èª­ã¿è¾¼ã¿ã—ã¦ã‚‚ã€1åº¦ã—ã‹èª­ã¿è¾¼ã¾ãªã„
 #include <math.h>
 #include <random>
 #include <algorithm>
 #include "DxLib.h"
 
-// ŒvZ—pƒ}ƒNƒ
+// è¨ˆç®—ç”¨ãƒã‚¯ãƒ­
 #define	PI	(3.1415926535897932386f)
 #define	DEG2RAD(x)			( ((x) / 180.0f ) * PI )
 #define	RAD2DEG(x)			( ((x) * 180.0f ) / PI )
 
-// degree‚Æradian‚Ì•ÏŠ·
+// degreeã¨radianã®å¤‰æ›
 static constexpr auto DEGREE_TO_RADIAN = DX_PI_F / 180.0f;
 static constexpr auto RADIAN_TO_DEGREE = 180.0f / DX_PI_F;
 
-// “–‚½‚è”»’è—pB2‚Â‚Ìbox‚ª“–‚½‚Á‚½‚©‚ğ”»’è
-// “–‚½‚Á‚Ä‚¢‚½‚ç1, “–‚½‚Á‚Ä‚¢‚È‚©‚Á‚½‚ç0‚ğ•Ô‚·
+// å½“ãŸã‚Šåˆ¤å®šç”¨ã€‚2ã¤ã®boxãŒå½“ãŸã£ãŸã‹ã‚’åˆ¤å®š
+// å½“ãŸã£ã¦ã„ãŸã‚‰1, å½“ãŸã£ã¦ã„ãªã‹ã£ãŸã‚‰0ã‚’è¿”ã™
 int IsHitBox
 (
-	int x1, int y1, int w1, int h1,// ‚Ğ‚Æ‚Â‚ß‚Ìbox ¶ã(x,y), ‘å‚«‚³w,h
-	int x2, int y2, int w2, int h2// ‚Ó‚½‚Â‚ß‚Ìbox ¶ã(x,y), ‘å‚«‚³w,h
+	int x1, int y1, int w1, int h1,// ã²ã¨ã¤ã‚ã®box å·¦ä¸Š(x,y), å¤§ãã•w,h
+	int x2, int y2, int w2, int h2// ãµãŸã¤ã‚ã®box å·¦ä¸Š(x,y), å¤§ãã•w,h
 );
 
 
-// “–‚½‚è”»’è—pB2‚Â‚Ì‰~‚ª“–‚½‚Á‚½‚©‚ğ”»’è
-// “–‚½‚Á‚Ä‚¢‚½‚ç1, “–‚½‚Á‚Ä‚¢‚È‚©‚Á‚½‚ç0‚ğ•Ô‚·
+// å½“ãŸã‚Šåˆ¤å®šç”¨ã€‚2ã¤ã®å††ãŒå½“ãŸã£ãŸã‹ã‚’åˆ¤å®š
+// å½“ãŸã£ã¦ã„ãŸã‚‰1, å½“ãŸã£ã¦ã„ãªã‹ã£ãŸã‚‰0ã‚’è¿”ã™
 int IsHitCircle
 (
-	int x1, int y1, int r1,// ‚Ğ‚Æ‚Â‚ß‚Ìcircle ’†S(x,y), ”¼Œar
-	int x2, int y2, int r2// ‚Ó‚½‚Â‚ß‚Ìcircle ’†S(x,y), ”¼Œar
+	int x1, int y1, int r1,// ã²ã¨ã¤ã‚ã®circle ä¸­å¿ƒ(x,y), åŠå¾„r
+	int x2, int y2, int r2// ãµãŸã¤ã‚ã®circle ä¸­å¿ƒ(x,y), åŠå¾„r
 );
 
-// “–‚½‚è”»’è—pB‰~‚Æ‹éŒ`‚ª“–‚½‚Á‚½‚©‚ğ”»’è
-// “–‚½‚Á‚Ä‚¢‚½‚ç1, “–‚½‚Á‚Ä‚¢‚È‚©‚Á‚½‚ç0‚ğ•Ô‚·
+// å½“ãŸã‚Šåˆ¤å®šç”¨ã€‚å††ã¨çŸ©å½¢ãŒå½“ãŸã£ãŸã‹ã‚’åˆ¤å®š
+// å½“ãŸã£ã¦ã„ãŸã‚‰1, å½“ãŸã£ã¦ã„ãªã‹ã£ãŸã‚‰0ã‚’è¿”ã™
 int IsHitBoxCircle
 (
-	int cx, int cy, int r,// circle ’†S(cx,cy), ”¼Œar
-	int x, int y, int w, int h//  ¶ã(x,y), ‘å‚«‚³w,h
+	int cx, int cy, int r,// circle ä¸­å¿ƒ(cx,cy), åŠå¾„r
+	int x, int y, int w, int h//  å·¦ä¸Š(x,y), å¤§ãã•w,h
 );
 
-// ƒJƒvƒZƒ‹‚Æ“_‚ÌÅ’Z‹——£‚Ì“ñæ‚ğŒvZ
+// ã‚«ãƒ—ã‚»ãƒ«ã¨ç‚¹ã®æœ€çŸ­è·é›¢ã®äºŒä¹—ã‚’è¨ˆç®—
 float GetCapsulePointSq(const VECTOR& point, const VECTOR& capsuleTop, const VECTOR& capsuleBottom, float capsuleRadius);
 
-// ƒJƒvƒZƒ‹‚Æ‹…‚Ì“–‚½‚è”»’è
+// ã‚«ãƒ—ã‚»ãƒ«ã¨çƒã®å½“ãŸã‚Šåˆ¤å®š
 bool HitCheck_Capsule_Sphere(const VECTOR& capsuleTop, const VECTOR& capsuleBottom, float capsuleRadius, const VECTOR& sphereCenter, float sphereRadius);
 
-// “_‚Æü•ª‚ÌÅ’Z‹——£‚Ì“ñæ‚ğŒvZ
+// ç‚¹ã¨ç·šåˆ†ã®æœ€çŸ­è·é›¢ã®äºŒä¹—ã‚’è¨ˆç®—
 float GetPointSegmentSq(const VECTOR& point, const VECTOR& segmentStart, const VECTOR& segmentEnd);
 
-// ‰~Œ`°”»’è—p‚Ì\‘¢‘Ì
+// å††å½¢åºŠåˆ¤å®šç”¨ã®æ§‹é€ ä½“
 struct CircleFloor
 {
-	VECTOR center;// ‰~‚Ì’†SˆÊ’u
-	float radius;// ‰~‚Ì”¼Œa
-	float height;// ‰~‚Ì‚‚³
+	VECTOR center;// å††ã®ä¸­å¿ƒä½ç½®
+	float radius;// å††ã®åŠå¾„
+	float height;// å††ã®é«˜ã•
 
-	// “_‚ª‰~“à‚É‚ ‚é‚©
+	// ç‚¹ãŒå††å†…ã«ã‚ã‚‹ã‹
 	bool IsPointInside(const VECTOR& point) const;
 
-	// ‰~‚Ì‹«ŠE‚Ü‚Å‚Ì‹——£‚ğŒvZ
+	// å††ã®å¢ƒç•Œã¾ã§ã®è·é›¢ã‚’è¨ˆç®—
 	float GetDistEdge(const VECTOR& point) const;
 };
 
@@ -65,39 +73,39 @@ struct CircleFloor
 
 
 
-// ”Ä—p”ŠwEŒvZƒ†[ƒeƒBƒŠƒeƒB
+// æ±ç”¨æ•°å­¦ãƒ»è¨ˆç®—ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£
 #undef max
 #undef min
 namespace mymath
 {
-	// ’l‚ğminValue‚ÆmaxValue‚Ì”ÍˆÍ‚Éû‚ß‚é
+	// å€¤ã‚’minValueã¨maxValueã®ç¯„å›²ã«åã‚ã‚‹
 	template<typename T>
 	inline T Clamp(const T& value, const T& minValue, const T& maxValue)
 	{
 		return std::max(minValue, std::min(maxValue, value));
 	}
 
-	// 0.0f‚©‚ç1.0f‚Ì”ÍˆÍ‚É’l‚ğû‚ß‚é
+	// 0.0fã‹ã‚‰1.0fã®ç¯„å›²ã«å€¤ã‚’åã‚ã‚‹
 	inline float Clamp01(float value)
 	{
 		return Clamp(value, 0.0f, 1.0f);
 	}
 
-	// üŒ`•âŠÔ : t‚ğ(0,1)‚ÉƒNƒ‰ƒ“ƒv‚µ‚Ästart‚Æend‚ÌŠÔ‚ğ•âŠÔ‚·‚é
+	// ç·šå½¢è£œé–“ : tã‚’(0,1)ã«ã‚¯ãƒ©ãƒ³ãƒ—ã—ã¦startã¨endã®é–“ã‚’è£œé–“ã™ã‚‹
 	inline float Lerp(float start, float end, float t)
 	{
 		t = Clamp01(t);
 		return start + (end - start) * t;
 	}
 
-	// ƒxƒNƒgƒ‹üŒ`•âŠÔ : t‚ğ(0,1)‚ÉƒNƒ‰ƒ“ƒv‚µ‚Ästart‚Æend‚ÌŠÔ‚ğ•âŠÔ‚·‚é
+	// ãƒ™ã‚¯ãƒˆãƒ«ç·šå½¢è£œé–“ : tã‚’(0,1)ã«ã‚¯ãƒ©ãƒ³ãƒ—ã—ã¦startã¨endã®é–“ã‚’è£œé–“ã™ã‚‹
 	inline VECTOR VectorLerp(const VECTOR& start, const VECTOR& end, float t)
 	{
 		t = Clamp01(t);
 		return VAdd(start, VScale(VSub(end, start), t));
 	}
 
-	// Šp“x³‹K‰» : Šp“x(ƒ‰ƒWƒAƒ“)‚ğ(-PI, +PI)‚Ì”ÍˆÍ‚Éû‚ß‚é
+	// è§’åº¦æ­£è¦åŒ– : è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³)ã‚’(-PI, +PI)ã®ç¯„å›²ã«åã‚ã‚‹
 	inline float WrapAngle(float angle)
 	{
 		while (angle > DX_PI_F)
@@ -111,7 +119,7 @@ namespace mymath
 		return angle;
 	}
 
-	// —”¶¬ : (min, max)‚Ì”ÍˆÍ‚Åƒ‰ƒ“ƒ_ƒ€‚Èfloat‚ğ•Ô‚·
+	// ä¹±æ•°ç”Ÿæˆ : (min, max)ã®ç¯„å›²ã§ãƒ©ãƒ³ãƒ€ãƒ ãªfloatã‚’è¿”ã™
 	inline float RandomRange(float min, float max)
 	{
 		static std::mt19937 engine(std::random_device{}());
@@ -119,7 +127,7 @@ namespace mymath
 		return dist(engine);
 	}
 
-	// Y¬•ª‚ğœ‹‚µ‚Ä…•½•ûŒü‚Ì’PˆÊƒxƒNƒgƒ‹‚ğ•Ô‚·(’·‚³‚ª‹É¬‚Ìê‡‚Íƒ[ƒƒxƒNƒgƒ‹)
+	// Yæˆåˆ†ã‚’é™¤å»ã—ã¦æ°´å¹³æ–¹å‘ã®å˜ä½ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¿”ã™(é•·ã•ãŒæ¥µå°ã®å ´åˆã¯ã‚¼ãƒ­ãƒ™ã‚¯ãƒˆãƒ«)
 	inline VECTOR FlattenVector(const VECTOR& v)
 	{
 		VECTOR flat = v;
