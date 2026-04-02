@@ -1,56 +1,86 @@
+/*****************************************
+* file   EnemyObserver.h
+* brief  敵の状態変化を受け取るクラス
+* author 成田 悠真
+* date   2026/02/24
+******************************************/
+
 #pragma once
 #include "appframe.h"
 #include "Enemy/EnemyFactory.h"
 
-// 敵の状態変化を受け取るインターフェース
+/// @brief 敵の状態変化を受け取るクラス
 class EnemyObserver
 {
 public:
+
 	virtual ~EnemyObserver() = default;
 
-	// 敵が倒されたときの通知関数
+	/// @brief 敵が倒されたときに通知する純粋仮想関数
+	///
+	/// @param enemyType 倒された敵の種類
 	virtual void OnEnemyDefeated(EnemyType enemyType) = 0;
 
-	// オブザーバーの有効性チェック
+	/// @brief オブザーバーの有効性をチェックする関数
+	///
+	/// @return オブザーバーが有効な場合はtrue、そうでない場合はfalse
 	virtual bool IsValid() const { return true; }
 };
 
-// 敵の状態変化を通知するクラス
+/// @brief 敵の状態変化を通知するクラス
 class EnemyNotifier
 {
 public:
-	// シングルトンインスタンスの取得
+
+	/// @brief シングルトンインスタンスの取得関数
 	static EnemyNotifier* GetInstance()
 	{
-		static EnemyNotifier instance;
-		return &instance;
+		static EnemyNotifier instance;	// 静的ローカル変数シングルトン
+		return &instance;				// インスタンスのアドレスを返す
 	}
 
-	// オブザーバーの追加
+	/// @brief オブザーバーの追加関数
+	///
+	/// @param observer 追加するオブザーバーのポインタ
 	void AddObserver(EnemyObserver* observer);
 
-	// オブザーバーの削除
+	/// @brief オブザーバーの削除関数
+	///
+	/// @param observer 削除するオブザーバーのポインタ
 	void RemoveObserver(EnemyObserver* observer);
 
-	// 敵が倒されたときの通知
+	/// @brief 敵が倒されたときの通知関数
+	///
+	/// @param enemyType 倒された敵の種類
 	void NotifyEnemyDefeated(EnemyType enemyType);
 
-	// 全てのオブザーバーをクリア
+	/// @brief 全てのオブザーバーをクリアする関数
 	void ClearObservers(){ _observers.clear(); }
 
-	// オブザーバーの数を取得
+	/// @brief オブザーバーの数を取得する関数
+	///
+	/// @return オブザーバーの数
 	size_t GetObserverCount() const { return _observers.size(); }
 
 private:
-	// シングルトンのため、コンストラクタ・デストラクタをprivateに
-	EnemyNotifier() = default;
-	~EnemyNotifier() = default;
 
-	// コピー・ムーブ禁止
-	EnemyNotifier(const EnemyNotifier&)				= delete;	// コピーコンストラクタ削除
-	EnemyNotifier& operator=(const EnemyNotifier&)	= delete;	// コピー代入演算子削除
-	EnemyNotifier(EnemyNotifier&&)					= delete;	// ムーブコンストラクタ削除
-	EnemyNotifier& operator=(EnemyNotifier&&)		= delete;	// ムーブ代入演算子削除
+	// シングルトンのため、コンストラクタ・デストラクタをprivateにいれる
+	EnemyNotifier()				= default;
+	virtual ~EnemyNotifier()	= default;
+
+	/* コピー・ムーブ禁止 */
+	
+	/// @brief コピーコンストラクタ削除関数
+	EnemyNotifier(const EnemyNotifier&)				= delete;	
+	
+	/// @brief コピー代入演算子削除関数
+	EnemyNotifier& operator=(const EnemyNotifier&)	= delete;	
+	
+	/// @brief ムーブコンストラクタ削除関数
+	EnemyNotifier(EnemyNotifier&&)					= delete;	
+	
+	/// @brief ムーブ代入演算子削除関数
+	EnemyNotifier& operator=(EnemyNotifier&&)		= delete;	
 
 	std::vector<EnemyObserver*>_observers;	// オブザーバーのリスト
 

@@ -1,4 +1,9 @@
-// 担当 : 成田
+/*****************************************
+* file   PlayerBase.h
+* brief  プレイヤーベースクラス
+* author 成田 悠真
+* date   2025/12/08
+******************************************/
 
 #pragma once
 #include "CharaBase.h"
@@ -377,15 +382,15 @@ public:
 	bool HasStateChanged()const;
 
 	// 各プレイヤー固有の設定を取得
-	virtual PlayerConfig GetPlayerConfig() = 0;											// プレイヤー設定を取得	
-	virtual PlayerAnimations GetPlayerAnimation() = 0;									// プレイヤーアニメーション名データを取得
-	virtual RenderConfig GetRenderConfig() = 0;											// 表示設定データを取得
+	virtual PlayerConfig		GetPlayerConfig()		= 0;	// プレイヤー設定を取得	
+	virtual PlayerAnimations	GetPlayerAnimation()	= 0;	// プレイヤーアニメーション名データを取得
+	virtual RenderConfig		GetRenderConfig()		= 0;	// 表示設定データを取得
 
 	void SetCameraAngle(float cameraAngle) { _cameraAngle = cameraAngle; }	// カメラ角度設定
 	VECTOR TransformMoveDirection(VECTOR move, float cameraAngle);			// カメラ角度に合わせて移動方向を変換する	
 
 
-	/*****ゲッターセッター*****/
+	/* ゲッターセッター */
 
 	// 攻撃コリジョン情報
 	VECTOR GetAttackColTop(){ return _vAttackColTop; }			// 攻撃コリジョン上部
@@ -420,8 +425,6 @@ public:
 	///
 	/// @return 吸収攻撃システムのポインタ(デフォルトはnullptr)
 	virtual PlayerAbsorbAttackSystem* GetAbsorbAttackSystem(){ return nullptr; };
-
-
 
 	// 状態リセット
 	void SetStateReset(){ return _playerState.StateReset(); }

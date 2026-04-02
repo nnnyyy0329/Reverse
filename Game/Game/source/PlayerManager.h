@@ -2,7 +2,7 @@
 * file	 PlayerManager.h
 * brief  プレイヤーマネージャークラス
 * author 成田 悠真
-* date   2026/1/09
+* date   2026/01/09
 ******************************************/
 
 #pragma once

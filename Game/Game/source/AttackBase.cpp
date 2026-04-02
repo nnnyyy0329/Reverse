@@ -96,7 +96,6 @@ bool AttackBase::Render()
     return true;
 }
 
-// 攻撃開始処理
 bool AttackBase::ProcessStartAttack()
 {
 	// 非アクティブ状態の場合のみ攻撃開始処理を行う
@@ -114,7 +113,6 @@ bool AttackBase::ProcessStartAttack()
     return false;
 }
 
-// 攻撃停止処理
 bool AttackBase::ProcessStopAttack()
 {
 	_eAttackState = ATTACK_STATE::INACTIVE; // 攻撃状態を非アクティブに設定
@@ -128,7 +126,6 @@ bool AttackBase::ProcessStopAttack()
     return true;
 }
 
-// 攻撃状態更新
 void AttackBase::UpdateAttackState()
 {
 	// 攻撃状態に応じて処理を分岐
@@ -188,7 +185,6 @@ void AttackBase::UpdateAttackState()
     }
 }
 
-// 攻撃中の移動更新
 void AttackBase::UpdateAttackMove()
 {
     // 所有者キャラを取得
@@ -206,7 +202,6 @@ void AttackBase::UpdateAttackMove()
     }
 }
 
-// 移動適用
 void AttackBase::ProcessAttackMovement()
 {
     auto owner = GetOwner();
@@ -251,14 +246,12 @@ void AttackBase::ProcessAttackMovement()
     }
 }
 
-// 攻撃移動の停止
 void AttackBase::StopAttackMovement()
 {
     // 攻撃移動可能フラグを無効にする
     _bCanAttackMovement = false;
 }
 
-// 攻撃コリジョンの位置更新
 void AttackBase::UpdateAttackColPos()
 {
     auto owner = GetOwner();
@@ -295,7 +288,6 @@ void AttackBase::UpdateAttackColPos()
     }
 }
 
-// 攻撃コリジョンの位置計算
 VECTOR AttackBase::CalculateAttackColPos(const VECTOR& basePos, const VECTOR& offset, const VECTOR& direction)
 {
     // 所有者の向きを基準としない場合
@@ -328,7 +320,6 @@ VECTOR AttackBase::CalculateAttackColPos(const VECTOR& basePos, const VECTOR& of
     }
 }
 
-// 向き調整更新
 void AttackBase::UpdateAttackDirAdjust()
 {
     if(!_canDirAdjust){ return; }   // 向き調整が可能な場合のみ処理
@@ -390,7 +381,6 @@ void AttackBase::UpdateAttackDirAdjust()
     }
 }
 
-// 入力方向計算関数
 VECTOR AttackBase::CalculateInputDir(const AnalogState& analog)
 {
     // 所有者取得
@@ -448,7 +438,6 @@ VECTOR AttackBase::CalculateInputDir(const AnalogState& analog)
     return VGet(0.0f, 0.0f, 0.0f);
 }
 
-// カプセル攻撃データ設定
 void AttackBase::SetCapsuleAttackData
 (
     VECTOR top,
@@ -483,7 +472,6 @@ void AttackBase::SetCapsuleAttackData
 	_eColType = COLLISION_TYPE::CAPSULE;    // コリジョンタイプをカプセルに設定
 }
 
-// カプセル攻撃データ設定
 void AttackBase::SetCapsuleAttackData(const AttackCollision& data)
 {
     _originalColTop = data.attackColTop;          // 元のコリジョン上部位置を保存
@@ -496,7 +484,6 @@ void AttackBase::SetCapsuleAttackData(const AttackCollision& data)
     _eColType = COLLISION_TYPE::CAPSULE;
 }
 
-// 円形攻撃データ設定
 void AttackBase::SetCircleAttackData
 (
     VECTOR center,
@@ -522,7 +509,6 @@ void AttackBase::SetCircleAttackData
 	_eColType = COLLISION_TYPE::CIRCLE; // コリジョンタイプを円に設定
 }
 
-// 球攻撃データ設定
 void AttackBase::SetSphereAttackData
 (
     VECTOR center,
@@ -546,19 +532,16 @@ void AttackBase::SetSphereAttackData
 	_eColType = COLLISION_TYPE::SPHERE; // コリジョンタイプを球に設定
 }
 
-// 攻撃コリジョンオフセット設定
 void AttackBase::SetCollisionOffset(const AttackColOffset& offset)
 {
     _stcColOffset = offset;  // コリジョンオフセット情報を保存
 }
 
-// 向き調整データ設定
 void AttackBase::SetDirAdjustData(bool canAdjust)
 {
     _canDirAdjust = canAdjust;      // 向き調整可能フラグ
 }
 
-// 当たったキャラを追加
 void AttackBase::AddHitCharas(std::shared_ptr<CharaBase> chara)
 {
     if(chara == nullptr) { return; }
@@ -571,7 +554,6 @@ void AttackBase::AddHitCharas(std::shared_ptr<CharaBase> chara)
     }
 }
 
-// 当たったキャラを持っているかチェック
 bool AttackBase::HasHitCharas(std::shared_ptr<CharaBase> chara)const
 {
     if(chara == nullptr) { return false; }
@@ -591,13 +573,11 @@ bool AttackBase::HasHitCharas(std::shared_ptr<CharaBase> chara)const
     return false;  
 }
 
-// 当たったキャラリストクリア
 void AttackBase::ClearHitCharas()
 {
     _hitChars.clear();
 }
 
-// 攻撃コリジョン表示
 void AttackBase::DrawAttackCollision()
 {
     // デバッグ用：攻撃判定の可視化

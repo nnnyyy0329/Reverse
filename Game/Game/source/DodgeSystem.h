@@ -1,3 +1,10 @@
+/*****************************************
+* file   DodgeSystem.h
+* brief  回避システムクラス
+* author 成田 悠真
+* date   2026/01/21
+******************************************/
+
 #pragma once
 #include "appframe.h"
 #include "CharaBase.h"
@@ -40,8 +47,12 @@ struct DodgeConfig
 class DodgeSystem
 {
 public:
+
 	DodgeSystem();
 	virtual ~DodgeSystem();
+
+
+	/* 基本関数 */
 
 	bool Initialize();
 	bool Terminate();
@@ -141,8 +152,9 @@ public:
 	bool GetIsInvincible() const { return _bIsInvincible; }									
 
 protected:
+
 	// キャラタイプ別設定管理
-	std::map<DODGE_CHARA, DodgeConfig>_charaConfigs;
+	std::map<DODGE_CHARA, DodgeConfig> _charaConfigs;
 
 	// 回避状態管理
 	DODGE_CHARA _eDodgeChara;		// 回避キャラ

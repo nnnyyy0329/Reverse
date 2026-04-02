@@ -2,7 +2,7 @@
 * file	 AbilityActionHint.h
 * brief  アビリティアクションヒントクラス
 * author 成田 悠真
-* date   2026/3/12
+* date   2026/03/12
 ******************************************/
 
 #pragma once

@@ -1,4 +1,9 @@
-// 担当 : 成田
+/*****************************************
+* file   InteriorPlayer.h
+* brief  裏プレイヤークラス
+* author 成田 悠真
+* date   2025/12/08
+******************************************/
 
 #pragma once
 #include "PlayerBase.h"
@@ -26,9 +31,9 @@ namespace InteriorPlayerFrameIndexConstants
 class InteriorPlayer : public PlayerBase
 {
 public:
+
 	InteriorPlayer();
 	virtual ~InteriorPlayer();
-
 
 
 	/* 基本関数 */
@@ -55,7 +60,6 @@ public:
 	void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;
 
 
-
 	/* ゲッターセッター */
 
 
@@ -66,57 +70,57 @@ private:
 	/// @brief プレイヤー設定を取得
 	///
 	/// @return プレイヤー設定構造体
-	virtual PlayerConfig		GetPlayerConfig()											override;
+	virtual PlayerConfig GetPlayerConfig()override;
 
 	/// @brief プレイヤーアニメーション設定を取得
 	///
 	/// @return プレイヤーアニメーション設定構造体
-	virtual PlayerAnimations	GetPlayerAnimation()										override;
+	virtual PlayerAnimations GetPlayerAnimation()override;
 
 	/// @brief 描画設定を取得
 	///
 	/// @return 描画設定構造体
-	virtual RenderConfig		GetRenderConfig()											override;
+	virtual RenderConfig GetRenderConfig()override;
 
 	/// @brief 回避設定を取得
 	///
 	/// @return 回避設定構造体
-	virtual DodgeConfig			GetDodgeConfig()											override;
+	virtual DodgeConfig GetDodgeConfig()override;
 
 	/// @brief 攻撃定数を取得
 	///
 	/// @return 攻撃定数構造体
-	virtual AttackConstants		GetAttackConstants()const									override;
+	virtual AttackConstants GetAttackConstants()const override;
 
 	/// @brief 攻撃コリジョン設定を取得
 	///
 	/// @param configs[5] 攻撃コリジョン設定の配列(5段階分)
-	virtual void				GetAttackColConfigs(AttackCollision configs[5])				override;
+	virtual void GetAttackColConfigs(AttackCollision configs[5])override;
 
 	/// @brief 攻撃コリジョンオフセット設定を取得
 	///
 	/// @param configs[5] 攻撃コリジョンオフセット設定の配列(5段階分)
-	virtual void				GetAttackColOffsetConfigs(AttackColOffset configs[5])		override;
+	virtual void GetAttackColOffsetConfigs(AttackColOffset configs[5])override;
 
 	/// @brief 攻撃方向補正設定を取得
 	///
 	/// @param configs[5] 攻撃方向補正設定の配列(5段階分)
-	virtual void				GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[5])	override;
+	virtual void GetAttackDirAdjustConfigs(AttackDirAdjustConfig configs[5])override;
 
 	/// @brief 範囲攻撃設定を取得
 	///
 	/// @return 範囲攻撃設定構造体
-	virtual AreaAttackConfig	GetAreaAttackConfigs()										override;
+	virtual AreaAttackConfig GetAreaAttackConfigs()override;
 
 	/// @brief 演出設定を取得
 	///
 	/// @param configs[5] 演出設定の配列(5段階分)
-	virtual void				GetAttackEffectConfigs(AttackEffectConfig configs[5])		override;
+	virtual void GetAttackEffectConfigs(AttackEffectConfig configs[5])override;
 
 	/// @brief 攻撃腕設定を取得
 	///
 	/// @param configs[5] 攻撃腕設定の配列(5段階分)
-	virtual void				GetAttackArmConfigs(AttackArmConfig configs[5])				override;
+	virtual void GetAttackArmConfigs(AttackArmConfig configs[5])override;
 
 
 protected:

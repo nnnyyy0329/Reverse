@@ -1,9 +1,7 @@
 #include "GeometryUtility.h"
 
-// 汎用計算関数
 namespace GeometryUtility
 {
-	// 対象が前方にあるかどうかを判定する
 	bool IsFacing(const VECTOR& fromPos, const VECTOR& fromDir, const VECTOR& targetPos, float dotThreshold)
 	{
 		// 対象への方向ベクトルを取得
@@ -26,7 +24,6 @@ namespace GeometryUtility
 		return dot > dotThreshold;
 	}
 
-	// 攻撃が前方からかどうかを判定する
 	bool IsAttackFromFront(const VECTOR& targetPos, const VECTOR& targetDir, const VECTOR& attackDir, float dotThreshold)
 	{
 		// 攻撃方向ベクトルを正規化
@@ -52,7 +49,6 @@ namespace GeometryUtility
 		return dot > dotThreshold;
 	}
 
-	// 対象の内積の値を取得
 	float GetDotToTarget(const VECTOR& fromPos, const VECTOR& fromDir, const VECTOR& targetPos)
 	{
 		// 対象への方向ベクトルを取得
@@ -74,7 +70,6 @@ namespace GeometryUtility
 		return VDot(forwardDir, toTarget);
 	}
 
-	// 攻撃方向からの内積の値を取得
 	float GetDotFromAttack(const VECTOR& targetDir, const VECTOR& attackDir)
 	{
 		// 攻撃方向ベクトルを正規化
@@ -99,7 +94,6 @@ namespace GeometryUtility
 		return VDot(forwardDir, attackToTarget);
 	}
 
-	// 2つのベクトル間の角度を取得（ラジアン）
 	float GetAngleRad(const VECTOR& vec1, const VECTOR& vec2)
 	{
 		// 正規化
@@ -117,14 +111,12 @@ namespace GeometryUtility
 		return acosf(dot);
 	}
 
-	// 2つのベクトル間の角度を取得（度数法）
 	float GetAngleDeg(const VECTOR& vec1, const VECTOR& vec2)
 	{
 		// 角度をラジアンで取得し、度数法に変換して返す
 		return GetAngleRad(vec1, vec2) * RADIAN_TO_DEGREE;
 	}
 
-	// 扇形内にいるかチェック
 	bool IsInSector(const VECTOR& targetPos, const SectorData& sectorData)
 	{
 		// 距離チェック
@@ -146,7 +138,6 @@ namespace GeometryUtility
 		return angle <= sectorData.angle / 2.0f;
 	}
 
-	// 扇形描画
 	void DrawSector(const SectorData& sectorData, int division, int fillColor, int lineColor)
 	{
 		// 基準角度計算
@@ -184,7 +175,6 @@ namespace GeometryUtility
 		DrawLine3D(center, endPoint, lineColor);
 	}
 
-	// オフセット位置をワールド座標に変換
 	VECTOR TransOffsetToWorld(const VECTOR& offset, const VECTOR& playerDir)
 	{
 		// プレイヤーの向きベクトルの正規化

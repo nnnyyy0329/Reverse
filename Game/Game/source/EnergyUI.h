@@ -2,7 +2,7 @@
 * file	 EnergyUI.h
 * brief  エネルギーUIクラス
 * author 成田 悠真
-* date   2026/1/25
+* date   2026/01/25
 ******************************************/
 
 #pragma once

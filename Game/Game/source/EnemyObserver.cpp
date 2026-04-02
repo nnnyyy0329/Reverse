@@ -1,6 +1,5 @@
 #include "EnemyObserver.h"
 
-// オブザーバーの追加
 void EnemyNotifier::AddObserver(EnemyObserver* observer)
 {
 	if(!observer) return; // nullptr チェック
@@ -13,7 +12,6 @@ void EnemyNotifier::AddObserver(EnemyObserver* observer)
 	}
 }
 
-// オブザーバーの削除
 void EnemyNotifier::RemoveObserver(EnemyObserver* observer)
 {
 	if(!observer) return; // nullptr チェック
@@ -22,7 +20,6 @@ void EnemyNotifier::RemoveObserver(EnemyObserver* observer)
 	_observers.erase(std::remove(_observers.begin(), _observers.end(), observer), _observers.end());
 }
 
-// 敵が倒されたときの通知
 void EnemyNotifier::NotifyEnemyDefeated(EnemyType enemyType)
 {
 	// オブザーバーのコピーを作成

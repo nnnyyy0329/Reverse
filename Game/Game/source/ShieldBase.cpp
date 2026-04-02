@@ -47,7 +47,6 @@ bool ShieldBase::Render()
 	return true;
 }
 
-// シールド発動
 void ShieldBase::ActivateShield()
 {
 	// 非アクティブ状態なら
@@ -59,7 +58,6 @@ void ShieldBase::ActivateShield()
 	}
 }
 
-// シールド解除
 void ShieldBase::DeactivateShield()
 {
 	// アクティブ中なら
@@ -76,7 +74,6 @@ void ShieldBase::DeactivateShield()
 	}
 }
 
-// 攻撃をブロック可能か
 bool ShieldBase::CanBlockAttack(const VECTOR& attackPos, const VECTOR& attackDir) const
 {
 	// シールドがアクティブでない場合はブロック不可
@@ -100,7 +97,6 @@ bool ShieldBase::CanBlockAttack(const VECTOR& attackPos, const VECTOR& attackDir
 	return GeometryUtility::IsAttackFromFront(ownerPos, ownerDir, attackDir, _stcShieldConfig.dotThreshold);
 }
 
-// 対象がシールド有効範囲内かチェック
 bool ShieldBase::IsInShieldRange(const VECTOR& targetPos) const
 {
 	// 所有者がいない場合はブロック不可
@@ -117,7 +113,6 @@ bool ShieldBase::IsInShieldRange(const VECTOR& targetPos) const
 	return distance <= _stcShieldConfig.blockDistance;
 }
 
-// 攻撃が有効な方向からかチェック
 bool ShieldBase::IsAttackFromValidDirection(const VECTOR& attackDir) const
 {
 	// 所有者がいない場合はブロック不可
@@ -138,13 +133,11 @@ bool ShieldBase::IsAttackFromValidDirection(const VECTOR& attackDir) const
 	return attackDiff <= _stcShieldConfig.blockAngleRange;
 }
 
-// ブロック成功処理
 void ShieldBase::SuccessBlock(const VECTOR& attackDir)
 {
 	_bIsBlocking = true;	// ブロック中
 }
 
-// ガード入力処理
 void ShieldBase::UpdateGuardInput(InputManager* input)
 {
 	// 押されたら
@@ -161,7 +154,6 @@ void ShieldBase::UpdateGuardInput(InputManager* input)
 	}
 }
 
-// ガード開始
 void ShieldBase::StartGuard()
 {
 	if(!HasStamina()) { return; }	// スタミナチェック
@@ -170,20 +162,17 @@ void ShieldBase::StartGuard()
 	ActivateShield();
 }
 
-// ガード停止
 void ShieldBase::StopGuard()
 {
 	// シールド解除
 	DeactivateShield();
 }
 
-// スタミナが足りているかチェック
 bool ShieldBase::HasStamina() const
 {
 	return StaminaManager::GetInstance()->CanShield();
 }
 
-// シールド状態更新
 void ShieldBase::UpdateShieldState()
 {
 	switch(_eShieldState)
@@ -224,7 +213,6 @@ void ShieldBase::UpdateShieldState()
 	}
 }
 
-// 所有者位置取得
 VECTOR ShieldBase::GetOwnerPos() const
 {
 	auto owner = GetOwner();
@@ -238,7 +226,6 @@ VECTOR ShieldBase::GetOwnerPos() const
 	return VGet(0.0f, 0.0f, 0.0f);
 }
 
-// 所有者前方取得
 VECTOR ShieldBase::GetOwnerDir() const
 {
 	auto owner = GetOwner();
@@ -252,14 +239,12 @@ VECTOR ShieldBase::GetOwnerDir() const
 	return VGet(0.0f, 0.0f, 0.0f);
 }
 
-// デバッグ表示
 void ShieldBase::DebugRender()
 {
 	// シールド有効範囲デバッグ描画
 	DrawShieldRangeDebug();
 }
 
-// シールド有効範囲デバッグ描画
 void ShieldBase::DrawShieldRangeDebug()
 {
 	if(_eShieldState != SHIELD_STATE::ACTIVE){ return; }

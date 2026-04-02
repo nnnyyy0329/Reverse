@@ -1,4 +1,9 @@
-// 担当 : 成田
+/*****************************************
+* file   AttackBase.h
+* brief  攻撃のベースクラス
+* author 成田 悠真
+* date   2025/12/28
+******************************************/
 
 #pragma once
 #include "appframe.h"
@@ -37,8 +42,6 @@ enum class ATTACK_STATE
 	RECOVERY,	///< 硬直中
 	_EOT_,
 };
-
-// 攻撃コリジョン情報構造体
 
 /// @brief 攻撃コリジョンの情報をまとめた構造体
 struct AttackCollision
@@ -80,44 +83,89 @@ struct AttackColOffset
 class AttackBase
 {
 public:
+
 	AttackBase();
 	virtual ~AttackBase();
 
+
+	/* 基本関数 */
+	
 	virtual bool Initialize();
 	virtual bool Terminate();
 	virtual bool Process();
 	virtual bool Render();
 
-	// 攻撃処理
-	virtual bool ProcessStartAttack();	// 攻撃開始
-	virtual bool ProcessStopAttack();	// 攻撃停止
-	void UpdateAttackState();			// 攻撃状態更新
 
-	// 攻撃中の移動処理
-	void UpdateAttackMove();				// 移動更新
-	virtual void ProcessAttackMovement();	// 移動処理
+	/* 攻撃処理 */
+
+	/// @brief 攻撃開始処理関数
+	virtual bool ProcessStartAttack();	
+
+	/// @brief 攻撃停止処理関数
+	virtual bool ProcessStopAttack();	
+
+	/// @brief 攻撃状態の更新処理
+	void UpdateAttackState();			
+
+
+	/* 攻撃中の移動処理 */
+
+	/// @brief 攻撃中の移動更新処理
+	void UpdateAttackMove();				
+
+	/// @brief 攻撃中の移動処理関数
+	virtual void ProcessAttackMovement();	
 
 	/// @brief 攻撃コリジョンの位置更新
 	void UpdateAttackColPos();	
 
-	// 攻撃コリジョンの位置計算(コリジョン上下のオフセットを入れる場合の計算用関数).未使用
+	/// @brief 攻撃コリジョンの位置計算関数 （未使用）
+	///
+	/// @param basePos 基準位置
+	/// @param offset コリジョンの上下オフセット
+	/// @param direction 攻撃の向き
+	/// 
+	/// @return 計算された攻撃コリジョンの位置
 	VECTOR CalculateAttackColPos(const VECTOR& basePos, const VECTOR& offset, const VECTOR& direction);	
 
 	/// @brief 攻撃の向き調整処理
 	void UpdateAttackDirAdjust();	
 
-	// 当たったキャラ管理
-	void AddHitCharas(std::shared_ptr<CharaBase> chara);		// 当たったキャラを追加
-	bool HasHitCharas(std::shared_ptr<CharaBase> chara)const;	// 当たったキャラを持っているかチェック
-	void ClearHitCharas();										// 当たったキャラリストクリア
 
-	// 攻撃移動の停止
+	/* 当たったキャラ管理 */
+
+	/// @brief 当たったキャラを追加する関数
+	///
+	/// @param chara 追加するキャラのポインタ
+	void AddHitCharas(std::shared_ptr<CharaBase> chara);		
+	
+	/// @brief 当たったキャラを持っているかチェックする関数
+	///
+	/// @param chara チェックしたいキャラのポインタ
+	bool HasHitCharas(std::shared_ptr<CharaBase> chara)const;	
+	
+	/// @brief 当たったキャラリストをクリアする関数
+	void ClearHitCharas();
+
+	/// @brief 攻撃移動の停止処理関数
 	virtual void StopAttackMovement();
 
-	// デバッグ表示
+	/// @brief 攻撃コリジョンのデバッグ描画関数
 	void DrawAttackCollision();
 
-	// カプセル攻撃データ設定
+	/// @brief カプセル攻撃データ設定関数
+	///
+	/// @param top カプセル上部
+	/// @param bottom カプセル下部
+	/// @param radius 半径
+	/// @param attackDir 攻撃方向
+	/// @param delay 発生遅延
+	/// @param duration 持続時間
+	/// @param recovery 後隙
+	/// @param damage ダメージ
+	/// @param attackState 攻撃状態
+	/// @param attackMoveSpeed 攻撃中の移動速度
+	/// @param canKnockback 吹き飛ばし攻撃かどうか
 	void SetCapsuleAttackData
 	(
 		VECTOR top,					// カプセル上部
@@ -138,7 +186,16 @@ public:
 	/// @param data 攻撃コリジョン情報構造体
 	void SetCapsuleAttackData(const AttackCollision& data);
 
-	// 円形攻撃データ設定
+	/// @brief 円形攻撃データ設定関数
+	///
+	/// @param center 中心位置
+	/// @param radius 半径
+	/// @param height 高さ
+	/// @param delay 発生遅延
+	/// @param duration 持続時間
+	/// @param recovery 後隙
+	/// @param damage ダメージ
+	/// @param hit ヒットフラグ
 	void SetCircleAttackData
 	(
 		VECTOR center,	// 中心位置
@@ -151,7 +208,15 @@ public:
 		bool hit		// ヒットフラグ
 	);
 
-	// 球攻撃データ設定
+	/// @brief 球攻撃データ設定関数
+	///
+	/// @param center 中心位置
+	/// @param radius 半径
+	/// @param delay 発生遅延
+	/// @param duration 持続時間
+	/// @param recovery 後隙
+	/// @param damage ダメージ
+	/// @param hit ヒットフラグ
 	void SetSphereAttackData
 	(
 		VECTOR center,	// 中心位置
@@ -163,13 +228,18 @@ public:
 		bool hit		// ヒットフラグ
 	);
 
-	// 攻撃コリジョンオフセット設定
+	/// @brief 攻撃コリジョンオフセット設定関数
+	///
+	/// @param offset 攻撃コリジョンオフセット情報構造体
 	void SetCollisionOffset(const AttackColOffset& offset);
 
-	// 向き調整データ設定
+	/// @brief 向き調整データ設定関数
+	///
+	/// @param speed 向き調整速度
 	void SetDirAdjustData(bool canAdjust);
 
-	// ゲッターセッター
+
+	/* ゲッターセッター */
 	COLLISION_TYPE GetCollisionType() const { return _eColType; }			// コリジョンタイプ取得
 	AttackCollision GetAttackCollision() const { return _stcAttackCol; }	// 攻撃コリジョン情報取得
 	ATTACK_STATE GetAttackState() const { return _eAttackState; }			// 攻撃状態取得
@@ -183,12 +253,21 @@ public:
 	std::shared_ptr<CharaBase> GetOwner() const { return _owner.lock(); }	// 所有者取得
 	void SetOwner(std::shared_ptr<CharaBase> owner) { _owner = owner; }		// 所有者設定
 
-	const AttackEffectConfig& GetAttackEffectConfig() const { return _attackEffectConfig; }			// 攻撃エフェクト情報取得
-	void SetAttackEffectConfig(const AttackEffectConfig& config) { _attackEffectConfig = config; }	// 攻撃エフェクト情報設定
+	// 攻撃エフェクト情報取得
+	const AttackEffectConfig& GetAttackEffectConfig() const { return _attackEffectConfig; }			
 
-	void SetEffectHandle(int handle) { _effectHandle = handle; }	// エフェクトハンドル設定
+	// 攻撃エフェクト情報設定
+	void SetAttackEffectConfig(const AttackEffectConfig& config) { _attackEffectConfig = config; }	
 
-	// クラスセット
+	// エフェクトハンドル設定
+	void SetEffectHandle(int handle) { _effectHandle = handle; }	
+
+
+	/* クラスセット */
+
+	/// @brief カメラマネージャー設定関数
+	///
+	/// @param cameraManager カメラマネージャーの共有ポインタ
 	void SetCameraManager(std::shared_ptr<CameraManager> cameraManager) { _cameraManager = cameraManager; }
 
 protected:
@@ -225,9 +304,7 @@ private:
 
 	std::vector<std::shared_ptr<CharaBase>> _hitChars;	// 当たったキャラを管理
 
-	// 攻撃エフェクト情報
-	AttackEffectConfig _attackEffectConfig;	
-
+	AttackEffectConfig _attackEffectConfig;	// 攻撃エフェクト情報
 
 	// コリジョン位置計算関連
 	VECTOR _originalColTop;		// 元のコリジョン上部位置

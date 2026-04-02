@@ -2,7 +2,7 @@
 * file	 BulletPlayer.h
 * brief  弾発射プレイヤークラス
 * author 成田 悠真
-* date   2026/1/30
+* date   2026/01/30
 ******************************************/
 
 #pragma once

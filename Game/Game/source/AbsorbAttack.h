@@ -1,3 +1,10 @@
+/*****************************************
+* file   AbsorbAttack.h
+* brief  吸収攻撃クラス
+* author 成田 悠真
+* date   2026/02/20
+******************************************/
+
 #pragma once
 #include "AttackBase.h"
 
@@ -16,7 +23,7 @@ namespace AbsorbTimeConstants
 	constexpr float DECREMENT_ABSORB_TIMER	= 1.0f;		// 吸収タイマーの減算量
 }
 
-// 吸収攻撃の設定構造体
+/// @brief 吸収攻撃の設定構造体
 struct AbsorbConfig
 {
 	float absorbRate;				// 吸収率
@@ -36,13 +43,17 @@ struct AbsorbConfig
 class AbsorbAttack : public AttackBase
 {
 public:
+
 	AbsorbAttack();
 	virtual ~AbsorbAttack();
 
-	/// @brief 吸収攻撃の更新
-	///
-	/// @return 更新処理が成功したかどうか
-	virtual bool Process() override;
+
+	/* 基本関数 */
+
+	virtual bool Process() override;	// 更新
+
+	
+	/* 吸収攻撃関係関数 */
 
 	/// @brief 吸収攻撃の開始処理
 	///

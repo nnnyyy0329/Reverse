@@ -65,13 +65,11 @@ bool EnergyUI::Render()
 	return true;
 }
 
-// エネルギーフレーム表示関数
 void EnergyUI::EnergyFrameRender()
 {
 	DrawGraph(DRAW_X, DRAW_Y, _iEnergyFrameHandle, TRUE);
 }
 
-// ゲージ表示比率計算関数
 void EnergyUI::GaugeRatioCalculation()
 {
 	// エネルギーマネージャーから現在のエネルギー量を取得
@@ -89,7 +87,6 @@ void EnergyUI::GaugeRatioCalculation()
 	EnergyGaugeRender(energyRatio);
 }
 
-// エネルギーゲージ表示関数
 void EnergyUI::EnergyGaugeRender(float ratio)
 {
 	if(ratio <= 0.0f){ return; }	// エネルギーが0以下の場合は描画しない

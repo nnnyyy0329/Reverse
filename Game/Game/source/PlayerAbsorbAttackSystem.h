@@ -1,3 +1,10 @@
+/*****************************************
+* file   PlayerAbsorbAttackSystem.h
+* brief  プレイヤーの吸収攻撃システムクラス
+* author 成田 悠真
+* date   2026/02/20
+******************************************/
+
 #pragma once
 #include "AbsorbAttack.h"
 #include "CharaBase.h"
@@ -6,8 +13,12 @@
 class PlayerAbsorbAttackSystem
 {
 public:
+
 	PlayerAbsorbAttackSystem();
 	virtual ~PlayerAbsorbAttackSystem();
+
+
+	/* 基本関数 */
 
 	virtual bool Initialize(std::weak_ptr<CharaBase> owner);	// 初期化
 	virtual bool Terminate();									// 終了
@@ -16,6 +27,9 @@ public:
 
 	/// @brief デバッグ描画関数
 	void DebugRender();
+
+	
+	/* 吸収攻撃関係関数 */
 
 	/// @brief 吸収攻撃の設定する
 	///
