@@ -458,7 +458,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackColl
 		{
 			_fLife = 0.0f;// マイナス防止
 			// 死亡ステートへ遷移
-			ChangeState(std::make_unique<Common::Dead>());
+			ChangeState(GetState<Common::Dead>());
 		}
 
 		return;
@@ -470,7 +470,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackColl
 	// 吹っ飛びフラグがtrueならDownステートへ遷移
 	if (attackInfo.canKnockback)
 	{
-		ChangeState(std::make_unique<Common::Down>());
+		ChangeState(GetState<Common::Down>());
 		return;
 	}
 
@@ -479,7 +479,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackColl
 	{
 		_fLife = 0.0f;// マイナス防止
 		// 死亡ステートへ遷移
-		ChangeState(std::make_unique<Common::Dead>());
+		ChangeState(GetState<Common::Dead>());
 		return;
 	}
 
@@ -497,7 +497,7 @@ void Enemy::ApplyDamage(float fDamage, ATTACK_OWNER_TYPE eType, const AttackColl
 	}
 
 	// ダメージステートへ遷移
-	ChangeState(std::make_unique<Common::Damage>());
+	ChangeState(GetState<Common::Damage>());
 }
 
 void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
@@ -522,7 +522,7 @@ void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
 		{
 			_fLife = 0.0f;// マイナス防止
 			// 死亡ステートへ遷移
-			ChangeState(std::make_unique<Common::Dead>());
+			ChangeState(GetState<Common::Dead>());
 		}
 
 		return;
@@ -536,7 +536,7 @@ void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
 	{
 		_fLife = 0.0f;// マイナス防止
 		// 死亡ステートへ遷移
-		ChangeState(std::make_unique<Common::Dead>());
+		ChangeState(GetState<Common::Dead>());
 		return;
 	}
 
@@ -556,7 +556,7 @@ void Enemy::ApplyDamageByBullet(float fDamage, CHARA_TYPE eType)
 	// ダメージステートへ遷移
 	if (_enemyParam.bChangeDamageState)
 	{
-		ChangeState(std::make_unique<Common::Damage>());
+		ChangeState(GetState<Common::Damage>());
 	}
 }
 

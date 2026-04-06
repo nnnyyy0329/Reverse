@@ -18,12 +18,12 @@ PlayerBase::PlayerBase()
 
 PlayerBase::~PlayerBase()
 {
-	// シールドシステムの終了処理
-	if(_shieldSystem)
-	{
-		_shieldSystem->Terminate();
-		_shieldSystem.reset();
-	}
+	//// シールドシステムの終了処理
+	//if(_shieldSystem)
+	//{
+	//	_shieldSystem->Terminate();
+	//	_shieldSystem.reset();
+	//}
 }
 
 bool PlayerBase::Initialize()
@@ -122,23 +122,23 @@ void PlayerBase::InitializeHitConfig(const VECTOR& attackDirection)
 	_fHitTime = HitConfig::HIT_TIME;		// 被弾時間
 }
 
-// シールドデータ初期化
-void PlayerBase::InitializeShieldData()
-{
-	// シールドシステム作成
-	_shieldSystem = std::make_shared<PlayerShieldSystem>();
-
-	// シールド所有者設定
-	// CharaBase の shared_from_this() を使用するため、Initialize関数内で所有者を設定する必要がある
-	_shieldSystem->SetOwner(shared_from_this());
-	
-	// プレイヤー固有の設定を取得してシールドシステムに設定
-	ShieldConfig config = GetShieldConfig();
-	_shieldSystem->SetShieldConfig(config);
-
-	// 初期化
-	_shieldSystem->Initialize();
-}
+//// シールドデータ初期化
+//void PlayerBase::InitializeShieldData()
+//{
+//	// シールドシステム作成
+//	_shieldSystem = std::make_shared<PlayerShieldSystem>();
+//
+//	// シールド所有者設定
+//	// CharaBase の shared_from_this() を使用するため、Initialize関数内で所有者を設定する必要がある
+//	_shieldSystem->SetOwner(shared_from_this());
+//	
+//	// プレイヤー固有の設定を取得してシールドシステムに設定
+//	ShieldConfig config = GetShieldConfig();
+//	_shieldSystem->SetShieldConfig(config);
+//
+//	// 初期化
+//	_shieldSystem->Initialize();
+//}
 
 // 状態初期化
 void PlayerBase::InitializeState()

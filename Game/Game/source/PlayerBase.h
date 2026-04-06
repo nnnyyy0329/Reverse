@@ -11,7 +11,7 @@
 //#include "ShieldBase.h"
 #include "DodgeSystem.h"
 #include "BulletManager.h"
-#include "PlayerShieldSystem.h"
+//#include "PlayerShieldSystem.h"
 #include "PlayerAbsorbAttackSystem.h"
 
 // 被弾設定
@@ -522,16 +522,16 @@ protected:	// 回避関係 --- 今後クラスで分ける予定 ------------------------------
 
 protected: 	// シールド関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 
-	std::shared_ptr<PlayerShieldSystem> _shieldSystem;	// シールドシステム
+	//std::shared_ptr<PlayerShieldSystem> _shieldSystem;	// シールドシステム
 
 	// PlayerBase_Shield.cpp で定義
-	void CallProcessShield();      // シールド関係Process呼び出し用関数
-	void ProcessShield();          // シールド処理
-	void ProcessShieldInput();     // シールド入力処理
-	bool IsShielding();            // シールド中かチェック
+	//void CallProcessShield();      // シールド関係Process呼び出し用関数
+	//void ProcessShield();          // シールド処理
+	//void ProcessShieldInput();     // シールド入力処理
+	//bool IsShielding();            // シールド中かチェック
 
 	// プレイヤー固有のシールド設定取得（仮想関数）
-	virtual ShieldConfig GetShieldConfig(){ return ShieldConfig{}; }
+	//virtual ShieldConfig GetShieldConfig(){ return ShieldConfig{}; }
 
 protected:	// 死亡関係 --- 今後クラスで分ける予定 ------------------------------------------------------
 

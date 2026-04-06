@@ -7,7 +7,9 @@
 #include "EnemyAttackSettings.h"
 #include "../BulletManager.h"
 
-//class BulletManager;
+#include <typeindex>
+#include <typeinfo>
+
 class AttackBase;
 class StageBase;
 
@@ -45,6 +47,24 @@ public:
 
 	// ステート変更
 	void ChangeState(std::shared_ptr<EnemyState> newState);
+	// マップから型<T>をキーとして、ステートのインスタンスを取得する。なければ生成するテンプレート関数
+	// Args&&... args : 可変引数テンプレート。任意の引数を受け取れるようにする。ステートの生成に必要な引数を渡すために使用する。
+	template<typename T, typename ... Args>
+	std::shared_ptr<T> GetState(Args&& ... args)
+	{
+		// キーからマップを検索する
+		auto type = std::type_index(typeid(T));
+
+		// マップに存在しない場合
+		if (_typeToStateMap.find(type) == _typeToStateMap.end())
+		{
+			// インスタンスを生成してマップに保存する
+			_typeToStateMap[type] = std::make_shared<T>(std::forward<Args>(args)...);
+		}
+
+		// マップからインスタンスを取得して返す
+		return std::static_pointer_cast<T>(_typeToStateMap[type]);
+	}
 
 	// 弾関連
 	void SpawnBullet(const BulletConfig& bulletConfig, const BulletEffectConfig& bEffectConfig);// 発射リクエストをする
@@ -119,6 +139,8 @@ protected:
 
 	std::shared_ptr<EnemyState> _currentState;
 	EnemyParam _enemyParam;
+	// 型からステートのインスタンスを取得するためのマップ
+	std::unordered_map<std::type_index, std::shared_ptr<EnemyState>> _typeToStateMap;
 
 	std::shared_ptr<AttackBase> _attackCollision;// 攻撃コリジョン
 

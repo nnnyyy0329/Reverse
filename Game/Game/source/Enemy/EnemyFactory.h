@@ -90,10 +90,10 @@ public:
 			{
 				if (e->GetTarget())
 				{
-					return std::make_shared<Normal::Caution>();
+					return e->GetState<Normal::Caution>();
 				}
 
-				return std::make_shared<Normal::Idle>();
+				return e->GetState<Normal::Idle>();
 			});
 
 			// ƒ_ƒEƒ“Œã‚Ì‘JˆÚæ‚ğŒˆ’è
@@ -101,15 +101,15 @@ public:
 			{
 				if (e->IsDead())
 				{
-					return std::make_shared<Common::Dead>();
+					return e->GetState<Common::Dead>();
 				}
 
 				if (e->GetTarget())
 				{
-					return std::make_shared<Normal::Caution>();
+					return e->GetState<Normal::Caution>();
 				}
 
-				return std::make_shared<Normal::Idle>();
+				return e->GetState<Normal::Idle>();
 			});
 
 		break;
@@ -140,10 +140,10 @@ public:
 			{
 				if (e->GetTarget())
 				{
-					return std::make_shared<Ranged::Approach>();
+					return e->GetState<Ranged::Approach>();
 				}
 
-				return std::make_shared<Ranged::Idle>();
+				return e->GetState<Ranged::Idle>();
 			});
 
 			// ”íƒ_ƒŒã‚Ì‘JˆÚæ‚ğŒˆ’è
@@ -151,15 +151,15 @@ public:
 			{
 				if (e->IsDead())
 				{
-					return std::make_shared<Common::Dead>();
+					return e->GetState<Common::Dead>();
 				}
 
 				if (e->GetTarget())
 				{
-					return std::make_shared<Ranged::Approach>();
+					return e->GetState<Ranged::Approach>();
 				}
 
-				return std::make_shared<Ranged::Idle>();
+				return e->GetState<Ranged::Idle>();
 			});
 
 		break;
@@ -191,10 +191,10 @@ public:
 			{
 				if (e->GetTarget())
 				{
-					return std::make_shared<Tank::Approach>();
+					return e->GetState<Tank::Approach>();
 				}
 
-				return std::make_shared<Tank::Idle>();
+				return e->GetState<Tank::Idle>();
 			});
 
 			// ƒ_ƒEƒ“Œã‚Ì‘JˆÚæ‚ğŒˆ’è
@@ -202,15 +202,15 @@ public:
 			{
 				if (e->IsDead())
 				{
-					return std::make_shared<Common::Dead>();
+					return e->GetState<Common::Dead>();
 				}
 
 				if (e->GetTarget())
 				{
-					return std::make_shared<Tank::Approach>();
+					return e->GetState<Tank::Approach>();
 				}
 
-				return std::make_shared<Tank::Idle>();
+				return e->GetState<Tank::Idle>();
 			});
 
 		break;

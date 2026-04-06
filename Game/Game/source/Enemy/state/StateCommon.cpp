@@ -81,7 +81,6 @@ namespace Common
 			StopMove(owner);
 		}
 
-		// コンボ数に応じたステート時間
 		if (_fTimer >= owner->GetEnemyParam().fDamageTime)
 		{
 			return owner->GetAfterDamageStateSelector();

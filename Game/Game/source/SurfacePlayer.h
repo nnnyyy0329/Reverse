@@ -77,7 +77,7 @@ private:
 	/// @brief シールド設定を取得
 	///
 	/// @return シールド設定構造体
-	virtual ShieldConfig		GetShieldConfig()		override;
+	//virtual ShieldConfig		GetShieldConfig()		override;
 
 	/// @brief 吸収攻撃システムのconst版ゲッター
 	///

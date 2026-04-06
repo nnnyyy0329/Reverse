@@ -156,7 +156,7 @@ namespace Tank
 
 		if (_fTimer >= _fTargetTimer)
 		{
-			return std::make_shared<Tank::Approach>();
+			return owner->GetState<Tank::Approach>();
 		}
 
 		return nullptr;
@@ -186,7 +186,7 @@ namespace Tank
 		auto targetInfo = GetTargetInfo(owner);
 		if (!targetInfo.bExist)
 		{
-			return std::make_shared<Tank::Idle>();
+			return owner->GetState<Tank::Idle>();
 		}
 
 		const auto& param = owner->GetEnemyParam();
@@ -197,7 +197,7 @@ namespace Tank
 			// 無限ループ防止のため、ここでも判定
 			if (owner->IsVisible(targetInfo.target->GetPos(), 5.0f))
 			{
-				return std::make_shared<Tank::Attack>();
+				return owner->GetState<Tank::Attack>();
 			}
 		}
 
@@ -248,7 +248,7 @@ namespace Tank
 		auto targetInfo = GetTargetInfo(owner);
 		if (!targetInfo.bExist)
 		{
-			return std::make_shared<Tank::Idle>();
+			return owner->GetState<Tank::Idle>();
 		}
 
 		const auto& param = owner->GetEnemyParam();
@@ -256,20 +256,20 @@ namespace Tank
 		// ターゲットが離れたら接近ステートへ
 		if (targetInfo.fDist > ATTACK_START_RANGE)
 		{
-			return std::make_shared<Tank::Approach>();
+			return owner->GetState<Tank::Approach>();
 		}
 
 		// 壁でターゲットが見えない場合、接近ステートへ
 		if (!owner->IsVisible(targetInfo.target->GetPos(), 5.0f))
 		{
-			return std::make_shared<Tank::Approach>();
+			return owner->GetState<Tank::Approach>();
 		}
 
 		// 通常攻撃距離まで来たら一段目攻撃へ
 		if (targetInfo.fDist <= NORMAL_ATTACK_RANGE)
 		{
 			StopMove(owner);
-			return std::make_shared<Tank::FirstAttackPrepare>();
+			return owner->GetState<Tank::FirstAttackPrepare>();
 		}
 
 		// 突進可能距離内で一度だけ判定する
@@ -281,7 +281,7 @@ namespace Tank
 			if (mymath::RandomRange(0.0f, 1.0f) < CHARGE_ATTACK_PROB)
 			{
 				StopMove(owner);
-				return std::make_shared<Tank::ChargePrepare>(targetInfo.target->GetPos());
+				return owner->GetState<Tank::ChargePrepare>(targetInfo.target->GetPos());
 			}
 		}
 
@@ -320,7 +320,7 @@ namespace Tank
 
 		if (_fTimer >= FIRST_PREPARE_TIME)
 		{
-			return std::make_shared<Tank::FirstAttackExecute>();
+			return owner->GetState<Tank::FirstAttackExecute>();
 		}
 
 		return nullptr;
@@ -367,7 +367,7 @@ namespace Tank
 		// 攻撃時間経過チェック
 		if (_fTimer >= FIRST_EXECUTE_TIME)
 		{
-			return std::make_shared<Tank::FirstAttackRecovery>();// 一段目後隙へ
+			return owner->GetState<Tank::FirstAttackRecovery>();// 一段目後隙へ
 		}
 
 		return nullptr;
@@ -408,7 +408,7 @@ namespace Tank
 		if (_fTimer >= FIRST_RECOVERY_TIME)
 		{
 			_bIsCompleted = true;
-			return std::make_shared<Tank::SecondAttackPrepare>();// 二段目予備動作へ
+			return owner->GetState<Tank::SecondAttackPrepare>();// 二段目予備動作へ
 		}
 
 		return nullptr;
@@ -444,7 +444,7 @@ namespace Tank
 
 		if (_fTimer >= SECOND_PREPARE_TIME)
 		{
-			return std::make_shared<Tank::SecondAttackExecute>();
+			return owner->GetState<Tank::SecondAttackExecute>();
 		}
 
 		return nullptr;
@@ -492,7 +492,7 @@ namespace Tank
 		// 攻撃時間経過チェック
 		if (_fTimer >= SECOND_EXECUTE_TIME)
 		{
-			return std::make_shared<Tank::SecondAttackRecovery>();// 二段目後隙へ
+			return owner->GetState<Tank::SecondAttackRecovery>();// 二段目後隙へ
 		}
 
 		return nullptr;
@@ -542,10 +542,10 @@ namespace Tank
 
 				if (mymath::RandomRange(0.0f, 1.0f) < THIRD_ATTACK_PROB)
 				{
-					return std::make_shared<Tank::ThirdAttackPrepare>();
+					return owner->GetState<Tank::ThirdAttackPrepare>();
 				}
 
-				return std::make_shared<Tank::Idle>();
+				return owner->GetState<Tank::Idle>();
 			}
 		}
 
@@ -581,7 +581,7 @@ namespace Tank
 
 		if (_fTimer >= THIRD_PREPARE_TIME)
 		{
-			return std::make_shared<Tank::ThirdAttackExecute>();
+			return owner->GetState<Tank::ThirdAttackExecute>();
 		}
 
 		return nullptr;
@@ -627,7 +627,7 @@ namespace Tank
 
 		if(_fTimer >= THIRD_EXECUTE_TIME)
 		{
-			return std::make_shared<Tank::ThirdAttackRecovery>();
+			return owner->GetState<Tank::ThirdAttackRecovery>();
 		}
 
 		return nullptr;
@@ -666,7 +666,7 @@ namespace Tank
 		if (_fTimer >= THIRD_RECOVERY_TIME)
 		{
 			_bIsCompleted = true;
-			return std::make_shared<Tank::Idle>();
+			return owner->GetState<Tank::Idle>();
 		}
 
 		return nullptr;
@@ -710,7 +710,7 @@ namespace Tank
 				? mymath::FlattenVector(vToTarget)
 				: owner->GetDir();
 
-			return std::make_shared<Tank::ChargeExecute>(vDir, _vChargeTarget);
+			return owner->GetState<Tank::ChargeExecute>(vDir, _vChargeTarget);
 		}
 
 		return nullptr;
@@ -752,14 +752,14 @@ namespace Tank
 
 		if (dist <= CHARGE_ARRIVE_DIST)
 		{
-			return std::make_shared<Tank::ChargeRecovery>();
+			return owner->GetState<Tank::ChargeRecovery>();
 		}
 
 		MoveToTarget(owner, _vChargeDir, CHARGE_SPEED);
 
 		if (_fTimer >= CHARGE_EXECUTE_TIME)
 		{
-			return std::make_shared<Tank::ChargeRecovery>();
+			return owner->GetState<Tank::ChargeRecovery>();
 		}
 
 		return nullptr;
@@ -798,7 +798,7 @@ namespace Tank
 		if(_fTimer >= CHARGE_RECOVERY_TIME)
 		{
 			_bIsCompleted = true;
-			return std::make_shared<Tank::Idle>();
+			return owner->GetState<Tank::Idle>();
 		}
 
 		return nullptr;

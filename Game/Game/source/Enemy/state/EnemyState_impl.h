@@ -6,7 +6,7 @@ template<typename LostTargetState>
 inline std::shared_ptr<EnemyState> EnemyState::TransitionToLostNoTarget(Enemy* owner)
 {
 	owner->SetTargetDetected(false);
-	return std::make_shared<LostTargetState>();
+	return owner->GetState<LostTargetState>();
 }
 
 template<typename IdleState>
@@ -14,7 +14,7 @@ inline std::shared_ptr<EnemyState> EnemyState::TransitionToIdleOutsideArea(Enemy
 {
 	if (owner->IsOutSideMoveArea())
 	{
-		return std::make_shared<IdleState>();
+		return owner->GetState<IdleState>();
 	}
 
 	return nullptr;
@@ -26,7 +26,7 @@ inline std::shared_ptr<EnemyState> EnemyState::TransitionToLostOutsideArea(Enemy
 	if (owner->IsOutSideMoveArea())
 	{
 		owner->SetTargetDetected(false);
-		return std::make_shared<LostTargetState>();
+		return owner->GetState<LostTargetState>();
 	}
 
 	return nullptr;

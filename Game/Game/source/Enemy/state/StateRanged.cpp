@@ -131,7 +131,7 @@ namespace Ranged
 		// 索敵結果チェック
 		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Notice>();
+			return owner->GetState<Notice>();
 		}
 
 		// タイマー更新
@@ -140,7 +140,7 @@ namespace Ranged
 		// 時間経過チェック
 		if (_fTimer >= _fTargetTimer)
 		{
-			return std::make_shared<Wander>();
+			return owner->GetState<Wander>();
 		}
 
 		return nullptr;
@@ -181,7 +181,7 @@ namespace Ranged
 		// 索敵結果チェック
 		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Notice>();
+			return owner->GetState<Notice>();
 		}
 
 		// タイマー更新
@@ -196,7 +196,7 @@ namespace Ranged
 		// 時間経過チェック
 		if (_fTimer >= _fLookDuration)
 		{
-			return std::make_shared<Idle>();
+			return owner->GetState<Idle>();
 		}
 
 		return nullptr;
@@ -243,7 +243,7 @@ namespace Ranged
 		// 時間経過チェック
 		if (_fTimer >= _fTargetTimer)
 		{
-			return std::make_shared<Approach>();
+			return owner->GetState<Approach>();
 		}
 
 		return nullptr;
@@ -293,7 +293,7 @@ namespace Ranged
 		// 射撃射程内チェック
 		if (targetInfo.fDist <= APPROACH_STOP_DISTANCE)
 		{
-			return std::make_shared<ShotStart>();
+			return owner->GetState<ShotStart>();
 		}
 
 		// ターゲット方向へ回転
@@ -341,7 +341,7 @@ namespace Ranged
 
 		if(_fTimer >= RETREAT_TIME)
 		{
-			return std::make_shared<ShotStart>();
+			return owner->GetState<ShotStart>();
 		}
 
 		return nullptr;
@@ -379,7 +379,7 @@ namespace Ranged
 		// 射撃射程内に入った場合
 		if (targetInfo.fDist >= SHOT_RANGE_MIN && targetInfo.fDist <= SHOT_RANGE_MAX)
 		{
-			return std::make_shared<ShotCharge>();
+			return owner->GetState<ShotCharge>();
 		}
 
 		// ターゲット方向へ回転
@@ -388,13 +388,13 @@ namespace Ranged
 		// 近すぎる場合は後退
 		if (targetInfo.fDist < RETREAT_TRIGGER_DISTANCE)
 		{
-			return std::make_shared<Retreat>();
+			return owner->GetState<Retreat>();
 		}
 
 		// 遠すぎる場合は接近
 		if (targetInfo.fDist > SHOT_RANGE_MAX)
 		{
-			return std::make_shared<Approach>();
+			return owner->GetState<Approach>();
 		}
 
 		StopMove(owner);
@@ -433,7 +433,7 @@ namespace Ranged
 		// 溜め時間終了チェック
 		if (_fTimer >= SHOT_CHARGE_TIME)
 		{
-			return std::make_shared<ShotExecute>();
+			return owner->GetState<ShotExecute>();
 		}
 
 		return nullptr;
@@ -501,7 +501,7 @@ namespace Ranged
 		// 射撃実行時間終了チェック
 		if (_fTimer >= SHOT_EXECUTE_TIME)
 		{
-			return std::make_shared<ShotRecovery>();
+			return owner->GetState<ShotRecovery>();
 		}
 
 		return nullptr;
@@ -597,7 +597,7 @@ namespace Ranged
 		// 後隙時間終了チェック
 		if (_fTimer >= SHOT_RECOVERY_TIME)
 		{
-			return std::make_shared<ShotInterval>();
+			return owner->GetState<ShotInterval>();
 		}
 
 		return nullptr;
@@ -639,7 +639,7 @@ namespace Ranged
 		// 近すぎる場合は後退
 		if (targetInfo.fDist < RETREAT_TRIGGER_DISTANCE)
 		{
-			return std::make_shared<Retreat>();
+			return owner->GetState<Retreat>();
 		}
 
 		StopMove(owner);
@@ -647,7 +647,7 @@ namespace Ranged
 		// 射撃間隔時間終了チェック
 		if (_fTimer >= _fTargetTimer)
 		{
-			return std::make_shared<ShotStart>();
+			return owner->GetState<ShotStart>();
 		}
 
 		return nullptr;
@@ -689,7 +689,7 @@ namespace Ranged
 		// 再索敵
 		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Notice>();
+			return owner->GetState<Notice>();
 		}
 
 		StopMove(owner);
@@ -795,7 +795,7 @@ namespace Ranged
 
 			if (diffDeg <= LOST_LOOK_ARRIVE_THRESHOLD)
 			{
-				return std::make_shared<Idle>();
+				return owner->GetState<Idle>();
 			}
 		}
 

@@ -145,7 +145,7 @@ bool PlayerBase::CanStartDodge()
 		_playerState.IsInAttackState(PLAYER_ATTACK_STATE::NONE)	&&	// 何かしらの攻撃状態ではなく
 		_playerState.IsInShootState(PLAYER_SHOOT_STATE::NONE)	&&	// 何かしらの発射状態ではなく
 		!_playerState.IsStateCombat()							&&	// 特殊状態中ではなく
-		StaminaManager::GetInstance()->CanDodge()				&&	// スタミナが回避可能な量で
+		//StaminaManager::GetInstance()->CanDodge()				&&	// スタミナが回避可能な量で
 		im.IsTrigger(INPUT_ACTION::DODGE))							// 回避入力があったら
 	{
 		return true;

@@ -160,23 +160,23 @@ DodgeConfig SurfacePlayer::GetDodgeConfig()
 	return config;
 }
 
-ShieldConfig SurfacePlayer::GetShieldConfig()
-{
-	// デフォルトの設定を返す
-	ShieldConfig config;
-
-	config.charaType = SHIELD_CHARA::SURFACE_PLAYER;
-	config.dotThreshold = 0.5f;
-	config.blockAngleRange = 90.0f;
-	config.blockDistance = 100.0f;
-	config.startTime = 10.0f;
-	config.recoveryTime = 15.0f;
-	config.staminaCost = 10.0f;
-	config.blockEffectName = "";
-	config.effectOffset = 0.0f;
-
-	return config;
-}
+//ShieldConfig SurfacePlayer::GetShieldConfig()
+//{
+//	// デフォルトの設定を返す
+//	ShieldConfig config;
+//
+//	config.charaType = SHIELD_CHARA::SURFACE_PLAYER;
+//	config.dotThreshold = 0.5f;
+//	config.blockAngleRange = 90.0f;
+//	config.blockDistance = 100.0f;
+//	config.startTime = 10.0f;
+//	config.recoveryTime = 15.0f;
+//	config.staminaCost = 10.0f;
+//	config.blockEffectName = "";
+//	config.effectOffset = 0.0f;
+//
+//	return config;
+//}
 
 void SurfacePlayer::MakeAbsorbSystem()
 {

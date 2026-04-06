@@ -168,13 +168,15 @@ namespace Normal
 		if (owner->IsAllerted())
 		{
 			owner->SetAllerted(false);// フラグをリセット
-			return std::make_shared<Notice>();
+
+			// マップからステートのインスタンスを取得する
+			return owner->GetState<Notice>();// 発見状態へ遷移
 		}
 
 		// 索敵結果チェック
 		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Notice>();
+			return owner->GetState<Notice>();
 		}
 
 		// タイマー更新
@@ -185,7 +187,7 @@ namespace Normal
 		{
 			if (owner->GetEnemyParam().bTransToWander)
 			{// trueなら徘徊へ遷移
-				return std::make_shared<Wander>();
+				return owner->GetState<Wander>();
 			}
 			_fTimer = 0.0f;// 待機を継続する
 		}
@@ -227,13 +229,13 @@ namespace Normal
 		if (owner->IsAllerted())
 		{
 			owner->SetAllerted(false);// フラグをリセット
-			return std::make_shared<Notice>();
+			return owner->GetState<Notice>();
 		}
 
 		// 索敵結果チェック
 		if (owner->IsTargetDetected())
 		{
-			return std::make_shared<Notice>();
+			return owner->GetState<Notice>();
 		}
 
 		// 移動可能範囲外チェック
@@ -249,7 +251,7 @@ namespace Normal
 		// 時間経過チェック
 		if (_fTimer >= _fTargetTimer)
 		{
-			return std::make_shared<Idle>();
+			return owner->GetState<Idle>();
 		}
 
 		return nullptr;
@@ -300,11 +302,11 @@ namespace Normal
 			float fRand = mymath::RandomRange(0.0f, 1.0f);
 			if(fRand <= param.fAggression)
 			{
-				return std::make_shared<Approach>();
+				return owner->GetState<Approach>();
 			}
 			else
 			{
-				return std::make_shared<Caution>();
+				return owner->GetState<Caution>();
 			}
 		}
 
@@ -379,7 +381,7 @@ namespace Normal
 
 		if (_fTimer >= CAUTION_TIME)
 		{
-			return std::make_shared<Approach>();
+			return owner->GetState<Approach>();
 		}
 
 		return nullptr;
@@ -426,7 +428,7 @@ namespace Normal
 		// 近接攻撃の距離内なら、近接攻撃する
 		if (targetInfo.fDist <= ATTACK_START_DISTANCE)
 		{
-			return std::make_shared<AttackStart>();
+			return owner->GetState<AttackStart>();
 		}
 
 		// 飛びかかり攻撃の距離内なら、確率で飛びかかりへ派生する
@@ -437,7 +439,7 @@ namespace Normal
 			{
 				if (mymath::RandomRange(0.0f, 1.0f) < JUMP_ATTACK_PROB)
 				{
-					return std::make_shared<JumpAttackCharge>();
+					return owner->GetState<JumpAttackCharge>();
 				}
 			}
 		}
@@ -490,7 +492,7 @@ namespace Normal
 
 		if (targetInfo.fDist <= ATTACK_EXECUTE_DISTANCE)
 		{
-			return std::make_shared<AttackCharge>();
+			return owner->GetState<AttackCharge>();
 		}
 
 		// ターゲット方向へ回転・移動
@@ -531,7 +533,7 @@ namespace Normal
 		// 溜め時間終了チェック
 		if (_fTimer >= ATTACK_CHARGE_TIME)
 		{
-			return std::make_shared<AttackExecute>();
+			return owner->GetState<AttackExecute>();
 		}
 
 		return nullptr;
@@ -596,7 +598,7 @@ namespace Normal
 		// 攻撃実行時間終了チェック
 		if (_fTimer >= ATTACK_EXECUTE_TIME)
 		{
-			return std::make_shared<AttackRecovery>();
+			return owner->GetState<AttackRecovery>();
 		}
 
 		return nullptr;
@@ -642,11 +644,11 @@ namespace Normal
 			float fRand = mymath::RandomRange(0.0f, 1.0f);
 			if (fRand <= param.fAggression)
 			{
-				return std::make_shared<Approach>();
+				return owner->GetState<Approach>();
 			}
 			else
 			{
-				return std::make_shared<Caution>();
+				return owner->GetState<Caution>();
 			}
 		}
 
@@ -681,7 +683,7 @@ namespace Normal
 
 		if(_fTimer >= JUMP_ATTACK_CHARGE_TIME)
 		{
-			return std::make_shared<JumpAttackExecute>();
+			return owner->GetState<JumpAttackExecute>();
 		}
 
 		return nullptr;
@@ -716,7 +718,7 @@ namespace Normal
 
 		if (_fTimer >= JUMP_ATTACK_EXECUTE_TIME)
 		{
-			return std::make_shared<JumpAttackRecovery>();
+			return owner->GetState<JumpAttackRecovery>();
 		}
 
 		return nullptr;
@@ -757,11 +759,11 @@ namespace Normal
 			float fRand = mymath::RandomRange(0.0f, 1.0f);
 			if (fRand <= param.fAggression)
 			{
-				return std::make_shared<Approach>();
+				return owner->GetState<Approach>();
 			}
 			else
 			{
-				return std::make_shared<Caution>();
+				return owner->GetState<Caution>();
 			}
 		}
 
@@ -906,7 +908,7 @@ namespace Normal
 
 			if(diffDeg <= LOST_LOOK_ARRIVE_THRESHOLD)
 			{
-				return std::make_shared<Idle>();
+				return owner->GetState<Idle>();
 			}
 		}
 

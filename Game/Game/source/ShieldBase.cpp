@@ -168,10 +168,10 @@ void ShieldBase::StopGuard()
 	DeactivateShield();
 }
 
-bool ShieldBase::HasStamina() const
-{
-	return StaminaManager::GetInstance()->CanShield();
-}
+//bool ShieldBase::HasStamina() const
+//{
+//	return StaminaManager::GetInstance()->CanShield();
+//}
 
 void ShieldBase::UpdateShieldState()
 {

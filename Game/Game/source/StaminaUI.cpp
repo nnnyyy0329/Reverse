@@ -2,7 +2,7 @@
 #include "StaminaManager.h"
 
 // スタミナUI表示設定用定数のエイリアス
-namespace RC = RenderConfig;
+namespace RC = SRenderConfig;
 
 StaminaUI::StaminaUI()
 {
