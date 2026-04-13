@@ -332,7 +332,11 @@ public:
 	/// 
 	/// @param fDamage ダメージ量
 	/// @param chara 弾のキャラタイプ
-	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;										
+	virtual void ApplyDamageByBullet(float fDamage, CHARA_TYPE chara)override;
+
+
+	
+	/* 共通初期化関数 */
 
 	// 共通初期化
 	void InitializePlayerConfig(PlayerConfig& config);			// プレイヤー設定初期化
@@ -341,6 +345,10 @@ public:
 	void InitializeShieldData();								// シールドデータ初期化
 	void InitializeState();										// 状態初期化
 	void InitializeAnimation();									// アニメーション初期化
+
+
+
+	/* 共通処理関数 */
 
 	// 共通処理
 	void CallProcess();						// Process呼び出し用関数
@@ -355,14 +363,18 @@ public:
 	bool IsHitStop();						// 被弾硬直中かチェック
 	bool IsAnimationFinishedConst()const;	// アニメーションが終了したかの処理
 
+
+
+	/* 共通描画関数 */ 
+	
 	// デバッグ描画共通
-	void DebugRender();				// デバッグ情報描画
-	void DrawBaseData();			// 基本データ表示
-	void DrawCoordinate();			// 座標表示
-	void DrawDirection();			// 向き表示
-	void DrawStatus();				// ステータス表示
-	void DrawParameter();			// パラメーター表示
-	void DrawColPos();				// コリジョン位置表示
+	void DebugRender();		// デバッグ情報描画
+	void DrawBaseData();	// 基本データ表示
+	void DrawCoordinate();	// 座標表示
+	void DrawDirection();	// 向き表示
+	void DrawStatus();		// ステータス表示
+	void DrawParameter();	// パラメーター表示
+	void DrawColPos();		// コリジョン位置表示
 
 	// ステータス文字列変換
 	std::string GetCurrentStateString() const;								// 現在の状態文字列取得

@@ -170,7 +170,7 @@ void ShieldBase::StopGuard()
 
 bool ShieldBase::HasStamina() const
 {
-	return StaminaManager::GetInstance()->CanShield();
+	return StaminaManager::GetInstance()->CanShieldByCost();
 }
 
 void ShieldBase::UpdateShieldState()

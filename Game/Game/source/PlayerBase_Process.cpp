@@ -155,9 +155,10 @@ void PlayerBase::ProcessInputMove()
 			_bIsDashInput = true;
 		}
 
-		// ダッシュ入力があれば移動速度を上げる
+		// ダッシュ入力があるなら
 		if(_bIsDashInput)
 		{
+			// 移動速度を上げる
 			_fMoveSpeed += _playerConfig.dashMoveSpeed;
 		}
 	}
@@ -249,9 +250,15 @@ void PlayerBase::ProcessPlayAnimation()
 	AnimManager* animManager = GetAnimManager();
 	if(animManager == nullptr){ return; }
 
-	const char* animName = GetCurrentAnimationName();	// 現在のステータスに応じたアニメーション名を取得
-	float blendTime = AnimConfig::BLEND_TIME;			// ブレンド時間
-	int loopCnt = GetLoopCount();						// ループカウント
+	// 現在のステータスに応じたアニメーション名を取得
+	const char* animName = GetCurrentAnimationName();	
+
+	// ブレンド時間
+	float blendTime = AnimConfig::BLEND_TIME;			
+
+	// ループカウント
+	int loopCnt = GetLoopCount();							
+	
 	if(animName != nullptr)
 	{
 		// アニメーションの切り替え

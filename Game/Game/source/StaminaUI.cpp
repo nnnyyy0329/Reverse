@@ -2,17 +2,17 @@
 #include "StaminaManager.h"
 
 // スタミナUI表示設定用定数のエイリアス
-namespace RC = RenderConfig;
+namespace SRC = StaminaRenderConfig;
 
 StaminaUI::StaminaUI()
 {
 	_iStaminaFrameHandle = ResourceServer::GetInstance()->GetHandle("StaminaFrame");
 	_iStaminaHandle = ResourceServer::GetInstance()->GetHandle("Stamina");
 
-	_drawStaminaBarX = RC::DRAW_BAR_FRAME_X + RC::DRAW_OFFSET_X;
-	_drawStaminaBarY = RC::DRAW_BAR_FRAME_Y + RC::DRAW_OFFSET_Y;
-	_drawStaminaBarFrameX = RC::DRAW_BAR_FRAME_X;
-	_drawStaminaBarFrameY = RC::DRAW_BAR_FRAME_Y;
+	_drawStaminaBarX = SRC::DRAW_BAR_FRAME_X + SRC::DRAW_OFFSET_X;
+	_drawStaminaBarY = SRC::DRAW_BAR_FRAME_Y + SRC::DRAW_OFFSET_Y;
+	_drawStaminaBarFrameX = SRC::DRAW_BAR_FRAME_X;
+	_drawStaminaBarFrameY = SRC::DRAW_BAR_FRAME_Y;
 }
 
 StaminaUI::~StaminaUI()

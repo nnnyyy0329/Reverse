@@ -9,7 +9,7 @@
 #include "appframe.h"
 
 // スタミナUI表示設定用定数
-namespace RenderConfig
+namespace StaminaRenderConfig
 {
 	// 画像表示用
 	const int DRAW_BAR_FRAME_X	= 216;
