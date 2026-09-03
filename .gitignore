@@ -418,6 +418,3 @@ FodyWeavers.xsd
 *.msp
 DxLib
 Game/Game/Log.txt
-Game/Game/include
-Game/Game/敵用のコーディング規約.txt
-Game/Game/res.zip
