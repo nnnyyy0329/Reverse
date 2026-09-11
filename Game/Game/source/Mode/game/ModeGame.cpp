@@ -262,31 +262,31 @@ bool ModeGame::Process()
 	}
 
 	// startでメニューを開く
-	//if (im.IsTrigger(INPUT_ACTION::MENU))
-	//{
-	//	ModeMenu* modeMenu = new ModeMenu();
-	//	ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
+	if (im.IsTrigger(INPUT_ACTION::MENU))
+	{
+		ModeMenu* modeMenu = new ModeMenu();
+		ModeServer::GetInstance()->Add(modeMenu, 99, "menu");
 
-	//	modeMenu->SetCameraManager(_cameraManager);
+		modeMenu->SetCameraManager(_cameraManager);
 
-	//	// メニュー項目を作成
-	//	auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
-	//	auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
-	//	auto useCollision = new MenuItemUseCollision(this, "UseCollision");
-	//	auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
-	//	auto killAllEnemies = new MenuItemDeathAllEnemies(this, "KillAllEnemies");
+		// メニュー項目を作成
+		auto viewDebugInfo = new MenuItemViewDebugInfo(this, "ViewDebugInfo");
+		auto viewCollision = new MenuItemViewCollision(this, "ViewCollision");
+		auto useCollision = new MenuItemUseCollision(this, "UseCollision");
+		auto debugCamera = new MenuDebugCamera(this, "DebugCamera");
+		auto killAllEnemies = new MenuItemDeathAllEnemies(this, "KillAllEnemies");
 
-	//	// デバッグカメラ切り替え
-	//	debugCamera->SetCameraManagerMenu(_cameraManager);
+		// デバッグカメラ切り替え
+		debugCamera->SetCameraManagerMenu(_cameraManager);
 
-	//	killAllEnemies->SetStageBase(_stage);
+		killAllEnemies->SetStageBase(_stage);
 
-	//	modeMenu->AddMenuItem(viewDebugInfo);
-	//	modeMenu->AddMenuItem(viewCollision);
-	//	modeMenu->AddMenuItem(useCollision);
-	//	modeMenu->AddMenuItem(debugCamera);
-	//	modeMenu->AddMenuItem(killAllEnemies);
-	//}
+		modeMenu->AddMenuItem(viewDebugInfo);
+		modeMenu->AddMenuItem(viewCollision);
+		modeMenu->AddMenuItem(useCollision);
+		modeMenu->AddMenuItem(debugCamera);
+		modeMenu->AddMenuItem(killAllEnemies);
+	}
 
 	// クラスセット
 	{
@@ -535,12 +535,12 @@ bool ModeGame::Render()
 			{
 				_playerManager->Render();
 				_stage->Render();
-				_energyUI->Render();
-				_playerLifeBarUI->Render();
-				_staminaUI->Render();
+				//_energyUI->Render();
+				//_playerLifeBarUI->Render();
+				//_staminaUI->Render();
 				//_item->Render();
-				_abilitySelectScreen->Render();
-				_abilityActionHint->Render();
+				//_abilitySelectScreen->Render();
+				//_abilityActionHint->Render();
 
 				BulletManager::GetInstance()->Render();
 			}
@@ -595,25 +595,25 @@ bool ModeGame::Render()
 	
 	// 敵残数表示
 	{
-		if(_stage)
-		{
-			if (_stage->GetStageNum() == 2)
-			{
-				SetFontSize(24);
-				DrawFormatString(60, 120, GetColor(255, 255, 255), "ボスを倒せ！");
-				SetFontSize(16);
-			}
-			else
-			{
-				const int current = _stage->GetCurrentEnemyCnt();
-				const int total = _stage->GetTotalEnemyCnt();
+		//if(_stage)
+		//{
+		//	if (_stage->GetStageNum() == 2)
+		//	{
+		//		SetFontSize(24);
+		//		DrawFormatString(60, 120, GetColor(255, 255, 255), "ボスを倒せ！");
+		//		SetFontSize(16);
+		//	}
+		//	else
+		//	{
+		//		const int current = _stage->GetCurrentEnemyCnt();
+		//		const int total = _stage->GetTotalEnemyCnt();
 
-				SetFontSize(24);
-				//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
-				DrawFormatString(60, 120, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
-				SetFontSize(16);
-			}
-		}
+		//		SetFontSize(24);
+		//		//DrawFormatString(20, 60, GetColor(255, 255, 255), "Enemy: %d/%d", current, total);
+		//		DrawFormatString(60, 120, GetColor(255, 255, 255), "残りの敵 : %d/%d", current, total);
+		//		SetFontSize(16);
+		//	}
+		//}
 	}
 
 
@@ -653,7 +653,7 @@ bool ModeGame::Render()
 		//DrawFormatString(20, 20, GetColor(255, 255, 255), "FPS: %d", static_cast<int>(s_fps + 0.5f));
 	}
 
-	_energyUI->Render();
+	//_energyUI->Render();
 	_cameraManager->Render();
 
 

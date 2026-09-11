@@ -220,8 +220,8 @@ AbsorbConfig SurfacePlayer::GetAbsorbConfig()
 {
 	AbsorbConfig config;
 
-	config.absorbRate		= 1.0f;						// 吸収率
-	config.energyAbsorbRate = 10.0f;					// エネルギー吸収率
+	config.absorbRate		= 5.0f;						// 吸収率
+	config.energyAbsorbRate = 50.0f;					// エネルギー吸収率
 	config.hpAbsorbRate		= 10.0f;					// HP吸収率(未使用)
 	config.absorbRange		= 240.0f;					// 吸収範囲
 	config.absorbAngle		= DX_PI_F / 2.5f;			// 吸収角度
