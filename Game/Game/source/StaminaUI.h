@@ -1,24 +1,24 @@
 /*****************************************
 * file   StaminaUI.h
-* brief  ƒXƒ^ƒ~ƒiUIƒNƒ‰ƒX
-* author ¬“c —I^
+* brief  ï¿½Xï¿½^ï¿½~ï¿½iUIï¿½Nï¿½ï¿½ï¿½X
+* author ï¿½ï¿½ï¿½c ï¿½Iï¿½^
 * date   2026/02/06
 ******************************************/
 
 #pragma once
 #include "appframe.h"
 
-// ƒXƒ^ƒ~ƒiUI•\¦İ’è—p’è”
-namespace SRenderConfig
+// ï¿½Xï¿½^ï¿½~ï¿½iUIï¿½\ï¿½ï¿½ï¿½İ’ï¿½pï¿½è”
+namespace StaminaRenderConfig
 {
-	// ‰æ‘œ•\¦—p
+	// ï¿½æ‘œï¿½\ï¿½ï¿½ï¿½p
 	const int DRAW_BAR_FRAME_X	= 216;
 	const int DRAW_BAR_FRAME_Y	= 1000;
 	const int DRAW_OFFSET_X		= 15;
 	const int DRAW_OFFSET_Y		= 5;
 }
 
-/// @brief ƒXƒ^ƒ~ƒiUIƒNƒ‰ƒX
+/// @brief ï¿½Xï¿½^ï¿½~ï¿½iUIï¿½Nï¿½ï¿½ï¿½X
 class StaminaUI
 {
 public:
@@ -27,7 +27,7 @@ public:
 	virtual ~StaminaUI();
 
 
-	/* Šî–{ŠÖ” */
+	/* ï¿½ï¿½{ï¿½Öï¿½ */
 
 	bool Initialize();
 	bool Terminate();
@@ -35,27 +35,27 @@ public:
 	bool Render();
 
 
-	/* ƒXƒ^ƒ~ƒiUI•\¦ŠÖŒWŠÖ” */
+	/* ï¿½Xï¿½^ï¿½~ï¿½iUIï¿½\ï¿½ï¿½ï¿½ÖŒWï¿½Öï¿½ */
 
-	/// @brief ƒXƒ^ƒ~ƒiƒtƒŒ[ƒ€•\¦ŠÖ”
+	/// @brief ï¿½Xï¿½^ï¿½~ï¿½iï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½Öï¿½
 	void StaminaFrameRender();			
 
-	/// @brief ƒQ[ƒW•\¦”ä—¦ŒvZŠÖ”
+	/// @brief ï¿½Qï¿½[ï¿½Wï¿½\ï¿½ï¿½ï¿½ä—¦ï¿½vï¿½Zï¿½Öï¿½
 	void GaugeRatioCalculation();			
 	
-	/// @brief ƒXƒ^ƒ~ƒiƒQ[ƒW•\¦ŠÖ”
+	/// @brief ï¿½Xï¿½^ï¿½~ï¿½iï¿½Qï¿½[ï¿½Wï¿½\ï¿½ï¿½ï¿½Öï¿½
 	///
-	/// @param ratio ƒQ[ƒW•\¦”ä—¦
+	/// @param ratio ï¿½Qï¿½[ï¿½Wï¿½\ï¿½ï¿½ï¿½ä—¦
 	void StaminaGaugeRender(float ratio);	
 
 protected:
 
-	int _iStaminaFrameHandle;	// ƒXƒ^ƒ~ƒiƒtƒŒ[ƒ€‰æ‘œƒnƒ“ƒhƒ‹
-	int _iStaminaHandle;// ƒXƒ^ƒ~ƒiƒQ[ƒW‰æ‘œƒnƒ“ƒhƒ‹
+	int _iStaminaFrameHandle;	// ï¿½Xï¿½^ï¿½~ï¿½iï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½æ‘œï¿½nï¿½ï¿½ï¿½hï¿½ï¿½
+	int _iStaminaHandle;// ï¿½Xï¿½^ï¿½~ï¿½iï¿½Qï¿½[ï¿½Wï¿½æ‘œï¿½nï¿½ï¿½ï¿½hï¿½ï¿½
 
-	int _drawStaminaBarX;		// ƒXƒ^ƒ~ƒiƒo[‚Ì•`‰æˆÊ’uX
-	int _drawStaminaBarY;		// ƒXƒ^ƒ~ƒiƒo[‚Ì•`‰æˆÊ’uY
-	int _drawStaminaBarFrameX;	// ƒXƒ^ƒ~ƒiƒo[ƒtƒŒ[ƒ€‚Ì•`‰æˆÊ’uX
-	int _drawStaminaBarFrameY;	// ƒXƒ^ƒ~ƒiƒo[ƒtƒŒ[ƒ€‚Ì•`‰æˆÊ’uY
+	int _drawStaminaBarX;		// ï¿½Xï¿½^ï¿½~ï¿½iï¿½oï¿½[ï¿½Ì•`ï¿½ï¿½Ê’uX
+	int _drawStaminaBarY;		// ï¿½Xï¿½^ï¿½~ï¿½iï¿½oï¿½[ï¿½Ì•`ï¿½ï¿½Ê’uY
+	int _drawStaminaBarFrameX;	// ï¿½Xï¿½^ï¿½~ï¿½iï¿½oï¿½[ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Ì•`ï¿½ï¿½Ê’uX
+	int _drawStaminaBarFrameY;	// ï¿½Xï¿½^ï¿½~ï¿½iï¿½oï¿½[ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Ì•`ï¿½ï¿½Ê’uY
 };
 

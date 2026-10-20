@@ -1,40 +1,40 @@
-// ’S“– : ¬“c
+// ï¿½Sï¿½ï¿½ : ï¿½ï¿½ï¿½c
 
 #include "PlayerBase.h"
 #include "StaminaManager.h"
 
 namespace
 {
-	constexpr float DODGE_STAMINA_COST = 10.0f;	// ‰ñ”ðŽž‚ÌƒXƒ^ƒ~ƒiÁ”ï—Ê
+	constexpr float DODGE_STAMINA_COST = 10.0f;	// ï¿½ï¿½ï¿½ï¿½ï¿½ÌƒXï¿½^ï¿½~ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½
 }
 
-// ‰ñ”ðî•ñ‰Šú‰»
+// ï¿½ï¿½ï¿½ï¿½ñ‰Šï¿½ï¿½ï¿½
 void PlayerBase::InitializeDodgeData()
 {
 	if(_dodgeSystem == nullptr){ return; }
 
-	// ŽqƒNƒ‰ƒX‚©‚ç‰ñ”ðî•ñ‚ÌŽæ“¾
+	// ï¿½qï¿½Nï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌŽæ“¾
 	DodgeConfig playerDodgeConfig = GetDodgeConfig();
 
-	// ƒLƒƒƒ‰ƒ^ƒCƒv‚É‰ž‚¶‚½‰ñ”ðƒLƒƒƒ‰ƒ^ƒCƒv‚ðŒˆ’è
+	// ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½vï¿½É‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½vï¿½ï¿½ï¿½ï¿½ï¿½
 	DODGE_CHARA dodgeCharaType = DODGE_CHARA::NONE;
 
-	// ƒLƒƒƒ‰ƒ^ƒCƒv‚É‰ž‚¶‚½‰ñ”ðƒLƒƒƒ‰ƒ^ƒCƒv‚ðŒˆ’è
+	// ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½vï¿½É‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½vï¿½ï¿½ï¿½ï¿½ï¿½
 	switch(GetCharaType())
 	{
-		case CHARA_TYPE::SURFACE_PLAYER: // •\ƒvƒŒƒCƒ„[
+		case CHARA_TYPE::SURFACE_PLAYER: // ï¿½\ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[
 		{
 			dodgeCharaType = DODGE_CHARA::SURFACE_PLAYER;
 			break;
 		}
 
-		case CHARA_TYPE::INTERIOR_PLAYER: // — ƒvƒŒƒCƒ„[
+		case CHARA_TYPE::INTERIOR_PLAYER: // ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[
 		{
 			dodgeCharaType = DODGE_CHARA::INTERIOR_PLAYER;
 			break;
 		}
 
-		case CHARA_TYPE::BULLET_PLAYER: // ’eƒvƒŒƒCƒ„[
+		case CHARA_TYPE::BULLET_PLAYER: // ï¿½eï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[
 		{
 			dodgeCharaType = DODGE_CHARA::BULLET_PLAYER;
 			break;
@@ -44,61 +44,61 @@ void PlayerBase::InitializeDodgeData()
 			return;
 	}
 
-	// ƒvƒŒƒCƒ„[‚Ì‰ñ”ðÝ’è‚ð“o˜^
+	// ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì‰ï¿½ï¿½Ý’ï¿½ï¿½oï¿½^
 	_dodgeSystem->RegisterDodgeCharaConfig(dodgeCharaType, playerDodgeConfig);
 }
 
-// ‰ñ”ðŒÄ‚Ño‚µ
+// ï¿½ï¿½ï¿½Ä‚Ñoï¿½ï¿½
 void PlayerBase::CallProcessDodge()
 {
-	if(_dodgeSystem == nullptr) { return; }	// ‰ñ”ðƒVƒXƒeƒ€‚ª‚È‚¯‚ê‚Îˆ—‚µ‚È‚¢
+	if(_dodgeSystem == nullptr) { return; }	// ï¿½ï¿½ï¿½Vï¿½Xï¿½eï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ï¿½Îï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½
 
-	// ‰ñ”ðˆ—
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	ProcessDodge();
 
-	// ‰ñ”ðI—¹ƒ`ƒFƒbƒN
+	// ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N
 	ProcessEndDodge();
 }
 
-// ‰ñ”ðˆ—
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void PlayerBase::ProcessDodge()
 {
-	// ‰ñ”ð“ü—Í‚ª‚ ‚Á‚½‚ç‰ñ”ð‚ðŒÄ‚Ño‚·
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Í‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚Ñoï¿½ï¿½
 	if(CanStartDodge())
 	{
-		// ‰ñ”ðŠJŽn
+		// ï¿½ï¿½ï¿½Jï¿½n
 		ProcessStartDodge();
 
-		// ‰ñ”ðŠJŽnŽž‚ÉƒXƒ^ƒ~ƒi‚ðÁ”ï
+		// ï¿½ï¿½ï¿½Jï¿½nï¿½ï¿½ï¿½ÉƒXï¿½^ï¿½~ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½
 		//StaminaManager::GetInstance()->ConsumeStamina(DODGE_STAMINA_COST);
 	}
 }
 
-// ‰ñ”ðŠJŽnˆ—
+// ï¿½ï¿½ï¿½Jï¿½nï¿½ï¿½ï¿½ï¿½
 void PlayerBase::ProcessStartDodge()
 {
-	// ‰ñ”ð‰Â”\‚©ƒ`ƒFƒbƒN
-	if(!CanDodge()){ return; }	// ‰ñ”ð•s‰Â”\‚È‚çˆ—‚µ‚È‚¢
+	// ï¿½ï¿½ï¿½Â”\ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N
+	if(!CanDodge()){ return; }	// ï¿½ï¿½ï¿½sï¿½Â”\ï¿½È‚çˆï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½
 
-	// ƒLƒƒƒ‰ƒ^ƒCƒv‚É‰ž‚¶‚½‰ñ”ðƒLƒƒƒ‰ƒ^ƒCƒv‚ðŒˆ’è
+	// ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½vï¿½É‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½vï¿½ï¿½ï¿½ï¿½ï¿½
 	DODGE_CHARA dodgeCharaType = DODGE_CHARA::NONE;
 
-	// ƒLƒƒƒ‰ƒ^ƒCƒv‚É‰ž‚¶‚½‰ñ”ðƒLƒƒƒ‰ƒ^ƒCƒv‚ðŒˆ’è
+	// ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½vï¿½É‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½vï¿½ï¿½ï¿½ï¿½ï¿½
 	switch(GetCharaType())
 	{
-		case CHARA_TYPE::SURFACE_PLAYER: // •\ƒvƒŒƒCƒ„[
+		case CHARA_TYPE::SURFACE_PLAYER: // ï¿½\ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[
 		{
 			dodgeCharaType = DODGE_CHARA::SURFACE_PLAYER;
 			break;
 		}
 
-		case CHARA_TYPE::INTERIOR_PLAYER: // — ƒvƒŒƒCƒ„[
+		case CHARA_TYPE::INTERIOR_PLAYER: // ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[
 		{
 			dodgeCharaType = DODGE_CHARA::INTERIOR_PLAYER;
 			break;
 		}
 
-		case CHARA_TYPE::BULLET_PLAYER: // ’eƒvƒŒƒCƒ„[
+		case CHARA_TYPE::BULLET_PLAYER: // ï¿½eï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[
 		{
 			dodgeCharaType = DODGE_CHARA::BULLET_PLAYER;
 			break;
@@ -108,77 +108,77 @@ void PlayerBase::ProcessStartDodge()
 			return; 
 	}
 
-	// ‰ñ”ðŒÄ‚Ño‚µ
+	// ï¿½ï¿½ï¿½Ä‚Ñoï¿½ï¿½
 	_dodgeSystem->CallDodge(shared_from_this(), dodgeCharaType);
 	_playerState.combatState = PLAYER_COMBAT_STATE::DODGE;
 }
 
-// ‰ñ”ðI—¹ˆ—
+// ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void PlayerBase::ProcessEndDodge()
 {
-	if(_playerState.combatState != PLAYER_COMBAT_STATE::DODGE){ return; }	// ‰ñ”ð’†‚Å‚È‚¯‚ê‚Îˆ—‚µ‚È‚¢
+	if(_playerState.combatState != PLAYER_COMBAT_STATE::DODGE){ return; }	// ï¿½ï¿½ð’†‚Å‚È‚ï¿½ï¿½ï¿½Îï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½
 
-	// ‰ñ”ð‚ªI—¹‚µ‚½ê‡
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡
 	if(!_dodgeSystem->IsDodging() && _dodgeSystem->GetDodgeState() == DODGE_STATE::INACTIVE)
 	{
-		// ŒÃ‚¢ƒXƒe[ƒ^ƒX‚ð•ÛŽ
+		// ï¿½Ã‚ï¿½ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½ï¿½ÛŽï¿½
 		PlayerState oldStatus = _playerState;
 
-		// ƒXƒe[ƒ^ƒXƒŠƒZƒbƒg
+		// ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½ï¿½ï¿½Zï¿½bï¿½g
 		_playerState.StateReset();
 
-		// ‘Ò‹@ó‘Ô‚É–ß‚é
+		// ï¿½Ò‹@ï¿½ï¿½Ô‚É–ß‚ï¿½
 		_playerState.movementState = PLAYER_MOVEMENT_STATE::WAIT;	
 
-		_oldPlayerState = oldStatus;	// ŒÃ‚¢ƒXƒe[ƒ^ƒX‚ðUŒ‚ó‘Ô‚ÉÝ’è
-		ProcessPlayAnimation();			// ƒAƒjƒ[ƒVƒ‡ƒ“Ø‚è‘Ö‚¦ŽÀs
-		_oldPlayerState = _playerState;	// Ø‚è‘Ö‚¦Œã‚ÉXV
+		_oldPlayerState = oldStatus;	// ï¿½Ã‚ï¿½ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½ï¿½Uï¿½ï¿½ï¿½ï¿½Ô‚ÉÝ’ï¿½
+		ProcessPlayAnimation();			// ï¿½Aï¿½jï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½Ø‚ï¿½Ö‚ï¿½ï¿½ï¿½ï¿½s
+		_oldPlayerState = _playerState;	// ï¿½Ø‚ï¿½Ö‚ï¿½ï¿½ï¿½ÉXï¿½V
 	}
 }
 
-// ‰ñ”ð‚ðŠJŽn‚Å‚«‚é‚©ƒ`ƒFƒbƒN
+// ï¿½ï¿½ï¿½ï¿½Jï¿½nï¿½Å‚ï¿½ï¿½é‚©ï¿½`ï¿½Fï¿½bï¿½N
 bool PlayerBase::CanStartDodge()
 {
 	auto& im = InputManager::GetInstance();
 
-	if((_playerState.IsStateMoving())							&&	// ˆÚ“®ó‘Ô‚Å
-		_playerState.IsInAttackState(PLAYER_ATTACK_STATE::NONE)	&&	// ‰½‚©‚µ‚ç‚ÌUŒ‚ó‘Ô‚Å‚Í‚È‚­
-		_playerState.IsInShootState(PLAYER_SHOOT_STATE::NONE)	&&	// ‰½‚©‚µ‚ç‚Ì”­ŽËó‘Ô‚Å‚Í‚È‚­
-		!_playerState.IsStateCombat()							&&	// “ÁŽêó‘Ô’†‚Å‚Í‚È‚­
-		//StaminaManager::GetInstance()->CanDodge()				&&	// ƒXƒ^ƒ~ƒi‚ª‰ñ”ð‰Â”\‚È—Ê‚Å
-		im.IsTrigger(INPUT_ACTION::DODGE))							// ‰ñ”ð“ü—Í‚ª‚ ‚Á‚½‚ç
+	if((_playerState.IsStateMoving())							&&	// ï¿½Ú“ï¿½ï¿½ï¿½Ô‚ï¿½
+		_playerState.IsInAttackState(PLAYER_ATTACK_STATE::NONE)	&&	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌUï¿½ï¿½ï¿½ï¿½Ô‚Å‚Í‚È‚ï¿½
+		_playerState.IsInShootState(PLAYER_SHOOT_STATE::NONE)	&&	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì”ï¿½ï¿½Ëï¿½Ô‚Å‚Í‚È‚ï¿½
+		!_playerState.IsStateCombat()							&&	// ï¿½ï¿½ï¿½ï¿½ï¿½Ô’ï¿½ï¿½Å‚Í‚È‚ï¿½
+		StaminaManager::GetInstance()->CanDodgeByCost()			&&	// ï¿½Xï¿½^ï¿½~ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½Â”\ï¿½È—Ê‚ï¿½
+		im.IsTrigger(INPUT_ACTION::DODGE))							// ï¿½ï¿½ï¿½ï¿½ï¿½Í‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	{
 		return true;
 	}
 
-	// ‰ñ”ðŠJŽn•s‰Â”\
+	// ï¿½ï¿½ï¿½Jï¿½nï¿½sï¿½Â”\
 	return false;
 }
 
-// ‰ñ”ð‰Â”\‚©ƒ`ƒFƒbƒN
+// ï¿½ï¿½ï¿½Â”\ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N
 bool PlayerBase::CanDodge()
 {
-	if(_dodgeSystem != nullptr										||	// ‰ñ”ðƒVƒXƒeƒ€‚ª—LŒø‚Å
-		_dodgeSystem->CanDodge()									||	// ‰ñ”ð’†‚Å‚È‚­
-		!IsAttacking()												||	// UŒ‚’†‚Å‚È‚­
-		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)		||	// ”í’e’†‚Å‚È‚­
-		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DEATH))		// Ž€–S’†‚¶‚á‚È‚¢‚È‚ç
+	if(_dodgeSystem != nullptr										||	// ï¿½ï¿½ï¿½Vï¿½Xï¿½eï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½ï¿½
+		_dodgeSystem->CanDodge()									||	// ï¿½ï¿½ð’†‚Å‚È‚ï¿½
+		!IsAttacking()												||	// ï¿½Uï¿½ï¿½ï¿½ï¿½ï¿½Å‚È‚ï¿½
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::HIT)		||	// ï¿½ï¿½eï¿½ï¿½ï¿½Å‚È‚ï¿½
+		!_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DEATH))		// ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½È‚ï¿½
 	{
 		return true;
 	}
 
-	// ‰ñ”ð•s‰Â”\
+	// ï¿½ï¿½ï¿½sï¿½Â”\
 	return false;
 }
 
-// ‰ñ”ð’†‚©ƒ`ƒFƒbƒN
+// ï¿½ï¿½ð’†‚ï¿½ï¿½`ï¿½Fï¿½bï¿½N
 bool PlayerBase::IsDodging()
 {
 	if(_dodgeSystem == nullptr) { return false; }
 
-	// ‰ñ”ð’†‚©ƒ`ƒFƒbƒN
-	if(_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DODGE)	||	// ‰ñ”ð’†‚Å
-		_dodgeSystem->IsDodging())									// ‰ñ”ð‚ð‚·‚Å‚É‚µ‚Ä‚¢‚é
+	// ï¿½ï¿½ð’†‚ï¿½ï¿½`ï¿½Fï¿½bï¿½N
+	if(_playerState.IsInCombatState(PLAYER_COMBAT_STATE::DODGE)	||	// ï¿½ï¿½ð’†‚ï¿½
+		_dodgeSystem->IsDodging())									// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å‚É‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
 	{
 		return true;
 	}
@@ -186,11 +186,11 @@ bool PlayerBase::IsDodging()
 	return false;
 }
 
-// –³“Gó‘Ô‚©ƒ`ƒFƒbƒN
+// ï¿½ï¿½ï¿½Gï¿½ï¿½Ô‚ï¿½ï¿½`ï¿½Fï¿½bï¿½N
 bool PlayerBase::IsInvincible()
 {
 	if(_dodgeSystem == nullptr) { return false; }
 
-	// –³“Gó‘Ô‚©ƒ`ƒFƒbƒN
+	// ï¿½ï¿½ï¿½Gï¿½ï¿½Ô‚ï¿½ï¿½`ï¿½Fï¿½bï¿½N
 	return _dodgeSystem->GetIsInvincible();
 }

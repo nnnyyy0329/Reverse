@@ -1,23 +1,23 @@
 #include "StaminaUI.h"
 #include "StaminaManager.h"
 
-// ƒXƒ^ƒ~ƒiUI•\¦İ’è—p’è”‚ÌƒGƒCƒŠƒAƒX
-namespace RC = SRenderConfig;
+// ï¿½Xï¿½^ï¿½~ï¿½iUIï¿½\ï¿½ï¿½ï¿½İ’ï¿½pï¿½è”ï¿½ÌƒGï¿½Cï¿½ï¿½ï¿½Aï¿½X
+namespace SRC = StaminaRenderConfig;
 
 StaminaUI::StaminaUI()
 {
 	_iStaminaFrameHandle = ResourceServer::GetInstance()->GetHandle("StaminaFrame");
 	_iStaminaHandle = ResourceServer::GetInstance()->GetHandle("Stamina");
 
-	_drawStaminaBarX = RC::DRAW_BAR_FRAME_X + RC::DRAW_OFFSET_X;
-	_drawStaminaBarY = RC::DRAW_BAR_FRAME_Y + RC::DRAW_OFFSET_Y;
-	_drawStaminaBarFrameX = RC::DRAW_BAR_FRAME_X;
-	_drawStaminaBarFrameY = RC::DRAW_BAR_FRAME_Y;
+	_drawStaminaBarX = SRC::DRAW_BAR_FRAME_X + SRC::DRAW_OFFSET_X;
+	_drawStaminaBarY = SRC::DRAW_BAR_FRAME_Y + SRC::DRAW_OFFSET_Y;
+	_drawStaminaBarFrameX = SRC::DRAW_BAR_FRAME_X;
+	_drawStaminaBarFrameY = SRC::DRAW_BAR_FRAME_Y;
 }
 
 StaminaUI::~StaminaUI()
 {
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ï¿½fï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^
 	Terminate();
 }
 
@@ -28,7 +28,7 @@ bool StaminaUI::Initialize()
 
 bool StaminaUI::Terminate()
 {
-	// ‰æ‘œ‚ÌŠJ•ú
+	// ï¿½æ‘œï¿½ÌŠJï¿½ï¿½
 	DeleteGraph(_iStaminaFrameHandle);
 	DeleteGraph(_iStaminaHandle);
 
@@ -42,16 +42,16 @@ bool StaminaUI::Process()
 
 bool StaminaUI::Render()
 {
-	// Zƒoƒbƒtƒ@–³Œø‰»
+	// Zï¿½oï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	SetUseZBuffer3D(FALSE);
 
-	// ƒXƒ^ƒ~ƒiƒtƒŒ[ƒ€•\¦ŠÖ”
+	// ï¿½Xï¿½^ï¿½~ï¿½iï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½Öï¿½
 	//StaminaFrameRender();
 
-	// ƒXƒ^ƒ~ƒiƒQ[ƒW•\¦ŠÖ”
+	// ï¿½Xï¿½^ï¿½~ï¿½iï¿½Qï¿½[ï¿½Wï¿½\ï¿½ï¿½ï¿½Öï¿½
 	//GaugeRatioCalculation();
 
-	// Zƒoƒbƒtƒ@—LŒø‰»
+	// Zï¿½oï¿½bï¿½tï¿½@ï¿½Lï¿½ï¿½ï¿½ï¿½
 	SetUseZBuffer3D(TRUE);
 
 	return true;
@@ -64,40 +64,40 @@ void StaminaUI::StaminaFrameRender()
 
 void StaminaUI::GaugeRatioCalculation()
 {
-	// ƒXƒ^ƒ~ƒiƒ}ƒl[ƒWƒƒ[‚©‚çŒ»İ‚ÌƒXƒ^ƒ~ƒi—Ê‚ğæ“¾
+	// ï¿½Xï¿½^ï¿½~ï¿½iï¿½}ï¿½lï¿½[ï¿½Wï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½çŒ»ï¿½İ‚ÌƒXï¿½^ï¿½~ï¿½iï¿½Ê‚ï¿½æ“¾
 	float currentStamina = StaminaManager::GetInstance()->GetCurrentStamina();
 	float maxStamina = StaminaManager::GetInstance()->GetMaxStamina();
 
-	// Å‘åƒXƒ^ƒ~ƒi‚ª0ˆÈ‰º‚Ìê‡‚Í•`‰æ‚µ‚È‚¢
+	// ï¿½Å‘ï¿½Xï¿½^ï¿½~ï¿½iï¿½ï¿½0ï¿½È‰ï¿½ï¿½Ìê‡ï¿½Í•`ï¿½æ‚µï¿½È‚ï¿½
 	if(maxStamina <= 0.0f) return;  
 
-	// ƒXƒ^ƒ~ƒi‚Ì”ä—¦‚ğŒvZ
+	// ï¿½Xï¿½^ï¿½~ï¿½iï¿½Ì”ä—¦ï¿½ï¿½vï¿½Z
 	float staminaRatio = currentStamina / maxStamina;
 	if(staminaRatio > 1.0f){ staminaRatio = 1.0f; }
 	if(staminaRatio < 0.0f){ staminaRatio = 0.0f; }
 
-	// ƒXƒ^ƒ~ƒiƒQ[ƒW•\¦ŠÖ”
+	// ï¿½Xï¿½^ï¿½~ï¿½iï¿½Qï¿½[ï¿½Wï¿½\ï¿½ï¿½ï¿½Öï¿½
 	StaminaGaugeRender(staminaRatio);
 }
 
 void StaminaUI::StaminaGaugeRender(float ratio)
 {
-	// ”ä—¦‚ª0ˆÈ‰º‚Ìê‡‚Í•`‰æ‚µ‚È‚¢
+	// ï¿½ä—¦ï¿½ï¿½0ï¿½È‰ï¿½ï¿½Ìê‡ï¿½Í•`ï¿½æ‚µï¿½È‚ï¿½
 	if(ratio <= 0.0f){ return; }	
 
-	// ‰æ‘œƒTƒCƒY
+	// ï¿½æ‘œï¿½Tï¿½Cï¿½Y
 	int graphW, graphH;
 	GetGraphSize(_iStaminaHandle, &graphW, &graphH);
 
-	// •`‰æ‚·‚é•
+	// ï¿½`ï¿½æ‚·ï¿½é•
 	int clipW = static_cast<int>(graphW * ratio);
 
-	// ƒNƒŠƒbƒsƒ“ƒO—Ìˆæ‚ğİ’è
+	// ï¿½Nï¿½ï¿½ï¿½bï¿½sï¿½ï¿½ï¿½Oï¿½Ìˆï¿½ï¿½İ’ï¿½
 	SetDrawArea(_drawStaminaBarX, _drawStaminaBarY, _drawStaminaBarX + clipW, _drawStaminaBarY + graphH);
 
-	// ƒXƒ^ƒ~ƒiƒQ[ƒW•`‰æ
+	// ï¿½Xï¿½^ï¿½~ï¿½iï¿½Qï¿½[ï¿½Wï¿½`ï¿½ï¿½
 	DrawGraph(_drawStaminaBarX, _drawStaminaBarY, _iStaminaHandle, TRUE);
 
-	// ƒNƒŠƒbƒsƒ“ƒO—Ìˆæ‚ğŒ³‚É–ß‚·
+	// ï¿½Nï¿½ï¿½ï¿½bï¿½sï¿½ï¿½ï¿½Oï¿½Ìˆï¿½ï¿½ï¿½ï¿½É–ß‚ï¿½
 	SetDrawAreaFull();
 }

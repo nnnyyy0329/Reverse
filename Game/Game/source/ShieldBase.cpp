@@ -13,10 +13,10 @@ ShieldBase::ShieldBase()
 	_eShieldChara = SHIELD_CHARA::NONE;
 	_eShieldState = SHIELD_STATE::INACTIVE;
 
-	_fStartupTimer = 0.0f;				// ”­¶‘Oƒ^ƒCƒ}[
-	_fRecoveryTimer = 0.0f;				// d’¼ƒ^ƒCƒ}[
-	_bIsBlocking = false;				// ƒuƒƒbƒN’†ƒtƒ‰
-	_stcShieldConfig = ShieldConfig();	// ƒV[ƒ‹ƒhİ’è‰Šú‰»
+	_fStartupTimer = 0.0f;				// ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½^ï¿½Cï¿½}ï¿½[
+	_fRecoveryTimer = 0.0f;				// ï¿½dï¿½ï¿½ï¿½^ï¿½Cï¿½}ï¿½[
+	_bIsBlocking = false;				// ï¿½uï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½tï¿½ï¿½
+	_stcShieldConfig = ShieldConfig();	// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½İ’è‰ï¿½ï¿½ï¿½ï¿½
 }
 
 ShieldBase::~ShieldBase()
@@ -36,7 +36,7 @@ bool ShieldBase::Terminate()
 
 bool ShieldBase::Process()
 {
-	// ƒV[ƒ‹ƒhó‘ÔXV
+	// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½ï¿½ÔXï¿½V
 	UpdateShieldState();
 
 	return true;
@@ -49,163 +49,163 @@ bool ShieldBase::Render()
 
 void ShieldBase::ActivateShield()
 {
-	// ”ñƒAƒNƒeƒBƒuó‘Ô‚È‚ç
+	// ï¿½ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½ï¿½Ô‚È‚ï¿½
 	if(_eShieldState == SHIELD_STATE::INACTIVE)
 	{
-		// ƒAƒNƒeƒBƒu‚ÉˆÚs
-		_eShieldState = SHIELD_STATE::STARTUP;			// ƒV[ƒ‹ƒhó‘Ô‚ğ”­¶‘O‚Éİ’è
-		_fStartupTimer = _stcShieldConfig.startTime;	// ”­¶‘Oƒ^ƒCƒ}[ƒZƒbƒg
+		// ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½ÉˆÚs
+		_eShieldState = SHIELD_STATE::STARTUP;			// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½ï¿½Ô‚ğ”­ï¿½ï¿½Oï¿½Éİ’ï¿½
+		_fStartupTimer = _stcShieldConfig.startTime;	// ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½^ï¿½Cï¿½}ï¿½[ï¿½Zï¿½bï¿½g
 	}
 }
 
 void ShieldBase::DeactivateShield()
 {
-	// ƒAƒNƒeƒBƒu’†‚È‚ç
+	// ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½ï¿½ï¿½È‚ï¿½
 	if(_eShieldState == SHIELD_STATE::ACTIVE)
 	{
-		_eShieldState = SHIELD_STATE::RECOVERY;				// ƒV[ƒ‹ƒhó‘Ô‚ğ”ñƒAƒNƒeƒBƒu‚Éİ’è
-		_fRecoveryTimer = _stcShieldConfig.recoveryTime;	// d’¼ƒ^ƒCƒ}[ƒZƒbƒg
+		_eShieldState = SHIELD_STATE::RECOVERY;				// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½ï¿½Ô‚ï¿½ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½Éİ’ï¿½
+		_fRecoveryTimer = _stcShieldConfig.recoveryTime;	// ï¿½dï¿½ï¿½ï¿½^ï¿½Cï¿½}ï¿½[ï¿½Zï¿½bï¿½g
 	}
-	// ”­¶‘Oó‘Ô‚È‚ç
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½Ô‚È‚ï¿½
 	else if(_eShieldState == SHIELD_STATE::STARTUP)
 	{
-		_eShieldState = SHIELD_STATE::INACTIVE;				// ƒV[ƒ‹ƒhó‘Ô‚ğd’¼‚Éİ’è
-		_fStartupTimer = 0.0f;								// ”­¶‘Oƒ^ƒCƒ}[ƒŠƒZƒbƒg
+		_eShieldState = SHIELD_STATE::INACTIVE;				// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½ï¿½Ô‚ï¿½dï¿½ï¿½ï¿½Éİ’ï¿½
+		_fStartupTimer = 0.0f;								// ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½^ï¿½Cï¿½}ï¿½[ï¿½ï¿½ï¿½Zï¿½bï¿½g
 	}
 }
 
 bool ShieldBase::CanBlockAttack(const VECTOR& attackPos, const VECTOR& attackDir) const
 {
-	// ƒV[ƒ‹ƒh‚ªƒAƒNƒeƒBƒu‚Å‚È‚¢ê‡‚ÍƒuƒƒbƒN•s‰Â
+	// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½ï¿½ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½Å‚È‚ï¿½ï¿½ê‡ï¿½Íƒuï¿½ï¿½ï¿½bï¿½Nï¿½sï¿½ï¿½
 	if(!IsActive()) { return false; }
 
-	// Š—LÒ‚ª‚¢‚È‚¢ê‡‚ÍƒuƒƒbƒN•s‰Â
+	// ï¿½ï¿½ï¿½Lï¿½Ò‚ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ê‡ï¿½Íƒuï¿½ï¿½ï¿½bï¿½Nï¿½sï¿½ï¿½
 	auto owner = GetOwner();
 	if(!owner) { return false; } 
 
-	// Š—LÒˆÊ’u‚Æ‘O•ûƒxƒNƒgƒ‹æ“¾
+	// ï¿½ï¿½ï¿½Lï¿½ÒˆÊ’uï¿½Æ‘Oï¿½ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½æ“¾
 	VECTOR ownerPos = GetOwnerPos();
 	VECTOR ownerDir = GetOwnerDir();
 
-	// UŒ‚ˆÊ’u‚ªƒV[ƒ‹ƒh—LŒø”ÍˆÍ“à‚©ƒ`ƒFƒbƒN
+	// ï¿½Uï¿½ï¿½ï¿½Ê’uï¿½ï¿½ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½Lï¿½ï¿½ï¿½ÍˆÍ“ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N
 	if(!IsInShieldRange(attackPos)) { return false; }
 
-	// UŒ‚‚ª—LŒø‚È•ûŒü‚©‚ç‚©ƒ`ƒFƒbƒN
+	// ï¿½Uï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½È•ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ç‚©ï¿½`ï¿½Fï¿½bï¿½N
 	if(!IsAttackFromValidDirection(attackDir)) { return false; }
 
-	// ‚·‚×‚Ä‚ÌğŒ‚ğ–‚½‚µ‚Ä‚¢‚éê‡‚ÍƒuƒƒbƒN‰Â”\
+	// ï¿½ï¿½ï¿½×‚Ä‚Ìï¿½ï¿½ï¿½ğ–‚ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ê‡ï¿½Íƒuï¿½ï¿½ï¿½bï¿½Nï¿½Â”\
 	return GeometryUtility::IsAttackFromFront(ownerPos, ownerDir, attackDir, _stcShieldConfig.dotThreshold);
 }
 
 bool ShieldBase::IsInShieldRange(const VECTOR& targetPos) const
 {
-	// Š—LÒ‚ª‚¢‚È‚¢ê‡‚ÍƒuƒƒbƒN•s‰Â
+	// ï¿½ï¿½ï¿½Lï¿½Ò‚ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ê‡ï¿½Íƒuï¿½ï¿½ï¿½bï¿½Nï¿½sï¿½ï¿½
 	auto owner = GetOwner();
 	if(!owner) { return false; } 
 
-	// Š—LÒˆÊ’uæ“¾
+	// ï¿½ï¿½ï¿½Lï¿½ÒˆÊ’uï¿½æ“¾
 	VECTOR ownerPos = GetOwnerPos();
 
-	// Š—LÒ‚©‚ç‘ÎÛ‚Ö‚Ì‹——£‚ğŒvZ
+	// ï¿½ï¿½ï¿½Lï¿½Ò‚ï¿½ï¿½ï¿½ÎÛ‚Ö‚Ì‹ï¿½ï¿½ï¿½ï¿½ï¿½vï¿½Z
 	float distance = VSize(VSub(targetPos, ownerPos));
 
-	// ƒV[ƒ‹ƒh—LŒø‹——£“à‚©ƒ`ƒFƒbƒN
+	// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N
 	return distance <= _stcShieldConfig.blockDistance;
 }
 
 bool ShieldBase::IsAttackFromValidDirection(const VECTOR& attackDir) const
 {
-	// Š—LÒ‚ª‚¢‚È‚¢ê‡‚ÍƒuƒƒbƒN•s‰Â
+	// ï¿½ï¿½ï¿½Lï¿½Ò‚ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ê‡ï¿½Íƒuï¿½ï¿½ï¿½bï¿½Nï¿½sï¿½ï¿½
 	auto owner = GetOwner();
 	if(!owner) { return false; } 
 
-	// Š—LÒˆÊ’u‚ÆŒü‚«
+	// ï¿½ï¿½ï¿½Lï¿½ÒˆÊ’uï¿½ÆŒï¿½ï¿½ï¿½
 	VECTOR ownerPos = GetOwnerPos();
 	VECTOR ownerDir = GetOwnerDir();
 
-	// UŒ‚Ò‚©‚çŠ—LÒ‚Ö‚Ì•ûŒü
+	// ï¿½Uï¿½ï¿½ï¿½Ò‚ï¿½ï¿½çŠï¿½Lï¿½Ò‚Ö‚Ì•ï¿½ï¿½ï¿½
 	VECTOR attackToOwner = VScale(attackDir, -1.0f);
 
-	// Š—LÒ‘O•û‚ÆUŒ‚•ûŒü‚ÌŠp“x·‚ğŒvZ
+	// ï¿½ï¿½ï¿½Lï¿½Ò‘Oï¿½ï¿½ï¿½ÆUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌŠpï¿½xï¿½ï¿½ï¿½ï¿½vï¿½Z
 	float attackDiff = GeometryUtility::GetAngleDeg(ownerDir, attackToOwner);
 
-	// Šp“x”ÍˆÍ“à‚©ƒ`ƒFƒbƒN
+	// ï¿½pï¿½xï¿½ÍˆÍ“ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N
 	return attackDiff <= _stcShieldConfig.blockAngleRange;
 }
 
 void ShieldBase::SuccessBlock(const VECTOR& attackDir)
 {
-	_bIsBlocking = true;	// ƒuƒƒbƒN’†
+	_bIsBlocking = true;	// ï¿½uï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½
 }
 
 void ShieldBase::UpdateGuardInput(InputManager* input)
 {
-	// ‰Ÿ‚³‚ê‚½‚ç
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½ï¿½
 	if(input->IsHold(INPUT_ACTION::ABILITY))
 	{
-		// ƒK[ƒhŠJn
+		// ï¿½Kï¿½[ï¿½hï¿½Jï¿½n
 		StartGuard();
 	}
-	// —£‚³‚ê‚½‚ç
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½ï¿½
 	else
 	{
-		// ƒK[ƒhI—¹
+		// ï¿½Kï¿½[ï¿½hï¿½Iï¿½ï¿½
 		StopGuard();
 	}
 }
 
 void ShieldBase::StartGuard()
 {
-	if(!HasStamina()) { return; }	// ƒXƒ^ƒ~ƒiƒ`ƒFƒbƒN
+	if(!HasStamina()) { return; }	// ï¿½Xï¿½^ï¿½~ï¿½iï¿½`ï¿½Fï¿½bï¿½N
 
-	// ƒV[ƒ‹ƒh”­“®
+	// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½ï¿½ï¿½ï¿½
 	ActivateShield();
 }
 
 void ShieldBase::StopGuard()
 {
-	// ƒV[ƒ‹ƒh‰ğœ
+	// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½ï¿½ï¿½
 	DeactivateShield();
 }
 
-//bool ShieldBase::HasStamina() const
-//{
-//	return StaminaManager::GetInstance()->CanShield();
-//}
+bool ShieldBase::HasStamina() const
+{
+	return StaminaManager::GetInstance()->CanShieldByCost();
+}
 
 void ShieldBase::UpdateShieldState()
 {
 	switch(_eShieldState)
 	{
-		case SHIELD_STATE::STARTUP: // ”­¶‘O
+		case SHIELD_STATE::STARTUP: // ï¿½ï¿½ï¿½ï¿½ï¿½O
 		{
-			_fStartupTimer -= DECREMENT_COUNT;	// d’¼ƒ^ƒCƒ}[‚ği‚ß‚é
+			_fStartupTimer -= DECREMENT_COUNT;	// ï¿½dï¿½ï¿½ï¿½^ï¿½Cï¿½}ï¿½[ï¿½ï¿½iï¿½ß‚ï¿½
 
 			if(_fStartupTimer <= 0.0f)
 			{
-				_eShieldState = SHIELD_STATE::ACTIVE;		// ƒV[ƒ‹ƒhó‘Ô‚ğƒAƒNƒeƒBƒu‚Éİ’è
+				_eShieldState = SHIELD_STATE::ACTIVE;		// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½ï¿½Ô‚ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½Éİ’ï¿½
 			}
 
 			break;
 		}
 
-		case SHIELD_STATE::ACTIVE: // ƒAƒNƒeƒBƒu’†
+		case SHIELD_STATE::ACTIVE: // ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½ï¿½
 		{
-			// ƒXƒ^ƒ~ƒiÁ”ï
+			// ï¿½Xï¿½^ï¿½~ï¿½iï¿½ï¿½ï¿½ï¿½
 			StaminaManager::GetInstance()->ConsumeStamina(SHIELD_COST_STAMINA);
 
 			break;
 		}
 
-		case SHIELD_STATE::RECOVERY: // d’¼’†
+		case SHIELD_STATE::RECOVERY: // ï¿½dï¿½ï¿½ï¿½ï¿½
 		{
-			_fRecoveryTimer -= DECREMENT_COUNT;	// d’¼ƒ^ƒCƒ}[‚ği‚ß‚é
+			_fRecoveryTimer -= DECREMENT_COUNT;	// ï¿½dï¿½ï¿½ï¿½^ï¿½Cï¿½}ï¿½[ï¿½ï¿½iï¿½ß‚ï¿½
 
-			// d’¼ŠÔ‚ğ’´‚¦‚½‚ç
+			// ï¿½dï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ğ’´‚ï¿½ï¿½ï¿½ï¿½ï¿½
 			if(_fRecoveryTimer <= 0.0f)
 			{
-				_eShieldState = SHIELD_STATE::INACTIVE;	// ƒV[ƒ‹ƒhó‘Ô‚ğ”ñƒAƒNƒeƒBƒu‚Éİ’è
-				_bIsBlocking = false;					// ƒuƒƒbƒN’†ƒtƒ‰ƒO‰ğœ
+				_eShieldState = SHIELD_STATE::INACTIVE;	// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½ï¿½Ô‚ï¿½ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½Éİ’ï¿½
+				_bIsBlocking = false;					// ï¿½uï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½tï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½
 			}
 
 			break;
@@ -218,11 +218,11 @@ VECTOR ShieldBase::GetOwnerPos() const
 	auto owner = GetOwner();
 	if(owner)
 	{
-		// Š—LÒˆÊ’uæ“¾
+		// ï¿½ï¿½ï¿½Lï¿½ÒˆÊ’uï¿½æ“¾
 		return owner->GetPos();
 	}
 
-	// Š—LÒ‚ª‚¢‚È‚¢ê‡‚Íƒ[ƒ
+	// ï¿½ï¿½ï¿½Lï¿½Ò‚ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ê‡ï¿½Íƒ[ï¿½ï¿½
 	return VGet(0.0f, 0.0f, 0.0f);
 }
 
@@ -231,17 +231,17 @@ VECTOR ShieldBase::GetOwnerDir() const
 	auto owner = GetOwner();
 	if(owner)
 	{
-		// Š—LÒ‘O•ûæ“¾
+		// ï¿½ï¿½ï¿½Lï¿½Ò‘Oï¿½ï¿½ï¿½æ“¾
 		return owner->GetDir();
 	}
 	
-	// Š—LÒ‚ª‚¢‚È‚¢ê‡‚Íƒ[ƒ
+	// ï¿½ï¿½ï¿½Lï¿½Ò‚ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ê‡ï¿½Íƒ[ï¿½ï¿½
 	return VGet(0.0f, 0.0f, 0.0f);
 }
 
 void ShieldBase::DebugRender()
 {
-	// ƒV[ƒ‹ƒh—LŒø”ÍˆÍƒfƒoƒbƒO•`‰æ
+	// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½Lï¿½ï¿½ï¿½ÍˆÍƒfï¿½oï¿½bï¿½Oï¿½`ï¿½ï¿½
 	DrawShieldRangeDebug();
 }
 
@@ -252,11 +252,11 @@ void ShieldBase::DrawShieldRangeDebug()
 	auto owner = GetOwner();
 	if(!owner) { return; } 
 
-	// Š—LÒˆÊ’u‚Æ‘O•ûƒxƒNƒgƒ‹æ“¾
+	// ï¿½ï¿½ï¿½Lï¿½ÒˆÊ’uï¿½Æ‘Oï¿½ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½æ“¾
 	VECTOR ownerPos = GetOwnerPos();
 	VECTOR ownerDir = GetOwnerDir();
 
-	// ƒV[ƒ‹ƒh—LŒø”ÍˆÍ•`‰æ
+	// ï¿½Vï¿½[ï¿½ï¿½ï¿½hï¿½Lï¿½ï¿½ï¿½ÍˆÍ•`ï¿½ï¿½
 
 }
 
